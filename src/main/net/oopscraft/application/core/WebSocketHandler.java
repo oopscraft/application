@@ -81,12 +81,21 @@ public abstract class WebSocketHandler extends TextWebSocketHandler {
 	 */
 	public abstract void onMessage(WebSocketSession session, TextMessage message);
 	
+	protected void sendMessage(WebSocketSession session, String message) {
+		try {
+			TextMessage textMessage = new TextMessage(message);
+			session.sendMessage(textMessage);
+		}catch(Exception ignore) {
+			LOG.warn(ignore.getMessage());
+		}
+	}
+	
 	/**
 	 * broadcast
 	 * @param message
 	 * @throws Exception
 	 */
-	protected void broadcastMessage(String message) throws Exception {
+	protected void broadcastMessage(String message) {
 		TextMessage textMessage = new TextMessage(message);
 		for(WebSocketSession session : sessionList) {
 			try {
