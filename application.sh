@@ -43,7 +43,7 @@ function log() {
 
 # crypto
 function crypto() {
-	java -cp ./*:./lib/* net.oopscraft.core.security.PBEncryptor
+	java -cp ./*:./lib/* net.oopscraft.application.core.PBEncryptor
 }
 
 # main
