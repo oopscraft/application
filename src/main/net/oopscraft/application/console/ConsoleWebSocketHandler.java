@@ -65,8 +65,11 @@ public class ConsoleWebSocketHandler extends WebSocketHandler {
 			default :
 			break;
 			}
+			String response = JsonConverter.convertObjectToJson(messageMap);
+			this.sendMessage(session, response);
 		}catch(Exception ignore) {
 			LOG.warn(ignore.getMessage());
+			this.sendMessage(session, ignore.getMessage());
 		}
 	}
 	
