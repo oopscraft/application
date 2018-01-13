@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+      "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" 
+      "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+      
+<tiles-definitions>
+	
+	<!-- console layout -->
+    <definition name="console/*.tiles" template="/WEB-INF/jsp/console/console.jsp">
+        <put-attribute name="body"   value="/WEB-INF/jsp/console/{1}.jsp" />
+    </definition>
+    
+    <!--  service layout -->
+    <definition name="service/*.tiles" template="/WEB-INF/jsp/service/service.jsp">
+        <put-attribute name="body"   value="/WEB-INF/jsp/service/{1}.jsp" />
+    </definition>
+    
+</tiles-definitions>
