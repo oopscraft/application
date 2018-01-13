@@ -35,7 +35,7 @@ sourceSets {
 
 // Overrding jar task
 jar { 
-	archiveName "oopscraft-core-${version}.jar" 
+	archiveName "oopscraft-application-${version}.jar" 
 	doLast {
 		copy {
 			from archivePath into '.'
@@ -50,7 +50,7 @@ jar {
 // Packages distribution binary file.
 task dist(type:Zip, dependsOn:jar) { 
 	group 'distribution' 
-	archiveName "oopscraft-core-${version}.zip" 
+	archiveName "oopscraft-application-${version}.zip" 
 	from (archivePath) 
 	from (configurations.runtime) { 
 		into 'lib' 
@@ -67,7 +67,7 @@ publishing {
 	publications { 
 		maven(MavenPublication) { 
 			groupId 'net.oopscraft' 
-			artifactId 'oopscraft-core' 
+			artifactId 'oopscraft-application' 
 			from components.java 
 		} 
 	} 
