@@ -60,7 +60,7 @@ public class DataSourceProxy implements DataSource {
 	public Connection getConnection() throws SQLException {
 		Connection connection = null;
 		try {
-			SqlSessionProxyFactory sqlSessionProxyFactory = ApplicationContainer.getAppbootContext().getSqlSessionProxyFactory(id);
+			SqlSessionProxyFactory sqlSessionProxyFactory = ApplicationContainer.getApplicationContext().getSqlSessionProxyFactory(id);
 			DataSource dataSource = sqlSessionProxyFactory.getDataSource(environment);
 			connection = dataSource.getConnection();
 		}catch(Exception e) {

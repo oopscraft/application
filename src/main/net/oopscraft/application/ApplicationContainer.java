@@ -21,18 +21,18 @@ public class ApplicationContainer {
 	private static final File PROPERTIES_FILE = new File("conf/application.properties");
 	private static final String LOGO = new String(Base64.decodeBase64("ICBfX19fICBfX19fICBfX18gIF9fX19fX19fX19fXyAgX19fICAgX19fX19fX19fXyAgICBfX18gICBfX18gIF9fXyAgX19fICBfX19fICBfX19fICBfX19fX18NCiAvIF9fIFwvIF9fIFwvIF8gXC8gX18vIF9fXy8gXyBcLyBfIHwgLyBfXy9fICBfXy9fX18vIF8gfCAvIF8gXC8gXyBcLyBfICkvIF9fIFwvIF9fIFwvXyAgX18vDQovIC9fLyAvIC9fLyAvIF9fXy9cIFwvIC9fXy8gLCBfLyBfXyB8LyBfLyAgLyAvIC9fX18vIF9fIHwvIF9fXy8gX19fLyBfICAvIC9fLyAvIC9fLyAvIC8gLyAgIA0KXF9fX18vXF9fX18vXy8gIC9fX18vXF9fXy9fL3xfL18vIHxfL18vICAgL18vICAgICAvXy8gfF8vXy8gIC9fLyAgL19fX18vXF9fX18vXF9fX18vIC9fLyAgICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg".getBytes()));
 	private static final Log LOG = LogFactory.getLog(ApplicationContainer.class);
-	private static Application appboot = null;
+	private static Application application = null;
 	
 	/**
 	 * launch
-	 * @param appboot
+	 * @param application
 	 * @param args
 	 * @throws Exception
 	 */
-	public static void launch(Class<? extends Application> appbootClass, String[] arguments) {
+	public static void launch(Class<? extends Application> applicationClass, String[] arguments) {
 		try{
 			ApplicationContext context = new ApplicationContext(arguments);
-			appboot = appbootClass.getConstructor(ApplicationContext.class).newInstance(context);
+			application = applicationClass.getConstructor(ApplicationContext.class).newInstance(context);
 			
 			// initiates application
 			initiateLog();
@@ -50,13 +50,13 @@ public class ApplicationContainer {
 			initiateWebServer();
 			
 			// start application
-			appboot.start();
+			application.start();
 			
 			// hooking kill signal
 			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
 				public void run() {
 					try {
-						appboot.stop();
+						application.stop();
 					}catch(Exception e){
 						e.printStackTrace(System.err);
 						LOG.warn(e.getMessage(), e);
@@ -77,7 +77,7 @@ public class ApplicationContainer {
 	public static void launchForTest(Class<? extends Application> applicationClass, String[] arguments) {
 		try{
 			ApplicationContext context = new ApplicationContext(arguments);
-			appboot = applicationClass.getConstructor(ApplicationContext.class).newInstance(context);
+			application = applicationClass.getConstructor(ApplicationContext.class).newInstance(context);
 			
 			// initiates application
 			initiateLog();
@@ -100,16 +100,16 @@ public class ApplicationContainer {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Application getAppboot() {
-		return appboot;
+	public static Application getApplication() {
+		return application;
 	}
 	
 	/**
 	 * Returns Application context
 	 * @return
 	 */
-	public static ApplicationContext getAppbootContext() {
-		return appboot.getContext();
+	public static ApplicationContext getApplicationContext() {
+		return application.getContext();
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class ApplicationContainer {
 	
 	/**
 	 * Creates Log
-	 * @param appboot
+	 * @param application
 	 * @throws Exception
 	 */
 	protected static void initiateLog() throws Exception {
@@ -191,7 +191,7 @@ public class ApplicationContainer {
 
 			// starts web server adds into context
 			webServer.start();
-			ApplicationContext context = appboot.getContext();
+			ApplicationContext context = application.getContext();
 			context.addWebServer(id, webServer);
 		}
 	}
@@ -209,7 +209,7 @@ public class ApplicationContainer {
 			String id = xmlReader.getTextContent(sqlSessionProxyFactoryExpression + "/@id");
 			String configureFile = xmlReader.getTextContent(sqlSessionProxyFactoryExpression + "/configureFile");
 			SqlSessionProxyFactory sqlSessionProxyFactory = SqlSessionProxyFactory.getInstance(new File(configureFile), PROPERTIES_FILE);
-			ApplicationContext context = appboot.getContext();
+			ApplicationContext context = application.getContext();
 			context.addSqlSessionProxyFactory(id, sqlSessionProxyFactory);
 		}
 	}
