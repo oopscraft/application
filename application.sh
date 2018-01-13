@@ -64,7 +64,7 @@ case ${1} in
 		crypto
 		;;
     *)
-        echo "Usage: ${0} [start|status|stop|log]"
+        echo "Usage: ${0} [start|status|stop|log|crypto]"
         ;;
 esac
 
