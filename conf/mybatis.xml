@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+       <setting name="defaultExecutorType" value="SIMPLE" />
+       <setting name="cacheEnabled" value="true" />
+       <setting name="callSettersOnNulls" value="true"/>
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+    </settings>
+    <typeAliases>
+		<typeAlias alias="valueMap" type="net.oopscraft.application.core.ValueMap"/>
+    </typeAliases>
+    <environments default="oltp">
+        <environment id="oltp">
+              <transactionManager type="JDBC"/>
+              <dataSource type="net.oopscraft.application.core.DbcpDataSourceFactory">
+                <property name="driverClassName" value="${dataSource.oltp.driver}" />
+                 <property name="url" value="${dataSource.oltp.url}" />
+                 <property name="username" value="${dataSource.oltp.username}" />
+                 <property name="password" value="${dataSource.oltp.password}" />
+                 <property name="initialSize" value="${dataSource.oltp.initialSize}"/>
+                 <property name="maxActive" value="${dataSource.oltp.maxActive}" />
+                 <property name="testOnBorrow" value="true"/>
+                 <property name="validationQuery" value="${dataSource.oltp.validationQuery}"/>
+              </dataSource>
+        </environment>
+        <environment id="olap">
+              <transactionManager type="JDBC"/>
+              <dataSource type="net.oopscraft.application.core.DbcpDataSourceFactory">
+                <property name="driverClassName" value="${dataSource.olap.driver}" />
+                 <property name="url" value="${dataSource.olap.url}" />
+                 <property name="username" value="${dataSource.olap.username}" />
+                 <property name="password" value="${dataSource.olap.password}" />
+                 <property name="initialSize" value="${dataSource.olap.initialSize}"/>
+                 <property name="maxActive" value="${dataSource.olap.maxActive}" />
+                 <property name="testOnBorrow" value="true"/>
+                 <property name="validationQuery" value="${dataSource.olap.validationQuery}"/>
+              </dataSource>
+        </environment>
+    </environments>
+	<mappers>
+		<mapper resource="net/oopscraft/application/user/UserDao.${dataSource.dbType}.xml"/>
+    </mappers>
+</configuration>

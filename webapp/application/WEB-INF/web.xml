@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app 
+   xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+   metadata-complete="false"
+   version="3.1"> 
+   
+    <display-name>nlog</display-name>
+   
+    <description>Network Logging Application</description>
+    
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+    
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+
+    <distributable/>
+    
+    <context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>file:conf/log4j.xml</param-value>
+	</context-param>
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+    
+    <!-- defines spring dispatcher servlet -->
+    <servlet>  
+        <servlet-name>dispatcherServlet</servlet-name>  
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>  
+        <init-param>  
+            <param-name>contextConfigLocation</param-name>  
+            <param-value>/WEB-INF/conf/spring.xml</param-value>
+        </init-param>  
+        <load-on-startup>1</load-on-startup>  
+    </servlet>      
+    <servlet-mapping>
+          <servlet-name>default</servlet-name>
+          <url-pattern>/lib/*</url-pattern>
+    </servlet-mapping>    
+    <servlet-mapping>  
+        <servlet-name>dispatcherServlet</servlet-name>  
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    
+    <!-- defines encoding filter -->
+    <filter>
+          <description>
+          </description>
+          <display-name>encodingFilter</display-name>
+              <filter-name>encodingFilter</filter-name>
+              <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+          <init-param>
+              <param-name>encoding</param-name>
+              <param-value>UTF-8</param-value>
+          </init-param>
+     </filter>
+     <filter-mapping>
+          <filter-name>encodingFilter</filter-name>
+          <url-pattern>/*</url-pattern>
+     </filter-mapping>
+     
+     <!-- defines cross-domain filter -->
+    <filter>
+        <filter-name>crossDomainFilter</filter-name>
+        <filter-class>net.oopscraft.application.core.CrossDomainFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>crossDomainFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+	<!-- defines Authentication filter 
+	<filter>
+		<filter-name>authenticationFilter</filter-name>
+		<filter-class>net.oopscraft.application.core.user.AuthenticationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>authenticationFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	--> 
+    
+</web-app>

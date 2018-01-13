@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+
+	<logger class="org.apache.commons.logging.impl.Log4JLogger">
+		<configureFile>conf/log4j.xml</configureFile>
+	</logger>
+
+	<webServer id="application" port="10001">
+		<!-- 
+		<ssl>
+			<keyStorePath>conf/ssl/keystore</keyStorePath>
+			<keyStoreType>pkcs12</keyStoreType>
+			<keyStorePass>abcd1234</keyStorePass>
+		</ssl>
+		-->
+		<context path="/application">
+			<resourceBase>webapp/application</resourceBase>
+			<descriptor>webapp/application/WEB-INF/web.xml</descriptor>
+		</context>
+	</webServer>
+	
+	<sqlSessionProxyFactory id="application">
+		<configureFile>conf/mybatis.xml</configureFile>
+	</sqlSessionProxyFactory>
+
+</application>

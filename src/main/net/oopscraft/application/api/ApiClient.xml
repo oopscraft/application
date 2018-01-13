@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HttpClientTest>
+
+	<request id="google_doodles" name="google doodles">
+		<uri>/doodles</uri>
+		<method>GET</method>
+		<timeout>10</timeout>
+		<contentType></contentType>
+		<test>{}</test>
+	</request>
+
+</HttpClientTest>
