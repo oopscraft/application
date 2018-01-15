@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/console/monitor")
 public class MonitorController {
 	
-	@RequestMapping(value="/monitor")
+	@RequestMapping(value="")
 	public ModelAndView getMonitor() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("console/monitor.tiles");
 		return modelAndView;
