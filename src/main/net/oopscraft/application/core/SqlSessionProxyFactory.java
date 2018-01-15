@@ -77,9 +77,9 @@ public class SqlSessionProxyFactory {
 		synchronized(this) {
 			
 	 		// Checking Transaction
-	 		if(TransactionManager.isTransactional()) {
-	 			if(TransactionManager.getCurrentTransaction().hasSqlSessionProxy(environment)) {
-	 				return TransactionManager.getCurrentTransaction().getSqlSessionProxy(environment);
+	 		if(SqlTransactionManager.isTransactional()) {
+	 			if(SqlTransactionManager.getCurrentTransaction().hasSqlSessionProxy(environment)) {
+	 				return SqlTransactionManager.getCurrentTransaction().getSqlSessionProxy(environment);
 	 			}
 	 		}
 			
@@ -92,8 +92,8 @@ public class SqlSessionProxyFactory {
 	 		// Returns sqlSessionProxy
 	 		SqlSession sqlSession = sqlSessionFactoryMap.get(environment).openSession();
 	 		SqlSessionProxy sqlSessionProxy = new SqlSessionProxy(sqlSession); 
-	 		if(TransactionManager.isTransactional()) {
-	 			TransactionManager.getCurrentTransaction().setSqlSessionProxy(environment, sqlSessionProxy);
+	 		if(SqlTransactionManager.isTransactional()) {
+	 			SqlTransactionManager.getCurrentTransaction().setSqlSessionProxy(environment, sqlSessionProxy);
 	 		}
 			return sqlSessionProxy;
 		}

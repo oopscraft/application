@@ -30,7 +30,7 @@ public class SqlSessionProxy {
 	 * Commits transaction.
 	 */
 	public void commit() { 
-		if(!TransactionManager.isTransactional()) {
+		if(!SqlTransactionManager.isTransactional()) {
 			sqlSession.commit();
 		}
 	} 
@@ -39,7 +39,7 @@ public class SqlSessionProxy {
 	 * Roll back transaction.
 	 */
 	public void rollback() { 
-		if(!TransactionManager.isTransactional()) {
+		if(!SqlTransactionManager.isTransactional()) {
 			sqlSession.rollback();
 		}
 	} 
@@ -48,7 +48,7 @@ public class SqlSessionProxy {
 	 * Closes sqlSession
 	 */
 	public void close() { 
-		if(!TransactionManager.isTransactional()) {
+		if(!SqlTransactionManager.isTransactional()) {
 			sqlSession.close();
 		}
 	} 

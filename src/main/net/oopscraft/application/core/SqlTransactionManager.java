@@ -1,14 +1,14 @@
 package net.oopscraft.application.core;
 
-public class TransactionManager {
+public class SqlTransactionManager {
 	
-	private static ThreadLocal<Transaction> currentTransaction = new ThreadLocal<Transaction>();
+	private static ThreadLocal<SqlTransaction> currentTransaction = new ThreadLocal<SqlTransaction>();
 	
 	public static void begin() throws Exception {
 		if(currentTransaction.get() != null) {
 			throw new Exception("Transaction is Already Started.");
 		}
-		Transaction transacton = new Transaction();
+		SqlTransaction transacton = new SqlTransaction();
 		currentTransaction.set(transacton);
 	}
 	
@@ -20,8 +20,8 @@ public class TransactionManager {
 		}
 	}
 	
-	protected static Transaction getCurrentTransaction() {
-		Transaction transaction =  currentTransaction.get();
+	protected static SqlTransaction getCurrentTransaction() {
+		SqlTransaction transaction =  currentTransaction.get();
 		return transaction;
 	}
 	
