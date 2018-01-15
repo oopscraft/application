@@ -3,7 +3,7 @@ package net.oopscraft.application.core;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Transaction {
+public class SqlTransaction {
 	
 	Map<String,SqlSessionProxy> sqlSessionProxyMap = new LinkedHashMap<String,SqlSessionProxy>();
 	
