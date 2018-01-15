@@ -89,6 +89,12 @@
 							</a>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link" href="/application/console/message">
+								<i class="fa fa-comment fa-2x" aria-hidden="true"></i>
+								Message
+							</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link" href="/application/console/board">
 								<i class="fa fa-sticky-note-o fa-2x" aria-hidden="true"></i>
 								Board
