@@ -45,7 +45,7 @@ public class ConsoleSecurity {
 	}
 
 	/**
-	 * isValidUser
+	 * isValidUsername
 	 * @param username
 	 * @return
 	 * @throws Exception
