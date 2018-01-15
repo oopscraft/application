@@ -9,19 +9,19 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<script src="/appboot/lib/jquery.js"></script>
-		<script src="/appboot/lib/popper.js"></script>
+		<script src="/application/lib/jquery.js"></script>
+		<script src="/application/lib/popper.js"></script>
 		
 		<!-- bootstrap -->
-		<link rel="stylesheet" href="/appboot/lib/bootstrap/css/bootstrap.min.css">
-		<script src="/appboot/lib/bootstrap/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="/application/lib/bootstrap/css/bootstrap.min.css">
+		<script src="/application/lib/bootstrap/js/bootstrap.min.js"></script>
 		
 		<!-- font-awesome -->
-		<link rel="stylesheet" href="/appboot/lib/font-awesome/css/font-awesome.css">
+		<link rel="stylesheet" href="/application/lib/font-awesome/css/font-awesome.css">
 		
 		<!--  core -->
-		<link rel="stylesheet" href="/appboot/appboot.css">
-		<script src="/appboot/appboot.js"></script>
+		<link rel="stylesheet" href="/application/application.css">
+		<script src="/application/application.js"></script>
 		
 		<!-- global -->
 		<script type="text/javascript">
@@ -51,14 +51,14 @@
 						<!-- Starts Login Panel -->
                         <form id="loginform" class="form-horizontal" role="form" style="width:300px;">
                             <div class="input-group text-center">
-								<img src="/appboot/img/logo_core.png"/>
+								<img src="/application/img/logo_application.png"/>
 							</div>
 							<div class="input-group mb-2 mb-sm-0" style="margin:1px;">
-								<div class="input-group-addon"><i class="material-icons">person</i></div>
+								<div class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></div>
 								<input type="text" class="form-control" id="username" placeholder="Username">
 							</div>
 							<div class="input-group mb-2 mb-sm-0" style="margin:1px;">
-								<div class="input-group-addon"><i class="material-icons">lock</i></div>
+								<div class="input-group-addon"><i class="fa fa-key" aria-hidden="true"></i></div>
 								<input type="password" class="form-control" id="password" placeholder="Password">
 							</div>
 							<div class="input-group mb-2 mb-sm-0" style="margin:1px;">

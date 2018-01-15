@@ -32,6 +32,7 @@ h1:before {
 h1>small {
 	font-size: 0.5em;
 	font-weight: bold;
+	color: #999999;
 }
 
 h1>small:before {
@@ -126,6 +127,7 @@ h2>small:before {
 }
 
 .input-group-addon {
+	width: 30px;
 	padding: 4px 10px;
 	font-size: 10px;
 	border-radius: 2px;
@@ -316,6 +318,14 @@ to {
 	text-align: center;
 	font-weight: bold;
 	color: red;
+}
+
+/**
+ * customize font-awesome
+ */
+.fa {
+	vertical-align: middle;
+	padding-right: 2px;
 }
 
 /**

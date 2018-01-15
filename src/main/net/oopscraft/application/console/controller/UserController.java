@@ -1,4 +1,12 @@
-package net.oopscraft.application.code;
+/*
+ * Copyright since 2002 oopscraft.net
+ *
+ * Everyone is permitted to copy and distribute verbatim copies of this license document, 
+ * but changing it is not allowed.
+ * Released under the LGPL-3.0 licence
+ * https://opensource.org/licenses/lgpl-3.0.html
+ */
+package net.oopscraft.application.console.controller;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,19 +26,23 @@ import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserDao;
 
+/**
+ * @author chomookun@gmail.com
+ *
+ */
 @Controller
 @RequestMapping("/console/user")
-public class CodeController {
+public class UserController {
 	
 	@Autowired
 	UserDao userDao;
 
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public ModelAndView get() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("user/User.tiles");
+	public ModelAndView user() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("console/user.tiles");
 		return modelAndView;
 	}
-
+	
 	@RequestMapping(value="/getUserList", method=RequestMethod.GET, produces="application/json")
 	//@Transactional
 	public ResponseEntity<?> getUserList(
@@ -77,6 +89,5 @@ public class CodeController {
 	) throws Exception {
 		return new ResponseEntity<>(new ValueMap(), HttpStatus.OK);
 	}
-
 	
 }
