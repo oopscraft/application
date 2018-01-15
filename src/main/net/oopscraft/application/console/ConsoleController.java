@@ -11,32 +11,19 @@ package net.oopscraft.application.console;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * @author chomookun@gmail.com
+ *
+ */
 @Controller
-@RequestMapping("/console/login")
-public class LoginController {
-	
-	
-	@RequestMapping(value="", method=RequestMethod.GET) 
-	public ModelAndView get() throws Exception {
-		return new ModelAndView("console/login.jsp");
-	}
-	
-	@RequestMapping(value="", method=RequestMethod.POST)
-	public ModelAndView post(
-		 @RequestParam("user")String user
-		,@RequestParam("password")String password
-	) throws Exception {
-		
-		
-		
-		
-		
-		
-		
-		return new ModelAndView("redirect:/console");
-	}
+@RequestMapping("/console")
+public class ConsoleController {
 
+	@RequestMapping(value="", method=RequestMethod.GET)
+	public ModelAndView get() throws Exception {
+		return new ModelAndView("redirect:/console/monitor");
+	}
+	
 }

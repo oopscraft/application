@@ -2,40 +2,40 @@ package net.oopscraft.application.core;
 
 public class SqlTransactionManager {
 	
-	private static ThreadLocal<SqlTransaction> currentTransaction = new ThreadLocal<SqlTransaction>();
+	private static ThreadLocal<SqlTransaction> currentSqlTransaction = new ThreadLocal<SqlTransaction>();
 	
 	public static void begin() throws Exception {
-		if(currentTransaction.get() != null) {
+		if(currentSqlTransaction.get() != null) {
 			throw new Exception("Transaction is Already Started.");
 		}
-		SqlTransaction transacton = new SqlTransaction();
-		currentTransaction.set(transacton);
+		SqlTransaction sqkTransacton = new SqlTransaction();
+		currentSqlTransaction.set(sqkTransacton);
 	}
 	
 	protected static boolean isTransactional() {
-		if(currentTransaction.get() != null) {
+		if(currentSqlTransaction.get() != null) {
 			return true;
 		}else {
 			return false;
 		}
 	}
 	
-	protected static SqlTransaction getCurrentTransaction() {
-		SqlTransaction transaction =  currentTransaction.get();
+	protected static SqlTransaction getCurrentSqlTransaction() {
+		SqlTransaction transaction =  currentSqlTransaction.get();
 		return transaction;
 	}
 	
 	public static void commit() throws Exception {
-		getCurrentTransaction().commit();
+		getCurrentSqlTransaction().commit();
 	}
 	
 	public static void rollback() throws Exception {
-		getCurrentTransaction().rollback();
+		getCurrentSqlTransaction().rollback();
 	}
 	
 	public static void close() throws Exception {
-		getCurrentTransaction().close();
-		currentTransaction.remove();
+		getCurrentSqlTransaction().close();
+		currentSqlTransaction.remove();
 	}
 	
 }
