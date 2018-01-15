@@ -54,7 +54,7 @@
     <mvc:annotation-driven/>
     
     <!-- Scans components -->
-	<context:component-scan base-package="net.oopscraft.application"/>
+	<context:component-scan base-package="net.oopscraft.application" name-generator="net.oopscraft.application.core.FullBeanNameGenerator"/>
     
     <!-- definition of data source
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">

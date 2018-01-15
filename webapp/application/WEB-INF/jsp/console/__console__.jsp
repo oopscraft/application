@@ -55,8 +55,8 @@
 		
 			<!--  start of navigation -->
 			<nav class="navbar navbar-expand-lg navbar-light bg-light">
-				<a class="navbar-brand" href="#">
-					<img src="/application/img/logo_core.png"/>
+				<a class="navbar-brand" href="/application/console">
+					<img src="/application/img/logo_application.png"/>
 			      	&nbsp; &nbsp;
 				</a>
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,61 +65,40 @@
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav mr-auto">
 						<li class="nav-item">	
-							<a class="nav-link" href="/application/monitor/Monitor">
-								<img src="/application/img/icon_monitor.png"/>
+							<a class="nav-link" href="/application/console/monitor">
+								<i class="fa fa-desktop fa-2x" aria-hidden="true"></i>
 								Monitor
 							</a>
 						</li>
-						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<img src="/application/img/icon_user.png"/>
+						<li class="nav-item">	
+							<a class="nav-link" href="/application/console/user">
+								<i class="fa fa-user fa-2x" aria-hidden="true"></i>
 								User
 							</a>
-							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-								<a class="dropdown-item" href="/application/user/User">
-									<img src="/application/img/dot_user.png"/>
-									User Manage
-								</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="#">
-									<img src="/application/img/dot_group.png"/>
-									Group Manage
-								</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="#">
-									<img src="/application/img/dot_id_card.png"/>
-									Role Manage
-								</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="#">
-									<img src="/application/img/dot_barcode.png"/>
-									Privilege Manage
-								</a>
-							</div>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="/application/menu/Menu">
-								<img src="/application/img/icon_menu.png"/>
+							<a class="nav-link" href="/application/console/menu">
+								<i class="fa fa-bars fa-2x" aria-hidden="true"></i>
 								Menu
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="/application/code/Code">
-								<img src="/application/img/icon_code.png"/>
+							<a class="nav-link" href="/application/console/code">
+								<i class="fa fa-code fa-2x" aria-hidden="true"></i>
 								Code
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="/application/board/Board">
-								<img src="/application/img/icon_board.png"/>
+							<a class="nav-link" href="/application/console/board">
+								<i class="fa fa-sticky-note-o fa-2x" aria-hidden="true"></i>
 								Board
 							</a>
 						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 	      				<li class="nav-item">
-	      					<a class="nav-link" href="/application/Logout">
-	      						<img src="/application/img/icon_power.png"/>
+	      					<a class="nav-link" href="/application/console/logout">
+								<i class="fa fa-power-off fa-2x" aria-hidden="true"></i>
 	      						Logout 
 	      					</a>
 	      				</li>

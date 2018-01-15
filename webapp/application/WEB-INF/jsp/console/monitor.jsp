@@ -296,13 +296,13 @@ function printThreadInfoList(threadInfoList){
 </style>
 
 <h1>
-	Monitor
+	Appliation Monitor
 	<small>Application Monitor with JMX</small>
 </h1>
 <div class="row">
 	<div class="col">
 		<h2>
-			<img src="/core/img/dot_server.png"/>
+			<i class="fa fa-microchip" aria-hidden="true"></i>
 			OS Information
 		</h2>
 		<canvas id="osInfoChart" width="300" height="150"></canvas>
@@ -310,7 +310,7 @@ function printThreadInfoList(threadInfoList){
 	</div>
 	<div class="col">
 		<h2>
-			<img src="/core/img/dot_memory.png"/>
+			<i class="fa fa-battery-half" aria-hidden="true"></i>
 			Memory Information
 		</h2>
 		<canvas id="memInfoChart" width="300" height="150"></canvas>
@@ -318,7 +318,7 @@ function printThreadInfoList(threadInfoList){
 	</div>
 	<div class="col">
 		<h2>
-			<img src="/core/img/dot_hard_disk.png"/>
+			<i class="fa fa-hdd-o" aria-hidden="true"></i>
 			Disk Information
 		</h2>
 		<canvas id="diskInfoChart" width="300" height="150"></canvas>
@@ -326,7 +326,7 @@ function printThreadInfoList(threadInfoList){
 	</div>
 	<div class="col">
 		<h2>
-			<img src="/core/img/dot_loading.png"/>
+			<i class="fa fa-clone" aria-hidden="true"></i>
 			Classes Information
 		</h2>
 		<canvas id="classInfoChart" width="300" height="150"></canvas>
@@ -336,7 +336,7 @@ function printThreadInfoList(threadInfoList){
 <div class="row">
 	<div class="col">
 		<h2>
-			<img src="/core/img/dot_monitor.png"/>
+			<i class="fa fa-th-list" aria-hidden="true"></i>
 			Thread Information
 		</h2>
 		<div id="threadInfoListContainer"></div>

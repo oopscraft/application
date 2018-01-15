@@ -8,7 +8,10 @@
 </script>
 <style type="text/css">
 </style>
-<h1>User Manage<small>User Management</small></h1>
+<h1>
+	User Management
+	<small>Management of User, Group, Role, Privilege </small>
+</h1>
 <div class="row">
 
 	<!-- start of left panel -->
@@ -98,7 +101,7 @@
 		<div class="row">
 			<div class="col">
 				<h2>
-					<img src="/core/img/dot_user.png"/>
+					<i class="fa fa-user" aria-hidden="true"></i>
 					User
 					<small>Details of user</small>
 				</h2>
@@ -168,7 +171,7 @@
 		<div class="row">
 			<div class="col">		
 				<h2>
-					<img src="/core/img/dot_group.png"/>
+					<i class="fa fa-group" aria-hidden="true"></i>
 					Groups
 					<small>List of Assigned Group</small>
 				</h2>
@@ -222,7 +225,7 @@
 		<div class="row">
 			<div class="col">
 				<h2>
-					<img src="/core/img/dot_id_card.png"/>
+					<i class="fa fa-id-badge" aria-hidden="true"></i>
 					Roles
 					<small>List of Available Rules</small>
 				</h2>
@@ -260,7 +263,7 @@
 		<div class="row">
 			<div class="col">
 				<h2>
-					<img src="/core/img/dot_barcode.png"/>
+					<i class="fa fa-barcode" aria-hidden="true"></i>
 					Privileges
 					<small>List of Available Privileges</small>
 				</h2>
