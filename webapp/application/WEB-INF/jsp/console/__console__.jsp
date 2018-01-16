@@ -39,15 +39,11 @@
 		<script type="text/javascript">
 		</script>
 		<style type="text/css">
+		main {
+			padding-top:10px;
+		}
 		</style>
 	</head>
-	<script type="text/javascript">
-	</script>
-	<style type="text/css">
-	main {
-		padding-top:10px;
-	}
-	</style>
 	<body>
 
 		<!-- start of header -->

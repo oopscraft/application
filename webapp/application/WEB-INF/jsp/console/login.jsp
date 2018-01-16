@@ -25,6 +25,42 @@
 		
 		<!-- global -->
 		<script type="text/javascript">
+		/**
+		 * Checking keypress
+		 */
+		$(document).ready(function(){
+			$('#admin').focus();
+		});
+		$(document).keypress(function(e) { 
+			if (e.keyCode == 13){
+				doLogin();
+			}
+		});
+		/**
+		 * Request login
+		 */
+		function doLogin() {
+			var loginForm = $('#loginForm');
+			var adminInput = $('#admin');
+			var passwordInput = $('#password');
+			var formData = new FormData(loginForm);
+			formData.append('admin', adminInput.val());
+			formData.append('password', passwordInput.val());
+			$.ajax({
+				 url: ''
+				,processData: false
+				,contentType: false
+				,data: formData
+				,type: 'POST'
+				,success: function(response) {
+					location.href='${pageContext.request.contextPath}' + '/console';
+		    	 }
+				,error: function(response) {
+					$('#message').text(response.responseText);
+				}
+			});
+			
+		}
 		</script>
 		<style type="text/css">
 		.vertical-center {
@@ -33,12 +69,37 @@
 			display: flex;
 			align-items: center;
 		}
-		input#username {
+		input#admin {
 			height: 34px !important;
 		}
 		input#password {
 			height: 34px !important;
-		} 
+		}
+		div#message {
+			height: 34px;
+			line-height: 34px;
+			text-align: center;
+			font-weight: bold;
+			color: orangered;
+		}
+		
+		
+#loginDiv {
+	display: table;
+	width: 100%;
+	padding: 30px;
+	border: groove 2px #efefef;
+	border-radius: 2px;
+	background: -webkit-linear-gradient(#efefef, white);
+	background: -o-linear-gradient(#efefef, white);
+	background: -moz-linear-gradient(#efefef, white);
+	background: linear-gradient(#efefef, white);
+}
+#loginForm {
+   display: table-cell;
+   text-align: center;
+   vertical-align: middle;
+}
 		</style>
 	</head>
 	<body>
@@ -49,23 +110,27 @@
 					<div class="col"></div>
   					<div class="col vertical-center">
 						<!-- Starts Login Panel -->
-                        <form id="loginform" class="form-horizontal" role="form" style="width:300px;">
+						<div id="loginDiv">
+                        <form id="loginForm" class="form-horizontal" role="form" style="width:300px;">
                             <div class="input-group text-center">
 								<img src="/application/img/logo_application.png"/>
 							</div>
 							<div class="input-group mb-2 mb-sm-0" style="margin:1px;">
 								<div class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></div>
-								<input type="text" class="form-control" id="username" placeholder="Username">
+								<input type="text" class="form-control" id="admin" placeholder="Administrator">
 							</div>
 							<div class="input-group mb-2 mb-sm-0" style="margin:1px;">
 								<div class="input-group-addon"><i class="fa fa-key" aria-hidden="true"></i></div>
 								<input type="password" class="form-control" id="password" placeholder="Password">
 							</div>
 							<div class="input-group mb-2 mb-sm-0" style="margin:1px;">
-								<button type="button" class="btn btn-primary btn-lg" style="width:100%;">Login</button>
+								<button type="button" class="btn btn-primary btn-lg" style="width:100%;" onclick="javascript:doLogin();">
+									Login
+								</button>
 							</div>
-                           	<div id="message"></div>
-						</form>    
+                           	<div id="message"> </div>
+						</form> 
+						</div>
 						<!-- Ends Login Panel -->
 					</div>
 					<div class="col"></div>

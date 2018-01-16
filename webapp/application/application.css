@@ -81,10 +81,10 @@ h2>small:before {
 	margin: 0px;
 	border: groove 2px #efefef;
 	border-radius: 2px;
-	background: -webkit-linear-gradient(#cccccc, white);
-	background: -o-linear-gradient(#cccccc, white);
-	background: -moz-linear-gradient(#cccccc, white);
-	background: linear-gradient(#cccccc, white);
+	background: -webkit-linear-gradient(#efefef, white);
+	background: -o-linear-gradient(#efefef, white);
+	background: -moz-linear-gradient(#efefef, white);
+	background: linear-gradient(#efefef, white);
 }
 .navbar li.nav-item {
 	min-width: 100px;

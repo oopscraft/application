@@ -50,8 +50,8 @@ public class ConsoleSecurity {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean isValidUsername(String username) throws Exception {
-		if(adminProperties.containsKey(username)) {
+	public boolean isValidAdmin(String admin) throws Exception {
+		if(adminProperties.containsKey(admin)) {
 			return true;
 		}else {
 			return false;
@@ -65,18 +65,17 @@ public class ConsoleSecurity {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean isValidPassword(String username, String password) throws Exception {
+	public boolean isValidPassword(String admin, String password) throws Exception {
 		// checks valid user.
-		if(!isValidUsername(username)) {
+		if(!isValidAdmin(admin)) {
 			return false;
 		}
 		// checks password is same.
-		if(password.equals(PbeStringEncryptor.encryptIdentifiedValue(adminProperties.getProperty(username)))) {
+		if(password.equals(PbeStringEncryptor.encryptIdentifiedValue(adminProperties.getProperty(admin)))) {
 			return true;
 		}else {
 			return false;
 		}
-		
 	}
 
 }
