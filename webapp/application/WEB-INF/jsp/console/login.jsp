@@ -36,6 +36,14 @@
 				doLogin();
 			}
 		});
+
+		/**
+		 * reloadCaptchaImage
+		 */
+		function reloadCaptchaImage() {
+			$('#captchaImage').attr("src", "/application/console/login/getCaptchaImage");
+		}
+		 
 		/**
 		 * Request login
 		 */
@@ -43,9 +51,11 @@
 			var loginForm = $('#loginForm');
 			var adminInput = $('#admin');
 			var passwordInput = $('#password');
+			var captchaInput = $('#captcha');
 			var formData = new FormData(loginForm);
 			formData.append('admin', adminInput.val());
 			formData.append('password', passwordInput.val());
+			formData.append('captcha', captchaInput.val());
 			$.ajax({
 				 url: ''
 				,processData: false
@@ -56,13 +66,29 @@
 					location.href='${pageContext.request.contextPath}' + '/console';
 		    	 }
 				,error: function(response) {
-					$('#message').text(response.responseText);
+					$('#messageDiv').text(response.responseText);
 				}
 			});
 			
 		}
 		</script>
 		<style type="text/css">
+		#loginDiv {
+			display: table;
+			width: 100%;
+			padding: 30px;
+			border: groove 2px #efefef;
+			border-radius: 2px;
+			background: -webkit-linear-gradient(#efefef, white);
+			background: -o-linear-gradient(#efefef, white);
+			background: -moz-linear-gradient(#efefef, white);
+			background: linear-gradient(#efefef, white);
+		}
+		#loginForm {
+		   display: table-cell;
+		   text-align: center;
+		   vertical-align: middle;
+		}
 		.vertical-center {
 			min-height: 80%;  /* Fallback for browsers do NOT support vh unit */
 			min-height: 80vh; /* These two lines are counted as one :-)       */
@@ -75,31 +101,24 @@
 		input#password {
 			height: 34px !important;
 		}
-		div#message {
+		div#captchaDiv {
+			padding: 5px 2px 5px 2px;
+			text-align:left;
+		}
+		img#captchaImage {
+			height: 34px;
+		}
+		input#captcha {
+			width: 150px;
+			height: 24px !important;
+		}
+		div#messageDiv {
 			height: 34px;
 			line-height: 34px;
 			text-align: center;
 			font-weight: bold;
 			color: orangered;
 		}
-		
-		
-#loginDiv {
-	display: table;
-	width: 100%;
-	padding: 30px;
-	border: groove 2px #efefef;
-	border-radius: 2px;
-	background: -webkit-linear-gradient(#efefef, white);
-	background: -o-linear-gradient(#efefef, white);
-	background: -moz-linear-gradient(#efefef, white);
-	background: linear-gradient(#efefef, white);
-}
-#loginForm {
-   display: table-cell;
-   text-align: center;
-   vertical-align: middle;
-}
 		</style>
 	</head>
 	<body>
@@ -123,12 +142,28 @@
 								<div class="input-group-addon"><i class="fa fa-key" aria-hidden="true"></i></div>
 								<input type="password" class="form-control" id="password" placeholder="Password">
 							</div>
+							<div id="captchaDiv">
+								<span style="font-weight:bold; font-size:12px;border-bottom:groove 2px;">
+									<i class="fa fa-lock" aria-hidden="true" style="color:orangered;"></i>
+									Security Check &nbsp;&nbsp;&nbsp;&nbsp;
+								</span>
+								<br/>
+								If you are not robot, Please enter the text below.
+								<br/>
+								<img id="captchaImage" src="/application/console/login/getCaptchaImage"/>
+								&nbsp;
+								<button type="button" class="btn btn-info" onclick="javascript:reloadCaptchaImage();">
+									<i class="fa fa-refresh" aria-hidden="true"></i>
+								</button>
+								<input type="text" class="form-control" id="captcha" placeholder="Anwser is...">
+							</div>
 							<div class="input-group mb-2 mb-sm-0" style="margin:1px;">
 								<button type="button" class="btn btn-primary btn-lg" style="width:100%;" onclick="javascript:doLogin();">
 									Login
 								</button>
 							</div>
-                           	<div id="message"> </div>
+                           	<div id="messageDiv">
+                           	</div>
 						</form> 
 						</div>
 						<!-- Ends Login Panel -->
