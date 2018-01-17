@@ -11,14 +11,9 @@ package net.oopscraft.application.core;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-
-import javax.imageio.ImageIO;
 
 /**
  * @author chomookun@gmail.com
@@ -92,7 +87,7 @@ public class Captcha {
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics2D = img.createGraphics();
         Font font = new Font(graphics2D.getFont().getFontName(), Font.ITALIC, 48);
-        graphics2D.setFont(font);
+        graphics2D.setFont(font);	
         FontMetrics fm = graphics2D.getFontMetrics();
         int width = fm.stringWidth(this.answer);
         int height = fm.getHeight();
@@ -110,7 +105,7 @@ public class Captcha {
         graphics2D.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
         graphics2D.setFont(font);
         fm = graphics2D.getFontMetrics();
-        graphics2D.setColor(Color.DARK_GRAY);
+        graphics2D.setColor(Color.GRAY);
         	    
         graphics2D.drawString(this.answer, 0, fm.getAscent());
         graphics2D.dispose();
