@@ -143,9 +143,9 @@
 								<input type="password" class="form-control" id="password" placeholder="Password">
 							</div>
 							<div id="captchaDiv">
-								<span style="font-weight:bold; font-size:12px;border-bottom:groove 2px;">
+								<span style="font-weight:bold; font-size:12px;border-bottom:groove 2px white;">
 									<i class="fa fa-lock" aria-hidden="true" style="color:orangered;"></i>
-									Security Check &nbsp;&nbsp;&nbsp;&nbsp;
+									Security Check &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 								</span>
 								<br/>
 								If you are not robot, Please enter the text below.
