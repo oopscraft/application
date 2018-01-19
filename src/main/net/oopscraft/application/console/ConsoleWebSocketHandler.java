@@ -12,9 +12,9 @@ import org.springframework.web.socket.WebSocketSession;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.WebSocketHandler;
-import net.oopscraft.application.core.monitor.JmxInfo;
-import net.oopscraft.application.core.monitor.JmxMonitor;
-import net.oopscraft.application.core.monitor.JmxMonitorListener;
+import net.oopscraft.application.core.monitor.Monitor;
+import net.oopscraft.application.core.monitor.MonitorAgent;
+import net.oopscraft.application.core.monitor.MonitorAgentListener;
 
 
 public class ConsoleWebSocketHandler extends WebSocketHandler {
@@ -26,9 +26,9 @@ public class ConsoleWebSocketHandler extends WebSocketHandler {
 	@Override
 	public void onCreate() {
 		// Adds JMX Monitor Listener
-		JmxMonitor.getInstance().addListener(new JmxMonitorListener() {
+		MonitorAgent.getInstance().addListener(new MonitorAgentListener() {
 			@Override
-			public void onCheck(JmxInfo jmxInfo, List<JmxInfo> jmxInfoHistory) throws Exception {
+			public void onCheck(Monitor jmxInfo, List<Monitor> jmxInfoHistory) throws Exception {
 				ValueMap messageMap = new ValueMap();
 				messageMap.set("id", Id.jmxInfo);
 				messageMap.set("result", convertJmxInfoToMap(jmxInfo));				
@@ -75,17 +75,17 @@ public class ConsoleWebSocketHandler extends WebSocketHandler {
 	
 	private Object getJmxInfoHistoryResult() throws Exception {
 		List<ValueMap> list = new ArrayList<ValueMap>();
-		for(JmxInfo jmxInfo : JmxMonitor.getInstance().getJmxInfoHistory()) {
+		for(Monitor jmxInfo : MonitorAgent.getInstance().getJmxInfoHistory()) {
 			list.add(convertJmxInfoToMap(jmxInfo));
 		}
 		return list;
 	}
 	
 	private ValueMap getJmxInfoResult() throws Exception {
-		return convertJmxInfoToMap(JmxMonitor.getInstance().getLastestJmxInfo());
+		return convertJmxInfoToMap(MonitorAgent.getInstance().getLastestJmxInfo());
 	}
 	
-	private ValueMap convertJmxInfoToMap(JmxInfo jmxInfo) throws Exception {
+	private ValueMap convertJmxInfoToMap(Monitor jmxInfo) throws Exception {
 		ValueMap jmxInfoMap = new ValueMap();
 		jmxInfoMap.set("osInfo", jmxInfo.getOsInfo());
 		jmxInfoMap.set("memInfo", jmxInfo.getMemInfo());
