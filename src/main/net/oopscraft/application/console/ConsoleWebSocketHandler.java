@@ -9,12 +9,12 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import net.oopscraft.application.core.JmxInfo;
-import net.oopscraft.application.core.JmxMonitor;
-import net.oopscraft.application.core.JmxMonitorListener;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.WebSocketHandler;
+import net.oopscraft.application.core.monitor.JmxInfo;
+import net.oopscraft.application.core.monitor.JmxMonitor;
+import net.oopscraft.application.core.monitor.JmxMonitorListener;
 
 
 public class ConsoleWebSocketHandler extends WebSocketHandler {

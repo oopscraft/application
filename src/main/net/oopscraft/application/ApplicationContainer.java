@@ -9,11 +9,11 @@ import org.apache.commons.logging.LogFactory;
 import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64;
 import org.w3c.dom.NodeList;
 
-import net.oopscraft.application.core.JmxMonitor;
 import net.oopscraft.application.core.SqlSessionProxyFactory;
 import net.oopscraft.application.core.WebServer;
 import net.oopscraft.application.core.WebServerContext;
 import net.oopscraft.application.core.XPathReader;
+import net.oopscraft.application.core.monitor.JmxMonitor;
 
 public class ApplicationContainer {
 

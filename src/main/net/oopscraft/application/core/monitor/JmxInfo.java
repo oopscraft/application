@@ -1,4 +1,4 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.monitor;
 
 import java.io.File;
 import java.lang.management.ClassLoadingMXBean;

@@ -1,4 +1,4 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.monitor;
 
 import java.util.List;
 import java.util.Observable;
