@@ -13,7 +13,7 @@ import net.oopscraft.application.core.SqlSessionProxyFactory;
 import net.oopscraft.application.core.WebServer;
 import net.oopscraft.application.core.WebServerContext;
 import net.oopscraft.application.core.XPathReader;
-import net.oopscraft.application.core.monitor.JmxMonitor;
+import net.oopscraft.application.core.monitor.MonitorAgent;
 
 public class ApplicationContainer {
 
@@ -44,7 +44,7 @@ public class ApplicationContainer {
 			initiateSqlSessionProxyFactory();
 			
 			// start monitorAgent
-			JmxMonitor.intialize(3, 10);
+			MonitorAgent.intialize(3, 10);
 			
 			// initiates webServer
 			initiateWebServer();

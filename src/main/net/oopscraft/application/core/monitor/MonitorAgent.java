@@ -9,15 +9,15 @@ import org.apache.commons.logging.LogFactory;
 
 
 
-public class JmxMonitor extends Observable implements Runnable {
+public class MonitorAgent extends Observable implements Runnable {
 	
-	private static final Log LOG = LogFactory.getLog(JmxMonitor.class);
-	private static JmxMonitor instance = null;
+	private static final Log LOG = LogFactory.getLog(MonitorAgent.class);
+	private static MonitorAgent instance = null;
 
 	private Thread thread = null;
 	private int intervalSeconds = 3;
 	private int historySize = 10;
-	private List<JmxInfo> jmxInfoHistory = new CopyOnWriteArrayList<JmxInfo>();
+	private List<Monitor> jmxInfoHistory = new CopyOnWriteArrayList<Monitor>();
 	
 	/**
 	 * Initialize MonitorAgent
@@ -26,10 +26,10 @@ public class JmxMonitor extends Observable implements Runnable {
 	 * @return
 	 * @throws Exception
 	 */
-	public synchronized static JmxMonitor intialize(int intervalSeconds, int historySize) throws Exception {
-		synchronized(JmxMonitor.class) {
+	public synchronized static MonitorAgent intialize(int intervalSeconds, int historySize) throws Exception {
+		synchronized(MonitorAgent.class) {
 			if(instance == null) {
-				instance = new JmxMonitor(intervalSeconds, historySize);
+				instance = new MonitorAgent(intervalSeconds, historySize);
 			}
 			return instance;
 		}
@@ -39,11 +39,11 @@ public class JmxMonitor extends Observable implements Runnable {
 	 * getInstance
 	 * @return
 	 */
-	public static JmxMonitor getInstance() {
+	public static MonitorAgent getInstance() {
 		return instance;
 	}
 	
-	private JmxMonitor(int interval, int limit) throws Exception {
+	private MonitorAgent(int interval, int limit) throws Exception {
 		this.intervalSeconds = interval;
 		this.historySize = limit;
 		thread = new Thread(this);
@@ -56,7 +56,7 @@ public class JmxMonitor extends Observable implements Runnable {
 	public void run() {
 		while(!Thread.interrupted()) {
 			try {
-				JmxInfo jmxInfo = new JmxInfo();
+				Monitor jmxInfo = new Monitor();
 				jmxInfoHistory.add(jmxInfo);
 				if(jmxInfoHistory.size() > historySize) {
 					jmxInfoHistory.remove(0);
@@ -75,15 +75,15 @@ public class JmxMonitor extends Observable implements Runnable {
 		
 	}
 	
-	public List<JmxInfo> getJmxInfoHistory() {
+	public List<Monitor> getJmxInfoHistory() {
 		return jmxInfoHistory;
 	}
 	
-	public JmxInfo getLastestJmxInfo() {
+	public Monitor getLastestJmxInfo() {
 		return jmxInfoHistory.get(jmxInfoHistory.size() -1);
 	}
 	
-	public void addListener(JmxMonitorListener listener) {
+	public void addListener(MonitorAgentListener listener) {
 		addObserver(listener);
 	}
 

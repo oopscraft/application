@@ -7,14 +7,14 @@ import java.util.Observer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public abstract class JmxMonitorListener implements Observer {
+public abstract class MonitorAgentListener implements Observer {
 	
-	private static final Log LOG = LogFactory.getLog(JmxMonitorListener.class);
+	private static final Log LOG = LogFactory.getLog(MonitorAgentListener.class);
 
 	@Override
 	public void update(Observable observable, Object arg1) {
 		try {
-			JmxMonitor jmxMonitor = (JmxMonitor) observable;
+			MonitorAgent jmxMonitor = (MonitorAgent) observable;
 			onCheck(jmxMonitor.getLastestJmxInfo(), jmxMonitor.getJmxInfoHistory());
 		}catch(Exception e) {
 			LOG.warn(e.getMessage(),e);
@@ -25,6 +25,6 @@ public abstract class JmxMonitorListener implements Observer {
 	 * Check 
 	 * @throws Exception
 	 */
-	public abstract void onCheck(JmxInfo jmxInfo, List<JmxInfo> jmxInfoHistory) throws Exception;
+	public abstract void onCheck(Monitor jmxInfo, List<Monitor> jmxInfoHistory) throws Exception;
 
 }

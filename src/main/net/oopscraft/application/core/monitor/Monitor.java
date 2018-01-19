@@ -14,9 +14,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class JmxInfo {
+public class Monitor {
 
-	private static final Log LOG = LogFactory.getLog(JmxInfo.class);
+	private static final Log LOG = LogFactory.getLog(Monitor.class);
 	
 	enum OsInfo { name, version, arch, availableProcessors, systemLoadAverage }
 	Map<OsInfo, Object> osInfo = new LinkedHashMap<OsInfo, Object>();
@@ -33,7 +33,7 @@ public class JmxInfo {
 	enum ThreadInfo { threadId, threadName, threadState, waitedCount, waitedTime, blockCount, blockTime }
 	List<Map<ThreadInfo, Object>> threadInfoList = new CopyOnWriteArrayList<Map<ThreadInfo, Object>>();
 
-	public JmxInfo() throws Exception {
+	public Monitor() throws Exception {
 		try {
 			// Getting OS info 
 			OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
