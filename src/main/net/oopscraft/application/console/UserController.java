@@ -23,8 +23,8 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.TextTableBuilder;
 import net.oopscraft.application.core.ValueMap;
-import net.oopscraft.application.user.User;
-import net.oopscraft.application.user.UserDao;
+import net.oopscraft.application.core.user.User;
+import net.oopscraft.application.core.user.UserDao;
 
 /**
  * @author chomookun@gmail.com

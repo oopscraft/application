@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.user.UserSecurityFilter;
+import net.oopscraft.application.core.user.UserSecurityFilter;
 
 public class ConsoleSecurityFilter implements Filter {
 	

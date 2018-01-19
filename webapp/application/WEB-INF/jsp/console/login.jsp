@@ -143,11 +143,11 @@
 								<input type="password" class="form-control" id="password" placeholder="Password">
 							</div>
 							<div id="captchaDiv">
-								<span style="font-weight:bold; font-size:12px;border-bottom:groove 2px white; padding-right:10px;">
+								<span style="font-weight:bold; font-size:12px;">
 									<i class="fa fa-lock" aria-hidden="true" style="color:orangered;"></i>
 									Security Check
 								</span>
-								<br/>
+								<hr style="margin:1px;"/>
 								If you are not robot, Please enter the text below.
 								<br/>
 								<img id="captchaImage" src="/application/console/login/getCaptchaImage"/>
