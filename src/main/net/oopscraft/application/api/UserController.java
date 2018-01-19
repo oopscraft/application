@@ -8,10 +8,15 @@
  */
 package net.oopscraft.application.api;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 /**
  * @author chomookun@gmail.com
  *
  */
-public class ApiSecurityFilter {
+@Controller
+@RequestMapping("/api/menu")
+public class UserController {
 
 }
