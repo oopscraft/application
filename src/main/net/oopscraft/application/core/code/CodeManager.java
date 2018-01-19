@@ -1,4 +1,4 @@
-package net.oopscraft.application.code;
+package net.oopscraft.application.core.code;
 
 public class CodeManager {
 
