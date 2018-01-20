@@ -41,6 +41,6 @@
         </environment>
     </environments>
 	<mappers>
-		<mapper resource="net/oopscraft/application/user/UserDao.${dataSource.dbType}.xml"/>
+		<mapper resource="net/oopscraft/application/core/user/UserDao.${dataSource.dbType}.xml"/>
     </mappers>
 </configuration>
