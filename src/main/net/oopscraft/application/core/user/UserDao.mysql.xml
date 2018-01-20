@@ -3,9 +3,9 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
-<mapper namespace="net.oopscraft.appboot.core.user.UserDao">
+<mapper namespace="net.oopscraft.application.core.user.UserDao">
 	
-	<select id="selectUserList" resultType="net.oopscraft.application.user.User">
+	<select id="selectUserList" resultType="net.oopscraft.application.core.user.User">
 		<![CDATA[
 		SELECT	user_id
 		FROM  	core_user_info
