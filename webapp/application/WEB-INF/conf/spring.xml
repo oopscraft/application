@@ -117,7 +117,7 @@
 
 	<!-- ConsoleWebSocket -->	
 	<websocket:handlers>
-		<websocket:mapping path="/console.ws" handler="consoleWebSocketHandler"/>
+		<websocket:mapping path="console/webSocket" handler="consoleWebSocketHandler"/>
 	</websocket:handlers>
 	<beans:bean id="consoleWebSocketHandler" class="net.oopscraft.application.console.ConsoleWebSocketHandler"/>
 

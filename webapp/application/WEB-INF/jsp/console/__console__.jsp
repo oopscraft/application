@@ -37,6 +37,14 @@
 		
 		<!-- global -->
 		<script type="text/javascript">
+		var webSocketClient = new WebSocketClient();
+		var wsProtocol = null;
+		if(window.location.protocol === 'https:'){
+			wsProtocol = 'wss:';
+		}else{
+			wsProtocol = 'ws:';
+		}
+		webSocketClient.open(wsProtocol + '//' + location.host + '/application/console/webSocket');
 		</script>
 		<style type="text/css">
 		main {
