@@ -75,7 +75,7 @@
     </bean>
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="configLocation" value="/WEB-INF/conf/mybatis-spring.xml" />
+        <property name="configLocation" value="file:webapp/application/WEB-INF/conf/mybatis-spring.xml" />
         <property name="mapperLocations" value="classpath:net/oopscraft/application/**/*Dao.${dataSource.dbType}.xml" />
     </bean>
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
@@ -94,19 +94,6 @@
     
 	<!-- Multipart Resolver -->    
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
-   
-    <!-- Tiles configuration -->
-	<beans:bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-		<beans:property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
-		<beans:property name="order" value="1"/>
-	</beans:bean>
-   	<beans:bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
-        <beans:property name="definitions">
-            <beans:list>
-				<beans:value>/WEB-INF/conf/tiles.xml</beans:value>
-            </beans:list>
-        </beans:property>
-   	</beans:bean>
    	
    	<!-- JSTL View Resolver -->
 	<bean id="jstlViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">

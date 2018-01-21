@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig;
 
-public class PbeStringEncryptor {
+public class PasswordBasedEncryptor {
     private static final String ALGORITHM = "PBEWithMD5AndDES";
     private static final String PASSWORD_ENV_NAME = "APP_ENCRYPTION_PASSWORD";
     private static final String DEFAULT_PASSWORD = "jasyptPass";
