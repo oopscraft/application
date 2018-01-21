@@ -60,7 +60,9 @@ public class UserController {
 			for(int idx = 0; idx < 10; idx ++) {
 				//SqlSessionProxy sqlSession = sqlSessionFactory.openSession((idx%2==0?"oltp":"olap"));
 				//UserDao userDao = sqlSession.getMapper(UserDao.class);
-				User user = new User(UUID.randomUUID().toString().replaceAll("-",""));
+				User user = new User();
+				user.setId(UUID.randomUUID().toString().replaceAll("-",""));
+				user.setName("Test User");
 				userDao.insertUser(user);
 				//sqlSession.commit();
 				//sqlSession.close();
@@ -76,7 +78,7 @@ public class UserController {
 		
 		//SqlSessionProxy sqlSession = sqlSessionFactory.openSession();
 		//UserDao userDao = sqlSession.getMapper(UserDao.class);
-		List<User> userList = userDao.selectUserList(key, value, 1, 1);
+		List<User> userList = userDao.selectUserList(new User(),10,1);
 		System.out.println(TextTableBuilder.build(userList));
 		//sqlSession.close();
 		

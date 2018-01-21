@@ -16,7 +16,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.core.PbeStringEncryptor;
+import net.oopscraft.application.core.PasswordBasedEncryptor;
 
 /**
  * @author chomookun@gmail.com
@@ -71,7 +71,7 @@ public class ConsoleSecurity {
 			return false;
 		}
 		// checks password is same.
-		if(password.equals(PbeStringEncryptor.encryptIdentifiedValue(adminProperties.getProperty(admin)))) {
+		if(password.equals(PasswordBasedEncryptor.encryptIdentifiedValue(adminProperties.getProperty(admin)))) {
 			return true;
 		}else {
 			return false;

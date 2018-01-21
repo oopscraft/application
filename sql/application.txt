@@ -14,7 +14,7 @@ values
 INSERT INTO db 
 (Host, Db, User, Select_priv, Insert_priv, Update_priv, Delete_priv, Create_priv, Drop_priv, Index_priv, Alter_priv)
 VALUES
-('%', 'fmwk_dev', 'app_dev', 'Y', 'Y', 'Y', 'Y','Y','Y','Y','Y')
+('%', 'app_dev', 'app_dev', 'Y', 'Y', 'Y', 'Y','Y','Y','Y','Y')
 ;
 
 flush privileges;

@@ -3,146 +3,157 @@ SET SESSION FOREIGN_KEY_CHECKS=0;
 
 /* Create Tables */
 
--- 공통_코드_정보
-CREATE TABLE app_cd_info
+-- Application Code
+CREATE TABLE APP_CODE_INF
 (
-	cd_id varchar(32) NOT NULL COMMENT '코드_아이디',
-	cd_nm varchar(100) NOT NULL COMMENT '코드_명',
-	cd_desc varchar(4000) COMMENT '코드_설명',
-	PRIMARY KEY (cd_id)
-) COMMENT = '공통_코드_정보';
+	CODE_ID varchar(32) NOT NULL COMMENT 'Code ID',
+	CODE_NAME varchar(256) NOT NULL COMMENT 'Code Name',
+	CODE_DESC text COMMENT 'Code Description',
+	PRIMARY KEY (CODE_ID)
+) COMMENT = 'Application Code';
 
 
--- 공통_코드_아이템
-CREATE TABLE app_cd_item
+-- Application Code Item
+CREATE TABLE APP_CODE_ITEM_CD
 (
-	cd_id varchar(32) NOT NULL COMMENT '코드_아이디',
-	item_id varchar(32) NOT NULL COMMENT '아이템_아이디',
-	item_nm varchar(100) COMMENT '아이템_명',
-	item_desc varchar(4000) COMMENT '아이템_설명',
-	PRIMARY KEY (cd_id, item_id)
-) COMMENT = '공통_코드_아이템';
+	CODE_ID varchar(32) NOT NULL COMMENT 'Code ID',
+	ITEM_CD text NOT NULL COMMENT 'Item Code',
+	ITEM_NAME text COMMENT 'Item Name',
+	ITEM_DESC text COMMENT 'Item Description',
+	PRIMARY KEY (CODE_ID, ITEM_CD(null))
+) COMMENT = 'Application Code Item';
 
 
--- 공통_그룹_정보
-CREATE TABLE core_group_info
+-- Appliation Group
+CREATE TABLE APP_GRP_INF
 (
-	group_id varchar(32) NOT NULL COMMENT '그룹_아이디',
-	upper_group_id varchar(32) COMMENT '상위_그룹_아이디',
-	group_nm varchar(100) COMMENT '그룹_명',
-	group_desc varchar(4000) COMMENT '그룹_설명',
-	PRIMARY KEY (group_id)
-) COMMENT = '공통_그룹_정보';
+	GRP_ID text NOT NULL COMMENT 'Group ID',
+	UPPR_GRP_ID text COMMENT 'Upper Group ID',
+	GRP_NM text COMMENT 'Group Name',
+	GRP_DESC text COMMENT 'Group Description',
+	PRIMARY KEY (GRP_ID(null))
+) COMMENT = 'Appliation Group';
 
 
--- 공통_그룹_롤_관계
-CREATE TABLE core_group_role_rel
+-- Application Group Roles
+CREATE TABLE APP_GRP_ROLE_REL
 (
-	group_id varchar(32) NOT NULL COMMENT '그룹_아이디',
-	role_id varchar(32) NOT NULL COMMENT '롤_아이디',
-	PRIMARY KEY (group_id, role_id)
-) COMMENT = '공통_그룹_롤_관계';
+	GRP_ID text NOT NULL COMMENT 'Group ID',
+	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
+	PRIMARY KEY (GRP_ID(null), ROLE_ID)
+) COMMENT = 'Application Group Roles';
 
 
--- 공통_메뉴정보
-CREATE TABLE core_menu_info
+-- Application Menu
+CREATE TABLE APP_MENU_INF
 (
-	menu_id varchar(32) NOT NULL COMMENT '메뉴_아이디',
-	upper_menu_id varchar(32) NOT NULL COMMENT '상위_메뉴_아이디',
-	menu_uri varchar(256) COMMENT '메뉴_경로',
-	role_need_yn varchar(1) COMMENT '롤_필요_여부',
-	menu_nm varchar(100) COMMENT '메뉴_명',
-	menu_desc varchar(4000) COMMENT '메뉴_설명',
+	menu_id varchar(n) NOT NULL COMMENT '메뉴_아이디',
+	upper_menu_id varchar(n) NOT NULL COMMENT '상위_메뉴_아이디',
+	menu_uri varchar(n) COMMENT '메뉴_경로',
+	menu_nm varchar(n) COMMENT '메뉴_명',
+	menu_description text COMMENT '메뉴_내용',
+	role_need_yn text COMMENT '롤_필요_여부',
 	PRIMARY KEY (menu_id)
-) COMMENT = '공통_메뉴정보';
+) COMMENT = 'Application Menu';
 
 
 -- 공통_메뉴_롤_관계
-CREATE TABLE core_menu_role_rel
+CREATE TABLE APP_MENU_ROLE_REL
 (
-	menu_id varchar(32) NOT NULL COMMENT '메뉴_아이디',
-	role_id varchar(32) NOT NULL COMMENT '롤_아이디',
-	PRIMARY KEY (menu_id, role_id)
+	menu_id varchar(n) NOT NULL COMMENT '메뉴_아이디',
+	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
+	PRIMARY KEY (menu_id, ROLE_ID)
 ) COMMENT = '공통_메뉴_롤_관계';
 
 
--- 공통_권한_정보
-CREATE TABLE core_priv_info
+-- Application Privilege
+CREATE TABLE APP_PRVL
 (
-	priv_id varchar(32) NOT NULL COMMENT '권한_아이디',
-	priv_nm varchar(100) COMMENT '권한_명',
-	priv_desc varchar(4000) COMMENT '권한_설명',
-	PRIMARY KEY (priv_id)
-) COMMENT = '공통_권한_정보';
+	PRVL_ID varchar(32) NOT NULL COMMENT 'Privilege ID',
+	PRVL_NAME text COMMENT 'Privilege Name',
+	PRVL_DESC text COMMENT 'Privilege Description',
+	PRIMARY KEY (PRVL_ID)
+) COMMENT = 'Application Privilege';
 
 
--- 공통_롤_정보
-CREATE TABLE core_role_info
+-- Application Role
+CREATE TABLE APP_ROLE_INF
 (
-	role_id varchar(32) NOT NULL COMMENT '롤_아이디',
-	role_nm varchar(100) COMMENT ' 롤_명',
-	role_desc varchar(4000) COMMENT '롤_설명',
-	PRIMARY KEY (role_id)
-) COMMENT = '공통_롤_정보';
+	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
+	ROLE_NM text COMMENT 'Role Name',
+	ROLE_DESC text COMMENT 'Role Description',
+	PRIMARY KEY (ROLE_ID)
+) COMMENT = 'Application Role';
 
 
--- 공통_롤_권한_관계
-CREATE TABLE core_role_priv_rel
+-- Application Role Privilege Relation
+CREATE TABLE APP_ROLE_PRVL_REL
 (
-	role_id varchar(32) NOT NULL COMMENT '롤_아이디',
-	priv_id varchar(32) NOT NULL COMMENT '권한_아이디',
-	PRIMARY KEY (role_id, priv_id)
-) COMMENT = '공통_롤_권한_관계';
+	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
+	PRVL_ID varchar(32) NOT NULL COMMENT 'Privilege ID',
+	PRIMARY KEY (ROLE_ID, PRVL_ID)
+) COMMENT = 'Application Role Privilege Relation';
 
 
--- 공통_사용자_그룹_관계
-CREATE TABLE core_user_group_rel
+-- Application User Groups
+CREATE TABLE APP_USR_GRP_REL
 (
-	user_id varchar(32) NOT NULL COMMENT '사용자_아이디',
-	group_id varchar(32) NOT NULL COMMENT '그룹_아이디',
-	PRIMARY KEY (user_id, group_id)
-) COMMENT = '공통_사용자_그룹_관계';
+	USR_ID varchar(32) NOT NULL COMMENT 'User ID',
+	GRP_ID text NOT NULL COMMENT 'Group ID',
+	PRIMARY KEY (USR_ID, GRP_ID(null))
+) COMMENT = 'Application User Groups';
 
 
--- 공통_사용자_정보
-CREATE TABLE core_user_info
+-- Application User
+CREATE TABLE APP_USR_INF
 (
-	user_id varchar(32) NOT NULL COMMENT '사용자_아이디',
-	user_email varchar(100) COMMENT '사용자_이메일',
-	user_mblno varchar(32) COMMENT '사용자_이동전화번호',
-	user_nm varchar(100) COMMENT '사용자_명',
-	user_pwd varchar(256) COMMENT '사용자_암호',
-	PRIMARY KEY (user_id)
-) COMMENT = '공통_사용자_정보';
+	USR_ID varchar(32) NOT NULL COMMENT 'User ID',
+	USR_EMAIL varchar(256) COMMENT 'User Email',
+	USR_MOB_NO varchar(14) COMMENT 'User Mobile Number',
+	USR_NM varchar(256) COMMENT 'User Name',
+	USR_NICK varchar(256) COMMENT 'User Nickname',
+	USR_PWD varchar(256) COMMENT 'User Password',
+	PRIMARY KEY (USR_ID)
+) COMMENT = 'Application User';
 
 
--- 공통_사용자_속성
-CREATE TABLE core_user_prop
+-- Application User Property
+CREATE TABLE APP_USR_PROP_CD
 (
-	prop_id varchar(32) NOT NULL COMMENT '속성_아이디',
-	prop_nm varchar(100) COMMENT '속성_명',
-	prop_desc varchar(4000) COMMENT '속성_설명',
-	PRIMARY KEY (prop_id)
-) COMMENT = '공통_사용자_속성';
+	PROP_CD text NOT NULL COMMENT 'Property ID',
+	PROP_NM text COMMENT 'Property Name',
+	PROP_DESC text COMMENT 'Property Description',
+	PRIMARY KEY (PROP_CD(null))
+) COMMENT = 'Application User Property';
 
 
--- 공통_사용자_롤_관계
-CREATE TABLE core_user_role_rel
+-- Application User Property Value
+CREATE TABLE APP_USR_PROP_VAL
 (
-	user_id varchar(32) NOT NULL COMMENT '사용자_아이디',
-	role_id varchar(32) NOT NULL COMMENT '롤_아이디',
-	PRIMARY KEY (user_id, role_id)
-) COMMENT = '공통_사용자_롤_관계';
+	USR_ID varchar(32) NOT NULL COMMENT 'User ID',
+	PROP_CD text NOT NULL COMMENT 'Property ID',
+	PROP_VAL text COMMENT 'Property Value',
+	PRIMARY KEY (USR_ID, PROP_CD(null))
+) COMMENT = 'Application User Property Value';
 
 
--- 사용자_속성_값
-CREATE TABLE user_props_val
+-- Application User Roles
+CREATE TABLE APP_USR_ROLE_REL
 (
-	user_id varchar(32) NOT NULL COMMENT '사용자_아이디',
-	prop_id varchar(32) NOT NULL COMMENT '속성_아이디',
-	prop_val varchar(100) COMMENT '속성_값',
-	PRIMARY KEY (user_id, prop_id)
-) COMMENT = '사용자_속성_값';
+	USR_ID varchar(32) NOT NULL COMMENT 'User ID',
+	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
+	PRIMARY KEY (USR_ID, ROLE_ID)
+) COMMENT = 'Application User Roles';
+
+
+-- Core Table Code Relation
+CREATE TABLE CORE_TAB_CODE_REL
+(
+	TAB_NAME varchar(64) NOT NULL COMMENT 'Table Name',
+	COL_NAME varchar(64) NOT NULL COMMENT 'Column Name',
+	CODE_ID varchar(32) NOT NULL COMMENT 'Code ID',
+	PRIMARY KEY (TAB_NAME, COL_NAME, CODE_ID)
+) COMMENT = 'Core Table Code Relation';
 
 
 

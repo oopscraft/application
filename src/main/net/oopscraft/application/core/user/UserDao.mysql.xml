@@ -4,23 +4,74 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="net.oopscraft.application.core.user.UserDao">
-	
-	<select id="selectUserList" resultType="net.oopscraft.application.core.user.User">
+
+    <resultMap id="user" type="net.oopscraft.application.core.user.User">
+        <result column="USR_ID" property="id"/>
+        <result column="USR_EMAIL" property="email"/>
+        <result column="USR_MOB_NO" property="mobileNumber"/>
+        <result column="USR_NM" property="name"/>
+        <result column="USR_NICK" property="nickname"/>
+        <result column="USR_PWD" property="password"/>
+    </resultMap>
+
+	<select id="selectUserList" resultMap="user">
 		<![CDATA[
-		SELECT	user_id
-		FROM  	core_user_info
+		SELECT 	 AUI.USR_ID
+				,AUI.USR_EMAIL
+				,AUI.USR_MOB_NO
+				,AUI.USR_NM
+				,AUI.USR_NICK
+				,AUI.USR_PWD
+		FROM 	APP_USR_INF AUI
+		]]>
+		<if test="key != null and key != ''">
+		<![CDATA[
+		WHERE 	AUI.${key} LIKE '%'||#{value}||'%'
+		]]>
+		</if>
+		<![CDATA[
+		LIMIT 	${rows}
+		OFFSET 	${(page-1)*rows}
+		]]>
+	</select>
+	
+	<select id="selectUser" resultMap="user">
+		<![CDATA[
+		SELECT 	 AUI.USR_ID
+				,AUI.USR_EMAIL
+				,AUI.USR_MOB_NO
+				,AUI.USR_NM
+				,AUI.USR_NICK
+				,AUI.USR_PWD
+		FROM 	APP_USR_INF AUI
+		WHERE 	AUI.USR_ID = #{id}
 		]]>
 	</select>
 	
 	<insert id="insertUser">
 		<![CDATA[
-		INSERT INTO core_user_info (
-			user_id
+		INSERT INTO APP_USR_INF (
+			 USR_ID
+			,USR_EMAIL
+			,USR_MOB_NO
+			,USR_NM
+			,USR_NICK
+			,USR_PWD
 		) VALUES (
-			#{userId}
+			 #{id}
+			,#{email}
+			,#{mobileNumber}
+			,#{name}
+			,#{nickname}
+			,#{password}
 		)
 		]]>
 	</insert>
+	
+	
+	
+	
+	
 	
 	
 </mapper>

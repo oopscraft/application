@@ -119,7 +119,7 @@ public class SqlSessionProxyFactory {
 			properties.load(propertiesInputStream); 
 			for(Entry<Object, Object> entry : properties.entrySet()) { 
 				Object key = entry.getKey(); 
-				Object value = PbeStringEncryptor.decryptIdentifiedValue((String)entry.getValue()); 
+				Object value = PasswordBasedEncryptor.decryptIdentifiedValue((String)entry.getValue()); 
 				properties.put(key, value); 
 			}
 			
