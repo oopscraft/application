@@ -7,6 +7,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import net.oopscraft.application.core.JmxInfo;
+import net.oopscraft.application.core.JmxInfoFactory;
+
 
 
 public class MonitorAgent extends Observable implements Runnable {
@@ -17,7 +20,7 @@ public class MonitorAgent extends Observable implements Runnable {
 	private Thread thread = null;
 	private int intervalSeconds = 3;
 	private int historySize = 10;
-	private List<Monitor> jmxInfoHistory = new CopyOnWriteArrayList<Monitor>();
+	private List<JmxInfo> jmxInfoHistory = new CopyOnWriteArrayList<JmxInfo>();
 	
 	/**
 	 * Initialize MonitorAgent
@@ -39,8 +42,13 @@ public class MonitorAgent extends Observable implements Runnable {
 	 * getInstance
 	 * @return
 	 */
-	public static MonitorAgent getInstance() {
-		return instance;
+	public static MonitorAgent getInstance() throws Exception {
+		synchronized(MonitorAgent.class) {
+			if(instance == null) {
+				throw new Exception("Monitor instance is not initialized."); 
+			}
+			return instance;
+		}
 	}
 	
 	private MonitorAgent(int interval, int limit) throws Exception {
@@ -56,7 +64,7 @@ public class MonitorAgent extends Observable implements Runnable {
 	public void run() {
 		while(!Thread.interrupted()) {
 			try {
-				Monitor jmxInfo = new Monitor();
+				JmxInfo jmxInfo = JmxInfoFactory.getJmxInfo();
 				jmxInfoHistory.add(jmxInfo);
 				if(jmxInfoHistory.size() > historySize) {
 					jmxInfoHistory.remove(0);
@@ -75,16 +83,20 @@ public class MonitorAgent extends Observable implements Runnable {
 		
 	}
 	
-	public List<Monitor> getJmxInfoHistory() {
+	public List<JmxInfo> getJmxInfoHistory() {
 		return jmxInfoHistory;
 	}
 	
-	public Monitor getLastestJmxInfo() {
+	public JmxInfo getLastestJmxInfo() {
 		return jmxInfoHistory.get(jmxInfoHistory.size() -1);
 	}
 	
 	public void addListener(MonitorAgentListener listener) {
 		addObserver(listener);
+	}
+	
+	public void removeListener(MonitorAgentListener listener) {
+		removeListener(listener);
 	}
 
 }

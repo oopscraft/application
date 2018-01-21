@@ -153,36 +153,18 @@ $( document ).ready(function() {
 	         }
 	     }
 	);
-	
-	// refresh
-	doRefresh();
 });
 
 /**
  * Creates web socket client
  */
-var monitorWebSocketClient = new WebSocketClient();
-var wsProtocol = null;
-if(window.location.protocol === 'https:'){
-	wsProtocol = 'wss:';
-}else{
-	wsProtocol = 'ws:';
-}
-monitorWebSocketClient.open(wsProtocol + '//' + location.host + '/core/monitorWebSocket');
-monitorWebSocketClient.onmessage = function(e){
+ webSocketClient.onmessage = function(e){
 	var dataJson = JSON.parse(e.data);
 	printOsInfo(dataJson.osInfo);
 	printMemInfo(dataJson.memInfo);
 	printDiskInfo(dataJson.diskInfo);
 	printClassInfo(dataJson.classInfo);
 	printThreadInfoList(dataJson.threadInfoList);
-}
-
-/**
- * doRefresh
- */
-function doRefresh() {
-	monitorWebSocketClient.send('');
 }
 
 /**

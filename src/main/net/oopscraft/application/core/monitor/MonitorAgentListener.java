@@ -7,6 +7,8 @@ import java.util.Observer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import net.oopscraft.application.core.JmxInfo;
+
 public abstract class MonitorAgentListener implements Observer {
 	
 	private static final Log LOG = LogFactory.getLog(MonitorAgentListener.class);
@@ -25,6 +27,6 @@ public abstract class MonitorAgentListener implements Observer {
 	 * Check 
 	 * @throws Exception
 	 */
-	public abstract void onCheck(Monitor jmxInfo, List<Monitor> jmxInfoHistory) throws Exception;
+	public abstract void onCheck(JmxInfo jmxInfo, List<JmxInfo> jmxInfoHistory) throws Exception;
 
 }
