@@ -6,12 +6,12 @@
  * Released under the LGPL-3.0 licence
  * https://opensource.org/licenses/lgpl-3.0.html
  */
-package net.oopscraft.application.service;
+package net.oopscraft.application.console.controller;
 
 /**
  * @author chomookun@gmail.com
  *
  */
-public class ProfileController {
+public class MessageController {
 
 }
