@@ -6,24 +6,26 @@
  * Released under the LGPL-3.0 licence
  * https://opensource.org/licenses/lgpl-3.0.html
  */
-package net.oopscraft.application.console;
+package net.oopscraft.application.api.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author chomookun@gmail.com
  *
  */
 @Controller
-@RequestMapping("/console")
-public class ConsoleController {
-
-	@RequestMapping(value="", method=RequestMethod.GET)
-	public ModelAndView get() throws Exception {
-		return new ModelAndView("redirect:/console/monitor");
+@RequestMapping("/api/code")
+public class CodeController {
+	
+	@RequestMapping(value="", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> getCode() throws Exception {
+		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 	
 }
