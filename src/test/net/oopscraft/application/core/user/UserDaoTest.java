@@ -24,7 +24,7 @@ public class UserDaoTest extends ApplicationTest {
 	UserDao userDao;
 	
 	@Test
-	public void insertUser() throws Exception {
+	public void handleUser() throws Exception {
 		try {
 			// insert new user
 			User user = new User();
@@ -34,11 +34,35 @@ public class UserDaoTest extends ApplicationTest {
 			user.setName("Tester");
 			user.setNickname("Tester");
 			user.setPassword("password");
+			user.setUseYn("Y");
 			userDao.insertUser(user);
-
-			// select new user
 			user = userDao.selectUser("test");
 			System.out.println(TextTableBuilder.build(user));
+			if(user == null) {
+				System.err.println("insertUser Error");
+				assert(false);
+			}
+			
+			// update user
+			user.setName("test2");
+			userDao.updateUser(user);
+			user = userDao.selectUser("test");
+			System.out.println(TextTableBuilder.build(user));
+			if(!"test2".equals(user.getName())) {
+				System.err.println("updateUser Error");
+				assert(false);
+			}
+			
+			// delete user
+			userDao.deleteUser(user.getId());
+			user = userDao.selectUser("test");
+			System.out.println(TextTableBuilder.build(user));
+			if(user != null) {
+				System.err.println("deleteUser Error");
+				assert(false);
+			}
+			
+			
 		}catch(Exception e) {
 			e.printStackTrace(System.err);
 			assert(false);

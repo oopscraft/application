@@ -12,6 +12,7 @@
         <result column="USR_NM" property="name"/>
         <result column="USR_NICK" property="nickname"/>
         <result column="USR_PWD" property="password"/>
+        <result column="USE_YN" property="useYn"/>
     </resultMap>
 
 	<select id="selectUserList" resultMap="user">
@@ -22,6 +23,7 @@
 				,AUI.USR_NM
 				,AUI.USR_NICK
 				,AUI.USR_PWD
+				,AUI.USE_YN
 		FROM 	APP_USR_INF AUI
 		]]>
 		<if test="key != null and key != ''">
@@ -43,6 +45,7 @@
 				,AUI.USR_NM
 				,AUI.USR_NICK
 				,AUI.USR_PWD
+				,AUI.USE_YN
 		FROM 	APP_USR_INF AUI
 		WHERE 	AUI.USR_ID = #{id}
 		]]>
@@ -57,6 +60,7 @@
 			,USR_NM
 			,USR_NICK
 			,USR_PWD
+			,USE_YN
 		) VALUES (
 			 #{id}
 			,#{email}
@@ -64,10 +68,31 @@
 			,#{name}
 			,#{nickname}
 			,#{password}
+			,#{useYn}
 		)
 		]]>
 	</insert>
 	
+	<update id="updateUser">
+		<![CDATA[
+		UPDATE	APP_USR_INF
+		SET 	 USR_EMAIL = #{email}
+				,USR_MOB_NO = #{mobileNumber}
+				,USR_NM = #{name}
+				,USR_NICK = #{nickname}
+				,USR_PWD = #{password}
+				,USE_YN = #{useYn}
+		WHERE	USR_ID = #{id}
+		]]>
+	</update>
+
+	<delete id="deleteUser">
+		<![CDATA[
+		DELETE
+		FROM 	APP_USR_INF
+		WHERE 	USR_ID = #{id}
+		]]>
+	</delete>
 	
 	
 	

@@ -8,6 +8,7 @@ public class User {
 	String name;
 	String nickname;
 	String password;
+	String useYn;
 	
 	public String getId() {
 		return id;
@@ -45,6 +46,11 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+	public String getUseYn() {
+		return useYn;
+	}
+	public void setUseYn(String useYn) {
+		this.useYn = useYn;
+	}
 
 }
