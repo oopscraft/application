@@ -23,10 +23,6 @@
 		<script src="/application/lib/alertify/alertify.js"></script>
 		<link rel="stylesheet" href="/application/lib/alertify/css/alertify.min.css">
 		<link rel="stylesheet" href="/application/lib/alertify/css/themes/default.min.css">
-
-		<!-- bootstrap-datetimepicker -->
-		<link rel="stylesheet" href="/application/lib/bootstrap-datepicker/css/bootstrap-datepicker.css" rel="stylesheet">
-		<script src="/application/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
 	
 		<!-- chartjs -->
 		<script src="/application/lib/Chart.js/Chart.js"></script>

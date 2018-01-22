@@ -24,7 +24,7 @@ public class ApplicationJUnit4ClassRunner extends SpringJUnit4ClassRunner {
 	public ApplicationJUnit4ClassRunner(Class<?> clazz) throws InitializationError {
 		super(clazz);
 		try {
-			ApplicationContainer.launchForTest(Application.class, new String[] {});
+			ApplicationContext.getInstance();
 		}catch(Exception e){
 			e.printStackTrace(System.err);
 			throw new InitializationError(e);

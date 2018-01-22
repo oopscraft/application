@@ -27,20 +27,21 @@ CREATE TABLE APP_CODE_ITEM_CD
 -- Appliation Group
 CREATE TABLE APP_GRP_INF
 (
-	GRP_ID text NOT NULL COMMENT 'Group ID',
-	UPPR_GRP_ID text COMMENT 'Upper Group ID',
-	GRP_NM text COMMENT 'Group Name',
+	GRP_ID varchar(32) NOT NULL COMMENT 'Group ID',
+	UPPR_GRP_ID varchar(32) COMMENT 'Upper Group ID',
+	SORT_SEQ int COMMENT 'Sort Sequence',
+	GRP_NM varchar(256) COMMENT 'Group Name',
 	GRP_DESC text COMMENT 'Group Description',
-	PRIMARY KEY (GRP_ID(null))
+	PRIMARY KEY (GRP_ID)
 ) COMMENT = 'Appliation Group';
 
 
 -- Application Group Roles
 CREATE TABLE APP_GRP_ROLE_REL
 (
-	GRP_ID text NOT NULL COMMENT 'Group ID',
+	GRP_ID varchar(32) NOT NULL COMMENT 'Group ID',
 	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
-	PRIMARY KEY (GRP_ID(null), ROLE_ID)
+	PRIMARY KEY (GRP_ID, ROLE_ID)
 ) COMMENT = 'Application Group Roles';
 
 
@@ -70,7 +71,7 @@ CREATE TABLE APP_MENU_ROLE_REL
 CREATE TABLE APP_PRVL
 (
 	PRVL_ID varchar(32) NOT NULL COMMENT 'Privilege ID',
-	PRVL_NAME text COMMENT 'Privilege Name',
+	PRVL_NAME varchar(256) COMMENT 'Privilege Name',
 	PRVL_DESC text COMMENT 'Privilege Description',
 	PRIMARY KEY (PRVL_ID)
 ) COMMENT = 'Application Privilege';
@@ -80,7 +81,7 @@ CREATE TABLE APP_PRVL
 CREATE TABLE APP_ROLE_INF
 (
 	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
-	ROLE_NM text COMMENT 'Role Name',
+	ROLE_NM varchar(256) COMMENT 'Role Name',
 	ROLE_DESC text COMMENT 'Role Description',
 	PRIMARY KEY (ROLE_ID)
 ) COMMENT = 'Application Role';
@@ -99,8 +100,8 @@ CREATE TABLE APP_ROLE_PRVL_REL
 CREATE TABLE APP_USR_GRP_REL
 (
 	USR_ID varchar(32) NOT NULL COMMENT 'User ID',
-	GRP_ID text NOT NULL COMMENT 'Group ID',
-	PRIMARY KEY (USR_ID, GRP_ID(null))
+	GRP_ID varchar(32) NOT NULL COMMENT 'Group ID',
+	PRIMARY KEY (USR_ID, GRP_ID)
 ) COMMENT = 'Application User Groups';
 
 

@@ -5,6 +5,50 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- global -->
 <script type="text/javascript">
+$(document).ready(function() {
+	getUserList('','',20,1);
+});
+
+/**
+ * Getting user list
+ */
+function getUserList(key, value, rows, page){
+	$.ajax({
+		 type:'GET'
+		,url:'${pageContext.request.contextPath}' + '/console/user/getUserList'
+		,data: {'key':key, 'value':value, 'rows':rows, 'page': page}
+		,dataType:'json'
+		,encode: true
+		,success:function(userList) {
+			console.log(userList);
+			var tbody = $('#userListTable > tbody');
+			tbody.empty();
+			if(userList.length > 0) {
+				for(var idx = 0, size = userList.length; idx < size; idx ++ ) {
+					var user = userList[idx];
+					var tr = $('<tr></tr>');
+					tr.append($('<td>' + user.id + '</td>'));
+					tr.append($('<td>' + user.email + '</td>'));
+					tr.append($('<td>' + user.mobileNumber + '</td>'));
+					tr.append($('<td>' + user.name + '</td>'));
+					tr.append($('<td>' + user.nickname + '</td>'));
+					tr.hide();
+					tbody.append(tr);
+					tr.fadeIn();
+				}
+			}else{
+				var tr = $('<tr><td colspan="5" class="text-center"><b>Data Not Found</b></td></tr>');
+				tbody.append(tr);
+			}
+		 }
+		,error: function(response) {
+			console.log(response);
+			alert(response.responseText);
+			return false;
+		 }
+	});	
+}
+
 </script>
 <style type="text/css">
 </style>
@@ -48,45 +92,24 @@
 		<!-- end of search form -->
 		
 		<!-- start of user list table -->
-		<table class="table table-bordered">
+		<table id="userListTable" class="table table-bordered">
+			<colgroup>
+				<col width="20%"/>
+				<col width="20%"/>
+				<col width="20%"/>
+				<col width="20%"/>
+				<col width="20%"/>
+			</colgroup>
 			<thead>
 			    <tr>
-			      <th scope="col">No</th>
-			      <th scope="col">User ID</th>
-			      <th scope="col">Name</th>
+			      <th scope="col">ID</th>
 			      <th scope="col">Email</th>
-			      <th scope="col">Status</th>
+			      <th scope="col">Mobile</th>
+			      <th scope="col">Name</th>
+			      <th scope="col">Nickname</th>
 			    </tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td >1</td>
-					<td>james123</td>
-					<td>James Scott</td>
-					<td>james123@gmail.com</td>
-					<td>USE</td>
-			    </tr>
-				<tr>
-					<td >1</td>
-					<td>james123</td>
-					<td>James Scott</td>
-					<td>james123@gmail.com</td>
-					<td>USE</td>
-			    </tr>
-				<tr>
-					<td >1</td>
-					<td>james123</td>
-					<td>James Scott</td>
-					<td>james123@gmail.com</td>
-					<td>USE</td>
-			    </tr>
-				<tr>
-					<td >1</td>
-					<td>james123</td>
-					<td>James Scott</td>
-					<td>james123@gmail.com</td>
-					<td>USE</td>
-			    </tr>
 			</tbody>
 		</table>
 		<!-- end of user list table -->
