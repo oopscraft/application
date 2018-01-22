@@ -47,10 +47,10 @@ CREATE TABLE APP_GRP_ROLE_REL
 -- Application Menu
 CREATE TABLE APP_MENU_INF
 (
-	menu_id varchar(n) NOT NULL COMMENT '메뉴_아이디',
-	upper_menu_id varchar(n) NOT NULL COMMENT '상위_메뉴_아이디',
-	menu_uri varchar(n) COMMENT '메뉴_경로',
-	menu_nm varchar(n) COMMENT '메뉴_명',
+	menu_id varchar(0) NOT NULL COMMENT '메뉴_아이디',
+	upper_menu_id varchar(0) NOT NULL COMMENT '상위_메뉴_아이디',
+	menu_uri varchar(0) COMMENT '메뉴_경로',
+	menu_nm varchar(0) COMMENT '메뉴_명',
 	menu_description text COMMENT '메뉴_내용',
 	role_need_yn text COMMENT '롤_필요_여부',
 	PRIMARY KEY (menu_id)
@@ -60,7 +60,7 @@ CREATE TABLE APP_MENU_INF
 -- 공통_메뉴_롤_관계
 CREATE TABLE APP_MENU_ROLE_REL
 (
-	menu_id varchar(n) NOT NULL COMMENT '메뉴_아이디',
+	menu_id varchar(0) NOT NULL COMMENT '메뉴_아이디',
 	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
 	PRIMARY KEY (menu_id, ROLE_ID)
 ) COMMENT = '공통_메뉴_롤_관계';
@@ -113,6 +113,7 @@ CREATE TABLE APP_USR_INF
 	USR_NM varchar(256) COMMENT 'User Name',
 	USR_NICK varchar(256) COMMENT 'User Nickname',
 	USR_PWD varchar(256) COMMENT 'User Password',
+	USE_YN varchar(1) COMMENT 'Use YN',
 	PRIMARY KEY (USR_ID)
 ) COMMENT = 'Application User';
 
