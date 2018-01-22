@@ -1,15 +1,12 @@
 package net.oopscraft.application.core.user;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Group {
 	
-	String id = null;
-	String upperId = null;
-	String name = null;
-	String description = null;
-	List<Group> childGroupList = new ArrayList<Group>();
+	String id;
+	String upperId;
+	int sortSeq;
+	String name;
+	String description;
 	
 	public String getId() {
 		return id;
@@ -23,6 +20,12 @@ public class Group {
 	public void setUpperId(String upperId) {
 		this.upperId = upperId;
 	}
+	public int getSortSeq() {
+		return sortSeq;
+	}
+	public void setSortSeq(int sortSeq) {
+		this.sortSeq = sortSeq;
+	}
 	public String getName() {
 		return name;
 	}
@@ -34,14 +37,6 @@ public class Group {
 	}
 	public void setDescription(String description) {
 		this.description = description;
-	}
-	
-	public void addChildGroup(Group group) {
-		this.childGroupList.add(group);
-	}
-	
-	public List<Group> getChildGroupList() {
-		return this.childGroupList;
 	}
 
 }

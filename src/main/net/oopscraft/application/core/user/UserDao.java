@@ -14,7 +14,11 @@ public interface UserDao {
 	
 	public int updateUser(User user) throws Exception;
 	
-	public int deleteUser(@Param("id")String id) throws Exception;
+	public int deleteUser(User user) throws Exception;
+	
+	public List<Group> selectGroupList() throws Exception;
+	
+	public List<Group> selectChildGroupList(@Param("id")String id) throws Exception;
 	
 	public Group selectGroup(@Param("id")String id) throws Exception;
 	
@@ -22,7 +26,7 @@ public interface UserDao {
 	
 	public int updateGroup(Group group) throws Exception;
 	
-	public int deleteGroup(@Param("id")String id) throws Exception;
+	public int deleteGroup(Group group) throws Exception;
 	
 	public Role selectRole(@Param("id")String id) throws Exception;
 	
@@ -30,7 +34,7 @@ public interface UserDao {
 	
 	public int updateRole(Role role) throws Exception;
 	
-	public int deleteRole(@Param("id")String id) throws Exception;
+	public int deleteRole(Role role) throws Exception;
 	
 	public Privilege selectPrivilege(@Param("id")String id) throws Exception;
 	
@@ -38,7 +42,7 @@ public interface UserDao {
 	
 	public int updatePrivilege(Privilege privilege) throws Exception;
 	
-	public int deletePrivilege(@Param("id")String id) throws Exception;
+	public int deletePrivilege(Privilege privilege) throws Exception;
 
 	public List<Group> selectAssignedGroupList(@Param("userId")String userId) throws Exception;
 	

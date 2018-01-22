@@ -8,6 +8,8 @@
  */
 package net.oopscraft.application.core.user;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -54,14 +56,13 @@ public class UserDaoTest extends ApplicationTest {
 			}
 			
 			// delete user
-			userDao.deleteUser(user.getId());
+			userDao.deleteUser(user);
 			user = userDao.selectUser("test");
 			System.out.println(TextTableBuilder.build(user));
 			if(user != null) {
 				System.err.println("deleteUser Error");
 				assert(false);
 			}
-			
 			
 		}catch(Exception e) {
 			e.printStackTrace(System.err);
@@ -70,4 +71,43 @@ public class UserDaoTest extends ApplicationTest {
 		assert(true);
 	}
 
+	@Test
+	public void handleGroup() throws Exception {
+		try {
+			// insert group list
+			for(int i = 0; i < 3; i ++) {
+				String groupId = String.valueOf(i); 
+				Group group = new Group();
+				group.setId(groupId);
+				group.setSortSeq(i);
+				group.setName(String.format("Name[%s]", groupId));
+				group.setDescription("this is description");
+				userDao.insertGroup(group);
+				for(int ii = 0; ii < 3; ii ++ ) {
+					String childGroupId = groupId + "-" + String.valueOf(ii);
+					Group childGroup = new Group();
+					childGroup.setId(childGroupId);
+					childGroup.setUpperId(groupId);
+					childGroup.setSortSeq(ii);
+					childGroup.setName(String.format("Name[%s]", childGroupId));
+					childGroup.setDescription("this is description");
+					userDao.insertGroup(childGroup);
+				}
+			}
+
+			// test selectGroupList
+			List<Group> groupList = userDao.selectGroupList();
+			System.out.println(TextTableBuilder.build(groupList));
+			
+			// test selectChildGroupList
+			List<Group> childGroupList = userDao.selectChildGroupList("1");
+			System.out.println(TextTableBuilder.build(childGroupList));
+			
+		}catch(Exception e) {
+			e.printStackTrace(System.err);
+			assert(false);
+		}
+		assert(true);
+	}
+	
 }

@@ -14,6 +14,14 @@
         <result column="USR_PWD" property="password"/>
         <result column="USE_YN" property="useYn"/>
     </resultMap>
+    
+    <resultMap id="group" type="net.oopscraft.application.core.user.Group">
+    	<result column="GRP_ID" property="id"/>
+    	<result column="UPPR_GRP_ID" property="upperId"/>
+    	<result column="SORT_SEQ" property="sortSeq"/>
+    	<result column="GRP_NM" property="name"/>
+		<result column="GRP_DESC" property="description"/>
+    </resultMap>
 
 	<select id="selectUserList" resultMap="user">
 		<![CDATA[
@@ -26,9 +34,9 @@
 				,AUI.USE_YN
 		FROM 	APP_USR_INF AUI
 		]]>
-		<if test="key != null and key != ''">
+		<if test="user.id != null and user.id != ''">
 		<![CDATA[
-		WHERE 	AUI.${key} LIKE '%'||#{value}||'%'
+		WHERE 	AUI.USR_ID LIKE '%'||#{user.id}||'%'
 		]]>
 		</if>
 		<![CDATA[
@@ -94,7 +102,101 @@
 		]]>
 	</delete>
 	
+	<select id="selectGroupList" resultMap="group">
+		<![CDATA[
+		WITH RECURSIVE A (PATH, GRP_ID, UPPR_GRP_ID, SORT_SEQ) AS (
+			-- Root element
+			SELECT 	 CAST(GRP_ID AS CHAR(10))
+					,GRP_ID
+					,UPPR_GRP_ID
+					,SORT_SEQ
+			FROM 	APP_GRP_INF
+			WHERE 	UPPR_GRP_ID IS NULL
+			UNION ALL
+			-- Child element
+			SELECT 	 CONCAT(A.PATH,',', AGI.GRP_ID)
+					,AGI.GRP_ID
+					,AGI.UPPR_GRP_ID
+					,AGI.SORT_SEQ
+			FROM 	APP_GRP_INF AGI
+			INNER JOIN A 
+			ON		AGI.UPPR_GRP_ID = A.GRP_ID
+		)
+		SELECT 	 A.PATH
+				,A.GRP_ID
+				,A.UPPR_GRP_ID
+				,A.SORT_SEQ
+				,AGI.GRP_NM
+				,AGI.GRP_DESC
+		FROM 	A
+		INNER JOIN APP_GRP_INF AGI
+		ON		AGI.GRP_ID = A.GRP_ID
+		ORDER BY A.PATH ASC
+				,A.SORT_SEQ ASC
+		]]>
+	</select>
 	
+	<select id="selectChildGroupList" resultMap="group">
+		<![CDATA[
+		SELECT 	 GRP_ID
+				,UPPR_GRP_ID
+				,SORT_SEQ
+				,GRP_NM
+				,GRP_DESC
+		FROM 	APP_GRP_INF
+		WHERE 	UPPR_GRP_ID = #{id}
+		ORDER BY SORT_SEQ ASC
+		]]>
+	</select>
+	
+	<select id="selectGroup" resultMap="group">
+		<![CDATA[
+		SELECT 	 GRP_ID
+				,UPPR_GRP_ID
+				,SORT_SEQ
+				,GRP_NM
+				,GRP_DESC
+		FROM 	APP_GRP_INF
+		WHERE 	GRP_ID = #{id}
+		]]>
+	</select>
+	
+	<insert id="insertGroup">
+		<![CDATA[
+		INSERT INTO APP_GRP_INF (
+			 GRP_ID
+			,UPPR_GRP_ID
+			,SORT_SEQ
+			,GRP_NM
+			,GRP_DESC
+		) VALUES (
+			 #{id}
+			,#{upperId}
+			,#{sortSeq}
+			,#{name}
+			,#{description}
+		)
+		]]>
+	</insert>
+	
+	<update id="updateGroup">
+		<![CDATA[
+		UPDATE 	APP_GRP_INF
+		SET 	 UPPR_GRP_ID = #{upperId}
+				,SORT_SEQ = #{sortSeq}
+				,GRP_NM = #{name}
+				,GRP_DESC = #{description}
+		WHERE 	GRP_ID = #{id}
+		]]>
+	</update>
+	
+	<delete id="deleteGroup">
+		<![CDATA[
+		DELETE 
+		FROM 	APP_GRP_INF
+		WHERE 	GRP_ID = #{id}
+		]]>
+	</delete>
 	
 	
 	

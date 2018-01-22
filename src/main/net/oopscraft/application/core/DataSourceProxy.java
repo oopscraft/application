@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
-import net.oopscraft.application.ApplicationContainer;
+import net.oopscraft.application.ApplicationContext;
 
 public class DataSourceProxy implements DataSource {
 	
@@ -60,7 +60,8 @@ public class DataSourceProxy implements DataSource {
 	public Connection getConnection() throws SQLException {
 		Connection connection = null;
 		try {
-			SqlSessionProxyFactory sqlSessionProxyFactory = ApplicationContainer.getApplicationContext().getSqlSessionProxyFactory(id);
+			ApplicationContext applicationContext = ApplicationContext.getInstance();
+			SqlSessionProxyFactory sqlSessionProxyFactory = applicationContext.getSqlSessionProxyFactory(id);
 			DataSource dataSource = sqlSessionProxyFactory.getDataSource(environment);
 			connection = dataSource.getConnection();
 		}catch(Exception e) {
