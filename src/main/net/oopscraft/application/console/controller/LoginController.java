@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +46,17 @@ public class LoginController {
 	
 	@RequestMapping(value="", method=RequestMethod.GET) 
 	public ModelAndView get() throws Exception {
-		return new ModelAndView("console/login.jsp");
+		ModelAndView modelAndView = new ModelAndView("console/login.jsp");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/isCaptchaRequired", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> isCaptchaRequired() throws Exception {
+		boolean captchaRequired = false;
+		if(getLoginFailCount() >= 3) {
+			captchaRequired = true;
+		}
+		return new ResponseEntity<>(captchaRequired, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/getCaptchaImage", method=RequestMethod.GET, produces=MediaType.IMAGE_PNG_VALUE)
@@ -72,33 +83,66 @@ public class LoginController {
         return new ResponseEntity<byte[]>(bytes,HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="", method=RequestMethod.POST, produces="application/json")
+	@RequestMapping(value="", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> post(
 		 @RequestParam("admin")String admin
 		,@RequestParam("password")String password
-		,@RequestParam("captcha")String captcha
+		,@RequestParam(value="captcha", required=false, defaultValue="")String captcha 
 	) throws Exception {
 		
+		// getting session
+		HttpSession session = request.getSession(true);
+		
 		// checks valid CAPTCHA answer
-		if(!captcha.equals(request.getSession(true).getAttribute("captcha"))){
-			return new ResponseEntity<>("CAPTCHA Answer is Incorrect.", HttpStatus.UNAUTHORIZED);
+		if(getLoginFailCount() >= 3) {
+			if(!captcha.equals(session.getAttribute("captcha"))){
+				return new ResponseEntity<>("CAPTCHA Answer is Incorrect.", HttpStatus.UNAUTHORIZED);
+			}
 		}
 		
+		// creates consoleSecurity component
 		ConsoleSecurity consoleSecurity = new ConsoleSecurity();
 		
 		// checks valid administrator user
 		if(!consoleSecurity.isValidAdmin(admin)) {
+			setLoginFailCount(getLoginFailCount()+1);
 			return new ResponseEntity<>("Administrator Name is Incorrect.", HttpStatus.UNAUTHORIZED);
 		}
 		
 		// checks valid password
 		if(!consoleSecurity.isValidPassword(admin, password)) {
+			setLoginFailCount(getLoginFailCount()+1);
 			return new ResponseEntity<>("Administrator Password is Incorrect.", HttpStatus.UNAUTHORIZED); 
 		}
 		
 		// creates session
-		request.getSession().setAttribute("admin", admin);
+		session.setAttribute("admin", admin);
+		setLoginFailCount(0);
 		return new ResponseEntity<>(null, HttpStatus.OK);
+	}
+	
+	/**
+	 * getting login fail count
+	 * @return
+	 * @throws Exception
+	 */
+	private int getLoginFailCount() throws Exception {
+		HttpSession session = request.getSession(true);
+		int loginFailCount = 0;
+		try {
+			loginFailCount = (int) session.getAttribute("loginFailCount");
+		}catch(Exception ignore){}
+		return loginFailCount;
+	}
+	
+	/**
+	 * setting login fail count
+	 * @param loginFailCount
+	 * @throws Exception
+	 */
+	private void setLoginFailCount(int loginFailCount) throws Exception {
+		HttpSession session = request.getSession(true);
+		session.setAttribute("loginFailCount", loginFailCount);
 	}
 
 }

@@ -71,7 +71,7 @@ public class ConsoleSecurity {
 			return false;
 		}
 		// checks password is same.
-		if(password.equals(PasswordBasedEncryptor.encryptIdentifiedValue(adminProperties.getProperty(admin)))) {
+		if(password.equals(PasswordBasedEncryptor.decryptIdentifiedValue(adminProperties.getProperty(admin)))) {
 			return true;
 		}else {
 			return false;

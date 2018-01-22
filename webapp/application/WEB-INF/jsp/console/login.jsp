@@ -29,6 +29,7 @@
 		 * Checking keypress
 		 */
 		$(document).ready(function(){
+			checkCaptchaRequired();
 			$('#admin').focus();
 		});
 		$(document).keypress(function(e) { 
@@ -36,12 +37,29 @@
 				doLogin();
 			}
 		});
+		
+		function checkCaptchaRequired() {
+			$.ajax({
+				 type:'GET'
+				,url:'${pageContext.request.contextPath}/console/login/isCaptchaRequired'
+				,success: function(captchaRequired) {
+					if(captchaRequired == true){
+						$('#captchaDiv').show();
+					}else{
+						$('#captchaDiv').hide();
+					}
+		    	 }
+				,error: function(response) {
+					$('#messageDiv').text(response.responseText);
+				}
+			});
+		}
 
 		/**
 		 * reloadCaptchaImage
 		 */
 		function reloadCaptchaImage() {
-			$('#captchaImage').attr("src", "/application/console/login/getCaptchaImage");
+			$('#captchaImage').attr('src','${pageContext.request.contextPath}/console/login/getCaptchaImage');
 		}
 		 
 		/**
@@ -63,13 +81,13 @@
 				,data: formData
 				,type: 'POST'
 				,success: function(response) {
-					location.href='${pageContext.request.contextPath}' + '/console';
+					location.href='${pageContext.request.contextPath}/console';
 		    	 }
 				,error: function(response) {
 					$('#messageDiv').text(response.responseText);
 				}
 			});
-			
+			checkCaptchaRequired();
 		}
 		</script>
 		<style type="text/css">
@@ -142,7 +160,7 @@
 								<div class="input-group-addon"><i class="fa fa-key" aria-hidden="true"></i></div>
 								<input type="password" class="form-control" id="password" placeholder="Password">
 							</div>
-							<div id="captchaDiv">
+							<div id="captchaDiv" style="display:none;">
 								<span style="font-weight:bold; font-size:12px;">
 									<i class="fa fa-lock" aria-hidden="true" style="color:orangered;"></i>
 									Security Check
@@ -150,7 +168,7 @@
 								<hr style="margin:1px;"/>
 								If you are not robot, Please enter the text below.
 								<br/>
-								<img id="captchaImage" src="/application/console/login/getCaptchaImage"/>
+								<img id="captchaImage" src="${pageContext.request.contextPath}/console/login/getCaptchaImage"/>
 								&nbsp;
 								<button type="button" class="btn btn-info" onclick="javascript:reloadCaptchaImage();">
 									<i class="fa fa-refresh" aria-hidden="true"></i>
