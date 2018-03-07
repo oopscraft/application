@@ -1,7 +1,7 @@
 html{
-	font-family: Tahomam, Dotum;
+	font-family: Verdana, Dotum;
 	font-size: 11px;
-	letter-spacing: -1px;
+	#letter-spacing: -1px;
 }
 
 main {
@@ -17,54 +17,22 @@ footer {
 }
 
 h1 {
-	margin: 0px;
-	padding: 5px 2px 4px 0px;
-	font-size: 1.5em;
-	font-weight: bold;
-	border-bottom: groove 2px #eee;
+	font-size: 1.5rem;
 }
-
-h1:before {
-	content: "| ";
-	color: steelblue;
-}
-
-h1>small {
-	font-size: 0.5em;
-	font-weight: bold;
-	color: #999999;
-}
-
-h1>small:before {
-	content: " - ";
-}
-
 h2 {
-	margin:10px 0px 0px 0px;
-	padding: 1px 0px 1px 0px;
-	border-bottom: solid 1px #eee;
-	font-size: 1.0em;
-    font-weight: bold;
-    font-family: Verdana;
+	font-size: 1.4rem;
 }
-
-h2:before {
-	font-size: 1.0em;
-	color: orangered;
-	content: "| ";
+h3 {
+	font-size: 1.3rem;
 }
-
-h2>small {
-	font-size: 10px;
-	font-weight: bold;
-	color: #999999;
+h4 {
+	font-size: 1.2rem;
 }
-
-h2>small:before {
-	content: " - ";
-	font-size: 10px;
-	font-weight: bold;
-	color: darkgray;
+h5 {
+	font-size: 1.1rem;
+}
+h6 {
+	font-size: 1.0rem;
 }
 
 .shadow { text-shadow:#999999 1px 1px 1px; }
@@ -101,13 +69,14 @@ h2>small:before {
 	margin-right: 10px;
 	margin-left: 10px;
 }
-
 .form_inline {
 	font-size: 11px;
 }
-
+.form-group>label {
+	font-weight: bold;
+}
 .table>thead>tr {
-	background: url(img/bg_glass_wave_fef1ec.png) 50% 50% repeat-x;
+	background-color: #f8f9fa;
 }
 
 .table>thead>tr>th {
@@ -157,8 +126,19 @@ textarea.form-control {
 button.btn {
 	cursor: hand;
 	cursor: pointer;
+	height: 25px;
+    font-weight: bold;
+    border-radius: 2px;
 }
-
+button.btn-primary {
+	background-color: #3090f7;
+	border-color: #3090f7;
+}
+button.btn-secondary {
+	color: #464a4e;
+	background-color: #e9ecef;
+	border-color: #ddd;
+}
 .badge {
 	padding: 1px 4px;
 	font-size: 9px;

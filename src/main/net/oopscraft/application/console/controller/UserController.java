@@ -57,8 +57,8 @@ public class UserController {
 				user.setId(value);
 			}else if("email".equals(key)) {
 				user.setEmail(value);
-			}else if("mobileNumber".equals(key)) {
-				user.setMobileNumber(value);
+			}else if("mobile".equals(key)) {
+				user.setMobile(value);
 			}else if("name".equals(key)) {
 				user.setName(value);
 			}else if("nickname".equals(key)) {
@@ -73,9 +73,11 @@ public class UserController {
 	
 	@RequestMapping(value="/getUser", method=RequestMethod.GET, produces="application/json")
 	public ResponseEntity<?> getUser(
-			 @RequestParam(value="userId")String userId
+			 @RequestParam(value="id")String id
 	) throws Exception {
-		return new ResponseEntity<>(new ValueMap(), HttpStatus.OK);
+		UserManager userManager = new UserManager();
+		User user = userManager.getUser(id);
+		return new ResponseEntity<>(JsonConverter.convertObjectToJson(user), HttpStatus.OK);
 	}
 	
 }

@@ -28,6 +28,14 @@ public class UserManager {
 		sqlSessionFactory = ApplicationContext.getInstance().getSqlSessionProxyFactory("application");
 	}
 	
+	/**
+	 * getting user list
+	 * @param user
+	 * @param rows
+	 * @param page
+	 * @return
+	 * @throws Exception
+	 */
 	public List<User> getUserList(User user, int rows, int page) throws Exception {
 		List<User> userList = null;
 		SqlSessionProxy sqlSession = null;
@@ -41,8 +49,31 @@ public class UserManager {
 			sqlSession.close();
 		}
 		return userList;
-		
 	}
+	
+	/**
+	 * getting user
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public User getUser(String id) throws Exception {
+		User user = null;
+		SqlSessionProxy sqlSession = null;
+		try {
+			sqlSession = sqlSessionFactory.openSession();
+			UserDao userDao = sqlSession.getMapper(UserDao.class);
+			user = userDao.selectUser(id);
+		}catch(Exception e) {
+			throw e;
+		}finally {
+			sqlSession.close();
+		}
+		return user;
+	}
+	
+	
+	
 	
 	public List<Group> getGroupList() throws Exception {
 		List<Group> groupList = null;

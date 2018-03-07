@@ -109,8 +109,8 @@ CREATE TABLE APP_USR_GRP_REL
 CREATE TABLE APP_USR_INF
 (
 	USR_ID varchar(32) NOT NULL COMMENT 'User ID',
-	USR_EMAIL varchar(256) COMMENT 'User Email',
-	USR_MOB_NO varchar(14) COMMENT 'User Mobile Number',
+	USR_EMIL varchar(256) COMMENT 'User Email',
+	USR_MOBL varchar(14) COMMENT 'User Mobile',
 	USR_NM varchar(256) COMMENT 'User Name',
 	USR_NICK varchar(256) COMMENT 'User Nickname',
 	USR_PWD varchar(256) COMMENT 'User Password',

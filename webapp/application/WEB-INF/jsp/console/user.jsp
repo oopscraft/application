@@ -27,10 +27,15 @@ function getUserList(key, value, rows, page){
 				for(var idx = 0, size = userList.length; idx < size; idx ++ ) {
 					var user = userList[idx];
 					var tr = $('<tr></tr>');
+					tr.data('id',user.id);
+					tr.click(function() {
+						getUser($(this).data('id'));
+					});
+					tr.addClass('cursor');
 					tr.append($('<td>' + user.id + '</td>'));
-					tr.append($('<td>' + user.email + '</td>'));
-					tr.append($('<td>' + user.mobileNumber + '</td>'));
 					tr.append($('<td>' + user.name + '</td>'));
+					tr.append($('<td>' + user.email + '</td>'));
+					tr.append($('<td>' + user.mobile + '</td>'));
 					tr.append($('<td>' + user.nickname + '</td>'));
 					tr.hide();
 					tbody.append(tr);
@@ -49,129 +54,158 @@ function getUserList(key, value, rows, page){
 	});	
 }
 
+/**
+ * Getting user detail
+ */
+function getUser(id) {
+	$.ajax({
+		 type:'GET'
+		,url:'${pageContext.request.contextPath}' + '/console/user/getUser'
+		,data: {'id':id}
+		,dataType:'json'
+		,encode: true
+		,success:function(user) {
+			console.log(user);
+			$('#id').val(user.id);
+			$('#email').val(user.email);
+			$('#mobile').val(user.mobile);
+			$('#name').val(user.name);
+			$('#nickname').val(user.nickname);
+			$('#useYn').val(user.useYn);
+		 }
+		,error: function(response) {
+			console.log(response);
+			alert(response.responseText);
+			return false;
+		 }
+	});	
+}
+
 </script>
 <style type="text/css">
 </style>
-<h1>
-	User Management
-	<small>Management of User, Group, Role, Privilege </small>
-</h1>
-<div class="row">
 
-	<!-- start of left panel -->
-	<div class="col">
-		<!--  start of search form -->
-		<div class="row">
-			<div class="col text-left">
-				<form class="form-inline">
-					<select class="form-control custom-select">
-						<option selected>___Column___</option>
-						<option value="1">One</option>
-						<option value="2">Two</option>
-						<option value="3">Three</option>
-					</select>
-					<input type="text" class="form-control" id="keyword" placeholder="Keyword">
-					<button type="button" class="btn">
-						<i class="fa fa-floppy-o" aria-hidden="true"></i>
-						Search
-					</button>
-				</form>
-			</div>
-			<div class="col">
-				<ul class="pagination justify-content-end">
-					<li class="page-item disabled">
-						<a class="page-link" href="#" tabindex="-1"><i class="fa fa-caret-left" aria-hidden="true"></i></a>
-					</li>
-					<li class="page-item"><a class="page-link" href="#">3</a></li>
-					<li class="page-item">
-						<a class="page-link" href="#"><i class="fa fa-caret-right" aria-hidden="true"></i></a>
-					</li>
-				</ul>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col">
+			<h1>
+				User Management
+				<small>Management of User, Group, Role, Privilege </small>
+			</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col"></div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="container-fluid border rounded">
+				<div class="row" style="padding-top:20px; min-height:700px;">
+					<div class="col">
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1">
+								<i class="fa fa-search" aria-hidden="true"></i>
+							</span>
+							<select class="form-control col-3" style="font-weight:bold;">
+								<option value="id">ID</option>
+								<option value="name">Name</option>
+								<option value="email">Email</option>
+								<option value="mobile">Mobile</option>
+								<option value="nickname">Nickname</option>
+							</select>
+							<input type="text" class="form-control" id="keyword" placeholder="Keyword">
+							<button type="button" class="btn btn-primary">
+								<i class="fa fa-search" aria-hidden="true"></i>
+								Find User
+							</button>
+						</div>
+						<table id="userListTable" class="table table-bordered table-hover">
+							<colgroup>
+								<col width="20%"/>
+								<col width="20%"/>
+								<col width="20%"/>
+								<col width="20%"/>
+								<col width="20%"/>
+							</colgroup>
+							<thead>
+							    <tr>
+							      <th scope="col">ID</th>
+							      <th scope="col">Name</th>
+							      <th scope="col">Email</th>
+							      <th scope="col">Mobile</th>
+							      <th scope="col">Nickname</th>
+							    </tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+						<ul class="pagination justify-content-center">
+							<li class="page-item disabled">
+								<a class="page-link" href="#" tabindex="-1"><</a>
+							</li>
+							<li class="page-item"><a class="page-link" href="#">1</a></li>
+							<li class="page-item"><a class="page-link" href="#">2</a></li>
+							<li class="page-item"><a class="page-link" href="#">3</a></li>
+							<li class="page-item">
+								<a class="page-link" href="#">></a>
+							</li>
+						</ul>
+					</div>
+				</div>
 			</div>
 		</div>
-		<!-- end of search form -->
+		<!--  end of left panel -->
 		
-		<!-- start of user list table -->
-		<table id="userListTable" class="table table-bordered">
-			<colgroup>
-				<col width="20%"/>
-				<col width="20%"/>
-				<col width="20%"/>
-				<col width="20%"/>
-				<col width="20%"/>
-			</colgroup>
-			<thead>
-			    <tr>
-			      <th scope="col">ID</th>
-			      <th scope="col">Email</th>
-			      <th scope="col">Mobile</th>
-			      <th scope="col">Name</th>
-			      <th scope="col">Nickname</th>
-			    </tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
-		<!-- end of user list table -->
-
-	</div>
-	<!--  end of left panel -->
-	
-	<!-- start of right panel -->
-	<div class="col">
-	
-		<!-- start of user detail -->
-		<div class="row">
-			<div class="col">
-				<h2>
-					<i class="fa fa-user" aria-hidden="true"></i>
-					User
-					<small>Details of user</small>
-				</h2>
-				<div class="border rounded" style="padding:10px;">
-					<form>
-						  <div class="form-row">
-						    <div class="form-group col-md-6">
-						      <label for="inputEmail4">Email</label>
-						      <input type="email" class="form-control" id="inputEmail4" placeholder="Email">
-						    </div>
-						    <div class="form-group col-md-6">
-						      <label for="inputPassword4">Password</label>
-						      <input type="password" class="form-control" id="inputPassword4" placeholder="Password">
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="inputAddress">Address</label>
-						    <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
-						  </div>
-						  <div class="form-group">
-						    <label for="inputAddress2">Address 2</label>
-						    <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-						  </div>
-						  <div class="form-row">
-						    <div class="form-group col-md-6">
-						      <label for="inputCity">City</label>
-						      <input type="text" class="form-control" id="inputCity">
-						    </div>
-						    <div class="form-group col-md-4">
-						      <label for="inputState">State</label>
-						      <select id="inputState" class="form-control">
-						        <option selected>Choose...</option>
-						        <option>...</option>
-						      </select>
-						    </div>
-						    <div class="form-group col-md-2">
-						      <label for="inputZip">Zip</label>
-						      <input type="text" class="form-control" id="inputZip">
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <div class="form-check">
-						      <label class="form-check-label">
-						        <input class="form-check-input" type="checkbox"> Check me out
-						      </label>
-						    </div>
-						  </div>
+		<!-- start of right panel -->
+		<div class="col">
+			<div class="container-fluid border rounded">
+				<!-- start of user detail -->
+				<div class="row" style="padding-top:10px; min-height:700px;">
+					<div class="col">
+						<h2>
+							User
+							<small>Details of user</small>
+						</h2>
+						<hr/>
+						<div class="form-group row">
+							<label for="id" class="col-2 col-form-label">ID</label>
+							<div class="col-4">
+								<input id="id" class="form-control" type="text" value="">
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="email" class="col-2 col-form-label">Email</label>
+							<div class="col-4">
+								<input id="email" class="form-control" type="text" value="">
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="mobile" class="col-2 col-form-label">Mobile</label>
+							<div class="col-4">
+								<input id="mobile" class="form-control" type="text" value="">
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="name" class="col-2 col-form-label">Name</label>
+							<div class="col-6">
+								<input id="name" class="form-control" type="text" value="">
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for=""nickname"" class="col-2 col-form-label">Nickname</label>
+							<div class="col-6">
+								<input id="nickname" class="form-control" type="text" value="">
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="useYn" class="col-2 col-form-label">Use YN</label>
+							<div class="col-2">
+								<select id="useYn" class="form-control">
+									<option value="Y">Y</option>
+									<option value="N">N</option>
+								</select>
+							</div>
+						</div>
 						<div class="form-group row">
 							<div class="col text-right">
 								<button type="button" class="btn btn-primary">
@@ -184,150 +218,127 @@ function getUserList(key, value, rows, page){
 								</button>
 							</div>
 						</div>
-					</form>
+						<h2>
+							Groups
+							<small>List of Assigned Group</small>
+						</h2>
+						<table class="table table-bordered">
+							<thead>
+							    <tr>
+							      <th scope="col">Group ID</th>
+							      <th scope="col">Name</th>
+							      <th scope="col">Status</th>
+							      <th scope="col">-</th>
+							    </tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>SALES</td>
+									<td>Sales Department</td>
+									<td>USE</td>
+									<td>
+										<button type="button" class="btn btn-light"><i class="fa fa-trash" aria-hidden="true"></i></button>
+									</td>
+							    </tr>
+								<tr>
+									<td>SALES</td>
+									<td>Sales Department</td>
+									<td>USE</td>
+									<td>
+										<button type="button" class="btn btn-light"><i class="fa fa-trash" aria-hidden="true"></i></button>
+									</td>
+							    </tr>
+								<tr>
+									<td>SALES</td>
+									<td>Sales Department</td>
+									<td>USE</td>
+									<td>
+										<button type="button" class="btn btn-light"><i class="fa fa-trash" aria-hidden="true"></i></button>
+									</td>
+							    </tr>
+							</tbody>
+						</table>
+						<div class="float-right">
+							<button type="button" class="btn btn-light">
+								<i class="fa fa-plus" aria-hidden="true"></i>
+								Add
+							</button>
+						</div>
+						<h2>
+							Roles
+							<small>List of Available Rules</small>
+						</h2>
+						<table class="table table-bordered">
+						  <thead>
+						    <tr>
+						      <th scope="col">First Name</th>
+						      <th scope="col">Last Name</th>
+						      <th scope="col">Username</th>
+						    </tr>
+						  </thead>
+						  <tbody>
+						    <tr>
+						      <td>Mark</td>
+						      <td>Otto</td>
+						      <td>@mdo</td>
+						    </tr>
+						    <tr>
+						      <td>Mark</td>
+						      <td>Otto</td>
+						      <td>@TwBootstrap</td>
+						    </tr>
+						    <tr>
+						      <td>Jacob</td>
+						      <td>Thornton</td>
+						      <td>@fat</td>
+						    </tr>
+						  </tbody>
+						</table>
+						<h2>
+							Privileges
+							<small>List of Available Privileges</small>
+						</h2>
+						<table class="table table-bordered">
+						  <thead>
+						    <tr>
+						      <th scope="col">#</th>
+						      <th scope="col">First Name</th>
+						      <th scope="col">Last Name</th>
+						      <th scope="col">Username</th>
+						    </tr>
+						  </thead>
+						  <tbody>
+						    <tr>
+						      <th scope="row">1</th>
+						      <td>Mark</td>
+						      <td>Otto</td>
+						      <td>@mdo</td>
+						    </tr>
+						    <tr>
+						      <th scope="row">2</th>
+						      <td>Mark</td>
+						      <td>Otto</td>
+						      <td>@TwBootstrap</td>
+						    </tr>
+						    <tr>
+						      <th scope="row">3</th>
+						      <td>Jacob</td>
+						      <td>Thornton</td>
+						      <td>@fat</td>
+						    </tr>
+						    <tr>
+						      <th scope="row">4</th>
+						      <td colspan="2">Larry the Bird</td>
+						      <td>@twitter</td>
+						    </tr>
+						  </tbody>
+						</table>
+					</div>				
 				</div>
+				<!-- end of privilege -->
 			</div>
+				
 		</div>
-		<!-- end of user detail -->
-		
-		<!-- start of group -->
-		<div class="row">
-			<div class="col">		
-				<h2>
-					<i class="fa fa-group" aria-hidden="true"></i>
-					Groups
-					<small>List of Assigned Group</small>
-				</h2>
-				<table class="table table-bordered">
-					<thead>
-					    <tr>
-					      <th scope="col">Group ID</th>
-					      <th scope="col">Name</th>
-					      <th scope="col">Status</th>
-					      <th scope="col">-</th>
-					    </tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>SALES</td>
-							<td>Sales Department</td>
-							<td>USE</td>
-							<td>
-								<button type="button" class="btn btn-light"><i class="fa fa-trash" aria-hidden="true"></i></button>
-							</td>
-					    </tr>
-						<tr>
-							<td>SALES</td>
-							<td>Sales Department</td>
-							<td>USE</td>
-							<td>
-								<button type="button" class="btn btn-light"><i class="fa fa-trash" aria-hidden="true"></i></button>
-							</td>
-					    </tr>
-						<tr>
-							<td>SALES</td>
-							<td>Sales Department</td>
-							<td>USE</td>
-							<td>
-								<button type="button" class="btn btn-light"><i class="fa fa-trash" aria-hidden="true"></i></button>
-							</td>
-					    </tr>
-					</tbody>
-				</table>
-				<div class="float-right">
-					<button type="button" class="btn btn-light">
-						<i class="fa fa-plus" aria-hidden="true"></i>
-						Add
-					</button>
-				</div>
-			</div>				
-		</div>
-		<!-- end of group -->
-
-		<!-- start of role -->
-		<div class="row">
-			<div class="col">
-				<h2>
-					<i class="fa fa-id-badge" aria-hidden="true"></i>
-					Roles
-					<small>List of Available Rules</small>
-				</h2>
-				<table class="table table-bordered">
-				  <thead>
-				    <tr>
-				      <th scope="col">First Name</th>
-				      <th scope="col">Last Name</th>
-				      <th scope="col">Username</th>
-				    </tr>
-				  </thead>
-				  <tbody>
-				    <tr>
-				      <td>Mark</td>
-				      <td>Otto</td>
-				      <td>@mdo</td>
-				    </tr>
-				    <tr>
-				      <td>Mark</td>
-				      <td>Otto</td>
-				      <td>@TwBootstrap</td>
-				    </tr>
-				    <tr>
-				      <td>Jacob</td>
-				      <td>Thornton</td>
-				      <td>@fat</td>
-				    </tr>
-				  </tbody>
-				</table>
-			</div>				
-		</div>
-		<!-- end of role -->
-		
-		<!-- start of privilege -->
-		<div class="row">
-			<div class="col">
-				<h2>
-					<i class="fa fa-barcode" aria-hidden="true"></i>
-					Privileges
-					<small>List of Available Privileges</small>
-				</h2>
-				<table class="table table-bordered">
-				  <thead>
-				    <tr>
-				      <th scope="col">#</th>
-				      <th scope="col">First Name</th>
-				      <th scope="col">Last Name</th>
-				      <th scope="col">Username</th>
-				    </tr>
-				  </thead>
-				  <tbody>
-				    <tr>
-				      <th scope="row">1</th>
-				      <td>Mark</td>
-				      <td>Otto</td>
-				      <td>@mdo</td>
-				    </tr>
-				    <tr>
-				      <th scope="row">2</th>
-				      <td>Mark</td>
-				      <td>Otto</td>
-				      <td>@TwBootstrap</td>
-				    </tr>
-				    <tr>
-				      <th scope="row">3</th>
-				      <td>Jacob</td>
-				      <td>Thornton</td>
-				      <td>@fat</td>
-				    </tr>
-				    <tr>
-				      <th scope="row">4</th>
-				      <td colspan="2">Larry the Bird</td>
-				      <td>@twitter</td>
-				    </tr>
-				  </tbody>
-				</table>
-			</div>				
-		</div>
-		<!-- end of privilege -->
-		
 	</div>
+	
 </div>
