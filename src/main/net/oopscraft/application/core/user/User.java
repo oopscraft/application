@@ -4,7 +4,7 @@ public class User {
 
 	String id;
 	String email;
-	String mobileNumber;
+	String mobile;
 	String name;
 	String nickname;
 	String password;
@@ -22,11 +22,11 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getMobileNumber() {
-		return mobileNumber;
+	public String getMobile() {
+		return mobile;
 	}
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 	public String getName() {
 		return name;

@@ -11,7 +11,7 @@
 	</page_setting>
 	<category_index>0</category_index>
 	<zoom>1.0</zoom>
-	<x>844</x>
+	<x>172</x>
 	<y>8</y>
 	<default_color>
 		<r>192</r>
@@ -168,7 +168,7 @@
 			</connections>
 			<display>false</display>
 			<creation_date>2017-10-29 03:10:09</creation_date>
-			<updated_date>2018-01-22 20:19:37</updated_date>
+			<updated_date>2018-01-24 02:38:43</updated_date>
 			<model_property>
 				<name>프로젝트명</name>
 				<value></value>
@@ -666,7 +666,7 @@
 			<char_semantics>false</char_semantics>
 			<description></description>
 			<logical_name>User Email</logical_name>
-			<physical_name>USR_EMAIL</physical_name>
+			<physical_name>USR_EMIL</physical_name>
 			<type>varchar(n)</type>
 		</word>
 		<word>
@@ -697,8 +697,8 @@
 			<args></args>
 			<char_semantics>false</char_semantics>
 			<description></description>
-			<logical_name>User Mobile Number</logical_name>
-			<physical_name>USR_MOB_NO</physical_name>
+			<logical_name>User Mobile</logical_name>
+			<physical_name>USR_MOBL</physical_name>
 			<type>varchar(n)</type>
 		</word>
 		<word>

@@ -7,8 +7,8 @@
 
     <resultMap id="user" type="net.oopscraft.application.core.user.User">
         <result column="USR_ID" property="id"/>
-        <result column="USR_EMAIL" property="email"/>
-        <result column="USR_MOB_NO" property="mobileNumber"/>
+        <result column="USR_EMIL" property="email"/>
+        <result column="USR_MOBL" property="mobile"/>
         <result column="USR_NM" property="name"/>
         <result column="USR_NICK" property="nickname"/>
         <result column="USR_PWD" property="password"/>
@@ -26,8 +26,8 @@
 	<select id="selectUserList" resultMap="user">
 		<![CDATA[
 		SELECT 	 AUI.USR_ID
-				,AUI.USR_EMAIL
-				,AUI.USR_MOB_NO
+				,AUI.USR_EMIL
+				,AUI.USR_MOBL
 				,AUI.USR_NM
 				,AUI.USR_NICK
 				,AUI.USR_PWD
@@ -48,8 +48,8 @@
 	<select id="selectUser" resultMap="user">
 		<![CDATA[
 		SELECT 	 AUI.USR_ID
-				,AUI.USR_EMAIL
-				,AUI.USR_MOB_NO
+				,AUI.USR_EMIL
+				,AUI.USR_MOBL
 				,AUI.USR_NM
 				,AUI.USR_NICK
 				,AUI.USR_PWD
@@ -63,8 +63,8 @@
 		<![CDATA[
 		INSERT INTO APP_USR_INF (
 			 USR_ID
-			,USR_EMAIL
-			,USR_MOB_NO
+			,USR_EMIL
+			,USR_MOBL
 			,USR_NM
 			,USR_NICK
 			,USR_PWD
@@ -72,7 +72,7 @@
 		) VALUES (
 			 #{id}
 			,#{email}
-			,#{mobileNumber}
+			,#{mobile}
 			,#{name}
 			,#{nickname}
 			,#{password}
@@ -84,8 +84,8 @@
 	<update id="updateUser">
 		<![CDATA[
 		UPDATE	APP_USR_INF
-		SET 	 USR_EMAIL = #{email}
-				,USR_MOB_NO = #{mobileNumber}
+		SET 	 USR_EMIL = #{email}
+				,USR_MOBL = #{mobile}
 				,USR_NM = #{name}
 				,USR_NICK = #{nickname}
 				,USR_PWD = #{password}

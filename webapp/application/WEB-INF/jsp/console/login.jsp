@@ -176,7 +176,7 @@
 								<input type="text" class="form-control" id="captcha" placeholder="Anwser is...">
 							</div>
 							<div class="input-group mb-2 mb-sm-0" style="margin:1px;">
-								<button type="button" class="btn btn-primary btn-lg" style="width:100%;" onclick="javascript:doLogin();">
+								<button type="button" class="btn btn-primary" style="width:100%; height:35px;" onclick="javascript:doLogin();">
 									Login
 								</button>
 							</div>

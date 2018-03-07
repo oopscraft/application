@@ -53,7 +53,7 @@ public class LoginController {
 	@RequestMapping(value="/isCaptchaRequired", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> isCaptchaRequired() throws Exception {
 		boolean captchaRequired = false;
-		if(getLoginFailCount() >= 3) {
+		if(getLoginFailCount() >= 2) {
 			captchaRequired = true;
 		}
 		return new ResponseEntity<>(captchaRequired, HttpStatus.OK);
@@ -94,7 +94,7 @@ public class LoginController {
 		HttpSession session = request.getSession(true);
 		
 		// checks valid CAPTCHA answer
-		if(getLoginFailCount() >= 3) {
+		if(getLoginFailCount() >= 2) {
 			if(!captcha.equals(session.getAttribute("captcha"))){
 				return new ResponseEntity<>("CAPTCHA Answer is Incorrect.", HttpStatus.UNAUTHORIZED);
 			}

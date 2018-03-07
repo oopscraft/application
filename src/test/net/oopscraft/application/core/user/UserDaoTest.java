@@ -32,7 +32,7 @@ public class UserDaoTest extends ApplicationTest {
 			User user = new User();
 			user.setId("test");
 			user.setEmail("test@email.com");
-			user.setMobileNumber("01012341234");
+			user.setMobile("01012341234");
 			user.setName("Tester");
 			user.setNickname("Tester");
 			user.setPassword("password");
