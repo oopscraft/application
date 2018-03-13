@@ -46,7 +46,7 @@ public class LoginController {
 	
 	@RequestMapping(value="", method=RequestMethod.GET) 
 	public ModelAndView get() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("console/login.jsp");
+		ModelAndView modelAndView = new ModelAndView("console/Login.jsp");
 		return modelAndView;
 	}
 	

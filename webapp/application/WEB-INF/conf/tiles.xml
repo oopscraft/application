@@ -6,8 +6,8 @@
 <tiles-definitions>
 	
 	<!-- console layout -->
-    <definition name="console/*.tiles" template="/WEB-INF/jsp/console/__console__.jsp">
-        <put-attribute name="body" value="/WEB-INF/jsp/console/{1}.jsp" />
+    <definition name="console/*.tiles" template="/WEB-INF/jsp/console/__Console__.jsp">
+        <put-attribute name="main" value="/WEB-INF/jsp/console/{1}.jsp" />
     </definition>
     
     

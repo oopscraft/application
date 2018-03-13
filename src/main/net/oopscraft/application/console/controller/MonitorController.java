@@ -18,7 +18,7 @@ public class MonitorController {
 	
 	@RequestMapping(value="")
 	public ModelAndView getMonitor() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("console/monitor.tiles");
+		ModelAndView modelAndView = new ModelAndView("console/Monitor.tiles");
 		return modelAndView;
 	}
 
