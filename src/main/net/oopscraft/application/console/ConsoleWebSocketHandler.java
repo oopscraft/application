@@ -24,20 +24,8 @@ public class ConsoleWebSocketHandler extends WebSocketHandler {
 	
 	enum Id { jmxInfoHistory, jmxInfo }
 	
-	private static BlockingQueue<String> messageQueue = new LinkedBlockingQueue<String>();
-	Thread messageThread = new Thread(new Runnable() {
-		@Override
-		public void run() {
-			while(!Thread.interrupted()) {
-				try {
-					String message = messageQueue.take();
-					broadcastMessage(message);
-				}catch(Exception e) {
-					LOG.warn(e.getMessage(), e);
-				}
-			}
-		}
-	});
+	private static BlockingQueue<String> messageQueue = null;
+	Thread messageThread = null;
 	
 	/**
 	 * sendMessage
@@ -51,6 +39,20 @@ public class ConsoleWebSocketHandler extends WebSocketHandler {
 	@Override
 	public void onCreate() {
 		LOG.info("onCreate");
+		messageQueue = new LinkedBlockingQueue<String>();
+		messageThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while(!Thread.interrupted()) {
+					try {
+						String message = messageQueue.take();
+						broadcastMessage(message);
+					}catch(Exception e) {
+						LOG.warn(e.getMessage(), e);
+					}
+				}
+			}
+		});
 		messageThread.setDaemon(true);
 		messageThread.start();
 		

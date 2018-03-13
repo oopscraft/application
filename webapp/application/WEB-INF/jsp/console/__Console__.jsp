@@ -37,6 +37,9 @@
 			font-family: sans-serif, Dotum;
 			font-size: 0.9375rem;
 		}
+		header {
+			border-bottom: groove 1px #efefef;
+		}
 		h1 {
 			font-size: 1.5rem;
 			padding-top: 1rem;
