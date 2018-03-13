@@ -6,6 +6,9 @@
 <!-- global -->
 <script type="text/javascript">
 
+/* Data Structure */
+var threadInfoList = new juice.data.List();
+
 /* Chart Elements */
 var osInfoChart = null;
 var memInfoChart = null;
@@ -168,11 +171,16 @@ var webSocketClient = new juice.util.WebSocketClient(wsProtocol + '//' + locatio
  webSocketClient.onMessage(function(e){
 	var dataJson = JSON.parse(e.data);
 	console.log(dataJson);
-	printOsInfo(dataJson.osInfo);
-	printMemInfo(dataJson.memInfo);
-	printDiskInfo(dataJson.diskInfo);
-	printClassInfo(dataJson.classInfo);
-	printThreadInfoList(dataJson.threadInfoList);
+	
+	if(dataJson.id == 'jmxInfo'){
+		var result = dataJson.result;
+		
+//		printOsInfo(result.osInfo);
+//		printMemInfo(result.memInfo);
+//		printDiskInfo(result.diskInfo);
+//		printClassInfo(result.classInfo);
+		threadInfoList.fromJson(result.threadInfoList);
+	}
 });
 webSocketClient.open();
 
@@ -276,8 +284,14 @@ function printClassInfo(classInfo){
  * printThreadInfoList
  */
 function printThreadInfoList(threadInfoList){
+	
+	threadInfoList.fromJson(threadInfoList);
+	
 	var threadInfoListTable = new JsonTable(threadInfoList);
 	var threadInfoListContainer = $('#threadInfoListContainer');
+	
+	
+	
 	threadInfoListContainer.empty();
 	threadInfoListTable.draw(threadInfoListContainer,'table table-bordered');	
 }
@@ -330,6 +344,30 @@ function printThreadInfoList(threadInfoList){
 				<i class="fa fa-th-list" aria-hidden="true"></i>
 				Thread Information
 			</h2>
+			<table data-juice="Grid" data-juice-bind="threadInfoList" data-juice-item="threadInfo">
+				<thead>
+					<tr>
+						<th>Thread ID</th>
+						<th>Thread Name</th>
+						<th>Thread State</th>
+						<th>Wait Count</th>
+						<th>Wait Time</th>
+						<th>Block Count</th>
+						<th>Block Time</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><label data-juice="Label" data-juice-bind="threadInfo.threadId"></label></td>
+						<td><label data-juice="Label" data-juice-bind="threadInfo.threadName"></label></td>
+						<td><label data-juice="Label" data-juice-bind="threadInfo.threadState"></label></td>
+						<td><label data-juice="Label" data-juice-bind="threadInfo.waitedCount"></label></td>
+						<td><label data-juice="Label" data-juice-bind="threadInfo.waitedTime"></label></td>
+						<td><label data-juice="Label" data-juice-bind="threadInfo.blockCount"></label></td>
+						<td><label data-juice="Label" data-juice-bind="threadInfo.blockTime"></label></td>
+					</tr>
+				</tbody>
+			</table>
 			<div id="threadInfoListContainer"></div>
 		</div>
 	</div>

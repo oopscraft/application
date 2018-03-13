@@ -12,18 +12,20 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import net.oopscraft.application.core.JmxInfo;
+import net.oopscraft.application.core.JmxMonitor;
+import net.oopscraft.application.core.JmxMonitorListener;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.WebSocketHandler;
-import net.oopscraft.application.core.monitor.MonitorDaemon;
 
 
 public class ConsoleWebSocketHandler extends WebSocketHandler {
 	
 	private static final Log LOG = LogFactory.getLog(ConsoleWebSocketHandler.class);
-	
-	enum Id { jmxInfoHistory, jmxInfo }
-	
+	enum Id { 
+		 jmxInfoHistory 
+		,jmxInfo 
+	};
 	private static BlockingQueue<String> messageQueue = null;
 	Thread messageThread = null;
 	
@@ -39,6 +41,8 @@ public class ConsoleWebSocketHandler extends WebSocketHandler {
 	@Override
 	public void onCreate() {
 		LOG.info("onCreate");
+		
+		// Creates message queue and consumer thread.
 		messageQueue = new LinkedBlockingQueue<String>();
 		messageThread = new Thread(new Runnable() {
 			@Override
@@ -56,9 +60,21 @@ public class ConsoleWebSocketHandler extends WebSocketHandler {
 		messageThread.setDaemon(true);
 		messageThread.start();
 		
-		// creates monitorDaemon instance
+		// creates JmxMonitor instance
 		try {
-			MonitorDaemon.getInstance();
+			JmxMonitor.intialize(3, 10);
+			JmxMonitor jmxMonitor = JmxMonitor.getInstance();
+			jmxMonitor.addListener(new JmxMonitorListener() {
+				@Override
+				public void onCheck(JmxInfo jmxInfo, List<JmxInfo> jmxInfoHistory) throws Exception {
+					ValueMap messageMap = new ValueMap();
+					messageMap.set("id", Id.jmxInfo);
+					messageMap.set("result", convertJmxInfoToMap(jmxInfo));				
+					String message = JsonConverter.convertObjectToJson(messageMap);
+					broadcastMessage(message);
+				}
+				
+			});
 		}catch(Exception e) {
 			LOG.warn(e.getMessage(), e);
 		}
@@ -83,20 +99,25 @@ public class ConsoleWebSocketHandler extends WebSocketHandler {
 	@Override
 	public void onMessage(WebSocketSession session, TextMessage message) {
 		LOG.info("onMessage");
-		this.sendMessage(session, message.getPayload());
 		try {
 			ValueMap messageMap = JsonConverter.convertJsonToObject(message.getPayload(), ValueMap.class);
 			Id id = Id.valueOf(messageMap.getString("id"));
+			Object result = null;
 			switch(id) {
 			case jmxInfoHistory :
-				messageMap.set("result", getJmxInfoHistoryResult());
+				List<ValueMap> list = new ArrayList<ValueMap>();
+				for(JmxInfo jmxInfo : JmxMonitor.getInstance().getJmxInfoHistory()) {
+					list.add(convertJmxInfoToMap(jmxInfo));
+				}
+				result = list;
 			break;
 			case jmxInfo :
-				messageMap.set("result", getJmxInfoResult());
+				result = convertJmxInfoToMap(JmxMonitor.getInstance().getLastestJmxInfo());
 			break;
 			default :
 			break;
 			}
+			messageMap.set("result", result);
 			String response = JsonConverter.convertObjectToJson(messageMap);
 			this.sendMessage(session, response);
 		}catch(Exception ignore) {
@@ -104,19 +125,7 @@ public class ConsoleWebSocketHandler extends WebSocketHandler {
 			this.sendMessage(session, ignore.getMessage());
 		}
 	}
-	
-	private Object getJmxInfoHistoryResult() throws Exception {
-		List<ValueMap> list = new ArrayList<ValueMap>();
-		for(JmxInfo jmxInfo : MonitorDaemon.getInstance().getJmxInfoHistory()) {
-			list.add(convertJmxInfoToMap(jmxInfo));
-		}
-		return list;
-	}
-	
-	private ValueMap getJmxInfoResult() throws Exception {
-		return convertJmxInfoToMap(MonitorDaemon.getInstance().getLastestJmxInfo());
-	}
-	
+
 	private ValueMap convertJmxInfoToMap(JmxInfo jmxInfo) throws Exception {
 		ValueMap jmxInfoMap = new ValueMap();
 		jmxInfoMap.set("osInfo", jmxInfo.getOsInfo());
