@@ -344,6 +344,7 @@ function printThreadInfoList(threadInfoList){
 				<i class="fa fa-th-list" aria-hidden="true"></i>
 				Thread Information
 			</h2>
+			<div id="threadInfoListContainer">
 			<table data-juice="Grid" data-juice-bind="threadInfoList" data-juice-item="threadInfo">
 				<thead>
 					<tr>
@@ -368,7 +369,7 @@ function printThreadInfoList(threadInfoList){
 					</tr>
 				</tbody>
 			</table>
-			<div id="threadInfoListContainer"></div>
+			</div>
 		</div>
 	</div>
 </div>
