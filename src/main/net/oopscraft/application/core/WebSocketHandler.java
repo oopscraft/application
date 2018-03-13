@@ -33,23 +33,54 @@ public abstract class WebSocketHandler extends TextWebSocketHandler {
 	} 
 	
 	@Override
-	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+	public final void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		LOG.debug(String.format("afterConnectionEstablished(%s)", session));
 		sessionList.add(session);
 		onConnect(session);
 	}
 	
 	@Override
-	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+	public final void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		LOG.debug(String.format("afterConnectionClosed(%s,%s)", session, status));
 		sessionList.remove(session);
 		onClose(session, status);
 	}
 
 	@Override
-	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+	protected final void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		onMessage(session, message);
 	}
+	
+	/**
+	 * sendMessage
+	 * @param session
+	 * @param message
+	 */
+	protected final void sendMessage(WebSocketSession session, String message) {
+		try {
+			TextMessage textMessage = new TextMessage(message);
+			session.sendMessage(textMessage);
+		}catch(Exception ignore) {
+			LOG.warn(ignore.getMessage());
+		}
+	}
+	
+	/**
+	 * broadcastMessage
+	 * @param message
+	 * @throws Exception
+	 */
+	protected final void broadcastMessage(String message) {
+		TextMessage textMessage = new TextMessage(message);
+		for(WebSocketSession session : sessionList) {
+			try {
+				session.sendMessage(textMessage);
+			}catch(Exception ignore) {
+				LOG.warn(ignore.getMessage());
+			}
+		}
+	}
+	
 
 	/**
 	 * onCreate
@@ -80,30 +111,5 @@ public abstract class WebSocketHandler extends TextWebSocketHandler {
 	 * @param message
 	 */
 	public abstract void onMessage(WebSocketSession session, TextMessage message);
-	
-	protected void sendMessage(WebSocketSession session, String message) {
-		try {
-			TextMessage textMessage = new TextMessage(message);
-			session.sendMessage(textMessage);
-		}catch(Exception ignore) {
-			LOG.warn(ignore.getMessage());
-		}
-	}
-	
-	/**
-	 * broadcast
-	 * @param message
-	 * @throws Exception
-	 */
-	protected void broadcastMessage(String message) {
-		TextMessage textMessage = new TextMessage(message);
-		for(WebSocketSession session : sessionList) {
-			try {
-				session.sendMessage(textMessage);
-			}catch(Exception ignore) {
-				LOG.warn(ignore.getMessage());
-			}
-		}
-	}
 
 }
