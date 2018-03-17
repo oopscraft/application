@@ -1,5 +1,7 @@
 package net.oopscraft.application.core.user;
 
+import java.util.Date;
+
 public class User {
 
 	String id;
@@ -8,7 +10,11 @@ public class User {
 	String name;
 	String nickname;
 	String password;
-	String useYn;
+	String image;
+	String message;
+	String description;
+	String statusCode;
+	Date joinDate;
 	
 	public String getId() {
 		return id;
@@ -46,11 +52,35 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getUseYn() {
-		return useYn;
+	public String getImage() {
+		return image;
 	}
-	public void setUseYn(String useYn) {
-		this.useYn = useYn;
+	public void setImage(String image) {
+		this.image = image;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getStatusCode() {
+		return statusCode;
+	}
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
+	}
+	public Date getJoinDate() {
+		return joinDate;
+	}
+	public void setJoinDate(Date joinDate) {
+		this.joinDate = joinDate;
 	}
 
 }

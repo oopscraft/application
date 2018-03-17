@@ -10,11 +10,18 @@ public interface UserDao {
 
 	public User selectUser(@Param("id")String id) throws Exception;
 	
-	public int insertUser(User user) throws Exception;
+	public int insertUser(@Param("user")User user) throws Exception;
 	
-	public int updateUser(User user) throws Exception;
+	public int updateUser(@Param("user")User user) throws Exception;
 	
-	public int deleteUser(User user) throws Exception;
+	public int deleteUser(@Param("id")String id) throws Exception;
+	
+	public List<Group> selectUserGroupList(@Param("user")User user) throws Exception;
+	
+	
+	
+	
+	
 	
 	public List<Group> selectGroupList() throws Exception;
 	

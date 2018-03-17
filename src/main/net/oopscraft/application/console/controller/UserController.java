@@ -14,13 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonConverter;
-import net.oopscraft.application.core.ValueMap;
+import net.oopscraft.application.core.user.Group;
 import net.oopscraft.application.core.user.User;
 import net.oopscraft.application.core.user.UserDao;
 import net.oopscraft.application.core.user.UserManager;
@@ -38,45 +39,103 @@ public class UserController {
 
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public ModelAndView user() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("console/user.tiles");
+		ModelAndView modelAndView = new ModelAndView("console/User.tiles");
 		return modelAndView;
 	}
-	
+
+	/**
+	 * getUserList
+	 * @param key
+	 * @param value
+	 * @param rows
+	 * @param page
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value="/getUserList", method=RequestMethod.GET, produces="application/json")
-	//@Transactional
 	public ResponseEntity<?> getUserList(
-			 @RequestParam(value="key",required=false)String key
-			,@RequestParam(value="value",required=false)String value
-			,@RequestParam(value="rows",defaultValue="20")Integer rows
-			,@RequestParam(value="page",defaultValue="1")Integer page
+		 @RequestParam(value="key",required=false)String key
+		,@RequestParam(value="value",required=false)String value
+		,@RequestParam(value="rows",defaultValue="30")Integer rows
+		,@RequestParam(value="page",defaultValue="1")Integer page
 	) throws Exception {
-		try {
-			UserManager userManager = new UserManager();
-			User user = new User();
-			if("id".equals(key)) {
-				user.setId(value);
-			}else if("email".equals(key)) {
-				user.setEmail(value);
-			}else if("mobile".equals(key)) {
-				user.setMobile(value);
-			}else if("name".equals(key)) {
-				user.setName(value);
-			}else if("nickname".equals(key)) {
-				user.setNickname(value);
-			}
-			List<User> userList = userManager.getUserList(user, 20, 1);
-			return new ResponseEntity<>(JsonConverter.convertObjectToJson(userList), HttpStatus.OK);
-		}catch(Exception e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		UserManager userManager = new UserManager();
+		User user = new User();
+		if("id".equals(key)) {
+			user.setId(value);
+		}else if("email".equals(key)) {
+			user.setEmail(value);
+		}else if("mobile".equals(key)) {
+			user.setMobile(value);
+		}else if("name".equals(key)) {
+			user.setName(value);
+		}else if("nickname".equals(key)) {
+			user.setNickname(value);
 		}
+		List<User> userList = userManager.getUserList(user, rows, page);
+		return new ResponseEntity<>(JsonConverter.convertObjectToJson(userList), HttpStatus.OK);
 	}
 	
+	/**
+	 * getUser
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value="/getUser", method=RequestMethod.GET, produces="application/json")
 	public ResponseEntity<?> getUser(
-			 @RequestParam(value="id")String id
+		 @RequestParam(value="id")String id
 	) throws Exception {
 		UserManager userManager = new UserManager();
 		User user = userManager.getUser(id);
+		return new ResponseEntity<>(JsonConverter.convertObjectToJson(user), HttpStatus.OK);
+	}
+	
+	/**
+	 * getUserGroupList
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/getUserGroupList", method=RequestMethod.GET, produces="application/json")
+	public ResponseEntity<?> getUserGroupList(
+		@RequestParam(value="id")String id
+	) throws Exception {
+		UserManager userManager = new UserManager();
+		User user = new User();
+		user.setId(id);
+		List<Group> userGroupList = userManager.getUserGroupList(user);
+		return new ResponseEntity<>(JsonConverter.convertObjectToJson(userGroupList), HttpStatus.OK);
+	}
+
+	/**
+	 * saveUser
+	 * @param payload
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/saveUser", method=RequestMethod.POST, produces="application/json")
+	public ResponseEntity<?> saveUser(
+		@RequestBody String payload
+	) throws Exception {
+		User user = JsonConverter.convertJsonToObject(payload, User.class);
+		UserManager userManager = new UserManager();
+		user = userManager.saveUser(user);
+		return new ResponseEntity<>(JsonConverter.convertObjectToJson(user), HttpStatus.OK);
+	}
+	
+	/**
+	 * removeUser
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/removeUser", method=RequestMethod.POST, produces="application/json")
+	public ResponseEntity<?> removeUser(
+		@RequestParam(value="id")String id
+	) throws Exception {
+		UserManager userManager = new UserManager();
+		User user = userManager.removeUser(id);
 		return new ResponseEntity<>(JsonConverter.convertObjectToJson(user), HttpStatus.OK);
 	}
 	
