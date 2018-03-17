@@ -4,9 +4,9 @@ public class Group {
 	
 	String id;
 	String upperId;
-	int sortSeq;
 	String name;
 	String description;
+	int sortSeq;
 	
 	public String getId() {
 		return id;

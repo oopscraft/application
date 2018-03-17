@@ -6,40 +6,70 @@
 <mapper namespace="net.oopscraft.application.core.user.UserDao">
 
     <resultMap id="user" type="net.oopscraft.application.core.user.User">
-        <result column="USR_ID" property="id"/>
-        <result column="USR_EMIL" property="email"/>
-        <result column="USR_MOBL" property="mobile"/>
-        <result column="USR_NM" property="name"/>
-        <result column="USR_NICK" property="nickname"/>
-        <result column="USR_PWD" property="password"/>
-        <result column="USE_YN" property="useYn"/>
+        <result column="user_id" property="id"/>
+        <result column="user_email" property="email"/>
+        <result column="user_mobile" property="mobile"/>
+        <result column="user_name" property="name"/>
+        <result column="user_nick" property="nickname"/>
+        <result column="user_pwd" property="password"/>
+        <result column="user_img" property="image"/>
+        <result column="user_msg" property="message"/>
+        <result column="user_desc" property="description"/>
+        <result column="user_stat_cd" property="statusCode"/>
+        <result column="user_join_dtm" property="joinDate"/>
     </resultMap>
     
     <resultMap id="group" type="net.oopscraft.application.core.user.Group">
-    	<result column="GRP_ID" property="id"/>
-    	<result column="UPPR_GRP_ID" property="upperId"/>
-    	<result column="SORT_SEQ" property="sortSeq"/>
-    	<result column="GRP_NM" property="name"/>
-		<result column="GRP_DESC" property="description"/>
+    	<result column="group_id" property="id"/>
+    	<result column="upper_group_id" property="upperId"/>
+		<result column="group_name" property="name"/>
+		<result column="group_desc" property="description"/>
+		<result column="sort_seq" property="sortSeq"/>
     </resultMap>
 
 	<select id="selectUserList" resultMap="user">
 		<![CDATA[
-		SELECT 	 AUI.USR_ID
-				,AUI.USR_EMIL
-				,AUI.USR_MOBL
-				,AUI.USR_NM
-				,AUI.USR_NICK
-				,AUI.USR_PWD
-				,AUI.USE_YN
-		FROM 	APP_USR_INF AUI
+		SELECT 	 user_id
+				,user_email
+				,user_mobile
+				,user_name
+				,user_nick
+				,user_pwd
+				,user_img
+				,user_msg
+				,user_desc
+				,user_stat_cd
+				,user_join_dtm
+		FROM 	app_user_info
+		WHERE 	1 = 1
 		]]>
 		<if test="user.id != null and user.id != ''">
 		<![CDATA[
-		WHERE 	AUI.USR_ID LIKE '%'||#{user.id}||'%'
+		AND 	user_id LIKE CONCAT(#{user.id},'%')
+		]]>
+		</if>
+		<if test="user.email != null and user.email != ''">
+		<![CDATA[
+		AND 	user_email LIKE #{user.email}||'%'
+		]]>
+		</if>
+		<if test="user.mobile != null and user.mobile != ''">
+		<![CDATA[
+		AND 	user_mobile LIKE #{user.mobile}||'%'
+		]]>
+		</if>
+		<if test="user.name != null and user.name != ''">
+		<![CDATA[
+		AND 	user_name LIKE #{user.email}||'%'
+		]]>
+		</if>
+		<if test="user.nickname != null and user.nickname != ''">
+		<![CDATA[
+		AND 	user_nick LIKE #{user.nickname}||'%'
 		]]>
 		</if>
 		<![CDATA[
+		AND 	sys_delete_yn = 'N'
 		LIMIT 	${rows}
 		OFFSET 	${(page-1)*rows}
 		]]>
@@ -47,60 +77,105 @@
 	
 	<select id="selectUser" resultMap="user">
 		<![CDATA[
-		SELECT 	 AUI.USR_ID
-				,AUI.USR_EMIL
-				,AUI.USR_MOBL
-				,AUI.USR_NM
-				,AUI.USR_NICK
-				,AUI.USR_PWD
-				,AUI.USE_YN
-		FROM 	APP_USR_INF AUI
-		WHERE 	AUI.USR_ID = #{id}
+		SELECT 	 user_id
+				,user_email
+				,user_mobile
+				,user_name
+				,user_nick
+				,user_pwd
+				,user_img
+				,user_msg
+				,user_desc
+				,user_stat_cd
+				,user_join_dtm
+		FROM 	app_user_info
+		WHERE 	user_id = #{id}
 		]]>
 	</select>
 	
 	<insert id="insertUser">
 		<![CDATA[
-		INSERT INTO APP_USR_INF (
-			 USR_ID
-			,USR_EMIL
-			,USR_MOBL
-			,USR_NM
-			,USR_NICK
-			,USR_PWD
-			,USE_YN
+		INSERT INTO app_user_info (
+ 				 user_id
+ 				,sys_insert_dtm
+ 				,sys_delete_yn
+				,user_email
+				,user_mobile
+				,user_name
+				,user_nick
+				,user_pwd
+				,user_img
+				,user_msg
+				,user_desc
+				,user_stat_cd
+				,user_join_dtm
 		) VALUES (
-			 #{id}
-			,#{email}
-			,#{mobile}
-			,#{name}
-			,#{nickname}
-			,#{password}
-			,#{useYn}
+ 				 #{user.id}
+ 				,NOW()
+ 				,'N'
+				,#{user.email}
+				,#{user.mobile}
+				,#{user.name}
+				,#{user.nickname}
+				,#{user.password}
+				,#{user.image}
+				,#{user.message}
+				,#{user.description}
+				,#{user.statusCode}
+				,#{user.joinDate}
 		)
 		]]>
 	</insert>
 	
 	<update id="updateUser">
 		<![CDATA[
-		UPDATE	APP_USR_INF
-		SET 	 USR_EMIL = #{email}
-				,USR_MOBL = #{mobile}
-				,USR_NM = #{name}
-				,USR_NICK = #{nickname}
-				,USR_PWD = #{password}
-				,USE_YN = #{useYn}
-		WHERE	USR_ID = #{id}
+		UPDATE 	app_user_info
+		SET		 sys_update_dtm = NOW()
+				,user_email = #{user.email}
+				,user_mobile = #{user.mobile}
+				,user_name = #{user.name}
+				,user_nick = #{user.nickname}
+				,user_pwd = #{user.password}
+				,user_img = #{user.image}
+				,user_msg = #{user.message}
+				,user_desc = #{user.description}
+				,user_stat_cd = #{user.statusCode}
+				,user_join_dtm = #{user.joinDate}
+		WHERE 	user_id = #{user.id}
 		]]>
 	</update>
 
 	<delete id="deleteUser">
 		<![CDATA[
-		DELETE
-		FROM 	APP_USR_INF
-		WHERE 	USR_ID = #{id}
+		UPDATE 	app_user_info
+		SET 	 sys_update_dtm = NOW()
+				,sys_delete_yn = 'Y'
+		WHERE 	user_id = #{id}
 		]]>
 	</delete>
+	
+	<select id="selectUserGroupList" resultMap="group">
+		<![CDATA[
+		SELECT 	 b.group_id
+				,b.upper_group_id
+				,b.group_name
+				,b.group_desc
+				,b.sort_seq
+		FROM 	app_user_group_map a
+		LEFT OUTER JOIN 
+				app_group_info b
+		ON 		b.group_id = a.group_id
+		WHERE 	a.user_id = #{user.id}
+		]]>
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	<select id="selectGroupList" resultMap="group">
 		<![CDATA[

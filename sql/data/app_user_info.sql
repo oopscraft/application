@@ -1,0 +1,5 @@
+-- Application User Information
+INSERT INTO app_user_info (user_id, sys_insert_dtm, sys_update_dtm, sys_delete_yn, user_email, user_mobile, user_name, user_nick, user_pwd, user_img, user_msg, user_desc, user_stat_cd, user_join_dtm) VALUES ('test1', '0001-01-01', '0001-01-01', 'N', 'test1@oopcraft.net', '010-1234-1234', 'James AndersonJames Anderson', 'Apple7', '0FFE1ABD1A08215353C233D6E009613E95EEC4253832A761AF28FF37AC5A150C0FFE1ABD1A08215353C233D6E009613E95EEC4253832A761AF28FF37AC5A150C', '', '', '', 'A', '0001-01-01');
+INSERT INTO app_user_info (user_id, sys_insert_dtm, sys_update_dtm, sys_delete_yn, user_email, user_mobile, user_name, user_nick, user_pwd, user_img, user_msg, user_desc, user_stat_cd, user_join_dtm) VALUES ('test2', '0001-01-01', '0001-01-01', 'N', 'test2@oopscraft.net', '010-4321-4321', 'David Johnson', 'Orange1', '0FFE1ABD1A08215353C233D6E009613E95EEC4253832A761AF28FF37AC5A150C0FFE1ABD1A08215353C233D6E009613E95EEC4253832A761AF28FF37AC5A150C0FFE1ABD1A08215353C233D6E009613E95EEC4253832A761AF28FF37AC5A150C0FFE1ABD1A08215353C233D6E009613E95EEC4253832A761AF28FF37AC5A150C', '', '', '', 'A', '0001-01-01');
+
+

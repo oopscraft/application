@@ -1,5 +1,25 @@
 SET SESSION FOREIGN_KEY_CHECKS=0;
 
+/* Drop Tables */
+
+DROP TABLE IF EXISTS APP_CODE_ITEM_CD;
+DROP TABLE IF EXISTS CORE_TAB_CODE_REL;
+DROP TABLE IF EXISTS APP_CODE_INF;
+DROP TABLE IF EXISTS APP_GRP_ROLE_REL;
+DROP TABLE IF EXISTS app_user_group_map;
+DROP TABLE IF EXISTS app_group_info;
+DROP TABLE IF EXISTS APP_MENU_ROLE_REL;
+DROP TABLE IF EXISTS APP_MENU_INF;
+DROP TABLE IF EXISTS APP_ROLE_PRVL_REL;
+DROP TABLE IF EXISTS APP_PRVL;
+DROP TABLE IF EXISTS APP_USR_ROLE_REL;
+DROP TABLE IF EXISTS APP_ROLE_INF;
+DROP TABLE IF EXISTS app_user_prop_val;
+DROP TABLE IF EXISTS app_user_info;
+DROP TABLE IF EXISTS app_user_prop_cd;
+
+
+
 
 /* Create Tables */
 
@@ -10,7 +30,7 @@ CREATE TABLE APP_CODE_INF
 	CODE_NAME varchar(256) NOT NULL COMMENT 'Code Name',
 	CODE_DESC text COMMENT 'Code Description',
 	PRIMARY KEY (CODE_ID)
-) COMMENT = 'Application Code';
+) ENGINE = InnoDB COMMENT = 'Application Code' DEFAULT CHARACTER SET utf8;
 
 
 -- Application Code Item
@@ -21,28 +41,31 @@ CREATE TABLE APP_CODE_ITEM_CD
 	ITEM_NAME text COMMENT 'Item Name',
 	ITEM_DESC text COMMENT 'Item Description',
 	PRIMARY KEY (CODE_ID, ITEM_CD(null))
-) COMMENT = 'Application Code Item';
+) ENGINE = InnoDB COMMENT = 'Application Code Item' DEFAULT CHARACTER SET utf8;
 
 
--- Appliation Group
-CREATE TABLE APP_GRP_INF
+-- Applition Group Information
+CREATE TABLE app_group_info
 (
-	GRP_ID varchar(32) NOT NULL COMMENT 'Group ID',
-	UPPR_GRP_ID varchar(32) COMMENT 'Upper Group ID',
-	SORT_SEQ int COMMENT 'Sort Sequence',
-	GRP_NM varchar(256) COMMENT 'Group Name',
-	GRP_DESC text COMMENT 'Group Description',
-	PRIMARY KEY (GRP_ID)
-) COMMENT = 'Appliation Group';
+	group_id varchar(32) NOT NULL COMMENT 'Group ID',
+	sys_insert_dtm datetime COMMENT 'System Insert Datetime',
+	sys_update_dtm datetime COMMENT 'System Update Datetime',
+	sys_delete_yn varchar(1) COMMENT 'System Delete or Not',
+	upper_group_id varchar(32) COMMENT 'Upper Group ID',
+	group_name varchar(256) COMMENT 'Group Name',
+	group_desc text COMMENT 'Group Description',
+	sort_seq int COMMENT 'Sort Sequence',
+	PRIMARY KEY (group_id)
+) ENGINE = InnoDB COMMENT = 'Applition Group Information' DEFAULT CHARACTER SET utf8;
 
 
 -- Application Group Roles
 CREATE TABLE APP_GRP_ROLE_REL
 (
-	GRP_ID varchar(32) NOT NULL COMMENT 'Group ID',
+	group_id varchar(32) NOT NULL COMMENT 'Group ID',
 	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
-	PRIMARY KEY (GRP_ID, ROLE_ID)
-) COMMENT = 'Application Group Roles';
+	PRIMARY KEY (group_id, ROLE_ID)
+) ENGINE = InnoDB COMMENT = 'Application Group Roles' DEFAULT CHARACTER SET utf8;
 
 
 -- Application Menu
@@ -55,7 +78,7 @@ CREATE TABLE APP_MENU_INF
 	menu_description text COMMENT '메뉴_내용',
 	role_need_yn text COMMENT '롤_필요_여부',
 	PRIMARY KEY (menu_id)
-) COMMENT = 'Application Menu';
+) ENGINE = InnoDB COMMENT = 'Application Menu' DEFAULT CHARACTER SET utf8;
 
 
 -- 공통_메뉴_롤_관계
@@ -64,7 +87,7 @@ CREATE TABLE APP_MENU_ROLE_REL
 	menu_id varchar(0) NOT NULL COMMENT '메뉴_아이디',
 	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
 	PRIMARY KEY (menu_id, ROLE_ID)
-) COMMENT = '공통_메뉴_롤_관계';
+) ENGINE = InnoDB COMMENT = '공통_메뉴_롤_관계' DEFAULT CHARACTER SET utf8;
 
 
 -- Application Privilege
@@ -74,7 +97,7 @@ CREATE TABLE APP_PRVL
 	PRVL_NAME varchar(256) COMMENT 'Privilege Name',
 	PRVL_DESC text COMMENT 'Privilege Description',
 	PRIMARY KEY (PRVL_ID)
-) COMMENT = 'Application Privilege';
+) ENGINE = InnoDB COMMENT = 'Application Privilege' DEFAULT CHARACTER SET utf8;
 
 
 -- Application Role
@@ -84,7 +107,7 @@ CREATE TABLE APP_ROLE_INF
 	ROLE_NM varchar(256) COMMENT 'Role Name',
 	ROLE_DESC text COMMENT 'Role Description',
 	PRIMARY KEY (ROLE_ID)
-) COMMENT = 'Application Role';
+) ENGINE = InnoDB COMMENT = 'Application Role' DEFAULT CHARACTER SET utf8;
 
 
 -- Application Role Privilege Relation
@@ -93,59 +116,73 @@ CREATE TABLE APP_ROLE_PRVL_REL
 	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
 	PRVL_ID varchar(32) NOT NULL COMMENT 'Privilege ID',
 	PRIMARY KEY (ROLE_ID, PRVL_ID)
-) COMMENT = 'Application Role Privilege Relation';
+) ENGINE = InnoDB COMMENT = 'Application Role Privilege Relation' DEFAULT CHARACTER SET utf8;
 
 
--- Application User Groups
-CREATE TABLE APP_USR_GRP_REL
+-- Application User Group Mapping
+CREATE TABLE app_user_group_map
 (
-	USR_ID varchar(32) NOT NULL COMMENT 'User ID',
-	GRP_ID varchar(32) NOT NULL COMMENT 'Group ID',
-	PRIMARY KEY (USR_ID, GRP_ID)
-) COMMENT = 'Application User Groups';
+	user_id varchar(32) NOT NULL COMMENT 'User ID',
+	group_id varchar(32) NOT NULL COMMENT 'Group ID',
+	PRIMARY KEY (user_id, group_id)
+) ENGINE = InnoDB COMMENT = 'Application User Group Mapping' DEFAULT CHARACTER SET utf8;
 
 
--- Application User
-CREATE TABLE APP_USR_INF
+-- Application User Information
+CREATE TABLE app_user_info
 (
-	USR_ID varchar(32) NOT NULL COMMENT 'User ID',
-	USR_EMIL varchar(256) COMMENT 'User Email',
-	USR_MOBL varchar(14) COMMENT 'User Mobile',
-	USR_NM varchar(256) COMMENT 'User Name',
-	USR_NICK varchar(256) COMMENT 'User Nickname',
-	USR_PWD varchar(256) COMMENT 'User Password',
-	USE_YN varchar(1) COMMENT 'Use YN',
-	PRIMARY KEY (USR_ID)
-) COMMENT = 'Application User';
+	user_id varchar(32) NOT NULL COMMENT 'User ID',
+	sys_insert_dtm datetime COMMENT 'System Insert Datetime',
+	sys_update_dtm datetime COMMENT 'System Update Datetime',
+	sys_delete_yn varchar(1) DEFAULT 'N' NOT NULL COMMENT 'System Delete or Not',
+	user_email varchar(256) COMMENT 'User Email',
+	user_mobile varchar(14) COMMENT 'User Mobile',
+	user_name varchar(256) COMMENT 'User Name',
+	user_nick varchar(256) COMMENT 'User Nickname',
+	user_pwd varchar(256) COMMENT 'User Password',
+	user_img text COMMENT 'Profile Image',
+	user_msg text COMMENT 'Profile Message',
+	user_desc text COMMENT 'Profile Description',
+	user_stat_cd varchar(16) NOT NULL COMMENT 'User Status Code',
+	user_join_dtm datetime COMMENT 'User Join Datetime',
+	PRIMARY KEY (user_id)
+) ENGINE = InnoDB COMMENT = 'Application User Information' DEFAULT CHARACTER SET utf8;
 
 
--- Application User Property
-CREATE TABLE APP_USR_PROP_CD
+-- Application User Property Code
+CREATE TABLE app_user_prop_cd
 (
-	PROP_CD text NOT NULL COMMENT 'Property ID',
-	PROP_NM text COMMENT 'Property Name',
-	PROP_DESC text COMMENT 'Property Description',
-	PRIMARY KEY (PROP_CD(null))
-) COMMENT = 'Application User Property';
+	user_prop_cd varchar(16) NOT NULL COMMENT 'User Property Code',
+	sys_insert_dtm datetime COMMENT 'System Insert Datetime',
+	sys_update_dtm datetime COMMENT 'System Update Datetime',
+	sys_delete_yn varchar(1) COMMENT 'System Delete or Not',
+	user_prop_name text COMMENT 'Property Name',
+	user_prop_desc text COMMENT 'Property Description',
+	mand_yn varchar(1) DEFAULT 'N' NOT NULL COMMENT 'Mondatory True or False',
+	PRIMARY KEY (user_prop_cd)
+) ENGINE = InnoDB COMMENT = 'Application User Property Code' DEFAULT CHARACTER SET utf8;
 
 
 -- Application User Property Value
-CREATE TABLE APP_USR_PROP_VAL
+CREATE TABLE app_user_prop_val
 (
-	USR_ID varchar(32) NOT NULL COMMENT 'User ID',
-	PROP_CD text NOT NULL COMMENT 'Property ID',
-	PROP_VAL text COMMENT 'Property Value',
-	PRIMARY KEY (USR_ID, PROP_CD(null))
-) COMMENT = 'Application User Property Value';
+	user_id varchar(32) NOT NULL COMMENT 'User ID',
+	user_prop_cd varchar(16) NOT NULL COMMENT 'User Property Code',
+	sys_insert_dtm datetime COMMENT 'System Insert Datetime',
+	sys_update_dtm datetime COMMENT 'System Update Dttm',
+	sys_delete_yn varchar(1) COMMENT 'System Delete or Not',
+	user_prop_val text COMMENT 'User Property Value',
+	PRIMARY KEY (user_id, user_prop_cd)
+) ENGINE = InnoDB COMMENT = 'Application User Property Value' DEFAULT CHARACTER SET utf8;
 
 
 -- Application User Roles
 CREATE TABLE APP_USR_ROLE_REL
 (
-	USR_ID varchar(32) NOT NULL COMMENT 'User ID',
+	user_id varchar(32) NOT NULL COMMENT 'User ID',
 	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
-	PRIMARY KEY (USR_ID, ROLE_ID)
-) COMMENT = 'Application User Roles';
+	PRIMARY KEY (user_id, ROLE_ID)
+) ENGINE = InnoDB COMMENT = 'Application User Roles' DEFAULT CHARACTER SET utf8;
 
 
 -- Core Table Code Relation
@@ -155,7 +192,7 @@ CREATE TABLE CORE_TAB_CODE_REL
 	COL_NAME varchar(64) NOT NULL COMMENT 'Column Name',
 	CODE_ID varchar(32) NOT NULL COMMENT 'Code ID',
 	PRIMARY KEY (TAB_NAME, COL_NAME, CODE_ID)
-) COMMENT = 'Core Table Code Relation';
+) ENGINE = InnoDB COMMENT = 'Core Table Code Relation' DEFAULT CHARACTER SET utf8;
 
 
 

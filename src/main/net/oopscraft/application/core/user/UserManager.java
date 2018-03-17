@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import net.oopscraft.application.ApplicationContext;
 import net.oopscraft.application.core.SqlSessionProxy;
 import net.oopscraft.application.core.SqlSessionProxyFactory;
@@ -22,6 +25,7 @@ import net.oopscraft.application.core.SqlSessionProxyFactory;
  */
 public class UserManager {
 	
+	private static Log LOG = LogFactory.getLog(UserManager.class);
 	SqlSessionProxyFactory sqlSessionFactory;
 	
 	public UserManager() throws Exception {
@@ -44,6 +48,8 @@ public class UserManager {
 			UserDao userDao = sqlSession.getMapper(UserDao.class);
 			userList = userDao.selectUserList(user, rows, page);
 		}catch(Exception e) {
+			LOG.error(e.getMessage(),e);
+			sqlSession.rollback();
 			throw e;
 		}finally {
 			sqlSession.close();
@@ -65,12 +71,103 @@ public class UserManager {
 			UserDao userDao = sqlSession.getMapper(UserDao.class);
 			user = userDao.selectUser(id);
 		}catch(Exception e) {
+			LOG.error(e.getMessage(),e);
+			sqlSession.rollback();
 			throw e;
 		}finally {
 			sqlSession.close();
 		}
 		return user;
 	}
+	
+	/**
+	 * saveUser
+	 * @param user
+	 * @return User
+	 * @throws Exception
+	 */
+	public User saveUser(User user) throws Exception {
+		SqlSessionProxy sqlSession = null;
+		try {
+			sqlSession = sqlSessionFactory.openSession();
+			UserDao userDao = sqlSession.getMapper(UserDao.class);
+			if(userDao.selectUser(user.getId()) == null) {
+				userDao.insertUser(user);
+			}else {
+				userDao.updateUser(user);
+			}
+			user = userDao.selectUser(user.getId());
+			sqlSession.commit();
+		}catch(Exception e) {
+			LOG.error(e.getMessage(),e);
+			sqlSession.rollback();
+			throw e;
+		}finally {
+			sqlSession.close();
+		}
+		return user;
+	}
+	
+	/**
+	 * removeUser
+	 * @param id
+	 * @return User
+	 * @throws Exception
+	 */
+	public User removeUser(String id) throws Exception {
+		User user = null;
+		SqlSessionProxy sqlSession = null;
+		try {
+			sqlSession = sqlSessionFactory.openSession();
+			UserDao userDao = sqlSession.getMapper(UserDao.class);
+			user = userDao.selectUser(id);
+			userDao.deleteUser(id);
+			sqlSession.commit();
+		}catch(Exception e) {
+			LOG.error(e.getMessage(),e);
+			sqlSession.rollback();
+			throw e;
+		}finally {
+			sqlSession.close();
+		}
+		return user;
+	}
+
+	/**
+	 * getUserGroupList
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Group> getUserGroupList(User user) throws Exception {
+		List<Group> userGroupList = null;
+		SqlSessionProxy sqlSession = null;
+		try {
+			sqlSession = sqlSessionFactory.openSession();
+			UserDao userDao = sqlSession.getMapper(UserDao.class);
+			userGroupList = userDao.selectUserGroupList(user);
+		}catch(Exception e) {
+			LOG.error(e.getMessage(),e);
+			sqlSession.rollback();
+			throw e;
+		}finally {
+			sqlSession.close();
+		}
+		return userGroupList;
+	}
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

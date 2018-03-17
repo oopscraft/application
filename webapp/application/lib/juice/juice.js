@@ -129,6 +129,7 @@ juice.data.List.prototype = {
 			map.fromJson(json[i]);
 			this.mapList.push(map);
 		}
+		this.index = -1;
 		this.notifyObservers();
 	},
 	/* convert to json object */

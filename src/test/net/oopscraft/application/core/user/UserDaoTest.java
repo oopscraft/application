@@ -36,7 +36,7 @@ public class UserDaoTest extends ApplicationTest {
 			user.setName("Tester");
 			user.setNickname("Tester");
 			user.setPassword("password");
-			user.setUseYn("Y");
+			user.setStatusCode("A");
 			userDao.insertUser(user);
 			user = userDao.selectUser("test");
 			System.out.println(TextTableBuilder.build(user));
@@ -56,7 +56,7 @@ public class UserDaoTest extends ApplicationTest {
 			}
 			
 			// delete user
-			userDao.deleteUser(user);
+			userDao.deleteUser(user.getId());
 			user = userDao.selectUser("test");
 			System.out.println(TextTableBuilder.build(user));
 			if(user != null) {
