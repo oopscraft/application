@@ -1,6 +1,12 @@
-package net.oopscraft.application.core.user;
+package net.oopscraft.application.core.security;
 
 import java.util.Date;
+import java.util.List;
+
+import net.oopscraft.application.ApplicationContext;
+import net.oopscraft.application.core.SqlSessionProxy;
+import net.oopscraft.application.core.SqlSessionProxyFactory;
+import net.oopscraft.application.core.security.dao.UserDao;
 
 public class User {
 
@@ -81,6 +87,34 @@ public class User {
 	}
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
+	}
+	
+	public void save() throws Exception {
+		save(this);
+	}
+	
+	public static void save(User user) throws Exception {
+		SqlSessionProxyFactory sqlSessionFactory = ApplicationContext.getInstance().getSqlSessionProxyFactory("application");
+		SqlSessionProxy sqlSession = null;
+		try {
+			sqlSession = sqlSessionFactory.openSession();
+			UserDao userDao = sqlSession.getMapper(UserDao.class);
+			if(userDao.selectUser(user.getId()) == null) {
+				userDao.insertUser(user);
+			}else {
+				userDao.updateUser(user);
+			}
+			sqlSession.commit();
+		}catch(Exception e) {
+			sqlSession.rollback();
+			throw e;
+		}finally {
+			sqlSession.close();
+		}
+	}
+	
+	public List<Group> getGroupList() {
+		return null;
 	}
 
 }

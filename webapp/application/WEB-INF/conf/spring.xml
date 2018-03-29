@@ -76,7 +76,7 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="/WEB-INF/conf/mybatis-spring.xml" />
-        <property name="mapperLocations" value="classpath:net/oopscraft/application/**/*Dao.${dataSource.dbType}.xml" />
+        <property name="mapperLocations" value="classpath:net/oopscraft/application/**/dao/${dataSource.dbType}/*Dao.xml" />
     </bean>
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg index="0" ref="sqlSessionFactory" />

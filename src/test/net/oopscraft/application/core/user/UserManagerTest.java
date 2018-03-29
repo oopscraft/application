@@ -14,6 +14,8 @@ import org.junit.Test;
 
 import net.oopscraft.application.ApplicationTest;
 import net.oopscraft.application.core.TextTableBuilder;
+import net.oopscraft.application.core.security.Group;
+import net.oopscraft.application.core.security.UserFactory;
 
 /**
  * @author chomookun@gmail.com
@@ -24,7 +26,7 @@ public class UserManagerTest extends ApplicationTest {
 	@Test
 	public void getGroupList() {
 		try {
-			UserManager userManager = new UserManager();
+			UserFactory userManager = new UserFactory();
 			List<Group> groupList = userManager.getGroupList();
 			System.out.println(TextTableBuilder.build(groupList));
 		}catch(Exception e) {

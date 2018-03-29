@@ -20,7 +20,6 @@ searchKeyOptions = [
 var userList = new juice.data.List();
 var userMap = new juice.data.Map();
 var userGroupList = new juice.data.List();
-var groupList = new juice.data.List();
 
 // code
 var userStatusCode = [{value:'A',text:'Active'},{value:'C',text:'Cancel'}];
@@ -162,18 +161,6 @@ function removeUser() {
 	})
 	.open();
 }
-
-/**
- * openUserGroupDialog
- */
-function addUserGroupDialog() {
-	// open dialog
-	userDetailDialog = juice.dialog($('#addUserGroupDialog')[0])
-		.setTitle('Add User Group')
-		.open();
-}
-
-
 </script>
 <style type="text/css">
 .user {
@@ -387,26 +374,43 @@ function addUserGroupDialog() {
 <!-------------------------------------------------------------------->
 <!-- addUserGroupDialog											-->
 <!-------------------------------------------------------------------->
+<script type="text/javascript">
+var groupList = new juice.data.List();
+/**
+ * openUserGroupDialog
+ */
+function addUserGroupDialog() {
+	// retrieves group list
+	$.ajax({
+		 type:'GET'
+		,url:'${pageContext.request.contextPath}' + '/console/user/getGroupList'
+		,data: null
+		,dataType:'json'
+		,encode: true
+		,success:function(response) {
+			console.log(response);
+			groupList.fromJson(response);
+		 }
+		,error: function(response) {
+			console.log(response);
+			juice.alert(response)
+				.open();
+			return false;
+		 }
+	});	
+	
+	// open dialog
+	var userDetailDialog = juice.dialog($('#addUserGroupDialog')[0])
+		.setTitle('Add User Group')
+		.open();
+}
+
+</script>
 <dialog style="display:none;">
 	<script type="text/javascript">
 	var groupSearchMap = new juice.data.Map();
 	</script>
 	<div id="addUserGroupDialog" style="width:800px; height:400px;">
-		<div style="display:flex; justify-content:space-between;;">
-			<span>
-				<i class="fas fa-search"></i>
-				&nbsp;
-				<select data-juice="ComboBox" data-juice-bind="searchMap.key" data-juice-options="searchKeyOptions">
-				</select>
-				<input data-juice="TextField" data-juice-bind="searchMap.value" style="width:100px;"/>
-				<button onclick="javascript: getUserList(1);">Search</button>
-			</span>
-			<span>
-				<button onclick="javascript:getUserList(searchMap.get('page')-1);"><</button>
-				<input data-juice="TextField" data-juice-bind="searchMap.page" style="width:30px;text-align:center;" readonly/>
-				<button onclick="javascript:getUserList(searchMap.get('page')+1);">></button>
-			</span>
-		</div>
 		<div>
 			<table data-juice="Grid" data-juice-bind="groupList" data-juice-item="group">
 				<thead>

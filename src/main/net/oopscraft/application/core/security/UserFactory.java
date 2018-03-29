@@ -6,7 +6,7 @@
  * Released under the LGPL-3.0 licence
  * https://opensource.org/licenses/lgpl-3.0.html
  */
-package net.oopscraft.application.core.user;
+package net.oopscraft.application.core.security;
 
 import java.util.List;
 import java.util.TreeMap;
@@ -18,17 +18,18 @@ import org.apache.commons.logging.LogFactory;
 import net.oopscraft.application.ApplicationContext;
 import net.oopscraft.application.core.SqlSessionProxy;
 import net.oopscraft.application.core.SqlSessionProxyFactory;
+import net.oopscraft.application.core.security.dao.UserDao;
 
 /**
  * @author chomookun@gmail.com
  *
  */
-public class UserManager {
+public class UserFactory {
 	
-	private static Log LOG = LogFactory.getLog(UserManager.class);
+	private static Log LOG = LogFactory.getLog(UserFactory.class);
 	SqlSessionProxyFactory sqlSessionFactory;
 	
-	public UserManager() throws Exception {
+	public UserFactory() throws Exception {
 		sqlSessionFactory = ApplicationContext.getInstance().getSqlSessionProxyFactory("application");
 	}
 	
@@ -156,22 +157,11 @@ public class UserManager {
 		return userGroupList;
 	}
 	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	/**
+	 * getGroupList
+	 * @return
+	 * @throws Exception
+	 */
 	public List<Group> getGroupList() throws Exception {
 		List<Group> groupList = null;
 		SqlSessionProxy sqlSession = null;
@@ -180,43 +170,87 @@ public class UserManager {
 			UserDao userDao = sqlSession.getMapper(UserDao.class);
 			groupList = userDao.selectGroupList();
 		}catch(Exception e) {
+			LOG.error(e.getMessage(),e);
+			sqlSession.rollback();
 			throw e;
 		}finally {
 			sqlSession.close();
 		}
 		return groupList;
 	}
-	
+
 
 	
-	public TreeMap<Group,List<Group>> getGroupTreeMap() throws Exception {
-//		SqlSessionProxyFactory sqlSessionFactory = ApplicationContext.getInstance().getSqlSessionProxyFactory("core");
-		try {
-			//TransactionManager.begin();
-			for(int idx = 0; idx < 10; idx ++) {
-				//SqlSessionProxy sqlSession = sqlSessionFactory.openSession((idx%2==0?"oltp":"olap"));
-				//UserDao userDao = sqlSession.getMapper(UserDao.class);
-				User user = new User();
-				user.setId(UUID.randomUUID().toString().replaceAll("-",""));
-				user.setName("Test User");
-				//userDao.insertUser(user);
-				//sqlSession.commit();
-				//sqlSession.close();
-			}
-			//TransactionManager.commit();
-		}catch(Exception e) {
-			e.printStackTrace(System.err);
-			//TransactionManager.rollback();
-			throw e;
-		}finally {
-			//TransactionManager.close();
-		}
-		return null;
-	}
 	
-	private List<Group> getChildGroupList(Group group) throws Exception {
-		
-		return null;
-	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+//	public List<Group> getGroupList() throws Exception {
+//		List<Group> groupList = null;
+//		SqlSessionProxy sqlSession = null;
+//		try {
+//			sqlSession = sqlSessionFactory.openSession();
+//			UserDao userDao = sqlSession.getMapper(UserDao.class);
+//			groupList = userDao.selectGroupList();
+//		}catch(Exception e) {
+//			throw e;
+//		}finally {
+//			sqlSession.close();
+//		}
+//		return groupList;
+//	}
+//	
+//
+//	
+//	public TreeMap<Group,List<Group>> getGroupTreeMap() throws Exception {
+////		SqlSessionProxyFactory sqlSessionFactory = ApplicationContext.getInstance().getSqlSessionProxyFactory("core");
+//		try {
+//			//TransactionManager.begin();
+//			for(int idx = 0; idx < 10; idx ++) {
+//				//SqlSessionProxy sqlSession = sqlSessionFactory.openSession((idx%2==0?"oltp":"olap"));
+//				//UserDao userDao = sqlSession.getMapper(UserDao.class);
+//				User user = new User();
+//				user.setId(UUID.randomUUID().toString().replaceAll("-",""));
+//				user.setName("Test User");
+//				//userDao.insertUser(user);
+//				//sqlSession.commit();
+//				//sqlSession.close();
+//			}
+//			//TransactionManager.commit();
+//		}catch(Exception e) {
+//			e.printStackTrace(System.err);
+//			//TransactionManager.rollback();
+//			throw e;
+//		}finally {
+//			//TransactionManager.close();
+//		}
+//		return null;
+//	}
+//	
+//	private List<Group> getChildGroupList(Group group) throws Exception {
+//		List<Group> groupList = null;
+//		SqlSessionProxy sqlSession = null;
+//		try {
+//			sqlSession = sqlSessionFactory.openSession();
+//			UserDao userDao = sqlSession.getMapper(UserDao.class);
+//			userList = userDao.selectUserList(user, rows, page);
+//		}catch(Exception e) {
+//			LOG.error(e.getMessage(),e);
+//			throw e;
+//		}finally {
+//			sqlSession.close();
+//		}
+//		return userList;
+//	}
 
 }

@@ -1,4 +1,4 @@
-package net.oopscraft.application.core.user;
+package net.oopscraft.application.core.security;
 
 import java.io.IOException;
 
@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
  
-public class UserSecurityFilter implements Filter {
+public class SecurityFilter implements Filter {
 	
-	private static final Log LOG = LogFactory.getLog(UserSecurityFilter.class);
+	private static final Log LOG = LogFactory.getLog(SecurityFilter.class);
  
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     	HttpServletRequest request = (HttpServletRequest) req;
