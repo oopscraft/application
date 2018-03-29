@@ -1,13 +1,27 @@
-package net.oopscraft.application.core.user;
+package net.oopscraft.application.core.security;
 
 public class Group {
-	
+
+	String path;
+	int depth;
 	String id;
 	String upperId;
 	String name;
 	String description;
 	int sortSeq;
 	
+	public String getPath() {
+		return path;
+	}
+	public void setPath(String path) {
+		this.path = path;
+	}
+	public int getDepth() {
+		return depth;
+	}
+	public void setDepth(int depth) {
+		this.depth = depth;
+	}
 	public String getId() {
 		return id;
 	}

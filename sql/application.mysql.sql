@@ -124,6 +124,7 @@ CREATE TABLE app_user_group_map
 (
 	user_id varchar(32) NOT NULL COMMENT 'User ID',
 	group_id varchar(32) NOT NULL COMMENT 'Group ID',
+	sys_insert_dtm datetime COMMENT 'System Inert Datetime',
 	PRIMARY KEY (user_id, group_id)
 ) ENGINE = InnoDB COMMENT = 'Application User Group Mapping' DEFAULT CHARACTER SET utf8;
 

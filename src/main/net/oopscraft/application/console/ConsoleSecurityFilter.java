@@ -14,11 +14,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.core.user.UserSecurityFilter;
+import net.oopscraft.application.core.security.SecurityFilter;
 
 public class ConsoleSecurityFilter implements Filter {
 	
-	private static final Log LOG = LogFactory.getLog(UserSecurityFilter.class);
+	private static final Log LOG = LogFactory.getLog(SecurityFilter.class);
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
