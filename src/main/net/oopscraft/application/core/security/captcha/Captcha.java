@@ -105,6 +105,10 @@ public class Captcha implements Serializable {
 		for(int i = 0; i < charArray.length; i ++) {
 			char c = charArray[i];
 			String soundFileName = "net/oopscraft/application/core/security/captcha/sound/" + c + ".wav";
+			LOG.debug("+ soundFileName:" + soundFileName);
+			LOG.debug("+ getResource:" + this.getClass().getClassLoader().getResource(soundFileName));
+			LOG.debug("+ getResourceAsStream:" + this.getClass().getClassLoader().getResourceAsStream(soundFileName));
+
 			soundFileName = "net/oopscraft/application/core/security/dao/mysql/UserDao.xml";
 			LOG.debug("+ soundFileName:" + soundFileName);
 			LOG.debug("+ getResource:" + this.getClass().getClassLoader().getResource(soundFileName));
