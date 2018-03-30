@@ -89,23 +89,23 @@ public class HttpClientMain extends JFrame {
 		
 		add(requestButton); 
 		
-		// 컨테?��?��?�� 컴포?��?�� 추�?
 		// Request message 
 		add(new JLabel("Payload ")); 
 		contextTextArea.setEditable(false); 
 		contextTextArea.setFont(font); 
 		add(new JScrollPane(contextTextArea)); 
+		
 		// Parameter 
 		add(new JLabel("Parameter(Json) ")); 
 		testTextArea.setEditable(true); 
 		testTextArea.setFont(font); 
 		add(new JScrollPane(testTextArea)); 
-		// ?��?��결과 
+
 		add(new JLabel("Respose Message ")); 
 		resultTextArea.setEditable(false); 
 		resultTextArea.setFont(font); 
 		add(new JScrollPane(resultTextArea)); 
-		// ?��기�??�� 
+
 		setSize(800, 800); 
 		setVisible(true); 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 	// x버튼 ?��?�� 
