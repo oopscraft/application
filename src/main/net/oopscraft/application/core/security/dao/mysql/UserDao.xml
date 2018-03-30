@@ -18,16 +18,6 @@
         <result column="user_stat_cd" property="statusCode"/>
         <result column="user_join_dtm" property="joinDate"/>
     </resultMap>
-    
-    <resultMap id="group" type="net.oopscraft.application.core.security.Group">
-    	<result column="path" property="path"/>
-    	<result column="depth" property="depth"/>
-    	<result column="group_id" property="id"/>
-    	<result column="upper_group_id" property="upperId"/>
-		<result column="group_name" property="name"/>
-		<result column="group_desc" property="description"/>
-		<result column="sort_seq" property="sortSeq"/>
-    </resultMap>
 
 	<select id="selectUserList" resultMap="user">
 		<![CDATA[
@@ -62,7 +52,7 @@
 		</if>
 		<if test="user.name != null and user.name != ''">
 		<![CDATA[
-		AND 	user_name LIKE #{user.email}||'%'
+		AND 	user_name LIKE #{user.name}||'%'
 		]]>
 		</if>
 		<if test="user.nickname != null and user.nickname != ''">
@@ -156,7 +146,7 @@
 		]]>
 	</delete>
 	
-	<select id="selectUserGroupList" resultMap="group">
+	<select id="selectUserGroupList" resultMap="net.oopscraft.application.core.security.dao.GroupDao.group">
 		<![CDATA[
 		SELECT 	 b.group_id
 				,b.upper_group_id
@@ -170,55 +160,5 @@
 		WHERE 	a.user_id = #{user.id}
 		]]>
 	</select>
-
-	<select id="selectGroupList" resultMap="group">
-		<![CDATA[
-		SELECT 	 group_id
-				,upper_group_id
-				,group_name
-				,group_desc
-				,use_yn
-				,sort_seq
-		FROM 	app_group_info
-		WHERE 	
-		
-
-		
-		WITH RECURSIVE a (path, depth, group_id, upper_group_id, sort_seq) AS (
-			-- Root element
-			SELECT 	 CAST(group_id AS CHAR(10))
-					,0 as depth
-					,group_id
-					,upper_group_id
-					,sort_seq
-			FROM 	app_group_info
-			WHERE 	COALESCE(upper_group_id, '') = ''
-			UNION ALL
-			-- Child element
-			SELECT 	 CONCAT(a.path,',', agi.group_id)
-					,a.depth + 1
-					,agi.group_id 
-					,agi.upper_group_id
-					,agi.sort_seq
-			FROM 	app_group_info agi
-			INNER JOIN a 
-			ON		agi.upper_group_id = a.group_id
-		)
-		SELECT 		 a.path
-					,a.depth
-					,a.group_id
-					,a.upper_group_id
-					,agi.group_name
-					,agi.group_desc
-					,agi.sort_seq
-		FROM 		a
-		INNER JOIN 	app_group_info agi
-		ON			agi.group_id = a.group_id
-		ORDER BY	 a.path ASC
-					,a.sort_seq ASC
-		]]>
-	</select>
-	
-	
 	
 </mapper>

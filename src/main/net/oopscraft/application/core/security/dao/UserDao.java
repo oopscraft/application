@@ -21,14 +21,4 @@ public interface UserDao {
 	
 	public List<Group> selectUserGroupList(@Param("user")User user) throws Exception;
 
-	public List<Group> selectGroupList() throws Exception;
-
-	public User selectGroup(@Param("id")String id) throws Exception;
-	
-	public int insertGroup(@Param("group")Group group) throws Exception;
-	
-	public int updateGroup(@Param("Group")Group group) throws Exception;
-	
-	public int deleteGroup(@Param("id")String id) throws Exception;
-
 }

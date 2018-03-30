@@ -15,25 +15,13 @@ import org.junit.Test;
 import net.oopscraft.application.ApplicationTest;
 import net.oopscraft.application.core.TextTableBuilder;
 import net.oopscraft.application.core.security.Group;
-import net.oopscraft.application.core.security.UserFactory;
+import net.oopscraft.application.core.security.UserService;
 
 /**
  * @author chomookun@gmail.com
  *
  */
-public class UserManagerTest extends ApplicationTest {
+public class UserServiceTest extends ApplicationTest {
 	
-	@Test
-	public void getGroupList() {
-		try {
-			UserFactory userManager = new UserFactory();
-			List<Group> groupList = userManager.getGroupList();
-			System.out.println(TextTableBuilder.build(groupList));
-		}catch(Exception e) {
-			e.printStackTrace(System.err);
-			assert(false);
-		}
-		assert(true);
-	}
 
 }

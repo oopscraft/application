@@ -22,9 +22,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.security.Group;
+import net.oopscraft.application.core.security.GroupService;
 import net.oopscraft.application.core.security.User;
-import net.oopscraft.application.core.security.UserFactory;
-import net.oopscraft.application.core.security.dao.UserDao;
+import net.oopscraft.application.core.security.UserService;
 
 /**
  * @author chomookun@gmail.com
@@ -35,8 +35,11 @@ import net.oopscraft.application.core.security.dao.UserDao;
 public class UserController {
 	
 	@Autowired
-	UserDao userDao;
+	UserService userService;
 
+	@Autowired
+	GroupService groupService;
+	
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public ModelAndView user() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("console/User.tiles");
@@ -59,7 +62,6 @@ public class UserController {
 		,@RequestParam(value="rows",defaultValue="30")Integer rows
 		,@RequestParam(value="page",defaultValue="1")Integer page
 	) throws Exception {
-		UserFactory userManager = new UserFactory();
 		User user = new User();
 		if("id".equals(key)) {
 			user.setId(value);
@@ -72,7 +74,7 @@ public class UserController {
 		}else if("nickname".equals(key)) {
 			user.setNickname(value);
 		}
-		List<User> userList = userManager.getUserList(user, rows, page);
+		List<User> userList = userService.getUserList(user, rows, page);
 		return new ResponseEntity<>(JsonConverter.convertObjectToJson(userList), HttpStatus.OK);
 	}
 	
@@ -86,8 +88,7 @@ public class UserController {
 	public ResponseEntity<?> getUser(
 		 @RequestParam(value="id")String id
 	) throws Exception {
-		UserFactory userManager = new UserFactory();
-		User user = userManager.getUser(id);
+		User user = userService.getUser(id);
 		return new ResponseEntity<>(JsonConverter.convertObjectToJson(user), HttpStatus.OK);
 	}
 	
@@ -101,10 +102,9 @@ public class UserController {
 	public ResponseEntity<?> getUserGroupList(
 		@RequestParam(value="id")String id
 	) throws Exception {
-		UserFactory userManager = new UserFactory();
 		User user = new User();
 		user.setId(id);
-		List<Group> userGroupList = userManager.getUserGroupList(user);
+		List<Group> userGroupList = userService.getUserGroupList(user);
 		return new ResponseEntity<>(JsonConverter.convertObjectToJson(userGroupList), HttpStatus.OK);
 	}
 
@@ -119,8 +119,7 @@ public class UserController {
 		@RequestBody String payload
 	) throws Exception {
 		User user = JsonConverter.convertJsonToObject(payload, User.class);
-		UserFactory userManager = new UserFactory();
-		user = userManager.saveUser(user);
+		user = userService.saveUser(user);
 		return new ResponseEntity<>(JsonConverter.convertObjectToJson(user), HttpStatus.OK);
 	}
 	
@@ -134,8 +133,7 @@ public class UserController {
 	public ResponseEntity<?> removeUser(
 		@RequestParam(value="id")String id
 	) throws Exception {
-		UserFactory userManager = new UserFactory();
-		User user = userManager.removeUser(id);
+		User user = userService.removeUser(id);
 		return new ResponseEntity<>(JsonConverter.convertObjectToJson(user), HttpStatus.OK);
 	}
 	
@@ -146,8 +144,7 @@ public class UserController {
 	 */
 	@RequestMapping(value="/getGroupList", method=RequestMethod.GET, produces="application/json")
 	public ResponseEntity<?> getGroupList() throws Exception {
-		UserFactory userManager = new UserFactory();
-		List<Group> groupList = userManager.getGroupList();
+		List<Group> groupList = groupService.getGroupList();
 		return new ResponseEntity<>(JsonConverter.convertObjectToJson(groupList), HttpStatus.OK);
 	}
 }

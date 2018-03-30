@@ -12,6 +12,6 @@ package net.oopscraft.application.core.security;
  * @author chomookun@gmail.com
  *
  */
-public class SecurityManager {
+public class SecurityService {
 
 }
