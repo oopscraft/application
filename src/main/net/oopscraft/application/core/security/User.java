@@ -88,33 +88,4 @@ public class User {
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
 	}
-	
-	public void save() throws Exception {
-		save(this);
-	}
-	
-	public static void save(User user) throws Exception {
-		SqlSessionProxyFactory sqlSessionFactory = ApplicationContext.getInstance().getSqlSessionProxyFactory("application");
-		SqlSessionProxy sqlSession = null;
-		try {
-			sqlSession = sqlSessionFactory.openSession();
-			UserDao userDao = sqlSession.getMapper(UserDao.class);
-			if(userDao.selectUser(user.getId()) == null) {
-				userDao.insertUser(user);
-			}else {
-				userDao.updateUser(user);
-			}
-			sqlSession.commit();
-		}catch(Exception e) {
-			sqlSession.rollback();
-			throw e;
-		}finally {
-			sqlSession.close();
-		}
-	}
-	
-	public List<Group> getGroupList() {
-		return null;
-	}
-
 }
