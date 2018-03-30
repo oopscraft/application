@@ -27,12 +27,16 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * @author chomookun@gmail.com
  *
  */
 public class Captcha implements Serializable {
 	
+	private static Log LOG = LogFactory.getLog(Captcha.class);
 	private static final long serialVersionUID = -193088373947619053L;
 
 	String answer;
@@ -100,8 +104,11 @@ public class Captcha implements Serializable {
 		int frameLength = 0;
 		for(int i = 0; i < charArray.length; i ++) {
 			char c = charArray[i];
-			String soundFileName = "/net/oopscraft/application/core/security/captcha/sound/" + c + ".wav"; 
-			AudioInputStream ais = AudioSystem.getAudioInputStream(this.getClass().getResource(soundFileName));
+			String soundFileName = "net/oopscraft/application/core/security/captcha/sound/" + c + ".wav";
+			LOG.debug("+ soundFileName:" + soundFileName);
+			LOG.debug("+ getResource:" + this.getClass().getClassLoader().getResource(soundFileName));
+			LOG.debug("+ getResourceAsStream:" + this.getClass().getClassLoader().getResourceAsStream(soundFileName));
+			AudioInputStream ais = AudioSystem.getAudioInputStream(this.getClass().getClassLoader().getResourceAsStream(soundFileName));
 			audioInputStreamList.add(ais);
 			if(audioFormat == null) {
 				audioFormat = ais.getFormat();
