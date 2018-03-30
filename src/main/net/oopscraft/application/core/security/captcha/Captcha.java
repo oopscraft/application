@@ -99,7 +99,7 @@ public class Captcha implements Serializable {
 	public byte[] getAudio() throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		List<AudioInputStream> audioInputStreamList = new ArrayList<AudioInputStream>();
-		char[] charArray = this.answer.toCharArray();
+		char[] charArray = this.answer.toLowerCase().toCharArray();
 		AudioFormat audioFormat = null;
 		int frameLength = 0;
 		for(int i = 0; i < charArray.length; i ++) {
@@ -109,10 +109,10 @@ public class Captcha implements Serializable {
 			LOG.debug("+ getResource:" + this.getClass().getClassLoader().getResource(soundFileName));
 			LOG.debug("+ getResourceAsStream:" + this.getClass().getClassLoader().getResourceAsStream(soundFileName));
 
-			soundFileName = "net/oopscraft/application/core/security/dao/mysql/UserDao.xml";
-			LOG.debug("+ soundFileName:" + soundFileName);
-			LOG.debug("+ getResource:" + this.getClass().getClassLoader().getResource(soundFileName));
-			LOG.debug("+ getResourceAsStream:" + this.getClass().getClassLoader().getResourceAsStream(soundFileName));
+//			soundFileName = "net/oopscraft/application/core/security/dao/mysql/UserDao.xml";
+//			LOG.debug("+ soundFileName:" + soundFileName);
+//			LOG.debug("+ getResource:" + this.getClass().getClassLoader().getResource(soundFileName));
+//			LOG.debug("+ getResourceAsStream:" + this.getClass().getClassLoader().getResourceAsStream(soundFileName));
 			AudioInputStream ais = AudioSystem.getAudioInputStream(this.getClass().getClassLoader().getResourceAsStream(soundFileName));
 			audioInputStreamList.add(ais);
 			if(audioFormat == null) {
