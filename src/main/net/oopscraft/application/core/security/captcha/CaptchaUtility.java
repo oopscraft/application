@@ -42,8 +42,8 @@ public class CaptchaUtility {
 	}
 	
 	public static void checkCaptcha(String answer, HttpServletRequest request, HttpServletResponse response) throws CaptchaException {
-		HttpSession session = request.getSession(true);
-		if(!answer.equals(session.getAttribute("captcha"))){
+		Captcha captcha = (Captcha) request.getSession(true).getAttribute("captcha");
+		if(!answer.equals(captcha.getAnswer())){
 			throw new CaptchaException("Invalid Captcha Answer.");
 		}
 	}

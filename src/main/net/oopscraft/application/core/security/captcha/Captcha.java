@@ -41,7 +41,7 @@ public class Captcha implements Serializable {
 		this.answer = answer;
 	}
 	
-	public String getAnswer() throws Exception {
+	public String getAnswer() {
 		return this.answer;
 	}
 	
