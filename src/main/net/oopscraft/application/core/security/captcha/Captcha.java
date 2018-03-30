@@ -102,7 +102,7 @@ public class Captcha implements Serializable {
 			char c = charArray[i];
 			String soundFileName = "sound" + File.separator + c + ".wav"; 
 			this.getClass().getResourceAsStream(soundFileName);
-			AudioInputStream ais = AudioSystem.getAudioInputStream(this.getClass().getResource(soundFileName));
+			AudioInputStream ais = AudioSystem.getAudioInputStream(this.getClass().getResourceAsStream(soundFileName));
 			audioInputStreamList.add(ais);
 			if(audioFormat == null) {
 				audioFormat = ais.getFormat();
