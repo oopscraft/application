@@ -27,16 +27,12 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * @author chomookun@gmail.com
  *
  */
 public class Captcha implements Serializable {
 	
-	private static Log LOG = LogFactory.getLog(Captcha.class);
 	private static final long serialVersionUID = -193088373947619053L;
 
 	String answer;
