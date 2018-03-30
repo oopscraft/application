@@ -1,12 +1,6 @@
 package net.oopscraft.application.core.security;
 
 import java.util.Date;
-import java.util.List;
-
-import net.oopscraft.application.ApplicationContext;
-import net.oopscraft.application.core.SqlSessionProxy;
-import net.oopscraft.application.core.SqlSessionProxyFactory;
-import net.oopscraft.application.core.security.dao.UserDao;
 
 public class User {
 
