@@ -104,11 +104,11 @@ public class Captcha implements Serializable {
 		int frameLength = 0;
 		for(int i = 0; i < charArray.length; i ++) {
 			char c = charArray[i];
-			String soundFileName = "net/oopscraft/application/core/security/captcha/sound/" + c + ".wav";
+			String soundFileName = "sound" + File.separator + c + ".wav";
 			LOG.debug("+ soundFileName:" + soundFileName);
-			LOG.debug("+ getResource:" + this.getClass().getClassLoader().getResource(soundFileName));
-			LOG.debug("+ getResourceAsStream:" + this.getClass().getClassLoader().getResourceAsStream(soundFileName));
-			AudioInputStream ais = AudioSystem.getAudioInputStream(this.getClass().getClassLoader().getResourceAsStream(soundFileName));
+			LOG.debug("+ getResource:" + this.getClass().getResource(soundFileName));
+			LOG.debug("+ getResourceAsStream:" + this.getClass().getResourceAsStream(soundFileName));
+			AudioInputStream ais = AudioSystem.getAudioInputStream(this.getClass().getResourceAsStream(soundFileName));
 			audioInputStreamList.add(ais);
 			if(audioFormat == null) {
 				audioFormat = ais.getFormat();
