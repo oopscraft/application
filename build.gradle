@@ -158,6 +158,9 @@ dependencies {
 	compile ('javax.servlet:jstl:1.2')
 	compile ('taglibs:standard:1.1.2')
 	
+	// simplecaptcha
+	compile ('nl.captcha:simplecaptcha:1.1.1')
+	
 	// junit
 	compile ('junit:junit:4.12')
 	

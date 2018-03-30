@@ -62,10 +62,20 @@
 		}
 
 		/**
-		 * reloadCaptchaImage
+		 * reloadCaptcha
 		 */
-		function reloadCaptchaImage() {
-			$('#captchaImage').attr('src','${pageContext.request.contextPath}/console/login/getCaptchaImage');
+		function reloadCaptcha() {
+			$.ajax({
+				 type:'GET'
+				,url:'${pageContext.request.contextPath}/console/login/prepareCaptcha'
+				,success: function(response) {
+					$('#captchaImage').attr('src','${pageContext.request.contextPath}/console/login/getCaptchaImage');
+					$('#captchaAudio').attr('src','${pageContext.request.contextPath}/console/login/getCaptchaAudio');
+		    	 }
+				,error: function(response) {
+					$('#messageDiv').text(response.responseText);
+				}
+			});
 		}
 		 
 		/**
@@ -144,7 +154,9 @@
 						<br/>
 						<img id="captchaImage" src="${pageContext.request.contextPath}/console/login/getCaptchaImage"/>
 						&nbsp;
-						<button type="button" class="btn btn-info" onclick="javascript:reloadCaptchaImage();">
+						<audio id="captchaAudio" controls="true" src="${pageContext.request.contextPath}/console/login/getCaptchaAudio" type="audio/wav"></audio>
+						<br/>
+						<button type="button" class="btn btn-info" onclick="javascript:reloadCaptcha();">
 							<i class="fas fa-sync-alt"></i>
 						</button>
 						<input type="text" class="form-control" id="captcha" placeholder="Anwser is...">

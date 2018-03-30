@@ -8,16 +8,10 @@
  */
 package net.oopscraft.application.console.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,14 +23,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.console.ConsoleSecurity;
-import net.oopscraft.application.core.Captcha;
-import net.oopscraft.application.core.Captcha.Type;
+import net.oopscraft.application.core.security.captcha.AnswerGenerator;
+import net.oopscraft.application.core.security.captcha.CaptchaException;
+import net.oopscraft.application.core.security.captcha.CaptchaUtility;
 
 @Controller
 @RequestMapping("/console/login")
 public class LoginController {
-	
-	private static final Log LOG = LogFactory.getLog(LoginController.class);
 	
 	@Autowired
 	HttpServletRequest request;
@@ -59,28 +52,23 @@ public class LoginController {
 		return new ResponseEntity<>(captchaRequired, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/getCaptchaImage", method=RequestMethod.GET, produces=MediaType.IMAGE_PNG_VALUE)
-	public ResponseEntity<byte[]> getCaptchaImage() throws Exception {
-		Captcha captcha = new Captcha(Type.CHAR_NUMERIC, 6);
-		
-		// setting CAPTCHA answer in session
-		request.getSession(true).setAttribute("captcha", captcha.getAnswer());
-		
-		BufferedImage image = captcha.getImage();
-		response.setHeader("Cache-Control", "private,no-cache,no-store");
-        ByteArrayOutputStream baos = null;
-        byte[] bytes = null;
-        try {
-        	baos = new ByteArrayOutputStream();
-        	ImageIO.write(image, "png", baos);
-        	bytes = baos.toByteArray();
-        }catch(Exception e) {
-        	LOG.error(e.getMessage(), e);
-        	throw e;
-        }finally {
-        	baos.close();	
-        }
-        return new ResponseEntity<byte[]>(bytes,HttpStatus.OK);
+	@RequestMapping(value="/prepareCaptcha", method=RequestMethod.GET)
+	public ResponseEntity<?> prepareCaptcha() throws Exception {
+		String answer = AnswerGenerator.generateAlphabetNumeric(6);
+		CaptchaUtility.prepareCaptcha(answer, request, response);
+		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/getCaptchaImage", method=RequestMethod.GET)
+	public ResponseEntity<?> getCaptchaImage() throws Exception {
+		CaptchaUtility.writeCaptchaImage(request, response);
+		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/getCaptchaAudio", method=RequestMethod.GET)
+	public ResponseEntity<?> getCaptchaAudio() throws Exception {
+		CaptchaUtility.writeCaptchaAudio(request, response);
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -95,7 +83,9 @@ public class LoginController {
 		
 		// checks valid CAPTCHA answer
 		if(getLoginFailCount() >= 2) {
-			if(!captcha.equals(session.getAttribute("captcha"))){
+			try {
+				CaptchaUtility.checkCaptcha(captcha, request, response);
+			}catch(CaptchaException e) {
 				return new ResponseEntity<>("CAPTCHA Answer is Incorrect.", HttpStatus.UNAUTHORIZED);
 			}
 		}
