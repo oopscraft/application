@@ -1,5 +1,7 @@
 package net.oopscraft.application;
 
+import java.io.File;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -17,9 +19,10 @@ public class ApplicationContainer {
 	 * @param args
 	 * @throws Exception
 	 */
-	public static void launch(Class<? extends Application> applicationClass) {
+	public static void launch(Class<? extends Application> applicationClass, File configureFile, File propertiesFile) {
 		try{
-			// creates ApplicationContext
+			// creates ApplicationContext	
+			ApplicationContext.initialize(configureFile, propertiesFile);
 			applicationContext = ApplicationContext.getInstance();
 			
 			// starts web server

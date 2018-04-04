@@ -1,5 +1,7 @@
 package net.oopscraft.application;
 
+import java.io.File;
+
 public class Application {
 	
 	/**
@@ -24,7 +26,7 @@ public class Application {
 	 * @throws Exception
 	 */
 	public static void main(final String[] args) throws Exception {
-		ApplicationContainer.launch(Application.class);
+		ApplicationContainer.launch(Application.class, new File("conf/application.xml"), new File("conf/application.properties"));
 	}
 
 }

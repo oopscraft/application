@@ -20,12 +20,22 @@ public class ApplicationContext {
 	
 	private static final String LOGO = new String(Base64.decodeBase64("ICBfX19fICBfX19fICBfX18gIF9fX19fX19fX19fXyAgX19fICAgX19fX19fX19fXyAgICBfX18gICBfX18gIF9fXyAgX18gICBfX19fX19fX19fX18gX19fX19fX19fX19fX18gIF8gIF9fDQogLyBfXyBcLyBfXyBcLyBfIFwvIF9fLyBfX18vIF8gXC8gXyB8IC8gX18vXyAgX18vX19fLyBfIHwgLyBfIFwvIF8gXC8gLyAgLyAgXy8gX19fLyBfIC9fICBfXy8gIF8vIF9fIFwvIHwvIC8NCi8gL18vIC8gL18vIC8gX19fL1wgXC8gL19fLyAsIF8vIF9fIHwvIF8vICAvIC8gL19fXy8gX18gfC8gX19fLyBfX18vIC9fX18vIC8vIC9fXy8gX18gfC8gLyBfLyAvLyAvXy8gLyAgICAvIA0KXF9fX18vXF9fX18vXy8gIC9fX18vXF9fXy9fL3xfL18vIHxfL18vICAgL18vICAgICAvXy8gfF8vXy8gIC9fLyAgL19fX18vX19fL1xfX18vXy8gfF8vXy8gL19fXy9cX19fXy9fL3xfLyAgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA=".getBytes()));
 	private static final Log LOG = LogFactory.getLog(ApplicationContext.class);
-	private static final File CONFIGURE_FILE = new File("conf/application.xml");
-	private static final File PROPERTIES_FILE = new File("conf/application.properties");
+//	private static final File CONFIGURE_FILE = new File("conf/application.xml");
+//	private static final File PROPERTIES_FILE = new File("conf/application.properties");
 	private static ApplicationContext instance;
 	
+	private File configureFile;
+	private File propertiesFile;
 	protected Map<String,WebServer> webServers = new LinkedHashMap<String,WebServer>();
 	protected Map<String,SqlSessionProxyFactory> sqlSessionProxyFactories = new LinkedHashMap<String,SqlSessionProxyFactory>();
+	
+	public synchronized static void initialize(File configureFile, File propertiesFile) throws Exception {
+		synchronized(ApplicationContext.class) {
+			if(instance == null) {
+				instance = new ApplicationContext(configureFile, propertiesFile);
+			}
+		}
+	}
 	
 	/**
 	 * getInstance
@@ -35,7 +45,7 @@ public class ApplicationContext {
 	public synchronized static ApplicationContext getInstance() throws Exception {
 		synchronized(ApplicationContext.class) {
 			if(instance == null) {
-				instance = new ApplicationContext();
+				throw new Exception("ApplicationContext is not initialized.");
 			}
 		}
 		return instance;
@@ -45,7 +55,9 @@ public class ApplicationContext {
 	 * constructor
 	 * @throws Exception
 	 */
-	private ApplicationContext() throws Exception {
+	private ApplicationContext(File configureFile, File propertiesFile) throws Exception {
+		this.configureFile = configureFile;
+		this.propertiesFile = propertiesFile;
 		prepareLog();
 		printWelcomeMessage();
 		createSqlSessionProxyFactory();
@@ -58,7 +70,7 @@ public class ApplicationContext {
 	 * @throws Exception
 	 */
 	private void prepareLog() throws Exception {
-		XPathReader xmlReader = new XPathReader(CONFIGURE_FILE);
+		XPathReader xmlReader = new XPathReader(configureFile);
 		String loggerExpression = "/application/logger";
 		String loggerClass = xmlReader.getTextContent(loggerExpression + "/@class");
 		System.setProperty(org.apache.commons.logging.Log.class.getName(), loggerClass);
@@ -94,7 +106,7 @@ public class ApplicationContext {
 	 * @throws Exception
 	 */
 	private void createWebServers() throws Exception {
-		XPathReader xmlReader = new XPathReader(CONFIGURE_FILE);
+		XPathReader xmlReader = new XPathReader(configureFile);
 		NodeList webServerNodeList = (NodeList) xmlReader.getElement("/application/webServer");
 		for(int idx = 1; idx <= webServerNodeList.getLength(); idx ++ ) {
 			String webServerExpression = String.format("/application/webServer[%d]", idx);
@@ -139,13 +151,13 @@ public class ApplicationContext {
 	 * @throws Exception
 	 */
 	private void createSqlSessionProxyFactory() throws Exception {
-		XPathReader xmlReader = new XPathReader(CONFIGURE_FILE);
+		XPathReader xmlReader = new XPathReader(configureFile);
 		NodeList sqlSessionProxyFactoryNodeList = (NodeList) xmlReader.getElement("/application/sqlSessionProxyFactory");
 		for(int idx = 1; idx <= sqlSessionProxyFactoryNodeList.getLength(); idx ++ ) {
 			String sqlSessionProxyFactoryExpression = String.format("/application/sqlSessionProxyFactory[%d]", idx);
 			String id = xmlReader.getTextContent(sqlSessionProxyFactoryExpression + "/@id");
 			String configureFile = xmlReader.getTextContent(sqlSessionProxyFactoryExpression + "/configureFile");
-			SqlSessionProxyFactory sqlSessionProxyFactory = SqlSessionProxyFactory.getInstance(new File(configureFile), PROPERTIES_FILE);
+			SqlSessionProxyFactory sqlSessionProxyFactory = SqlSessionProxyFactory.getInstance(new File(configureFile), propertiesFile);
 			sqlSessionProxyFactories.put(id, sqlSessionProxyFactory);
 		}
 	}
