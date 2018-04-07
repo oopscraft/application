@@ -142,10 +142,10 @@ dependencies {
 	compile ('org.jasypt:jasypt-spring3:1.9.2')
 	
 	// embedded tomcat
-	compile ('org.apache.tomcat.embed:tomcat-embed-core:9.0.0.M21') { force=true } 
-	compile ('org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6') { force=true } 
-	compile ('org.apache.tomcat.embed:tomcat-embed-jasper:9.0.0.M21') { force=true } 
-	compile ('org.apache.tomcat.embed:tomcat-embed-websocket:9.0.0.M21') { force=true } 
+	compile ('org.apache.tomcat.embed:tomcat-embed-core:8.5.2') { force=true } 
+	compile ('org.apache.tomcat.embed:tomcat-embed-logging-juli:8.5.2') { force=true } 
+	compile ('org.apache.tomcat.embed:tomcat-embed-jasper:8.5.2') { force=true } 
+	compile ('org.apache.tomcat.embed:tomcat-embed-websocket:8.5.2') { force=true } 
 
 	// jsp and servlet
 	compile ('javax.servlet.jsp:jsp-api:2.2') { force=true } 
@@ -160,6 +160,9 @@ dependencies {
 	
 	// spring-batch
 	compile ('org.springframework.batch:spring-batch-core:3.0.9.RELEASE')
+	
+	// quartz
+	compile ('org.quartz-scheduler:quartz:2.3.0')
 	
 	// junit
 	compile ('junit:junit:4.12')
