@@ -8,7 +8,7 @@ public class Application {
 	 * start application
 	 * @throws Exception
 	 */
-	public void start() throws Exception {
+	public void onStart() throws Exception {
 		// void
 	};
 	
@@ -16,7 +16,7 @@ public class Application {
 	 * stop application
 	 * @throws Exception
 	 */
-	public void stop() throws Exception {
+	public void onStop() throws Exception {
 		// void
 	};
 	
