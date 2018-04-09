@@ -32,14 +32,14 @@ public class ApplicationContainer {
 			
 			// start application
 			application = applicationClass.newInstance();
-			application.start();
+			application.onStart();
 			
 			// hooking kill signal
 			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
 				public void run() {
 					// stop application
 					try {
-						application.stop();
+						application.onStop();
 					}catch(Exception e){
 						e.printStackTrace(System.err);
 						LOG.warn(e.getMessage(), e);
