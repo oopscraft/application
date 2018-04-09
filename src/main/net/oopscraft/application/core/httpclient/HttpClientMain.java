@@ -1,4 +1,4 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.httpclient;
 
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -14,7 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import org.apache.log4j.Logger; 
+import org.apache.log4j.Logger;
+
+import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.TextTableBuilder;
+import net.oopscraft.application.core.ValueMap; 
 
 public class HttpClientMain extends JFrame { 
 	private static final long serialVersionUID = -3361457504257128292L; 

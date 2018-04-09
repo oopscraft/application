@@ -1,4 +1,4 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.httpclient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -20,6 +20,9 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.log4j.Logger;
+
+import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.ValueMap;
 
 public class HttpClient {
 	private static Logger logger = Logger.getLogger(HttpClient.class);
