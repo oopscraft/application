@@ -14,8 +14,8 @@ import org.junit.Test;
 
 import net.oopscraft.application.ApplicationTest;
 import net.oopscraft.application.core.TextTableBuilder;
-import net.oopscraft.application.core.security.Group;
-import net.oopscraft.application.core.security.UserService;
+import net.oopscraft.application.user.Group;
+import net.oopscraft.application.user.UserService;
 
 /**
  * @author chomookun@gmail.com

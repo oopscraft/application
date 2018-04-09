@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import net.oopscraft.application.ApplicationTest;
 import net.oopscraft.application.core.TextTableBuilder;
-import net.oopscraft.application.core.security.User;
-import net.oopscraft.application.core.security.dao.UserDao;
+import net.oopscraft.application.user.User;
+import net.oopscraft.application.user.dao.UserDao;
 
 /**
  * @author chomookun@gmail.com
