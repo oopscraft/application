@@ -12,6 +12,6 @@ package net.oopscraft.application.user;
  * @author chomookun@gmail.com
  *
  */
-public class SecurityService {
+public class UserSecurityService {
 
 }
