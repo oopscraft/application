@@ -18,12 +18,12 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-@RequestMapping("/console/code")
-public class CodeController {
+@RequestMapping("/console/menu")
+public class MenuManageController {
 	
-	@RequestMapping(value="/code", method=RequestMethod.GET)
-	public ModelAndView doCode() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("console/code.tiles");
+	@RequestMapping(value="", method=RequestMethod.GET)
+	public ModelAndView doMenu() throws Exception {
+		ModelAndView modelAndView =new ModelAndView("console/menu.tiles");
 		return modelAndView;
 	}
 	

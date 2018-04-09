@@ -31,8 +31,8 @@ import net.oopscraft.application.user.UserService;
  *
  */
 @Controller
-@RequestMapping("/console/user")
-public class UserController {
+@RequestMapping("/admin/userManage")
+public class UserManageController {
 	
 	@Autowired
 	UserService userService;
@@ -42,7 +42,7 @@ public class UserController {
 	
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public ModelAndView user() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("console/User.tiles");
+		ModelAndView modelAndView = new ModelAndView("admin/userManage.tiles");
 		return modelAndView;
 	}
 

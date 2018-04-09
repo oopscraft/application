@@ -12,6 +12,6 @@ package net.oopscraft.application.admin.controller;
  * @author chomookun@gmail.com
  *
  */
-public class MessageController {
+public class GroupManageController {
 
 }

@@ -22,14 +22,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.admin.ConsoleSecurity;
+import net.oopscraft.application.admin.AdminSecurity;
 import net.oopscraft.application.core.captcha.AnswerGenerator;
 import net.oopscraft.application.core.captcha.CaptchaException;
 import net.oopscraft.application.core.captcha.CaptchaUtility;
 
 @Controller
-@RequestMapping("/console/login")
-public class LoginController {
+@RequestMapping("/admin/sign")
+public class SignController {
 	
 	@Autowired
 	HttpServletRequest request;
@@ -39,7 +39,7 @@ public class LoginController {
 	
 	@RequestMapping(value="", method=RequestMethod.GET) 
 	public ModelAndView get() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("console/Login.jsp");
+		ModelAndView modelAndView = new ModelAndView("admin/sign.jsp");
 		return modelAndView;
 	}
 	
@@ -91,7 +91,7 @@ public class LoginController {
 		}
 		
 		// creates consoleSecurity component
-		ConsoleSecurity consoleSecurity = new ConsoleSecurity();
+		AdminSecurity consoleSecurity = new AdminSecurity();
 		
 		// checks valid administrator user
 		if(!consoleSecurity.isValidAdmin(admin)) {
@@ -135,4 +135,9 @@ public class LoginController {
 		session.setAttribute("loginFailCount", loginFailCount);
 	}
 
+	@RequestMapping(value="", method=RequestMethod.DELETE) 
+	public ModelAndView delete() throws Exception {
+		request.getSession().invalidate();
+		return new ModelAndView("redirect:/console");
+	}
 }

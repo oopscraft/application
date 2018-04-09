@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/console/monitor")
+@RequestMapping("/admin/monitor")
 public class MonitorController {
 	
 	@RequestMapping(value="")
 	public ModelAndView getMonitor() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("console/Monitor.tiles");
+		ModelAndView modelAndView = new ModelAndView("admin/monitor.tiles");
 		return modelAndView;
 	}
 
