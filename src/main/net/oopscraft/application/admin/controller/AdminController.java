@@ -8,12 +8,9 @@
  */
 package net.oopscraft.application.admin.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -21,18 +18,12 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-@RequestMapping("/console/logout")
-public class LogoutController {
-	
-	@Autowired
-	HttpServletRequest request;
-	
-	@Autowired
-	HttpServletResponse response;
-	
-	@RequestMapping(value="") 
+@RequestMapping("/console")
+public class AdminController {
+
+	@RequestMapping(value="", method=RequestMethod.GET)
 	public ModelAndView get() throws Exception {
-		request.getSession().invalidate();
-		return new ModelAndView("redirect:/console");
+		return new ModelAndView("redirect:/console/monitor");
 	}
+	
 }

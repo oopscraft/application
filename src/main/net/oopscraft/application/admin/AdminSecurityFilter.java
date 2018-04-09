@@ -17,7 +17,7 @@ import org.apache.commons.logging.LogFactory;
 
 import net.oopscraft.application.user.SecurityFilter;
 
-public class ConsoleSecurityFilter implements Filter {
+public class AdminSecurityFilter implements Filter {
 	
 	private static final Log LOG = LogFactory.getLog(SecurityFilter.class);
 

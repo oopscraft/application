@@ -74,14 +74,14 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
-    <!-- define console security filter -->
+    <!-- define admin security filter -->
     <filter>
-    	<filter-name>consoleSecurityFilter</filter-name>
-    	<filter-class>net.oopscraft.application.console.ConsoleSecurityFilter</filter-class>
+    	<filter-name>adminSecurityFilter</filter-name>
+    	<filter-class>net.oopscraft.application.admin.AdminSecurityFilter</filter-class>
     </filter>
     <filter-mapping>
-    	<filter-name>consoleSecurityFilter</filter-name>
-    	<url-pattern>/console/*</url-pattern>
+    	<filter-name>adminSecurityFilter</filter-name>
+    	<url-pattern>/admin/*</url-pattern>
     </filter-mapping>
     
 </web-app>

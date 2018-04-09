@@ -22,13 +22,13 @@ import net.oopscraft.application.core.PasswordBasedEncryptor;
  * @author chomookun@gmail.com
  *
  */
-public class ConsoleSecurity {
+public class AdminSecurity {
 	
-	private static final Log LOG = LogFactory.getLog(ConsoleSecurity.class);
+	private static final Log LOG = LogFactory.getLog(AdminSecurity.class);
 	private static final File ADMIN_RPOPERTIES = new File("conf/admin.properties");
 	private static Properties adminProperties;
 	
-	public ConsoleSecurity() throws Exception {
+	public AdminSecurity() throws Exception {
 		InputStream is = null;
 		try {
 			is = new FileInputStream(ADMIN_RPOPERTIES);

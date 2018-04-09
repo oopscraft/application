@@ -19,9 +19,9 @@ import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.WebSocketHandler;
 
 
-public class ConsoleWebSocketHandler extends WebSocketHandler {
+public class AdminWebSocketHandler extends WebSocketHandler {
 	
-	private static final Log LOG = LogFactory.getLog(ConsoleWebSocketHandler.class);
+	private static final Log LOG = LogFactory.getLog(AdminWebSocketHandler.class);
 	enum Id { 
 		 jmxInfoHistory 
 		,jmxInfo 
