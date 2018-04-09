@@ -1,4 +1,4 @@
-package net.oopscraft.application.core; 
+package net.oopscraft.application.core.macro; 
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner; 
+import org.reflections.scanners.SubTypesScanner;
+
+import net.oopscraft.application.core.NotationConverter;
+import net.oopscraft.application.core.ValueMap; 
 
 public class MacroExecutor { 
 	

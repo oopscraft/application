@@ -1,4 +1,6 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.macro;
+
+import net.oopscraft.application.core.ValueMap;
 
 /**
  * Macro abstract class

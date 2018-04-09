@@ -1,4 +1,4 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.macro;
 
 import java.lang.annotation.ElementType; 
 import java.lang.annotation.Retention; 
