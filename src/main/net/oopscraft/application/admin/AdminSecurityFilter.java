@@ -15,11 +15,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.user.SecurityFilter;
+import net.oopscraft.application.user.UserSecurityFilter;
 
 public class AdminSecurityFilter implements Filter {
 	
-	private static final Log LOG = LogFactory.getLog(SecurityFilter.class);
+	private static final Log LOG = LogFactory.getLog(UserSecurityFilter.class);
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
  
-public class SecurityFilter implements Filter {
+public class UserSecurityFilter implements Filter {
 	
-	private static final Log LOG = LogFactory.getLog(SecurityFilter.class);
+	private static final Log LOG = LogFactory.getLog(UserSecurityFilter.class);
  
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     	HttpServletRequest request = (HttpServletRequest) req;
