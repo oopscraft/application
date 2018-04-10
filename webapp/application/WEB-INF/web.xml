@@ -74,14 +74,14 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
-    <!-- define admin security filter -->
+    <!-- define spring security filter -->
     <filter>
-    	<filter-name>adminSecurityFilter</filter-name>
-    	<filter-class>net.oopscraft.application.admin.AdminSecurityFilter</filter-class>
+    	<filter-name>springSecurityFilterChain</filter-name>
+    	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
     <filter-mapping>
-    	<filter-name>adminSecurityFilter</filter-name>
-    	<url-pattern>/admin/*</url-pattern>
+    	<filter-name>springSecurityFilterChain</filter-name>
+    	<url-pattern>/*</url-pattern>
     </filter-mapping>
     
 </web-app>

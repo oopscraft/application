@@ -13,7 +13,7 @@
 			<keyStorePass>abcd1234</keyStorePass>
 		</ssl>
 		-->
-		<context path="/application">
+		<context path="/">
 			<resourceBase>webapp/application</resourceBase>
 			<descriptor>webapp/application/WEB-INF/web.xml</descriptor>
 		</context>
