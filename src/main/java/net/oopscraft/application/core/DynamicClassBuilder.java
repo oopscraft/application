@@ -9,7 +9,8 @@ import java.net.URLClassLoader;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DynamicClassBuilder
@@ -17,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public class DynamicClassBuilder {
 	
-	private static Logger logger = Logger.getLogger(DynamicClassBuilder.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DynamicClassBuilder.class);
 	private static final String TEMP_DIR = ".classes";
 	
 	private String packagePath = null;
@@ -39,6 +40,7 @@ public class DynamicClassBuilder {
 		return this;
 	}
 	
+	@SuppressWarnings("restriction")
 	public Class<?> build() throws Exception {
 		File packageDir = null;
 		File sourceFile = null;
@@ -62,7 +64,7 @@ public class DynamicClassBuilder {
 	        return Class.forName(packagePath + "." + className, true, classLoader);
 
 		}catch(Exception e){
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw e;
 		}finally{
 			if(packageDir != null) {

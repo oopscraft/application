@@ -19,10 +19,11 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpClient {
-	private static Logger logger = Logger.getLogger(HttpClient.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(HttpClient.class);
 	private static final String CHARSET = "UTF-8";
 	enum EncodeType {NONE, URL, JSON}
 
@@ -52,7 +53,7 @@ public class HttpClient {
 	 * @throws Exception 
 	 */ 
 	public String request(HttpRequest request, ValueMap params, InputStream inputStream, long length) throws Exception { 
-		logger.info(String.format("HttpClient.request[id:%s, params:%s]", request.getId(), params));
+		LOGGER.info(String.format("HttpClient.request[id:%s, params:%s]", request.getId(), params));
 
 		String response = null;
 		HttpURLConnection connection = null;
@@ -61,10 +62,10 @@ public class HttpClient {
 		ByteArrayOutputStream baos = null;
 		int responseCode = 0;
 		try { 
-			logger.debug(request);
+			LOGGER.debug(request);
 			String uri = bindParameter(request.getUri(), params, EncodeType.URL);
 			String url = this.host + uri ;
-			logger.info(String.format("Request[header:%s,method:%s,url:%s]",request,request.getMethod(),url));
+			LOGGER.info(String.format("Request[header:%s,method:%s,url:%s]",request,request.getMethod(),url));
 			
 			// connecting and setting options. 
 			connection = this.getConnection(url);
@@ -92,7 +93,7 @@ public class HttpClient {
 				}else{
 					payload = bindParameter(request.getPayload(), params, EncodeType.NONE);
 				}
-				logger.info(String.format("Payload[%s]",payload));
+				LOGGER.info(String.format("Payload[%s]",payload));
 				connection.setDoOutput(true);
 				dos=new DataOutputStream(connection.getOutputStream());
 				dos.write(payload.getBytes(CHARSET));
@@ -109,7 +110,7 @@ public class HttpClient {
 			long count = 0;
 			long currentLen = 0;
 			int len = 0;
-			logger.info(String.format("send binary[%d/%d]",currentLen,totalLen));
+			LOGGER.info(String.format("send binary[%d/%d]",currentLen,totalLen));
 			while((len=inputStream.read(buffer))!=-1){ 
 				count ++;
 				currentLen += len;
@@ -119,7 +120,7 @@ public class HttpClient {
 				dos.write(buffer,0,len);
 				dos.flush();
 			}
-			logger.info(String.format("send binary[%d/%d]",currentLen,totalLen));
+			LOGGER.info(String.format("send binary[%d/%d]",currentLen,totalLen));
 			dos.flush();
 			dos.close();
 		
@@ -138,30 +139,30 @@ public class HttpClient {
 			
 			// defines response string. 
 			response = new String(baos.toByteArray(),CHARSET);
-			logger.info(String.format("Response[code:%d,message:%s]",response));
+			LOGGER.info(String.format("Response[code:%d,message:%s]",response));
 			
 			// checking response HTTP code 
 			if(responseCode >= 400) { 
 				throw new HttpException(responseCode, response != null ? response : connection.getResponseMessage());
 			}
 		}catch(HttpException e){ 
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw e;
 		}catch(Exception e){ 
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new HttpException(responseCode, e.getMessage(), e);
 		}finally{ 
 			if(is != null) { 
-				try { is.close(); }catch(Exception e){ logger.warn(e.getMessage()); } 
+				try { is.close(); }catch(Exception e){ LOGGER.warn(e.getMessage()); } 
 			}
 			if(dos != null) { 
-				try {	dos.close(); }catch(Exception e){ logger.warn(e.getMessage()); } 
+				try {	dos.close(); }catch(Exception e){ LOGGER.warn(e.getMessage()); } 
 			} 
 			if(baos != null) { 
-				try { baos.close(); }catch(Exception e){ logger.warn(e.getMessage()); } 
+				try { baos.close(); }catch(Exception e){ LOGGER.warn(e.getMessage()); } 
 			} 
 			if(connection != null) { 
-				try { connection.disconnect(); }catch(Exception e){ logger.warn(e.getMessage()); } 
+				try { connection.disconnect(); }catch(Exception e){ LOGGER.warn(e.getMessage()); } 
 			} 
 		} 
 		
@@ -262,7 +263,7 @@ public class HttpClient {
 				default : 
 				break;
 			} 
-			logger.debug("+ " + name + ":" + value);
+			LOGGER.debug("+ " + name + ":" + value);
 			m.appendReplacement(sb, Matcher.quoteReplacement(value.toString()));
 		} 
 		m.appendTail(sb);
