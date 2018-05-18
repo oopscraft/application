@@ -11,9 +11,9 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import net.oopscraft.application.core.JmxInfo;
-import net.oopscraft.application.core.JmxMonitor;
-import net.oopscraft.application.core.JmxMonitorListener;
+import net.oopscraft.application.core.SystemInfo;
+import net.oopscraft.application.core.SystemMonitor;
+import net.oopscraft.application.core.SystemMonitorListener;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.WebSocketHandler;
@@ -62,11 +62,11 @@ public class AdminWebSocketHandler extends WebSocketHandler {
 		
 		// creates JmxMonitor instance
 		try {
-			JmxMonitor.intialize(3, 10);
-			JmxMonitor jmxMonitor = JmxMonitor.getInstance();
-			jmxMonitor.addListener(new JmxMonitorListener() {
+			SystemMonitor.intialize(3, 10);
+			SystemMonitor jmxMonitor = SystemMonitor.getInstance();
+			jmxMonitor.addListener(new SystemMonitorListener() {
 				@Override
-				public void onCheck(JmxInfo jmxInfo, List<JmxInfo> jmxInfoHistory) throws Exception {
+				public void onCheck(SystemInfo jmxInfo, List<SystemInfo> jmxInfoHistory) throws Exception {
 					ValueMap messageMap = new ValueMap();
 					messageMap.set("id", Id.jmxInfo);
 					messageMap.set("result", convertJmxInfoToMap(jmxInfo));				
@@ -106,13 +106,13 @@ public class AdminWebSocketHandler extends WebSocketHandler {
 			switch(id) {
 			case jmxInfoHistory :
 				List<ValueMap> list = new ArrayList<ValueMap>();
-				for(JmxInfo jmxInfo : JmxMonitor.getInstance().getJmxInfoHistory()) {
+				for(SystemInfo jmxInfo : SystemMonitor.getInstance().getJmxInfoHistory()) {
 					list.add(convertJmxInfoToMap(jmxInfo));
 				}
 				result = list;
 			break;
 			case jmxInfo :
-				result = convertJmxInfoToMap(JmxMonitor.getInstance().getLastestJmxInfo());
+				result = convertJmxInfoToMap(SystemMonitor.getInstance().getLastestJmxInfo());
 			break;
 			default :
 			break;
@@ -126,7 +126,7 @@ public class AdminWebSocketHandler extends WebSocketHandler {
 		}
 	}
 
-	private ValueMap convertJmxInfoToMap(JmxInfo jmxInfo) throws Exception {
+	private ValueMap convertJmxInfoToMap(SystemInfo jmxInfo) throws Exception {
 		ValueMap jmxInfoMap = new ValueMap();
 		jmxInfoMap.set("osInfo", jmxInfo.getOsInfo());
 		jmxInfoMap.set("memInfo", jmxInfo.getMemInfo());

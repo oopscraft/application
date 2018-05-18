@@ -12,7 +12,7 @@ import org.reflections.scanners.SubTypesScanner;
 import net.oopscraft.application.core.NotationConverter;
 import net.oopscraft.application.core.ValueMap; 
 
-public class MacroExecutor { 
+public class MacroParser { 
 	
 	private static final Pattern MACRO_PATTERN = Pattern.compile("([a-zA-Z_]+)\\((.*)\\)"); 
 
@@ -22,7 +22,7 @@ public class MacroExecutor {
 	 * Constructor
 	 * @param macroPackage Package path of macro class
 	 */
-	public MacroExecutor(String macroPackage) { 
+	public MacroParser(String macroPackage) { 
 		this.macroPackage = macroPackage; 
 	} 
 

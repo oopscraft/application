@@ -15,23 +15,23 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.core.JmxInfo.ClassInfo;
-import net.oopscraft.application.core.JmxInfo.DiskInfo;
-import net.oopscraft.application.core.JmxInfo.MemInfo;
-import net.oopscraft.application.core.JmxInfo.OsInfo;
-import net.oopscraft.application.core.JmxInfo.ThreadInfo;
+import net.oopscraft.application.core.SystemInfo.ClassInfo;
+import net.oopscraft.application.core.SystemInfo.DiskInfo;
+import net.oopscraft.application.core.SystemInfo.MemInfo;
+import net.oopscraft.application.core.SystemInfo.OsInfo;
+import net.oopscraft.application.core.SystemInfo.ThreadInfo;
 
 
 
-public class JmxMonitor extends Observable implements Runnable {
+public class SystemMonitor extends Observable implements Runnable {
 	
-	private static final Log LOG = LogFactory.getLog(JmxMonitor.class);
-	private static JmxMonitor instance = null;
+	private static final Log LOG = LogFactory.getLog(SystemMonitor.class);
+	private static SystemMonitor instance = null;
 	private int intervalSeconds = 3;
 	private int historySize = 10;
 
 	private Thread thread = null;
-	private List<JmxInfo> jmxInfoHistory = new CopyOnWriteArrayList<JmxInfo>();
+	private List<SystemInfo> jmxInfoHistory = new CopyOnWriteArrayList<SystemInfo>();
 	
 	/**
 	 * Initialize MonitorAgent
@@ -40,10 +40,10 @@ public class JmxMonitor extends Observable implements Runnable {
 	 * @return
 	 * @throws Exception
 	 */
-	public synchronized static JmxMonitor intialize(int intervalSeconds, int historySize) throws Exception {
-		synchronized(JmxMonitor.class) {
+	public synchronized static SystemMonitor intialize(int intervalSeconds, int historySize) throws Exception {
+		synchronized(SystemMonitor.class) {
 			if(instance == null) {
-				instance = new JmxMonitor(intervalSeconds, historySize);
+				instance = new SystemMonitor(intervalSeconds, historySize);
 			}
 			return instance;
 		}
@@ -53,8 +53,8 @@ public class JmxMonitor extends Observable implements Runnable {
 	 * getInstance
 	 * @return
 	 */
-	public static JmxMonitor getInstance() throws Exception {
-		synchronized(JmxMonitor.class) {
+	public static SystemMonitor getInstance() throws Exception {
+		synchronized(SystemMonitor.class) {
 			if(instance == null) {
 				throw new Exception("Monitor instance is not initialized."); 
 			}
@@ -68,7 +68,7 @@ public class JmxMonitor extends Observable implements Runnable {
 	 * @param limit
 	 * @throws Exception
 	 */
-	private JmxMonitor(int interval, int limit) throws Exception {
+	private SystemMonitor(int interval, int limit) throws Exception {
 		this.intervalSeconds = interval;
 		this.historySize = limit;
 		thread = new Thread(this);
@@ -81,7 +81,7 @@ public class JmxMonitor extends Observable implements Runnable {
 	public void run() {
 		while(!Thread.interrupted()) {
 			try {
-				JmxInfo jmxInfo = getJmxInfo();
+				SystemInfo jmxInfo = getJmxInfo();
 				jmxInfoHistory.add(jmxInfo);
 				if(jmxInfoHistory.size() > historySize) {
 					jmxInfoHistory.remove(0);
@@ -100,8 +100,8 @@ public class JmxMonitor extends Observable implements Runnable {
 		
 	}
 	
-	public static JmxInfo getJmxInfo() throws Exception {
-		JmxInfo jmxInfo = new JmxInfo();
+	public static SystemInfo getJmxInfo() throws Exception {
+		SystemInfo jmxInfo = new SystemInfo();
 		try {
 			// Getting OS info 
 			OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
@@ -151,19 +151,19 @@ public class JmxMonitor extends Observable implements Runnable {
 		return jmxInfo;
 	}
 	
-	public List<JmxInfo> getJmxInfoHistory() {
+	public List<SystemInfo> getJmxInfoHistory() {
 		return jmxInfoHistory;
 	}
 	
-	public JmxInfo getLastestJmxInfo() {
+	public SystemInfo getLastestJmxInfo() {
 		return jmxInfoHistory.get(jmxInfoHistory.size() -1);
 	}
 	
-	public void addListener(JmxMonitorListener listener) {
+	public void addListener(SystemMonitorListener listener) {
 		addObserver(listener);
 	}
 	
-	public void removeListener(JmxMonitorListener listener) {
+	public void removeListener(SystemMonitorListener listener) {
 		deleteObserver(listener);
 	}
 
