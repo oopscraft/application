@@ -1,11 +1,13 @@
 package net.oopscraft.application.core;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class SqlSessionProxy { 
 	
-	private static Logger logger = Logger.getLogger(SqlSessionProxy.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SqlSessionProxy.class);
 	
 	SqlSession sqlSession = null; 
 
@@ -60,7 +62,7 @@ public class SqlSessionProxy {
 		try { 
 			close(); 
 		}catch(Exception ignore){ 
-			logger.warn(ignore.getMessage(), ignore);
+			LOGGER.warn(ignore.getMessage(), ignore);
 		}finally{ 
 			super.finalize(); 
 		} 

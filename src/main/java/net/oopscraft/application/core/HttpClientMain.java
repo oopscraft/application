@@ -14,11 +14,14 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import org.apache.log4j.Logger; 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 
 public class HttpClientMain extends JFrame { 
 	private static final long serialVersionUID = -3361457504257128292L; 
-	private static Logger logger = Logger.getLogger(HttpClientMain.class); 
+	private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientMain.class); 
 	FlowLayout flow = new FlowLayout(FlowLayout.LEFT); 
 	Font font = new Font("Courier New",Font.ITALIC,12); 
 	JComboBox<String> apiList = null; 
@@ -35,7 +38,7 @@ public class HttpClientMain extends JFrame {
 	public HttpClientMain(final String host, final String resourceXml) throws Exception { 
 		super(host + " [" + resourceXml + "]"); 
 		super.setLayout(flow); 
-		// API 목록 
+		// API 紐⑸줉 
 		HttpRequestFactory requestFactory = HttpRequestFactory.getInstance(resourceXml); 
 		List<HttpRequest> requestList = requestFactory.getHttpRequestList(); 
 		Vector<String> apis = new Vector<String>(); 
@@ -46,7 +49,6 @@ public class HttpClientMain extends JFrame {
 		add(new JLabel("MA-SERVER-OPENAPI")); 
 		add(apiList); apiList.setSelectedIndex(-1); 
 		apiList.addActionListener(new ActionListener(){ 
-			@Override 
 			public void actionPerformed(ActionEvent evt) { 
 				String selectedItem = (String) apiList.getSelectedItem(); 
 				String id = selectedItem.split(":")[0].trim(); 
@@ -57,15 +59,14 @@ public class HttpClientMain extends JFrame {
 					testTextArea.setText(request.getTest()); 
 					resultTextArea.setText(""); 
 				}catch(Exception e){ 
-					logger.error(e.getMessage(),e); 
+					LOGGER.error(e.getMessage(),e); 
 				} 
 			} 
 		}); 
-		
-		// 추�?  
-		JButton requestButton = new JButton("?���?"); 
+
+		// request button
+		JButton requestButton = new JButton("?占쏙옙占�?"); 
 		requestButton.addActionListener(new ActionListener(){ 
-			@Override 
 			public void actionPerformed(ActionEvent evt) { 
 				try { 
 					String selectedItem = (String) apiList.getSelectedItem(); 
@@ -108,7 +109,7 @@ public class HttpClientMain extends JFrame {
 
 		setSize(800, 800); 
 		setVisible(true); 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 	// x버튼 ?��?�� 
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 	// x踰꾪듉 ?占쏙옙?占쏙옙 
 	} 
 	
 	private static String convertFormedString(String str) { 

@@ -6,11 +6,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList; 
 
 public class HttpRequestFactory { 
-	private static Logger logger = Logger.getLogger(HttpRequestFactory.class); 
+	private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestFactory.class); 
 	private static Map<String,HttpRequestFactory> instanceMap = new LinkedHashMap<String,HttpRequestFactory>(); 
 	List<HttpRequest> requestList = new ArrayList<HttpRequest>(); 
 	
@@ -34,7 +35,7 @@ public class HttpRequestFactory {
 	 * @throws Exception 
 	 */ 
 	private HttpRequestFactory(String resourceXml) throws Exception { 
-		logger.info("Creating OpenApiContextManager Singleton Instance."); 
+		LOGGER.info("Creating OpenApiContextManager Singleton Instance."); 
 		// loading input stream from XML file in class path.
 		XPathReader xmlReader = null;
 		InputStream is = null; 
@@ -61,7 +62,7 @@ public class HttpRequestFactory {
 					try { 
 						request.setTimeout(Integer.parseInt(timeout)); 
 					}catch(Exception e){ 
-						logger.warn(e.getMessage()); 
+						LOGGER.warn(e.getMessage()); 
 					} 
 				} 
 				request.setContentType(contentType); 
@@ -70,13 +71,13 @@ public class HttpRequestFactory {
 				
 				// add element 
 				requestList.add(request); 
-				logger.debug(request); 
+
 			} 
 		}catch(Exception e){ 
-			logger.error(e.getMessage(), e); 
+			LOGGER.error(e.getMessage(), e); 
 			throw e; 
 		}finally{ 
-			try { is.close(); }catch(Exception e){ logger.warn(e.getMessage()); } 
+			try { is.close(); }catch(Exception e){ LOGGER.warn(e.getMessage()); } 
 		} 
 	} 
 	
