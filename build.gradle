@@ -13,26 +13,6 @@ configurations.all {
 	} 
 }
 
-// Defines source set structure
-sourceSets { 
-	main { 
-		java { 
-			srcDirs = ['src/main'] 
-		} 
-		resources { 
-			srcDirs = ['src/main'] 
-		} 
-	} 
-	test { 
-		java { 
-			srcDirs = ['src/test'] 
-		} 
-		resources { 
-			srcDirs = ['src/test'] 
-		} 
-	} 
-} 
-
 // Overrding jar task
 jar { 
 	archiveName "oopscraft-application-${version}.jar" 
