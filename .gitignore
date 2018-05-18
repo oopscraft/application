@@ -1,5 +1,6 @@
 /bin/
 /build/
+/target/
 /log/
 /.tomcat/
 /.gradle/
@@ -7,3 +8,4 @@
 *.jar
 *.swo
 *.swp
+
