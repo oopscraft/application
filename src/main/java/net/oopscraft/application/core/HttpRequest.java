@@ -1,4 +1,4 @@
-package net.oopscraft.application.core.httpclient;
+package net.oopscraft.application.core;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

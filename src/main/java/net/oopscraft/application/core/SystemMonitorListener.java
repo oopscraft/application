@@ -7,16 +7,16 @@ import java.util.Observer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.core.JmxInfo;
+import net.oopscraft.application.core.SystemInfo;
 
-public abstract class JmxMonitorListener implements Observer {
+public abstract class SystemMonitorListener implements Observer {
 	
-	private static final Log LOG = LogFactory.getLog(JmxMonitorListener.class);
+	private static final Log LOG = LogFactory.getLog(SystemMonitorListener.class);
 
 	@Override
 	public void update(Observable observable, Object arg1) {
 		try {
-			JmxMonitor jmxMonitor = (JmxMonitor) observable;
+			SystemMonitor jmxMonitor = (SystemMonitor) observable;
 			onCheck(jmxMonitor.getLastestJmxInfo(), jmxMonitor.getJmxInfoHistory());
 		}catch(Exception e) {
 			LOG.warn(e.getMessage(),e);
@@ -27,6 +27,6 @@ public abstract class JmxMonitorListener implements Observer {
 	 * Check 
 	 * @throws Exception
 	 */
-	public abstract void onCheck(JmxInfo jmxInfo, List<JmxInfo> jmxInfoHistory) throws Exception;
+	public abstract void onCheck(SystemInfo jmxInfo, List<SystemInfo> jmxInfoHistory) throws Exception;
 
 }

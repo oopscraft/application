@@ -1,4 +1,4 @@
-package net.oopscraft.application.core.httpclient;
+package net.oopscraft.application.core;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.NodeList;
-
-import net.oopscraft.application.core.XPathReader; 
+import org.w3c.dom.NodeList; 
 
 public class HttpRequestFactory { 
 	private static Logger logger = Logger.getLogger(HttpRequestFactory.class); 
