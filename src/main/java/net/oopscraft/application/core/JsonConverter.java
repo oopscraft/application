@@ -3,6 +3,7 @@ package net.oopscraft.application.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
@@ -20,11 +21,13 @@ public class JsonConverter {
 	
 	public static <T> T convertJsonToObject(String json, Class<T> clazz) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		return mapper.readValue(json, clazz);
 	}
 	
 	public static <T> T convertJsonToObjectList(String json, Class<T> clazz) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		return mapper.readValue(json, TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, clazz));
 	}
 	

@@ -14,6 +14,7 @@ import net.oopscraft.application.core.ValueMap;
 
 public class MacroParser { 
 	
+	private static final String MACRO_IDENTIFIER = "\\$\\{(.*?)\\}"; 
 	private static final Pattern MACRO_PATTERN = Pattern.compile("([a-zA-Z_]+)\\((.*)\\)"); 
 
 	private String macroPackage = null;		// Package path of macro classes 
@@ -46,6 +47,20 @@ public class MacroParser {
 			} 
 		} 
 		return macroList; 
+	}
+	
+	public String parse(ValueMap macroContext, String value) throws Exception {
+        Pattern p = Pattern.compile(MACRO_IDENTIFIER);
+        Matcher m = p.matcher(value);
+        StringBuffer sb = new StringBuffer();
+        while(m.find()) {
+            String originalValue = m.group(1);
+            String parsedValue = execute(macroContext, originalValue);
+            m.appendReplacement(sb, Matcher.quoteReplacement(parsedValue));
+        }
+        m.appendTail(sb);
+        String parsedValue = sb.toString();
+        return parsedValue;
 	}
 	
 	/**
