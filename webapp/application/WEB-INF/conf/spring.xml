@@ -125,25 +125,17 @@
 	<beans:bean id="adminWebSocketHandler" class="net.oopscraft.application.admin.AdminWebSocketHandler"/>
 	
 	<!-- spring security -->
+	<context:component-scan base-package="net.lotte.chamomile.commons.user" name-generator="net.lotte.chamomile.batch.core.FullBeanNameGenerator"/>
+	<bean id="userAuthenticationProvider" class="net.lotte.chamomile.commons.user.UserAuthenticationProvider"/>
+	<bean id="userAuthorizationFilter" class="net.lotte.chamomile.commons.user.UserAuthorizationFilter"/>
 	<security:http use-expressions="true">
 		<security:intercept-url pattern="/user/sign" access="permitAll" />
 		<security:form-login login-page="/user/sign" login-processing-url="/user/sign" username-parameter="id" password-parameter="password" default-target-url="/"/>
 		<security:logout invalidate-session="true" logout-url="/user/sign/out" logout-success-url="/" />
+		<security:custom-filter ref="userAuthorizationFilter" after="SWITCH_USER_FILTER"  />
 	</security:http> 
 	<security:authentication-manager>
-		<security:authentication-provider user-service-ref="userService"/>
+		<security:authentication-provider ref="userAuthenticationProvider" />
 	</security:authentication-manager>
-	<bean id="userService" class="net.oopscraft.application.user.UserService"/>
-	<bean id="encoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" />
-	<bean id="saltSource" class="org.springframework.security.authentication.dao.ReflectionSaltSource">
-		<property name="userPropertyToUse" value="username"/>
-	</bean> 
-	<security:authentication-manager> 
-		<security:authentication-provider user-service-ref="userService">
-			<security:password-encoder ref="encoder"> 
-				<security:salt-source ref="saltSource" />
-			</security:password-encoder>
-		</security:authentication-provider>
-	</security:authentication-manager> 
 
 </beans>
