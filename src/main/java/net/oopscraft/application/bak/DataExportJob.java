@@ -1,4 +1,4 @@
-package net.lotte.chamomile.batch.builtin.dataexport;
+package net.oopscraft.application.bak;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -25,25 +25,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.RowMapper;
 
-import net.lotte.chamomile.batch.builtin.BuiltinJob;
-import net.lotte.chamomile.batch.builtin.BuiltinJobMeta;
-import net.lotte.chamomile.batch.core.ValueMap;
-import net.lotte.chamomile.batch.workflow.Job;
+import net.oopscraft.application.core.ValueMap;
 
-@BuiltinJobMeta(
-	name="Data Export Job",
-	description="Exort Table into CVS File",
-	type=Job.Type.SPRING,
-	command="/net/lotte/chamomile/batch/builtin/dataexport/DataExportJob.xml$dataExportJob",
-	argument="{ \r\n" + 
-	"\"table\": \"[export table name]\",\r\n" + 
-	"\"column\": [column names delimiter by ','(column1,column2...)],\r\n" + 
-	"\"where\": [where clauses(column1 = '1' AND column2 = '2'...)],\r\n" + 
-	"\"file\": \"[export file path]\"\r\n" + 
-	"}"
-)
+//@BuiltinJobMeta(
+//	name="Data Export Job",
+//	description="Exort Table into CVS File",
+//	type=Job.Type.SPRING,
+//	command="/net/lotte/chamomile/batch/builtin/dataexport/DataExportJob.xml$dataExportJob",
+//	argument="{ \r\n" + 
+//	"\"table\": \"[export table name]\",\r\n" + 
+//	"\"column\": [column names delimiter by ','(column1,column2...)],\r\n" + 
+//	"\"where\": [where clauses(column1 = '1' AND column2 = '2'...)],\r\n" + 
+//	"\"file\": \"[export file path]\"\r\n" + 
+//	"}"
+//)
 @Configuration
-public class DataExportJob implements BuiltinJob  {
+public class DataExportJob {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataExportJob.class);
 	

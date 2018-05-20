@@ -62,7 +62,7 @@ public class HttpClient {
 		ByteArrayOutputStream baos = null;
 		int responseCode = 0;
 		try { 
-			LOGGER.debug(request);
+			LOGGER.debug(request.toString());
 			String uri = bindParameter(request.getUri(), params, EncodeType.URL);
 			String url = this.host + uri ;
 			LOGGER.info(String.format("Request[header:%s,method:%s,url:%s]",request,request.getMethod(),url));
@@ -115,7 +115,7 @@ public class HttpClient {
 				count ++;
 				currentLen += len;
 				if(count%1024 == 0) { 
-					logger.info(String.format("send binary[%d/%d]", currentLen, totalLen));
+					LOGGER.info(String.format("send binary[%d/%d]", currentLen, totalLen));
 				} 
 				dos.write(buffer,0,len);
 				dos.flush();

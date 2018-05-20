@@ -1,4 +1,4 @@
-package net.lotte.chamomile.commons.user;
+package net.oopscraft.application.user;
 
 import java.io.IOException;
 
@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserAuthorizationFilter implements Filter {
 	
-	@Autowired
-	ResourceService resourceService;
+//	@Autowired
+//	ResourceService resourceService;
 	
 	private static Log LOG = LogFactory.getLog(UserAuthorizationFilter.class);
  
@@ -34,39 +34,39 @@ public class UserAuthorizationFilter implements Filter {
         String method = request.getMethod();
         LOG.debug(String.format("[%s][%s]",  method, uri));
         
-        // checking source author
-        try {
-        	Resource resource = resourceService.getResource(uri, method);
-
-        	// 해당 리소스에 설정된 권한이 있을 경우
-        	if(resource != null) {
-        		if(this.hasAuthority(resource.getAuthorityId()) == false) {
-        			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        			return;
-        		}
-        	}
-        	
-        }catch(Exception e) {
-        	LOG.error(e.getMessage());
-        	throw new ServletException(e);
-        }
+//        // checking source author
+//        try {
+//        	Resource resource = resourceService.getResource(uri, method);
+//
+//
+//        	if(resource != null) {
+//        		if(this.hasAuthority(resource.getAuthorityId()) == false) {
+//        			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+//        			return;
+//        		}
+//        	}
+//        	
+//        }catch(Exception e) {
+//        	LOG.error(e.getMessage());
+//        	throw new ServletException(e);
+//        }
         
         chain.doFilter(req, res);
     }
     
     /**
-     * 로그인한 사용저 권한중에 해당 권한이 존재하는지 여부를 확인한다.
+     * 
      * @param authorityId
      * @return
      * @throws Exception
      */
     private boolean hasAuthority(String authorityId) throws Exception {
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    	if(authentication.isAuthenticated() 
-    	&& !(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
-    		User user = (User)authentication.getPrincipal();
-    		return user.hasAuthority(authorityId);
-    	}
+//    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//    	if(authentication.isAuthenticated() 
+//    	&& !(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
+//    		User user = (User)authentication.getPrincipal();
+//    		return user.hasAuthority(authorityId);
+//    	}
     	return false;
     }
     
