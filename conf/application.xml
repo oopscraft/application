@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application>
 
-	<logger class="org.apache.commons.logging.impl.Log4JLogger">
-		<configureFile>conf/log4j.xml</configureFile>
-	</logger>
-
 	<webServer id="application" port="10001">
 		<!-- 
 		<ssl>

@@ -124,8 +124,8 @@
 	</websocket:handlers>
 	<beans:bean id="adminWebSocketHandler" class="net.oopscraft.application.admin.AdminWebSocketHandler"/>
 	
-	<!-- spring security -->
-	<context:component-scan base-package="net.lotte.chamomile.commons.user" name-generator="net.lotte.chamomile.batch.core.FullBeanNameGenerator"/>
+	<!-- spring security 
+	<context:component-scan base-package="net.lotte.chamomile.commons.user" name-generator="net.oopscraft.application.core.FullBeanNameGenerator"/>
 	<bean id="userAuthenticationProvider" class="net.lotte.chamomile.commons.user.UserAuthenticationProvider"/>
 	<bean id="userAuthorizationFilter" class="net.lotte.chamomile.commons.user.UserAuthorizationFilter"/>
 	<security:http use-expressions="true">
@@ -137,5 +137,6 @@
 	<security:authentication-manager>
 		<security:authentication-provider ref="userAuthenticationProvider" />
 	</security:authentication-manager>
+	-->
 
 </beans>

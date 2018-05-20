@@ -49,6 +49,13 @@ public class MacroParser {
 		return macroList; 
 	}
 	
+	/**
+	 * macroContext
+	 * @param macroContext
+	 * @param value
+	 * @return
+	 * @throws Exception
+	 */
 	public String parse(ValueMap macroContext, String value) throws Exception {
         Pattern p = Pattern.compile(MACRO_IDENTIFIER);
         Matcher m = p.matcher(value);

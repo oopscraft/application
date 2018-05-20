@@ -5,8 +5,45 @@
 	<artifactId>application</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	
+	<properties>
+		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
+		<org.apache.tomcat.embed.version>8.5.2</org.apache.tomcat.embed.version>
+		<org.springframework.spring.version>4.3.9.RELEASE</org.springframework.spring.version>
+		<org.springframework.security.version>4.2.6.RELEASE</org.springframework.security.version>
+		<org.apache.tiles.version>3.0.7</org.apache.tiles.version>
+		<org.jasypt.version>1.9.2</org.jasypt.version>
+		<org.springframework.batch.version>3.0.9.RELEASE</org.springframework.batch.version>
+		<org.quartz-scheduler.version>1.8.6</org.quartz-scheduler.version>
+	</properties>
+	
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+            <executions>
+                <execution>
+                    <id>default-compile</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>compile</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>default-testCompile</id>
+                    <phase>test-compile</phase>
+                    <goals>
+                        <goal>testCompile</goal>
+                    </goals>
+                </execution>
+            </executions>
+			</plugin>
  			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -56,17 +93,28 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	<properties>
-		<org.slf4j.version>1.7.25</org.slf4j.version>
-		<org.apache.tomcat.embed.version>8.5.2</org.apache.tomcat.embed.version>
-		<org.springframework.spring.version>4.3.9.RELEASE</org.springframework.spring.version>
-		<org.springframework.security.version>4.2.6.RELEASE</org.springframework.security.version>
-		<org.apache.tiles.version>3.0.7</org.apache.tiles.version>
-		<org.jasypt.version>1.9.2</org.jasypt.version>
-		<org.springframework.batch.version>3.0.9.RELEASE</org.springframework.batch.version>
-		<org.quartz-scheduler.version>1.8.6</org.quartz-scheduler.version>
-	</properties>
+
+	<reporting>
+		<plugins>
+           <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <linkXref>true</linkXref>
+                    <rulesets>
+                        <ruleset>rulesets/java/basic.xml</ruleset>
+                    </rulesets>
+                    <sourceEncoding>utf-8</sourceEncoding>
+                </configuration>
+            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
+			</plugin>
+		</plugins>
+	</reporting>
 	
 	<dependencies>
 	
@@ -116,24 +164,29 @@
 		<dependency>  
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-exec</artifactId>
-			<version>${org.apache.commons.version}</version>
+			<version>1.3</version>
 		</dependency>  
-		
-		<!-- org.slf4j -->
+
+		<!-- org.slf4j + org.apache.logging.log4j -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${org.slf4j.version}</version>
+			<version>1.7.25</version>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>${org.slf4j.version}</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.9.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${org.slf4j.version}</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>2.9.0</version>
 		</dependency>
 	
 		<!-- org.apache.tomcat.embed -->
@@ -290,7 +343,7 @@
 		<!-- org.apache.tiles -->
 		<dependency>
 			<groupId>org.apache.tiles</groupId>
-			<artifactId>tiles-jsp</artifactId>
+			<artifactId>tiles-core</artifactId>
 			<version>${org.apache.tiles.version}</version>
 		</dependency>
 		<dependency>

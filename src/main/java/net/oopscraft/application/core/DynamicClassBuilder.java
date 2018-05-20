@@ -40,7 +40,6 @@ public class DynamicClassBuilder {
 		return this;
 	}
 	
-	@SuppressWarnings("restriction")
 	public Class<?> build() throws Exception {
 		File packageDir = null;
 		File sourceFile = null;
