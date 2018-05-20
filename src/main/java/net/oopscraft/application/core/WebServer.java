@@ -51,7 +51,6 @@ public class WebServer {
 		 for(WebServerContext context : this.contextList){ 
 			 File resourceBase = new File(context.getResourceBase());
 			 StandardContext ctx = (StandardContext)tomcat.addWebapp(context.getContextPath(), resourceBase.getAbsolutePath());
-//			 ctx.addParameter("webAppRootKey", Long.toString(System.currentTimeMillis()));
 			 ctx.addParameter("webAppRootKey", UUID.randomUUID().toString());
 			 ctx.setAltDDName(context.getDescriptor());
 			 ctx.setReloadable(false);
