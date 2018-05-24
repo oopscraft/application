@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<client>
+	<request id="getUserList">
+		<uri>/api/users</uri>
+		<method>POST</method>
+		<payload>
+			<![CDATA[
+			{ 'name': 'james' }
+			]]>
+		</payload>
+	</request>
+
+</client>
