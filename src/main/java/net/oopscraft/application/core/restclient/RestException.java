@@ -1,4 +1,4 @@
-package net.oopscraft.application.core.rest; 
+package net.oopscraft.application.core.restclient; 
 
 public class RestException extends Exception { 
 	private static final long serialVersionUID = -6708475225195828436L; 

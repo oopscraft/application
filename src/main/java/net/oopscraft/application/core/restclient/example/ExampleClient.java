@@ -1,6 +1,6 @@
-package net.oopscraft.application.core.rest.example;
+package net.oopscraft.application.core.restclient.example;
 
-import net.oopscraft.application.core.rest.RestParam;
+import net.oopscraft.application.core.restclient.RestParam;
 
 public interface ExampleClient {
 	

@@ -1,13 +1,20 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.restclient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.cert.X509Certificate;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,26 +29,90 @@ import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HttpClient {
-	private static final Logger LOGGER = LoggerFactory.getLogger(HttpClient.class);
+import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.ValueMap;
+
+public class RestClientHandler implements InvocationHandler {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RestClientHandler.class);
 	private static final String CHARSET = "UTF-8";
 	enum EncodeType {NONE, URL, JSON}
+	
+	public String host;
+	public RestRequestFactory restRequestFactory;
 
-	private String host = null;
-	
-	/**
-	 * Constructor
-	 */
-	protected HttpClient() {
+	@Override
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		String methodName = method.getName();
+		RestRequest restRequest = restRequestFactory.getRestRequest(methodName);
+		
+		// setting parameter from interface annotations.
+		ValueMap params = new ValueMap();
+		Annotation[][] annotationsArray = method.getParameterAnnotations();
+		for(int i = 0; i < annotationsArray.length; i ++) {
+			Annotation annotation = annotationsArray[i][0];
+			RestParam restParam = (RestParam) annotation;
+			String name = restParam.value();
+			Object value = args[i];
+			params.set(name, value);
+        }
+		
+		// request
+		String response = this.request(restRequest, params, null, 0);
+		
+		// convert response string into return type.
+		Class<?> returnType = method.getReturnType();
+		if(returnType == void.class) {
+			return null;
+		}else if(returnType == int.class) {
+			return Integer.parseInt(response);
+		}else if(returnType == long.class) {
+			return Long.parseLong(response);
+		}else if(returnType == double.class) {
+			return Double.parseDouble(response);
+		}else if(returnType == float.class) {
+			return Float.parseFloat(response);
+		}else if(returnType == BigDecimal.class) {
+			return new BigDecimal(response);
+		}else if(returnType == String.class) {
+			return response;
+		}else if(returnType == List.class) {
+			return JsonConverter.convertJsonToObjectList(response, Object.class); 
+		}else{
+			return JsonConverter.convertJsonToObject(response, returnType); 
+		}
 	}
-	
-	/** 
-	 * Constructor 
-	 * @param host 
+
+	/**
+	 * @return the host
 	 */
-	public HttpClient(String host) {
+	public String getHost() {
+		return host;
+	}
+
+	/**
+	 * @param host the host to set
+	 */
+	public void setHost(String host) {
 		this.host = host;
 	}
+
+	/**
+	 * @return the restRequestFactory
+	 */
+	public RestRequestFactory getRestRequestFactory() {
+		return restRequestFactory;
+	}
+
+	/**
+	 * @param restRequestFactory the restRequestFactory to set
+	 */
+	public void setRestRequestFactory(RestRequestFactory restRequestFactory) {
+		this.restRequestFactory = restRequestFactory;
+	}
+	
+
+	
 
 	/** 
 	 * Call request 
@@ -52,7 +123,7 @@ public class HttpClient {
 	 * @return 
 	 * @throws Exception 
 	 */ 
-	public String request(HttpRequest request, ValueMap params, InputStream inputStream, long length) throws Exception { 
+	public String request(RestRequest request, ValueMap params, InputStream inputStream, long length) throws Exception { 
 		LOGGER.info(String.format("HttpClient.request[id:%s, params:%s]", request.getId(), params));
 
 		String response = null;
@@ -101,28 +172,30 @@ public class HttpClient {
 			} 
 			
 			// send
-			connection.setRequestProperty("Cache-Control","no-cache");
-			connection.setRequestProperty("Content-Length",Long.toString(length));
-			connection.setDoOutput(true);
-			dos=new DataOutputStream(connection.getOutputStream());
-			byte[] buffer = new byte[1024];
-			long totalLen = length;
-			long count = 0;
-			long currentLen = 0;
-			int len = 0;
-			LOGGER.info(String.format("send binary[%d/%d]",currentLen,totalLen));
-			while((len=inputStream.read(buffer))!=-1){ 
-				count ++;
-				currentLen += len;
-				if(count%1024 == 0) { 
-					LOGGER.info(String.format("send binary[%d/%d]", currentLen, totalLen));
-				} 
-				dos.write(buffer,0,len);
+			if(inputStream != null) {
+				connection.setRequestProperty("Cache-Control","no-cache");
+				connection.setRequestProperty("Content-Length",Long.toString(length));
+				connection.setDoOutput(true);
+				dos=new DataOutputStream(connection.getOutputStream());
+				byte[] buffer = new byte[1024];
+				long totalLen = length;
+				long count = 0;
+				long currentLen = 0;
+				int len = 0;
+				LOGGER.info(String.format("send binary[%d/%d]",currentLen,totalLen));
+				while((len=inputStream.read(buffer))!=-1){ 
+					count ++;
+					currentLen += len;
+					if(count%1024 == 0) { 
+						LOGGER.info(String.format("send binary[%d/%d]", currentLen, totalLen));
+					} 
+					dos.write(buffer,0,len);
+					dos.flush();
+				}
+				LOGGER.info(String.format("send binary[%d/%d]",currentLen,totalLen));
 				dos.flush();
+				dos.close();
 			}
-			LOGGER.info(String.format("send binary[%d/%d]",currentLen,totalLen));
-			dos.flush();
-			dos.close();
 		
 			// reading
 			is=connection.getErrorStream();
@@ -132,6 +205,8 @@ public class HttpClient {
 			
 			// reading from stream 
 			baos = new ByteArrayOutputStream();
+			int len = 0;
+			byte[] buffer = new byte[1024];
 			while((len=is.read(buffer))!=-1){
 				baos.write(buffer, 0, len);
 				baos.flush();
@@ -139,18 +214,18 @@ public class HttpClient {
 			
 			// defines response string. 
 			response = new String(baos.toByteArray(),CHARSET);
-			LOGGER.info(String.format("Response[code:%d,message:%s]",response));
+			LOGGER.info(String.format("Response[code:%d,message:%s]",responseCode, response));
 			
 			// checking response HTTP code 
 			if(responseCode >= 400) { 
-				throw new HttpException(responseCode, response != null ? response : connection.getResponseMessage());
+				throw new RestException(responseCode, response != null ? response : connection.getResponseMessage());
 			}
-		}catch(HttpException e){ 
+		}catch(RestException e){ 
 			LOGGER.error(e.getMessage(), e);
 			throw e;
 		}catch(Exception e){ 
 			LOGGER.error(e.getMessage(), e);
-			throw new HttpException(responseCode, e.getMessage(), e);
+			throw new RestException(responseCode, e.getMessage(), e);
 		}finally{ 
 			if(is != null) { 
 				try { is.close(); }catch(Exception e){ LOGGER.warn(e.getMessage()); } 
