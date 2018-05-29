@@ -1,8 +1,8 @@
-package net.oopscraft.application.core.rest.example;
+package net.oopscraft.application.core.restclient.example;
 
 import org.apache.logging.log4j.core.config.Configurator;
 
-import net.oopscraft.application.core.rest.RestClientMain;
+import net.oopscraft.application.core.restclient.RestClientMain;
 
 public class ExampleClientMain {
 	

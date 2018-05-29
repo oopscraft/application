@@ -1,4 +1,4 @@
-package net.oopscraft.application.core.rest;
+package net.oopscraft.application.core.restclient;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
