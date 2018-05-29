@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Vector;
 
@@ -20,6 +19,7 @@ import javax.swing.JTextArea;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.TextTableBuilder;
 import net.oopscraft.application.core.ValueMap;
+import net.oopscraft.application.core.rest.example.ExampleClient;
 
 
 
@@ -37,7 +37,7 @@ public class RestClientMain extends JFrame {
 	public static void main(String[] args) throws Exception {
 		String restRequestXml = "/" + RestClientMain.class.getPackage().getName().replaceAll("\\.", "/") + "/RestClient.xml";
 		String host = "http://marketdata.krx.co.kr";
-		new RestClientMain(RestClient.class, restRequestXml, host); 
+		new RestClientMain(ExampleClient.class, restRequestXml, host); 
 	} 
 	
 	public RestClientMain(final Class<?> clazz, final String restRequestXml, final String host) throws Exception { 

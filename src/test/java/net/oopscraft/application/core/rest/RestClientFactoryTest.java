@@ -2,6 +2,8 @@ package net.oopscraft.application.core.rest;
 
 import org.junit.Test;
 
+import net.oopscraft.application.core.rest.example.ExampleClient;
+
 public class RestClientFactoryTest {
 
 	@Test
@@ -11,7 +13,7 @@ public class RestClientFactoryTest {
 			String resourceXml = "/net/oopscraft/application/core/rest/RestRequest.xml";
 			String bid = "COM";
 			String name = "selectbox";
-			RestClient restClient = RestClientFactory.getRestClient(RestClient.class, resourceXml, host);
+			ExampleClient restClient = RestClientFactory.getRestClient(ExampleClient.class, resourceXml, host);
 			String result = restClient.getTest(bid, name);
 			System.out.println(result);
 			assert(true);
