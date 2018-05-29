@@ -36,5 +36,16 @@ public class JsonConverter {
 		String json = mapper.writeValueAsString(string);
 		return mapper.writeValueAsString(json);
 	}
+	
+	public static boolean isJson(String value) {
+	    boolean valid = true;
+	    try{
+	    	ObjectMapper mapper = new ObjectMapper();
+	    	mapper.readTree(value);
+	    } catch(Exception e){
+	        valid = false;
+	    }
+	    return valid;
+	}
 
 }

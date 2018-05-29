@@ -18,6 +18,7 @@ public class SystemInfo {
 	Map<DiskInfo, Object> diskInfo = new LinkedHashMap<DiskInfo, Object>();
 	Map<ClassInfo, Object> classInfo = new LinkedHashMap<ClassInfo, Object>();
 	List<Map<ThreadInfo, Object>> threadInfoList = new CopyOnWriteArrayList<Map<ThreadInfo, Object>>();
+	StringBuffer processInfoList = new StringBuffer();
 
 	public Map<OsInfo, Object> getOsInfo() {
 		return osInfo;
@@ -39,4 +40,7 @@ public class SystemInfo {
 		return threadInfoList;
 	}
 
+	public String getProcessInfoList() {
+		return processInfoList.toString();
+	}
 }
