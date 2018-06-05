@@ -117,6 +117,14 @@ public class MacroParser {
 			} 
 		} 
 		argumentList.add(buffer.toString()); 
+		
+		// strips " ' characters.
+		for(int i = 0; i < argumentList.size(); i ++) {
+			String argument = argumentList.get(i);
+			argument = argument.replaceAll("(^[\'\"])|([\'\"]$)", "");
+			argumentList.set(i, argument);
+		}
+		
 		return argumentList.toArray(new String[argumentList.size()]); 
 	} 
 }
