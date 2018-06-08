@@ -1,6 +1,9 @@
 package net.oopscraft.application.core;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.math.BigDecimal;
+import java.sql.Clob;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -17,13 +20,37 @@ public class ValueMap extends LinkedHashMap<String,Object> {
 		super();
 	}
 	
-	public ValueMap(Map<String,Object> map) {
-		super();
-		super.putAll(map);		
+	public Object put(String name, Object value) {
+		if(value instanceof Clob) {
+			StringBuffer buffer = new StringBuffer();
+			Clob clob = (Clob)value;
+			Reader reader = null;
+			try {
+				reader = clob.getCharacterStream();
+				char[] buff = new char[1024];
+				int nchars = 0;
+				while ((nchars = reader.read(buff)) > 0) {
+					buffer.append(buff, 0, nchars);
+				}
+			}catch(Exception e) {
+				buffer.append(e.getMessage());
+			}finally {
+				if(reader != null) {
+					try {
+						reader.close();
+					} catch (IOException e) {
+						buffer.append(e.getMessage());
+					}
+				}
+			}
+			return super.put(name, buffer.toString());
+		}else {
+			return super.put(name, value);
+		}
 	}
 		
 	public void set(String name, Object value) {
-		super.put(name, value);
+		this.put(name, value);
 	}
 	
 	public Object get(String name) {
