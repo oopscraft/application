@@ -77,6 +77,22 @@ public class ApplicationContainer {
 	}
 	
 	/**
+	 * Launches application for test
+	 * @param applicationClass
+	 * @param configureFile
+	 * @param propertiesFile
+	 */
+	public static void launchForTest(Class<? extends Application> applicationClass, File configureFile, File propertiesFile) throws Exception {
+		// creates ApplicationContext	
+		ApplicationContext.initialize(configureFile, propertiesFile);
+		applicationContext = ApplicationContext.getInstance();
+		
+		// create resource
+		printWelcomeMessage();
+		createSqlSessionProxyFactories();
+	}
+	
+	/**
 	 * printWelcomeMessage
 	 * @throws Exception
 	 */
