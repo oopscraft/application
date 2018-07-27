@@ -12,6 +12,11 @@
     <typeAliases>
 		<typeAlias alias="valueMap" type="net.oopscraft.application.core.ValueMap"/>
     </typeAliases>
+	<plugins>
+		<plugin interceptor="net.oopscraft.application.core.PageableInterceptor">
+			<property name="dbType" value="${dataSource.dbType}"/>
+		</plugin> 
+	</plugins>
     <environments default="oltp">
         <environment id="oltp">
               <transactionManager type="JDBC"/>
