@@ -26,6 +26,7 @@ public class Application {
 	 * @throws Exception
 	 */
 	public static void main(final String[] args) throws Exception {
+		System.setProperty("log4j.configurationFile", "conf/log4j2.xml");
 		ApplicationContainer.launch(Application.class, new File("conf/application.xml"), new File("conf/application.properties"));
 	}
 
