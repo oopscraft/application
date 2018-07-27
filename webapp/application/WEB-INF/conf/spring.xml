@@ -80,6 +80,23 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="/WEB-INF/conf/mybatis-spring.xml" />
         <property name="mapperLocations" value="classpath:net/oopscraft/application/**/dao/${dataSource.dbType}/*Dao.xml" />
+
+        <property name="mapperLocations">
+			<array>
+				<value>classpath:net/lotte/chamomile/batch/dao/mapper/*Dao.xml</value>
+				<!-- 
+				<value>classpath:net/lotte/chamomile/batch/dao/${dataSource.dbType}/*Dao.xml</value>
+				 -->
+			</array>
+		</property>
+		<property name="plugins">
+			<array>
+				<ref bean="pageableInterceptor"/>
+			</array>
+		</property>
+    </bean>
+    <bean id="pageableInterceptor" class="net.lotte.chamomile.batch.core.PageableInterceptor">
+    	<property name="dbType" value="${dataSource.dbType}"/>
     </bean>
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg index="0" ref="sqlSessionFactory" />
@@ -94,6 +111,21 @@
         <property name="DataSource" ref="dataSource"/>
     </bean>
     <tx:annotation-driven transaction-manager="txManager"/>
+	
+    <!-- message -->
+	<beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<beans:property name="basename" value="/WEB-INF/message/message"/>
+		<beans:property name="defaultEncoding" value="UTF-8"/>	         
+		<beans:property name="cacheSeconds" value="3"/>
+	</beans:bean>    
+	<beans:bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+		<beans:property name="defaultLocale" value="${defaultLocale}" />
+	</beans:bean>
+	<mvc:interceptors>
+		<beans:bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+			<beans:property name="paramName" value="lang" />
+		</beans:bean>
+    </mvc:interceptors>	 
     
 	<!-- Multipart Resolver -->    
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
