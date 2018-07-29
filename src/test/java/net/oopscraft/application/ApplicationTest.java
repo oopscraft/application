@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import net.oopscraft.application.ApplicationJUnit4ClassRunner;
 
 @RunWith(ApplicationJUnit4ClassRunner.class)
-@ContextConfiguration(locations="file:src/test/java/net/oopscraft/application/spring-test.xml")
+@ContextConfiguration(locations="file:webapp/application/WEB-INF/conf/spring.xml")
 @WebAppConfiguration
 @Transactional
 public class ApplicationTest {

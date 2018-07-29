@@ -8,6 +8,8 @@
  */
 package net.oopscraft.application;
 
+import java.io.File;
+
 import org.junit.runners.model.InitializationError;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
