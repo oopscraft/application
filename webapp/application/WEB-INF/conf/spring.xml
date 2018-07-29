@@ -56,7 +56,7 @@
     <mvc:default-servlet-handler/>
     <mvc:annotation-driven/>
     
-    <!-- Scans components -->
+    <!-- Scans Components -->
 	<context:component-scan base-package="net.oopscraft.application" name-generator="net.oopscraft.application.core.FullBeanNameGenerator"/>
     
     <!-- definition of data source
@@ -79,14 +79,9 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="/WEB-INF/conf/mybatis-spring.xml" />
-        <property name="mapperLocations" value="classpath:net/oopscraft/application/**/dao/${dataSource.dbType}/*Dao.xml" />
-
         <property name="mapperLocations">
 			<array>
-				<value>classpath:net/lotte/chamomile/batch/dao/mapper/*Dao.xml</value>
-				<!-- 
-				<value>classpath:net/lotte/chamomile/batch/dao/${dataSource.dbType}/*Dao.xml</value>
-				 -->
+				<value>classpath:net/oopscraft/application/**/*Dao.xml</value>
 			</array>
 		</property>
 		<property name="plugins">
@@ -95,29 +90,23 @@
 			</array>
 		</property>
     </bean>
-    <bean id="pageableInterceptor" class="net.lotte.chamomile.batch.core.PageableInterceptor">
+    <bean id="pageableInterceptor" class="net.oopscraft.application.core.PageableInterceptor">
     	<property name="dbType" value="${dataSource.dbType}"/>
     </bean>
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg index="0" ref="sqlSessionFactory" />
     </bean>
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage">
-            <value>net.oopscraft.application</value>
-        </property>
-        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-    </bean>
-    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="DataSource" ref="dataSource"/>
     </bean>
-    <tx:annotation-driven transaction-manager="txManager"/>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 	
-    <!-- message -->
+    <!-- Message Source -->
 	<beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<beans:property name="basename" value="/WEB-INF/message/message"/>
 		<beans:property name="defaultEncoding" value="UTF-8"/>	         
 		<beans:property name="cacheSeconds" value="3"/>
-	</beans:bean>    
+	</beans:bean>
 	<beans:bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
 		<beans:property name="defaultLocale" value="${defaultLocale}" />
 	</beans:bean>

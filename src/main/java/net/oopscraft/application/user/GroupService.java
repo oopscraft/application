@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 import net.oopscraft.application.ApplicationContext;
 import net.oopscraft.application.core.SqlSessionProxy;
 import net.oopscraft.application.core.SqlSessionProxyFactory;
-import net.oopscraft.application.user.dao.GroupDao;
-import net.oopscraft.application.user.dao.UserDao;
 
 /**
  * @author chomookun@gmail.com

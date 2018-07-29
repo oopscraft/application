@@ -1,15 +1,10 @@
-import java.lang.reflect.Field;
-import java.sql.Connection;
+package net.oopscraft.application.core;
+
 import java.sql.Statement;
 import java.util.Properties;
 
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
-import org.apache.ibatis.cache.CacheKey;
-import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
@@ -22,7 +17,6 @@ import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
-import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +44,8 @@ public class PageableInterceptor implements Interceptor {
 		
 		if(rowBounds != null && rowBounds instanceof Pageable) {
 			Pageable pageable = (Pageable)rowBounds;
-			ParamMap paramMap = (ParamMap)metaStatementHandler.getValue("delegate.boundSql.parameterObject");
+			@SuppressWarnings("unchecked")
+			ParamMap<Pageable> paramMap = (ParamMap<Pageable>)metaStatementHandler.getValue("delegate.boundSql.parameterObject");
 			paramMap.put("pageable", pageable);
 			String originalSql = (String) metaStatementHandler.getValue("delegate.boundSql.sql");
 			LOGGER.debug("originalSql = {}", originalSql);

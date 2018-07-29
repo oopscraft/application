@@ -1,3 +1,7 @@
+package net.oopscraft.application.core;
+
+import org.apache.ibatis.session.RowBounds;
+
 public class Pageable extends RowBounds {
 	
 	int rows = Integer.MAX_VALUE;
