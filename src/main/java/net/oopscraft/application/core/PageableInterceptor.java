@@ -21,6 +21,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.oopscraft.application.core.DatabaseIdProvider.DatabaseId;
+
 @Intercepts({
 	@Signature(type = StatementHandler.class, method = "parameterize", args = {Statement.class})
 })
@@ -73,20 +75,6 @@ public class PageableInterceptor implements Interceptor {
 	@Override
 	public void setProperties(Properties properties) {
 		LOGGER.debug("+ PageableInterceptor.setProperties");
-        for (String name : properties.stringPropertyNames()) {
-        	String value = properties.getProperty(name);
-        	if("dbType".equals(name)) {
-        		this.setDbType(value);
-        	}
-        }
-	}
-	
-	/**
-	 * Setting database type.
-	 * @param dbType
-	 */
-	public void setDbType(String dbType) {
-		this.dbType = DbType.valueOf(dbType.toString().trim().toUpperCase());
 	}
 	
 	/**
@@ -98,7 +86,7 @@ public class PageableInterceptor implements Interceptor {
 		
 		StringBuffer pageableSql = new StringBuffer();
 		
-		// defines prefix sql
+		// defines prefix SQL
 		switch(databaseId) {
 			case ORACLE :
 				pageableSql.append("SELECT * FROM (SELECT ROWNUM AS i,DAT.* FROM (");
