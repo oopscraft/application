@@ -1,8 +1,18 @@
+package net.oopscraft.application.core;
+
+import java.sql.SQLException;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DatabaseIdProvider implements org.apache.ibatis.mapping.DatabaseIdProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseIdProvider.class);
 	
-	enum DatabaseId { ORACLE, MYSQL, MSSQL, TIBERO, POSTGRES };
+	protected enum DatabaseId { ANSI, MYSQL, POSTGRES, ORACLE, MSSQL };
 	String databaseId;
 	
 	@Override

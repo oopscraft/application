@@ -10,7 +10,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class ValueMap extends LinkedHashMap<String,Object> {
 	
