@@ -30,9 +30,6 @@ public class PageableInterceptor implements Interceptor {
 	private static final ObjectFactory DEFAULT_OBJECT_FACTORY = new DefaultObjectFactory();
 	private static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY = new DefaultObjectWrapperFactory();
 	private static final ReflectorFactory DEFAULT_REFLECTOR_FACTORY = new DefaultReflectorFactory();
-	
-	enum DbType { UNKNOWN, ORACLE, MYSQL, MSSQL, TIBERO };
-	DbType dbType = DbType.UNKNOWN;
 
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
@@ -50,9 +47,13 @@ public class PageableInterceptor implements Interceptor {
 			String originalSql = (String) metaStatementHandler.getValue("delegate.boundSql.sql");
 			LOGGER.debug("originalSql = {}", originalSql);
 			LOGGER.debug("pageable = {}", pageable);
+			
+			//setting database id
+			String databaseIdString = (String)metaStatementHandler.getValue("delegate.configuration.databaseId");
+			DatabaseId databaseId = DatabaseId.valueOf(databaseIdString.toUpperCase());
 
 			// pageable 이 존재하는 경우
-			StringBuffer sql = this.createPageableSql(originalSql);
+			StringBuffer sql = this.createPageableSql(originalSql, databaseId);
 			LOGGER.debug("sql = {}", sql.toString());
 			metaStatementHandler.setValue("delegate.boundSql.sql", sql.toString());
 
@@ -93,18 +94,18 @@ public class PageableInterceptor implements Interceptor {
 	 * @param originalSql
 	 * @return
 	 */
-	private StringBuffer createPageableSql(String originalSql) {
+	private StringBuffer createPageableSql(String originalSql, DatabaseId databaseId) {
 		
 		StringBuffer pageableSql = new StringBuffer();
 		
 		// defines prefix sql
-		switch(this.dbType) {
+		switch(databaseId) {
 			case ORACLE :
 				pageableSql.append("SELECT * FROM (SELECT ROWNUM AS i,DAT.* FROM (");
 				pageableSql.append(originalSql);
 				pageableSql.append(") DAT) WHERE i BETWEEN (#{pageable.offset}+1) AND (#{pageable.offset}+#{pageable.limit})");
 			break;
-			default:
+			default :
 				pageableSql.append("SELECT * FROM (");
 				pageableSql.append(originalSql);
 				pageableSql.append(") LIMIT #{pageable.limit}");
