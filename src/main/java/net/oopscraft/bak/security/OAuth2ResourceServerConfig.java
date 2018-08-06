@@ -1,4 +1,4 @@
-package net.oopscraft.application.security;
+package net.oopscraft.bak.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
