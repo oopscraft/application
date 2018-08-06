@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @Configuration
 public class OAuth2Configure {
@@ -49,7 +51,14 @@ public class OAuth2Configure {
 	    @Bean
 	    public TokenStore tokenStore() {
 //	        return new JdbcTokenStore(dataSource);
-	    	return new InMemoryTokenStore();
+	    	return new JwtTokenStore(accessTokenConverter());
+	    }
+
+	    @Bean
+	    public JwtAccessTokenConverter accessTokenConverter() {
+	        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+	        converter.setSigningKey("123");
+	        return converter;
 	    }
 	}
 
@@ -64,9 +73,16 @@ public class OAuth2Configure {
 	    @Bean
 	    public TokenStore tokenStore() {
 	        //return new JdbcTokenStore(dataSource);
-	    	return new InMemoryTokenStore();
+	    	return new JwtTokenStore(accessTokenConverter());
 	    }
 
+	    @Bean
+	    public JwtAccessTokenConverter accessTokenConverter() {
+	        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+	        converter.setSigningKey("123");
+	        return converter;
+	    }
+	    
 	    @Override
 	    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 	        endpoints.tokenStore(tokenStore());
