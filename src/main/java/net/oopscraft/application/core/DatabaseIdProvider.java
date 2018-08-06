@@ -32,5 +32,9 @@ public class DatabaseIdProvider implements org.apache.ibatis.mapping.DatabaseIdP
 		}
 		return null;
 	}
+	
+	public void setDatabaseId(String databaseId) {
+		this.databaseId = databaseId;
+	}
 
 }

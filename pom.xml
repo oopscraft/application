@@ -13,6 +13,7 @@
 		<org.springframework.security.version>4.2.6.RELEASE</org.springframework.security.version>
 		<org.apache.tiles.version>3.0.7</org.apache.tiles.version>
 		<org.jasypt.version>1.9.2</org.jasypt.version>
+		<org.springframework.security.oauth.version>2.0.10.RELEASE</org.springframework.security.oauth.version>
 		<org.springframework.batch.version>3.0.9.RELEASE</org.springframework.batch.version>
 		<org.quartz-scheduler.version>1.8.6</org.quartz-scheduler.version>
 	</properties>
@@ -311,23 +312,6 @@
 			<version>${org.springframework.spring.version}</version>
 		</dependency>
 		
-		<!-- org.springframework.security -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<version>${org.springframework.security.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<version>${org.springframework.security.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>${org.springframework.security.version}</version>
-		</dependency>
-		
 		<!-- JSTL -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -367,6 +351,30 @@
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-spring3</artifactId>
 			<version>${org.jasypt.version}</version>
+		</dependency>
+		
+		<!-- org.springframework.security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${org.springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${org.springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${org.springframework.security.version}</version>
+		</dependency>
+		
+		<!-- Spring Security OAuth2-->
+		<dependency>
+		    <groupId>org.springframework.security.oauth</groupId>
+		    <artifactId>spring-security-oauth2</artifactId>
+		    <version>${org.springframework.security.oauth.version}</version>
 		</dependency>
 		
 		<!-- spring-batch -->

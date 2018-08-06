@@ -6,20 +6,25 @@
  * Released under the LGPL-3.0 licence
  * https://opensource.org/licenses/lgpl-3.0.html
  */
-package net.oopscraft.application.admin.controller;
+package net.oopscraft.application.admin;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * @author chomoo
+ *
+ */
 @Controller
-@RequestMapping("/admin/monitor")
-public class MonitorController {
+@RequestMapping("/console/code")
+public class CodeManageController {
 	
-	@RequestMapping(value="")
-	public ModelAndView getMonitor() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/monitor.tiles");
+	@RequestMapping(value="/code", method=RequestMethod.GET)
+	public ModelAndView doCode() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("console/code.tiles");
 		return modelAndView;
 	}
-
+	
 }

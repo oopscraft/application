@@ -13,42 +13,38 @@
 		<typeAlias alias="valueMap" type="net.oopscraft.application.core.ValueMap"/>
     </typeAliases>
 	<plugins>
-		<plugin interceptor="net.oopscraft.application.core.PageableInterceptor">
-			<property name="dbType" value="${dataSource.dbType}"/>
-		</plugin> 
+		<plugin interceptor="net.oopscraft.application.core.PageableInterceptor"/>
 	</plugins>
     <environments default="oltp">
         <environment id="oltp">
               <transactionManager type="JDBC"/>
               <dataSource type="net.oopscraft.application.core.DbcpDataSourceFactory">
-                <property name="driverClassName" value="${dataSource.oltp.driver}" />
-                 <property name="url" value="${dataSource.oltp.url}" />
-                 <property name="username" value="${dataSource.oltp.username}" />
-                 <property name="password" value="${dataSource.oltp.password}" />
-                 <property name="initialSize" value="${dataSource.oltp.initialSize}"/>
-                 <property name="maxActive" value="${dataSource.oltp.maxActive}" />
+                <property name="driverClassName" value="${application.dataSource.oltp.driver}" />
+                 <property name="url" value="${application.dataSource.oltp.url}" />
+                 <property name="username" value="${application.dataSource.oltp.username}" />
+                 <property name="password" value="${application.dataSource.oltp.password}" />
+                 <property name="initialSize" value="${application.dataSource.oltp.initialSize}"/>
+                 <property name="maxActive" value="${application.dataSource.oltp.maxActive}" />
                  <property name="testOnBorrow" value="true"/>
-                 <property name="validationQuery" value="${dataSource.oltp.validationQuery}"/>
+                 <property name="validationQuery" value="${application.dataSource.oltp.validationQuery}"/>
               </dataSource>
         </environment>
         <environment id="olap">
               <transactionManager type="JDBC"/>
               <dataSource type="net.oopscraft.application.core.DbcpDataSourceFactory">
-                <property name="driverClassName" value="${dataSource.olap.driver}" />
-                 <property name="url" value="${dataSource.olap.url}" />
-                 <property name="username" value="${dataSource.olap.username}" />
-                 <property name="password" value="${dataSource.olap.password}" />
-                 <property name="initialSize" value="${dataSource.olap.initialSize}"/>
-                 <property name="maxActive" value="${dataSource.olap.maxActive}" />
+                <property name="driverClassName" value="${application.dataSource.olap.driver}" />
+                 <property name="url" value="${application.dataSource.olap.url}" />
+                 <property name="username" value="${application.dataSource.olap.username}" />
+                 <property name="password" value="${application.dataSource.olap.password}" />
+                 <property name="initialSize" value="${application.dataSource.olap.initialSize}"/>
+                 <property name="maxActive" value="${application.dataSource.olap.maxActive}" />
                  <property name="testOnBorrow" value="true"/>
-                 <property name="validationQuery" value="${dataSource.olap.validationQuery}"/>
+                 <property name="validationQuery" value="${application.dataSource.olap.validationQuery}"/>
               </dataSource>
         </environment>
     </environments>
-    <databaseIdProvider type="DB_VENDOR">
-		<property name="SQL Server" value="sqlserver"/>
-		<property name="DB2" value="db2"/>        
-		<property name="Oracle" value="oracle" />
+    <databaseIdProvider type="net.oopscraft.application.core.DatabaseIdProvider">
+		<property name="databaseId" value="${application.databaseId}"/>
 	</databaseIdProvider>
 	<mappers>
 		<mapper resource="net/oopscraft/application/user/UserDao.xml"/>
