@@ -89,10 +89,13 @@
 				<ref bean="pageableInterceptor"/>
 			</array>
 		</property>
+		<property name="databaseIdProvider">
+			<bean class="net.oopscraft.application.core.DatabaseIdProvider">
+				<property name="databaseId" value="${application.databaseId}"/>
+			</bean>
+		</property>
     </bean>
-    <bean id="pageableInterceptor" class="net.oopscraft.application.core.PageableInterceptor">
-    	<property name="dbType" value="${dataSource.dbType}"/>
-    </bean>
+    <bean id="pageableInterceptor" class="net.oopscraft.application.core.PageableInterceptor"/>
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg index="0" ref="sqlSessionFactory" />
     </bean>
@@ -108,7 +111,7 @@
 		<beans:property name="cacheSeconds" value="3"/>
 	</beans:bean>
 	<beans:bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
-		<beans:property name="defaultLocale" value="${defaultLocale}" />
+		<beans:property name="defaultLocale" value="${application.defaultLocale}" />
 	</beans:bean>
 	<mvc:interceptors>
 		<beans:bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">

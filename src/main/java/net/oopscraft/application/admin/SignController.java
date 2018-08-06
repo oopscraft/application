@@ -6,7 +6,7 @@
  * Released under the LGPL-3.0 licence
  * https://opensource.org/licenses/lgpl-3.0.html
  */
-package net.oopscraft.application.admin.controller;
+package net.oopscraft.application.admin;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.admin.AdminSecurity;
 import net.oopscraft.application.core.captcha.AnswerGenerator;
 import net.oopscraft.application.core.captcha.CaptchaException;
 import net.oopscraft.application.core.captcha.CaptchaUtility;
