@@ -1,5 +1,5 @@
 package net.oopscraft.application.user;
 
-public class Privilege {
+public class Authority {
 
 }

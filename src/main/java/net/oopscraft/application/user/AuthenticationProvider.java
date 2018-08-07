@@ -9,7 +9,6 @@
 package net.oopscraft.application.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
@@ -17,10 +16,10 @@ import org.springframework.security.core.AuthenticationException;
  * @author chomookun
  *
  */
-public class UserAuthenticationProvider implements AuthenticationProvider {
+public class AuthenticationProvider implements org.springframework.security.authentication.AuthenticationProvider {
 	
 	@Autowired
-	UserService userService;
+	UserDetailsService userDetailsService;
 
 	/* (non-Javadoc)
 	 * @see org.springframework.security.authentication.AuthenticationProvider#authenticate(org.springframework.security.core.Authentication)
