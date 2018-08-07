@@ -1,6 +1,10 @@
 package net.oopscraft.application.user;
 
+import java.util.Collection;
 import java.util.Date;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class User {
 
@@ -82,4 +86,5 @@ public class User {
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
 	}
+
 }

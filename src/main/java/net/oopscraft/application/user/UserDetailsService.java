@@ -8,25 +8,22 @@
  */
 package net.oopscraft.application.user;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-/**
- * @author chomookun@gmail.com
- *
- */
 @Service
-public class UserService implements UserDetailsService {
+public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
 	
-	private static Log LOG = LogFactory.getLog(UserService.class);
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailsService.class);
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		// TODO Auto-generated method stub
 		return null;
-		
 	}
+	
+
 }

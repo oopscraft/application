@@ -30,7 +30,7 @@ import net.oopscraft.application.code.Code;
 @RequestMapping("/api/code")
 public class CodeController {
 	
-	@PreAuthorize("#oauth2.hasScope('read')")
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<Code>> getAll(
 		 @RequestParam(value = "rows", defaultValue = "10") int rows
