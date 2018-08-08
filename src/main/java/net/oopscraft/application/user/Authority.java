@@ -1,5 +1,5 @@
 package net.oopscraft.application.user;
 
-public class Authority {
+public class Authority implements GrantedAuthority {
 
 }
