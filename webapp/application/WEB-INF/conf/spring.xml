@@ -161,6 +161,43 @@
 	<security:authentication-manager>
 		<security:authentication-provider ref="userAuthenticationProvider" />
 	</security:authentication-manager>
+
+	<!-- spring security -->
+	<beans:bean id="loginHandler" class="net.lotte.chamomile.batch.user.LoginHandler" />
+	<beans:bean id="userService" class="net.lotte.chamomile.batch.user.UserService"/>
+	<beans:bean id="userAuthenticationProvider" class="net.lotte.chamomile.batch.user.UserAuthenticationProvider"/>
+	<beans:bean id="userAuthorizationFilter" class="net.lotte.chamomile.batch.user.UserAuthorizationFilter"/>
+	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
+	
+	<http pattern="/application.js" security="none"/>
+	<http pattern="/application.css" security="none"/>
+	<http pattern="/fonts/**/*" security="none"/>	
+	<http pattern="/images/**/*" security="none"/>
+	<http pattern="/lib/**/*" security="none"/>
+	
+
+	<http pattern="/admin/login" security="none" />
+	<http pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
+		<csrf disabled="true" />
+		<intercept-url pattern="/admin/**/*" access="isAuthenticated()" />
+		<form-login login-page="/admin/login" 
+					login-processing-url="/admin/doLogin" 
+					username-parameter="id" 
+					password-parameter="password" 
+					authentication-success-handler-ref="loginHandler"
+					authentication-failure-handler-ref="loginHandler" />
+		<logout invalidate-session="true" logout-url="/admin/doLogout" logout-success-url="/" />
+		<custom-filter ref="userAuthorizationFilter" after="SWITCH_USER_FILTER"  />
+	</http> 
+	<authentication-manager>
+		<authentication-provider ref="userAuthenticationProvider" />
+	</authentication-manager>
+	<global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
+
 	-->
+	
+	<!-- ========================================================== -->
+	<!-- Admin Security  											-->
+	<!-- ========================================================== -->
 
 </beans>
