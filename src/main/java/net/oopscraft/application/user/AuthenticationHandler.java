@@ -1,4 +1,5 @@
-public class LoginHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler {
+package net.oopscraft.application.user;
+public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler {
 	
 	/**
 	 * 인증 성공시 호출 핸들러
