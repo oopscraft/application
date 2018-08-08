@@ -20,7 +20,7 @@ import net.oopscraft.application.user.Group;
  * @author chomookun@gmail.com
  *
  */
-public class UserDetailsServiceTest extends ApplicationTest {
+public class UserServiceTest extends ApplicationTest {
 	
 
 }

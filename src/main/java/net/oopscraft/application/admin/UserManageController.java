@@ -24,7 +24,7 @@ import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
 import net.oopscraft.application.user.User;
-import net.oopscraft.application.user.UserDetailsService;
+import net.oopscraft.application.user.UserService;
 
 /**
  * @author chomookun@gmail.com
@@ -35,7 +35,7 @@ import net.oopscraft.application.user.UserDetailsService;
 public class UserManageController {
 	
 	@Autowired
-	UserDetailsService userService;
+	UserService userService;
 
 	@Autowired
 	GroupService groupService;
