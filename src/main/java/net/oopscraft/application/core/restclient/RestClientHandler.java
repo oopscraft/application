@@ -37,6 +37,7 @@ public class RestClientHandler implements InvocationHandler {
 	
 	public String host;
 	public RestRequestFactory restRequestFactory;
+	private List<RestPreProcessor> restPreProcessorList = new ArrayList<RestPreProcessor>();
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -52,7 +53,12 @@ public class RestClientHandler implements InvocationHandler {
 			String name = restParam.value();
 			Object value = args[i];
 			params.set(name, value);
-        }
+        	}
+		
+		// executes restPreProcessor
+		for(RestPreProcessor restPreProcessor : restPreProcessorList) {
+			restPreProcessor.process(restRequest);
+		}
 		
 		// request
 		String response = this.request(restRequest, params, null, 0);
@@ -108,6 +114,9 @@ public class RestClientHandler implements InvocationHandler {
 		this.restRequestFactory = restRequestFactory;
 	}
 	
+	public void addRestPreProcessor(RestPreProcessor restPreProcessor) {
+		this.restPreProcessorList.add(restPreProcessor);
+	}
 
 	
 
