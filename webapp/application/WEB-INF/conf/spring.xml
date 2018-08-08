@@ -174,8 +174,6 @@
 	<http pattern="/fonts/**/*" security="none"/>	
 	<http pattern="/images/**/*" security="none"/>
 	<http pattern="/lib/**/*" security="none"/>
-	
-
 	<http pattern="/admin/login" security="none" />
 	<http pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
 		<csrf disabled="true" />

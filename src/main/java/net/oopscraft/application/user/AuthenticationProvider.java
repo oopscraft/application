@@ -11,6 +11,7 @@ package net.oopscraft.application.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author chomookun
@@ -36,9 +37,9 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		String password = (String) authentication.getCredentials();
 		
 		// loading user information
-		User user = null;
+		UserDetails userDetails = null;
 		try {
-			user = userService.loadUserByUsername(id);
+			userDetails = userDetailsService.loadUserByUsername(id);
 		}catch(UsernameNotFoundException e) {
 			String message = messageSource.getMessage("message.loginFailed.NotFound", null, new Locale(defaultLocale));
 			//String message = messageSource.getMessage("message.loginFailed.userNotFound", null, null);
