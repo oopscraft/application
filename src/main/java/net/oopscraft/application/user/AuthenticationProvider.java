@@ -8,9 +8,15 @@
  */
 package net.oopscraft.application.user;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -20,7 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class AuthenticationProvider implements org.springframework.security.authentication.AuthenticationProvider {
 	
 	@Autowired
-	UserDetailsService userDetailsService;
+	UserService userDetailsService;
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -37,30 +43,20 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		String password = (String) authentication.getCredentials();
 		
 		// loading user information
-		UserDetails userDetails = null;
+		org.springframework.security.core.userdetails.UserDetails userDetails = null;
 		try {
 			userDetails = userDetailsService.loadUserByUsername(id);
 		}catch(UsernameNotFoundException e) {
-			String message = messageSource.getMessage("message.loginFailed.NotFound", null, new Locale(defaultLocale));
-			//String message = messageSource.getMessage("message.loginFailed.userNotFound", null, null);
-			throw new UsernameNotFoundException(message);
+			throw new UsernameNotFoundException(e.getMessage(), e);
 		}
 		
 		// checking password
-		if(passwordEncoder.matches(password, user.getPassword()) == false) {
-			String message = messageSource.getMessage("message.loginFailed.NotFound", null, new Locale(defaultLocale));
-			//String message = messageSource.getMessage("message.loginFailed.invalidPassword", null, null);
-			throw new BadCredentialsException(message);
-		}
-		
-		// checking use or not
-		if("1".equals(user.getUseYn()) == false) {
-			String message = messageSource.getMessage("message.loginFailed.invalidUser", null, new Locale(defaultLocale));
-			throw new InsufficientAuthenticationException(message);
+		if(passwordEncoder.matches(password, userDetails.getPassword()) == false) {
+			throw new BadCredentialsException("");
 		}
 
 		// return authentication token.
-		authentication = new UsernamePasswordAuthenticationToken(user, password, user.getAuthorityList());
+		authentication = new UsernamePasswordAuthenticationToken(id, password, user.getAuthorityList());
 		return authentication;
 		
 		
@@ -86,7 +82,6 @@ public class AuthenticationProvider implements org.springframework.security.auth
 //		// return authentication token.
 //		authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorityList());
 //		return authentication;
-		return null;
 	}
 
 	/* (non-Javadoc)
