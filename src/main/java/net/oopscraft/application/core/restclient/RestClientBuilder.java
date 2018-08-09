@@ -1,9 +1,13 @@
+package net.oopscraft.application.core.restclient;
+
+import java.lang.reflect.Proxy;
+
 public class RestClientBuilder {
 	
 	Class<?> clazz;
 	String restRequestXml;
 	String host;
-	List<RestPreProcessor> restPreProcessorList = new ArrayList<RestPreProcessor>();
+	RestListener restListener;
 	
 	public RestClientBuilder(Class<?> clazz, String restRequestXml, String host) throws RestException {
 		this.clazz = clazz;
@@ -15,8 +19,8 @@ public class RestClientBuilder {
 	 * addRestPreProcessor
 	 * @param restPreProcessor
 	 */
-	public RestClientBuilder addRestPreProcessor(RestPreProcessor restPreProcessor) {
-		restPreProcessorList.add(restPreProcessor);
+	public RestClientBuilder setRestListener(RestListener restListener) {
+		this.restListener = restListener;
 		return this;
 	}
 
@@ -26,8 +30,8 @@ public class RestClientBuilder {
 		RestRequestFactory restRequestFactory = RestRequestFactory.getInstance(restRequestXml);
 		restClientHandler.setRestRequestFactory(restRequestFactory);
 		restClientHandler.setHost(host);
-		for(RestPreProcessor restPreProcessor : restPreProcessorList) {
-			restClientHandler.addRestPreProcessor(restPreProcessor);
+		if(restListener != null) {
+			restClientHandler.setRestListener(restListener);
 		}
 		
 		// returns proxy instance

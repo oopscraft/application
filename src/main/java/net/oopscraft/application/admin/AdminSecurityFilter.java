@@ -12,20 +12,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import net.oopscraft.application.user.UserSecurityFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AdminSecurityFilter implements Filter {
 	
-	private static final Log LOG = LogFactory.getLog(UserSecurityFilter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdminSecurityFilter.class);
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     	HttpServletRequest request = (HttpServletRequest) req;
     	HttpServletResponse response = (HttpServletResponse) res;
-        LOG.debug(String.format("IP:%s,URL:%s,URI:%s",request.getRemoteAddr(),request.getRequestURL(),request.getRequestURI()));
+        LOGGER.debug(String.format("IP:%s,URL:%s,URI:%s",request.getRemoteAddr(),request.getRequestURL(),request.getRequestURI()));
         
         // checking session
         if(!request.getRequestURI().contains(request.getContextPath() + "/console/login")) {

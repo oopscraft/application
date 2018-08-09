@@ -1,7 +1,9 @@
 package net.oopscraft.application.user;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +23,8 @@ public class User implements UserDetails {
 	String description;
 	String statusCode;
 	Date joinDate;
+	
+	List<Authority> authorities = new ArrayList<Authority>();
 	
 	public String getId() {
 		return id;
@@ -91,8 +95,7 @@ public class User implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+		return authorities;
 	}
 
 	@Override
