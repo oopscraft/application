@@ -35,9 +35,9 @@ public class RestClientHandler implements InvocationHandler {
 	private static final String CHARSET = "UTF-8";
 	enum EncodeType {NONE, URL, JSON}
 	
-	public String host;
-	public RestRequestFactory restRequestFactory;
-	private List<RestPreProcessor> restPreProcessorList = new ArrayList<RestPreProcessor>();
+	private String host;
+	private RestRequestFactory restRequestFactory;
+	private RestListener restListener;
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -53,36 +53,31 @@ public class RestClientHandler implements InvocationHandler {
 			String name = restParam.value();
 			Object value = args[i];
 			params.set(name, value);
-        	}
-		
-		// executes restPreProcessor
-		for(RestPreProcessor restPreProcessor : restPreProcessorList) {
-			restPreProcessor.process(restRequest);
-		}
+        }
 		
 		// request
-		String response = this.request(restRequest, params, null, 0);
+		RestResponse restResponse = this.request(restRequest, params, null, 0);
 		
 		// convert response string into return type.
 		Class<?> returnType = method.getReturnType();
 		if(returnType == void.class) {
 			return null;
 		}else if(returnType == int.class) {
-			return Integer.parseInt(response);
+			return Integer.parseInt(restResponse.getResponseMessage());
 		}else if(returnType == long.class) {
-			return Long.parseLong(response);
+			return Long.parseLong(restResponse.getResponseMessage());
 		}else if(returnType == double.class) {
-			return Double.parseDouble(response);
+			return Double.parseDouble(restResponse.getResponseMessage());
 		}else if(returnType == float.class) {
-			return Float.parseFloat(response);
+			return Float.parseFloat(restResponse.getResponseMessage());
 		}else if(returnType == BigDecimal.class) {
-			return new BigDecimal(response);
+			return new BigDecimal(restResponse.getResponseMessage());
 		}else if(returnType == String.class) {
-			return response;
+			return restResponse.getResponseMessage();
 		}else if(returnType == List.class) {
-			return JsonConverter.convertJsonToObjectList(response, Object.class); 
+			return JsonConverter.convertJsonToObjectList(restResponse.getResponseMessage(), Object.class); 
 		}else{
-			return JsonConverter.convertJsonToObject(response, returnType); 
+			return JsonConverter.convertJsonToObject(restResponse.getResponseMessage(), returnType); 
 		}
 	}
 
@@ -114,61 +109,67 @@ public class RestClientHandler implements InvocationHandler {
 		this.restRequestFactory = restRequestFactory;
 	}
 	
-	public void addRestPreProcessor(RestPreProcessor restPreProcessor) {
-		this.restPreProcessorList.add(restPreProcessor);
+	/**
+	 * setRestListener
+	 * @param restListener
+	 */
+	public void setRestListener(RestListener restListener) {
+		this.restListener = restListener;
 	}
-
-	
 
 	/** 
 	 * Call request 
-	 * @param request 
+	 * @param restRequest 
 	 * @param params 
 	 * @param inputStream 
 	 * @param length 
 	 * @return 
 	 * @throws Exception 
 	 */ 
-	public String request(RestRequest request, ValueMap params, InputStream inputStream, long length) throws Exception { 
-		LOGGER.info(String.format("HttpClient.request[id:%s, params:%s]", request.getId(), params));
+	public RestResponse request(RestRequest restRequest, ValueMap params, InputStream inputStream, long length) throws Exception { 
+		LOGGER.info(String.format("HttpClient.request[id:%s, params:%s]", restRequest.getId(), params));
 
-		String response = null;
+		// restListener.before
+		if(restListener != null) {
+			restListener.before(restRequest);
+		}
+		
+		RestResponse restResponse = new RestResponse();
 		HttpURLConnection connection = null;
 		DataOutputStream dos = null;
 		InputStream is = null;
 		ByteArrayOutputStream baos = null;
-		int responseCode = 0;
 		try { 
-			LOGGER.debug(request.toString());
-			String uri = bindParameter(request.getUri(), params, EncodeType.URL);
+			LOGGER.debug(restRequest.toString());
+			String uri = bindParameter(restRequest.getUri(), params, EncodeType.URL);
 			String url = this.host + uri ;
-			LOGGER.info(String.format("Request[header:%s,method:%s,url:%s]",request,request.getMethod(),url));
+			LOGGER.info(String.format("Request[header:%s,method:%s,url:%s]",restRequest,restRequest.getMethod(),url));
 			
 			// connecting and setting options. 
 			connection = this.getConnection(url);
-			connection.setRequestMethod(request.getMethod());
+			connection.setRequestMethod(restRequest.getMethod());
 			connection.setConnectTimeout(10*1000);	// connect timeout is 10 seconds. 
-			connection.setReadTimeout(request.getTimeout()*1000);
+			connection.setReadTimeout(restRequest.getTimeout()*1000);
 			// setting content-type header 
-			if(request.getContentType() != null) { 
-				connection.setRequestProperty("Content-Type", request.getContentType());
+			if(restRequest.getContentType() != null) { 
+				connection.setRequestProperty("Content-Type", restRequest.getContentType());
 			} 
 			// setting custom header 
-			setCustomHeaders(connection, request.getCustomHeaders());
+			setCustomHeaders(connection, restRequest.getCustomHeaders());
 			
 			// send request body data 
-			if(request.getPayload() != null && !request.getPayload().isEmpty()) { 
+			if(restRequest.getPayload() != null && !restRequest.getPayload().isEmpty()) { 
 				String payload = null;
 				// defines binding parameter encoding type according to content type. 
-				if(request.getContentType().contains("application/x-www-form-urlencoded") 
-				|| request.getContentType().contains("multipart/form-data") 
+				if(restRequest.getContentType().contains("application/x-www-form-urlencoded") 
+				|| restRequest.getContentType().contains("multipart/form-data") 
 				){
-					payload = bindParameter(request.getPayload(), params, EncodeType.URL);
+					payload = bindParameter(restRequest.getPayload(), params, EncodeType.URL);
 				}
-				else if(request.getContentType().contains("application/json")){
-					payload = bindParameter(request.getPayload(), params, EncodeType.JSON);
+				else if(restRequest.getContentType().contains("application/json")){
+					payload = bindParameter(restRequest.getPayload(), params, EncodeType.JSON);
 				}else{
-					payload = bindParameter(request.getPayload(), params, EncodeType.NONE);
+					payload = bindParameter(restRequest.getPayload(), params, EncodeType.NONE);
 				}
 				LOGGER.info(String.format("Payload[%s]",payload));
 				connection.setDoOutput(true);
@@ -219,19 +220,27 @@ public class RestClientHandler implements InvocationHandler {
 			} 
 			
 			// defines response string. 
-			response = new String(baos.toByteArray(),CHARSET);
-			LOGGER.info(String.format("Response[code:%d,message:%s]",responseCode, response));
+			int responseCode = connection.getResponseCode();
+			String responseMessage = new String(baos.toByteArray(),CHARSET);
+			LOGGER.info(String.format("Response[code:%d,message:%s]",responseCode, responseMessage));
+			restResponse.setResponseCode(responseCode);
+			restResponse.setResponseMessage(responseMessage);
+			
+			// restListener.after
+			if(restListener != null) {
+				restListener.after(restResponse);
+			}
 			
 			// checking response HTTP code 
-			if(responseCode >= 400) { 
-				throw new RestException(responseCode, response != null ? response : connection.getResponseMessage());
+			if(restResponse.getResponseCode() >= 400) { 
+				throw new RestException(responseCode, responseMessage != null ? responseMessage : connection.getResponseMessage());
 			}
 		}catch(RestException e){ 
 			LOGGER.error(e.getMessage(), e);
 			throw e;
 		}catch(Exception e){ 
 			LOGGER.error(e.getMessage(), e);
-			throw new RestException(responseCode, e.getMessage(), e);
+			throw new RestException(restResponse.getResponseCode(), e.getMessage(), e);
 		}finally{ 
 			if(is != null) { 
 				try { is.close(); }catch(Exception e){ LOGGER.warn(e.getMessage()); } 
@@ -248,7 +257,7 @@ public class RestClientHandler implements InvocationHandler {
 		} 
 		
 		// return
-		return response;																																																																																					
+		return restResponse;																																																																																					
 	}
 
 	/** 

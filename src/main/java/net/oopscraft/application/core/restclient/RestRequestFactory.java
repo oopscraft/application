@@ -22,7 +22,7 @@ public class RestRequestFactory {
 	 * @return 
 	 * @throws Exception 
 	 */ 
-	public synchronized static RestRequestFactory getInstance(String restRequestXml) throws Exception { 
+	public synchronized static RestRequestFactory getInstance(String restRequestXml) throws RestException { 
 		synchronized(RestRequestFactory.class) { 
 			if(!instanceMap.containsKey(restRequestXml)) { 
 				RestRequestFactory instance = new RestRequestFactory(restRequestXml); 
@@ -36,7 +36,7 @@ public class RestRequestFactory {
 	 * Constructor 
 	 * @throws Exception 
 	 */ 
-	private RestRequestFactory(String restRequestXml) throws Exception { 
+	private RestRequestFactory(String restRequestXml) throws RestException { 
 		LOGGER.info("Creating OpenApiContextManager Singleton Instance."); 
 		// loading input stream from XML file in class path.
 		XPathReader xmlReader = null;
@@ -77,9 +77,11 @@ public class RestRequestFactory {
 			} 
 		}catch(Exception e){ 
 			LOGGER.error(e.getMessage(), e); 
-			throw e; 
-		}finally{ 
-			try { is.close(); }catch(Exception e){ LOGGER.warn(e.getMessage()); } 
+			throw new RestException(e); 
+		}finally{
+			if(is != null) {
+				try { is.close(); }catch(Exception e){ LOGGER.warn(e.getMessage()); }
+			}
 		} 
 	} 
 	

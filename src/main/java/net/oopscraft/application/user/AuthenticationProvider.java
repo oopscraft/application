@@ -8,11 +8,8 @@
  */
 package net.oopscraft.application.user;
 
-import java.util.Locale;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -26,7 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class AuthenticationProvider implements org.springframework.security.authentication.AuthenticationProvider {
 	
 	@Autowired
-	UserService userDetailsService;
+	UserService userService;
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -43,20 +40,20 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		String password = (String) authentication.getCredentials();
 		
 		// loading user information
-		org.springframework.security.core.userdetails.UserDetails userDetails = null;
+		org.springframework.security.core.userdetails.UserDetails user = null;
 		try {
-			userDetails = userDetailsService.loadUserByUsername(id);
+			user = userService.loadUserByUsername(id);
 		}catch(UsernameNotFoundException e) {
 			throw new UsernameNotFoundException(e.getMessage(), e);
 		}
 		
 		// checking password
-		if(passwordEncoder.matches(password, userDetails.getPassword()) == false) {
+		if(passwordEncoder.matches(password, user.getPassword()) == false) {
 			throw new BadCredentialsException("");
 		}
 
 		// return authentication token.
-		authentication = new UsernamePasswordAuthenticationToken(id, password, user.getAuthorityList());
+		authentication = new UsernamePasswordAuthenticationToken(id, password, user.getAuthorities());
 		return authentication;
 		
 		

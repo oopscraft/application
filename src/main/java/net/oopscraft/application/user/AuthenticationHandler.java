@@ -1,4 +1,17 @@
 package net.oopscraft.application.user;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
 public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler {
 	
 	/**
@@ -12,12 +25,12 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 		,HttpServletResponse response
 		,Authentication authentication
 	) throws IOException, ServletException {
-		ObjectMapper om = new ObjectMapper();
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("success", true);
-		String jsonString = om.writeValueAsString(map);
-		OutputStream out = response.getOutputStream();
-		out.write(jsonString.getBytes());
+		String referer = request.getHeader("referer");
+		if(referer != null && referer.isEmpty() == true) {
+			response.sendRedirect(referer);	
+		}else {
+			response.sendRedirect("/");
+		}
 	}
 	
 	/**
@@ -35,5 +48,7 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 		OutputStream out = response.getOutputStream();
 		out.write(exception.getMessage().getBytes());
 	}
+
+
 
 }

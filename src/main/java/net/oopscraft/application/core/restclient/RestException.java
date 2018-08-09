@@ -1,7 +1,8 @@
 package net.oopscraft.application.core.restclient; 
 
 public class RestException extends Exception { 
-	private static final long serialVersionUID = -6708475225195828436L; 
+	private static final long serialVersionUID = -6708475225195828436L;
+	
 	int httpCode = 0; 
 	
 	public RestException(Throwable cause) { 
