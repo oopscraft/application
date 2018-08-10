@@ -25,7 +25,7 @@ public class JsonConverter {
 		return mapper.readValue(json, clazz);
 	}
 	
-	public static <T> T convertJsonToObjectList(String json, Class<T> clazz) throws Exception {
+	public static <T> List<T> convertJsonToObjectList(String json, Class<T> clazz) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		return mapper.readValue(json, TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, clazz));
