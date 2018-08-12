@@ -76,6 +76,22 @@
     	<property name="id" value="application"/>
     	<property name="environment" value="oltp"/>
     </bean>
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="DataSource" ref="dataSource"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    
+    <!-- spring data jpa -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter" />
+        <property name="packagesToScan" value="sample.app" />
+    </bean>
+	<bean id="hibernateJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+		<property name="showSql" value="true" />
+	</bean>
+    
+    <!-- mybatis spring -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="/WEB-INF/conf/mybatis-spring.xml" />
@@ -99,11 +115,7 @@
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg index="0" ref="sqlSessionFactory" />
     </bean>
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="DataSource" ref="dataSource"/>
-    </bean>
-    <tx:annotation-driven transaction-manager="transactionManager"/>
-	
+    
     <!-- Message Source -->
 	<beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<beans:property name="basename" value="/WEB-INF/message/message"/>
@@ -161,41 +173,36 @@
 	<security:authentication-manager>
 		<security:authentication-provider ref="userAuthenticationProvider" />
 	</security:authentication-manager>
+	-->
 
-	<!-- spring security -->
-	<beans:bean id="loginHandler" class="net.lotte.chamomile.batch.user.LoginHandler" />
-	<beans:bean id="userService" class="net.lotte.chamomile.batch.user.UserService"/>
-	<beans:bean id="userAuthenticationProvider" class="net.lotte.chamomile.batch.user.UserAuthenticationProvider"/>
-	<beans:bean id="userAuthorizationFilter" class="net.lotte.chamomile.batch.user.UserAuthorizationFilter"/>
-	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
-	
-	<http pattern="/application.js" security="none"/>
-	<http pattern="/application.css" security="none"/>
-	<http pattern="/fonts/**/*" security="none"/>	
-	<http pattern="/images/**/*" security="none"/>
-	<http pattern="/lib/**/*" security="none"/>
-	<http pattern="/admin/login" security="none" />
-	<http pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
-		<csrf disabled="true" />
-		<intercept-url pattern="/admin/**/*" access="isAuthenticated()" />
-		<form-login login-page="/admin/login" 
+	<!-- spring security 
+	<bean id="loginHandler" class="net.lotte.chamomile.batch.user.LoginHandler" />
+	<bean id="userService" class="net.lotte.chamomile.batch.user.UserService"/>
+	<bean id="userAuthenticationProvider" class="net.lotte.chamomile.batch.user.UserAuthenticationProvider"/>
+	<bean id="userAuthorizationFilter" class="net.lotte.chamomile.batch.user.UserAuthorizationFilter"/>
+	<bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
+	<security:http pattern="/application.js" security="none"/>
+	<security:http pattern="/application.css" security="none"/>
+	<security:http pattern="/fonts/**/*" security="none"/>	
+	<security:http pattern="/images/**/*" security="none"/>
+	<security:http pattern="/lib/**/*" security="none"/>
+	<security:http pattern="/admin/login" security="none" />
+	<security:http pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
+		<security:csrf disabled="true" />
+		<security:intercept-url pattern="/admin/**/*" access="isAuthenticated()" />
+		<security:form-login login-page="/admin/login" 
 					login-processing-url="/admin/doLogin" 
 					username-parameter="id" 
 					password-parameter="password" 
 					authentication-success-handler-ref="loginHandler"
 					authentication-failure-handler-ref="loginHandler" />
-		<logout invalidate-session="true" logout-url="/admin/doLogout" logout-success-url="/" />
-		<custom-filter ref="userAuthorizationFilter" after="SWITCH_USER_FILTER"  />
-	</http> 
-	<authentication-manager>
-		<authentication-provider ref="userAuthenticationProvider" />
-	</authentication-manager>
-	<global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
-
-	-->
-	
-	<!-- ========================================================== -->
-	<!-- Admin Security  											-->
-	<!-- ========================================================== -->
+		<security:logout invalidate-session="true" logout-url="/admin/doLogout" logout-success-url="/" />
+		<security:custom-filter ref="userAuthorizationFilter" after="SWITCH_USER_FILTER"  />
+	</security:http> 
+	<security:authentication-manager>
+		<security:authentication-provider ref="userAuthenticationProvider" />
+	</security:authentication-manager>
+	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
+-->
 
 </beans>
