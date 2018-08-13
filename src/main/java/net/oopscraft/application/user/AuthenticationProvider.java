@@ -6,7 +6,7 @@
  * Released under the LGPL-3.0 licence
  * https://opensource.org/licenses/lgpl-3.0.html
  */
-package net.oopscraft.application.admin;
+package net.oopscraft.application.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,8 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import net.oopscraft.application.user.UserService;
 
 /**
  * @author chomookun

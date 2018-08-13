@@ -1,5 +1,5 @@
 package net.oopscraft.application.api;
 
-public class AthenticationTokenProvider {
+public class AuthenticationTokenProvider {
 
 }
