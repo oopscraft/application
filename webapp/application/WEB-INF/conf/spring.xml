@@ -160,93 +160,53 @@
 	</websocket:handlers>
 	<beans:bean id="adminWebSocketHandler" class="net.oopscraft.application.admin.AdminWebSocketHandler"/>
 	
-	<!-- spring security 
-	<context:component-scan base-package="net.lotte.chamomile.commons.user" name-generator="net.oopscraft.application.core.FullBeanNameGenerator"/>
-	<bean id="userAuthenticationProvider" class="net.lotte.chamomile.commons.user.UserAuthenticationProvider"/>
-	<bean id="userAuthorizationFilter" class="net.lotte.chamomile.commons.user.UserAuthorizationFilter"/>
-	<security:http use-expressions="true">
-		<security:intercept-url pattern="/user/sign" access="permitAll" />
-		<security:form-login login-page="/user/sign" login-processing-url="/user/sign" username-parameter="id" password-parameter="password" default-target-url="/"/>
-		<security:logout invalidate-session="true" logout-url="/user/sign/out" logout-success-url="/" />
-		<security:custom-filter ref="userAuthorizationFilter" after="SWITCH_USER_FILTER"  />
-	</security:http> 
-	<security:authentication-manager>
-		<security:authentication-provider ref="userAuthenticationProvider" />
-	</security:authentication-manager>
-	-->
 
-	<!-- spring security 
-	<bean id="loginHandler" class="net.lotte.chamomile.batch.user.LoginHandler" />
-	<bean id="userService" class="net.lotte.chamomile.batch.user.UserService"/>
-	<bean id="userAuthenticationProvider" class="net.lotte.chamomile.batch.user.UserAuthenticationProvider"/>
-	<bean id="userAuthorizationFilter" class="net.lotte.chamomile.batch.user.UserAuthorizationFilter"/>
+
+
+
+	<!-- ====================================================== -->
+	<!-- spring security										-->
+	<!-- ====================================================== -->
+	<bean id="userService" class="net.oopscraft.application.user.UserService"/>
+	<bean id="userAuthenticationProvider" class="net.oopscraft.application.user.UserAuthenticationProvider"/>
 	<bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
-	<security:http pattern="/application.js" security="none"/>
-	<security:http pattern="/application.css" security="none"/>
-	<security:http pattern="/fonts/**/*" security="none"/>	
-	<security:http pattern="/images/**/*" security="none"/>
-	<security:http pattern="/lib/**/*" security="none"/>
-	<security:http pattern="/admin/login" security="none" />
-	<security:http pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
-		<security:csrf disabled="true" />
-		<security:intercept-url pattern="/admin/**/*" access="isAuthenticated()" />
-		<security:form-login login-page="/admin/login" 
-					login-processing-url="/admin/doLogin" 
-					username-parameter="id" 
-					password-parameter="password" 
-					authentication-success-handler-ref="loginHandler"
-					authentication-failure-handler-ref="loginHandler" />
-		<security:logout invalidate-session="true" logout-url="/admin/doLogout" logout-success-url="/" />
-		<security:custom-filter ref="userAuthorizationFilter" after="SWITCH_USER_FILTER"  />
-	</security:http> 
 	<security:authentication-manager>
 		<security:authentication-provider ref="userAuthenticationProvider" />
 	</security:authentication-manager>
 	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
--->
-	
-	<!-- spring security -->
-	<beans:bean id="loginHandler" class="net.lotte.chamomile.batch.user.LoginHandler" />
-	<beans:bean id="userService" class="net.lotte.chamomile.batch.user.UserService"/>
-	<beans:bean id="userAuthenticationProvider" class="net.lotte.chamomile.batch.user.UserAuthenticationProvider"/>
-	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
-	<authentication-manager>
-		<authentication-provider ref="userAuthenticationProvider" />
-	</authentication-manager>
-	<global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
-	
-	<!-- static resource -->
-	<http pattern="/application.js" security="none"/>
-	<http pattern="/application.css" security="none"/>
-	<http pattern="/fonts/**/*" security="none"/>	
-	<http pattern="/images/**/*" security="none"/>
-	<http pattern="/lib/**/*" security="none"/>
 
-	<!-- Admin Security -->
-	<http pattern="/admin/login" security="none" />
-	<http pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
-		<csrf disabled="true" />
-		<intercept-url pattern="/admin/**/*" access="isAuthenticated()" />
-		<form-login login-page="/admin/login" 
-					login-processing-url="/admin/doLogin" 
-					username-parameter="id" 
-					password-parameter="password" 
-					authentication-success-handler-ref="loginHandler"
-					authentication-failure-handler-ref="loginHandler" />
-		<logout invalidate-session="true" logout-url="/admin/doLogout" logout-success-url="/" />
-		<custom-filter ref="userSecurityFilter" after="SWITCH_USER_FILTER"  />
-	</http>
-	<beans:bean id="userSecurityFilter" class="net.lotte.chamomile.batch.user.UserSecurityFilter"/>
+	<!-- static resource -->
+	<security:http pattern="/lib/**/*" security="none"/>
+	<security:http pattern="/img/**/*" security="none"/>
+	<security:http pattern="/font/**/*" security="none"/>	
+
+	<!-- admin Security -->
+	<security:http pattern="/admin/login" security="none" />
+	<security:http pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
+		<security:csrf disabled="true" />
+		<security:intercept-url pattern="/admin/**/*" access="isAuthenticated()" />
+		<security:form-login 
+			login-page="/admin/login" 
+			login-processing-url="/admin/doLogin" 
+			username-parameter="id" 
+			password-parameter="password" 
+			authentication-success-handler-ref="adminSecurityHandler"
+			authentication-failure-handler-ref="adminSecurityHandler" />
+		<security:logout invalidate-session="true" logout-url="/admin/doLogout" logout-success-url="/" />
+		<security:custom-filter ref="userSecurityFilter" after="SWITCH_USER_FILTER"  />
+	</security:http>
+	<bean id="adminSecurityFilter" class="net.oopscraft.application.user.UserSecurityFilter"/>
+	<bean id="adminSecurityHandler" class="net.oopscraft.application.user.LoginHandler" />
 	
-	<!-- API Security -->
-	<http pattern="/api/token" security="none" />
-	<http entry-point-ref="apiSecurityHandler" pattern="/api/**/*" use-expressions="true">
-		<csrf disabled="true" />
-		<access-denied-handler ref="apiSecurityHandler" />
-		<custom-filter ref="apiSecurityFilter" after="BASIC_AUTH_FILTER" />
-	</http>
-	<beans:bean id="apiSecurityHandler" class="net.lotte.chamomile.batch.api.ApiSecurityHandler"/>
-	<beans:bean id="apiSecurityFilter" class="net.lotte.chamomile.batch.api.ApiSecurityFilter"/>
+	<!-- api Security -->
+	<security:http pattern="/api/token" security="none" />
+	<security:http entry-point-ref="apiSecurityHandler" pattern="/api/**/*" use-expressions="true">
+		<security:csrf disabled="true" />
+		<security:access-denied-handler ref="apiSecurityHandler" />
+		<security:custom-filter ref="apiSecurityFilter" after="BASIC_AUTH_FILTER" />
+	</security:http>
+	<bean id="apiSecurityFilter" class="net.oopscraft.application.api.ApiSecurityFilter"/>
+	<bean id="apiSecurityHandler" class="net.oopscraft.application.api.ApiSecurityHandler"/>
 
 
 </beans>
