@@ -27,7 +27,9 @@
 		http://www.springframework.org/schema/security/spring-security.xsd
         ">
         
-    <!-- defines PBE configuration -->
+	<!-- ====================================================== -->
+	<!-- defines PBE configuration								-->
+	<!-- ====================================================== -->
     <bean id="environmentStringPBEConfig" class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
         <property name="algorithm" value="PBEWithMD5AndDES" />
         <property name="passwordEnvName" value="APP_ENCRYPTION_PASSWORD" />
@@ -59,7 +61,10 @@
     <!-- Scans Components -->
 	<context:component-scan base-package="net.oopscraft.application" name-generator="net.oopscraft.application.core.FullBeanNameGenerator"/>
     
-    <!-- definition of data source
+	<!-- ====================================================== -->
+	<!-- dataSource definition									-->
+	<!-- ====================================================== -->
+    <!-- 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${dataSource.oltp.driver}" />
         <property name="url" value="${dataSource.oltp.url}" />
@@ -71,7 +76,6 @@
         <property name="validationQuery" value="${dataSource.oltp.validationQuery}"/>
     </bean> 
     -->
-    <!--  In Case of Using Application DataSource -->
     <bean id="dataSource" class="net.oopscraft.application.core.DataSourceProxy">
     	<property name="id" value="application"/>
     	<property name="environment" value="oltp"/>
@@ -81,17 +85,9 @@
     </bean>
     <tx:annotation-driven transaction-manager="transactionManager"/>
     
-    <!-- spring data jpa -->
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="dataSource" />
-        <property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter" />
-        <property name="packagesToScan" value="sample.app" />
-    </bean>
-	<bean id="hibernateJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-		<property name="showSql" value="true" />
-	</bean>
-    
-    <!-- mybatis spring -->
+	<!-- ====================================================== -->
+	<!-- mybatis spring 										-->
+	<!-- ====================================================== -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="/WEB-INF/conf/mybatis-spring.xml" />
@@ -116,7 +112,21 @@
         <constructor-arg index="0" ref="sqlSessionFactory" />
     </bean>
     
-    <!-- Message Source -->
+	<!-- ====================================================== -->
+	<!-- spring data JPA + Hibernate							-->
+	<!-- ====================================================== -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter" />
+        <property name="packagesToScan" value="sample.app" />
+    </bean>
+	<bean id="hibernateJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+		<property name="showSql" value="true" />
+	</bean>
+    
+	<!-- ====================================================== -->
+	<!-- Message Source											-->
+	<!-- ====================================================== -->
 	<beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<beans:property name="basename" value="/WEB-INF/message/message"/>
 		<beans:property name="defaultEncoding" value="UTF-8"/>	         
@@ -158,11 +168,8 @@
 	<websocket:handlers>
 		<websocket:mapping path="admin/webSocket.ws" handler="adminWebSocketHandler"/>
 	</websocket:handlers>
-	<beans:bean id="adminWebSocketHandler" class="net.oopscraft.application.admin.AdminWebSocketHandler"/>
+	<beans:bean id="adminWebSocketHandler" class="net.oopscraft.application.admin.WebSocketHandler"/>
 	
-
-
-
 
 	<!-- ====================================================== -->
 	<!-- spring security										-->
@@ -190,23 +197,23 @@
 			login-processing-url="/admin/doLogin" 
 			username-parameter="id" 
 			password-parameter="password" 
-			authentication-success-handler-ref="adminSecurityHandler"
-			authentication-failure-handler-ref="adminSecurityHandler" />
+			authentication-success-handler-ref="adminAuthenticationHandler"
+			authentication-failure-handler-ref="adminAuthenticationHandler" />
 		<security:logout invalidate-session="true" logout-url="/admin/doLogout" logout-success-url="/" />
-		<security:custom-filter ref="userSecurityFilter" after="SWITCH_USER_FILTER"  />
+		<security:custom-filter ref="adminSecurityFilter" after="SWITCH_USER_FILTER"  />
 	</security:http>
-	<bean id="adminSecurityFilter" class="net.oopscraft.application.user.UserSecurityFilter"/>
-	<bean id="adminSecurityHandler" class="net.oopscraft.application.user.LoginHandler" />
+	<bean id="adminSecurityFilter" class="net.oopscraft.application.admin.SecurityFilter"/>
+	<bean id="adminAuthenticationHandler" class="net.oopscraft.application.admin.AuthenticationHandler"/>
 	
 	<!-- api Security -->
 	<security:http pattern="/api/token" security="none" />
-	<security:http entry-point-ref="apiSecurityHandler" pattern="/api/**/*" use-expressions="true">
+	<security:http entry-point-ref="apiAuthenticationHandler" pattern="/api/**/*" use-expressions="true">
 		<security:csrf disabled="true" />
 		<security:access-denied-handler ref="apiSecurityHandler" />
 		<security:custom-filter ref="apiSecurityFilter" after="BASIC_AUTH_FILTER" />
 	</security:http>
-	<bean id="apiSecurityFilter" class="net.oopscraft.application.api.ApiSecurityFilter"/>
-	<bean id="apiSecurityHandler" class="net.oopscraft.application.api.ApiSecurityHandler"/>
+	<bean id="apiSecurityFilter" class="net.oopscraft.application.api.SecurityFilter"/>
+	<bean id="apiAuthenticationHandler" class="net.oopscraft.application.api.AuthenticationHandler"/>
 
 
 </beans>
