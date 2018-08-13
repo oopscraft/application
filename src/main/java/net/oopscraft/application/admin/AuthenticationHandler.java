@@ -1,4 +1,4 @@
-package net.oopscraft.application.user;
+package net.oopscraft.application.admin;
 
 import java.io.IOException;
 import java.io.OutputStream;

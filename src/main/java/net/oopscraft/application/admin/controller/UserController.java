@@ -6,7 +6,7 @@
  * Released under the LGPL-3.0 licence
  * https://opensource.org/licenses/lgpl-3.0.html
  */
-package net.oopscraft.application.admin;
+package net.oopscraft.application.admin.controller;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import net.oopscraft.application.user.UserService;
  */
 @Controller
 @RequestMapping("/admin/userManage")
-public class UserManageController {
+public class UserController {
 	
 	@Autowired
 	UserService userService;

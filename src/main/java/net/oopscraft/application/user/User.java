@@ -92,7 +92,11 @@ public class User implements UserDetails {
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
 	}
-
+	
+	public void setAuthorities(List<Authority> authorities) {
+		this.authorities = authorities;
+	}
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;

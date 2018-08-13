@@ -6,7 +6,7 @@
  * Released under the LGPL-3.0 licence
  * https://opensource.org/licenses/lgpl-3.0.html
  */
-package net.oopscraft.application.admin;
+package net.oopscraft.application.admin.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -89,20 +89,20 @@ public class SignController {
 			}
 		}
 		
-		// creates consoleSecurity component
-		AdminSecurity consoleSecurity = new AdminSecurity();
-		
-		// checks valid administrator user
-		if(!consoleSecurity.isValidAdmin(admin)) {
-			setLoginFailCount(getLoginFailCount()+1);
-			return new ResponseEntity<>("Administrator Name is Incorrect.", HttpStatus.UNAUTHORIZED);
-		}
-		
-		// checks valid password
-		if(!consoleSecurity.isValidPassword(admin, password)) {
-			setLoginFailCount(getLoginFailCount()+1);
-			return new ResponseEntity<>("Administrator Password is Incorrect.", HttpStatus.UNAUTHORIZED); 
-		}
+//		// creates consoleSecurity component
+//		AdminSecurity consoleSecurity = new AdminSecurity();
+//		
+//		// checks valid administrator user
+//		if(!consoleSecurity.isValidAdmin(admin)) {
+//			setLoginFailCount(getLoginFailCount()+1);
+//			return new ResponseEntity<>("Administrator Name is Incorrect.", HttpStatus.UNAUTHORIZED);
+//		}
+//		
+//		// checks valid password
+//		if(!consoleSecurity.isValidPassword(admin, password)) {
+//			setLoginFailCount(getLoginFailCount()+1);
+//			return new ResponseEntity<>("Administrator Password is Incorrect.", HttpStatus.UNAUTHORIZED); 
+//		}
 		
 		// creates session
 		session.setAttribute("admin", admin);
