@@ -375,6 +375,13 @@
 		    <version>1.0.9.RELEASE</version>
 		</dependency>
 		
+		<!-- JJWT(Json Web Token Library) -->
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt</artifactId>
+		    <version>0.9.0</version>
+		</dependency>
+		
 	    <!-- spring data jpa -->
 		<dependency>
 		    <groupId>org.springframework.data</groupId>
