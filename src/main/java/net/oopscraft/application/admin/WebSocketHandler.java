@@ -16,12 +16,11 @@ import net.oopscraft.application.core.SystemMonitor;
 import net.oopscraft.application.core.SystemMonitorListener;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
-import net.oopscraft.application.core.WebSocketHandler;
 
 
-public class AdminWebSocketHandler extends WebSocketHandler {
+public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHandler {
 	
-	private static final Log LOG = LogFactory.getLog(AdminWebSocketHandler.class);
+	private static final Log LOG = LogFactory.getLog(WebSocketHandler.class);
 	enum Id { 
 		 jmxInfoHistory 
 		,jmxInfo 

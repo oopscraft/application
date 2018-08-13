@@ -15,9 +15,9 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AdminSecurityFilter implements Filter {
+public class SecurityFilter implements Filter {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AdminSecurityFilter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityFilter.class);
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

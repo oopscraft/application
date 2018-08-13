@@ -1,7 +1,37 @@
+package net.oopscraft.application.api;
 
-public class ApiSecurityFilter implements Filter {
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureException;
+import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.user.Authority;
+import net.oopscraft.application.user.User;
+
+public class SecurityFilter implements Filter {
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(ApiSecurityFilter.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(SecurityFilter.class);
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 	
 	@Value("${secretKey}")
@@ -35,9 +65,9 @@ public class ApiSecurityFilter implements Filter {
         	user.setId(id);
         	user.setPassword(password);
         	List<Authority> authorityList= JsonConverter.convertJsonToObjectList(authorities, Authority.class);
-        	user.setAuthorityList(authorityList);
+        	user.setAuthorities(authorityList);
         	SecurityContext securityContext = SecurityContextHolder.getContext();
-        	Authentication authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorityList());
+        	Authentication authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
         	securityContext.setAuthentication(authentication);
         }catch(Exception e) {
         	AuthenticationException authenticationException = new BadCredentialsException("Invalid Token Claims.");
