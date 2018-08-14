@@ -205,9 +205,13 @@ public class RestClientHandler implements InvocationHandler {
 			}
 		
 			// reading
-			is=connection.getErrorStream();
-			if(is==null){
+			try {
 				is=connection.getInputStream();
+			}catch(Exception e) {
+				LOGGER.error(e.getMessage());
+			}
+			if(is == null) {
+				is=connection.getErrorStream();
 			}
 			
 			// reading from stream 
