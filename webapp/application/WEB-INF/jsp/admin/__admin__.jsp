@@ -9,6 +9,7 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta http-equiv="refresh" content="${pageContext.session.maxInactiveInterval+10}">
 
 		<!-- juice -->
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/lib/juice/juice.css">
