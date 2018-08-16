@@ -9,8 +9,9 @@ function update() {
 
 # gradle build
 function build() {
-	gradle clean
-	gradle jar
+	#gradle clean
+	#gradle jar
+	mvn clean install
 }
 
 # main
