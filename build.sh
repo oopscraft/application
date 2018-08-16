@@ -11,7 +11,7 @@ function update() {
 function build() {
 	#gradle clean
 	#gradle jar
-	mvn clean install
+	mvn clean package
 }
 
 # main
