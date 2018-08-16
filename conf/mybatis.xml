@@ -47,6 +47,6 @@
 		<property name="databaseId" value="${application.databaseId}"/>
 	</databaseIdProvider>
 	<mappers>
-		<mapper resource="net/oopscraft/application/user/UserDao.xml"/>
+		<package name="net.oopscraft.application.**.dao"/>
     </mappers>
 </configuration>

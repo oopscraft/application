@@ -1,4 +1,4 @@
-package net.oopscraft.application.user;
+package net.oopscraft.application.user.dao;
 
 import java.util.List;
 
