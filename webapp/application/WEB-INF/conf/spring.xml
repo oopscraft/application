@@ -88,23 +88,29 @@
 	<!-- ====================================================== -->
 	<!-- mybatis spring 										-->
 	<!-- ====================================================== -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="net.oopscraft.application.**.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+		<property name="nameGenerator" ref="beanNameGenerator"/>
+	</bean>
+	<bean id="beanNameGenerator" class="net.oopscraft.application.core.FullBeanNameGenerator"/>
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="/WEB-INF/conf/mybatis-spring.xml" />
         <property name="mapperLocations">
 			<array>
-				<value>classpath:net/oopscraft/application/**/*Dao.xml</value>
-			</array>
-		</property>
-		<property name="plugins">
-			<array>
-				<ref bean="pageableInterceptor"/>
+				<value>classpath:net/oopscraft/application/**/dao/*.xml</value>
 			</array>
 		</property>
 		<property name="databaseIdProvider">
 			<bean class="net.oopscraft.application.core.DatabaseIdProvider">
 				<property name="databaseId" value="${application.databaseId}"/>
 			</bean>
+		</property>
+		<property name="plugins">
+			<array>
+				<ref bean="pageableInterceptor"/>
+			</array>
 		</property>
     </bean>
     <bean id="pageableInterceptor" class="net.oopscraft.application.core.PageableInterceptor"/>
@@ -175,10 +181,10 @@
 	<!-- spring security										-->
 	<!-- ====================================================== -->
 	<bean id="userService" class="net.oopscraft.application.user.UserService"/>
-	<bean id="userAuthenticationProvider" class="net.oopscraft.application.user.UserAuthenticationProvider"/>
+	<bean id="authenticationProvider" class="net.oopscraft.application.user.AuthenticationProvider"/>
 	<bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
 	<security:authentication-manager>
-		<security:authentication-provider ref="userAuthenticationProvider" />
+		<security:authentication-provider ref="authenticationProvider" />
 	</security:authentication-manager>
 	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
 
@@ -202,18 +208,17 @@
 		<security:logout invalidate-session="true" logout-url="/admin/doLogout" logout-success-url="/" />
 		<security:custom-filter ref="adminSecurityFilter" after="SWITCH_USER_FILTER"  />
 	</security:http>
-	<bean id="adminSecurityFilter" class="net.oopscraft.application.admin.SecurityFilter"/>
 	<bean id="adminAuthenticationHandler" class="net.oopscraft.application.admin.AuthenticationHandler"/>
+	<bean id="adminSecurityFilter" class="net.oopscraft.application.admin.SecurityFilter"/>
 	
 	<!-- api Security -->
 	<security:http pattern="/api/token" security="none" />
 	<security:http entry-point-ref="apiAuthenticationHandler" pattern="/api/**/*" use-expressions="true">
 		<security:csrf disabled="true" />
-		<security:access-denied-handler ref="apiSecurityHandler" />
+		<security:access-denied-handler ref="apiAuthenticationHandler" />
 		<security:custom-filter ref="apiSecurityFilter" after="BASIC_AUTH_FILTER" />
 	</security:http>
-	<bean id="apiSecurityFilter" class="net.oopscraft.application.api.SecurityFilter"/>
 	<bean id="apiAuthenticationHandler" class="net.oopscraft.application.api.AuthenticationHandler"/>
-
+	<bean id="apiSecurityFilter" class="net.oopscraft.application.api.SecurityFilter"/>
 
 </beans>

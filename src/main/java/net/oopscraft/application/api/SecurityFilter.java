@@ -34,7 +34,7 @@ public class SecurityFilter implements Filter {
 	private static Logger LOGGER = LoggerFactory.getLogger(SecurityFilter.class);
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 	
-	@Value("${secretKey}")
+	@Value("${application.api.secretKey}")
 	String secretKey;
  
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

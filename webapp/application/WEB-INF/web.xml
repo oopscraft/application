@@ -6,13 +6,9 @@
    metadata-complete="false"
    version="3.1"> 
    
-    <display-name>nlog</display-name>
-   
-    <description>Network Logging Application</description>
-    
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
+    <display-name>oopscraft-application</display-name>
+    <description>oopscraft application</description>
+
     
     <session-config>
         <session-timeout>60</session-timeout>
