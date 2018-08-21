@@ -230,6 +230,15 @@ public class RestClientHandler implements InvocationHandler {
 			restResponse.setResponseCode(responseCode);
 			restResponse.setResponseMessage(responseMessage);
 			
+			// setting response header
+			Map<String,String> headerMap = new LinkedHashMap<String,String>();
+			for(Map.Entry<String,List<String>> entry: connection.getHeaderFields().entrySet()){
+				String name = entry.getKey();
+				String value = connection.getHeaderField(name);
+				headerMap.put(name, value);
+			}
+			restResponse.setHeaderMap(headerMap);
+			
 			// restListener.after
 			if(restListener != null) {
 				restListener.after(restResponse);
