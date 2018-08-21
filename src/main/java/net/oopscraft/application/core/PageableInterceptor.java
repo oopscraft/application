@@ -53,8 +53,13 @@ public class PageableInterceptor implements Interceptor {
 			//setting database id
 			String databaseIdString = (String)metaStatementHandler.getValue("delegate.configuration.databaseId");
 			DatabaseId databaseId = DatabaseId.valueOf(databaseIdString.toUpperCase());
+			
+			// totalCount
+			if(pageable.enableTotalCount() == true) {
+				setTotalCount(metaStatementHandler, pageable);
+			}
 
-			// pageable 이 존재하는 경우
+			// pageable
 			StringBuffer sql = this.createPageableSql(originalSql, databaseId);
 			LOGGER.debug("sql = {}", sql.toString());
 			metaStatementHandler.setValue("delegate.boundSql.sql", sql.toString());
@@ -102,6 +107,83 @@ public class PageableInterceptor implements Interceptor {
 		}
 
 		return pageableSql;
+	}
+	
+	/**
+	 * Getting total count
+	 * @param metaStatementHandler
+	 * @param pageable
+	 * @throws SQLException
+	 */
+	private void setTotalCount(MetaObject metaStatementHandler, final Pageable pageable) throws SQLException {
+		Configuration configuration = (Configuration) metaStatementHandler.getValue("delegate.configuration");
+		String originalSql = (String) metaStatementHandler.getValue("delegate.boundSql.sql");
+		
+		// count sql
+		StringBuffer totalCountSql = createTotalCountSql(originalSql);
+		
+		@SuppressWarnings("unchecked")
+		List<ParameterMapping> parameterMappings = (List<ParameterMapping>) metaStatementHandler.getValue("delegate.boundSql.parameterMappings");
+		@SuppressWarnings("unchecked")
+		ParamMap<Pageable> paramMap = (ParamMap<Pageable>)metaStatementHandler.getValue("delegate.boundSql.parameterObject");
+		MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
+		final BoundSql totalCountBoundSql = new BoundSql(configuration, totalCountSql.toString(), parameterMappings, paramMap);
+		@SuppressWarnings("unchecked")
+		Map<String,Object> additionalParameters = (Map<String, Object>) metaStatementHandler.getValue("delegate.boundSql.additionalParameters");
+		for(String name : additionalParameters.keySet()) {
+			totalCountBoundSql.setAdditionalParameter(name, additionalParameters.get(name));
+		}
+		SqlSource totalCountSqlSource = new SqlSource() {
+			@Override
+			public BoundSql getBoundSql(Object parameterObject) {
+				return totalCountBoundSql;
+			}
+		};
+
+		MappedStatement.Builder builder = new MappedStatement.Builder(configuration, mappedStatement.getId()+"_cnt", totalCountSqlSource, mappedStatement.getSqlCommandType());
+		builder.resource(mappedStatement.getResource());
+		builder.fetchSize(mappedStatement.getFetchSize());
+		builder.statementType(mappedStatement.getStatementType());
+		builder.keyGenerator(mappedStatement.getKeyGenerator());
+		String[] keyProperties = mappedStatement.getKeyProperties();
+		builder.keyProperty(keyProperties == null ? null : keyProperties[0]);
+		builder.timeout(mappedStatement.getTimeout());
+		builder.parameterMap(mappedStatement.getParameterMap());
+		builder.cache(mappedStatement.getCache());
+		builder.flushCacheRequired(mappedStatement.isFlushCacheRequired());
+		builder.useCache(mappedStatement.isUseCache());
+
+		List<ResultMapping> resultMappings = new ArrayList<ResultMapping>();
+		ResultMap.Builder resultMapBuilder = new ResultMap.Builder(configuration, mappedStatement.getId() + "_cnt", Integer.class, resultMappings);
+		ResultMap resultMap = resultMapBuilder.build();
+		List<ResultMap> resultMaps = new ArrayList<ResultMap>();
+		resultMaps.add(resultMap);
+		builder.resultMaps(resultMaps);
+
+		MappedStatement totalCountMappedStatement = builder.build();
+		Executor executor = (Executor) metaStatementHandler.getValue("delegate.executor");
+		pageable.setTotalCount(0);
+		executor.query(totalCountMappedStatement, paramMap, RowBounds.DEFAULT, new ResultHandler<Integer>() {
+			@Override
+			public void handleResult(ResultContext<? extends Integer> resultContext) {
+				Integer totalCount = resultContext.getResultObject();
+				LOGGER.debug("+ totalCount:" + totalCount);
+				pageable.setTotalCount(totalCount);
+			}
+		});
+	}
+	
+	/**
+	 * Creates total count query
+	 * @param originalSql
+	 * @return
+	 */
+	private static StringBuffer createTotalCountSql(String originalSql) {
+		StringBuffer totalCountSql = new StringBuffer();
+		totalCountSql.append("SELECT COUNT(*) FROM (");
+		totalCountSql.append(originalSql);
+		totalCountSql.append(") DAT");
+		return totalCountSql;
 	}
 
 }
