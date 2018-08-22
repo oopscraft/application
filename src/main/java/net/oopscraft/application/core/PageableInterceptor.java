@@ -1,10 +1,21 @@
 package net.oopscraft.application.core;
 
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
@@ -17,6 +28,9 @@ import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ResultContext;
+import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,8 +69,8 @@ public class PageableInterceptor implements Interceptor {
 			DatabaseId databaseId = DatabaseId.valueOf(databaseIdString.toUpperCase());
 			
 			// totalCount
-			if(pageable.enableTotalCount() == true) {
-				setTotalCount(metaStatementHandler, pageable);
+			if(pageable.enableTotalRows() == true) {
+				setTotalRows(metaStatementHandler, pageable);
 			}
 
 			// pageable
@@ -115,12 +129,12 @@ public class PageableInterceptor implements Interceptor {
 	 * @param pageable
 	 * @throws SQLException
 	 */
-	private void setTotalCount(MetaObject metaStatementHandler, final Pageable pageable) throws SQLException {
+	private void setTotalRows(MetaObject metaStatementHandler, final Pageable pageable) throws SQLException {
 		Configuration configuration = (Configuration) metaStatementHandler.getValue("delegate.configuration");
 		String originalSql = (String) metaStatementHandler.getValue("delegate.boundSql.sql");
 		
 		// count sql
-		StringBuffer totalCountSql = createTotalCountSql(originalSql);
+		StringBuffer totalCountSql = createTotalRowsSql(originalSql);
 		
 		@SuppressWarnings("unchecked")
 		List<ParameterMapping> parameterMappings = (List<ParameterMapping>) metaStatementHandler.getValue("delegate.boundSql.parameterMappings");
@@ -162,13 +176,13 @@ public class PageableInterceptor implements Interceptor {
 
 		MappedStatement totalCountMappedStatement = builder.build();
 		Executor executor = (Executor) metaStatementHandler.getValue("delegate.executor");
-		pageable.setTotalCount(0);
+		pageable.setTotalRows(0);
 		executor.query(totalCountMappedStatement, paramMap, RowBounds.DEFAULT, new ResultHandler<Integer>() {
 			@Override
 			public void handleResult(ResultContext<? extends Integer> resultContext) {
-				Integer totalCount = resultContext.getResultObject();
-				LOGGER.debug("+ totalCount:" + totalCount);
-				pageable.setTotalCount(totalCount);
+				Integer totalRows = resultContext.getResultObject();
+				LOGGER.debug("+ totalCount:" + totalRows);
+				pageable.setTotalRows(totalRows);
 			}
 		});
 	}
@@ -178,12 +192,12 @@ public class PageableInterceptor implements Interceptor {
 	 * @param originalSql
 	 * @return
 	 */
-	private static StringBuffer createTotalCountSql(String originalSql) {
-		StringBuffer totalCountSql = new StringBuffer();
-		totalCountSql.append("SELECT COUNT(*) FROM (");
-		totalCountSql.append(originalSql);
-		totalCountSql.append(") DAT");
-		return totalCountSql;
+	private static StringBuffer createTotalRowsSql(String originalSql) {
+		StringBuffer totalRowsSql = new StringBuffer();
+		totalRowsSql.append("SELECT COUNT(*) FROM (");
+		totalRowsSql.append(originalSql);
+		totalRowsSql.append(") DAT");
+		return totalRowsSql;
 	}
 
 }
