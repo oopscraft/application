@@ -5,6 +5,8 @@ PID_FILE=${APP_NAME}.pid
 touch ${PID_FILE}
 PID=$(cat ${PID_FILE})
 MAIN_CLASS="net.oopscraft.application.Application"
+# load profile
+source ${APP_NAME}.profile
 
 # start
 function start() {
@@ -15,8 +17,8 @@ function start() {
 		exit -1
 	fi
 	CLASSPATH="./*:./lib/*"
-	JAVA_OPTS=${JAVA_OPTS}" -server -Djava.net.preferIPv4Stack=true -Dlog4j.configuration=file:conf/log4j2.xml"
-	java ${JAVA_OPTS} -classpath ${CLASSPATH} ${MAIN_CLASS} 2>&1 > /dev/null & 
+	JAVA_OPTS=" -server -Djava.net.preferIPv4Stack=true -Dlog4j.configuration=file:conf/log4j2.xml "${JAVA_OPTS}
+	java ${JAVA_OPTS} -classpath ${CLASSPATH} ${MAIN_CLASS} 2>&1>/dev/null & 
 	echo $! > ${PID_FILE}
 }
 
@@ -33,12 +35,16 @@ function stop() {
 		echo "Application is not running."
 		exit -1
 	fi
+	printf "shutting down."
 	kill ${PID}
+	while kill -0 ${PID} 2>/dev/null; do printf "."; sleep 1; done
+	echo -e "\nshutdown is complete."
 }
 
 # log
 function log() {
-	tail -F ./log/application.log
+	tput rmam
+	tail -F ./log/${APP_NAME}.log
 }	
 
 # crypto
