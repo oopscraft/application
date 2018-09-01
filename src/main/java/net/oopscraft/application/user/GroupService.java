@@ -15,8 +15,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.ApplicationContext;
-import net.oopscraft.application.core.SqlSessionProxy;
-import net.oopscraft.application.core.SqlSessionProxyFactory;
+import net.oopscraft.application.core.mybatis.SqlSessionProxy;
+import net.oopscraft.application.core.mybatis.SqlSessionProxyFactory;
 import net.oopscraft.application.user.dao.GroupDao;
 import net.oopscraft.application.user.dao.UserDao;
 

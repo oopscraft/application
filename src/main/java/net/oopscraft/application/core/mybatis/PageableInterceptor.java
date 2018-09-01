@@ -1,4 +1,4 @@
-package net.lotte.chamomile.batch.core;
+package net.oopscraft.application.core.mybatis;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -36,7 +36,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.lotte.chamomile.batch.core.DatabaseIdProvider.DatabaseId;
+import net.oopscraft.application.core.mybatis.DatabaseIdProvider.DatabaseId;
 
 @Intercepts({
 	@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class,Integer.class})
@@ -68,7 +68,7 @@ public class PageableInterceptor implements Interceptor {
 				setTotalCount(metaStatementHandler, pageable, databaseId);
 			}
 
-			// convert page query
+			// convert page query	
 			convertPageableSql(metaStatementHandler, pageable, databaseId);
 
 			// proceed

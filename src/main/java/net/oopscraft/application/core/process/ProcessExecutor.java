@@ -1,8 +1,9 @@
-package net.lotte.chamomile.batch.core;
+package net.oopscraft.application.core.process;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,26 +15,29 @@ public class ProcessExecutor {
 
 	private Process process;
 	
-	public interface StreamHandler {
-		public void readLine(String line);
-	}
-	
-	public int execute(List<String> command, final StreamHandler streamHandler) throws Exception, ProcessExecutorException {
+	/**
+	 * Executes command as process.
+	 * @param command
+	 * @param processStreamHandler
+	 * @return	
+	 * @throws Exception
+	 */
+	public int execute(List<String> command, final ProcessStreamHandler processStreamHandler) throws Exception {
 		
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.command(command);
 		process = processBuilder.start();
 
 		// standard out stream
-		Thread stdThread = createStreamReadThread(process.getInputStream(),streamHandler);
+		Thread stdThread = createStreamReadThread(process.getInputStream(),processStreamHandler);
 		stdThread.start();
 		
 		// error stream
 		final StringBuffer errorMessage = new StringBuffer();
-		Thread errThread = createStreamReadThread(process.getErrorStream(),new StreamHandler() {
+		Thread errThread = createStreamReadThread(process.getErrorStream(),new ProcessStreamHandler() {
 			@Override
 			public void readLine(String line) {
-				streamHandler.readLine(line);
+				processStreamHandler.readLine(line);
 				errorMessage.append(System.lineSeparator()).append(line);
 			}
 		});
@@ -42,24 +46,31 @@ public class ProcessExecutor {
 		// wait and check exit value
 		int exitValue = process.waitFor();
 		if(exitValue != 0) {
-			throw new ProcessExecutorException(errorMessage.toString());
+			throw new ProcessException(exitValue, errorMessage.toString());
 		}
 		return exitValue;
 	}
 	
-	private Thread createStreamReadThread(final InputStream inputStream, final StreamHandler streamHandler) throws Exception {
+	/**
+	 * Creates thread for reading stream.
+	 * @param inputStream
+	 * @param processStreamHandler
+	 * @return
+	 * @throws Exception
+	 */
+	private Thread createStreamReadThread(final InputStream inputStream, final ProcessStreamHandler processStreamHandler) throws Exception {
 		Thread streamReadThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				InputStreamReader isr = null;
 				BufferedReader br = null;
 				try {
-					isr = new InputStreamReader(inputStream, "euc-kr");
+					isr = new InputStreamReader(inputStream, Charset.defaultCharset());
 					br = new BufferedReader(isr);
 					String line;
 					while((line = br.readLine()) != null) {
 						LOGGER.debug(line);
-						streamHandler.readLine(line);
+						processStreamHandler.readLine(line);
 					}
 				}catch(Exception e) {
 					LOGGER.error(e.getMessage(), e);
@@ -91,8 +102,13 @@ public class ProcessExecutor {
 		return streamReadThread;
 	}
 	
+	/**
+	 * Destroies process.
+	 */
 	public void destroy() {
-		process.destroy();
+		if(process != null) {
+			process.destroy();
+		}
 	}
 	
 	

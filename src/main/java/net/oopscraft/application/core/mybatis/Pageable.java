@@ -1,4 +1,4 @@
-package net.lotte.chamomile.batch.core;
+package net.oopscraft.application.core.mybatis;
 
 import org.apache.ibatis.session.RowBounds;
 
