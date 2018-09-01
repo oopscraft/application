@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application>
+<application class="net.oopscraft.application.Application">
 
-	<webServer id="application" port="10001">
+	<webServer port="10001">
 		<!-- 
 		<ssl>
 			<keyStorePath>conf/ssl/keystore</keyStorePath>
@@ -9,13 +9,13 @@
 			<keyStorePass>abcd1234</keyStorePass>
 		</ssl>
 		-->
-		<context path="/application">
+		<context path="/">
 			<resourceBase>webapp/application</resourceBase>
 			<descriptor>webapp/application/WEB-INF/web.xml</descriptor>
 		</context>
 	</webServer>
 	
-	<sqlSessionProxyFactory id="application">
+	<sqlSessionProxyFactory>
 		<configureFile>conf/mybatis.xml</configureFile>
 	</sqlSessionProxyFactory>
 

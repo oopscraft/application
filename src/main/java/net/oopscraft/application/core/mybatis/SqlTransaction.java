@@ -1,4 +1,4 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.mybatis;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

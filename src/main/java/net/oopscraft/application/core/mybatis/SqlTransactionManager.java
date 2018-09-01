@@ -1,4 +1,4 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.mybatis;
 
 public class SqlTransactionManager {
 	

@@ -1,4 +1,4 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.mybatis;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +15,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import net.oopscraft.application.core.PasswordBasedEncryptor;
 
 public class SqlSessionProxyFactory { 
 	
