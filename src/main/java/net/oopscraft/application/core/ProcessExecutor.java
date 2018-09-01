@@ -18,7 +18,7 @@ public class ProcessExecutor {
 		public void readLine(String line);
 	}
 	
-	public int execute(List<String> command, StreamHandler streamHandler) throws Exception, ProcessExecutorException {
+	public int execute(List<String> command, final StreamHandler streamHandler) throws Exception, ProcessExecutorException {
 		
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.command(command);
@@ -33,6 +33,7 @@ public class ProcessExecutor {
 		Thread errThread = createStreamReadThread(process.getErrorStream(),new StreamHandler() {
 			@Override
 			public void readLine(String line) {
+				streamHandler.readLine(line);
 				errorMessage.append(System.lineSeparator()).append(line);
 			}
 		});
