@@ -18,7 +18,7 @@ function start() {
 	fi
 	CLASSPATH="./*:./lib/*"
 	JAVA_OPTS=" -server -Djava.net.preferIPv4Stack=true -Dlog4j.configuration=file:conf/log4j2.xml "${JAVA_OPTS}
-	java ${JAVA_OPTS} -classpath ${CLASSPATH} ${MAIN_CLASS} 2>&1>/dev/null & 
+	java ${JAVA_OPTS} -classpath ${CLASSPATH} ${MAIN_CLASS} >/dev/null 2>&1 & 
 	echo $! > ${PID_FILE}
 }
 
