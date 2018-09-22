@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-public class JsonConverter {
+public class JsonUtils {
 	
 	public static String convertObjectToJson(Object obj) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();

@@ -2,7 +2,7 @@ package net.oopscraft.application.core;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 import org.apache.catalina.connector.Connector;
@@ -17,11 +17,7 @@ public class WebServer {
 	String keyStorePath = null;
 	String keyStoreType = null;
 	String keyStorePass = null;
-	List<WebServerContext> contextList = new ArrayList<WebServerContext>();
-
-	public void addContext(WebServerContext context) throws Exception { 
-		contextList.add(context); 
-	}
+	Collection<WebServerContext> contexts = new ArrayList<WebServerContext>();
 
 	public void start() throws Exception {
 		 
@@ -48,7 +44,7 @@ public class WebServer {
 		 }
 		 
 		 // setting context 
-		 for(WebServerContext context : this.contextList){ 
+		 for(WebServerContext context : this.contexts){ 
 			 File resourceBase = new File(context.getResourceBase());
 			 StandardContext ctx = (StandardContext)tomcat.addWebapp(context.getContextPath(), resourceBase.getAbsolutePath());
 			 ctx.addParameter("webAppRootKey", UUID.randomUUID().toString());
@@ -56,10 +52,12 @@ public class WebServer {
 			 ctx.setReloadable(false);
 			 
 			 // add parameter 
-			 for(String name : context.getParameters().keySet()){ 
-				 String value = context.getParameter(name);
-				 ctx.addParameter(name, value);
-			 } 
+			 if(context.getParameter() != null) {
+				 for(String name : context.getParameter().keySet()){ 
+					 String value = context.getParameter(name);
+					 ctx.addParameter(name, value);
+				 }
+			 }
 		 } 
 		 
 		 // starts server instance. 
@@ -108,6 +106,14 @@ public class WebServer {
 
 	public void setKeyStorePass(String keyStorePass) {
 		this.keyStorePass = keyStorePass;
+	}
+	
+	public void addContext(WebServerContext context) throws Exception { 
+		contexts.add(context); 
+	}
+	
+	public void setContexts(Collection<WebServerContext> contexts) {
+		this.contexts = contexts;
 	}
 
 }

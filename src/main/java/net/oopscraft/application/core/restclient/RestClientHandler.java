@@ -27,7 +27,7 @@ import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.ValueMap;
 
 public class RestClientHandler implements InvocationHandler {
@@ -76,9 +76,9 @@ public class RestClientHandler implements InvocationHandler {
 		}else if(returnType == String.class) {
 			return restResponse.getResponseMessage();
 		}else if(returnType == List.class) {
-			return JsonConverter.convertJsonToObjectList(restResponse.getResponseMessage(), Object.class); 
+			return JsonUtils.convertJsonToObjectList(restResponse.getResponseMessage(), Object.class); 
 		}else{
-			return JsonConverter.convertJsonToObject(restResponse.getResponseMessage(), returnType); 
+			return JsonUtils.convertJsonToObject(restResponse.getResponseMessage(), returnType); 
 		}
 	}
 
@@ -354,11 +354,11 @@ public class RestClientHandler implements InvocationHandler {
 					if(value == null) { 
 						value = "null";
 					}else if(value instanceof String) { 
-						value = "\"" + JsonConverter.stringify(value.toString()) + "\"";
+						value = "\"" + JsonUtils.stringify(value.toString()) + "\"";
 					}else if( value instanceof BigDecimal) { 
 						value = value.toString();
 					}else if(value instanceof Object){ 
-						value = JsonConverter.convertObjectToJson(value);
+						value = JsonUtils.convertObjectToJson(value);
 					} 
 				break;
 				case NONE: 

@@ -1,0 +1,21 @@
+{
+	"class":"net.oopscraft.application.Application",
+	"webServer": {
+		"port": 10001,
+		"ssl": true,
+		"keyStorePath": "conf/ssl/keystore",
+		"keyStoreType": "pkcs12",
+		"keyStorePass": "abcd1234",
+		"contexts": [
+			{
+				"contextPath":"/",
+				"resourceBase":"webapp/application",
+				"descriptor":"webapp/application/WEB-INF/web.xml",
+				"parameter":null
+			}
+		]
+	},
+	"sqlSessionProxyFactory": {
+		"configureFile": "conf/mybatis.xml"
+	}
+}

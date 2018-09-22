@@ -14,7 +14,7 @@ import org.springframework.web.socket.WebSocketSession;
 import net.oopscraft.application.core.SystemInfo;
 import net.oopscraft.application.core.SystemMonitor;
 import net.oopscraft.application.core.SystemMonitorListener;
-import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.ValueMap;
 
 
@@ -69,7 +69,7 @@ public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHa
 					ValueMap messageMap = new ValueMap();
 					messageMap.set("id", Id.jmxInfo);
 					messageMap.set("result", convertJmxInfoToMap(jmxInfo));				
-					String message = JsonConverter.convertObjectToJson(messageMap);
+					String message = JsonUtils.convertObjectToJson(messageMap);
 					broadcastMessage(message);
 				}
 				
@@ -99,7 +99,7 @@ public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHa
 	public void onMessage(WebSocketSession session, TextMessage message) {
 		LOG.info("onMessage");
 		try {
-			ValueMap messageMap = JsonConverter.convertJsonToObject(message.getPayload(), ValueMap.class);
+			ValueMap messageMap = JsonUtils.convertJsonToObject(message.getPayload(), ValueMap.class);
 			Id id = Id.valueOf(messageMap.getString("id"));
 			Object result = null;
 			switch(id) {
@@ -117,7 +117,7 @@ public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHa
 			break;
 			}
 			messageMap.set("result", result);
-			String response = JsonConverter.convertObjectToJson(messageMap);
+			String response = JsonUtils.convertObjectToJson(messageMap);
 			this.sendMessage(session, response);
 		}catch(Exception ignore) {
 			LOG.warn(ignore.getMessage());
