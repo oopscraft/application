@@ -1,11 +1,20 @@
 package net.oopscraft.application;
 
-import java.io.File;
+import net.oopscraft.application.core.WebServer;
 
 public class Application {
 	
+	WebServer webServer;
+	
+	public WebServer getWebServer() {
+		return webServer;
+	}
+	public void setWebServer(WebServer webServer) {
+		this.webServer = webServer;
+	}
+	
 	/**
-	 * start application
+	 * process on application start
 	 * @throws Exception
 	 */
 	public void onStart() throws Exception {
@@ -13,21 +22,11 @@ public class Application {
 	};
 	
 	/**
-	 * stop application
+	 * process on application stop
 	 * @throws Exception
 	 */
 	public void onStop() throws Exception {
 		// void
 	};
-	
-	/**
-	 * main
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(final String[] args) throws Exception {
-		System.setProperty("log4j.configurationFile", "conf/log4j2.xml");
-		ApplicationContainer.launch(Application.class, new File("conf/application.xml"), new File("conf/application.properties"));
-	}
 
 }

@@ -8,7 +8,7 @@ public class WebServerContext {
 	String contextPath = null;
 	String resourceBase = null;
 	String descriptor = null;
-	Map<String, String> parameters = new LinkedHashMap<String, String>();
+	Map<String, String> parameter = new LinkedHashMap<String, String>();
 
 	public String getContextPath() {
 		return contextPath;
@@ -34,19 +34,19 @@ public class WebServerContext {
 		this.descriptor = descriptor;
 	}
 
-	public Map<String, String> getParameters() {
-		return parameters;
+	public Map<String, String> getParameter() {
+		return parameter;
 	}
 
-	public void setParameters(Map<String, String> initParameters) {
-		this.parameters = initParameters;
+	public void setParameter(Map<String, String> parameter) {
+		this.parameter = parameter;
 	}
 
-	public void addParameter(String name, String value) {
-		this.parameters.put(name, value);
+	public void setParameter(String name, String value) {
+		this.parameter.put(name, value);
 	}
 
 	public String getParameter(String name) {
-		return this.parameters.get(name);
+		return this.parameter.get(name);
 	}
 }
