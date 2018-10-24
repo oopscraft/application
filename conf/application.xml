@@ -2,18 +2,25 @@
 <application class="net.oopscraft.application.Application">
 
 	<webServer port="10001">
-		<!-- 
-		<ssl>
-			<keyStorePath>conf/ssl/keystore</keyStorePath>
-			<keyStoreType>pkcs12</keyStoreType>
-			<keyStorePass>abcd1234</keyStorePass>
-		</ssl>
-		-->
+		<ssl>false</ssl>
+		<keyStorePath>conf/ssl/keystore</keyStorePath>
+		<keyStoreType>pkcs12</keyStoreType>
+		<keyStorePass>abcd1234</keyStorePass>
 		<context path="/">
 			<resourceBase>webapp/application</resourceBase>
 			<descriptor>webapp/application/WEB-INF/web.xml</descriptor>
 		</context>
 	</webServer>
+	
+	<dataSource id="oltp" class="org.apache.commons.dbcp.BasicDataSource">
+		<driver>org.mariadb.jdbc.Driver</driver>
+		<url>jdbc://</url>
+		<username></username>
+		<password></password>
+		<initialSize>5</initialSize>
+		<maxActive>10</maxActive>
+		<validationQuery>select 1</validationQuery>
+	</dataSource>
 	
 	<sqlSessionProxyFactory>
 		<configureFile>conf/mybatis.xml</configureFile>
