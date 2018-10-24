@@ -149,6 +149,11 @@ public class SqlSessionProxyFactory {
  		SqlSessionFactory sqlSessionFactory = sqlSessionFactoryMap.get(environment);
  		return sqlSessionFactory.getConfiguration().getEnvironment().getDataSource();
  	}
+ 	
+// 	protected void setDataSource(DataSource dataSource) {
+// 		SqlSessionFactory sqlSessionFactory = sqlSessionFactoryMap.get(environment);
+// 		sqlSessionFactory.getConfiguration().getEnvironment()
+// 	}
 }
 
 

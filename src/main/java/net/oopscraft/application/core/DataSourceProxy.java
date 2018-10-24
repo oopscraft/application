@@ -1,4 +1,4 @@
-package net.oopscraft.application.core.mybatis;
+package net.oopscraft.application.core;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 import net.oopscraft.application.ApplicationContext;
+import net.oopscraft.application.core.mybatis.SqlSessionProxyFactory;
 
 public class DataSourceProxy implements DataSource {
 	
