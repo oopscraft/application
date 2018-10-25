@@ -148,7 +148,7 @@ public class TextTableBuilder {
 					columnNamesVector.add(fieldName);
 				}catch(Exception e) {
 					try {
-						Method getterMethod = objClass.getMethod("get" + NotationConverter.toPascalCase(fieldName));
+						Method getterMethod = objClass.getMethod("get" + NotationUtils.toPascalCase(fieldName));
 						getterMethod.invoke(obj);
 						columnNamesVector.add(fieldName);
 					}catch(Exception ignore) {}
@@ -185,7 +185,7 @@ public class TextTableBuilder {
 					columnValue = field.get(obj);
 				}catch(Exception e) {
 					try {
-						Method getterMethod = objClass.getMethod("get" + NotationConverter.toPascalCase(columnName));
+						Method getterMethod = objClass.getMethod("get" + NotationUtils.toPascalCase(columnName));
 						columnValue = getterMethod.invoke(obj);
 					}catch(Exception e1) {
 						columnValue = e1.getMessage();
