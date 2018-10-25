@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application class="net.oopscraft.application.Application">
 
-	<webServer port="10001">
-		<ssl>false</ssl>
-		<keyStorePath>conf/ssl/keystore</keyStorePath>
-		<keyStoreType>pkcs12</keyStoreType>
-		<keyStorePass>abcd1234</keyStorePass>
+	<webServer id="application" port="10001">
+		<ssl>${application.webSerer.ssl}</ssl>
+		<keyStorePath>${application.webSerer.keyStorePath}</keyStorePath>
+		<keyStoreType>${application.webSerer.keyStoreType}</keyStoreType>
+		<keyStorePass>${application.webSerer.keyStorePass}</keyStorePass>
 		<context path="/">
 			<resourceBase>webapp/application</resourceBase>
 			<descriptor>webapp/application/WEB-INF/web.xml</descriptor>
 		</context>
 	</webServer>
 	
-	<dataSource id="oltp" class="org.apache.commons.dbcp.BasicDataSource">
-		<driver>org.mariadb.jdbc.Driver</driver>
-		<url>jdbc://</url>
-		<username></username>
-		<password></password>
-		<initialSize>5</initialSize>
-		<maxActive>10</maxActive>
-		<validationQuery>select 1</validationQuery>
+	<dataSource id="oltp">
+		<driver>${application.dataSource.oltp.driver}</driver>
+		<url>${application.dataSource.oltp.url}</url>
+		<username>${application.dataSource.oltp.username}</username>
+		<password>${application.dataSource.oltp.password}</password>
+		<initialSize>${application.dataSource.oltp.initialSize}</initialSize>
+		<maxActive>${application.dataSource.oltp.maxActive}</maxActive>
+		<validationQuery>${application.dataSource.oltp.validationQuery}</validationQuery>
 	</dataSource>
 	
 	<sqlSessionProxyFactory>
