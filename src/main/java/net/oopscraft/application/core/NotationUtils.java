@@ -1,6 +1,6 @@
 package net.oopscraft.application.core;
 
-public class NotationConverter {
+public class NotationUtils {
 	
 	/**
 	 * Convert string into camel case notation.
