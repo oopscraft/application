@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application class="net.oopscraft.application.Application">
 
-	<webServer id="application" port="10001">
+	<webServer id="webServer" port="10001">
 		<ssl>${application.webSerer.ssl}</ssl>
 		<keyStorePath>${application.webSerer.keyStorePath}</keyStorePath>
 		<keyStoreType>${application.webSerer.keyStoreType}</keyStoreType>
@@ -12,7 +12,7 @@
 		</context>
 	</webServer>
 	
-	<dataSource id="oltp">
+	<dataSource id="dataSource">
 		<driver>${application.dataSource.oltp.driver}</driver>
 		<url>${application.dataSource.oltp.url}</url>
 		<username>${application.dataSource.oltp.username}</username>
@@ -22,8 +22,17 @@
 		<validationQuery>${application.dataSource.oltp.validationQuery}</validationQuery>
 	</dataSource>
 	
-	<sqlSessionProxyFactory>
+	<transactionManager id="transactionManager">
+		<dataSource>dataSource</dataSource>
+	</transactionManager>
+	
+	<entityManagerFactory id="entityManagerFactory" dataSource="dataSource">
+        <property name="showSql" value="true" />
+        <property name="packagesToScan" value="sample.app" />
+	</entityManagerFactory>
+	
+	<sqlSessionFactory id="sqlSessionFactory" dataSource="dataSource">
 		<configureFile>conf/mybatis.xml</configureFile>
-	</sqlSessionProxyFactory>
+	</sqlSessionFactory>
 
 </application>
