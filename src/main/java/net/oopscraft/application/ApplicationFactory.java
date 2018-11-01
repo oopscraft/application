@@ -2,16 +2,26 @@ package net.oopscraft.application;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.SharedCacheMode;
+import javax.persistence.ValidationMode;
+import javax.persistence.spi.ClassTransformer;
+import javax.persistence.spi.PersistenceUnitInfo;
+import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -24,18 +34,27 @@ public class ApplicationFactory {
 	
 	private static final String PROPERTY_IDENTIFIER = "\\$\\{(.*?)\\}";
 	
-	static Application getApplication(Class<?> clazz, File contextXmlFile, File contextPropertiesFile) throws Exception {
+	/**
+	 * getApplication
+	 * @param clazz
+	 * @param applicationXmlFile
+	 * @param applicationPropertiesFile
+	 * @return
+	 * @throws Exception
+	 */
+	public static Application getApplication(Class<?> clazz, File applicationXmlFile, File applicationPropertiesFile) throws Exception {
 		
 		Application application = (Application) clazz.newInstance();
-		application.setContextXmlFile(contextXmlFile);
-		application.setContextPropertiesFile(contextPropertiesFile);
+		application.setXmlFile(applicationXmlFile);
+		application.setPropertiesFile(applicationPropertiesFile);
 
 		// creates resources.
-		XPathReader contextXmlReader = new XPathReader(contextXmlFile);
+		XPathReader contextXmlReader = new XPathReader(applicationXmlFile);
 		Properties contextProperties = new Properties();
-		contextProperties.load(new FileInputStream(contextPropertiesFile));
+		contextProperties.load(new FileInputStream(applicationPropertiesFile));
 		application.setWebServers(createWebServers(contextXmlReader, contextProperties));
 		application.setDataSources(createDataSources(contextXmlReader, contextProperties));
+		application.setEntityManagerFactories(createEntityManagerFactories(contextXmlReader, contextProperties));
 		
 		return application;
 	}
@@ -66,7 +85,7 @@ public class ApplicationFactory {
 	 * @param context
 	 * @throws Exception
 	 */
-	private static HashMap<String,WebServer> createWebServers(XPathReader contextXmlReader, Properties contextProperties) throws Exception {
+	private static Map<String,WebServer> createWebServers(XPathReader contextXmlReader, Properties contextProperties) throws Exception {
 		HashMap<String,WebServer> webServers = new LinkedHashMap<String,WebServer>();
 		NodeList webServerNodeList = (NodeList) contextXmlReader.getElement("/application/webServer");
 		for(int idx = 1; idx <= webServerNodeList.getLength(); idx ++ ) {
@@ -135,6 +154,144 @@ public class ApplicationFactory {
 			dataSources.put(id, dataSource);
 		}
 		return dataSources;
+	}
+
+	/**
+	 * createEntityManagerFactories
+	 * @param contextXmlReader
+	 * @param contextProperties
+	 * @return
+	 * @throws Exception
+	 */
+	private static HashMap<String,EntityManagerFactory> createEntityManagerFactories(XPathReader contextXmlReader, Properties contextProperties) throws Exception {
+		HashMap<String,EntityManagerFactory> entityManagerFactories = new LinkedHashMap<String,EntityManagerFactory>();
+		PersistenceUnitInfo persistenceUnitInfo = new PersistenceUnitInfo() {
+
+			@Override
+			public String getPersistenceUnitName() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public String getPersistenceProviderClassName() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public PersistenceUnitTransactionType getTransactionType() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public DataSource getJtaDataSource() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public DataSource getNonJtaDataSource() {
+				// TODO Auto-generated method stub
+				return null;
+				
+			}
+
+			@Override
+			public List<String> getMappingFileNames() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public List<URL> getJarFileUrls() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public URL getPersistenceUnitRootUrl() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public List<String> getManagedClassNames() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public boolean excludeUnlistedClasses() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			@Override
+			public SharedCacheMode getSharedCacheMode() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public ValidationMode getValidationMode() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Properties getProperties() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public String getPersistenceXMLSchemaVersion() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public ClassLoader getClassLoader() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public void addTransformer(ClassTransformer transformer) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public ClassLoader getNewTempClassLoader() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+		};
+
+		
+		HibernatePersistenceProvider hibernatePersistenceProvider = new HibernatePersistenceProvider();
+
+		
+		Properties properties = new Properties();
+//		properties.put("hibernate.hbm2ddl.auto", "create");
+		properties.put("hibernate.show_sql", "false");
+		properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        
+		EntityManagerFactory entityManagerFactory = hibernatePersistenceProvider.createContainerEntityManagerFactory(persistenceUnitInfo, properties);
+		
+		entityManagerFactories.put("entityManagerFactory", entityManagerFactory);
+		return entityManagerFactories;
+	}
+	
+	
+	private static void createSqlSessionFactory() throws Exception {
+		
+		//SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(config);
+		
 	}
 	
 }

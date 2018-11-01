@@ -1,30 +1,34 @@
 package net.oopscraft.application;
 
 import java.io.File;
-import java.sql.Connection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
+import org.apache.ibatis.session.SqlSessionFactory;
 
 import net.oopscraft.application.core.WebServer;
 
 public class Application {
 	
-	File contextXmlFile;
-	File contextPropertiesFile;
-	HashMap<String,WebServer> webServers = new LinkedHashMap<String,WebServer>();
-	HashMap<String,DataSource> dataSources = new LinkedHashMap<String,DataSource>();
+	File xmlFile;
+	File propertiesFile;
+	Map<String,WebServer> webServers = new LinkedHashMap<String,WebServer>();
+	Map<String,DataSource> dataSources = new LinkedHashMap<String,DataSource>();
+	Map<String,SqlSessionFactory> sqlSessionFactories = new LinkedHashMap<String,SqlSessionFactory>();
+	Map<String,EntityManagerFactory> entityManagerFactories = new LinkedHashMap<String,EntityManagerFactory>();
 	
-	final void setContextXmlFile(File contextXmlFile) throws Exception {
-		this.contextXmlFile = contextXmlFile;
+	final void setXmlFile(File xmlFile) throws Exception {
+		this.xmlFile = xmlFile;
 	}
 	
-	final void setContextPropertiesFile(File contextPropertiesFile) {
-		this.contextPropertiesFile = contextPropertiesFile;
+	final void setPropertiesFile(File propertiesFile) {
+		this.propertiesFile = propertiesFile;
 	}
 	
-	final void setWebServers(HashMap<String,WebServer> webServers) {
+	final void setWebServers(Map<String,WebServer> webServers) {
 		this.webServers = webServers;
 	}
 	
@@ -32,7 +36,7 @@ public class Application {
 		webServers.put(id, webServer);
 	}
 
-	public final HashMap<String,WebServer> getWebServers() {
+	public final Map<String,WebServer> getWebServers() {
 		return webServers;
 	}
 	
@@ -44,23 +48,35 @@ public class Application {
 		dataSources.put(id, dataSource);
 	}
 	
-	public final void setDataSources(HashMap<String,DataSource> dataSources) {
+	public final void setDataSources(Map<String,DataSource> dataSources) {
 		this.dataSources = dataSources;
 	}
 	
-	public final HashMap<String,DataSource> getDataSources() {
+	public final Map<String,DataSource> getDataSources() {
 		return dataSources;
 	}
 	
 	public final DataSource getDataSource(String id) {
 		return dataSources.get(id);
 	}
+
+	final void setEntityManagerFactories(Map<String,EntityManagerFactory> entityManagerFactories) {
+		this.entityManagerFactories = entityManagerFactories;
+	}
+	
+	final void setEntityManagerFactory(String id, EntityManagerFactory entityManagerFactory) {
+		entityManagerFactories.put(id, entityManagerFactory);
+	}
+	
+	public final EntityManagerFactory getEntityManagerFactory(String id) {
+		return entityManagerFactories.get(id);
+	}
+	
+	public final Map<String,EntityManagerFactory> getEntityManagerFactories() {
+		return entityManagerFactories;
+	}
 	
 	public final void start() throws Exception {
-		
-		Connection connection = this.getDataSource("oltp").getConnection();
-		System.err.println(connection);
-		
 		onStart();
 	}
 	
