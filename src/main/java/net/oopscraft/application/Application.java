@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import net.oopscraft.application.core.WebServer;
 
@@ -17,8 +18,7 @@ public class Application {
 	File propertiesFile;
 	Map<String,WebServer> webServers = new LinkedHashMap<String,WebServer>();
 	Map<String,DataSource> dataSources = new LinkedHashMap<String,DataSource>();
-	Map<String,SqlSessionFactory> sqlSessionFactories = new LinkedHashMap<String,SqlSessionFactory>();
-	Map<String,EntityManagerFactory> entityManagerFactories = new LinkedHashMap<String,EntityManagerFactory>();
+	Map<String,LocalContainerEntityManagerFactoryBean> entityManagerFactories = new LinkedHashMap<String,LocalContainerEntityManagerFactoryBean >();
 	
 	final void setXmlFile(File xmlFile) throws Exception {
 		this.xmlFile = xmlFile;
@@ -60,19 +60,19 @@ public class Application {
 		return dataSources.get(id);
 	}
 
-	final void setEntityManagerFactories(Map<String,EntityManagerFactory> entityManagerFactories) {
+	final void setEntityManagerFactories(Map<String,LocalContainerEntityManagerFactoryBean > entityManagerFactories) {
 		this.entityManagerFactories = entityManagerFactories;
 	}
 	
-	final void setEntityManagerFactory(String id, EntityManagerFactory entityManagerFactory) {
+	final void setEntityManagerFactory(String id, LocalContainerEntityManagerFactoryBean  entityManagerFactory) {
 		entityManagerFactories.put(id, entityManagerFactory);
 	}
 	
-	public final EntityManagerFactory getEntityManagerFactory(String id) {
+	public final LocalContainerEntityManagerFactoryBean getEntityManagerFactory(String id) {
 		return entityManagerFactories.get(id);
 	}
 	
-	public final Map<String,EntityManagerFactory> getEntityManagerFactories() {
+	public final Map<String,LocalContainerEntityManagerFactoryBean > getEntityManagerFactories() {
 		return entityManagerFactories;
 	}
 	

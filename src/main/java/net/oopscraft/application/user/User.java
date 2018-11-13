@@ -5,25 +5,56 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@Entity
+@Table(name = "APP_USER_INFO")
 public class User implements UserDetails {
 
 	private static final long serialVersionUID = -2175537994774089889L;
 
+	@Id
+	@Column(name="USER_ID")
 	String id;
+	
+	@Transient
 	String email;
+	
+	@Transient
 	String mobile;
+	
+	@Column(name="USER_NAME")
 	String name;
+	
+	@Transient
 	String nickname;
+	
+	@Transient
 	String password;
+	
+	@Transient
 	String image;
+	
+	@Transient
 	String message;
+	
+	@Transient
 	String description;
+	
+	@Transient
 	String statusCode;
+	
+	@Transient
 	Date joinDate;
 	
+	@Transient
 	List<Authority> authorities = new ArrayList<Authority>();
 	
 	public String getId() {

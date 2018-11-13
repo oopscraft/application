@@ -32,10 +32,14 @@ public class ApplicationContainer {
 		LOGGER.info(System.lineSeparator() + BANNER);
 		
 		// initializes application
-		XPathReader configXmlReader = new XPathReader(APPLICATION_XML);
-		String applicationClassName = configXmlReader.getTextContent("/application/@class");
+		XPathReader applicationXmlReader = new XPathReader(APPLICATION_XML);
+		String applicationClassName = applicationXmlReader.getTextContent("/application/@class");
 		Class<?> applicationClass = Class.forName(applicationClassName);
-		application = ApplicationFactory.getApplication(applicationClass, APPLICATION_XML, APPLICATION_PROPERTIES);
+		application = new ApplicationBuilder()
+				.setClass(applicationClass)
+				.setXmlFile(APPLICATION_XML)
+				.setPropertiesFile(APPLICATION_PROPERTIES)
+				.build();
 		application.start();
 		
 		// hooking kill signal

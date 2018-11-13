@@ -22,10 +22,6 @@
 		<validationQuery>${application.dataSource.oltp.validationQuery}</validationQuery>
 	</dataSource>
 	
-	<transactionManager id="transactionManager">
-		<dataSource>dataSource</dataSource>
-	</transactionManager>
-	
 	<entityManagerFactory id="entityManagerFactory" dataSource="dataSource">
         <property name="showSql" value="true" />
         <property name="packagesToScan" value="sample.app" />
