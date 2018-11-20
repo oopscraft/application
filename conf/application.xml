@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application class="net.oopscraft.application.Application">
 
-	<webServer id="webServer" port="10001">
+	<!-- ====================================================== -->
+	<!-- Embedded WebServer(Tomcat) Definition					-->
+	<!-- ====================================================== -->
+	<webServer id="webServer">
+		<port>${application.webServer.port}</port>
 		<ssl>${application.webSerer.ssl}</ssl>
 		<keyStorePath>${application.webSerer.keyStorePath}</keyStorePath>
 		<keyStoreType>${application.webSerer.keyStoreType}</keyStoreType>
@@ -11,24 +15,50 @@
 			<descriptor>webapp/application/WEB-INF/web.xml</descriptor>
 		</context>
 	</webServer>
-	
+
+	<!-- ====================================================== -->
+	<!-- DataSource Definition									-->
+	<!-- ====================================================== -->
 	<dataSource id="dataSource">
 		<driver>${application.dataSource.oltp.driver}</driver>
 		<url>${application.dataSource.oltp.url}</url>
 		<username>${application.dataSource.oltp.username}</username>
 		<password>${application.dataSource.oltp.password}</password>
+		<defaultAutoCommit>${application.dataSource.oltp.defaultAutoCommit}</defaultAutoCommit>
 		<initialSize>${application.dataSource.oltp.initialSize}</initialSize>
 		<maxActive>${application.dataSource.oltp.maxActive}</maxActive>
 		<validationQuery>${application.dataSource.oltp.validationQuery}</validationQuery>
 	</dataSource>
 	
-	<entityManagerFactory id="entityManagerFactory" dataSource="dataSource">
-        <property name="showSql" value="true" />
-        <property name="packagesToScan" value="sample.app" />
+	<!-- ====================================================== -->
+	<!-- JPA+Hibernate EntityManagerFactory Definition			-->
+	<!-- ====================================================== -->
+	<entityManagerFactory id="entityManagerFactory">
+		<dataSource>dataSource</dataSource>
+		<databasePlatform>org.hibernate.dialect.MySQLDialect</databasePlatform>
+		<packagesToScan>net.oopscraft.application</packagesToScan>
 	</entityManagerFactory>
 	
-	<sqlSessionFactory id="sqlSessionFactory" dataSource="dataSource">
-		<configureFile>conf/mybatis.xml</configureFile>
+	<!-- ====================================================== -->
+	<!-- MYBATIS SqlSessionFactory Definition					-->
+	<!-- ====================================================== -->
+	<sqlSessionFactory id="sqlSessionFactory">
+		<dataSource>dataSource</dataSource>
+		<mapperLocations>classpath*:net/oopscraft/application/**/*Mapper.xml</mapperLocations>
+		<configuration>
+			<cacheEnabled>false</cacheEnabled>
+			<callSettersOnNulls>true</callSettersOnNulls>
+			<mapUnderscoreToCamelCase>true</mapUnderscoreToCamelCase>
+		</configuration>
 	</sqlSessionFactory>
+	
+	<!-- ====================================================== -->
+	<!-- Message Source											-->
+	<!-- ====================================================== -->
+	<messageSource id="messageSource">
+		<basename>/WEB-INF/message/message</basename>
+		<cacheSeconds>3</cacheSeconds>
+	</messageSource>
+	
 
 </application>

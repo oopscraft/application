@@ -69,7 +69,7 @@ public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHa
 					ValueMap messageMap = new ValueMap();
 					messageMap.set("id", Id.jmxInfo);
 					messageMap.set("result", convertJmxInfoToMap(jmxInfo));				
-					String message = JsonUtils.convertObjectToJson(messageMap);
+					String message = JsonUtils.toJson(messageMap);
 					broadcastMessage(message);
 				}
 				
@@ -99,7 +99,7 @@ public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHa
 	public void onMessage(WebSocketSession session, TextMessage message) {
 		LOG.info("onMessage");
 		try {
-			ValueMap messageMap = JsonUtils.convertJsonToObject(message.getPayload(), ValueMap.class);
+			ValueMap messageMap = JsonUtils.toObject(message.getPayload(), ValueMap.class);
 			Id id = Id.valueOf(messageMap.getString("id"));
 			Object result = null;
 			switch(id) {
@@ -117,7 +117,7 @@ public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHa
 			break;
 			}
 			messageMap.set("result", result);
-			String response = JsonUtils.convertObjectToJson(messageMap);
+			String response = JsonUtils.toJson(messageMap);
 			this.sendMessage(session, response);
 		}catch(Exception ignore) {
 			LOG.warn(ignore.getMessage());

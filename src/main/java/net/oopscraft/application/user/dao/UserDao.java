@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.User;
 
-@Repository
 public interface UserDao {
 	
 	public List<User> selectUserList(@Param("user")User user, @Param("rows")int rows, @Param("page")int page) throws Exception;

@@ -64,7 +64,7 @@ public class SecurityFilter implements Filter {
         	User user = new User();
         	user.setId(id);
         	user.setPassword(password);
-        	List<Authority> authorityList= JsonUtils.convertJsonToObjectList(authorities, Authority.class);
+        	List<Authority> authorityList= JsonUtils.toList(authorities, Authority.class);
         	user.setAuthorities(authorityList);
         	SecurityContext securityContext = SecurityContextHolder.getContext();
         	Authentication authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());

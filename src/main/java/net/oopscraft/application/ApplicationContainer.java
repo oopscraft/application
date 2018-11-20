@@ -7,6 +7,7 @@ import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.oopscraft.application.core.WebServer;
 import net.oopscraft.application.core.XPathReader;
 
 public class ApplicationContainer {
@@ -32,15 +33,7 @@ public class ApplicationContainer {
 		LOGGER.info(System.lineSeparator() + BANNER);
 		
 		// initializes application
-		XPathReader applicationXmlReader = new XPathReader(APPLICATION_XML);
-		String applicationClassName = applicationXmlReader.getTextContent("/application/@class");
-		Class<?> applicationClass = Class.forName(applicationClassName);
-		application = new ApplicationBuilder()
-				.setClass(applicationClass)
-				.setXmlFile(APPLICATION_XML)
-				.setPropertiesFile(APPLICATION_PROPERTIES)
-				.build();
-		application.start();
+		application = getApplication();
 		
 		// hooking kill signal
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
@@ -54,8 +47,31 @@ public class ApplicationContainer {
 			}
 		}));
 		
+		// starts webServer
+		for(WebServer webServer : application.getWebServers().values()) {
+			webServer.start();
+		}
+		
 		// thread join
 		Thread.currentThread().join();
+	}
+	
+	public synchronized static Application getApplication() throws Exception {
+		synchronized(ApplicationContainer.class) {
+			if(application == null) {
+				// initializes application
+				XPathReader applicationXmlReader = new XPathReader(APPLICATION_XML);
+				String applicationClassName = applicationXmlReader.getTextContent("/application/@class");
+				Class<?> applicationClass = Class.forName(applicationClassName);
+				application = new ApplicationBuilder()
+						.setClass(applicationClass)
+						.setXmlFile(APPLICATION_XML)
+						.setPropertiesFile(APPLICATION_PROPERTIES)
+						.build();
+				application.start();
+			}
+			return application;
+		}
 	}
 
 }

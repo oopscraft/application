@@ -26,8 +26,8 @@ import net.oopscraft.application.core.captcha.AnswerGenerator;
 import net.oopscraft.application.core.captcha.CaptchaException;
 import net.oopscraft.application.core.captcha.CaptchaUtility;
 
-@Controller
-@RequestMapping("/admin/sign")
+//@Controller
+//@RequestMapping("/admin/sign")
 public class SignController {
 	
 	@Autowired

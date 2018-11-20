@@ -76,9 +76,9 @@ public class RestClientHandler implements InvocationHandler {
 		}else if(returnType == String.class) {
 			return restResponse.getResponseMessage();
 		}else if(returnType == List.class) {
-			return JsonUtils.convertJsonToObjectList(restResponse.getResponseMessage(), Object.class); 
+			return JsonUtils.toList(restResponse.getResponseMessage(), Object.class); 
 		}else{
-			return JsonUtils.convertJsonToObject(restResponse.getResponseMessage(), returnType); 
+			return JsonUtils.toObject(restResponse.getResponseMessage(), returnType); 
 		}
 	}
 
@@ -358,7 +358,7 @@ public class RestClientHandler implements InvocationHandler {
 					}else if( value instanceof BigDecimal) { 
 						value = value.toString();
 					}else if(value instanceof Object){ 
-						value = JsonUtils.convertObjectToJson(value);
+						value = JsonUtils.toJson(value);
 					} 
 				break;
 				case NONE: 

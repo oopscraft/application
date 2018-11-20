@@ -17,8 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
  * @author chomoo
  *
  */
-@Controller
-@RequestMapping("/console/code")
+//@Controller
+//@RequestMapping("/console/code")
 public class CodeController {
 	
 	@RequestMapping(value="/code", method=RequestMethod.GET)

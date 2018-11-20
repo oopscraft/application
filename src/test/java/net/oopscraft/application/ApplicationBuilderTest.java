@@ -3,6 +3,7 @@ package net.oopscraft.application;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -10,13 +11,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import net.oopscraft.application.core.TextTableBuilder;
 import net.oopscraft.application.core.WebServer;
 import net.oopscraft.application.core.XPathReader;
 import net.oopscraft.application.user.User;
+import net.oopscraft.application.user.UserRepository;
+import net.oopscraft.application.user.dao.UserDao;
+import net.oopscraft.application.user.mapper.UserMapper;
 
 public class ApplicationBuilderTest {
 	
@@ -83,13 +91,65 @@ public class ApplicationBuilderTest {
 				LocalContainerEntityManagerFactoryBean entityManagerFactory = entityManagerFactories.get(id);
 				System.out.println(String.format("+ id[%s]",id));
 				System.out.println(String.format("entityManagerFactory[%s]",entityManagerFactory));
-				EntityManager entityManager = entityManagerFactory.getObject().createEntityManager();
-				System.out.println(String.format("entityManager[%s]",entityManager));
-				
-				User user = new User();
-				user.setId("admin");
-				user = entityManager.find(User.class, user.getId());
-				System.out.println(TextTableBuilder.build(user));
+				EntityManager entityManager = null;
+				try {
+					entityManager = entityManagerFactory.getObject().createEntityManager();
+					System.out.println(String.format("entityManager[%s]",entityManager));
+					
+					// testing direct entityManager
+					User user = new User();
+					user.setId("admin");
+					user = entityManager.find(User.class, user.getId());
+					System.out.println(String.format("+ user:%s", user));
+					System.out.println(TextTableBuilder.build(user));
+					
+					// testing JapRepository
+					UserRepository userRepository = new JpaRepositoryFactory(entityManager).getRepository(UserRepository.class);
+					List<User> userList = userRepository.findAll();
+					System.out.println(TextTableBuilder.build(userList));
+					
+					// tests inserting
+					user.setId("admin2");
+					user.setName("Admin 2");
+					userRepository.save(user);
+
+				}catch(Exception e) {
+					e.printStackTrace(System.err);
+					throw e;
+				}finally {
+					entityManager.close();
+				}
+			}
+			assert(true);
+		}catch(Exception e) {
+			e.printStackTrace(System.err);
+			assert(false);
+		}
+	}
+	
+	/**
+	 * Tests buildSqlSessionFactories method
+	 */
+	@Test
+	public void testBuildSqlSessionFactories() {
+		try {
+			ApplicationBuilder applicationBuilder = new ApplicationBuilder();
+			applicationBuilder.buildDataSources(application, xPathReader, properties);
+			applicationBuilder.buildSqlSessionFactories(application, xPathReader, properties);
+			Map<String,SqlSessionFactoryBean> sqlSessionFactories = application.getSqlSessionFactories();
+			for(String id : sqlSessionFactories.keySet()) {
+				SqlSessionFactoryBean sqlSessionFactory = sqlSessionFactories.get(id);
+				SqlSession sqlSession = null;
+				try {
+					sqlSession = sqlSessionFactory.getObject().openSession();
+					UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+					User user = new User();
+					List<User> userList = userMapper.selectUserList(user);
+					System.out.println(TextTableBuilder.build(userList));
+				}catch(Exception e) {
+					e.printStackTrace(System.err);
+					throw e;
+				}
 			}
 			assert(true);
 		}catch(Exception e) {

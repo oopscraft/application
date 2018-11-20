@@ -4,10 +4,11 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.commons.collections.map.LinkedMap;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.springframework.context.MessageSource;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import net.oopscraft.application.core.WebServer;
@@ -19,6 +20,8 @@ public class Application {
 	Map<String,WebServer> webServers = new LinkedHashMap<String,WebServer>();
 	Map<String,DataSource> dataSources = new LinkedHashMap<String,DataSource>();
 	Map<String,LocalContainerEntityManagerFactoryBean> entityManagerFactories = new LinkedHashMap<String,LocalContainerEntityManagerFactoryBean >();
+	Map<String,SqlSessionFactoryBean> sqlSessionFactories = new LinkedHashMap<String,SqlSessionFactoryBean>();
+	Map<String,MessageSource> messageSources = new LinkedHashMap<String,MessageSource>();
 	
 	final void setXmlFile(File xmlFile) throws Exception {
 		this.xmlFile = xmlFile;
@@ -74,6 +77,38 @@ public class Application {
 	
 	public final Map<String,LocalContainerEntityManagerFactoryBean > getEntityManagerFactories() {
 		return entityManagerFactories;
+	}
+	
+	final void setSqlSessionFactories(Map<String,SqlSessionFactoryBean> sqlSessionFactories) {
+		this.sqlSessionFactories = sqlSessionFactories;
+	}
+	
+	final void setSqlSessionFactory(String id, SqlSessionFactoryBean sqlSessionFactory) {
+		this.sqlSessionFactories.put(id, sqlSessionFactory);
+	}
+	
+	public final SqlSessionFactoryBean getSqlSessionFactory(String id) {
+		return sqlSessionFactories.get(id);
+	}
+	
+	public final Map<String,SqlSessionFactoryBean> getSqlSessionFactories(){
+		return sqlSessionFactories;
+	}
+	
+	final void setMessageSources(Map<String,MessageSource> messageSources) {
+		this.messageSources = messageSources;
+	}
+	
+	final void setMessageSource(String id, MessageSource messageSource) {
+		this.messageSources.put(id, messageSource);
+	}
+	
+	public final MessageSource getMessageSource(String id) {
+		return messageSources.get(id);
+	}
+	
+	public final Map<String,MessageSource> getMessageSources(){
+		return messageSources;
 	}
 	
 	public final void start() throws Exception {
