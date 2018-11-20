@@ -21,8 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtils;
-import net.oopscraft.application.user.Group;
-import net.oopscraft.application.user.GroupService;
+import net.oopscraft.application.user.Group;	
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
 
@@ -30,15 +29,15 @@ import net.oopscraft.application.user.UserService;
  * @author chomookun@gmail.com
  *
  */
-@Controller
-@RequestMapping("/admin/userManage")
+//@Controller
+//@RequestMapping("/admin/userManage")
 public class UserController {
 	
 	@Autowired
 	UserService userService;
 
-	@Autowired
-	GroupService groupService;
+//	@Autowired
+//	GroupService groupService;
 	
 //	@RequestMapping(value="", method=RequestMethod.GET)
 //	public ModelAndView user() throws Exception {

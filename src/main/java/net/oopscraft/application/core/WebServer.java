@@ -50,6 +50,7 @@ public class WebServer {
 			 ctx.addParameter("webAppRootKey", UUID.randomUUID().toString());
 			 ctx.setAltDDName(context.getDescriptor());
 			 ctx.setReloadable(false);
+			 ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
 			 
 			 // add parameter 
 			 if(context.getParameter() != null) {

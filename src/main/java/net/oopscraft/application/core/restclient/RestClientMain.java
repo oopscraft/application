@@ -81,7 +81,7 @@ public class RestClientMain extends JFrame {
 					Object restClient = RestClientFactory.getRestClient(clazz, restRequestXml, host);
 					ValueMap params = null; 
 					if(testTextArea.getText() != null) { 
-						params = JsonUtils.convertJsonToObject(testTextArea.getText(), ValueMap.class); 
+						params = JsonUtils.toObject(testTextArea.getText(), ValueMap.class); 
 					} 
 					resultTextArea.setText(""); 
 					
@@ -109,7 +109,7 @@ public class RestClientMain extends JFrame {
 					Object response = method.invoke(restClient, args.toArray(new Object[args.size()-1]));
 					String result = null;
 					if(response instanceof Object) {
-						result = JsonUtils.convertObjectToJson(response);
+						result = JsonUtils.toJson(response);
 					}else {
 						result = (String) response;
 					}

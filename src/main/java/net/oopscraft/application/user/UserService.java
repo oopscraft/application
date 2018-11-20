@@ -18,12 +18,12 @@ import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.user.dao.UserDao;
 
-@Service
+//@Service
 public class UserService implements UserDetailsService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
-	@Autowired
+////	@Autowired
 	UserDao userDao;
 	
 	@Override

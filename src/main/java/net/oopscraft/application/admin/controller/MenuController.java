@@ -17,8 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
  * @author chomoo
  *
  */
-@Controller
-@RequestMapping("/console/menu")
+//@Controller
+//@RequestMapping("/console/menu")
 public class MenuController {
 	
 	@RequestMapping(value="", method=RequestMethod.GET)

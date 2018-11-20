@@ -1,27 +1,49 @@
 package net.oopscraft.application.user;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name="APP_GROUP_INFO")
 public class Group {
 
-	String path;
-	int depth;
+	@Id
+	@Column(name="GROUP_ID")
 	String id;
-	String upperId;
-	String name;
-	String description;
-	int sortSeq;
 	
-	public String getPath() {
-		return path;
+	@Column(name="UPPER_GROUP_ID")
+	String upperId;
+	
+	@Column(name="GROUP_NAME")
+	String name;
+	
+	@Column(name="GROUP_DESC")
+	String description;
+	
+	@Column(name="DISP_SEQ")
+	Integer displaySeq;
+	
+	@Transient
+	List<Group> childGroups = new ArrayList<Group>();
+	
+	public void setChildGroups(List<Group> childGroups) {
+		this.childGroups = childGroups;
 	}
-	public void setPath(String path) {
-		this.path = path;
+	
+	public void addChildGroup(Group group) {
+		childGroups.add(group);
 	}
-	public int getDepth() {
-		return depth;
+	
+	public List<Group> getChildGroups() {
+		return childGroups;
 	}
-	public void setDepth(int depth) {
-		this.depth = depth;
-	}
+	
 	public String getId() {
 		return id;
 	}
@@ -34,11 +56,11 @@ public class Group {
 	public void setUpperId(String upperId) {
 		this.upperId = upperId;
 	}
-	public int getSortSeq() {
-		return sortSeq;
+	public Integer getDisplaySeq() {
+		return displaySeq;
 	}
-	public void setSortSeq(int sortSeq) {
-		this.sortSeq = sortSeq;
+	public void setDisplaySeq(Integer displaySeq) {
+		this.displaySeq = displaySeq;
 	}
 	public String getName() {
 		return name;
