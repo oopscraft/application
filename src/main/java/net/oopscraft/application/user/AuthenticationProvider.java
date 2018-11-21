@@ -13,20 +13,17 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-/**
- * @author chomookun
- *
- */
 public class AuthenticationProvider implements org.springframework.security.authentication.AuthenticationProvider {
 	
 	@Autowired
 	UserService userService;
 	
-	@Autowired
-	PasswordEncoder passwordEncoder;
+	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	/* (non-Javadoc)
 	 * @see org.springframework.security.authentication.AuthenticationProvider#authenticate(org.springframework.security.core.Authentication)
@@ -40,7 +37,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		String password = (String) authentication.getCredentials();
 		
 		// loading user information
-		org.springframework.security.core.userdetails.UserDetails user = null;
+		UserDetails user = null;
 		try {
 			user = userService.loadUserByUsername(id);
 		}catch(UsernameNotFoundException e) {
@@ -55,30 +52,6 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		// return authentication token.
 		authentication = new UsernamePasswordAuthenticationToken(id, password, user.getAuthorities());
 		return authentication;
-		
-		
-		
-//		// getting user id and password
-//		String id = authentication.getName();
-//		String password = (String) authentication.getCredentials();
-//		
-//		// loading user information
-//		User user = userService.loadUserByUsername(id);
-//		if(user.getPassword().equals(password) == false) {
-//			throw new BadCredentialsException("password is invalid");
-//		}
-//		
-//		// Retrieves user authority
-//		try {
-//			List<Authority> authorityList = userService.getUserAuthorityList(id);
-//			user.setAuthorityList(authorityList);
-//		}catch(Exception e) {
-//			throw new AuthenticationServiceException(e.getMessage(),e);
-//		}
-//
-//		// return authentication token.
-//		authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorityList());
-//		return authentication;
 	}
 
 	/* (non-Javadoc)

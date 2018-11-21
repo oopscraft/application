@@ -93,13 +93,12 @@
 	<!-- ====================================================== -->
 	<!-- Integration with MYBATIS 								-->
 	<!-- ====================================================== -->
-	<!-- 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" 
 		factory-bean="application" 
 		factory-method="getSqlSessionFactory">
 		<constructor-arg index="0" value="sqlSessionFactory"/>
 	</bean>
-	 -->
+	<!--	
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="mapperLocations">
@@ -115,6 +114,7 @@
 			</bean>
 		</property>
     </bean>
+     -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="basePackage" value="net.oopscraft.application.**.mapper" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
@@ -133,11 +133,18 @@
 	<!-- ====================================================== -->
 	<!-- Message Source											-->
 	<!-- ====================================================== -->
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource" 
+		factory-bean="application" 
+		factory-method="getMessageSource">
+		<constructor-arg index="0" value="messageSource"/>
+	</bean>
+	<!-- 
 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basename" value="/WEB-INF/message/message"/>
 		<property name="defaultEncoding" value="UTF-8"/>	         
 		<property name="cacheSeconds" value="3"/>
 	</bean>
+	 -->
 	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
 		<property name="defaultLocale" value="en" />
 	</bean>
@@ -146,6 +153,37 @@
 			<property name="paramName" value="language" />
 		</bean>
     </mvc:interceptors>
+    
+	<!-- ====================================================== -->
+	<!-- View Resolver											-->
+	<!-- ====================================================== -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+	    <property name="prefix" value="/WEB-INF/view/"/>
+	</bean>
+	
+	<!-- ====================================================== -->
+	<!-- Spring Security										-->
+	<!-- ====================================================== -->
+	<bean id="authenticationProvider" class="net.oopscraft.application.user.AuthenticationProvider"/>
+	<security:authentication-manager>
+		<security:authentication-provider ref="authenticationProvider"/>
+	</security:authentication-manager>
+	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
+	<security:http pattern="/admin/sign" security="none" />
+	<security:http pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
+		<security:csrf disabled="true" />
+		<security:intercept-url pattern="/admin/**/*" access="isAuthenticated()" />
+		<security:form-login 
+			login-page="/admin/sign" 
+			login-processing-url="/admin/sign/in" 
+			username-parameter="id" 
+			password-parameter="password" 
+			authentication-success-handler-ref="net.oopscraft.application.admin.SignController"
+			authentication-failure-handler-ref="net.oopscraft.application.admin.SignController"
+			/>
+		<security:logout invalidate-session="true" logout-url="/admin/sign/out" logout-success-url="/" />
+	</security:http>
 
 
 </beans>

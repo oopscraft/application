@@ -8,6 +8,8 @@
  */
 package net.oopscraft.application.user;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,29 +18,74 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.user.dao.UserDao;
-
-//@Service
+@Service
 public class UserService implements UserDetailsService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-
-////	@Autowired
-	UserDao userDao;
+	
+	public enum FindBy { ID_LIKE, NAME_LIKE }
+	
+	@Autowired
+	UserRepository userRepository;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		try {
-			User user = userDao.selectUser(username);
+			User user = userRepository.findOne(username);
 			if(user == null) {
 				throw new UsernameNotFoundException(String.format("user[%s] is not found.",username));
 			}
-			return (UserDetails) user;
+			return (UserDetails)user;
 		}catch(Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new UsernameNotFoundException(e.getMessage(), e);
 		}
 	}
 	
-
+	/**
+	 * Gets list of user by search condition and value
+	 * @param findBy
+	 * @param value
+	 * @return
+	 * @throws Exception
+	 */
+	public List<User> getUsers(FindBy findBy, String value) throws Exception {
+		List<User> users = null;
+		if(findBy == null) {
+			users = userRepository.findAll();
+		}else {
+			switch(findBy) {
+			case ID_LIKE:
+				users = userRepository.findByIdLike(value);
+			break;
+			case NAME_LIKE:
+				users = userRepository.findByNameLike(value);
+			break;
+			}
+		}
+		return users;
+	}
+	
+	public User getUser(String id) throws Exception {
+		User user = userRepository.findOne(id);
+		return user;
+	}
+	
+	/**
+	 * Saves user details
+	 * @param user
+	 * @throws Exception
+	 */
+	public void saveUser(User user) throws Exception {
+		userRepository.save(user);
+	}
+	
+	/**
+	 * Removes group details
+	 * @param id
+	 * @throws Exception
+	 */
+	public void removeUser(String id) throws Exception {
+		userRepository.delete(id);
+	}
 }

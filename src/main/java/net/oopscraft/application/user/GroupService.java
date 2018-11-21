@@ -13,6 +13,13 @@ public class GroupService {
 	
 	public enum FindBy { ID_LIKE, NAME_LIKE } 
 	
+	/**
+	 * Gets list of group by search condition and value
+	 * @param findBy
+	 * @param value
+	 * @return
+	 * @throws Exception
+	 */
 	public List<Group> getGroups(FindBy findBy, String value) throws Exception {
 		List<Group> groups = null;
 		if(findBy == null) {
@@ -28,29 +35,50 @@ public class GroupService {
 			}
 		}
 		for(Group group : groups) {
-			fillChildGroupHierarchy(group);
+			fillChildGroupRecursively(group);
 		}
 		return groups;
 	}
 	
+	/**
+	 * Gets detail of group
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
 	public Group getGroup(String id) throws Exception {
 		Group group = groupRepository.findOne(id);
-		fillChildGroupHierarchy(group);
+		fillChildGroupRecursively(group);
 		return group;
 	}
 	
-	private void fillChildGroupHierarchy(Group group) throws Exception {
+	/**
+	 * Fills child group recursively
+	 * @param group
+	 * @throws Exception
+	 */
+	private void fillChildGroupRecursively(Group group) throws Exception {
 		List<Group> childGroups = groupRepository.findByUpperId(group.getId());
 		group.setChildGroups(childGroups);
 		for(Group childGroup : childGroups) {
-			fillChildGroupHierarchy(childGroup);
+			fillChildGroupRecursively(childGroup);
 		}
 	}
 	
+	/**
+	 * Saves group details
+	 * @param group
+	 * @throws Exception
+	 */
 	public void saveGroup(Group group) throws Exception {
-		groupRepository.save(group);
+		groupRepository.saveAndFlush(group);
 	}
 	
+	/**
+	 * Removes group details
+	 * @param id
+	 * @throws Exception
+	 */
 	public void removeGroup(String id) throws Exception {
 		groupRepository.delete(id);
 	}
