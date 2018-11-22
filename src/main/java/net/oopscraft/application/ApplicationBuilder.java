@@ -84,6 +84,7 @@ public class ApplicationBuilder {
 		buildDataSources(application, xPathReader, properties);
 		buildEntityManagerFactories(application, xPathReader, properties);
 		buildSqlSessionFactories(application, xPathReader, properties);
+		buildMessageSource(application, xPathReader, properties);
 		return application;
 	}
 	

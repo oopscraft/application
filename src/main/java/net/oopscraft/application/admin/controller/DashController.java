@@ -1,4 +1,4 @@
-package net.oopscraft.application.admin;
+package net.oopscraft.application.admin.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -13,7 +13,7 @@ public class DashController {
 	@RequestMapping(method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ModelAndView dash() throws Exception {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("admin/dash.jsp");
+		modelAndView.setViewName("admin/dash.tiles");
 		return modelAndView;
 	}
 

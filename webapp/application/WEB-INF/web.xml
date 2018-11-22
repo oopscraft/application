@@ -8,7 +8,6 @@
    
     <display-name>oopscraft-application</display-name>
     <description>oopscraft application</description>
-
     
     <session-config>
         <session-timeout>60</session-timeout>
@@ -16,12 +15,17 @@
 
     <distributable/>
     
+	<!-- ====================================================== -->
+	<!-- Defines Log4j2 Descriptor								-->
+	<!-- ====================================================== -->
     <context-param>
 		<param-name>log4jConfigLocation</param-name>
 		<param-value>file:conf/log4j2.xml</param-value>
 	</context-param>
     
-    <!-- defines spring dispatcher servlet -->
+	<!-- ====================================================== -->
+	<!-- Defines Spring Dispatcher Servlet						-->
+	<!-- ====================================================== -->
     <servlet>  
         <servlet-name>dispatcherServlet</servlet-name>  
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>  
@@ -30,17 +34,15 @@
             <param-value>/WEB-INF/conf/spring.xml</param-value>
         </init-param>  
         <load-on-startup>1</load-on-startup>  
-    </servlet>      
-    <servlet-mapping>
-          <servlet-name>default</servlet-name>
-          <url-pattern>/lib/*</url-pattern>
-    </servlet-mapping>    
+    </servlet>
     <servlet-mapping>  
         <servlet-name>dispatcherServlet</servlet-name>  
         <url-pattern>/</url-pattern>
     </servlet-mapping>
     
-    <!-- defines encoding filter -->
+	<!-- ====================================================== -->
+	<!-- Defines Encoding Filter								-->
+	<!-- ====================================================== -->
     <filter>
           <description>
           </description>
@@ -56,19 +58,9 @@
           <filter-name>encodingFilter</filter-name>
           <url-pattern>/*</url-pattern>
      </filter-mapping>
-     
-     <!-- defines cross-domain filter -->
-    <filter>
-        <filter-name>crossDomainFilter</filter-name>
-        <filter-class>net.oopscraft.application.core.CrossDomainFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>crossDomainFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
     
     <!-- ====================================================== -->
-	<!-- Spring Security Filter									-->
+	<!-- Defines Spring Security Filter							-->
 	<!-- ====================================================== -->
     <filter>
     	<filter-name>springSecurityFilterChain</filter-name>

@@ -11,30 +11,50 @@ package net.oopscraft.application.admin.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtils;
-import net.oopscraft.application.user.Group;	
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
 
-/**
- * @author chomookun@gmail.com
- *
- */
-//@Controller
-//@RequestMapping("/admin/userManage")
+
+@Controller
+@RequestMapping("/admin/user")
 public class UserController {
 	
 	@Autowired
 	UserService userService;
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public ModelAndView user() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("admin/user.tiles");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="getUsers", method=RequestMethod.GET)
+	@ResponseBody
+	public String getUsers(
+			 @RequestParam(value="key",required=false)String key
+			,@RequestParam(value="value",required=false)String value
+		) throws Exception {
+		List<User> users = userService.getUsers(null, null);
+		return JsonUtils.toJson(users);
+	}
+
+	@RequestMapping(value="getUser", method=RequestMethod.GET)
+	@ResponseBody
+	public String getUser(@RequestParam(value="id")String id) throws Exception {
+		User user = userService.getUser(id);
+		return JsonUtils.toJson(user);
+	}
+
+	
 
 //	@Autowired
 //	GroupService groupService;
