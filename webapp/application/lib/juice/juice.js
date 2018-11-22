@@ -4,7 +4,7 @@
  * - Modify the source or allow re-creation. However, you must state that you have the original creator.
  * - However, we can not grant patents or licenses for reproductives. (Modifications or reproductions must be shared with the public.)
  * Licence: LGPL(GNU Lesser General Public License version 3)
- * Copyright (C) 2017 chomookun@oopscraft.net
+ * Copyright (C) 2017 juice.oopscraft.net
  */
 "use strict";
 
@@ -59,7 +59,8 @@ juice.data.Map.prototype = {
 	/* setting value */
 	set: function(name,value) {
 		var event = {name:name, value:value};
-		if(this.listener['change'] && this.listener['change'].call(this,event) == false){
+		if(this.listener.change && this.listener.change.call(this,event) == false){
+			this.notifyObservers();
 			return false;
 		}
 		this.data[name] = value;
@@ -108,7 +109,7 @@ juice.data.Map.prototype = {
 	},
 	/* listen change event */
 	onChange: function(listener){
-		this.listener['change'] = listener;
+		this.listener.change = listener;
 	}
 }
 
@@ -127,6 +128,7 @@ juice.data.List.prototype = {
 		for(var i = 0; i < json.length; i ++ ) {
 			var map = new juice.data.Map();
 			map.fromJson(json[i]);
+			map.addObserver(this);
 			this.mapList.push(map);
 		}
 		this.index = -1;
@@ -145,10 +147,22 @@ juice.data.List.prototype = {
 		this.observers.push(observer);
 	},
 	/* notify chages to observers */
-	notifyObservers: function() {
+	notifyObservers: function(observer) {
 		for(var i = 0; i < this.observers.length; i++){
+			if(this.observers[i] == observer){
+				continue;
+			}
 			this.observers[i].update();
 		}
+	},
+	/* update */
+	update: function(){
+		this.notifyObservers();
+	},
+	/* set index */
+	setIndex: function(index) {
+		this.index = index;
+		this.notifyObservers();
 	},
 	/* get current select row index */
 	getIndex: function() {
@@ -164,6 +178,7 @@ juice.data.List.prototype = {
 	},
 	/* adds new row map into list */
 	addRow: function(map){
+		map.addObserver(this);
 		this.mapList.push(map);
 		this.index = this.getRowCount();
 		this.notifyObservers();
@@ -177,6 +192,7 @@ juice.data.List.prototype = {
 	},
 	/* insert row map into specified position */
 	insertRow: function(index, map){
+		map.addObserver(this);
 		this.mapList.splice(index, 0, map);
 		this.index = index;
 		this.notifyObservers();
@@ -198,6 +214,7 @@ juice.data.Tree = function() {
 juice.data.Tree.prototype = {
 	/* load data from JSON Array */ 
 	fromJson: function(json,linkNodeName){
+		this.rootNode = new juice.data.Map();
 		for(var i = 0; i < json.length; i ++){
 			var node = new juice.data.Map();
 			node.fromJson(json[i]);
@@ -215,6 +232,7 @@ juice.data.Tree.prototype = {
 				}
 			}
 		}
+		this.notifyObservers();
 	},
 	/* convert into JSON Array */
 	toJson: function(linkNodeName){
@@ -272,7 +290,6 @@ juice.data.Tree.prototype = {
 	},
 	/* moves node */
 	moveNode: function(from, to){
-		console.log('from:' + from + '/' + 'to:' + to);
 		var fromNode = this.getNode(from);
 		var toNode = this.getNode(to);
 		
@@ -289,7 +306,6 @@ juice.data.Tree.prototype = {
 	},
 	/* move node to child */
 	moveNodeToChild: function(from, to){
-		console.log('from:' + from + '/' + 'to:' + to);
 		var fromNode = this.getNode(from);
 		var toNode = this.getNode(to);
 		
@@ -322,8 +338,15 @@ juice.ui.Label.prototype = {
 		while (this.label.firstChild) {
 		    this.label.removeChild(this.label.firstChild);
 		}
-		var value = this.map.get(this.name) || '';
-		this.label.appendChild(document.createTextNode(value));
+		var value = this.map.get(this.name) == undefined ? '' : this.map.get(this.name);
+		if(this.mask){
+			this.label.appendChild(document.createTextNode(juice.util.MaskFormatter.mask(this.mask, value)));
+		}else{
+			this.label.appendChild(document.createTextNode(value));
+		}
+	},
+	setMask: function(mask){
+		this.mask = mask;
 	}
 }
 
@@ -336,15 +359,38 @@ juice.ui.TextField = function(input){
 }
 juice.ui.TextField.prototype = {
 	bind: function(map, name) {
+		var $this = this;
 		this.map = map;
 		this.name = name;
 		this.map.addObserver(this);
 		this.input.addEventListener('change',function(){
-			map.set(name, this.value);
+			if($this.validator){
+				if($this.validator.call(this,this.value) == false) {
+					$this.update();
+					this.focus();
+					return;
+				}
+			}
+			if($this.mask){
+				map.set(name, juice.util.MaskFormatter.unmask($this.mask, this.value));
+			}else{
+				map.set(name, this.value);
+			}
 		});
 	},
 	update: function() {
-		this.input.value = this.map.get(this.name) || '';
+		var value = this.map.get(this.name) == undefined ? '' : this.map.get(this.name);
+		if(this.mask){
+			this.input.value = juice.util.MaskFormatter.mask(this.mask, value);
+		}else{
+			this.input.value = value;
+		}
+	},
+	setMask: function(mask){
+		this.mask = mask;
+	},
+	setValidator: function(validator){
+		this.validator = validator;
 	}
 }
 
@@ -361,6 +407,14 @@ juice.ui.ComboBox.prototype = {
 			var option = document.createElement('option');
 			option.value = options[i]['value'] || '';
 			option.appendChild(document.createTextNode(options[i]['text']));
+			if(options[i]['disabled']){
+				option.disabled = options[i]['disabled'];
+			}
+			if(options[i].style){
+				for(var property in options[i].style){
+					option.style[property] = options[i].style[property];
+				}
+			}
 			this.select.appendChild(option);
 		}
 	},
@@ -417,12 +471,10 @@ juice.ui.Radio.prototype = {
 		this.name = name;
 		this.map.addObserver(this);
 		this.input.addEventListener('change', function() {
-			console.log(name + '|' + this.value);
 			map.set(name, this.value);
 		});
 	},
 	update: function(){
-		console.log('Radio.prototype.update');
 		if(this.map.get(this.name) == this.input.value) {
 			this.input.checked = true;
 		}else{
@@ -445,6 +497,7 @@ juice.ui.TextArea.prototype = {
 		this.map.addObserver(this);
 		this.textarea.name = name;
 		this.textarea.value = map.get(name);
+		var $this = this;
 		this.textarea.addEventListener('change',function(){
 			map.set(this.name, this.value);
 		});
@@ -482,7 +535,6 @@ juice.ui.HtmlEditor = function(div) {
 
 	// iframe specific
 	this.iframe.addEventListener('DOMNodeInsertedIntoDocument', function(){
-		console.log('DOMNodeInsertedIntoDocument');
 		$this.bind($this.map, $this.name);
 	});
 }
@@ -661,6 +713,312 @@ juice.ui.HtmlEditor.prototype = {
 }
 
 /**
+ * CronExpression prototype
+ */
+juice.ui.CronExpression = function(input) {
+	this.input = input;
+	
+	
+	this.second = this.createSelectSecond();
+	this.minute = this.createSelectMinute();
+	this.hour = this.createSelectHour();
+	this.day = this.createSelectDay();
+	this.month = this.createSelectMonth();
+	this.week = this.createSelectWeek();
+	
+	this.editor = document.createElement('span');
+	this.editor.classList.add('juice-ui-cronExpression-editor');
+	
+	// seconds
+	var secondSpan = document.createElement('span');
+	secondSpan.classList.add('juice-ui-cronExpression-editor-second');
+	secondSpan.appendChild(this.second);
+	this.editor.appendChild(secondSpan);
+	
+	// minute
+	var minuteSpan = document.createElement('span');
+	minuteSpan.classList.add('juice-ui-cronExpression-editor-minute');
+	minuteSpan.appendChild(this.minute);
+	this.editor.appendChild(minuteSpan);
+	
+	// hour
+	var hourSpan = document.createElement('span');
+	hourSpan.classList.add('juice-ui-cronExpression-editor-hour');
+	hourSpan.appendChild(this.hour);
+	this.editor.appendChild(hourSpan);
+	
+	// day
+	var daySpan = document.createElement('span');
+	daySpan.classList.add('juice-ui-cronExpression-editor-day');
+	daySpan.appendChild(this.day);
+	this.editor.appendChild(daySpan);
+	
+	// month
+	var monthSpan = document.createElement('span');
+	monthSpan.classList.add('juice-ui-cronExpression-editor-month');
+	monthSpan.appendChild(this.month);
+	this.editor.appendChild(monthSpan);
+	
+	// week
+	var weekSpan = document.createElement('span');
+	weekSpan.classList.add('juice-ui-cronExpression-editor-week');
+	weekSpan.appendChild(this.week);
+	this.editor.appendChild(weekSpan);
+	
+	// append editor span to input parent
+	this.input.parentNode.appendChild(this.editor);
+}
+juice.ui.CronExpression.prototype = {
+	text: {
+		EVERY:'Every',
+		LAST_DAY: 'Last Day',
+		LAST_WEEKDAY: 'Last Weekday',
+		WEEKDAY: 'Weekday',
+		WEEKEND: 'Weekend',
+		MON: 'Monday',
+		TUE: 'Tuesday',
+		WED: 'Wednesday',
+		THU: 'Thursday',
+		FRI: 'Friday',
+		SAT: 'Saturday',
+		SUN: 'Sunday'
+	},
+	bind: function(map, name) {
+		this.map = map;
+		this.name = name;
+		this.map.addObserver(this);
+		this.input.addEventListener('change',function(){
+			map.set(name, this.value);
+		});
+	},
+	/* update */
+	update: function() {
+		var $this = this;
+		this.input.value = this.map.get(this.name) || '';
+		this.input.classList.add('juice-ui-cronExpression');
+		
+		// parse cron expression
+		var cronExpressionArray = this.input.value.split(' ');
+		this.second.value = cronExpressionArray[0];
+		this.minute.value = cronExpressionArray[1];
+		this.hour.value = cronExpressionArray[2];
+		this.day.value = cronExpressionArray[3];
+		this.month.value = cronExpressionArray[4];
+		this.week.value = cronExpressionArray[5];
+	},
+	setReadonly: function(readonly) {
+		if(readonly == true) {
+			this.input.setAttribute('readonly',true);
+			this.second.setAttribute('disabled',true);
+			this.minute.setAttribute('disabled',true);
+			this.hour.setAttribute('disabled',true);
+			this.day.setAttribute('disabled',true);
+			this.month.setAttribute('disabled',true);
+			this.week.setAttribute('disabled',true);
+		}else if(readonly == false){
+			this.input.removeAttribute('readonly');
+			this.second.removeAttribute('disabled');
+			this.minute.removeAttribute('disabled');
+			this.hour.removeAttribute('disabled');
+			this.day.removeAttribute('disabled');
+			this.month.removeAttribute('disabled');
+			this.week.removeAttribute('disabled');
+		}
+	},
+	isSupprotCronExpression: function() {
+		var pattern = /([\d]{1,2}) ([\d]{1,2}) ([\d|\*]{1,2}) ([\d|\*]{1,2}) ([\d|\*]{1,2}) ([\?]{1})$/gi;
+		return pattern.test(this.input.value);
+	},
+	generateCronExpression: function() {
+		var cronExpression = this.second.value 
+						+ ' ' + this.minute.value 
+						+ ' ' + this.hour.value
+						+ ' ' + this.day.value 
+						+ ' ' + this.month.value
+						+ ' ' + this.week.value;
+		this.map.set(this.name, cronExpression);
+	},
+	createSelectSecond: function() {
+		var selectSecond = document.createElement('select');
+		for(var i = 0; i < 59; i ++){
+			var option = document.createElement('option');
+			option.value = i;
+			option.appendChild(document.createTextNode(i));
+			selectSecond.appendChild(option);
+		}
+		var $this = this;
+		selectSecond.onchange = function() {
+			$this.generateCronExpression();
+		}
+		
+		// copy class list
+		for(var i = 0; i < this.input.classList.length; i ++){
+			selectSecond.classList.add(this.input.classList[0]);
+		}
+		return selectSecond;
+	},
+	createSelectMinute: function() {
+		var selectMinute = document.createElement('select');
+		for(var i = 0; i <= 59; i ++){
+			var option = document.createElement('option');
+			option.value = i;
+			option.appendChild(document.createTextNode(i));
+			selectMinute.appendChild(option);
+		}
+		
+		// add event listener
+		var $this = this;
+		selectMinute.onchange = function() {
+			$this.generateCronExpression();
+		}
+		
+		// copy class list
+		for(var i = 0; i < this.input.classList.length; i ++){
+			selectMinute.classList.add(this.input.classList[0]);
+		}
+		return selectMinute;
+	},
+	createSelectHour: function() {
+		var selectHour = document.createElement('select');
+		var defaultOption = document.createElement('option');
+		defaultOption.value = '*';
+		defaultOption.appendChild(document.createTextNode(this.text.EVERY));
+		selectHour.appendChild(defaultOption);
+		for(var i = 0; i <= 23; i ++){
+			var option = document.createElement('option');
+			option.value = i;
+			option.appendChild(document.createTextNode(i));
+			selectHour.appendChild(option);
+		}
+		
+		// add event listener
+		var $this = this;
+		selectHour.onchange = function() {
+			$this.generateCronExpression();
+		}
+		
+		// copy class list
+		for(var i = 0; i < this.input.classList.length; i ++){
+			selectHour.classList.add(this.input.classList[0]);
+		}
+		return selectHour;
+	},
+	createSelectDay: function() {
+		var selectDay = document.createElement('select');
+		
+		// default option
+		var defaultOption = document.createElement('option');
+		defaultOption.value = '?';
+		defaultOption.appendChild(document.createTextNode('-'));
+		selectDay.appendChild(defaultOption);		
+		
+		// every option
+		var everyOption = document.createElement('option');
+		everyOption.value = '*';
+		everyOption.appendChild(document.createTextNode(this.text.EVERY));
+		selectDay.appendChild(everyOption);
+		
+		// last day of month
+		var lastDayOption = document.createElement('option');
+		lastDayOption.value = 'L';
+		lastDayOption.appendChild(document.createTextNode(this.text.LAST_DAY));
+		selectDay.appendChild(lastDayOption);
+		
+		// last weekday of month
+		var lastWeekdayOption = document.createElement('option');
+		lastWeekdayOption.value = 'LW';
+		lastWeekdayOption.appendChild(document.createTextNode(this.text.LAST_WEEKDAY));
+		selectDay.appendChild(lastWeekdayOption);
+		
+		// specific day
+		for(var i = 1; i <= 31; i ++){
+			var option = document.createElement('option');
+			option.value = i;
+			option.appendChild(document.createTextNode(i));
+			selectDay.appendChild(option);
+		}
+			
+		// add event listener
+		var $this = this;
+		selectDay.onchange = function() {
+			if(this.value != '?') {
+				$this.week.value = '?';
+			}
+			$this.generateCronExpression();
+		}
+		// copy class list
+		for(var i = 0; i < this.input.classList.length; i ++){
+			selectDay.classList.add(this.input.classList[0]);
+		}
+		return selectDay;
+	},
+	createSelectMonth: function() {
+		var selectMonth = document.createElement('select');
+		var defaultOption = document.createElement('option');
+		defaultOption.value = '*';
+		defaultOption.appendChild(document.createTextNode(this.text.EVERY));
+		selectMonth.appendChild(defaultOption);
+		for(var i = 1; i <= 12; i ++){
+			var option = document.createElement('option');
+			option.value = i;
+			option.appendChild(document.createTextNode(i));
+			selectMonth.appendChild(option);
+		}
+		
+		// add event listener
+		var $this = this;
+		selectMonth.onchange = function() {
+			$this.generateCronExpression();
+		}
+		
+		// copy class list
+		for(var i = 0; i < this.input.classList.length; i ++){
+			selectMonth.classList.add(this.input.classList[0]);
+		}
+		return selectMonth;
+	},
+	createSelectWeek: function() {
+		var selectWeek = document.createElement('select');
+		var defaultOption = document.createElement('option');
+		defaultOption.value = '?';
+		defaultOption.appendChild(document.createTextNode('-'));
+		selectWeek.appendChild(defaultOption);
+		
+		// weekday
+		var weekdayOption = document.createElement('option');
+		weekdayOption.value = '1-5';
+		weekdayOption.appendChild(document.createTextNode(this.text.WEEKDAY));
+		selectWeek.appendChild(weekdayOption);
+		
+		// weekend
+		var weekendOption = document.createElement('option');
+		weekendOption.value = '6-7';
+		weekendOption.appendChild(document.createTextNode(this.text.WEEKEND));
+		selectWeek.appendChild(weekendOption);
+		
+		var dayOfWeek = [this.text.MON, this.text.TUE, this.text.WED,this.text.THU, this.text.FRI, this.text.SAT, this.text.SUN];
+		for(var i = 0; i < dayOfWeek.length; i ++){
+			var option = document.createElement('option');
+			option.value = i+1;
+			option.appendChild(document.createTextNode(dayOfWeek[i]));
+			selectWeek.appendChild(option);
+		}
+		var $this = this;
+		selectWeek.onchange = function() {
+			if(this.value != '?') {
+				$this.day.value = '?';
+			}
+			$this.generateCronExpression();
+		}
+		// copy class list
+		for(var i = 0; i < this.input.classList.length; i ++){
+			selectWeek.classList.add(this.input.classList[0]);
+		}
+		return selectWeek;
+	}
+}
+
+/**
  * Grid prototype
  */
 juice.ui.Grid = function(table) {
@@ -668,6 +1026,7 @@ juice.ui.Grid = function(table) {
 	this.table.classList.add('juice-ui-grid');
 	this.tbody = table.querySelector('tbody');
 	this.table.removeChild(this.tbody);
+	this.rows = new Array();
 }
 juice.ui.Grid.prototype = {
 	/* bind data structure */
@@ -683,25 +1042,32 @@ juice.ui.Grid.prototype = {
 	setEditable: function(editable){
 		this.editable = editable;
 	},
+	/* sets filter */
+	setFilter: function(filter){
+		this.filter = filter;
+	},
 	/* update */
 	update: function() {
 		
 		// remove previous rows
-		var elements = this.table.querySelectorAll('tbody');
-		for(var i = 0; i < elements.length; i ++ ) {
-			this.table.removeChild(elements[i]);
+		for(var i = 0; i < this.rows.length; i ++ ) {
+			this.table.removeChild(this.rows[i]);
 		}
+		this.rows.length = 0;
 		
 		// creates new rows
 		for(var index = 0; index < this.list.getRowCount(); index ++ ) {
 			var map = this.list.getRow(index);
 			var tbody = this.createRow(index,map);
 			this.table.appendChild(tbody);
+			this.rows.push(tbody);
 		}
 
 		// not found row
 		if(this.list.getRowCount() < 1) {
-			this.table.appendChild(this.createEmptyRow());
+			var emptyRow = this.createEmptyRow();
+			this.table.appendChild(emptyRow);
+			this.rows.push(emptyRow);
 		}
 	},
 	/* creates row */
@@ -730,6 +1096,8 @@ juice.ui.Grid.prototype = {
 				elements[i].classList.remove('juice-ui-grid-index');
 			}
 			tbody.classList.add('juice-ui-grid-index');
+			$this.list.index = index;
+			$this.list.notifyObservers($this);
 		});
 		if(index == this.list.index){
 			tbody.classList.add('juice-ui-grid-index');
@@ -788,12 +1156,23 @@ juice.ui.Grid.prototype = {
 			}
 		}
 		
+		// Adjust filter
+		if(this.filter){
+			if(this.filter.call($context) == false) {
+				tbody.style.display = 'none';
+			}
+		}
+		
 		// return
 		return tbody;
 	},
 	/* creates not found row */
 	createEmptyRow: function() {
-		var tbody = document.createElement('tbody');
+		var tbody = this.tbody.cloneNode(true);
+		while (tbody.firstChild) {
+			tbody.removeChild(tbody.firstChild);
+		}
+		tbody.dataset.juiceIndex = -1;
 		tbody.classList.add('juice-ui-grid-empty')
 		var tr = document.createElement('tr');
 		var td = document.createElement('td');
@@ -978,6 +1357,428 @@ juice.ui.TreeView.prototype = {
 }
 
 /**
+ * juice.ui.Workflow
+ */
+juice.ui.Workflow = function(ul){
+	this.ul = ul;
+	this.ul.classList.add('juice-ui-workflow');
+	this.ul.style.listStyleType = 'none';
+	this.li = this.ul.querySelector('li');
+	this.ul.removeChild(this.li);
+	if(this.ul.parentElement){
+		this.ul.parentElement.style.position = 'relative';
+	}
+	
+	// default option
+	this.nodeId = 'nodeId';
+	this.nodeX = 'nodeX';
+	this.nodeY = 'nodeY';
+	this.linkFrom = 'linkFrom';
+	this.linkTo = 'linkTo';
+	this.linkText = null;
+}
+juice.ui.Workflow.prototype = {
+	/* bind data structure */
+	bind: function(nodeList,linkList) {
+		this.nodeList = nodeList;
+		this.linkList = linkList;
+		this.nodeList.addObserver(this);
+		this.linkList.addObserver(this);
+	},
+	/* setting node id */
+	setNodeId: function(value) {
+		this.nodeId = value;
+	},
+	setNodeX: function(value) {
+		this.nodeX = value;
+	},
+	setNodeY: function(value) {
+		this.nodeY = value;
+	},
+	/* setting link from */
+	setLinkFrom: function(value) {
+		this.linkFrom = value;
+	},
+	/* setting link to */
+	setLinkTo: function(value) {
+		this.linkTo = value;
+	},
+	/* setting link text */
+	setLinkText: function(value) {
+		this.linkText = value;
+	},
+	/* update */
+	update: function() {
+		var $this = this;
+		var ul = this.ul;
+		
+		// remove previous node
+		var elements = this.ul.querySelectorAll('.juice-ui-workflow-node');
+		for(var i = 0; i < elements.length; i ++ ) {
+			this.ul.removeChild(elements[i]);
+		}
+		
+		// creates node list
+		for(var index = 0; index < this.nodeList.getRowCount(); index ++ ) {
+			var map = this.nodeList.getRow(index);
+			var li = this.createNode(index,map);
+			li.dataset.juiceNodeId = map.get(this.nodeId);
+			this.ul.appendChild(li);
+		}
+		
+		// remove previous link
+		var elements = this.ul.querySelectorAll('.juice-ui-workflow-link');
+		for(var i = 0; i < elements.length; i ++ ) {
+			this.ul.removeChild(elements[i]);
+		}
+		
+		// creates link list
+		for(var index = 0; index < this.linkList.getRowCount(); index ++) {
+			var map = this.linkList.getRow(index);
+			var line = this.createLink(index, map);
+			this.ul.appendChild(line);
+		}
+	},
+	/* create ndoe */
+	createNode: function(index, map){
+		var $this = this;
+		var li = this.li.cloneNode(true);
+		li.classList.add('juice-ui-workflow-node');
+
+		var $context = {};
+		$context['node'] = map;
+		li = this.executeExpression(li, $context);
+		li.dataset.juiceIndex = index;
+		li.dataset.juiceId = map.get(this.nodeId);
+		
+		// setting index class
+		if(index == this.nodeList.index){
+			li.classList.add('juice-ui-workflow-node-index');
+		}
+		
+		// creates juice element.
+		juice.initialize(li,$context);
+		
+		// drag
+		li.style.position = 'absolute';
+		li.style.zIndex = 9;
+		li.style.left = map.get(this.nodeX) + 'px';
+		li.style.top = map.get(this.nodeY) + 'px';
+		// mouse down
+		li.addEventListener('mousedown', function(ev){
+			
+			// setting current index
+			$this.nodeList.index = index;
+			var elements = $this.ul.querySelectorAll('.juice-ui-workflow-node');
+			for(var i = 0; i < elements.length; i ++ ) {
+				elements[i].classList.remove('juice-ui-workflow-node-index');
+			}
+			li.classList.add('juice-ui-workflow-node-index');
+
+		    // mouse move
+			var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+		    pos3 = ev.clientX;
+		    pos4 = ev.clientY;
+		    document.onmousemove = function(ev){
+			    pos1 = pos3 - ev.clientX;
+			    pos2 = pos4 - ev.clientY;
+			    pos3 = ev.clientX;
+			    pos4 = ev.clientY;
+			    li.style.left = (li.offsetLeft - pos1) + 'px';
+			    li.style.top = (li.offsetTop - pos2) + 'px';
+			    
+			    // mouse up
+			    document.onmouseup = function(ev){ 
+			    	document.onmousemove = null;
+			    	document.onmouseup = null;
+			    	var x = Math.round(li.offsetLeft/10)*10;
+			    	var y = Math.round(li.offsetTop/10)*10;
+			    	map.set($this.nodeX,x);
+			    	map.set($this.nodeY,y);
+					$this.update();
+					$this.nodeList.notifyObservers($this);
+					$this.linkList.notifyObservers($this);
+			    };
+		    };
+		    
+		    // just mouse up
+		    document.onmouseup = function(ev){ 
+		    	document.onmousemove = null;
+		    	document.onmouseup = null;
+		    	$this.nodeList.notifyObservers($this);
+		    	$this.linkList.notifyObservers($this);
+		    };
+		});
+		return li;
+	},
+	/* create link */
+	createLink: function(index, map) {
+		var $this = this;
+		var line = document.createElement('div');
+		line.style.position = 'absolute';
+		line.classList.add('juice-ui-workflow-link');
+		line.dataset.juiceIndex = index;
+		
+		// setting current index
+		if(index == this.linkList.index){
+			line.classList.add('juice-ui-workflow-link-index');
+		}
+		line.addEventListener('mousedown', function() {
+			$this.linkList.index = index;
+			var elements = $this.ul.querySelectorAll('.juice-ui-workflow-link');
+			for(var i = 0; i < elements.length; i ++ ) {
+				elements[i].classList.remove('juice-ui-workflow-link-index');
+			}
+			line.classList.add('juice-ui-workflow-link-index');
+			$this.linkList.notifyObservers($this);
+		});
+
+		
+		// defines line position
+		try {
+			var from = this.ul.querySelector('[data-juice-node-id="' + map.get(this.linkFrom) + '"]');
+			var to = this.ul.querySelector('[data-juice-node-id="' + map.get(this.linkTo) + '"]');
+	
+			var fromTop = from.offsetTop  + from.offsetHeight/2;
+			var fromLeft = from.offsetLeft + from.offsetWidth/2;
+			var toTop = to.offsetTop    + to.offsetHeight/2;
+			var toLeft = to.offsetLeft   + to.offsetWidth/2;
+	
+			var diffTop   = Math.abs(toTop - fromTop);
+			var diffLeft   = Math.abs(toLeft - fromLeft);
+			var height    = Math.sqrt(diffTop*diffTop + diffLeft*diffLeft);
+			var angle  = 180 / Math.PI * Math.acos( diffTop/height );
+	
+			if(toTop > fromTop){
+			    var top  = (toTop-fromTop)/2 + fromTop;
+			}else{
+			    var top  = (fromTop-toTop)/2 + toTop;
+			}
+			if(toLeft > fromLeft){
+			    var left = (toLeft-fromLeft)/2 + fromLeft;
+			}else{
+			    var left = (fromLeft-toLeft)/2 + toLeft;
+			}
+
+			if(( fromTop < toTop && fromLeft < toLeft) || ( toTop < fromTop && toLeft < fromLeft) || (fromTop > toTop && fromLeft > toLeft) || (toTop > fromTop && toLeft > fromLeft)){
+			  angle *= -1;
+			}
+			
+			// flips angle
+			if(fromTop == toTop){
+				if(toLeft > fromLeft){
+					angle = angle + 180;
+				}
+			}else if(fromTop > toTop){
+				angle = angle + 180;
+			}
+			
+			top-= height/2;
+			line.style["-webkit-transform"] = 'rotate('+ angle +'deg)';
+			line.style["-moz-transform"] = 'rotate('+ angle +'deg)';
+			line.style["-ms-transform"] = 'rotate('+ angle +'deg)';
+			line.style["-o-transform"] = 'rotate('+ angle +'deg)';
+			line.style["-transform"] = 'rotate('+ angle +'deg)';
+			line.style.top    = top+'px';
+			line.style.left   = left+'px';
+			line.style.height = height + 'px';
+
+			// creates link text
+			if(this.linkText){
+				var span = document.createElement('span');
+				span.classList.add('juice-ui-workflow-link-text');
+				line.appendChild(span);	
+				
+				var text = map.get(this.linkText);
+				span.appendChild(document.createTextNode(text));
+				span.style.position = 'absolute';
+				span.style.height = '20px';
+				span.style.lineHeight = '20px';
+				span.style.padding = '0px';
+				span.style.textAlign = 'center';
+				span.style.width = '100px';
+				
+				var textAngle = angle * -1;
+				span.style["-webkit-transform"] = 'rotate('+ textAngle +'deg)';
+				span.style["-moz-transform"] = 'rotate('+ textAngle +'deg)';
+				span.style["-ms-transform"] = 'rotate('+ textAngle +'deg)';
+				span.style["-o-transform"] = 'rotate('+ textAngle +'deg)';
+				span.style["-transform"] = 'rotate('+ textAngle +'deg)';			
+				span.style.top = (height/2)- 10 + 'px';
+				span.style.left = -50 + 'px';
+			}
+			
+		}catch(e){
+			console.warn(e);
+		}
+
+		// return
+		return line;
+	},
+	/* executes expression */
+	executeExpression: function(element,$context) {
+		var string = element.outerHTML;
+		string = string.replace(/\{\{(.*?)\}\}/gi,function(match, command){
+			return eval(command);
+		});
+		var div = document.createElement('div');
+		div.innerHTML = string;
+		return div.firstChild;
+	}
+}
+
+/**
+ * juice.ui.Pagination prototype
+ */
+juice.ui.Pagination = function(ul){
+	this.ul = ul;
+	this.ul.classList.add('juice-ui-pagination');
+	this.ul.style.listStyleType = 'none';
+	this.li = this.ul.querySelector('li');
+	this.ul.removeChild(this.li);
+	this.pageSize = 1;
+}
+juice.ui.Pagination.prototype = {
+	/* bind */
+	bind: function(map) {
+		this.map = map;
+		this.map.addObserver(this);
+	},
+	/* setting column name specified rows value */
+	setRows: function(value){
+		this.rows = value;
+	},
+	/* setting column name specified page value */
+	setPage: function(value){
+		this.page = value;
+	},
+	/* setting column name specified total rows value */
+	setTotalCount: function(value){
+		this.totalCount = value;
+	},
+	setPageSize: function(value) {
+		this.pageSize = parseInt(value);
+	},
+	/* update */
+	update: function() {
+
+		// remove all li element
+		while (this.ul.hasChildNodes()) {
+			this.ul.removeChild(this.ul.lastChild);
+		}
+		
+		// getting pagination values
+		var rows = parseInt(this.map.get(this.rows));
+		var page = parseInt(this.map.get(this.page));
+		var	totalCount = parseInt(this.map.get(this.totalCount));
+
+		// creates previous item
+		var itemPrev = this.createItemPrev(page-1);
+		this.ul.appendChild(itemPrev);
+		if(page == 1){
+			itemPrev.onclick = null;
+			itemPrev.style.pointerEvents = 'none';
+		}
+
+		// create page item
+		if(this.pageSize > 1) {
+			// creates page item
+			var totalPage = Math.max(Math.ceil(totalCount/rows),1);
+			var startPage = Math.floor((page-1)/this.pageSize)*this.pageSize + 1;
+			var endPage = Math.min(startPage+this.pageSize-1, totalPage);
+			for(var i = startPage; i <= endPage; i ++){
+				var itemPage = this.createItemPage(i);
+				if(i == page){
+					itemPage.classList.add('juice-ui-pagination-item-page-index');
+					itemPage.onclick = null;
+					itemPage.style.pointerEvents = 'none';
+				}
+				this.ul.appendChild(itemPage);
+			}
+			
+			// create next item
+			var itemNext = this.createItemNext(page+1);
+			this.ul.appendChild(itemNext);
+			if(page == totalPage) {
+				itemNext.onclick = null;
+				itemNext.style.pointerEvents = 'none';
+			}
+			
+		}else{
+			// creates page item
+			var itemPage = this.createItemPage(page);
+			itemPage.classList.add('juice-ui-pagination-item-page-index');
+			itemPage.onclick = null;
+			itemPage.style.pointerEvents = 'none';
+			this.ul.appendChild(itemPage);
+			
+			// create next item
+			var itemNext = this.createItemNext(page+1);
+			this.ul.appendChild(itemNext);
+			if(totalCount < rows) {
+				itemNext.onclick = null;
+				itemNext.style.pointerEvents = 'none';
+			}
+		}
+	},
+	/* create page item */
+	createItemPage: function(page) {
+		var $this = this;
+		var ul = this.ul;
+		var li = this.li.cloneNode(true);
+		li.classList.add('juice-ui-pagination-item-page');
+		
+		// executes expression
+		var $context = {};
+		$context['page'] = page;
+		li = this.executeExpression(li, $context);
+		return li;
+	},
+	createItemPrev: function(page) {
+		var $this = this;
+		var ul = this.ul;
+		var li = this.li.cloneNode(true);
+		li.classList.add('juice-ui-pagination-item-prev');
+		
+		// remove child element
+		while (li.hasChildNodes()) {
+			li.removeChild(li.lastChild);
+		}
+		// executes expression
+		var $context = {};
+		$context['page'] = page;
+		li = this.executeExpression(li, $context);
+		return li;
+	},
+	createItemNext: function(page) {
+		var $this = this;
+		var ul = this.ul;
+		var li = this.li.cloneNode(true);
+		li.classList.add('juice-ui-pagination-item-next');
+		
+		// remove child element
+		while (li.hasChildNodes()) {
+			li.removeChild(li.lastChild);
+		}
+		// executes expression
+		var $context = {};
+		$context['page'] = page;
+		li = this.executeExpression(li, $context);
+		return li;
+	},
+	/* executes expression */
+	executeExpression: function(element,$context) {
+		var string = element.outerHTML;
+		string = string.replace(/\{\{(.*?)\}\}/gi,function(match, command){
+			return eval(command);
+		});
+		var ul = document.createElement('ul');
+		ul.innerHTML = string;
+		return ul.firstChild;
+	}
+}
+
+/**
  * juice.ui.Anitmator
  */
 juice.ui.Animator = function(element){
@@ -988,8 +1789,7 @@ juice.ui.Animator.prototype = {
 		var interval = setInterval(function() {
 			try {
 				callback.call(this.element);
-			}catch(e){
-				throw e
+			}catch(ignore){
 			}finally{
 				clearInterval(interval);
 			}
@@ -1033,7 +1833,6 @@ juice.ui.Blocker.prototype = {
 	        zIndex = parseInt(zIndex, 10);
 	        z = (zIndex) ? Math.max(z, zIndex) : z;
 	    }
-	    console.log('maxZIndex:' + z);
 	    return z;
 	},
 	/* blocking specified element */ 
@@ -1192,8 +1991,11 @@ juice.ui.Dialog.prototype = {
 		var animator = new juice.ui.Animator(this.div);
 		animator.fadeIn();
 		
-		// let current active element to be blured.
-		this.getWindow().document.activeElement.blur();
+		// let current active element to be blur.
+		try {
+			this.getWindow().document.activeElement.blur();
+		}catch(ignore){
+		}
 	},
 	/* close dialog window */
 	close: function(callback) {
@@ -1502,67 +2304,101 @@ juice.ui.Progress.prototype = {
 }
 
 /**
- * juice.util.StringUtils
+ * juice.util.MaskFormatter
  */
-juice.util.StringUtils = {
-	/*
-	 * printf
-	 * %d	Outputs an integer. Formatting is not yet supported. 
-	 * %i	Outputs an integer. Formatting is not yet supported.
-	 * %s	Outputs a string.
-	 * %f	Outputs a floating-point value. Formatting is not yet supported.
-	 */
-	printf: function(format){
-		var string = format;
-		var pos = 1;
-		var $arguments = arguments;
-		string = string.replace(/\%s|\%d/gi,function(match, command){
-			return $arguments[pos++];
-		});
-		return string;
+juice.util.MaskFormatter = {
+	DIGIT_KEY: '#',
+	DIGIT_REX: /[0-9]/,
+	UPPERCASE_KEY: 'U',
+	UPPERCASE_REX: /[A-Z]/,
+	LOWERCASE_KEY: 'L',
+	LOWERCASE_REX: /[a-z]/,
+	CHARACTER_KEY: '?',
+	CHARACTER_REX: /[a-zA-Z]/,
+	ALPHA_NUMERIC_KEY: 'A',
+	ALPHA_NUMERIC_REX: /[a-zA-Z0-9]/,
+	ANYTHING_KEY: '*',
+	ANYTHING_REX: /[*]/,
+	mask: function(format, value) {
+		if(!value) {
+			return '';
+		}
+		var resultValue = '';
+		var formatChars = format.split('');
+		var valueChars = value.split('');
+		var pos = 0;
+		for(var i = 0, len = formatChars.length; i < len; i ++){
+			var formatChar = formatChars[i];
+			switch(formatChar) {
+			case this.DIGIT_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.DIGIT_REX.test(valueChar) ? valueChar : 0; 
+			break;
+			case this.UPPERCASE_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.UPPERCASE_REX.test(valueChar) ? valueChar : ' ';
+			break;
+			case this.LOWERCASE_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.LOWERCASE_REX.test(valueChar) ? valueChar : ' ';
+			break;
+			case this.CHARACTER_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.CHARACTER_REX.test(valueChar) ? valueChar : ' ';
+			break;
+			case this.ALPHA_NUMERIC_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.ALPHA_NUMERIC_REX.test(valueChar) ? valueChar : ' ';
+			break;
+			case this.ANYTHING_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.ANYTHING_REX.test(valueChar) ? valueChar : ' ';
+			break;
+			default:
+				resultValue += formatChar; 
+			break;
+			}
+		}
+		return resultValue;
 	},
-	/*
-	 * Checks whether value is empty.
-	 */
-	isEmpty: function(value){
-	},
-	ifEmpty: function(value, defaultValue){
-	},
-	equals: function(value1,value2){
-	},
-	equalsIgnoreCase: function(value1,value2){
-	},
-	contains: function(value, searchValue){
-	},
-	startsWith: function(value, startValue){
-	},
-	endsWith: function(value, endValue){
-	},
-	trim: function(value){
-	},
-	replace: function(value, searchValue, replacement){
-	},
-	lpad: function(value, length, pad){
-	},
-	rpad: function(value, length, pad){
-	},
-	hasTag: function(value) {
-	},
-	stripTag: function(value){
-	},
-	escapeTag: function(value){
-	},
-	toNumberFormat: function(value, precision){
-	},
-	isDigit: function(value){
-	},
-	isNumeric: function(value){
-	},
-	isEmail: function(value){
-	},
-	isUrl: function(value){
-	},
-	isPhoneNumber: function(value){
+	unmask: function(format, value) {
+		var resultValue = '';
+		var formatChars = format.split('');
+		var valueChars = value.split('');
+		var pos = 0;
+		for(var i = 0, len = formatChars.length; i < len; i ++){
+			var formatChar = formatChars[i];
+			switch(formatChar) {
+			case this.DIGIT_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.DIGIT_REX.test(valueChar) ? valueChar : 0; 
+			break;
+			case this.UPPERCASE_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.UPPERCASE_REX.test(valueChar) ? valueChar : ' ';
+			break;
+			case this.LOWERCASE_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.LOWERCASE_REX.test(valueChar) ? valueChar : ' ';
+			break;
+			case this.CHARACTER_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.CHARACTER_REX.test(valueChar) ? valueChar : ' ';
+			break;
+			case this.ALPHA_NUMERIC_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.ALPHA_NUMERIC_REX.test(valueChar) ? valueChar : ' ';
+			break;
+			case this.ANYTHING_KEY:
+				var valueChar = valueChars[pos++];
+				resultValue += this.ANYTHING_REX.test(valueChar) ? valueChar : ' ';
+			break;
+			default:
+				pos++;
+			break;
+			}
+		}
+		return resultValue;
 	}
 }
 
@@ -1572,34 +2408,32 @@ juice.util.StringUtils = {
 juice.util.WebSocketClient = function(url) {
 	this.url = url;
 	this.listener = {};
+	this.reconnectInterval = 3*1000;	// ms
 }
 juice.util.WebSocketClient.prototype = {
 	open: function() {
-		console.log('WebSocketClient.connect:' + this.url);
 		this.webSocket = new WebSocket(this.url);
 		var $this = this;
 		this.webSocket.onopen = function(event){
-			console.log(event);
 			if($this.listener.onOpen){
 				$this.listener.onOpen.call($this,event);
 			}
 		}
 		this.webSocket.onmessage = function(event){
-			console.log(event);
 			if($this.listener.onMessage){
 				$this.listener.onMessage.call($this,event);
 			}
 		}
 		this.webSocket.onclose = function(ev){
-			console.log(ev);
 			if($this.listener.onClose){
 				$this.listener.onClose.call($this,event);
 			}
 			// reconnect
-			$this.open(webSocketClient.url);
+			setTimeout(function(){
+				$this.open($this.url);
+			},$this.reconnectInterval);
 		}
 		this.webSocket.onerror = function(ev){
-			console.log(ev);
 			if($this.listener.onError){
 				$this.listener.onError.call($this,event);
 			}
@@ -1619,6 +2453,9 @@ juice.util.WebSocketClient.prototype = {
 	},
 	onError: function(listener){
 		this.listener.onError = listener;
+	},
+	setReconnectInterval: function(value){
+		this.reconnectInterval = value;
 	}
 }
 
@@ -1642,7 +2479,6 @@ juice.initialize = function(container, $context) {
 	var treeViewElements = container.querySelectorAll('ul[data-juice="TreeView"]');
 	for(var i = 0; i < treeViewElements.length; i++ ) {
 		var element = treeViewElements[i];
-		console.log(element.dataset);
 		var treeView = new juice.ui.TreeView(element);
 		var bind = element.dataset.juiceBind;
 		var list = $context[bind];
@@ -1664,7 +2500,44 @@ juice.initialize = function(container, $context) {
 		grid.bind(list);
 		grid.setItem(element.dataset.juiceItem);
 		element.dataset.juiceEditable && grid.setEditable(eval(element.dataset.juiceEditable));
+		element.dataset.juiceFilter && grid.setFilter(eval(element.dataset.juiceFilter));
 		grid.update();
+		var id = generateUUID();
+		element.dataset.juice = id;
+	}
+	
+	// creates Workflow
+	var workflowElements = container.querySelectorAll('ul[data-juice="Workflow"]');
+	for(var i = 0; i < workflowElements.length; i++ ) {
+		var element = workflowElements[i];
+		var workflow = new juice.ui.Workflow(element);
+		var bind = element.dataset.juiceBind.split(',');
+		var nodeList = bind[0];
+		var linkList = bind[1];
+		workflow.bind($context[nodeList],$context[linkList]);
+		workflow.setNodeId(element.dataset.juiceNodeId);
+		workflow.setNodeX(element.dataset.juiceNodeX);
+		workflow.setNodeY(element.dataset.juiceNodeY);
+		workflow.setLinkFrom(element.dataset.juiceLinkFrom);
+		workflow.setLinkTo(element.dataset.juiceLinkTo);
+		element.dataset.juiceLinkText && workflow.setLinkText(element.dataset.juiceLinkText);
+		workflow.update();
+		var id = generateUUID();
+		element.dataset.juice = id;
+	}
+	
+	// creates Pagination
+	var paginationElements = container.querySelectorAll('ul[data-juice="Pagination"]');
+	for(var i = 0; i < paginationElements.length; i++ ) {
+		var element = paginationElements[i];
+		var pagination = new juice.ui.Pagination(element);
+		var bind = element.dataset.juiceBind;
+		pagination.bind($context[bind]);
+		pagination.setRows(element.dataset.juiceRows);
+		pagination.setPage(element.dataset.juicePage);
+		pagination.setTotalCount(element.dataset.juiceTotalCount);
+		pagination.setPageSize(element.dataset.juicePageSize);
+		pagination.update();
 		var id = generateUUID();
 		element.dataset.juice = id;
 	}
@@ -1682,11 +2555,14 @@ juice.initialize = function(container, $context) {
 			case 'Label':
 				var label = new juice.ui.Label(element);
 				label.bind($context[map],name);
+				element.dataset.juiceMask && label.setMask(element.dataset.juiceMask);
 				label.update();
 			break;
 			case 'TextField':
 				var textField = new juice.ui.TextField(element);
 				textField.bind($context[map],name);
+				element.dataset.juiceMask && textField.setMask(element.dataset.juiceMask);
+				element.dataset.juiceValidator && textField.setValidator(eval(element.dataset.juiceValidator));
 				textField.update();
 			break;
 			case 'ComboBox':
@@ -1715,6 +2591,14 @@ juice.initialize = function(container, $context) {
 				var htmlEditor = new juice.ui.HtmlEditor(element);
 				htmlEditor.bind($context[map],name);
 				htmlEditor.update();
+			break;
+			case 'CronExpression':
+				var cronExpression = new juice.ui.CronExpression(element);
+				cronExpression.bind($context[map],name);
+				cronExpression.update();
+				if(element.dataset.juiceReadonly){
+					cronExpression.setReadonly(eval(element.dataset.juiceReadonly));
+				}
 			break;
 		}
 		element.dataset.juice = id;
@@ -1810,7 +2694,6 @@ juice.dialog = function(element) {
 		},
 		open: function(){
 			dialog.open();
-			console.log(this);
 			return this;
 		},
 		close: function(){

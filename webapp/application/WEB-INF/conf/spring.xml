@@ -155,35 +155,51 @@
     </mvc:interceptors>
     
 	<!-- ====================================================== -->
+	<!-- Default Servlet Handler								-->
+	<!-- ====================================================== -->
+    <mvc:default-servlet-handler default-servlet-name="default"/>
+    <mvc:annotation-driven/>
+    
+	<!-- ====================================================== -->
 	<!-- View Resolver											-->
 	<!-- ====================================================== -->
-	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+	<bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+		<property name="order" value="0"/>
+	</bean>
+   	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+        <property name="definitions">
+            <list>
+				<value>/WEB-INF/conf/tiles.xml</value>
+            </list>
+        </property>
+   	</bean>
+	<bean id="jstlViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
 		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
 	    <property name="prefix" value="/WEB-INF/view/"/>
+	    <property name="order" value="1"/>
 	</bean>
 	
 	<!-- ====================================================== -->
 	<!-- Spring Security										-->
 	<!-- ====================================================== -->
-	<bean id="authenticationProvider" class="net.oopscraft.application.user.AuthenticationProvider"/>
 	<security:authentication-manager>
-		<security:authentication-provider ref="authenticationProvider"/>
+		<security:authentication-provider ref="net.oopscraft.application.user.AuthenticationProvider"/>
 	</security:authentication-manager>
 	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
-	<security:http pattern="/admin/sign" security="none" />
+	<security:http pattern="/admin/login" security="none" />
 	<security:http pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
 		<security:csrf disabled="true" />
 		<security:intercept-url pattern="/admin/**/*" access="isAuthenticated()" />
 		<security:form-login 
-			login-page="/admin/sign" 
-			login-processing-url="/admin/sign/in" 
+			login-page="/admin/login" 
+			login-processing-url="/admin/login/processing" 
 			username-parameter="id" 
 			password-parameter="password" 
-			authentication-success-handler-ref="net.oopscraft.application.admin.SignController"
-			authentication-failure-handler-ref="net.oopscraft.application.admin.SignController"
+			authentication-success-handler-ref="net.oopscraft.application.user.AuthenticationHandler"
+			authentication-failure-handler-ref="net.oopscraft.application.user.AuthenticationHandler"
 			/>
-		<security:logout invalidate-session="true" logout-url="/admin/sign/out" logout-success-url="/" />
+		<security:logout invalidate-session="true" logout-url="/admin/logout" logout-success-url="/admin" />
 	</security:http>
-
 
 </beans>

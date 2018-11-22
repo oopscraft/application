@@ -5,7 +5,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@page import="java.util.*" %>
 <%@page import="java.text.*" %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -13,21 +13,19 @@
 		<script src="${pageContext.request.contextPath}/lib/juice/juice.js"></script>
 		<script src="${pageContext.request.contextPath}/lib/jquery.js"></script>
 		<script type="text/javascript">
-		function doSignIn() {
-			var signInForm = $('#signInForm');
-			var signInFormData = new FormData(signInForm);
+		var userMap = new juice.data.Map();
+		function doLogin() {
+			var id = userMap.get('id');
 			$.ajax({
-				 url: '/admin/sign/in'
+				 url: '/admin/login/processing'
 				,type: 'POST'
-				,processData: false
-				,contentType: false
-				,data: signInFormData
-				,success: function(response) {
-					location.href='${pageContext.request.contextPath}/admin/dash';
+				,data: userMap.toJson()
+				,success: function(data, textStatus, jqXHR) {
+					location.href='${pageContext.request.contextPath}/admin';
 		    	 }
-				,error: function(response) {
-					$('#messageDiv').text(response.responseText);
-				}
+			 	,error: function(jqXHR, textStatus, errorThrown) {
+					$('#messageDiv').text(jqXHR.responseText);
+				 }
 			});
 		}
 		</script>
@@ -35,15 +33,9 @@
 		</style>
 	</head>
 	<body>
-			<form id="signInForm" action="/admin/sign/in" method="POST">
-				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-				<input type="text" name="id"/>
-				<input type="password" name="password"/>
-				<input type="submit" value="submit"/>
-			</form>
-			<button onclick="javascript:doSignIn();">Sign In</button>
-			<div id="messageDiv">
-				${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message}
-			</div>
+		<input type="text" data-juice="TextField" data-juice-bind="userMap.id"/>
+		<input type="text" data-juice="TextField" data-juice-bind="userMap.password"/>
+		<button onclick="javascript:doLogin();">Login</button>
+		<div id="messageDiv"></div>
 	</body>
 </html>
