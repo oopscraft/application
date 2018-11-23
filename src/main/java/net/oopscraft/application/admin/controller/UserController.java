@@ -67,11 +67,8 @@ public class UserController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public String saveUser(@RequestBody String payload) throws Exception {
-		User newUser = JsonUtils.toObject(payload, User.class);
-		User user = userService.getUser(newUser.getId());
-		user.setName(newUser.getName());
-		LOGGER.info(TextTableBuilder.build(user));
-		userService.saveUser(user);
+		User user = JsonUtils.toObject(payload, User.class);
+		user = userService.saveUser(user);
 		return JsonUtils.toJson(user);
 	}
 	
