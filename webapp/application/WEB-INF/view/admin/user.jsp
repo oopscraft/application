@@ -49,6 +49,26 @@ function getUser(id) {
 	});	
 }
 
+/**
+ * Saves user
+ */
+function saveUser() {
+	var user = userMap.toJson();
+	user.groups = groupList.toJson();
+	user.roles = roleList.toJson();
+	user.authorities = authorityList.toJson();
+	
+	$.ajax({
+		 url: 'user/saveUser'
+		,type: 'POST'
+		,data: JSON.stringify(user)
+		,contentType: "application/json"
+		,success: function(data, textStatus, jqXHR) {
+			alert(data);
+ 	 	}
+	});	
+}
+
 </script>
 <style type="text/css">
 .container {
@@ -114,8 +134,8 @@ function getUser(id) {
 				</span>
 			</div>
 			<div>
-				<button onclick="javascript:getUserList();">Save</button>
-				<button onclick="javascript:getUserList();">Remove</button>
+				<button onclick="javascript:saveUser();">Save</button>
+				<button onclick="javascript:removeUser();">Remove</button>
 			</div>
 		</div>
 		<table class="detail">
