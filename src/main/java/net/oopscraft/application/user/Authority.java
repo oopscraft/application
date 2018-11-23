@@ -5,13 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.springframework.security.core.GrantedAuthority;
-
 @Entity
 @Table(name = "APP_AUTH_INFO")
-public class Authority implements GrantedAuthority {
-
-	private static final long serialVersionUID = 3356217006919881316L;
+public class Authority {
 
 	@Id
 	@Column(name = "AUTH_ID")
@@ -45,12 +41,6 @@ public class Authority implements GrantedAuthority {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	@Override
-	public String getAuthority() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

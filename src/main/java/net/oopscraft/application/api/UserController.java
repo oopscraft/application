@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.user.User;
-import net.oopscraft.application.user.UserRepository;
 import net.oopscraft.application.user.mapper.UserMapper;
+import net.oopscraft.application.user.repository.UserRepository;
 
 @Controller
 @RequestMapping("/api/user")

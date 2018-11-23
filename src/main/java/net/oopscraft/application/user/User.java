@@ -1,7 +1,5 @@
 package net.oopscraft.application.user;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -15,17 +13,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "APP_USER_INFO")
-public class User implements UserDetails {
-
-	private static final long serialVersionUID = -2175537994774089889L;
+public class User {
 
 	@Id
 	@Column(name = "USER_ID")
@@ -157,43 +150,8 @@ public class User implements UserDetails {
 		this.roles = roles;
 	}
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		List<Authority> authorities = new ArrayList<Authority>();
-		authorities.addAll(this.authorities);
-		for(Role role : roles) {
-			authorities.addAll(role.getAuthorities());
-		}
+	public List<Authority> getAuthorities() {
 		return authorities;
 	}
 
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

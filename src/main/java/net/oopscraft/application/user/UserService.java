@@ -10,7 +10,6 @@ package net.oopscraft.application.user;
 
 import java.util.List;
 
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import net.oopscraft.application.user.repository.UserRepository;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -69,9 +70,6 @@ public class UserService implements UserDetailsService {
 	
 	public User getUser(String id) throws Exception {
 		User user = userRepository.findOne(id);
-		user.getGroups();
-		user.getRoles();
-		user.getAuthorities();
 		return user;
 	}
 	

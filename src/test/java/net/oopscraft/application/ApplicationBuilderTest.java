@@ -22,9 +22,9 @@ import net.oopscraft.application.core.TextTableBuilder;
 import net.oopscraft.application.core.WebServer;
 import net.oopscraft.application.core.XPathReader;
 import net.oopscraft.application.user.User;
-import net.oopscraft.application.user.UserRepository;
-import net.oopscraft.application.user.dao.UserDao;
 import net.oopscraft.application.user.mapper.UserMapper;
+import net.oopscraft.application.user.repository.UserRepository;
+import net.oopscraft.bak.user.dao.UserDao;
 
 public class ApplicationBuilderTest {
 	
