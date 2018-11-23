@@ -3,14 +3,14 @@ SET SESSION FOREIGN_KEY_CHECKS=0;
 
 /* Create Tables */
 
--- Application Authority
+-- Application Authority Information
 CREATE TABLE APP_AUTH_INFO
 (
 	AUTH_ID varchar(32) NOT NULL COMMENT 'Authority ID',
 	AUTH_NAME varchar(256) COMMENT 'Authority Name',
 	AUTH_DESC text COMMENT 'Authority Description',
 	PRIMARY KEY (AUTH_ID)
-) ENGINE = InnoDB COMMENT = 'Application Authority' DEFAULT CHARACTER SET utf8;
+) ENGINE = InnoDB COMMENT = 'Application Authority Information' DEFAULT CHARACTER SET utf8;
 
 
 -- Application Code
@@ -89,23 +89,23 @@ CREATE TABLE app_menu_priv_map
 ) ENGINE = InnoDB COMMENT = '새 테이블' DEFAULT CHARACTER SET utf8;
 
 
--- Application Role Privilege Mapping
+-- Application Role Authority Map
 CREATE TABLE APP_ROLE_AUTH_MAP
 (
 	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
 	AUTH_ID varchar(32) NOT NULL COMMENT 'Authority ID',
 	PRIMARY KEY (ROLE_ID, AUTH_ID)
-) ENGINE = InnoDB COMMENT = 'Application Role Privilege Mapping' DEFAULT CHARACTER SET utf8;
+) ENGINE = InnoDB COMMENT = 'Application Role Authority Map' DEFAULT CHARACTER SET utf8;
 
 
--- Application Role
+-- Application Role Information
 CREATE TABLE APP_ROLE_INFO
 (
 	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
 	ROLE_NAME varchar(256) COMMENT 'Role Name',
 	ROLE_DESC text COMMENT 'Role Description',
 	PRIMARY KEY (ROLE_ID)
-) ENGINE = InnoDB COMMENT = 'Application Role' DEFAULT CHARACTER SET utf8;
+) ENGINE = InnoDB COMMENT = 'Application Role Information' DEFAULT CHARACTER SET utf8;
 
 
 -- Application Menu
@@ -139,13 +139,13 @@ CREATE TABLE APP_TAB_COL_CODE_MAP
 ) ENGINE = InnoDB COMMENT = 'Core Table Code Relation' DEFAULT CHARACTER SET utf8;
 
 
--- Application User Role Mapping
+-- Application User Authority Map
 CREATE TABLE APP_USER_AUTH_MAP
 (
 	USER_ID varchar(32) NOT NULL COMMENT 'User ID',
 	AUTH_ID varchar(32) NOT NULL COMMENT 'Authority ID',
 	PRIMARY KEY (USER_ID, AUTH_ID)
-) ENGINE = InnoDB COMMENT = 'Application User Role Mapping' DEFAULT CHARACTER SET utf8;
+) ENGINE = InnoDB COMMENT = 'Application User Authority Map' DEFAULT CHARACTER SET utf8;
 
 
 -- Application User Group Mapping
@@ -194,13 +194,13 @@ CREATE TABLE APP_USER_PROP_VAL
 ) ENGINE = InnoDB COMMENT = 'Application User Property Value' DEFAULT CHARACTER SET utf8;
 
 
--- Application User Role Mapping
+-- Application User Role Map
 CREATE TABLE APP_USER_ROLE_MAP
 (
 	USER_ID varchar(32) NOT NULL COMMENT 'User ID',
 	ROLE_ID varchar(32) NOT NULL COMMENT 'Role ID',
 	PRIMARY KEY (USER_ID, ROLE_ID)
-) ENGINE = InnoDB COMMENT = 'Application User Role Mapping' DEFAULT CHARACTER SET utf8;
+) ENGINE = InnoDB COMMENT = 'Application User Role Map' DEFAULT CHARACTER SET utf8;
 
 
 
