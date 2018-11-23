@@ -10,10 +10,13 @@ package net.oopscraft.application.admin.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.TextTableBuilder;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
 
@@ -28,6 +32,8 @@ import net.oopscraft.application.user.UserService;
 @Controller
 @RequestMapping("/admin/user")
 public class UserController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 	
 	@Autowired
 	UserService userService;
@@ -56,6 +62,19 @@ public class UserController {
 		User user = userService.getUser(id);
 		return JsonUtils.toJson(user);
 	}
+	
+	@RequestMapping(value="saveUser", method=RequestMethod.POST)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public String saveUser(@RequestBody String payload) throws Exception {
+		User newUser = JsonUtils.toObject(payload, User.class);
+		User user = userService.getUser(newUser.getId());
+		user.setName(newUser.getName());
+		LOGGER.info(TextTableBuilder.build(user));
+		userService.saveUser(user);
+		return JsonUtils.toJson(user);
+	}
+	
 
 //	@RequestMapping(value="getUserGroups", method=RequestMethod.GET)
 //	public String getUserGroups(@RequestParam(value="id")String id) throws Exception {
