@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.core.TextTableBuilder;
 import net.oopscraft.application.user.repository.UserRepository;
 
 @Service
@@ -78,8 +79,12 @@ public class UserService implements UserDetailsService {
 	 * @param user
 	 * @throws Exception
 	 */
-	public void saveUser(User user) throws Exception {
-		userRepository.save(user);
+	public User saveUser(User user) throws Exception {
+		User prevUser = userRepository.findOne(user.getId());
+		prevUser.setName(user.getName());
+		LOGGER.info(TextTableBuilder.build(prevUser));
+		userRepository.save(prevUser);
+		return userRepository.findOne(user.getId());
 	}
 	
 	/**
@@ -87,8 +92,10 @@ public class UserService implements UserDetailsService {
 	 * @param id
 	 * @throws Exception
 	 */
-	public void removeUser(String id) throws Exception {
+	public User removeUser(String id) throws Exception {
+		User persistUser = userRepository.findOne(id);
 		userRepository.delete(id);
+		return persistUser;
 	}
 	
 
