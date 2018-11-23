@@ -13,5 +13,5 @@ public interface GroupRepository extends JpaRepository<Group,String> {
 	public List<Group> findByIdLike(String id) throws Exception;
 	
 	public List<Group> findByNameLike(String name) throws Exception;
-	
+
 }
