@@ -13,6 +13,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +40,7 @@ public class UserController {
 	
 	@RequestMapping(value="getUsers", method=RequestMethod.GET)
 	@ResponseBody
+	@Transactional
 	public String getUsers(
 			 @RequestParam(value="key",required=false)String key
 			,@RequestParam(value="value",required=false)String value
@@ -49,16 +51,17 @@ public class UserController {
 
 	@RequestMapping(value="getUser", method=RequestMethod.GET)
 	@ResponseBody
+	@Transactional
 	public String getUser(@RequestParam(value="id")String id) throws Exception {
 		User user = userService.getUser(id);
 		return JsonUtils.toJson(user);
 	}
 
-	@RequestMapping(value="getUserGroups", method=RequestMethod.GET)
-	public String getUserGroups(@RequestParam(value="id")String id) throws Exception {
-		List<Group> userGroups = userService.get
-		return null;
-	}
+//	@RequestMapping(value="getUserGroups", method=RequestMethod.GET)
+//	public String getUserGroups(@RequestParam(value="id")String id) throws Exception {
+//		List<Group> userGroups = userService.get
+//		return null;
+//	}
 
 //	@Autowired
 //	GroupService groupService;

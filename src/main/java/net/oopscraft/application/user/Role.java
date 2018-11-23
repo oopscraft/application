@@ -12,13 +12,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import org.springframework.security.core.GrantedAuthority;
-
 @Entity
 @Table(name = "APP_ROLE_INFO")
-public class Role implements GrantedAuthority {
-
-	private static final long serialVersionUID = -6948802311193544168L;
+public class Role {
 
 	@Id
 	@Column(name = "ROLE_ID")
@@ -64,12 +60,6 @@ public class Role implements GrantedAuthority {
 
 	public void setAuthorities(List<Authority> authorities) {
 		this.authorities = authorities;
-	}
-
-	@Override
-	public String getAuthority() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

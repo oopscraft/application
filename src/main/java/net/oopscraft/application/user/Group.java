@@ -3,9 +3,15 @@ package net.oopscraft.application.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -29,8 +35,18 @@ public class Group {
 	@Column(name = "DISP_SEQ")
 	Integer displaySeq;
 
-	@Transient
+	//@Transient
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "UPPER_GROUP_ID")
 	List<Group> childGroups = new ArrayList<Group>();
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "APP_GROUP_ROLE_MAP", joinColumns = @JoinColumn(name = "GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+	List<Role> roles;
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "APP_GROUP_AUTH_MAP", joinColumns = @JoinColumn(name = "GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	List<Authority> authorities;
 
 	public void setChildGroups(List<Group> childGroups) {
 		this.childGroups = childGroups;
@@ -82,6 +98,22 @@ public class Group {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+
+	public List<Authority> getAuthorities() {
+		return authorities;
+	}
+
+	public void setAuthorities(List<Authority> authorities) {
+		this.authorities = authorities;
 	}
 
 }

@@ -184,7 +184,7 @@
 	<!-- Spring Security										-->
 	<!-- ====================================================== -->
 	<security:authentication-manager>
-		<security:authentication-provider ref="net.oopscraft.application.user.AuthenticationProvider"/>
+		<security:authentication-provider ref="net.oopscraft.application.user.security.AuthenticationProvider"/>
 	</security:authentication-manager>
 	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
 	<security:http pattern="/admin/login" security="none" />
@@ -196,8 +196,8 @@
 			login-processing-url="/admin/login/processing" 
 			username-parameter="id" 
 			password-parameter="password" 
-			authentication-success-handler-ref="net.oopscraft.application.user.AuthenticationHandler"
-			authentication-failure-handler-ref="net.oopscraft.application.user.AuthenticationHandler"
+			authentication-success-handler-ref="net.oopscraft.application.user.security.AuthenticationHandler"
+			authentication-failure-handler-ref="net.oopscraft.application.user.security.AuthenticationHandler"
 			/>
 		<security:logout invalidate-session="true" logout-url="/admin/logout" logout-success-url="/admin" />
 	</security:http>

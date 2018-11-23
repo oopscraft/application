@@ -10,7 +10,10 @@
 var userFindMap = new juice.data.Map();
 var userList = new juice.data.List();
 var userMap = new juice.data.Map();
-var userGroupList = new juice.data.List();
+var groupList = new juice.data.List();
+var roleList= new juice.data.List();
+var authorityList = new juice.data.List();
+
 $( document ).ready(function() {
 	getUsers();
 });
@@ -37,20 +40,11 @@ function getUser(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
-			userMap.fromJson(JSON.parse(data));
-  	 	}
-	});	
-}
-
-/**
- * Gets user group list
- */
-function getUserGroups(id){
-	$.ajax({
-		 url: 'user/getUserGroups'
-		,type: 'GET'
-		,success: function(data, textStatus, jqXHR) {
-			userGroupList.fromJson(JSON.parse(data));
+			var user = JSON.parse(data);
+			userMap.fromJson(user);
+			groupList.fromJson(user.groups);
+			roleList.fromJson(user.roles);
+			authorityList.fromJson(user.authorities);
   	 	}
 	});	
 }
@@ -74,10 +68,12 @@ function getUserGroups(id){
 </span>
 <div class="container">
 	<div class="left">
+		<!-- ====================================================== -->
+		<!-- User List												-->
+		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<span class="title2">
-					<i class="material-icons">account_box</i>
 					Find User
 				</span>
 				<select data-juice="ComboBox" data-juice-bind="userFindMap.key" data-juice-options="[]" style="width:100px;"></select>
@@ -114,7 +110,6 @@ function getUserGroups(id){
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<span class="title2">
-					<i class="material-icons">person</i>
 					User Detail
 				</span>
 			</div>
@@ -132,7 +127,7 @@ function getUserGroups(id){
 			</colgroup>
 			<tr>
 				<th>ID</th>
-				<td><label data-juice="Label" data-juice-bind="userMap.id"></label></td>
+				<td><input data-juice="TextField" data-juice-bind="userMap.id" disabled/></td>
 				<th>Password</th>
 				<td><button>Change</button></td>
 			</tr>
@@ -156,12 +151,11 @@ function getUserGroups(id){
 			</tr>
 		</table>
 		<!-- ====================================================== -->
-		<!-- Related Group											-->
+		<!-- User Groups											-->
 		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<span class="title2">
-					<i class="material-icons">folder_shared</i>
 					Related Group
 				</span>				
 			</div>
@@ -169,7 +163,7 @@ function getUserGroups(id){
 				<button>Add</button>
 			</div>
 		</div>
-		<table data-juice="Grid" data-juice-bind="userList" data-juice-item="user">
+		<table data-juice="Grid" data-juice-bind="groupList" data-juice-item="group">
 			<thead>
 				<tr>
 					<th>Group ID</th>
@@ -178,20 +172,19 @@ function getUserGroups(id){
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-id="{{$context.user.get('id')}}" onclick="javascript:getUser(this.dataset.id);">
-					<td><label data-juice="Label" data-juice-bind="user.id"></label></td>
-					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
+				<tr data-id="{{$context.group.get('id')}}">
+					<td><label data-juice="Label" data-juice-bind="group.id"></label></td>
+					<td><label data-juice="Label" data-juice-bind="group.name"></label></td>
 					<td><button>Remove</button></td>
 				</tr>
 			</tbody>
 		</table>
 		<!-- ====================================================== -->
-		<!-- Related Role											-->
+		<!-- User Roles												-->
 		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<span class="title2">
-					<i class="material-icons">folder_shared</i>
 					Related Role
 				</span>
 			</div>
@@ -199,7 +192,7 @@ function getUserGroups(id){
 				<button>Add</button>
 			</div>
 		</div>
-		<table data-juice="Grid" data-juice-bind="userList" data-juice-item="user">
+		<table data-juice="Grid" data-juice-bind="roleList" data-juice-item="role">
 			<thead>
 				<tr>
 					<th>Role ID</th>
@@ -208,9 +201,9 @@ function getUserGroups(id){
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-id="{{$context.user.get('id')}}" onclick="javascript:getUser(this.dataset.id);">
-					<td><label data-juice="Label" data-juice-bind="user.id"></label></td>
-					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
+				<tr data-id="{{$context.role.get('id')}}">
+					<td><label data-juice="Label" data-juice-bind="role.id"></label></td>
+					<td><label data-juice="Label" data-juice-bind="role.name"></label></td>
 					<td><button>Remove</button></td>
 				</tr>
 			</tbody>
@@ -221,7 +214,6 @@ function getUserGroups(id){
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<span class="title2">
-					<i class="material-icons">folder_shared</i>
 					Related Authority
 				</span>
 			</div>
@@ -229,7 +221,7 @@ function getUserGroups(id){
 				<button>Add</button>
 			</div>
 		</div>
-		<table data-juice="Grid" data-juice-bind="userList" data-juice-item="user">
+		<table data-juice="Grid" data-juice-bind="authorityList" data-juice-item="authority">
 			<thead>
 				<tr>
 					<th>Role ID</th>
@@ -238,9 +230,9 @@ function getUserGroups(id){
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-id="{{$context.user.get('id')}}" onclick="javascript:getUser(this.dataset.id);">
-					<td><label data-juice="Label" data-juice-bind="user.id"></label></td>
-					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
+				<tr data-id="{{$context.authority.get('id')}}">
+					<td><label data-juice="Label" data-juice-bind="authority.id"></label></td>
+					<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
 					<td><button>Remove</button></td>
 				</tr>
 			</tbody>

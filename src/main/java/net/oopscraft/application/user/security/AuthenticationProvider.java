@@ -6,17 +6,19 @@
  * Released under the LGPL-3.0 licence
  * https://opensource.org/licenses/lgpl-3.0.html
  */
-package net.oopscraft.application.user;
+package net.oopscraft.application.user.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import net.oopscraft.application.user.User;
+import net.oopscraft.application.user.UserService;
 
 @Component
 public class AuthenticationProvider implements org.springframework.security.authentication.AuthenticationProvider {
@@ -37,10 +39,10 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		String password = (String) authentication.getCredentials();
 		
 		// loading user information
-		UserDetails user = null;
+		User user = null;
 		try {
-			user = userService.loadUserByUsername(id);
-		}catch(UsernameNotFoundException e) {
+			user = userService.getUser(id);
+		}catch(Exception e) {
 			throw new UsernameNotFoundException(e.getMessage(), e);
 		}
 		
@@ -50,7 +52,8 @@ public class AuthenticationProvider implements org.springframework.security.auth
 //		}
 
 		// return authentication token.
-		authentication = new UsernamePasswordAuthenticationToken(id, password, user.getAuthorities());
+		UserDetails userDetails = new UserDetails(user);
+		authentication = new UsernamePasswordAuthenticationToken(id, password, userDetails.getAuthorities());
 		return authentication;
 	}
 
