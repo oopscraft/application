@@ -54,7 +54,11 @@ public class UserController {
 		return JsonUtils.toJson(user);
 	}
 
-	
+	@RequestMapping(value="getUserGroups", method=RequestMethod.GET)
+	public String getUserGroups(@RequestParam(value="id")String id) throws Exception {
+		List<Group> userGroups = userService.get
+		return null;
+	}
 
 //	@Autowired
 //	GroupService groupService;

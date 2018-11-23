@@ -5,11 +5,15 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,45 +22,51 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@Table(name="APP_USER_INFO")
+@Table(name = "APP_USER_INFO")
 public class User implements UserDetails {
 
 	private static final long serialVersionUID = -2175537994774089889L;
 
 	@Id
-	@Column(name="USER_ID")
+	@Column(name = "USER_ID")
 	String id;
-	
-	@Column(name="USER_PWD")
+
+	@Column(name = "USER_PWD")
 	String password;
-	
-	@Column(name="USER_EMAIL")
+
+	@Column(name = "USER_EMAIL")
 	String email;
-	
-	@Column(name="USER_PHONE")
+
+	@Column(name = "USER_PHONE")
 	String phone;
-	
-	@Column(name="USER_NAME")
+
+	@Column(name = "USER_NAME")
 	String name;
-	
-	@Column(name="USER_NICK")
+
+	@Column(name = "USER_NICK")
 	String nickname;
-	
-	@Column(name="USER_PHOTO")
+
+	@Column(name = "USER_PHOTO")
 	String photo;
-	
-	@Column(name="USER_MSG")
+
+	@Column(name = "USER_MSG")
 	String message;
-	
-	@Column(name="USER_JOIN_DTTM")
+
+	@Column(name = "USER_JOIN_DTTM")
 	Date joinDate;
-	
-	@Transient
-	List<Group> groups = new ArrayList<Group>();
-	
-	@Transient
-	List<Authority> authorities = new ArrayList<Authority>();
-	
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "APP_USER_GROUP_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
+	List<Group> groups;
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "APP_USER_ROLE_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+	List<Role> roles;
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "APP_USER_AUTH_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	List<Authority> authorities;
+
 	public String getId() {
 		return id;
 	}
@@ -138,9 +148,22 @@ public class User implements UserDetails {
 	public void setGroups(List<Group> groups) {
 		this.groups = groups;
 	}
+	
+	public List<Role> getRoles() {
+		return roles;
+	}
+	
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.addAll(this.authorities);
+		for(Role role : roles) {
+			authorities.addAll(role.getAuthorities());
+		}
 		return authorities;
 	}
 

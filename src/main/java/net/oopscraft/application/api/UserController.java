@@ -60,6 +60,8 @@ public class UserController {
 		}else {
 			users = userRepository.findAll();
 		}
+
+		
 		
 //		for(String beanName : applicationContext.getBeanDefinitionNames()) {
 //			Object beanObj = applicationContext.getBean(beanName);
@@ -98,6 +100,7 @@ public class UserController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@Transactional
 	public ResponseEntity<?> getUser(@PathVariable("id")String id) throws Exception {
 		User user = userRepository.findOne(id);
 		if(user == null) {

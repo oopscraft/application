@@ -10,6 +10,7 @@ package net.oopscraft.application.user;
 
 import java.util.List;
 
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,9 @@ public class UserService implements UserDetailsService {
 	
 	public User getUser(String id) throws Exception {
 		User user = userRepository.findOne(id);
+		user.getGroups();
+		user.getRoles();
+		user.getAuthorities();
 		return user;
 	}
 	
@@ -88,4 +92,6 @@ public class UserService implements UserDetailsService {
 	public void removeUser(String id) throws Exception {
 		userRepository.delete(id);
 	}
+	
+
 }
