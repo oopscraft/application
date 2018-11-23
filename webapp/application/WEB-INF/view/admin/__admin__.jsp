@@ -26,12 +26,14 @@
         });
 		</script>
 		<style type="text/css">
+		/*
 		* {
 			margin: 0px;
 			padding: 0px;
 			font-family: Tahoma, Dotum;
 			font-size: 11px;
 		}
+		*/
 		body {
 			display: grid;
 			grid-template-columns: 200px auto;
@@ -107,14 +109,28 @@
 		<nav>
 			NAV
 			<ul>
-				<li><a href="user">User Management</a></li>
-				<li><a href="group">Group Management</a></li>
-				<li><a href="authority">Authority Management</a></li>
+				<li>User Management
+					<ul>
+						<li><a href="user">User</a></li>
+						<li><a href="group">Group</a></li>
+						<li><a href="role">Role</a></li>
+						<li><a href="authority">Authority</a></li>
+					</ul>
+				</li>
 				<li><a href="menu">메뉴 관리</a></li>
 				<li><a href="code">코드 관리</a></li>
 				<li><a href="message">메시지 관리</a></li>
+				<li><a href="template">템플릿 관리</a></li>
 				<li><a href="board">게시판 관리</a></li>
 				<li><a href="content">컨텐츠 관리</a></li>
+				<li>Statistics
+					<ul>
+						<li><a href="user">Transaction</a></li>
+						<li><a href="group">Group</a></li>
+						<li><a href="role">Role</a></li>
+						<li><a href="authority">Authority</a></li>
+					</ul>
+				</li>
 			</ul>
 		</nav>
 		<section>
