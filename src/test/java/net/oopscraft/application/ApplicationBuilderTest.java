@@ -19,8 +19,8 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import net.oopscraft.application.core.TextTableBuilder;
-import net.oopscraft.application.core.WebServer;
 import net.oopscraft.application.core.XPathReader;
+import net.oopscraft.application.core.webserver.WebServer;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.mapper.UserMapper;
 import net.oopscraft.application.user.repository.UserRepository;

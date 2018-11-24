@@ -6,22 +6,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.User;
-import net.oopscraft.application.user.mapper.UserMapper;
-import net.oopscraft.application.user.repository.UserRepository;
+import net.oopscraft.application.user.UserService;
 
 @Controller
 @RequestMapping("/api/user")
@@ -33,10 +30,7 @@ public class UserController {
 	private MessageSource messageSource;
  	
 	@Autowired
-	private UserRepository userRepository;
-	
-	@Autowired
-	private UserMapper userMapper;
+	private UserService userService;
 	
 	/**
 	 * Gets list of users.
@@ -48,18 +42,14 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> getUsers(
-		 @RequestParam(value="key",required=false)String key
-		,@RequestParam(value="value",required=false)String value
-	) throws Exception {
-		
-		List<User> users = null;
-		if("id".equals(key)) {
-			users = userRepository.findByIdLike(value);
-		}else if("name".equals(key)) {
-			users = userRepository.findByNameLike(value);
-		}else {
-			users = userRepository.findAll();
-		}
+			 @RequestParam(value="key",required=false)String key
+			,@RequestParam(value="value",required=false)String value
+			,@RequestParam(value="page",required=false,defaultValue="1")Integer page
+			,@RequestParam(value="size",required=false,defaultValue="10")Integer size
+		) throws Exception {
+		PageInfo pageInfo = new PageInfo(page.intValue(),size.intValue(),true);
+		List<User> users = userService.getUsers(null, null, pageInfo);
+		return new ResponseEntity<>(JsonUtils.toJson(users), HttpStatus.OK);
 
 		
 		
@@ -88,60 +78,60 @@ public class UserController {
 //		if(1 == 1) {
 //			throw new Exception();	
 //		}
-		
-		// return response
-		return new ResponseEntity<>(JsonUtils.toJson(users), HttpStatus.OK);
+//		
+//		// return response
+//		return new ResponseEntity<>(JsonUtils.toJson(users), HttpStatus.OK);
 	}
 	
-	/**
-	 * Gets user
-	 * @param id
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@Transactional
-	public ResponseEntity<?> getUser(@PathVariable("id")String id) throws Exception {
-		User user = userRepository.findOne(id);
-		if(user == null) {
-			String message = String.format("User[%s] is not found.", id);
-			message = messageSource.getMessage("warn.notFound", new String[]{"User",id}, message, LocaleContextHolder.getLocale());
-			return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<>(JsonUtils.toJson(user), HttpStatus.OK);
-	}
-	
-	/**
-	 * Saves user
-	 * @param payload
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value="/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> saveUser(@RequestBody String payload) throws Exception {
-		User user = JsonUtils.toObject(payload, User.class);
-		userRepository.saveAndFlush(user);
-		user = userRepository.findOne(user.getId());
-		return new ResponseEntity<>(JsonUtils.toJson(user), HttpStatus.OK);
-	}
-	
-	/**
-	 * Removes user
-	 * @param id
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value="/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> removeUser(@PathVariable("id")String id) throws Exception {
-		User user = userRepository.findOne(id);
-		if(user == null) {
-			String message = String.format("User[%s] is not found.", id);
-			message = messageSource.getMessage("warn.notFound", new String[]{"User",id}, message, LocaleContextHolder.getLocale());
-			return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
-		}
-		userRepository.delete(user.getId());
-		return new ResponseEntity<>(JsonUtils.toJson(user), HttpStatus.OK);
-	}
+//	/**
+//	 * Gets user
+//	 * @param id
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@Transactional
+//	public ResponseEntity<?> getUser(@PathVariable("id")String id) throws Exception {
+//		User user = userRepository.findOne(id);
+//		if(user == null) {
+//			String message = String.format("User[%s] is not found.", id);
+//			message = messageSource.getMessage("warn.notFound", new String[]{"User",id}, message, LocaleContextHolder.getLocale());
+//			return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+//		}
+//		return new ResponseEntity<>(JsonUtils.toJson(user), HttpStatus.OK);
+//	}
+//	
+//	/**
+//	 * Saves user
+//	 * @param payload
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value="/{id}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	public ResponseEntity<?> saveUser(@RequestBody String payload) throws Exception {
+//		User user = JsonUtils.toObject(payload, User.class);
+//		userRepository.saveAndFlush(user);
+//		user = userRepository.findOne(user.getId());
+//		return new ResponseEntity<>(JsonUtils.toJson(user), HttpStatus.OK);
+//	}
+//	
+//	/**
+//	 * Removes user
+//	 * @param id
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value="/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	public ResponseEntity<?> removeUser(@PathVariable("id")String id) throws Exception {
+//		User user = userRepository.findOne(id);
+//		if(user == null) {
+//			String message = String.format("User[%s] is not found.", id);
+//			message = messageSource.getMessage("warn.notFound", new String[]{"User",id}, message, LocaleContextHolder.getLocale());
+//			return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+//		}
+//		userRepository.delete(user.getId());
+//		return new ResponseEntity<>(JsonUtils.toJson(user), HttpStatus.OK);
+//	}
 
 
 }

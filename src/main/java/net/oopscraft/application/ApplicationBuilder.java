@@ -27,9 +27,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import net.oopscraft.application.core.PasswordBasedEncryptor;
-import net.oopscraft.application.core.WebServer;
-import net.oopscraft.application.core.WebServerContext;
 import net.oopscraft.application.core.XPathReader;
+import net.oopscraft.application.core.webserver.WebServer;
+import net.oopscraft.application.core.webserver.WebServerContext;
 
 public class ApplicationBuilder {
 	

@@ -13,6 +13,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTableBuilder;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
@@ -50,8 +52,11 @@ public class UserController {
 	public String getUsers(
 			 @RequestParam(value="key",required=false)String key
 			,@RequestParam(value="value",required=false)String value
+			,@RequestParam(value="page",required=false,defaultValue="1")Integer page
+			,@RequestParam(value="size",required=false,defaultValue="10")Integer size
 		) throws Exception {
-		List<User> users = userService.getUsers(null, null);
+		PageInfo pageInfo = new PageInfo(page.intValue(),size.intValue(),true);
+		List<User> users = userService.getUsers(null, null, pageInfo);
 		return JsonUtils.toJson(users);
 	}
 

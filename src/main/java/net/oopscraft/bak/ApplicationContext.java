@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.oopscraft.application.core.WebServer;
 import net.oopscraft.application.core.mybatis.SqlSessionProxyFactory;
+import net.oopscraft.application.core.webserver.WebServer;
 
 public class ApplicationContext {
 	
