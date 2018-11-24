@@ -11,11 +11,11 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import net.oopscraft.application.core.SystemInfo;
-import net.oopscraft.application.core.SystemMonitor;
-import net.oopscraft.application.core.SystemMonitorListener;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.ValueMap;
+import net.oopscraft.application.core.monitor.SystemInfo;
+import net.oopscraft.application.core.monitor.SystemMonitor;
+import net.oopscraft.application.core.monitor.SystemMonitorListener;
 
 
 public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHandler {

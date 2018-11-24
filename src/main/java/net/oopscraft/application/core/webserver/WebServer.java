@@ -1,4 +1,4 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.webserver;
 
 import java.io.File;
 import java.util.ArrayList;

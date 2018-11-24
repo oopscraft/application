@@ -1,4 +1,4 @@
-package net.oopscraft.application.core;
+package net.oopscraft.application.core.monitor;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,11 +18,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.core.SystemInfo.ClassInfo;
-import net.oopscraft.application.core.SystemInfo.DiskInfo;
-import net.oopscraft.application.core.SystemInfo.MemInfo;
-import net.oopscraft.application.core.SystemInfo.OsInfo;
-import net.oopscraft.application.core.SystemInfo.ThreadInfo;
+import net.oopscraft.application.core.monitor.SystemInfo.ClassInfo;
+import net.oopscraft.application.core.monitor.SystemInfo.DiskInfo;
+import net.oopscraft.application.core.monitor.SystemInfo.MemInfo;
+import net.oopscraft.application.core.monitor.SystemInfo.OsInfo;
+import net.oopscraft.application.core.monitor.SystemInfo.ThreadInfo;
 
 
 

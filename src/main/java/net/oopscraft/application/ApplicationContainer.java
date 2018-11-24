@@ -7,8 +7,8 @@ import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.oopscraft.application.core.WebServer;
 import net.oopscraft.application.core.XPathReader;
+import net.oopscraft.application.core.webserver.WebServer;
 
 public class ApplicationContainer {
 	

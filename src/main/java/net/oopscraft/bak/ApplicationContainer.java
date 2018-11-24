@@ -8,10 +8,10 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64;
 import org.w3c.dom.NodeList;
 
-import net.oopscraft.application.core.WebServer;
-import net.oopscraft.application.core.WebServerContext;
 import net.oopscraft.application.core.XPathReader;
 import net.oopscraft.application.core.mybatis.SqlSessionProxyFactory;
+import net.oopscraft.application.core.webserver.WebServer;
+import net.oopscraft.application.core.webserver.WebServerContext;
 
 public class ApplicationContainer {
 

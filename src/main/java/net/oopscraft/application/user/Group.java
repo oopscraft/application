@@ -13,7 +13,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name = "APP_GROUP_INFO")
@@ -35,7 +34,6 @@ public class Group {
 	@Column(name = "DISP_SEQ")
 	Integer displaySeq;
 
-	//@Transient
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "UPPER_GROUP_ID")
 	List<Group> childGroups = new ArrayList<Group>();
