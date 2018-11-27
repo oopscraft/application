@@ -60,7 +60,7 @@ public class RestClientMain extends JFrame {
 				try { 
 					RestRequestFactory requestFactory = RestRequestFactory.getInstance(restRequestXml); 
 					RestRequest request = requestFactory.getRestRequest(id); 
-					contextTextArea.setText(TextTable.build(request)); 
+					contextTextArea.setText(new TextTable(request).toString()); 
 					testTextArea.setText(request.getTest()); 
 					resultTextArea.setText(""); 
 				}catch(Exception e){ 

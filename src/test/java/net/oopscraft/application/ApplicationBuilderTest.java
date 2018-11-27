@@ -101,12 +101,12 @@ public class ApplicationBuilderTest {
 					user.setId("admin");
 					user = entityManager.find(User.class, user.getId());
 					System.out.println(String.format("+ user:%s", user));
-					System.out.println(TextTable.build(user));
+					System.out.println(new TextTable(user));
 					
 					// testing JapRepository
 					UserRepository userRepository = new JpaRepositoryFactory(entityManager).getRepository(UserRepository.class);
 					List<User> userList = userRepository.findAll();
-					System.out.println(TextTable.build(userList));
+					System.out.println(new TextTable(userList));
 					
 					// tests inserting
 					user.setId("admin2");
@@ -145,7 +145,7 @@ public class ApplicationBuilderTest {
 					UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 					User user = new User();
 					List<User> userList = userMapper.selectUserList(user);
-					System.out.println(TextTable.build(userList));
+					System.out.println(new TextTable(userList));
 				}catch(Exception e) {
 					e.printStackTrace(System.err);
 					throw e;

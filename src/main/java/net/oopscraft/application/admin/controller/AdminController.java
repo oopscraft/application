@@ -62,17 +62,17 @@ public class AdminController {
 		return JsonUtils.toJson(groups);
 	}
 
-	@RequestMapping(value="getRoles", method=RequestMethod.GET)
-	@ResponseBody
-	@Transactional
-	public String getRoles(@RequestParam(value = "searchKey", required = false) String searchKey,
-			@RequestParam(value = "searchValue", required = false) String searchValue,
-			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
-		PageInfo pageInfo = new PageInfo(page.intValue(), rows.intValue(), true);
-		List<Role> authorities = roleService.getRoles(RoleService.SearchKey.valueOf(searchKey), searchValue, pageInfo);
-		return JsonUtils.toJson(authorities);
-	}
+//	@RequestMapping(value="getRoles", method=RequestMethod.GET)
+//	@ResponseBody
+//	@Transactional
+//	public String getRoles(@RequestParam(value = "searchKey", required = false) String searchKey,
+//			@RequestParam(value = "searchValue", required = false) String searchValue,
+//			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+//			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
+//		PageInfo pageInfo = new PageInfo(page.intValue(), rows.intValue(), true);
+//		List<Role> authorities = roleService.getRoles(RoleService.SearchKey.valueOf(searchKey), searchValue, pageInfo);
+//		return JsonUtils.toJson(authorities);
+//	}
 	
 //	@RequestMapping(value="getAuthorities", method=RequestMethod.GET)
 //	@ResponseBody

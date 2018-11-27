@@ -25,7 +25,7 @@ public class ApplicationJUnit4ClassRunner extends SpringJUnit4ClassRunner {
 	 */
 	public ApplicationJUnit4ClassRunner(Class<?> clazz) throws Exception {
 		super(clazz);
-		ApplicationContainer.launchForTest(Application.class, new File("conf/application.xml"), new File("conf/application.properties"));
+		//ApplicationContainer.launchForTest(Application.class, new File("conf/application.xml"), new File("conf/application.properties"));
 	}
 
 }
