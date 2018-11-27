@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.oopscraft.application.ApplicationTest;
-import net.oopscraft.application.core.TextTableBuilder;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.bak.user.dao.UserDao;
 
 /**
@@ -38,7 +38,7 @@ public class UserDaoTest extends ApplicationTest {
 			user.setStatusCode("A");
 			userDao.insertUser(user);
 			user = userDao.selectUser("test");
-			System.out.println(TextTableBuilder.build(user));
+			System.out.println(TextTable.build(user));
 			if(user == null) {
 				System.err.println("insertUser Error");
 				assert(false);
@@ -48,7 +48,7 @@ public class UserDaoTest extends ApplicationTest {
 			user.setName("test2");
 			userDao.updateUser(user);
 			user = userDao.selectUser("test");
-			System.out.println(TextTableBuilder.build(user));
+			System.out.println(TextTable.build(user));
 			if(!"test2".equals(user.getName())) {
 				System.err.println("updateUser Error");
 				assert(false);
@@ -57,7 +57,7 @@ public class UserDaoTest extends ApplicationTest {
 			// delete user
 			userDao.deleteUser(user.getId());
 			user = userDao.selectUser("test");
-			System.out.println(TextTableBuilder.build(user));
+			System.out.println(TextTable.build(user));
 			if(user != null) {
 				System.err.println("deleteUser Error");
 				assert(false);

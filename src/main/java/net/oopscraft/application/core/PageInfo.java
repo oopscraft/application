@@ -7,17 +7,17 @@ import org.springframework.data.domain.Pageable;
 public class PageInfo {
 
 	int page = 1;
-	int size = Integer.MAX_VALUE;
+	int rows = Integer.MAX_VALUE;
 	boolean enableTotalCount = false;
 	long totalCount = -1;
 
-	public PageInfo(int page, int size) {
+	public PageInfo(int page, int rows) {
 		this.page = page;
-		this.size = size;
+		this.rows = rows;
 	}
 
-	public PageInfo(int page, int size, boolean enableTotalCount) {
-		this(page, size);
+	public PageInfo(int page, int rows, boolean enableTotalCount) {
+		this(page, rows);
 		this.enableTotalCount = enableTotalCount;
 	}
 
@@ -25,16 +25,16 @@ public class PageInfo {
 		return page;
 	}
 
-	public int getSize() {
-		return size;
+	public int getRows() {
+		return rows;
 	}
 
 	public int getOffset() {
-		return (size*page) - this.size;
+		return (rows * page) - this.rows;
 	}
 
 	public int getLimit() {
-		return size;
+		return rows;
 	}
 
 	public boolean isEnableTotalCount() {
@@ -48,13 +48,28 @@ public class PageInfo {
 	public long getTotalCount() {
 		return totalCount;
 	}
-	
+
 	public Pageable toPageable() {
-		return new PageRequest(page - 1, size);
+		return new PageRequest(page - 1, rows);
 	}
-	
+
 	public RowBounds toRowBounds() {
 		return new RowBounds(getOffset(), getLimit());
+	}
+
+	/**
+	 * Gets Content-Range value
+	 * 
+	 * @param response
+	 */
+	public String getContentRange() {
+		StringBuffer contentRange = new StringBuffer();
+		contentRange.append("items");
+		contentRange.append(" ");
+		contentRange.append(getOffset() + 1).append("-").append(getOffset() + getLimit());
+		contentRange.append("/");
+		contentRange.append(isEnableTotalCount() ? getTotalCount() : "*");
+		return contentRange.toString();
 	}
 
 }

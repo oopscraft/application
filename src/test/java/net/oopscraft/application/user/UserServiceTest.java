@@ -13,7 +13,7 @@ import java.util.List;
 import org.junit.Test;
 
 import net.oopscraft.application.ApplicationTest;
-import net.oopscraft.application.core.TextTableBuilder;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.Group;
 
 /**

@@ -49,7 +49,7 @@ public class WebServer {
 			 StandardContext ctx = (StandardContext)tomcat.addWebapp(context.getContextPath(), resourceBase.getAbsolutePath());
 			 ctx.addParameter("webAppRootKey", UUID.randomUUID().toString());
 			 ctx.setAltDDName(context.getDescriptor());
-			 ctx.setReloadable(false);
+			 ctx.setReloadable(true);
 			 ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
 			 
 			 // add parameter 

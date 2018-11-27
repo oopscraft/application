@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.TextTableBuilder;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.repository.UserRepository;
 
 @Service
@@ -27,8 +27,8 @@ public class UserService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
-	public enum FindBy {
-		ID_LIKE, NAME_LIKE, EMAIL_LIKE, PHONE_LIKE
+	public enum SearchKey {
+		ID, NAME, EMAIL, PHONE
 	}
 
 	@Autowired
@@ -37,29 +37,29 @@ public class UserService {
 	/**
 	 * Gets list of user by search condition and value
 	 * 
-	 * @param findBy
-	 * @param value
+	 * @param searchKey
+	 * @param searchValue
 	 * @return
 	 * @throws Exception
 	 */
-	public List<User> getUsers(FindBy findBy, String value, PageInfo pageInfo) throws Exception {
+	public List<User> getUsers(SearchKey searchKey, String searchValue, PageInfo pageInfo) throws Exception {
 		Page<User> users = null;
-		Pageable pageable = new PageRequest(pageInfo.getPage() - 1, pageInfo.getSize());
-		if (findBy == null) {
+		Pageable pageable = new PageRequest(pageInfo.getPage() - 1, pageInfo.getRows());
+		if (searchKey == null) {
 			users = userRepository.findAll(pageable);
 		} else {
-			switch (findBy) {
-			case ID_LIKE:
-				users = userRepository.findByIdLike(value, pageable);
+			switch (searchKey) {
+			case ID:
+				users = userRepository.findByIdLike(searchValue, pageable);
 				break;
-			case NAME_LIKE:
-				users = userRepository.findByNameLike(value, pageable);
+			case NAME:
+				users = userRepository.findByNameLike(searchValue, pageable);
 				break;
-			case EMAIL_LIKE:
-				users = userRepository.findByEmailLike(value, pageable);
+			case EMAIL:
+				users = userRepository.findByEmailLike(searchValue, pageable);
 				break;
-			case PHONE_LIKE:
-				users = userRepository.findByPhoneLike(value, pageable);
+			case PHONE:
+				users = userRepository.findByPhoneLike(searchValue, pageable);
 				break;
 			}
 		}
@@ -88,10 +88,15 @@ public class UserService {
 	 * @throws Exception
 	 */
 	public User saveUser(User user) throws Exception {
-		User prevUser = userRepository.findOne(user.getId());
-		prevUser.setName(user.getName());
-		LOGGER.info(TextTableBuilder.build(prevUser));
-		userRepository.save(prevUser);
+		User one = userRepository.findOne(user.getId());
+		one.setName(user.getName());
+		one.setNickname(user.getNickname());
+		one.setEmail(user.getEmail());
+		one.setPhone(user.getPhone());
+		one.setPhoto(user.getPhoto());
+		one.setMessage(user.getMessage());
+		LOGGER.info("{}", new TextTable(one));
+		userRepository.save(one);
 		return userRepository.findOne(user.getId());
 	}
 

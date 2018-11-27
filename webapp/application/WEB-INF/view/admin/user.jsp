@@ -7,12 +7,23 @@
 <%@page import="java.text.*" %>
 <!-- global -->
 <script type="text/javascript">
-var userFindMap = new juice.data.Map();
-var userList = new juice.data.List();
-var userMap = new juice.data.Map();
-var groupList = new juice.data.List();
-var roleList= new juice.data.List();
-var authorityList = new juice.data.List();
+var userSearch = new juice.data.Map({
+	 key: null
+	,value: null
+	,page: 1
+	,rows: 10
+	,totalCount:100
+});
+var userSearchOptions = [
+	 { text:'전체', value:null }
+	,{ text:'ID', value:'ID' }
+	,{ text:'Name', value:'NAME' }
+];
+var users = new juice.data.List();
+var user = new juice.data.Map();
+var groups = new juice.data.List();
+var roles= new juice.data.List();
+var authorities = new juice.data.List();
 
 $( document ).ready(function() {
 	getUsers();
@@ -25,8 +36,9 @@ function getUsers() {
 	$.ajax({
 		 url: 'user/getUsers'
 		,type: 'GET'
+		,data: userSearch.toJson()
 		,success: function(data, textStatus, jqXHR) {
-			userList.fromJson(JSON.parse(data));
+			users.fromJson(JSON.parse(data));
    	 	}
 	});	
 }
@@ -40,11 +52,14 @@ function getUser(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
-			var user = JSON.parse(data);
-			userMap.fromJson(user);
-			groupList.fromJson(user.groups);
-			roleList.fromJson(user.roles);
-			authorityList.fromJson(user.authorities);
+			var userJson = JSON.parse(data);
+			user.fromJson(userJson);
+			groups.fromJson(userJson.groups);
+			roles.fromJson(userJson.roles);
+			authorities.fromJson(userJson.authorities);
+			
+			// setting user photo
+			$('#userPhotoImg').src = user.get('photo');
   	 	}
 	});	
 }
@@ -53,20 +68,30 @@ function getUser(id) {
  * Saves user
  */
 function saveUser() {
-	var user = userMap.toJson();
-	user.groups = groupList.toJson();
-	user.roles = roleList.toJson();
-	user.authorities = authorityList.toJson();
+	var userJson = user.toJson();
+	userJson.groups = groups.toJson();
+	userJson.roles = roles.toJson();
+	userJson.authorities = authorities.toJson();
 	
 	$.ajax({
 		 url: 'user/saveUser'
 		,type: 'POST'
-		,data: JSON.stringify(user)
+		,data: JSON.stringify(userJson)
 		,contentType: "application/json"
 		,success: function(data, textStatus, jqXHR) {
-			alert(data);
+			alert("Save completed.");
+			getUser(user.get('id'));
  	 	}
 	});	
+}
+
+/**
+ * Adds groups
+ */
+function addGroup() {
+	__openGroupsDialog(function(selectedgroups){
+		alert(selectedgroups);
+	});
 }
 
 </script>
@@ -82,46 +107,55 @@ function saveUser() {
 	width: 50%;
 }
 </style>
-<span class="title1">
-	<i class="material-icons">face</i>
+<div class="title1">
+	<i class="fas fa-user-alt"></i>
 	User Management
-</span>
+</div>
 <div class="container">
 	<div class="left">
 		<!-- ====================================================== -->
 		<!-- User List												-->
 		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
-			<div>
+			<div style="flex:auto;">
 				<span class="title2">
-					Find User
+					<i class="fas fa-search"></i>
 				</span>
-				<select data-juice="ComboBox" data-juice-bind="userFindMap.key" data-juice-options="[]" style="width:100px;"></select>
+				<select data-juice="ComboBox" data-juice-bind="userSearch.key" data-juice-options="userSearchOptions" style="width:100px;"></select>
+				<input data-juice="TextField" data-juice-bind="userSearch.value" style="width:100px;"/>
 			</div>
 			<div>
-				<button onclick="javascript:getUsers();">Find</button>
-				<button onclick="javascript:getUsers();">&lt;</button>
-				<button onclick="javascript:getUsers();">&gt;</button>
+				<button onclick="javascript:getUsers();">
+					<i class="fas fa-search"></i>
+					Find
+				</button>
 			</div>
 		</div>
-		<table data-juice="Grid" data-juice-bind="userList" data-juice-item="user">
+		<table data-juice="Grid" data-juice-bind="users" data-juice-item="user">
 			<thead>
 				<tr>
 					<th>No</th>
 					<th>ID</th>
 					<th>Name</th>
+					<th>Nickname</th>
 					<th>Email</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr data-id="{{$context.user.get('id')}}" onclick="javascript:getUser(this.dataset.id);">
 					<td>{{$context.index+1}}</td>
-					<td><label data-juice="Label" data-juice-bind="user.id"></label></td>
+					<td><label data-juice="Label" data-juice-bind="user.id" class="id"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
+					<td><label data-juice="Label" data-juice-bind="user.nickname"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.email"></label></td>
 				</tr>
 			</tbody>
 		</table>
+		<div>
+			<ul data-juice="Pagination" data-juice-bind="userSearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
+				<li data-page="{{$context.page}}" onclick="javascript:getUsers(this.dataset.page);">{{$context.page}}</li>
+			</ul>
+		</div>
 	</div>
 	<div class="right">
 		<!-- ====================================================== -->
@@ -129,13 +163,24 @@ function saveUser() {
 		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div>
-				<span class="title2">
+				<div class="title2">
+					<i class="fas fa-user-circle"></i>
 					User Detail
-				</span>
+				</div>
 			</div>
 			<div>
-				<button onclick="javascript:saveUser();">Save</button>
-				<button onclick="javascript:removeUser();">Remove</button>
+				<button onclick="javascript:saveUser();">
+					<i class="fas fa-plus"></i>
+					New
+				</button>
+				<button onclick="javascript:saveUser();">
+					<i class="fas fa-save"></i>
+					Save
+				</button>
+				<button onclick="javascript:removeUser();">
+					<i class="far fa-trash-alt"></i>
+					Remove
+				</button>
 			</div>
 		</div>
 		<table class="detail">
@@ -147,115 +192,107 @@ function saveUser() {
 			</colgroup>
 			<tr>
 				<th>ID</th>
-				<td><input data-juice="TextField" data-juice-bind="userMap.id" disabled/></td>
+				<td><input class="id" data-juice="TextField" data-juice-bind="user.id" disabled/></td>
 				<th>Password</th>
-				<td><button>Change</button></td>
+				<td><button><i class="fas fa-key"></i> Change</button></td>
+			</tr>
+			<tr>
+				<th>
+					Photo
+				</th>
+				<td>
+					<img id="userPhotoImg" src="" style="height:100%;"/>
+				</td>
+				<th>
+					Message
+				</th>
+				<td>
+					<textarea data-juice="TextArea" data-juice-bind="user.message"></textarea>
+				</td>
 			</tr>
 			<tr>
 				<th>Name</th>
-				<td><input data-juice="TextField" data-juice-bind="userMap.name"/></td>
+				<td><input data-juice="TextField" data-juice-bind="user.name"/></td>
 				<th>Nickname</th>
-				<td><input data-juice="TextField" data-juice-bind="userMap.nickname"/></td>
+				<td><input data-juice="TextField" data-juice-bind="user.nickname"/></td>
 			</tr>
 			<tr>
 				<th>Email</th>
-				<td><input data-juice="TextField" data-juice-bind="userMap.email"/></td>
+				<td><input data-juice="TextField" data-juice-bind="user.email"/></td>
 				<th>Phone</th>
-				<td><input data-juice="TextField" data-juice-bind="userMap.phone"/></td>
+				<td><input data-juice="TextField" data-juice-bind="user.phone"/></td>
 			</tr>
 			<tr>
-				<th>fdsa</th>
-				<td>fdsa</td>
-				<th>fda</th>
-				<td>fdsa</td>
+				<th>Groups</th>
+				<td colspan="3">
+					<table data-juice="Grid" data-juice-bind="groups" data-juice-item="group">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+								<th>-</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr data-id="{{$context.group.get('id')}}">
+								<td>
+									<a href=""><label data-juice="Label" data-juice-bind="group.id" class="id"></label></a>
+								</td>
+								<td><label data-juice="Label" data-juice-bind="group.name"></label></td>
+								<td>
+									<button><i class="fas fa-minus"></i></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
 			</tr>
-		</table>
-		<!-- ====================================================== -->
-		<!-- User Groups											-->
-		<!-- ====================================================== -->
-		<div style="display:flex; justify-content: space-between;">
-			<div>
-				<span class="title2">
-					Related Group
-				</span>				
-			</div>
-			<div>
-				<button>Add</button>
-			</div>
-		</div>
-		<table data-juice="Grid" data-juice-bind="groupList" data-juice-item="group">
-			<thead>
-				<tr>
-					<th>Group ID</th>
-					<th>Group Name</th>
-					<th>-</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr data-id="{{$context.group.get('id')}}">
-					<td><label data-juice="Label" data-juice-bind="group.id"></label></td>
-					<td><label data-juice="Label" data-juice-bind="group.name"></label></td>
-					<td><button>Remove</button></td>
-				</tr>
-			</tbody>
-		</table>
-		<!-- ====================================================== -->
-		<!-- User Roles												-->
-		<!-- ====================================================== -->
-		<div style="display:flex; justify-content: space-between;">
-			<div>
-				<span class="title2">
-					Related Role
-				</span>
-			</div>
-			<div>
-				<button>Add</button>
-			</div>
-		</div>
-		<table data-juice="Grid" data-juice-bind="roleList" data-juice-item="role">
-			<thead>
-				<tr>
-					<th>Role ID</th>
-					<th>Role Name</th>
-					<th>-</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr data-id="{{$context.role.get('id')}}">
-					<td><label data-juice="Label" data-juice-bind="role.id"></label></td>
-					<td><label data-juice="Label" data-juice-bind="role.name"></label></td>
-					<td><button>Remove</button></td>
-				</tr>
-			</tbody>
-		</table>
-		<!-- ====================================================== -->
-		<!-- Related Authority										-->
-		<!-- ====================================================== -->
-		<div style="display:flex; justify-content: space-between;">
-			<div>
-				<span class="title2">
-					Related Authority
-				</span>
-			</div>
-			<div>
-				<button>Add</button>
-			</div>
-		</div>
-		<table data-juice="Grid" data-juice-bind="authorityList" data-juice-item="authority">
-			<thead>
-				<tr>
-					<th>Role ID</th>
-					<th>Role Name</th>
-					<th>-</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr data-id="{{$context.authority.get('id')}}">
-					<td><label data-juice="Label" data-juice-bind="authority.id"></label></td>
-					<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
-					<td><button>Remove</button></td>
-				</tr>
-			</tbody>
+			<tr>
+				<th>Roles</th>
+				<td colspan="3">
+					<table data-juice="Grid" data-juice-bind="roles" data-juice-item="role">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+								<th>-</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr data-id="{{$context.role.get('id')}}">
+								<td><label data-juice="Label" data-juice-bind="role.id"></label></td>
+								<td><label data-juice="Label" data-juice-bind="role.name"></label></td>
+								<td>
+									<button><i class="fas fa-minus"></i></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<th>Authorities</th>
+				<td colspan="3">
+					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+								<th>-</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr data-id="{{$context.authority.get('id')}}">
+								<td><label data-juice="Label" data-juice-bind="authority.id"></label></td>
+								<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
+								<td>
+									<button><i class="fas fa-minus"></i></button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
 		</table>
 	</div>
 </div>
