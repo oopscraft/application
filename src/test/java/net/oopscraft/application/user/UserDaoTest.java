@@ -31,14 +31,12 @@ public class UserDaoTest extends ApplicationTest {
 			User user = new User();
 			user.setId("test");
 			user.setEmail("test@email.com");
-			user.setMobile("01012341234");
 			user.setName("Tester");
 			user.setNickname("Tester");
 			user.setPassword("password");
-			user.setStatusCode("A");
 			userDao.insertUser(user);
 			user = userDao.selectUser("test");
-			System.out.println(TextTable.build(user));
+			System.out.println(new TextTable(user));
 			if(user == null) {
 				System.err.println("insertUser Error");
 				assert(false);
@@ -48,7 +46,7 @@ public class UserDaoTest extends ApplicationTest {
 			user.setName("test2");
 			userDao.updateUser(user);
 			user = userDao.selectUser("test");
-			System.out.println(TextTable.build(user));
+			System.out.println(new TextTable(user));
 			if(!"test2".equals(user.getName())) {
 				System.err.println("updateUser Error");
 				assert(false);
@@ -57,7 +55,7 @@ public class UserDaoTest extends ApplicationTest {
 			// delete user
 			userDao.deleteUser(user.getId());
 			user = userDao.selectUser("test");
-			System.out.println(TextTable.build(user));
+			System.out.println(new TextTable(user));
 			if(user != null) {
 				System.err.println("deleteUser Error");
 				assert(false);

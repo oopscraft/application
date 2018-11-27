@@ -17,7 +17,7 @@ public class RestRequestFactoryTest {
 		try {
 			RestRequestFactory restRequestFactory = RestRequestFactory.getInstance("/net/oopscraft/application/core/rest/RestRequest.xml");
 			List<RestRequest> restRequestList = restRequestFactory.getRestRequestList();
-			System.out.println(TextTable.build(restRequestList));
+			System.out.println(new TextTable(restRequestList));
 			assert(true);
 		}catch(Exception e) {
 			e.printStackTrace(System.err);

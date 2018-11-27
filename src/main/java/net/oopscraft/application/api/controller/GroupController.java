@@ -24,25 +24,25 @@ public class GroupController {
 	@Autowired
 	GroupService groupService;
 
-	/**
-	 * Returns list of group
-	 * 
-	 * @param findBy
-	 * @param value
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> getGroups(@RequestParam(value = "findBy", required = false) String findBy,
-			@RequestParam(value = "value", required = false) String value) throws Exception {
-		List<Group> groups = null;
-		if (findBy != null && findBy.isEmpty() == false) {
-			groups = groupService.getGroups(GroupService.SearchKey.valueOf(findBy), value);
-		} else {
-			groups = groupService.getGroups(null, null);
-		}
-		return new ResponseEntity<>(JsonUtils.toJson(groups), HttpStatus.OK);
-	}
+//	/**
+//	 * Returns list of group
+//	 * 
+//	 * @param findBy
+//	 * @param value
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	public ResponseEntity<?> getGroups(@RequestParam(value = "findBy", required = false) String findBy,
+//			@RequestParam(value = "value", required = false) String value) throws Exception {
+//		List<Group> groups = null;
+//		if (findBy != null && findBy.isEmpty() == false) {
+//			groups = groupService.getGroups(GroupService.SearchKey.valueOf(findBy), value);
+//		} else {
+//			groups = groupService.getGroups(null, null);
+//		}
+//		return new ResponseEntity<>(JsonUtils.toJson(groups), HttpStatus.OK);
+//	}
 
 	/**
 	 * Returns group details.

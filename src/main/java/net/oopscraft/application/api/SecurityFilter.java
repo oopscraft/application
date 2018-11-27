@@ -28,6 +28,7 @@ import io.jsonwebtoken.SignatureException;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.User;
+import net.oopscraft.application.user.security.UserDetails;
 
 public class SecurityFilter implements Filter {
 	
@@ -64,10 +65,9 @@ public class SecurityFilter implements Filter {
         	User user = new User();
         	user.setId(id);
         	user.setPassword(password);
-        	List<Authority> authorityList= JsonUtils.toList(authorities, Authority.class);
-        	user.setAuthorities(authorityList);
+        	UserDetails userDetails = new UserDetails(user);
         	SecurityContext securityContext = SecurityContextHolder.getContext();
-        	Authentication authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+        	Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
         	securityContext.setAuthentication(authentication);
         }catch(Exception e) {
         	AuthenticationException authenticationException = new BadCredentialsException("Invalid Token Claims.");
