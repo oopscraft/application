@@ -6,7 +6,7 @@
 <tiles-definitions>
 	
 	<!-- Admin Layout -->
-    <definition name="admin/*.tiles" template="/WEB-INF/view/admin/__admin__.jsp">
+    <definition name="admin/*.tiles" template="/WEB-INF/view/admin/__admin.jsp">
         <put-attribute name="main" value="/WEB-INF/view/admin/{1}.jsp" />
     </definition>
     

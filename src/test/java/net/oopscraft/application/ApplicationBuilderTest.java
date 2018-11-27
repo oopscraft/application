@@ -18,7 +18,7 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
-import net.oopscraft.application.core.TextTableBuilder;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.XPathReader;
 import net.oopscraft.application.core.webserver.WebServer;
 import net.oopscraft.application.user.User;
@@ -101,12 +101,12 @@ public class ApplicationBuilderTest {
 					user.setId("admin");
 					user = entityManager.find(User.class, user.getId());
 					System.out.println(String.format("+ user:%s", user));
-					System.out.println(TextTableBuilder.build(user));
+					System.out.println(TextTable.build(user));
 					
 					// testing JapRepository
 					UserRepository userRepository = new JpaRepositoryFactory(entityManager).getRepository(UserRepository.class);
 					List<User> userList = userRepository.findAll();
-					System.out.println(TextTableBuilder.build(userList));
+					System.out.println(TextTable.build(userList));
 					
 					// tests inserting
 					user.setId("admin2");
@@ -145,7 +145,7 @@ public class ApplicationBuilderTest {
 					UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
 					User user = new User();
 					List<User> userList = userMapper.selectUserList(user);
-					System.out.println(TextTableBuilder.build(userList));
+					System.out.println(TextTable.build(userList));
 				}catch(Exception e) {
 					e.printStackTrace(System.err);
 					throw e;

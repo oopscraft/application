@@ -20,12 +20,16 @@ var juice = {
 /**
  * DataMap prototype
  */
-juice.data.Map = function() {
+juice.data.Map = function(json) {
 	this.data = {};
 	this.observers = new Array();
 	this.listener = {};
 	this.parentNode = null;
 	this.childNodes = new Array();
+	if(json) {
+		this.fromJson(json);
+	}
+	this.readOnly = {};
 }
 juice.data.Map.prototype = {
 	/* load data from json object*/
@@ -110,16 +114,24 @@ juice.data.Map.prototype = {
 	/* listen change event */
 	onChange: function(listener){
 		this.listener.change = listener;
+	},
+	/* sets readOnly property */
+	setReadOnly: function(name, readOnly){
+		this.readOnly[name] = readOnly;
+		this.notifyObservers();
 	}
 }
 
 /**
  * DataList prototype
  */
-juice.data.List = function() {
+juice.data.List = function(json) {
 	this.mapList = new Array();
 	this.observers = new Array();
 	this.index = -1;
+	if(json) {
+		this.fromJson(json);
+	}
 }
 juice.data.List.prototype = {
 	/* load data from json */
@@ -168,6 +180,11 @@ juice.data.List.prototype = {
 	getIndex: function() {
 		return this.index;
 	},
+	/* clear current select row index */
+	clearIndex: function() {
+		this.index = -1;
+		this.notifyObservers();
+	},
 	/* returns current row count */
 	getRowCount: function() {
 		return this.mapList.length;
@@ -201,15 +218,36 @@ juice.data.List.prototype = {
 	removeRow: function(index){
 		this.mapList.splice(index, 1);
 		this.notifyObservers();
+	},
+	/* checks contains row via compare */
+	containsRow: function(map, compare) {
+		for(var i = 0, size = this.getRowCount(); i < size; i ++){
+			var row = this.getRow(i);
+			if(compare.call(this,row,map) == true){
+				return true;
+			}
+		}
+		return false;
+	},
+	/* add all rows */
+	addAll: function(list){
+		for(var i = 0, size = list.getRowCount(); i < size; i ++){
+			var map = list.getRow(i);
+			this.addRow(map);
+		}
 	}
+	
 }
 
 /**
  * juice.data.tree prototype
  */
-juice.data.Tree = function() {
+juice.data.Tree = function(json,linkNodeName) {
 	this.rootNode = new juice.data.Map();
 	this.observers = new Array();
+	if(json) {
+		this.fromJson(json,linkNodeName);
+	}
 }
 juice.data.Tree.prototype = {
 	/* load data from JSON Array */ 
@@ -384,6 +422,11 @@ juice.ui.TextField.prototype = {
 			this.input.value = juice.util.MaskFormatter.mask(this.mask, value);
 		}else{
 			this.input.value = value;
+		}
+		if(this.map.readOnly[this.name]){
+			this.input.readOnly = true;
+		}else{
+			this.input.readOnly = false;
 		}
 	},
 	setMask: function(mask){
@@ -2069,24 +2112,31 @@ juice.ui.Alert = function(message){
 
 	// creates dialog
 	this.dialog = new juice.ui.Dialog(this.content);
+	
+	// return self
+	return this;
 }
 juice.ui.Alert.prototype = {
 	/* setting title */
 	setTitle: function(title){
 		this.dialog.setTitle(title);
+		return this;
 	},
 	/* opens alert message box */
 	open : function(){
 		this.dialog.open();
 		this.buttonConfirm.focus();
+		return this;
 	},
 	/* confirm */
 	confirm: function(){
 		this.dialog.close(this.listener.confirm);
+		return this;
 	},
 	/* on close event callback */
 	onConfirm: function(listener){
 		this.listener.confirm = listener;
+		return this;
 	}
 }
 
@@ -2132,32 +2182,41 @@ juice.ui.Confirm = function(message){
 
 	// creates dialog
 	this.dialog = new juice.ui.Dialog(this.content);
+	
+	// return self
+	return this;
 }
 juice.ui.Confirm.prototype = {
 	/* setting title */
 	setTitle: function(title){
 		this.dialog.setTitle(title);
+		return this;
 	},
 	/* opens alert message box */
 	open : function(){
 		this.dialog.open();
 		this.buttonCancel.focus();
+		return this;
 	},
 	/* confirm */
 	confirm: function(){
 		this.dialog.close(this.listener.confirm);
+		return this;
 	},
 	/* cancel */
 	cancel: function(){
 		this.dialog.close(this.listener.cancel);
+		return this;
 	},
 	/* defines confirm event callback function */
 	onConfirm: function(listener){
 		this.listener.confirm = listener;
+		return this;
 	},
 	/* onClose listener */
 	onCancel: function(listener){
 		this.listener.cancel = listener;
+		return this;
 	}
 }
 
@@ -2473,7 +2532,17 @@ juice.initialize = function(container, $context) {
 			return (c=='x' ? r :(r&0x3|0x8)).toString(16);
 		});
 		return uuid;
-	}
+	};
+	
+	// getObject
+	function getObject($context, name) {
+		try {
+			var obj = eval("$context." + name);
+			return obj;
+		}catch(e){
+			console.log('invalid object:' + name);
+		}
+	};
 
 	// creates TreeView 
 	var treeViewElements = container.querySelectorAll('ul[data-juice="TreeView"]');
@@ -2481,7 +2550,7 @@ juice.initialize = function(container, $context) {
 		var element = treeViewElements[i];
 		var treeView = new juice.ui.TreeView(element);
 		var bind = element.dataset.juiceBind;
-		var list = $context[bind];
+		var list = getObject($context,bind);
 		treeView.bind(list);
 		treeView.setItem(element.dataset.juiceItem);
 		element.dataset.juiceEditable && treeView.setEditable(eval(element.dataset.juiceEditable));
@@ -2496,7 +2565,7 @@ juice.initialize = function(container, $context) {
 		var element = gridElements[i];
 		var grid = new juice.ui.Grid(element);
 		var bind = element.dataset.juiceBind;
-		var list = $context[bind];
+		var list = getObject($context,bind);
 		grid.bind(list);
 		grid.setItem(element.dataset.juiceItem);
 		element.dataset.juiceEditable && grid.setEditable(eval(element.dataset.juiceEditable));
@@ -2512,9 +2581,9 @@ juice.initialize = function(container, $context) {
 		var element = workflowElements[i];
 		var workflow = new juice.ui.Workflow(element);
 		var bind = element.dataset.juiceBind.split(',');
-		var nodeList = bind[0];
-		var linkList = bind[1];
-		workflow.bind($context[nodeList],$context[linkList]);
+		var nodeList = getObject($context,bind[0]);
+		var linkList = getObject($context,bind[1]);
+		workflow.bind(nodeList, linkList);
 		workflow.setNodeId(element.dataset.juiceNodeId);
 		workflow.setNodeX(element.dataset.juiceNodeX);
 		workflow.setNodeY(element.dataset.juiceNodeY);
@@ -2531,8 +2600,7 @@ juice.initialize = function(container, $context) {
 	for(var i = 0; i < paginationElements.length; i++ ) {
 		var element = paginationElements[i];
 		var pagination = new juice.ui.Pagination(element);
-		var bind = element.dataset.juiceBind;
-		pagination.bind($context[bind]);
+		pagination.bind(getObject($context,element.dataset.juiceBind));
 		pagination.setRows(element.dataset.juiceRows);
 		pagination.setPage(element.dataset.juicePage);
 		pagination.setTotalCount(element.dataset.juiceTotalCount);
@@ -2549,18 +2617,18 @@ juice.initialize = function(container, $context) {
 		var type = element.dataset.juice;
 		var bind = element.dataset.juiceBind.split('.');
 		var name = bind.pop();
-		var map = bind.join('.');
+		var map = getObject($context,bind.join('.'));
 		var id = generateUUID();
 		switch(type) {
 			case 'Label':
 				var label = new juice.ui.Label(element);
-				label.bind($context[map],name);
+				label.bind(map,name);
 				element.dataset.juiceMask && label.setMask(element.dataset.juiceMask);
 				label.update();
 			break;
 			case 'TextField':
 				var textField = new juice.ui.TextField(element);
-				textField.bind($context[map],name);
+				textField.bind(map,name);
 				element.dataset.juiceMask && textField.setMask(element.dataset.juiceMask);
 				element.dataset.juiceValidator && textField.setValidator(eval(element.dataset.juiceValidator));
 				textField.update();
@@ -2568,33 +2636,33 @@ juice.initialize = function(container, $context) {
 			case 'ComboBox':
 				var comboBox = new juice.ui.ComboBox(element);
 				var options = element.dataset.juiceOptions;
-				comboBox.options(eval(options));
-				comboBox.bind($context[map],name);
+				comboBox.options(getObject($context,options));
+				comboBox.bind(map, name);
 				comboBox.update();
 			break;
 			case 'CheckBox':
 				var checkBox = new juice.ui.CheckBox(element);
-				checkBox.bind($context[map],name);
+				checkBox.bind(map, name);
 				checkBox.update();
 			break;
 			case 'Radio':
 				var radio = new juice.ui.Radio(element);
-				radio.bind($context[map],name);
+				radio.bind(map, name);
 				radio.update();
 			break;
 			case 'TextArea':
 				var textArea = new juice.ui.TextArea(element);
-				textArea.bind($context[map], name);
+				textArea.bind(map, name);
 				textArea.update();
 			break;
 			case 'HtmlEditor':
 				var htmlEditor = new juice.ui.HtmlEditor(element);
-				htmlEditor.bind($context[map],name);
+				htmlEditor.bind(map, name);
 				htmlEditor.update();
 			break;
 			case 'CronExpression':
 				var cronExpression = new juice.ui.CronExpression(element);
-				cronExpression.bind($context[map],name);
+				cronExpression.bind(map, name);
 				cronExpression.update();
 				if(element.dataset.juiceReadonly){
 					cronExpression.setReadonly(eval(element.dataset.juiceReadonly));

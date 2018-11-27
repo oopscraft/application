@@ -17,7 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import net.oopscraft.application.core.JsonUtils;
-import net.oopscraft.application.core.TextTableBuilder;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.restclient.example.ExampleClient;
 
@@ -60,7 +60,7 @@ public class RestClientMain extends JFrame {
 				try { 
 					RestRequestFactory requestFactory = RestRequestFactory.getInstance(restRequestXml); 
 					RestRequest request = requestFactory.getRestRequest(id); 
-					contextTextArea.setText(TextTableBuilder.build(request)); 
+					contextTextArea.setText(TextTable.build(request)); 
 					testTextArea.setText(request.getTest()); 
 					resultTextArea.setText(""); 
 				}catch(Exception e){ 

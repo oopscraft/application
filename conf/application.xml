@@ -56,7 +56,7 @@
 	<!-- Message Source											-->
 	<!-- ====================================================== -->
 	<messageSource id="messageSource">
-		<basename>/WEB-INF/message/message</basename>
+		<basename>file:conf/i18n/message</basename>
 		<cacheSeconds>3</cacheSeconds>
 	</messageSource>
 	
