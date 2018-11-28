@@ -111,6 +111,21 @@ public class RoleController {
 		role = roleService.saveRole(role);
 		return JsonUtils.toJson(role);
 	}
+	
+	/**
+	 * Removes role.
+	 * 
+	 * @param payload
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "removeRole", method = RequestMethod.GET)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public String removeRole(@RequestParam(value = "id") String id) throws Exception {
+		Role role = roleService.removeRole(id);
+		return JsonUtils.toJson(role);
+	}
 
 
 }

@@ -15,9 +15,11 @@
 		<script src="${pageContext.request.contextPath}/lib/juice/juice.js"></script>
 		<script src="${pageContext.request.contextPath}/lib/jquery.js"></script>
 
-		<!-- font icon -->
+		<!-- font icon 
  		<link href="${pageContext.request.contextPath}/lib/fontawesome/css/all.css" rel="stylesheet">
  		<script defer src="${pageContext.request.contextPath}/lib/fontawesome/js/all.js"></script>
+ 		-->
+ 		<link href="${pageContext.request.contextPath}/lib/icon/css/icon.css" rel="stylesheet">
 		
 		<!-- global -->
 		<script type="text/javascript">
@@ -222,32 +224,54 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			border: solid 1px;
+			height: 50px;
+			background-color: #f7f7f7;
+			border: solid 1px #ccc;
 		}
 		body > main {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
 			min-height: 768px;
-			border: solid 1px;
+			border: solid 0px #efefef;
 		}
 		body > main > nav {
 			align-self: stretch;
 			width: 200px;
-			border: solid 1px;
+			padding: 0px;
+			border: solid 1px #ccc;
+		}
+		body > main > nav > ul {
+		    list-style: none;
+		}
+		body > main > nav > ul li {
+			font-weight: normal;
+			background-color: #f7f7f7;
+			padding: 5px;
+			border-top: solid 1px white;
+			border-bottom: solid 1px #ccc;
+		}
+		body > main > nav > ul li:hover {
 			font-weight: bold;
+			background-color: white;
+			cursor: hand;
+			cursor: pointer;
+		}
+		body > main > nav > ul li > a {
+			display: block;
+			text-decoration: none !important;
 		}
 		body > main > section {
 			align-self: stretch;
 			width: 100%;
-			border: solid 1px;
+			border: solid 1px #efefef;
 			padding: 10px;
 		}
 		body > footer {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			border: solid 1px;
+			border: solid 1px #efefef;
 		}
 		@media (max-width: 1024px) {
 			body > main {
@@ -267,6 +291,9 @@
 			display: inline-block;
 			font-size: 14px;
 			font-weight: bold;
+		}
+		i {
+			font-size: inherit;
 		}
 		table.detail {
 			width: 100%;
@@ -329,7 +356,8 @@
 			</div>
 			<div style="padding-right:10px;">
 				<span>
-					<i class="fas fa-globe"></i>
+					<i class="icon-globe"></i>
+					<spring:message code="label.language"/>
 					<select onchange="javascript:__changeLanguage(this.value)">
 						<option value="en" ${pageContext.response.locale == 'en'?'selected':''}>English</option>
 						<option value="ko" ${pageContext.response.locale == 'ko'?'selected':''}>한국어</option>
@@ -337,9 +365,9 @@
 				</span>
 				&nbsp;
 				<span>
-					<i class="fas fa-power-off"></i>
+					<i class="icon-logout"></i>
 					<a href="${pageContext.request.contextPath}/admin/logout">
-						Logout
+						<spring:message code="label.logout"/>
 					</a>
 				</span>
 			</div>
@@ -349,18 +377,73 @@
 			<!-- Navigation												-->
 			<!-- ====================================================== -->
 			<nav>
-				NAV
 				<ul>
-					<li><a href="user"><spring:message code="label.user"/></a></li>
-					<li><a href="group"><spring:message code="label.group"/></a></li>
-					<li><a href="role"><spring:message code="label.role"/></a></li>
-					<li><a href="authority"><spring:message code="label.authority"/></a></li>
-					<li><a href="menu"><spring:message code="label.menu"/></a></li>
-					<li><a href="code"><spring:message code="label.code"/></a></li>
-					<li><a href="message"><spring:message code="label.message"/></a></li>
-					<li><a href="template"><spring:message code="label.template"/></a></li>
-					<li><a href="board"><spring:message code="label.board"/></a></li>
-					<li><a href="content"><spring:message code="label.content"/></a></li>
+					<li>
+						<a href="dash">
+							<i class="icon-monitor"></i>
+							<spring:message code="label.dash"/>
+						</a>
+					</li>
+					<li>
+						<a href="user">
+							<i class="icon-user"></i>
+							<spring:message code="label.user"/>
+						</a>
+					</li>
+					<li>
+						<a href="group">
+							<i class="icon-folder"></i>
+							<spring:message code="label.group"/>
+						</a>
+					</li>
+					<li>
+						<a href="role">
+							<i class="icon-card"></i>
+							<spring:message code="label.role"/>
+						</a>
+					</li>
+					<li>
+						<a href="authority">
+							<i class="icon-key"></i>
+							<spring:message code="label.authority"/>
+						</a>
+					</li>
+					<li>
+						<a href="menu">
+							<i class="icon-list"></i>
+							<spring:message code="label.menu"/>
+						</a>
+					</li>
+					<li>
+						<a href="code">
+							<i class="icon-code"></i>
+							<spring:message code="label.code"/>
+						</a>
+					</li>
+					<li>
+						<a href="message">
+							<i class="icon-message"></i>
+							<spring:message code="label.message"/>
+						</a>
+					</li>
+					<li>
+						<a href="template">
+							<i class="icon-template"></i>
+							<spring:message code="label.template"/>
+						</a>
+					</li>
+					<li>
+						<a href="board">
+							<i class="icon-key"></i>
+							<spring:message code="label.board"/>
+						</a>
+					</li>
+					<li>
+						<a href="content">
+							<i class="icon-content"></i>
+							<spring:message code="label.content"/>
+						</a>
+					</li>
 				</ul>
 			</nav>
 			<!-- ====================================================== -->

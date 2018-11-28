@@ -165,7 +165,7 @@ function removeAuthority() {
 }
 </style>
 <div class="title1">
-	<i class="fas fa-user-alt"></i>
+	<i class="icon-key"></i>
 	<spring:message code="text.authority"/>
 	<spring:message code="text.management"/>
 </div>
@@ -178,14 +178,14 @@ function removeAuthority() {
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
 				<div class="title2">
-					<i class="fas fa-search"></i>
+					<i class="icon-search"></i>
 				</div>
 				<select data-juice="ComboBox" data-juice-bind="authoritySearch.key" data-juice-options="authoritySearchKeys" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="authoritySearch.value" style="width:100px;"/>
 			</div>
 			<div>
 				<button onclick="javascript:getAuthorities();">
-					<i class="fas fa-search"></i>
+					<i class="icon-search"></i>
 					<spring:message code="text.search"/>
 				</button>
 			</div>
@@ -228,22 +228,22 @@ function removeAuthority() {
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
-					<i class="fas fa-user-circle"></i>
+					<i class="icon-key"></i>
 					<spring:message code="text.authority"/>
 					<spring:message code="text.details"/>
 				</div>
 			</div>
 			<div>
 				<button onclick="javascript:addAuthority();">
-					<i class="fas fa-plus"></i>
+					<i class="icon-plus"></i>
 					<spring:message code="text.new"/>
 				</button>
 				<button onclick="javascript:saveAuthority();">
-					<i class="fas fa-save"></i>
+					<i class="icon-disk"></i>
 					<spring:message code="text.save"/>
 				</button>
 				<button onclick="javascript:removeAuthority();">
-					<i class="far fa-trash-alt"></i>
+					<i class="icon-trash"></i>
 					<spring:message code="text.remove"/>
 				</button>
 			</div>
