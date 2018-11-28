@@ -97,6 +97,16 @@ function getRole(id) {
 }
 
 /**
+ * Adds role
+ */
+function addRole() {
+	roles.clearIndex();
+	role.fromJson({});
+	role.setReadOnly('id',false);
+	authorities.fromJson([]);
+}
+
+/**
  * Adds Authority
  */
 function addAuthority(){
@@ -161,7 +171,29 @@ function saveRole(){
 		}).open();
 }
 
-
+/**
+ * Removes role
+ */
+function removeRole() {
+	<c:set var="item"><spring:message code="text.role"/></c:set>
+	var message = '<spring:message code="message.removeItem.confirm" arguments="${item}"/>';
+	new juice.ui.Confirm(message)
+	.onConfirm(function() {
+		$.ajax({
+			 url: 'role/removeRole'
+			,type: 'GET'
+			,data: { id: role.get('id') }
+			,success: function(data, textStatus, jqXHR) {
+				<c:set var="item"><spring:message code="text.role"/></c:set>
+				var message = '<spring:message code="message.removeItem.complete" arguments="${item}"/>';
+				new juice.ui.Alert(message)
+				.onConfirm(function(){
+					getRoles();
+				}).open();
+	  	 	}
+		});	
+	}).open();
+}
 
 </script>
 <style type="text/css">
@@ -177,7 +209,7 @@ function saveRole(){
 }
 </style>
 <div class="title1">
-	<i class="fas fa-user-alt"></i>
+	<i class="icon-card"></i>
 	<spring:message code="text.role"/>
 	<spring:message code="text.management"/>
 </div>
@@ -190,14 +222,14 @@ function saveRole(){
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
 				<div class="title2">
-					<i class="fas fa-search"></i>
+					<i class="icon-search"></i>
 				</div>
 				<select data-juice="ComboBox" data-juice-bind="roleSearch.key" data-juice-options="roleSearchKeys" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="roleSearch.value" style="width:100px;"/>
 			</div>
 			<div>
 				<button onclick="javascript:getRoles();">
-					<i class="fas fa-search"></i>
+					<i class="icon-search"></i>
 					<spring:message code="text.search"/>
 				</button>
 			</div>
@@ -240,22 +272,22 @@ function saveRole(){
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
-					<i class="fas fa-user-circle"></i>
+					<i class="icon-card"></i>
 					<spring:message code="text.role"/>
 					<spring:message code="text.details"/>
 				</div>
 			</div>
 			<div>
 				<button onclick="javascript:addRole();">
-					<i class="fas fa-plus"></i>
+					<i class="icon-plus"></i>
 					<spring:message code="text.new"/>
 				</button>
 				<button onclick="javascript:saveRole();">
-					<i class="fas fa-save"></i>
+					<i class="icon-disk"></i>
 					<spring:message code="text.save"/>
 				</button>
 				<button onclick="javascript:removeRole();">
-					<i class="far fa-trash-alt"></i>
+					<i class="icon-trash"></i>
 					<spring:message code="text.remove"/>
 				</button>
 			</div>
@@ -273,7 +305,7 @@ function saveRole(){
 					<spring:message code="text.id"/>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="role.id" disabled/>
+					<input class="id" data-juice="TextField" data-juice-bind="role.id"/>
 				</td>
 				<th>
 					<spring:message code="text.role"/>
@@ -292,18 +324,24 @@ function saveRole(){
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="text.authority"/>
-					<spring:message code="text.list"/>
+					<i class="icon-key"></i>
+					<spring:message code="text.authorities"/>
 				</th>
 				<td colspan="3">
 					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
 						<thead>
 							<tr>
-								<th>ID</th>
-								<th>Name</th>
+								<th>
+									<spring:message code="text.authority"/>
+									<spring:message code="text.id"/>
+								</th>
+								<th>
+									<spring:message code="text.authority"/>
+									<spring:message code="text.name"/>
+								</th>
 								<th>
 									<button onclick="javascript:addAuthority();">
-										<i class="fas fa-plus"></i>
+										<i class="icon-plus"></i>
 									</button>
 								</th>
 							</tr>
@@ -314,7 +352,7 @@ function saveRole(){
 								<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
 								<td>
 									<button data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
-										<i class="fas fa-minus"></i>
+										<i class="icon-minus"></i>
 									</button>
 								</td>
 							</tr>

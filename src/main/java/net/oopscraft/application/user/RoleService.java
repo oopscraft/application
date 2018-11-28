@@ -1,5 +1,6 @@
 package net.oopscraft.application.user;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -96,18 +97,31 @@ public class RoleService {
 		if (one == null) {
 			one = new Role();
 			one.setId(role.getId());
+			one.setAuthorities(new ArrayList<Authority>());
 		}
 		one.setName(role.getName());
 		one.setDescription(role.getDescription());
-		
+
 		// add authorities
 		one.getAuthorities().clear();
-		for(Authority authority : role.getAuthorities()) {
+		for (Authority authority : role.getAuthorities()) {
 			one.getAuthorities().add(authority);
 		}
 
 		roleRepository.save(one);
 		return roleRepository.findOne(role.getId());
+	}
+	
+	/**
+	 * Removes role
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public Role removeRole(String id) throws Exception {
+		Role role = roleRepository.getOne(id);
+		roleRepository.delete(role);
+		return role;
 	}
 
 }
