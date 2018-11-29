@@ -257,13 +257,16 @@ function removeAuthority() {
 			</colgroup>
 			<tr>
 				<th>
+					<i class="icon-attention"></i>
 					<spring:message code="text.authority"/>
 					<spring:message code="text.id"/>
 				</th>
 				<td>
+					
 					<input class="id" data-juice="TextField" data-juice-bind="authority.id"/>
 				</td>
 				<th>
+					*
 					<spring:message code="text.authority"/>
 					<spring:message code="text.name"/>
 				</th>
