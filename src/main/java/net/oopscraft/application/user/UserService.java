@@ -141,7 +141,7 @@ public class UserService {
 		one.setEmail(user.getEmail());
 		one.setPhone(user.getPhone());
 		one.setPhoto(user.getPhoto());
-		one.setMessage(user.getMessage());
+		one.setProfile(user.getProfile());
 		
 		// add authorities
 		one.getAuthorities().clear();

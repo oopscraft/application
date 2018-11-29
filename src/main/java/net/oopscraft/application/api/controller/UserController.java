@@ -42,51 +42,51 @@ public class UserController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@Transactional(rollbackFor = Exception.class)
-	public ResponseEntity<?> getUsers(
-			 @RequestParam(value="key",required=false)String key
-			,@RequestParam(value="value",required=false)String value
-			,@RequestParam(value="page",required=false,defaultValue="1")Integer page
-			,@RequestParam(value="rows",required=false,defaultValue="10")Integer rows
-		) throws Exception {
-		PageInfo pageInfo = new PageInfo(page.intValue(),rows.intValue(),true);
-		List<User> users = userService.getUsers(null, null, pageInfo);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return new ResponseEntity<>(JsonUtils.toJson(users), httpHeaders, HttpStatus.OK);
-
-		
-		
-//		for(String beanName : applicationContext.getBeanDefinitionNames()) {
-//			Object beanObj = applicationContext.getBean(beanName);
-//			System.out.println("+ beanName[" + beanName + "]:" + beanObj);
-//		}
+//	@RequestMapping(method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@Transactional(rollbackFor = Exception.class)
+//	public ResponseEntity<?> getUsers(
+//			 @RequestParam(value="key",required=false)String key
+//			,@RequestParam(value="value",required=false)String value
+//			,@RequestParam(value="page",required=false,defaultValue="1")Integer page
+//			,@RequestParam(value="rows",required=false,defaultValue="10")Integer rows
+//		) throws Exception {
+//		PageInfo pageInfo = new PageInfo(page.intValue(),rows.intValue(),true);
+//		List<User> users = userService.getUsers(null, null, pageInfo);
+//		HttpHeaders httpHeaders = new HttpHeaders();
+//		httpHeaders.add(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+//		return new ResponseEntity<>(JsonUtils.toJson(users), httpHeaders, HttpStatus.OK);
+//
 //		
-//		// insert via JPA
-//		User userJpa = new User();
-//		userJpa.setId("userjpa");
-//		userJpa.setName("userjpa");
-//		userRepository.saveAndFlush(userJpa);
 //		
-//		// insert via MYBATIS
-//		User userMybatis = new User();
-//		userMybatis.setId("userMybatis");
-//		userMybatis.setName("userMybatis");
-//		userMapper.insertUser(userMybatis);
-//		
-//		// prints all users.
-//		List<User> users = userMapper.selectUserList(new User());
-//		LOGGER.info(TextTableBuilder.build(users));
-//		
-//		// throws Exception
-//		if(1 == 1) {
-//			throw new Exception();	
-//		}
-//		
-//		// return response
-//		return new ResponseEntity<>(JsonUtils.toJson(users), HttpStatus.OK);
-	}
+////		for(String beanName : applicationContext.getBeanDefinitionNames()) {
+////			Object beanObj = applicationContext.getBean(beanName);
+////			System.out.println("+ beanName[" + beanName + "]:" + beanObj);
+////		}
+////		
+////		// insert via JPA
+////		User userJpa = new User();
+////		userJpa.setId("userjpa");
+////		userJpa.setName("userjpa");
+////		userRepository.saveAndFlush(userJpa);
+////		
+////		// insert via MYBATIS
+////		User userMybatis = new User();
+////		userMybatis.setId("userMybatis");
+////		userMybatis.setName("userMybatis");
+////		userMapper.insertUser(userMybatis);
+////		
+////		// prints all users.
+////		List<User> users = userMapper.selectUserList(new User());
+////		LOGGER.info(TextTableBuilder.build(users));
+////		
+////		// throws Exception
+////		if(1 == 1) {
+////			throw new Exception();	
+////		}
+////		
+////		// return response
+////		return new ResponseEntity<>(JsonUtils.toJson(users), HttpStatus.OK);
+//	}
 	
 //	/**
 //	 * Gets user
