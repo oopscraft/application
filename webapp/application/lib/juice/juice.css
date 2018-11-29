@@ -36,6 +36,7 @@
     padding-right: 1%;
     width: 98%;
     color: #495057;
+    -webkit-appearance: none;
     border-radius: 2px;
     border: 1px solid #cccccc;
     background-color: #fff;

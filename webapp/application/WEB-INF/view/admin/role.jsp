@@ -237,17 +237,20 @@ function removeRole() {
 			</div>
 		</div>
 		<table id="rolesTable" data-juice="Grid" data-juice-bind="roles" data-juice-item="role">
+			<colgroup>
+				<col style="width:10%;"/>
+				<col/>
+				<col/>
+			</colgroup>
 			<thead>
 				<tr>
 					<th>
 						<spring:message code="text.no"/>
 					</th>
 					<th>
-						<spring:message code="text.role"/>
 						<spring:message code="text.id"/>
 					</th>
 					<th>
-						<spring:message code="text.role"/>
 						<spring:message code="text.name"/>
 					</th>
 				</tr>
@@ -296,31 +299,31 @@ function removeRole() {
 		</div>
 		<table id="roleTable" class="detail">
 			<colgroup>
-				<col style="width:20%;">
-				<col style="width:30%;">
-				<col style="width:20%;">
-				<col style="width:30%;">
+				<col style="width:30%;"/>
+				<col style="width:70%;"/>
 			</colgroup>
 			<tr>
 				<th>
-					<spring:message code="text.role"/>
+					<i class="icon-attention"></i>
 					<spring:message code="text.id"/>
 				</th>
 				<td>
 					<input class="id" data-juice="TextField" data-juice-bind="role.id"/>
 				</td>
+			</tr>
+			<tr>
 				<th>
-					<spring:message code="text.role"/>
-					<spring:message code="text.name"/>
+					<span class="must">
+						<spring:message code="text.name"/>
+					</span>
 				</th>
 				<td><input data-juice="TextField" data-juice-bind="role.name"/></td>
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="text.role"/>
 					<spring:message code="text.description"/>
 				</th>
-				<td colspan="3">
+				<td>
 					<textarea data-juice="TextArea" data-juice-bind="role.description"></textarea>
 				</td>
 			</tr>
@@ -329,16 +332,19 @@ function removeRole() {
 					<i class="icon-key"></i>
 					<spring:message code="text.authorities"/>
 				</th>
-				<td colspan="3">
+				<td>
 					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
+						<colgroup>
+							<col/>
+							<col/>
+							<col style="width:10%;"/>
+						</colgroup>
 						<thead>
 							<tr>
 								<th>
-									<spring:message code="text.authority"/>
 									<spring:message code="text.id"/>
 								</th>
 								<th>
-									<spring:message code="text.authority"/>
 									<spring:message code="text.name"/>
 								</th>
 								<th>

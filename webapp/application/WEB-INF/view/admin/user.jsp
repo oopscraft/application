@@ -3,6 +3,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@page import="java.util.*" %>
 <%@page import="java.text.*" %>
 <!-- global -->
@@ -11,20 +12,52 @@ var userSearch = new juice.data.Map({
 	 key: null
 	,value: null
 	,page: 1
-	,rows: 10
-	,totalCount:100
+	,rows: 20
+	,totalCount: -1
 });
-var userSearchOptions = [
-	 { text:'전체', value:null }
-	,{ text:'ID', value:'ID' }
-	,{ text:'Name', value:'NAME' }
+/* defines roleSearch Map change event handler */
+userSearch.onChange(function(event){
+	/* reset value when key changed */
+	if(event.name == 'key'){
+		this.set('value','');
+	}
+});
+var userSearchKeys = [
+	 { value:'', text:'- <spring:message code="text.all"/> -' }
+	,{ value:'id', text:'<spring:message code="text.id"/>' }
+	,{ value:'name', text:'<spring:message code="text.name"/>' }
+	,{ value:'email', text:'<spring:message code="text.email"/>' }
+	,{ value:'phone', text:'<spring:message code="text.phone"/>' }
 ];
 var users = new juice.data.List();
 var user = new juice.data.Map();
+user.onChange(function(event){
+	// Checks ID is unique.
+	if(event.name == 'id') {
+		var valid = true;
+		$.ajax({
+			 url: 'user/getUser'
+			,type: 'GET'
+			,data: {id:event.value}
+			,async: false
+			,success: function(data, textStatus, jqXHR) {
+				var userJson = JSON.parse(data);
+				if(userJson != null && userJson.id == event.value){
+					new juice.ui.Alert('<spring:message code="message.duplicatedId"/>').open();
+					valid = false;
+				}
+	 	 	}
+		});
+		return valid;
+	}
+});
 var groups = new juice.data.List();
 var roles= new juice.data.List();
 var authorities = new juice.data.List();
 
+/**
+ * On document loaded
+ */
 $( document ).ready(function() {
 	getUsers();
 });
@@ -32,13 +65,18 @@ $( document ).ready(function() {
 /**
  * Gets user list
  */
-function getUsers() {
+function getUsers(page) {
+	if(page){
+		userSearch.set('page',page);
+	}
 	$.ajax({
 		 url: 'user/getUsers'
 		,type: 'GET'
 		,data: userSearch.toJson()
 		,success: function(data, textStatus, jqXHR) {
 			users.fromJson(JSON.parse(data));
+			userSearch.set('totalCount', __parseTotalCount(jqXHR));
+			$('#usersTable > tbody').hide().fadeIn();
    	 	}
 	});	
 }
@@ -57,12 +95,14 @@ function getUser(id) {
 			groups.fromJson(userJson.groups);
 			roles.fromJson(userJson.roles);
 			authorities.fromJson(userJson.authorities);
+			$('#userTable').hide().fadeIn();
 			
 			// setting user photo
 			$('#userPhotoImg').src = user.get('photo');
   	 	}
 	});	
 }
+
 
 /**
  * Saves user
@@ -83,6 +123,82 @@ function saveUser() {
 			getUser(user.get('id'));
  	 	}
 	});	
+}
+
+/**
+ * Adds Role
+ */
+function addRole(){
+	__rolesDialog.open(function (selectedRoles){
+		
+		// checks duplicated row
+		var duplicated = false;
+		for(var i = 0, size = selectedRoles.getRowCount(); i < size; i ++){
+			var row = selectedRoles.getRow(i);
+			duplicated = roles.containsRow(row, function(src,tar){
+				if(src.get('id') == tar.get('id')){
+					return true;
+				}
+			});
+			if(duplicated == true){
+				break;
+			}
+		}
+		if(duplicated == true){
+			<c:set var="item"><spring:message code="text.role"/></c:set>
+			var message = '<spring:message code="message.duplicatedItem" arguments="${item}"/>';
+			new juice.ui.Alert(message).open();
+			return false;
+		}
+
+		// add selected rows.
+		roles.addAll(selectedRoles);
+	});
+}
+
+/**
+ * Removes authoritiy.
+ */
+function removeAuthority(index){
+	roles.removeRow(index);
+}
+
+/**
+ * Adds Authority
+ */
+function addAuthority(){
+	__authoritiesDialog.open(function (selectedAuthorities){
+		
+		// checks duplicated row
+		var duplicated = false;
+		for(var i = 0, size = selectedAuthorities.getRowCount(); i < size; i ++){
+			var row = selectedAuthorities.getRow(i);
+			duplicated = authorities.containsRow(row, function(src,tar){
+				if(src.get('id') == tar.get('id')){
+					return true;
+				}
+			});
+			if(duplicated == true){
+				break;
+			}
+		}
+		if(duplicated == true){
+			<c:set var="item"><spring:message code="text.authority"/></c:set>
+			var message = '<spring:message code="message.duplicatedItem" arguments="${item}"/>';
+			new juice.ui.Alert(message).open();
+			return false;
+		}
+
+		// add selected rows.
+		authorities.addAll(selectedAuthorities);
+	});
+}
+
+/**
+ * Removes authoritiy.
+ */
+function removeAuthority(index){
+	authorities.removeRow(index);
 }
 
 /**
@@ -108,8 +224,9 @@ function addGroup() {
 }
 </style>
 <div class="title1">
-	<i class="fas fa-user-alt"></i>
-	User Management
+	<i class="icon-user"></i>
+	<spring:message code="text.user"/>
+	<spring:message code="text.management"/>
 </div>
 <div class="container">
 	<div class="left">
@@ -119,26 +236,36 @@ function addGroup() {
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
 				<span class="title2">
-					<i class="fas fa-search"></i>
+					<i class="icon-search"></i>
 				</span>
-				<select data-juice="ComboBox" data-juice-bind="userSearch.key" data-juice-options="userSearchOptions" style="width:100px;"></select>
+				<select data-juice="ComboBox" data-juice-bind="userSearch.key" data-juice-options="userSearchKeys" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="userSearch.value" style="width:100px;"/>
 			</div>
 			<div>
 				<button onclick="javascript:getUsers();">
-					<i class="fas fa-search"></i>
-					Find
+					<i class="icon-search"></i>
+					<spring:message code="text.search"/>
 				</button>
 			</div>
 		</div>
-		<table data-juice="Grid" data-juice-bind="users" data-juice-item="user">
+		<table id="usersTable" data-juice="Grid" data-juice-bind="users" data-juice-item="user">
 			<thead>
 				<tr>
-					<th>No</th>
-					<th>ID</th>
-					<th>Name</th>
-					<th>Nickname</th>
-					<th>Email</th>
+					<th>
+						<spring:message code="text.no"/>
+					</th>
+					<th>
+						<spring:message code="text.id"/>
+					</th>
+					<th>
+						<spring:message code="text.name"/>
+					</th>
+					<th>
+						<spring:message code="text.email"/>
+					</th>
+					<th>
+						<spring:message code="text.phone"/>
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -146,8 +273,8 @@ function addGroup() {
 					<td>{{$context.index+1}}</td>
 					<td><label data-juice="Label" data-juice-bind="user.id" class="id"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
-					<td><label data-juice="Label" data-juice-bind="user.nickname"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.email"></label></td>
+					<td><label data-juice="Label" data-juice-bind="user.phone"></label></td>
 				</tr>
 			</tbody>
 		</table>
@@ -157,6 +284,7 @@ function addGroup() {
 			</ul>
 		</div>
 	</div>
+	<hr/>
 	<div class="right">
 		<!-- ====================================================== -->
 		<!-- User Details											-->
@@ -164,83 +292,146 @@ function addGroup() {
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
-					<i class="fas fa-user-circle"></i>
-					User Detail
+					<i class="icon-user"></i>
+					<spring:message code="text.user"/>
+					<spring:message code="text.details"/>
 				</div>
 			</div>
 			<div>
-				<button onclick="javascript:saveUser();">
-					<i class="fas fa-plus"></i>
-					New
+				<button onclick="javascript:addUser();">
+					<i class="icon-plus"></i>
+					<spring:message code="text.new"/>
 				</button>
 				<button onclick="javascript:saveUser();">
-					<i class="fas fa-save"></i>
-					Save
+					<i class="icon-disk"></i>
+					<spring:message code="text.save"/>
 				</button>
 				<button onclick="javascript:removeUser();">
-					<i class="far fa-trash-alt"></i>
-					Remove
+					<i class="icon-trash"></i>
+					<spring:message code="text.remove"/>
 				</button>
 			</div>
 		</div>
-		<table class="detail">
+		<table id="userTable" class="detail">
 			<colgroup>
-				<col style="width:20%;">
-				<col style="width:30%;">
-				<col style="width:20%;">
-				<col style="width:30%;">
+				<col style="width:30;">
+				<col style="width:70%;">
 			</colgroup>
 			<tr>
-				<th>ID</th>
-				<td><input class="id" data-juice="TextField" data-juice-bind="user.id" disabled/></td>
-				<th>Password</th>
-				<td><button><i class="fas fa-key"></i> Change</button></td>
+				<th>
+					<i class="icon-attention"></i>
+					<spring:message code="text.id"/>
+				</th>
+				<td>
+					<input class="id" data-juice="TextField" data-juice-bind="user.id"/>
+				</td>
 			</tr>
 			<tr>
 				<th>
-					Photo
+					<span class="must">
+						<spring:message code="text.password"/>
+					</span>
 				</th>
 				<td>
-					<img id="userPhotoImg" src="" style="height:100%;"/>
+					<input class="id" data-juice="TextField" data-juice-bind="user.password" style="width:30%;"/>
+					<input class="id" data-juice="TextField" data-juice-bind="user.passwordConfirm" style="width:30%;"/>
+					<button>
+						<i class="icon-key"></i>
+						<spring:message code="text.change"/>
+					</button>
 				</td>
+			</tr>
+			<tr>
 				<th>
-					Message
+					<span class="must">
+						<spring:message code="text.email"/>
+					</span>
+				</th>
+				<td>
+					<input data-juice="TextField" data-juice-bind="user.email"/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span class="must">
+						<spring:message code="text.phone"/>
+					</span>
+				</th>
+				<td>
+					<input data-juice="TextField" data-juice-bind="user.phone"/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span class="must">
+						<spring:message code="text.name"/>
+					</span>
+				</th>
+				<td>
+					<input data-juice="TextField" data-juice-bind="user.name"/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span class="must">
+						<spring:message code="text.nickname"/>
+					</span>
+				</th>
+				<td>
+					<input data-juice="TextField" data-juice-bind="user.nickname"/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<spring:message code="text.photo"/>
+				</th>
+				<td>
+					<img id="userPhotoImg" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTI4IDEyOCIgaWQ9ItCh0LvQvtC5XzEiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDEyOCAxMjgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxnPjxnPjxwYXRoIGQ9Ik02My45MTExMzI4LDcyLjAzNTY0NDVjLTEwLjI2NTYyNSwwLTE4LjYxNzE4NzUtOC4zNTIwNTA4LTE4LjYxNzE4NzUtMTguNjE3Njc1OCAgICBTNTMuNjQ1NTA3OCwzNC44MDAyOTMsNjMuOTExMTMyOCwzNC44MDAyOTNzMTguNjE4MTY0MSw4LjM1MjA1MDgsMTguNjE4MTY0MSwxOC42MTc2NzU4ICAgIFM3NC4xNzY3NTc4LDcyLjAzNTY0NDUsNjMuOTExMTMyOCw3Mi4wMzU2NDQ1eiBNNjMuOTExMTMyOCwzOC44MDAyOTNjLTguMDU5NTcwMywwLTE0LjYxNzE4NzUsNi41NTc2MTcyLTE0LjYxNzE4NzUsMTQuNjE3Njc1OCAgICBzNi41NTc2MTcyLDE0LjYxNzY3NTgsMTQuNjE3MTg3NSwxNC42MTc2NzU4YzguMDYwNTQ2OSwwLDE0LjYxODE2NDEtNi41NTc2MTcyLDE0LjYxODE2NDEtMTQuNjE3Njc1OCAgICBTNzEuOTcxNjc5NywzOC44MDAyOTMsNjMuOTExMTMyOCwzOC44MDAyOTN6IiBmaWxsPSIjMzM5OUNDIi8+PC9nPjxnPjxwYXRoIGQ9Ik0zMi43MDAxOTUzLDk0LjE4NTU0NjljLTEuMTA0NDkyMiwwLTItMC44OTU1MDc4LTItMiAgICBjMC0xMy4xOTkyMTg4LDE0LjgyNzE0ODQtMjMuOTM3OTg4MywzMy4wNTE3NTc4LTIzLjkzNzk4ODNjOC40MTAxNTYyLDAsMTYuNDE2MDE1NiwyLjI3MjQ2MDksMjIuNTQxOTkyMiw2LjM5ODkyNTggICAgYzAuOTE2MDE1NiwwLjYxNzE4NzUsMS4xNTgyMDMxLDEuODU5ODYzMywwLjU0MTk5MjIsMi43NzU4Nzg5Yy0wLjYxNzE4NzUsMC45MTYwMTU2LTEuODU4Mzk4NCwxLjE2MDE1NjItMi43NzYzNjcyLDAuNTQxNTAzOSAgICBDNzguNTg2OTE0MSw3NC4yNzc4MzIsNzEuMzc1LDcyLjI0NzU1ODYsNjMuNzUxOTUzMSw3Mi4yNDc1NTg2Yy0xNi4wMTk1MzEyLDAtMjkuMDUxNzU3OCw4Ljk0NDMzNTktMjkuMDUxNzU3OCwxOS45Mzc5ODgzICAgIEMzNC43MDAxOTUzLDkzLjI5MDAzOTEsMzMuODA0Njg3NSw5NC4xODU1NDY5LDMyLjcwMDE5NTMsOTQuMTg1NTQ2OXoiIGZpbGw9IiMzMzk5Q0MiLz48L2c+PGc+PHBhdGggZD0iTTg5LjEyOTg4MjgsODEuMzg5NjQ4NGMtMC41MjA1MDc4LDAtMS4wNDAwMzkxLTAuMjE5NzI2Ni0xLjQxMDE1NjItMC41ODk4NDM4ICAgIHMtMC41ODk4NDM4LTAuODkwMTM2Ny0wLjU4OTg0MzgtMS40MTAxNTYyYzAtMC41Mjk3ODUyLDAuMjE5NzI2Ni0xLjA0MDAzOTEsMC41ODk4NDM4LTEuNDE5OTIxOSAgICBjMC43MzA0Njg4LTAuNzM5NzQ2MSwyLjA4OTg0MzgtMC43Mzk3NDYxLDIuODMwMDc4MSwwYzAuMzcwMTE3MiwwLjM3OTg4MjgsMC41ODAwNzgxLDAuODkwMTM2NywwLjU4MDA3ODEsMS40MTk5MjE5ICAgIGMwLDAuNTIwMDE5NS0wLjIwOTk2MDksMS4wNDAwMzkxLTAuNTgwMDc4MSwxLjQxMDE1NjJDOTAuMTY5OTIxOSw4MS4xNjk5MjE5LDg5LjY2MDE1NjIsODEuMzg5NjQ4NCw4OS4xMjk4ODI4LDgxLjM4OTY0ODR6IiBmaWxsPSIjMzM5OUNDIi8+PC9nPjxnPjxwYXRoIGQ9Ik05MS44Mzk4NDM4LDg1Yy0wLjUzMDI3MzQsMC0xLjA0MDAzOTEtMC4yMjAyMTQ4LTEuNDEwMTU2Mi0wLjU5MDMzMiAgICBDOTAuMDQ5ODA0Nyw4NC4wNDAwMzkxLDg5LjgzOTg0MzgsODMuNTIwMDE5NSw4OS44Mzk4NDM4LDgzYzAtMC41MzAyNzM0LDAuMjA5OTYwOS0xLjA0MDAzOTEsMC41ODk4NDM4LTEuNDIwNDEwMiAgICBjMC43NDAyMzQ0LTAuNzM5NzQ2MSwyLjA4MDA3ODEtMC43Mzk3NDYxLDIuODIwMzEyNSwwQzkzLjYyOTg4MjgsODEuOTU5OTYwOSw5My44Mzk4NDM4LDgyLjQ2OTcyNjYsOTMuODM5ODQzOCw4MyAgICBjMCwwLjUyMDAxOTUtMC4yMDk5NjA5LDEuMDQwMDM5MS0wLjU4OTg0MzgsMS40MDk2NjhDOTIuODc5ODgyOCw4NC43Nzk3ODUyLDkyLjM1OTM3NSw4NSw5MS44Mzk4NDM4LDg1eiIgZmlsbD0iIzMzOTlDQyIvPjwvZz48Zz48cGF0aCBkPSJNOTQuNTQ5ODA0Nyw5NC4wMjAwMTk1Yy0wLjUzMDI3MzQsMC0xLjA0OTgwNDctMC4yMDk5NjA5LTEuNDE5OTIxOS0wLjU5MDMzMiAgICBjLTAuMzcwMTE3Mi0wLjM2OTYyODktMC41ODAwNzgxLTAuODg5NjQ4NC0wLjU4MDA3ODEtMS40MDk2NjhjMC0wLjUzMDI3MzQsMC4yMDk5NjA5LTEuMDQwMDM5MSwwLjU4MDA3ODEtMS40MjA0MTAyICAgIGMwLjc1LTAuNzM5NzQ2MSwyLjA4MDA3ODEtMC43Mzk3NDYxLDIuODMwMDc4MSwwYzAuMzcwMTE3MiwwLjM4MDM3MTEsMC41ODk4NDM4LDAuODkwMTM2NywwLjU4OTg0MzgsMS40MjA0MTAyICAgIGMwLDAuNTIwMDE5NS0wLjIxOTcyNjYsMS4wNDAwMzkxLTAuNTg5ODQzOCwxLjQwOTY2OEM5NS41ODk4NDM4LDkzLjgxMDA1ODYsOTUuMDY5MzM1OSw5NC4wMjAwMTk1LDk0LjU0OTgwNDcsOTQuMDIwMDE5NXoiIGZpbGw9IiMzMzk5Q0MiLz48L2c+PGc+PHBhdGggZD0iTTkzLjYzOTY0ODQsODkuNTA5NzY1NmMtMC41MTk1MzEyLDAtMS4wNDAwMzkxLTAuMjE5NzI2Ni0xLjQxMDE1NjItMC41ODk4NDM4ICAgIHMtMC41ODk4NDM4LTAuODkwMTM2Ny0wLjU4OTg0MzgtMS40MTAxNTYyYzAtMC41Mjk3ODUyLDAuMjE5NzI2Ni0xLjA0OTgwNDcsMC41ODk4NDM4LTEuNDE5OTIxOSAgICBjMC43NS0wLjc0MDIzNDQsMi4wODAwNzgxLTAuNzQwMjM0NCwyLjgzMDA3ODEsMGMwLjM3MDExNzIsMC4zNzk4ODI4LDAuNTgwMDc4MSwwLjg5MDEzNjcsMC41ODAwNzgxLDEuNDE5OTIxOSAgICBjMCwwLjUyMDAxOTUtMC4yMDk5NjA5LDEuMDQwMDM5MS0wLjU4MDA3ODEsMS40MTAxNTYyQzk0LjY3OTY4NzUsODkuMjkwMDM5MSw5NC4xNjk5MjE5LDg5LjUwOTc2NTYsOTMuNjM5NjQ4NCw4OS41MDk3NjU2eiIgZmlsbD0iIzMzOTlDQyIvPjwvZz48L2c+PC9zdmc+" style="height:5rem;"/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<spring:message code="text.profile"/>
 				</th>
 				<td>
 					<textarea data-juice="TextArea" data-juice-bind="user.message"></textarea>
 				</td>
 			</tr>
 			<tr>
-				<th>Name</th>
-				<td><input data-juice="TextField" data-juice-bind="user.name"/></td>
-				<th>Nickname</th>
-				<td><input data-juice="TextField" data-juice-bind="user.nickname"/></td>
-			</tr>
-			<tr>
-				<th>Email</th>
-				<td><input data-juice="TextField" data-juice-bind="user.email"/></td>
-				<th>Phone</th>
-				<td><input data-juice="TextField" data-juice-bind="user.phone"/></td>
-			</tr>
-			<tr>
-				<th>Groups</th>
-				<td colspan="3">
+				<th>
+					<i class="icon-folder"></i>
+					<spring:message code="text.groups"/>
+				</th>
+				<td>
 					<table data-juice="Grid" data-juice-bind="groups" data-juice-item="group">
+						<colgroup>
+							<col>
+							<col>
+							<col style="width:10%;">
+						</colgroup>
 						<thead>
 							<tr>
-								<th>ID</th>
-								<th>Name</th>
-								<th>-</th>
+								<th>
+									<spring:message code="text.id"/>
+								</th>
+								<th>
+									<spring:message code="text.name"/>
+								</th>
+								<th>
+									<button onclick="javascript:addGroup();">
+										<i class="icon-plus"></i>
+									</button>
+								</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr data-id="{{$context.group.get('id')}}">
-								<td>
-									<a href=""><label data-juice="Label" data-juice-bind="group.id" class="id"></label></a>
-								</td>
+								<td><label data-juice="Label" data-juice-bind="group.id" class="id"></label></td>
 								<td><label data-juice="Label" data-juice-bind="group.name"></label></td>
 								<td>
-									<button><i class="fas fa-minus"></i></button>
+									<button data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
+										<i class="icon-minus"></i>
+									</button>
 								</td>
 							</tr>
 						</tbody>
@@ -248,22 +439,40 @@ function addGroup() {
 				</td>
 			</tr>
 			<tr>
-				<th>Roles</th>
-				<td colspan="3">
+				<th>
+					<i class="icon-card"></i>
+					<spring:message code="text.roles"/>
+				</th>
+				<td>
 					<table data-juice="Grid" data-juice-bind="roles" data-juice-item="role">
+						<colgroup>
+							<col>
+							<col>
+							<col style="width:10%;">
+						</colgroup>
 						<thead>
 							<tr>
-								<th>ID</th>
-								<th>Name</th>
-								<th>-</th>
+								<th>
+									<spring:message code="text.id"/>
+								</th>
+								<th>
+									<spring:message code="text.name"/>
+								</th>
+								<th>
+									<button onclick="javascript:addRole();">
+										<i class="icon-plus"></i>
+									</button>
+								</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr data-id="{{$context.role.get('id')}}">
-								<td><label data-juice="Label" data-juice-bind="role.id"></label></td>
+								<td><label data-juice="Label" data-juice-bind="role.id" class="id"></label></td>
 								<td><label data-juice="Label" data-juice-bind="role.name"></label></td>
 								<td>
-									<button><i class="fas fa-minus"></i></button>
+									<button data-index="{{$context.index}}" onclick="javascript:removeRole(this.dataset.index);">
+										<i class="icon-minus"></i>
+									</button>
 								</td>
 							</tr>
 						</tbody>
@@ -271,22 +480,44 @@ function addGroup() {
 				</td>
 			</tr>
 			<tr>
-				<th>Authorities</th>
+				<th>
+					<i class="icon-key"></i>
+					<spring:message code="text.authorities"/>
+				</th>
 				<td colspan="3">
 					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
+						<colgroup>
+							<col>
+							<col>
+							<col style="width:10%;">
+						</colgroup>
 						<thead>
 							<tr>
-								<th>ID</th>
-								<th>Name</th>
-								<th>-</th>
+								<th>
+									<spring:message code="text.id"/>
+								</th>
+								<th>
+									<spring:message code="text.name"/>
+								</th>
+								<th>
+									<button onclick="javascript:addAuthority();">
+										<i class="icon-plus"></i>
+									</button>
+								</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr data-id="{{$context.authority.get('id')}}">
-								<td><label data-juice="Label" data-juice-bind="authority.id"></label></td>
-								<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
 								<td>
-									<button><i class="fas fa-minus"></i></button>
+									<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+								</td>
+								<td>
+									<label data-juice="Label" data-juice-bind="authority.name"></label>
+								</td>
+								<td>
+									<button data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
+										<i class="icon-minus"></i>
+									</button>
 								</td>
 							</tr>
 						</tbody>

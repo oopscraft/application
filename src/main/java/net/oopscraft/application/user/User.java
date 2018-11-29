@@ -42,21 +42,21 @@ public class User {
 	@Column(name = "USER_PHOTO")
 	String photo;
 
-	@Column(name = "USER_MSG")
-	String message;
+	@Column(name = "USER_PRFL")
+	String profile;
 
 	@Column(name = "USER_JOIN_DTTM")
 	Date joinDate;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APP_USER_GROUP_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
 	List<Group> groups;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APP_USER_ROLE_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
 	List<Role> roles;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APP_USER_AUTH_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
 	List<Authority> authorities;
 
@@ -118,12 +118,12 @@ public class User {
 		this.photo = photo;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getProfile() {
+		return profile;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setProfile(String profile) {
+		this.profile = profile;
 	}
 
 	public Date getJoinDate() {
@@ -152,6 +152,10 @@ public class User {
 
 	public List<Authority> getAuthorities() {
 		return authorities;
+	}
+	
+	public void setAuthorities(List<Authority> authorities) {
+		this.authorities = authorities;
 	}
 
 }

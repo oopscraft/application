@@ -49,42 +49,38 @@ public class AdminController {
 		modelAndView.setView(new RedirectView("/admin/dash"));
 		return modelAndView;
 	}
-	
-	@RequestMapping(value="getGroups", method=RequestMethod.GET)
+
+	/**
+	 * Gets groups
+	 * 
+	 * @param searchKey
+	 * @param searchValue
+	 * @param page
+	 * @param rows
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "getRoles", method = RequestMethod.GET)
 	@ResponseBody
 	@Transactional
-	public String getGroups(@RequestParam(value = "searchKey", required = false) String searchKey,
-			@RequestParam(value = "searchValue", required = false) String searchValue,
+	public String getRoles(@RequestParam(value = "key", required = false) String key,
+			@RequestParam(value = "value", required = false) String value,
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
+		RoleService.SearchCondition searchCondition = roleService.new SearchCondition();
+		switch ((key == null ? "" : key)) {
+		case "id":
+			searchCondition.setId(value);
+			break;
+		case "name":
+			searchCondition.setName(value);
+			break;
+		}
 		PageInfo pageInfo = new PageInfo(page.intValue(), rows.intValue(), true);
-		List<Group> groups = groupService.getGroups(null, null, pageInfo);
-		return JsonUtils.toJson(groups);
+		List<Role> roles = roleService.getRoles(searchCondition, pageInfo);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+		return JsonUtils.toJson(roles);
 	}
-
-//	@RequestMapping(value="getRoles", method=RequestMethod.GET)
-//	@ResponseBody
-//	@Transactional
-//	public String getRoles(@RequestParam(value = "searchKey", required = false) String searchKey,
-//			@RequestParam(value = "searchValue", required = false) String searchValue,
-//			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-//			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
-//		PageInfo pageInfo = new PageInfo(page.intValue(), rows.intValue(), true);
-//		List<Role> authorities = roleService.getRoles(RoleService.SearchKey.valueOf(searchKey), searchValue, pageInfo);
-//		return JsonUtils.toJson(authorities);
-//	}
-	
-//	@RequestMapping(value="getAuthorities", method=RequestMethod.GET)
-//	@ResponseBody
-//	@Transactional
-//	public String getAuthorities(@RequestParam(value = "searchKey", required = false) String searchKey,
-//			@RequestParam(value = "searchValue", required = false) String searchValue,
-//			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-//			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
-//		PageInfo pageInfo = new PageInfo(page.intValue(), rows.intValue(), true);
-//		List<Authority> authorities = authorityService.getAuthorities(null, null, pageInfo);
-//		return JsonUtils.toJson(authorities);
-//	}
 	
 	/**
 	 * Gets authorities
