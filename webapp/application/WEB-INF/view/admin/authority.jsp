@@ -258,17 +258,18 @@ function removeAuthority() {
 			<tr>
 				<th>
 					<i class="icon-attention"></i>
-					<spring:message code="text.authority"/>
 					<spring:message code="text.id"/>
 				</th>
 				<td>
 					
 					<input class="id" data-juice="TextField" data-juice-bind="authority.id"/>
 				</td>
+			</tr>
+			<tr>
 				<th>
-					*
-					<spring:message code="text.authority"/>
-					<spring:message code="text.name"/>
+					<span class="must">
+						<spring:message code="text.name"/>
+					</span>
 				</th>
 				<td>
 					<input data-juice="TextField" data-juice-bind="authority.name"/>
@@ -276,10 +277,9 @@ function removeAuthority() {
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="text.authority"/>
 					<spring:message code="text.description"/>
 				</th>
-				<td colspan="3">
+				<td>
 					<textarea data-juice="TextArea" data-juice-bind="authority.description"></textarea>
 				</td>
 			</tr>

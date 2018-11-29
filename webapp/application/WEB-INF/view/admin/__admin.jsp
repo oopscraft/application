@@ -9,16 +9,11 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="viewport" content="width=1024, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta http-equiv="refresh" content="${pageContext.session.maxInactiveInterval+10}">
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/lib/juice/juice.css">
 		<script src="${pageContext.request.contextPath}/lib/juice/juice.js"></script>
 		<script src="${pageContext.request.contextPath}/lib/jquery.js"></script>
-
-		<!-- font icon 
- 		<link href="${pageContext.request.contextPath}/lib/fontawesome/css/all.css" rel="stylesheet">
- 		<script defer src="${pageContext.request.contextPath}/lib/fontawesome/js/all.js"></script>
- 		-->
  		<link href="${pageContext.request.contextPath}/lib/icon/css/icon.css" rel="stylesheet">
 		
 		<!-- global -->
@@ -105,63 +100,6 @@
 	          	 }
       		});	
         }
-        
-        /**
-         * Gets authorities and open dialog
-   
-        var __authoritiesDialog = {
-        	//dialog: new juice.ui.Dialog($('#__authoritiesDialog')[0]),
-           	authoritySearch: new juice.data.Map({
-	   			 key: null
-	 			,value: null
-	 			,page: 1
-	 			,rows: 10
-	 			,totalCount:-1
-	 		}),
-	 		authoritySearchKeys: [
-				 { value:'', text:'- <spring:message code="text.all"/> -' }
-				,{ value:'id', text:'<spring:message code="text.id"/>' }
-				,{ value:'name', text:'<spring:message code="text.name"/>' }
-	 		],
-	 		authorities: new juice.data.List(),
-	 		getAuthorities: function(page){
-            	if(page){
-            		this.authoritySearch.set('page',page);
-            	}
-            	$this = this;
-            	$.ajax({
-            		 url: '${pageContext.request.contextPath}/admin/getAuthorities'
-            		,type: 'GET'
-            		,data: this.authoritySearch.toJson()
-            		,success: function(data, textStatus, jqXHR) {
-            			$this.authorities.fromJson(JSON.parse(data));
-            			$this.authoritySearch.set('totalCount', __parseTotalCount(jqXHR));
-            			$('#__authoritiesTable > tbody').hide().fadeIn();
-               	 	}
-            	});	
-	 		},
-			open: function(callback){
-				this.callback = callback;
-				this.getAuthorities(1);
-				this.dialog = new juice.ui.Dialog($('#__authoritiesDialog')[0]);
-				this.dialog.open();
-			},
-			selectAuthorities: function(){
-	        	var selectedAuthorities = new juice.data.List();
-	        	for(var i = 0, size = this.authorities.getRowCount(); i < size; i ++){
-	        		var authority = this.authorities.getRow(i);
-	        		if(authority.get('__selected') == true){
-	        			selectedAuthorities.addRow(authority);
-	        		}
-	        	}				
-				if(this.callback.call(this, selectedAuthorities) == false){
-					return false;
-				}else{
-					this.dialog.close();					
-				}
-			}
-        };
-                 */     
 
          
 /*         
@@ -225,11 +163,6 @@
 			color: #555;
 			line-height: 20px;
 		}
-		@media (max-width: 1024px) {
-			* {
-				font-size: 1.0rem;
-			}
-		}
 		body {
 		}
 		body > header {
@@ -243,18 +176,8 @@
 		body > header nav.topNav {
 			display: inline-block;
 		}
-		@media (max-width: 1024px) {
-			body > header nav.topNav {
-				display: none;
-			}
-		}
 		body > header nav.responsiveNav {
 			display: none;
-		}
-		@media (max-width: 1024px) {
-			body > header nav.responsiveNav {
-				display: inline-block;
-			}
 		}
 		body > main {
 			display: flex;
@@ -270,15 +193,6 @@
 			padding: 0px;
 			border: solid 1px #ccc;
    			background-color: #fff;
-		}
-		@media (max-width: 1024px) {
-			body > main > nav {
-				position: absolute;
-				right:0px;
-				display: none;
-				height: 100%;
-				width: 100%;
-			}
 		}
 		body > main > nav > ul {
 		    list-style: none;
@@ -372,16 +286,8 @@
 		.id {
 			font-weight: bold;
 		}
-		@media (max-width: 1024px) {
-			.container {
-				display: block !important;
-			}
-			.container .left {
-				width: 100%;
-			}
-			.container .right {
-				width: 100%;
-			}
+		.must:before {
+			content:"*";
 		}
 		</style>
 	</head>
@@ -531,9 +437,148 @@
 		<!-- ====================================================== -->
 		<!-- Roles Dialog											-->
 		<!-- ====================================================== -->
+		<script type="text/javascript">
+        /**
+         * Gets roles and open dialog
+         */        
+        var __rolesDialog = {
+           	search: new juice.data.Map(),
+	 		searchKeys: [
+				 { value:'', text:'- <spring:message code="text.all"/> -' }
+				,{ value:'id', text:'<spring:message code="text.id"/>' }
+				,{ value:'name', text:'<spring:message code="text.name"/>' }
+	 		],
+	 		option: new juice.data.Map(),
+	 		roles: new juice.data.List(),
+	 		/* initilize dialog */
+	 		initialize: function(){
+	 			this.search.fromJson({
+		   			 key: null
+		 			,value: null
+		 			,page: 1
+		 			,rows: 10
+		 			,totalCount:-1
+	 			});
+	 			this.roles.fromJson([]);
+	 			this.option.set('selectAll',false);
+	 		},
+	 		/* open dialog */
+			open: function(callback){
+				this.callback = callback;
+				this.initialize();
+				this.getRoles(1);
+				this.dialog = new juice.ui.Dialog($('#__rolesDialog')[0]),
+				this.dialog.setTitle('<spring:message code="text.role"/> <spring:message code="text.list"/>'),
+				this.dialog.open();
+			},
+			/* gets roles */
+	 		getRoles: function(page){
+            	if(page){
+            		this.search.set('page',page);
+            	}
+            	$this = this;
+            	$.ajax({
+            		 url: '${pageContext.request.contextPath}/admin/getRoles'
+            		,type: 'GET'
+            		,data: this.search.toJson()
+            		,success: function(data, textStatus, jqXHR) {
+            			$this.roles.fromJson(JSON.parse(data));
+            			$this.search.set('totalCount', __parseTotalCount(jqXHR));
+            			$('#__rolesTable > tbody').hide().fadeIn();
+               	 	}
+            	});	
+	 		},
+	 		/* selects rows by index */
+			select: function(index){
+				if(this.roles.getRow(index).get('__selected') == true){
+					this.roles.getRow(index).set('__selected', false);
+				}else{
+					this.roles.getRow(index).set('__selected', true);
+				}
+			},
+			/* selects all rows */
+			selectAll: function(){
+				this.option.set('selectAll', this.option.get('selectAll') == true ? false : true);
+				for(var i = 0, size = this.roles.getRowCount(); i < size; i ++){
+					this.roles.getRow(i).set('__selected', this.option.get('selectAll'));
+				}
+			},
+			/* confirm selected rows */
+			selectRoles: function(){
+	        	var selectedRoles = new juice.data.List();
+	        	for(var i = 0, size = this.roles.getRowCount(); i < size; i ++){
+	        		var role = this.roles.getRow(i);
+	        		if(role.get('__selected') == true){
+	        			selectedRoles.addRow(role);
+	        		}
+	        	}				
+				if(this.callback.call(this, selectedRoles) == false){
+					return false;
+				}else{
+					this.dialog.close();					
+				}
+			}
+        };
+        </script>
+        <style type="text/css">
+		#__rolesDialog {
+			width: 500px;
+		}
+        </style>
 		<dialog>
 			<div id="__rolesDialog">
-			__rolesDialog 
+				<div style="display:flex; justify-content: space-between;">
+					<div style="flex:auto;">
+						<div class="title2">
+							<i class="icon-search"></i>
+						</div>
+						<select data-juice="ComboBox" data-juice-bind="__rolesDialog.search.key" data-juice-options="__rolesDialog.searchKeys" style="width:100px;"></select>
+						<input data-juice="TextField" data-juice-bind="__rolesDialog.search.value" style="width:100px;"/>
+					</div>
+					<div>
+						<button onclick="javascript:__rolesDialog.getRoles();">
+							<i class="icon-search"></i>
+							<spring:message code="text.search"/>
+						</button>
+					</div>
+				</div>
+				<table id="__rolesTable" data-juice="Grid" data-juice-bind="__rolesDialog.roles" data-juice-item="role">
+					<thead>
+						<tr>
+							<th>
+								<input data-juice="CheckBox" data-juice-bind="__rolesDialog.option.selectAll" onclick="javascript:__rolesDialog.selectAll();"/>
+							</th>
+							<th>
+								<spring:message code="text.no"/>
+							</th>
+							<th>
+								<spring:message code="text.id"/>
+							</th>
+							<th>
+								<spring:message code="text.name"/>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-index="{{$context.index}}" onclick="javascript:__rolesDialog.select(this.dataset.index);">
+							<td><input data-juice="CheckBox" data-juice-bind="role.__selected"/></td>
+							<td>{{$context.index+1}}</td>
+							<td><label data-juice="Label" data-juice-bind="role.id" class="id"></label></td>
+							<td><label data-juice="Label" data-juice-bind="role.name"></label></td>
+						</tr>
+					</tbody>
+				</table>
+				<div>
+					<ul data-juice="Pagination" data-juice-bind="__rolesDialog.search" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
+						<li data-page="{{$context.page}}" onclick="javascript:__rolesDialog.getRoles(this.dataset.page);">{{$context.page}}</li>
+					</ul>
+				</div>
+				<div style="text-align:right;">
+					<button onclick="javascript:__rolesDialog.selectRoles();">
+						<i class="icon-check"></i>
+						<spring:message code="text.confirm"/>
+					</button>
+				</div>
 			</div>
 		</dialog>		
 
@@ -627,11 +672,6 @@
 		#__authoritiesDialog {
 			width: 500px;
 		}
-		@media (max-width: 1024px) {
-			#__authoritiesDialog {
-				width: 100%;
-			}
-		}
         </style>
 		<dialog>
 			<div id="__authoritiesDialog">
@@ -657,15 +697,12 @@
 								<input data-juice="CheckBox" data-juice-bind="__authoritiesDialog.option.selectAll" onclick="javascript:__authoritiesDialog.selectAll();"/>
 							</th>
 							<th>
-								<spring:message code="text.role"/>
 								<spring:message code="text.no"/>
 							</th>
 							<th>
-								<spring:message code="text.role"/>
 								<spring:message code="text.id"/>
 							</th>
 							<th>
-								<spring:message code="text.role"/>
 								<spring:message code="text.name"/>
 							</th>
 						</tr>

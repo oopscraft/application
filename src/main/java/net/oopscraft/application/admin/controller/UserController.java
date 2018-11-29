@@ -29,8 +29,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.user.RoleService;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
+import net.oopscraft.application.user.RoleService.SearchCondition;
 
 @Controller
 @RequestMapping("/admin/user")
@@ -69,12 +71,27 @@ public class UserController {
 	@RequestMapping(value = "getUsers", method = RequestMethod.GET)
 	@ResponseBody
 	@Transactional
-	public String getUsers(@RequestParam(value = "searchKey", required = false) String searchKey,
-			@RequestParam(value = "searchValue", required = false) String searchValue,
+	public String getUsers(@RequestParam(value = "key", required = false) String key,
+			@RequestParam(value = "value", required = false) String value,
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
+		UserService.SearchCondition searchCondition = userService.new SearchCondition();
+		switch ((key == null ? "" : key)) {
+		case "id":
+			searchCondition.setId(value);
+			break;
+		case "name":
+			searchCondition.setName(value);
+			break;
+		case "email":
+			searchCondition.setEmail(value);
+			break;
+		case "phone":
+			searchCondition.setPhone(value);
+			break;
+		}
 		PageInfo pageInfo = new PageInfo(page.intValue(), rows.intValue(), true);
-		List<User> users = userService.getUsers(null, null, pageInfo);
+		List<User> users = userService.getUsers(searchCondition, pageInfo);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return JsonUtils.toJson(users);
 	}

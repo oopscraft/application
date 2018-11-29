@@ -10,12 +10,12 @@ import net.oopscraft.application.user.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 	
-	public Page<User> findByIdLike(String id, Pageable pageable) throws Exception;
+	public Page<User> findByIdStartingWith(String id, Pageable pageable) throws Exception;
 	
-	public Page<User> findByNameLike(String name, Pageable pageable) throws Exception;
+	public Page<User> findByNameStartingWith(String name, Pageable pageable) throws Exception;
 	
-	public Page<User> findByEmailLike(String id, Pageable pageable) throws Exception;
+	public Page<User> findByEmailStartingWith(String email, Pageable pageable) throws Exception;
 	
-	public Page<User> findByPhoneLike(String id, Pageable pageable) throws Exception;
+	public Page<User> findByPhoneStartingWith(String phone, Pageable pageable) throws Exception;
 
 }
