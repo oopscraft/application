@@ -225,6 +225,11 @@
 			color: #555;
 			line-height: 20px;
 		}
+		@media (max-width: 1024px) {
+			* {
+				font-size: 0.5rem;
+			}
+		}
 		body {
 		}
 		body > header {
