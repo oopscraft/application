@@ -126,7 +126,9 @@ function addAuthority(){
 			}
 		}
 		if(duplicated == true){
-			alert('dup');
+			<c:set var="item"><spring:message code="text.authority"/></c:set>
+			var message = '<spring:message code="message.duplicatedItem" arguments="${item}"/>';
+			new juice.ui.Alert(message).open();
 			return false;
 		}
 
