@@ -227,7 +227,7 @@
 		}
 		@media (max-width: 1024px) {
 			* {
-				font-size: 0.5rem;
+				font-size: 1.0rem;
 			}
 		}
 		body {
