@@ -51,7 +51,7 @@
         /* slide mobile navigation */
         function __viewResponsiveNav() {
         	var mainNav = $('main > nav');
-        	mainNav.fadeToggle();
+        	mainNav.slideToggle(200);
         }
         
         /**
@@ -269,8 +269,10 @@
 		@media (max-width: 1024px) {
 			body > main > nav {
 				position: absolute;
+				right:0px;
 				display: none;
 				height: 100%;
+				width: 100%;
 			}
 		}
 		body > main > nav > ul {
@@ -616,8 +618,18 @@
 			}
         };
         </script>
+        <style type="text/css">
+		#__authoritiesDialog {
+			width: 500px;
+		}
+		@media (max-width: 1024px) {
+			#__authoritiesDialog {
+				width: 100%;
+			}
+		}
+        </style>
 		<dialog>
-			<div id="__authoritiesDialog" style="width:600px;">
+			<div id="__authoritiesDialog">
 				<div style="display:flex; justify-content: space-between;">
 					<div style="flex:auto;">
 						<div class="title2">
