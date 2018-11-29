@@ -48,6 +48,12 @@
             }
         }, true);
         
+        /* slide mobile navigation */
+        function __viewResponsiveNav() {
+        	var mainNav = $('main > nav');
+        	mainNav.fadeToggle();
+        }
+        
         /**
          * Changes language
          */
@@ -102,7 +108,7 @@
         
         /**
          * Gets authorities and open dialog
-         */        
+   
         var __authoritiesDialog = {
         	//dialog: new juice.ui.Dialog($('#__authoritiesDialog')[0]),
            	authoritySearch: new juice.data.Map({
@@ -155,6 +161,7 @@
 				}
 			}
         };
+                 */     
 
          
 /*         
@@ -228,6 +235,22 @@
 			background-color: #f7f7f7;
 			border: solid 1px #ccc;
 		}
+		body > header nav.topNav {
+			display: inline-block;
+		}
+		@media (max-width: 1024px) {
+			body > header nav.topNav {
+				display: none;
+			}
+		}
+		body > header nav.responsiveNav {
+			display: none;
+		}
+		@media (max-width: 1024px) {
+			body > header nav.responsiveNav {
+				display: inline-block;
+			}
+		}
 		body > main {
 			display: flex;
 			align-items: center;
@@ -236,10 +259,19 @@
 			border: solid 0px #efefef;
 		}
 		body > main > nav {
+			display: block;
 			align-self: stretch;
 			width: 200px;
 			padding: 0px;
 			border: solid 1px #ccc;
+   			background-color: #fff;
+		}
+		@media (max-width: 1024px) {
+			body > main > nav {
+				position: absolute;
+				display: none;
+				height: 100%;
+			}
 		}
 		body > main > nav > ul {
 		    list-style: none;
@@ -272,15 +304,6 @@
 			align-items: center;
 			justify-content: space-between;
 			border: solid 1px #efefef;
-		}
-		@media (max-width: 1024px) {
-			body > main {
-				flex-direction: column;
-			}
-			body > main > nav {
-				width: 100vw;
-				border: solid 1px;
-			}
 		}
 		.title1 {
             font-size: 18px;
@@ -318,7 +341,7 @@
 			padding-left: 5px;
 			padding-right: 5px;
 			border: solid 1px #aaaaaa;
-			background-color: #efefef;
+			background-color: #f7f7f7;
 			border-radius: 2px;
 			font-weight: bold;
 			cursor: hand;
@@ -342,6 +365,17 @@
 		.id {
 			font-weight: bold;
 		}
+		@media (max-width: 1024px) {
+			.container {
+				display: block !important;
+			}
+			.container .left {
+				width: 100%;
+			}
+			.container .right {
+				width: 100%;
+			}
+		}
 		</style>
 	</head>
 	<body>
@@ -349,12 +383,12 @@
 		<!-- Header													-->
 		<!-- ====================================================== -->
 		<header>
-			<div>
+			<span>
 				<a href="dash">
 					<img src="${pageContext.request.contextPath}/img/application.png"/>
 				</a>
-			</div>
-			<div style="padding-right:10px;">
+			</span>
+			<nav class="topNav" style="padding-right:10px;">
 				<span>
 					<i class="icon-globe"></i>
 					<spring:message code="label.language"/>
@@ -370,7 +404,10 @@
 						<spring:message code="label.logout"/>
 					</a>
 				</span>
-			</div>
+			</nav>
+			<nav class="responsiveNav">
+				<i class="icon-list" style="font-size:16px; padding-right:10px;" onclick="javascript:__viewResponsiveNav();"></i>
+			</nav>
 		</header>
 		<main>
 			<!-- ====================================================== -->
@@ -433,15 +470,21 @@
 						</a>
 					</li>
 					<li>
+						<a href="content">
+							<i class="icon-content"></i>
+							<spring:message code="label.content"/>
+						</a>
+					</li>
+					<li>
 						<a href="board">
-							<i class="icon-key"></i>
+							<i class="icon-bbs"></i>
 							<spring:message code="label.board"/>
 						</a>
 					</li>
 					<li>
-						<a href="content">
-							<i class="icon-content"></i>
-							<spring:message code="label.content"/>
+						<a href="board">
+							<i class="icon-bbs"></i>
+							공지사항 관리
 						</a>
 					</li>
 				</ul>
@@ -490,19 +533,102 @@
 		<!-- ====================================================== -->
 		<!-- Authorities Dialog										-->
 		<!-- ====================================================== -->
+		<script type="text/javascript">
+        /**
+         * Gets authorities and open dialog
+         */        
+        var __authoritiesDialog = {
+           	search: new juice.data.Map(),
+	 		searchKeys: [
+				 { value:'', text:'- <spring:message code="text.all"/> -' }
+				,{ value:'id', text:'<spring:message code="text.id"/>' }
+				,{ value:'name', text:'<spring:message code="text.name"/>' }
+	 		],
+	 		option: new juice.data.Map(),
+	 		authorities: new juice.data.List(),
+	 		/* initilize dialog */
+	 		initialize: function(){
+	 			this.search.fromJson({
+		   			 key: null
+		 			,value: null
+		 			,page: 1
+		 			,rows: 10
+		 			,totalCount:-1
+	 			});
+	 			this.authorities.fromJson([]);
+	 			this.option.set('selectAll',false);
+	 		},
+	 		/* open dialog */
+			open: function(callback){
+				this.callback = callback;
+				this.initialize();
+				this.getAuthorities(1);
+				this.dialog = new juice.ui.Dialog($('#__authoritiesDialog')[0]),
+				this.dialog.setTitle('<spring:message code="text.role"/> <spring:message code="text.list"/>'),
+				this.dialog.open();
+			},
+			/* gets authorities */
+	 		getAuthorities: function(page){
+            	if(page){
+            		this.search.set('page',page);
+            	}
+            	$this = this;
+            	$.ajax({
+            		 url: '${pageContext.request.contextPath}/admin/getAuthorities'
+            		,type: 'GET'
+            		,data: this.search.toJson()
+            		,success: function(data, textStatus, jqXHR) {
+            			$this.authorities.fromJson(JSON.parse(data));
+            			$this.search.set('totalCount', __parseTotalCount(jqXHR));
+            			$('#__authoritiesTable > tbody').hide().fadeIn();
+               	 	}
+            	});	
+	 		},
+	 		/* selects rows by index */
+			select: function(index){
+				if(this.authorities.getRow(index).get('__selected') == true){
+					this.authorities.getRow(index).set('__selected', false);
+				}else{
+					this.authorities.getRow(index).set('__selected', true);
+				}
+			},
+			/* selects all rows */
+			selectAll: function(){
+				this.option.set('selectAll', this.option.get('selectAll') == true ? false : true);
+				for(var i = 0, size = this.authorities.getRowCount(); i < size; i ++){
+					this.authorities.getRow(i).set('__selected', this.option.get('selectAll'));
+				}
+			},
+			/* confirm selected rows */
+			selectAuthorities: function(){
+	        	var selectedAuthorities = new juice.data.List();
+	        	for(var i = 0, size = this.authorities.getRowCount(); i < size; i ++){
+	        		var authority = this.authorities.getRow(i);
+	        		if(authority.get('__selected') == true){
+	        			selectedAuthorities.addRow(authority);
+	        		}
+	        	}				
+				if(this.callback.call(this, selectedAuthorities) == false){
+					return false;
+				}else{
+					this.dialog.close();					
+				}
+			}
+        };
+        </script>
 		<dialog>
-			<div id="__authoritiesDialog" style="width:800px;">
+			<div id="__authoritiesDialog" style="width:600px;">
 				<div style="display:flex; justify-content: space-between;">
 					<div style="flex:auto;">
 						<div class="title2">
-							<i class="fas fa-search"></i>
+							<i class="icon-search"></i>
 						</div>
-						<select data-juice="ComboBox" data-juice-bind="__authoritiesDialog.authoritySearch.key" data-juice-options="__authoritiesDialog.authoritySearchKeys" style="width:100px;"></select>
-						<input data-juice="TextField" data-juice-bind="__authoritiesDialog.authoritySearch.value" style="width:100px;"/>
+						<select data-juice="ComboBox" data-juice-bind="__authoritiesDialog.search.key" data-juice-options="__authoritiesDialog.searchKeys" style="width:100px;"></select>
+						<input data-juice="TextField" data-juice-bind="__authoritiesDialog.search.value" style="width:100px;"/>
 					</div>
 					<div>
 						<button onclick="javascript:__authoritiesDialog.getAuthorities();">
-							<i class="fas fa-search"></i>
+							<i class="icon-search"></i>
 							<spring:message code="text.search"/>
 						</button>
 					</div>
@@ -510,14 +636,25 @@
 				<table id="__authoritiesTable" data-juice="Grid" data-juice-bind="__authoritiesDialog.authorities" data-juice-item="authority">
 					<thead>
 						<tr>
-							<th>c</th>
-							<th><spring:message code="text.no"/></th>
-							<th><spring:message code="text.id"/></th>
-							<th><spring:message code="text.name"/></th>
+							<th>
+								<input data-juice="CheckBox" data-juice-bind="__authoritiesDialog.option.selectAll" onclick="javascript:__authoritiesDialog.selectAll();"/>
+							</th>
+							<th>
+								<spring:message code="text.role"/>
+								<spring:message code="text.no"/>
+							</th>
+							<th>
+								<spring:message code="text.role"/>
+								<spring:message code="text.id"/>
+							</th>
+							<th>
+								<spring:message code="text.role"/>
+								<spring:message code="text.name"/>
+							</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
+						<tr data-index="{{$context.index}}" onclick="javascript:__authoritiesDialog.select(this.dataset.index);">
 							<td><input data-juice="CheckBox" data-juice-bind="authority.__selected"/></td>
 							<td>{{$context.index+1}}</td>
 							<td><label data-juice="Label" data-juice-bind="authority.id" class="id"></label></td>
@@ -526,13 +663,16 @@
 					</tbody>
 				</table>
 				<div>
-					<ul data-juice="Pagination" data-juice-bind="__authoritiesDialog.authoritySearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
+					<ul data-juice="Pagination" data-juice-bind="__authoritiesDialog.search" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
 						<li data-page="{{$context.page}}" onclick="javascript:__authoritiesDialog.getAuthorities(this.dataset.page);">{{$context.page}}</li>
 					</ul>
 				</div>
-				<button onclick="javascript:__authoritiesDialog.selectAuthorities();">
-					선택
-				</button>
+				<div style="text-align:right;">
+					<button onclick="javascript:__authoritiesDialog.selectAuthorities();">
+						<i class="icon-check"></i>
+						<spring:message code="text.confirm"/>
+					</button>
+				</div>
 			</div>
 		</dialog>		
 		
