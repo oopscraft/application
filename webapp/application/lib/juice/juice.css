@@ -3,9 +3,8 @@
  */
 .juice-ui-label {
 	margin: 0px;
-	padding-left: 3%;
-    padding-right: 3%;
     font-weight: inherit;
+    cursor: inherit;
 }
 
 /**
@@ -299,51 +298,22 @@
  * juice.ui.TreeView
  */
 .juice-ui-treeView {
-	list-style-type: none;
-	margin: 0px;
-	margin-left: 10px;
-	padding: 0px;
+	list-style-position: inside;
+	margin-left: 0rem;
 }
 .juice-ui-treeView ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-    margin-left: 20px;
+	list-style-position: inside;
+	margin-left: 2rem;
 }
 .juice-ui-treeView li {
-	margin: 0;
-	padding: 0 5px;
-	border-left:1px solid rgb(100,100,100);
-}
-.juice-ui-treeView li:last-child {
-	border-left:none;
-}
-.juice-ui-treeView li:before {
-	position:relative;
-	top:-0.3em;
-	height:2em;
-	width:12px;
-	color:white;
-	border-bottom:1px solid rgb(100,100,100);
-	content:"";
-	display:inline-block;
-	left:-5px;
-}
-.juice-ui-treeView li:last-child:before {
-	border-left:1px solid rgb(100,100,100);
+    list-style-type: none;
+    margin: 0;
 }
 .juice-ui-treeView .juice-ui-treeView-draggable *:not(input):not(select):not(textarea):not(button):not(a) {
 	cursor: move;
 }
 .juice-ui-treeView .juice-ui-treeView-dragstart {
 	opacity: 0.2;
-}
-.juice-ui-treeView input {
-	border: solid 0;
-	border-bottom: dotted 1px #ccc;
-}
-.juice-ui-treeView input:focus {
-	outline: 0;
 }
 
 /**

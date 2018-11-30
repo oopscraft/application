@@ -250,10 +250,8 @@ function removeAuthority() {
 		</div>
 		<table id="authorityTable" class="detail">
 			<colgroup>
-				<col style="width:20%;">
 				<col style="width:30%;">
-				<col style="width:20%;">
-				<col style="width:30%;">
+				<col style="width:70%;">
 			</colgroup>
 			<tr>
 				<th>
