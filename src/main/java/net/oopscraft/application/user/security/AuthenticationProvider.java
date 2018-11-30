@@ -39,16 +39,19 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		String password = (String) authentication.getCredentials();
 		
 		// loading user information
-		User user = null;
+		User user;
 		try {
 			user = userService.getUser(id);
-		}catch(Exception e) {
+		} catch (Exception e) {
 			throw new UsernameNotFoundException(e.getMessage(), e);
+		}
+		if(user == null) {
+			throw new UsernameNotFoundException(String.format("user[%s] not found.", id));	
 		}
 		
 //		// checking password
 //		if(passwordEncoder.matches(password, user.getPassword()) == false) {
-//			throw new BadCredentialsException("");
+//			throw new BadCredentialsException("password is incorrect.");
 //		}
 
 		// return authentication token.
