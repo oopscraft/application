@@ -49,10 +49,6 @@ public class RoleService {
 		}
 	}
 
-	public enum SearchKey {
-		ID, NAME
-	}
-
 	public List<Role> getRoles(SearchCondition searchCondition, PageInfo pageInfo) throws Exception {
 		List<Role> roles = null;
 		Page<Role> page = null;

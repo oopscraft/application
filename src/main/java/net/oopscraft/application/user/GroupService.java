@@ -1,14 +1,11 @@
 package net.oopscraft.application.user;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.repository.GroupRepository;
 
 @Service
@@ -16,10 +13,6 @@ public class GroupService {
 
 	@Autowired
 	private GroupRepository groupRepository;
-
-	public enum SearchKey {
-		ID, NAME
-	}
 
 	/**
 	 * Gets list of group by search condition and value
@@ -29,28 +22,12 @@ public class GroupService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Group> getGroups(SearchKey searchKey, String SearchValue, PageInfo pageInfo) throws Exception {
-		Page<Group> groups = null;
-		Pageable pageable = new PageRequest(pageInfo.getPage() - 1, pageInfo.getRows());
-		if (searchKey == null) {
-			groups = groupRepository.findByUpperIdIsNull(pageable);
-		} else {
-			switch (searchKey) {
-			case ID:
-				groups = groupRepository.findByIdLike(SearchValue, pageable);
-				break;
-			case NAME:
-				groups = groupRepository.findByNameLike(SearchValue, pageable);
-				break;
-			}
-		}
+	public List<Group> getGroups() throws Exception {
+		List<Group> groups = groupRepository.findByUpperIdIsNull();
 		for (Group group : groups) {
 			fillChildGroupRecursively(group);
 		}
-		if (pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(groups.getTotalElements());
-		}
-		return groups.getContent();
+		return groups;
 	}
 
 	/**
@@ -86,8 +63,31 @@ public class GroupService {
 	 * @param group
 	 * @throws Exception
 	 */
-	public void saveGroup(Group group) throws Exception {
-		groupRepository.saveAndFlush(group);
+	public Group saveGroup(Group group) throws Exception {
+		Group one = groupRepository.findOne(group.getId());
+		if (one == null) {
+			one = new Group();
+			one.setId(group.getId());
+			one.setRoles(new ArrayList<Role>());
+			one.setAuthorities(new ArrayList<Authority>());
+		}
+		one.setName(group.getName());
+		one.setDescription(group.getDescription());
+		
+		// adds roles
+		one.getRoles().clear();
+		for(Role role : group.getRoles()) {
+			one.getRoles().add(role);
+		}
+		
+		// adds authorities
+		one.getAuthorities().clear();
+		for (Authority authority : group.getAuthorities()) {
+			one.getAuthorities().add(authority);
+		}
+
+		groupRepository.save(one);
+		return groupRepository.findOne(group.getId());
 	}
 
 	/**
@@ -96,8 +96,10 @@ public class GroupService {
 	 * @param id
 	 * @throws Exception
 	 */
-	public void removeGroup(String id) throws Exception {
-		groupRepository.delete(id);
+	public Group removeGroup(String id) throws Exception {
+		Group group = groupRepository.getOne(id);
+		groupRepository.delete(group);
+		return group;
 	}
 
 }

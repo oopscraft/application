@@ -199,14 +199,14 @@
 		}
 		body > main > nav > ul li {
 			font-weight: normal;
-			background-color: #f7f7f7;
+			background-color: white;
 			padding: 5px;
 			border-top: solid 1px white;
 			border-bottom: solid 1px #ccc;
 		}
 		body > main > nav > ul li:hover {
 			font-weight: bold;
-			background-color: white;
+			background-color: #f7f7f7;
 			cursor: hand;
 			cursor: pointer;
 		}
@@ -270,10 +270,7 @@
 		}
 		hr {
 			margin: 2px;
-			border-top: solid 1px #ccc;
-			border-left: solid 1px #ccc;
-			border-bottom: solid 1px #efefef;
-			border-right: solid 1px #efefef;
+			border: 0px;
 		}
 		a {
 			text-decoration: none;
@@ -283,12 +280,35 @@
 		a:hover {
 			text-decoration: underline;
 		}
+		.container {
+			display: flex;
+			justify-content: space-between;
+		}
+		.left {
+			width: 50%;
+			border: dotted 1px #ccc;
+			border-radius: 3px;
+			padding:1rem;
+			min-height:400px;
+		}
+		.right {
+			width: 50%;
+			border: dotted 1px #ccc;
+			border-radius: 3px;
+			padding:1rem;
+			min-height:400px;
+		}
 		.id {
 			font-weight: bold;
 		}
 		.must:before {
 			content:"*";
 			color: red;
+		}
+		.link {
+			cursor: hand;
+			cursor: pointer;
+			text-decoration: underline;
 		}
 		</style>
 	</head>
@@ -467,13 +487,15 @@
 			open: function(callback){
 				this.callback = callback;
 				this.initialize();
-				this.getRoles(1);
-				this.dialog = new juice.ui.Dialog($('#__rolesDialog')[0]),
-				this.dialog.setTitle('<spring:message code="text.role"/> <spring:message code="text.list"/>'),
-				this.dialog.open();
+				this.dialog = new juice.ui.Dialog($('#__rolesDialog')[0]);
+				this.dialog.setTitle('<spring:message code="text.role"/> <spring:message code="text.list"/>');
+				var $this = this;
+				this.getRoles(1, function(){
+					$this.dialog.open();
+				});
 			},
 			/* gets roles */
-	 		getRoles: function(page){
+	 		getRoles: function(page, callback){
             	if(page){
             		this.search.set('page',page);
             	}
@@ -486,6 +508,9 @@
             			$this.roles.fromJson(JSON.parse(data));
             			$this.search.set('totalCount', __parseTotalCount(jqXHR));
             			$('#__rolesTable > tbody').hide().fadeIn();
+            			if(callback){
+            				callback.call(this);
+            			}
                	 	}
             	});	
 	 		},
@@ -615,13 +640,15 @@
 			open: function(callback){
 				this.callback = callback;
 				this.initialize();
-				this.getAuthorities(1);
-				this.dialog = new juice.ui.Dialog($('#__authoritiesDialog')[0]),
-				this.dialog.setTitle('<spring:message code="text.role"/> <spring:message code="text.list"/>'),
-				this.dialog.open();
+				this.dialog = new juice.ui.Dialog($('#__authoritiesDialog')[0]);
+				this.dialog.setTitle('<spring:message code="text.authority"/> <spring:message code="text.list"/>');
+				var $this = this;
+				this.getAuthorities(1, function(){
+					$this.dialog.open();
+				});
 			},
 			/* gets authorities */
-	 		getAuthorities: function(page){
+	 		getAuthorities: function(page, callback){
             	if(page){
             		this.search.set('page',page);
             	}
@@ -634,6 +661,9 @@
             			$this.authorities.fromJson(JSON.parse(data));
             			$this.search.set('totalCount', __parseTotalCount(jqXHR));
             			$('#__authoritiesTable > tbody').hide().fadeIn();
+            			if(callback){
+            				callback.call(this);
+            			}
                	 	}
             	});	
 	 		},

@@ -60,7 +60,7 @@ $( document ).ready(function() {
 });
 
 /**
- * Gets role list
+ * Gets roles
  */
 function getRoles(page) {
 	if(page){
@@ -330,6 +330,7 @@ function removeRole() {
 			<tr>
 				<th>
 					<i class="icon-key"></i>
+					<spring:message code="text.own"/>
 					<spring:message code="text.authorities"/>
 				</th>
 				<td>

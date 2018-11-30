@@ -103,26 +103,15 @@ function getUser(id) {
 	});	
 }
 
-
 /**
- * Saves user
+ * Adds user.
  */
-function saveUser() {
-	var userJson = user.toJson();
-	userJson.groups = groups.toJson();
-	userJson.roles = roles.toJson();
-	userJson.authorities = authorities.toJson();
-	
-	$.ajax({
-		 url: 'user/saveUser'
-		,type: 'POST'
-		,data: JSON.stringify(userJson)
-		,contentType: "application/json"
-		,success: function(data, textStatus, jqXHR) {
-			alert("Save completed.");
-			getUser(user.get('id'));
- 	 	}
-	});	
+function addUser() {
+	users.clearIndex();
+	user.fromJson({});
+	user.setReadOnly('id',false);
+	roles.fromJson([]);
+	authorities.fromJson([]);
 }
 
 /**
@@ -157,9 +146,9 @@ function addRole(){
 }
 
 /**
- * Removes authoritiy.
+ * Removes role.
  */
-function removeAuthority(index){
+function removeRole(index){
 	roles.removeRow(index);
 }
 
@@ -210,6 +199,62 @@ function addGroup() {
 	});
 }
 
+
+/**
+ * Saves user
+ */
+function saveUser() {
+	<c:set var="item"><spring:message code="text.user"/></c:set>
+	var message = '<spring:message code="message.saveItem.confirm" arguments="${item}"/>';
+	new juice.ui.Confirm(message)
+		.onConfirm(function() {
+			var userJson = user.toJson();
+			userJson.groups = groups.toJson();
+			userJson.roles = roles.toJson();
+			userJson.authorities = authorities.toJson();
+			console.log(userJson);
+			$.ajax({
+				 url: 'user/saveUser'
+				,type: 'POST'
+				,data: JSON.stringify(userJson)
+				,contentType: "application/json"
+				,success: function(data, textStatus, jqXHR) {
+					<c:set var="item"><spring:message code="text.user"/></c:set>
+					var message = '<spring:message code="message.saveItem.complete" arguments="${item}"/>';
+					new juice.ui.Alert(message)
+						.onConfirm(function(){
+							getUser(user.get('id'));
+							getUsers();
+						}).open();
+			 	}
+			});	
+		}).open();
+}
+
+/**
+ * Removes User
+ */
+function removeUser(){
+	<c:set var="item"><spring:message code="text.user"/></c:set>
+	var message = '<spring:message code="message.removeItem.confirm" arguments="${item}"/>';
+	new juice.ui.Confirm(message)
+	.onConfirm(function() {
+		$.ajax({
+			 url: 'user/removeUser'
+			,type: 'GET'
+			,data: { id: user.get('id') }
+			,success: function(data, textStatus, jqXHR) {
+				<c:set var="item"><spring:message code="text.user"/></c:set>
+				var message = '<spring:message code="message.removeItem.complete" arguments="${item}"/>';
+				new juice.ui.Alert(message)
+				.onConfirm(function(){
+					getUsers();
+				}).open();
+	  	 	}
+		});	
+	}).open();
+}
+
 </script>
 <style type="text/css">
 .container {
@@ -228,6 +273,7 @@ function addGroup() {
 	<spring:message code="text.user"/>
 	<spring:message code="text.management"/>
 </div>
+<hr/>
 <div class="container">
 	<div class="left">
 		<!-- ====================================================== -->
@@ -400,14 +446,15 @@ function addGroup() {
 			<tr>
 				<th>
 					<i class="icon-folder"></i>
+					<spring:message code="text.own"/>
 					<spring:message code="text.groups"/>
 				</th>
 				<td>
 					<table data-juice="Grid" data-juice-bind="groups" data-juice-item="group">
 						<colgroup>
-							<col>
-							<col>
-							<col style="width:10%;">
+							<col style="width:40%;"/>
+							<col style="width:50%;"/>
+							<col style="width:10%;"/>
 						</colgroup>
 						<thead>
 							<tr>
@@ -441,14 +488,15 @@ function addGroup() {
 			<tr>
 				<th>
 					<i class="icon-card"></i>
+					<spring:message code="text.own"/>
 					<spring:message code="text.roles"/>
 				</th>
 				<td>
 					<table data-juice="Grid" data-juice-bind="roles" data-juice-item="role">
 						<colgroup>
-							<col>
-							<col>
-							<col style="width:10%;">
+							<col style="width:40%;"/>
+							<col style="width:50%;"/>
+							<col style="width:10%;"/>
 						</colgroup>
 						<thead>
 							<tr>
@@ -482,14 +530,15 @@ function addGroup() {
 			<tr>
 				<th>
 					<i class="icon-key"></i>
+					<spring:message code="text.own"/>
 					<spring:message code="text.authorities"/>
 				</th>
 				<td colspan="3">
 					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
 						<colgroup>
-							<col>
-							<col>
-							<col style="width:10%;">
+							<col style="width:40%;"/>
+							<col style="width:50%;"/>
+							<col style="width:10%;"/>
 						</colgroup>
 						<thead>
 							<tr>
