@@ -247,8 +247,8 @@
 		table.detail > tbody > tr > th {
 			border: solid 1px #efefef;
 			background-color: #fafafa;
-			padding: 1px;
-			text-align: center;
+			text-align: right;
+			padding-right: 1.0rem;
 		}
 		table.detail > tbody > tr > td {
 			border: solid 1px #efefef;
@@ -288,6 +288,7 @@
 		}
 		.must:before {
 			content:"*";
+			color: red;
 		}
 		</style>
 	</head>

@@ -7,15 +7,29 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.LocaleResolver;
 
 @Component
 public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler {
 
+	@Autowired
+	HttpServletRequest request;
+	
+	@Autowired
+	MessageSource messageSource;
+	
+	@Autowired
+	LocaleResolver localeResolver;
+	
 	/**
 	 * 인증 성공시 호출 핸들러
 	 * @param HttpServletRequest, HttpServletResponse, Authentication
@@ -40,9 +54,17 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 	 */
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+		String message = null;
+		if(exception instanceof UsernameNotFoundException) {
+			message = messageSource.getMessage("message.userNotFound", null, localeResolver.resolveLocale(request));
+		}else if(exception instanceof BadCredentialsException) {
+			message = messageSource.getMessage("message.passwordIncorrect", null, localeResolver.resolveLocale(request));
+		}else {
+			message = exception.getMessage();
+		}
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		OutputStream out = response.getOutputStream();
-		out.write(exception.getMessage().getBytes());
+		out.write(message.getBytes());
 	}
 	
 
