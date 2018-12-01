@@ -243,6 +243,7 @@ juice.data.List.prototype = {
  * juice.data.tree prototype
  */
 juice.data.Tree = function(json,linkNodeName) {
+	this.index = [];
 	this.rootNode = new juice.data.Map();
 	this.observers = new Array();
 	if(json) {
@@ -305,6 +306,24 @@ juice.data.Tree.prototype = {
 		for(var i = 0; i < this.observers.length; i++){
 			this.observers[i].update();
 		}
+	},
+	/* update */
+	update: function(){
+		this.notifyObservers();
+	},
+	/* set index */
+	setIndex: function(index) {
+		this.index = index;
+		this.notifyObservers();
+	},
+	/* get current select row index */
+	getIndex: function() {
+		return this.index;
+	},
+	/* clear current select row index */
+	clearIndex: function() {
+		this.index = [];
+		this.notifyObservers();
 	},
 	/* get rootNode */
 	getRootNode: function() {
@@ -1291,13 +1310,19 @@ juice.ui.TreeView.prototype = {
 		
 		// executes expression
 		var $context = {};
-		$context['index'] = JSON.stringify(index);
+		$context['index'] = index;
 		$context['depth'] = index.length - 1;
 		$context[this.item] = node;
 		li = this.executeExpression(li, $context);
 		
 		// creates juice element.
 		juice.initialize(li,$context);
+		
+		// on click event
+		li.addEventListener('click', function(event){
+			event.stopPropagation();
+			$this.tree.setIndex(eval(this.dataset.juiceIndex));
+		});
 
 		// child node
 		var childNodes = node.getChildNodes();

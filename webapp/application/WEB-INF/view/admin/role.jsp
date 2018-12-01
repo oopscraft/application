@@ -336,8 +336,8 @@ function removeRole() {
 				<td>
 					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
 						<colgroup>
-							<col/>
-							<col/>
+							<col style="width:40%;"/>
+							<col style="width:50%;"/>
 							<col style="width:10%;"/>
 						</colgroup>
 						<thead>

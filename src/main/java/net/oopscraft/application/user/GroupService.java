@@ -3,13 +3,18 @@ package net.oopscraft.application.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.repository.GroupRepository;
 
 @Service
 public class GroupService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GroupService.class);
 
 	@Autowired
 	private GroupRepository groupRepository;
@@ -23,10 +28,11 @@ public class GroupService {
 	 * @throws Exception
 	 */
 	public List<Group> getGroups() throws Exception {
-		List<Group> groups = groupRepository.findByUpperIdIsNull();
+		List<Group> groups = groupRepository.findByUpperIdIsNullOrderByDisplaySeqAsc();
 		for (Group group : groups) {
 			fillChildGroupRecursively(group);
 		}
+		LOGGER.debug("groups {}", new TextTable(groups));
 		return groups;
 	}
 
@@ -50,7 +56,7 @@ public class GroupService {
 	 * @throws Exception
 	 */
 	private void fillChildGroupRecursively(Group group) throws Exception {
-		List<Group> childGroups = groupRepository.findByUpperId(group.getId());
+		List<Group> childGroups = groupRepository.findByUpperIdOrderByDisplaySeqAsc(group.getId());
 		group.setChildGroups(childGroups);
 		for (Group childGroup : childGroups) {
 			fillChildGroupRecursively(childGroup);
