@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
@@ -15,24 +16,29 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import net.oopscraft.application.core.PasswordBasedEncryptor;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.XPathReader;
+import net.oopscraft.application.core.monitor.MonitorAgent;
+import net.oopscraft.application.core.monitor.MonitorAgentListener;
+import net.oopscraft.application.core.monitor.MonitorInfo;
 import net.oopscraft.application.core.webserver.WebServer;
 import net.oopscraft.application.core.webserver.WebServerContext;
 
 public class ApplicationBuilder {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationBuilder.class);
 	private static final String PROPERTY_IDENTIFIER = "\\$\\{(.*?)\\}";
 	Class<?> clazz;
 	File xmlFile;
@@ -80,6 +86,7 @@ public class ApplicationBuilder {
 		XPathReader xPathReader = new XPathReader(xmlFile);
 		Properties properties = new Properties();
 		properties.load(new FileInputStream(propertiesFile));
+		buildMonitorAgent(application);
 		buildWebServers(application, xPathReader, properties);
 		buildDataSources(application, xPathReader, properties);
 		buildEntityManagerFactories(application, xPathReader, properties);
@@ -107,6 +114,23 @@ public class ApplicationBuilder {
         }
         m.appendTail(sb);
        return sb.toString();
+	}
+	
+	/**
+	 * build MonitorAgent
+	 * @param application
+	 * @throws Exception
+	 */
+	void buildMonitorAgent(Application application) throws Exception {
+		MonitorAgent.intialize(3, 100);
+		MonitorAgent monitorAgent = MonitorAgent.getInstance();
+		monitorAgent.addListener(new MonitorAgentListener() {
+			@Override
+			public void onCheck(MonitorInfo jmxInfo, List<MonitorInfo> jmxInfoHistory) throws Exception {
+				LOGGER.info("{}", new TextTable(jmxInfo));
+			}
+		});
+		application.setMonitorAgent(monitorAgent);
 	}
 	
 	/**

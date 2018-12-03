@@ -1,6 +1,5 @@
 package net.oopscraft.application.user;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -34,7 +33,7 @@ public class Group {
 	Integer displaySeq;
 	
 	@Transient
-	List<Group> childGroups = new ArrayList<Group>();
+	List<Group> childGroups;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APP_GROUP_ROLE_MAP", joinColumns = @JoinColumn(name = "GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))

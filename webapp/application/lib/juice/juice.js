@@ -30,6 +30,7 @@ juice.data.Map = function(json) {
 		this.fromJson(json);
 	}
 	this.readOnly = {};
+	this.focus = null;
 }
 juice.data.Map.prototype = {
 	/* load data from json object*/
@@ -62,12 +63,16 @@ juice.data.Map.prototype = {
 	},
 	/* setting value */
 	set: function(name,value) {
-		var event = {name:name, value:value};
-		if(this.listener.change && this.listener.change.call(this,event) == false){
-			this.notifyObservers();
-			return false;
+		if(this.listener.beforeChange){
+			if(this.listener.beforeChange.call(this,{name:name, value:value}) == false){
+				this.notifyObservers();
+				return false;
+			}
 		}
 		this.data[name] = value;
+		if(this.listener.afterChange){
+			this.listener.afterChange.call(this,{name:name, value:this.get(name)});
+		}
 		this.notifyObservers();
 	},
 	/* getting value */
@@ -111,14 +116,21 @@ juice.data.Map.prototype = {
 		this.childNodes.splice(index,1);
 		this.notifyObservers();
 	},
-	/* listen change event */
-	onChange: function(listener){
-		this.listener.change = listener;
-	},
 	/* sets readOnly property */
 	setReadOnly: function(name, readOnly){
 		this.readOnly[name] = readOnly;
 		this.notifyObservers();
+	},
+	/*//Deprecated listen change event 
+	onChange: function(listener){
+		this.listener.change = listener;
+	},
+	*/
+	beforeChange: function(listener){
+		this.listener.beforeChange = listener;
+	},
+	afterChange: function(listener){
+		this.listener.afterChange = listener;
 	}
 }
 
@@ -235,8 +247,13 @@ juice.data.List.prototype = {
 			var map = list.getRow(i);
 			this.addRow(map);
 		}
+	},
+	beforeChange: function(beforeChangeListener){
+		// TODO
+	},
+	afterChange: function(afterChangeListener){
+		// TODO
 	}
-	
 }
 
 /**
@@ -271,6 +288,7 @@ juice.data.Tree.prototype = {
 				}
 			}
 		}
+		this.index = [];
 		this.notifyObservers();
 	},
 	/* convert into JSON Array */
@@ -301,7 +319,7 @@ juice.data.Tree.prototype = {
 	addObserver: function(observer) {
 		this.observers.push(observer);
 	},
-	/* notify chages to observers */
+	/* notify change event to observers */
 	notifyObservers: function() {
 		for(var i = 0; i < this.observers.length; i++){
 			this.observers[i].update();
@@ -319,6 +337,30 @@ juice.data.Tree.prototype = {
 	/* get current select row index */
 	getIndex: function() {
 		return this.index;
+	},
+	findIndexes: function(handler){
+		var indexes = [];
+		var depth = -1;
+		var cursor = [];
+		findChild(this.rootNode);
+		$this = this;
+		function findChild(node) {
+			depth ++;
+			cursor.push(-1);
+			var childNodes = node.getChildNodes();
+			for(var i = 0, size = childNodes.length; i < size; i ++){
+				var childNode = childNodes[i];
+				cursor[depth] = i;
+				console.log('cursor:' + cursor);
+				if(handler.call($this,childNode) == true){
+					indexes.push(JSON.parse(JSON.stringify(cursor)));
+				}
+				findChild(childNode);
+			}
+			depth --;
+			cursor.pop();
+		}
+		return indexes;
 	},
 	/* clear current select row index */
 	clearIndex: function() {
@@ -338,43 +380,47 @@ juice.data.Tree.prototype = {
 		}
 		return node;
 	},
-	/* remove node */
 	removeNode: function(index){
 		var node = this.getNode(index);
 		var parentNode = node.getParentNode();
 		parentNode.removeChildNode(index[index.length-1]);
+		this.index = -1;
 		this.notifyObservers();
 	},
-	/* moves node */
-	moveNode: function(from, to){
-		var fromNode = this.getNode(from);
-		var toNode = this.getNode(to);
+	insertNode: function(index, map){
+		var node = this.getNode(index);
+		var parentNode = node.getParentNode();
+		parentNode.insertChildNode(index[index.length-1], map);
+		this.index = index;
+		this.notifyObservers();
+	},
+	moveNode: function(fromIndex, toIndex){
+		var fromNode = this.getNode(fromIndex);
+		var toNode = this.getNode(toIndex);
 		
 		//remove
 		var fromParentNode = fromNode.getParentNode();
-		fromParentNode.removeChildNode(from[from.length-1]);
+		fromParentNode.removeChildNode(fromIndex[fromIndex.length-1]);
 		
 		// insert
 		var toParentNode = toNode.getParentNode();
-		toParentNode.insertChildNode(to[to.length-1],fromNode);
+		toParentNode.insertChildNode(toIndex[toIndex.length-1],fromNode);
 		
 		// notify 
+		this.index = toIndex;
 		this.notifyObservers();
 	},
-	/* move node to child */
-	moveNodeToChild: function(from, to){
-		var fromNode = this.getNode(from);
-		var toNode = this.getNode(to);
-		
-		//remove
-		var fromParentNode = fromNode.getParentNode();
-		fromParentNode.removeChildNode(from[from.length-1]);
-		
-		// insert as child
-		toNode.addChildNode(fromNode);
-		
-		// notify 
-		this.notifyObservers();
+	beforeNodeChange: function(listener){
+		// TODO
+	},
+	afterNodeChange: function(listener){
+		// TODO
+	},
+	beforeIndexChange: function(listener){
+		// TODO
+	},
+	afterIndexChange: function(listener){
+		// TODO
 	}
 }
 
@@ -1310,13 +1356,22 @@ juice.ui.TreeView.prototype = {
 		
 		// executes expression
 		var $context = {};
-		$context['index'] = index;
+		$context['index'] = JSON.stringify(index);
 		$context['depth'] = index.length - 1;
 		$context[this.item] = node;
 		li = this.executeExpression(li, $context);
 		
 		// creates juice element.
 		juice.initialize(li,$context);
+		
+		// active index item
+		if(JSON.stringify(index) == JSON.stringify(this.tree.index)){
+			li.childNodes.forEach(function(item){
+				if(item.nodeType == 1){
+					item.classList.add('juice-ui-treeView-index');
+				}
+			});
+		}
 		
 		// on click event
 		li.addEventListener('click', function(event){
@@ -1395,12 +1450,8 @@ juice.ui.TreeView.prototype = {
 				    	return false;
 				    }
 				    
-				    // check move or add child
-				    if(li.dataset.juiceContainable && eval(li.dataset.juiceContainable) == true){
-				    	$this.tree.moveNodeToChild(fromIndex, toIndex);
-				    }else{
-				    	$this.tree.moveNode(fromIndex, toIndex);
-				    }
+				    // moves node
+				    $this.tree.moveNode(fromIndex, toIndex);
 				});
 				li.addEventListener('dragover', function(ev){
 					ev.preventDefault();
@@ -2066,40 +2117,46 @@ juice.ui.Dialog.prototype = {
 		}
 	},
 	/* close dialog window */
-	close: function(callback) {
-		var $this = this;
+	close: function() {
 		
 		// fires close listener
-		if(this.listener.close){
-			if($this.listener.close.call($this) == false){
+		if(this.listener.beforeClose){
+			if(this.listener.beforeClose.call(this) == false){
 				return false;
 			}
 		}
-
-		// close window.
-		var animator = new juice.ui.Animator(this.div);
-		animator.fadeOut(function() {
-			
-			// restore content element into parent node
-			if($this.parentNode){
-				$this.parentNode.appendChild($this.content);
-			}
-			
-			// removes dialog from screen
-			$this.getWindow().document.body.removeChild($this.div);
-
-			// calls callback function
-			if(callback){
-				callback.call($this);
-			}
-		});
 		
+		// display
+		var animator = new juice.ui.Animator(this.div);
+		animator.fadeOut();
+
+		// restore content element into parent node
+		if(this.parentNode){
+			this.parentNode.appendChild(this.content);
+		}
+		
+		// removes dialog from screen
+		this.getWindow().document.body.removeChild(this.div);
+
+		// calls callback function
+		if(this.afterClose){
+			this.afterClose.call(this);
+		}
+
 		// unblock
 		this.blocker.unblock();
 	},
 	/* defines close event callback function */
 	onClose: function(listener){
 		this.listener.close = listener;
+	},
+	beforeClose: function(listener){
+		this.listener.beforeClose = listener;
+		return this;
+	},
+	afterClose: function(listener){
+		this.listener.afterClose = listener;
+		return this;
 	}
 }
 
@@ -2155,12 +2212,24 @@ juice.ui.Alert.prototype = {
 	},
 	/* confirm */
 	confirm: function(){
-		this.dialog.close(this.listener.confirm);
+		if(this.listener.beforeConfirm){
+			if(this.listener.beforeConfirm.call(this) == false){
+				return false;
+			}
+		}
+		this.dialog.close();
+		if(this.listener.afterConfirm) {
+			this.listener.afterConfirm.call(this);
+		}
+	},
+	// defines before confirm event listener
+	beforeConfirm: function(listener){
+		this.listener.beforeConfirm = listener;
 		return this;
 	},
-	/* on close event callback */
-	onConfirm: function(listener){
-		this.listener.confirm = listener;
+	// defines after confirm event listener.
+	afterConfirm: function(listener){
+		this.listener.afterConfirm = listener;
 		return this;
 	}
 }
@@ -2225,22 +2294,46 @@ juice.ui.Confirm.prototype = {
 	},
 	/* confirm */
 	confirm: function(){
-		this.dialog.close(this.listener.confirm);
-		return this;
+		if(this.listener.beforeConfirm){
+			if(this.listener.beforeConfirm.call(this) == false){
+				return false;
+			}
+		}
+		this.dialog.close();
+		if(this.listener.afterConfirm) {
+			this.listener.afterConfirm.call(this);
+		}
 	},
 	/* cancel */
 	cancel: function(){
-		this.dialog.close(this.listener.cancel);
+		if(this.listener.cancel){
+			if(this.listener.beforeCancel.call(this) == false){
+				return false;
+			}
+		}
+		this.dialog.close();
+		if(this.listener.afterCancel){
+			this.listener.afterCancel.call(this);
+		}
+	},
+	// defines before confirm event listener
+	beforeConfirm: function(listener){
+		this.listener.beforeConfirm = listener;
 		return this;
 	},
-	/* defines confirm event callback function */
-	onConfirm: function(listener){
-		this.listener.confirm = listener;
+	// defines after confirm event listener.
+	afterConfirm: function(listener){
+		this.listener.afterConfirm = listener;
 		return this;
 	},
-	/* onClose listener */
-	onCancel: function(listener){
-		this.listener.cancel = listener;
+	// defines before cancel event listener.
+	beforeCancel: function(listener){
+		this.listener.beforeCancel = listener;
+		return this;
+	},
+	// defines after cancel event listener.
+	afterCancel: function(listener){
+		this.listener.afterCancel = listener;
 		return this;
 	}
 }
@@ -2294,46 +2387,68 @@ juice.ui.Prompt = function(message){
 
 	// creates dialog
 	this.dialog = new juice.ui.Dialog(this.content);
+	
+	return this;
 }
 juice.ui.Prompt.prototype = {
-	/* setting title */
+	// sets title
 	setTitle: function(title){
 		this.dialog.setTitle(title);
+		return this;
 	},
-	/* opens alert message box */
+	// open prompt message dialog
 	open : function(){
 		this.dialog.open();
 		this.input.focus();
+		return this;
 	},
-	/* closes alert message box */
+	// confirm
 	confirm: function() {
-		if(this.listener.confirm){
-			if(this.listener.confirm.call(this) == false){
+		if(this.listener.beforeConfirm){
+			if(this.listener.beforeConfirm.call(this, { value: this.input.value }) == false){
 				return false;
 			}
 		}
 		this.dialog.close();
+		if(this.listener.afterConfirm) {
+			this.listener.afterConfirm.call(this, { value: this.input.value });
+		}
 	},
-	/* cancel */
+	// cancel
 	cancel: function() {
 		if(this.listener.cancel){
-			if(this.listener.cancel.call(this) == false){
+			if(this.listener.beforeCancel.call(this, { value: this.input.value }) == false){
 				return false;
 			}
 		}
 		this.dialog.close();
+		if(this.listener.afterCancel){
+			this.listener.afterCancel.call(this, { value: this.input.value });
+		}
 	},
-	/* return input value */
+	// return input value
 	getValue: function() {
 		return this.input.value;
 	},
-	/* defines confirm event callback function */
-	onConfirm: function(listener){
-		this.listener.confirm = listener;
+	// defines before confirm event listener
+	beforeConfirm: function(listener){
+		this.listener.beforeConfirm = listener;
+		return this;
 	},
-	/* defines cancle event callback function */
-	onCancel: function(listener){
-		this.listener.cancel = listener;
+	// defines after confirm event listener.
+	afterConfirm: function(listener){
+		this.listener.afterConfirm = listener;
+		return this;
+	},
+	// defines before cancel event listener.
+	beforeCancel: function(listener){
+		this.listener.beforeCancel = listener;
+		return this;
+	},
+	// defines after cancel event listener.
+	afterCancel: function(listener){
+		this.listener.afterCancel = listener;
+		return this;
 	}
 }
 
@@ -2697,118 +2812,6 @@ juice.initialize = function(container, $context) {
 		element.dataset.juice = id;
 	}
 }
-
-/**
- * juice.alert 
- */
-juice.alert = function(message){
-	var alert = new juice.ui.Alert(message);
-	return {
-		setTitle: function(title){
-			alert.setTitle(title);
-			return this;
-		},
-		onConfirm: function(listener){
-			alert.onConfirm(listener);
-			return this;
-		},
-		open: function(){
-			alert.open();
-			return this;
-		}
-	}
-}
-
-/**
- * juice.confirm
- */
-juice.confirm = function(message){
-	var confirm = new juice.ui.Confirm(message);
-	return {
-		setTitle: function(title){
-			confirm.setTitle(title);
-			return this;
-		},
-		onConfirm: function(listener){
-			confirm.onConfirm(listener);
-			return this;
-		},
-		onCancel: function(listener){
-			confirm.onCancel(listener);
-			return this;
-		},
-		open: function(){
-			confirm.open();
-			return this;
-		}
-	}
-}
-
-/**
- * juice.prompt
- */
-juice.prompt = function(message){
-	var prompt = new juice.ui.Prompt(message);
-	return {
-		setTitle: function(title){
-			prompt.setTitle(title);
-			return this;
-		},
-		onConfirm: function(listener){
-			prompt.onConfirm(listener);
-			return this;
-		},
-		onCancel: function(listener){
-			prompt.onCancel(listener);
-			return this;
-		},
-		open: function(){
-			prompt.open();
-			return this;
-		}
-	}
-}
-
-/**
- * juice.dialog
- * @param element
- * @returns
- */
-juice.dialog = function(element) {
-	var dialog = new juice.ui.Dialog(element);
-	return {
-		setTitle: function(title){
-			dialog.setTitle(title);
-			return this;
-		},
-		onClose: function(listener){
-			dialog.onClose(listener);
-			return this;
-		},
-		open: function(){
-			dialog.open();
-			return this;
-		},
-		close: function(){
-			dialog.close();
-			return this;
-		}
-	}
-}
-
-/**
- * juice.progress
- */
-juice.progress = {
-	progress: new juice.ui.Progress(),
-	start: function(){
-		this.progress.start();
-	},
-	end: function(){
-		this.progress.end();
-	}
-}
-
 
 /**
  * DOMContentLoaded event process

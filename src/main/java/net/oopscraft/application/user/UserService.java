@@ -22,7 +22,6 @@ import org.springframework.util.StringUtils;
 
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.user.RoleService.SearchCondition;
 import net.oopscraft.application.user.repository.UserRepository;
 
 @Service
@@ -142,6 +141,12 @@ public class UserService {
 		one.setPhone(user.getPhone());
 		one.setPhoto(user.getPhoto());
 		one.setProfile(user.getProfile());
+		
+		// add groups
+		one.getGroups().clear();
+		for (Group group : user.getGroups()) {
+			one.getGroups().add(group);
+		}
 		
 		// add authorities
 		one.getAuthorities().clear();

@@ -7,16 +7,16 @@ import java.util.Observer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.core.monitor.SystemInfo;
+import net.oopscraft.application.core.monitor.MonitorInfo;
 
-public abstract class SystemMonitorListener implements Observer {
+public abstract class MonitorAgentListener implements Observer {
 	
-	private static final Log LOG = LogFactory.getLog(SystemMonitorListener.class);
+	private static final Log LOG = LogFactory.getLog(MonitorAgentListener.class);
 
 	@Override
 	public void update(Observable observable, Object arg1) {
 		try {
-			SystemMonitor jmxMonitor = (SystemMonitor) observable;
+			MonitorAgent jmxMonitor = (MonitorAgent) observable;
 			onCheck(jmxMonitor.getLastestJmxInfo(), jmxMonitor.getJmxInfoHistory());
 		}catch(Exception e) {
 			LOG.warn(e.getMessage(),e);
@@ -27,6 +27,6 @@ public abstract class SystemMonitorListener implements Observer {
 	 * Check 
 	 * @throws Exception
 	 */
-	public abstract void onCheck(SystemInfo jmxInfo, List<SystemInfo> jmxInfoHistory) throws Exception;
+	public abstract void onCheck(MonitorInfo jmxInfo, List<MonitorInfo> jmxInfoHistory) throws Exception;
 
 }

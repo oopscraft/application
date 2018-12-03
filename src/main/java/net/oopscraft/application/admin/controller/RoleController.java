@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,7 +60,7 @@ public class RoleController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getRoles", method = RequestMethod.GET)
+	@RequestMapping(value = "getRoles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional
 	public String getRoles(@RequestParam(value = "key", required = false) String key,
@@ -88,7 +89,7 @@ public class RoleController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getRole", method = RequestMethod.GET)
+	@RequestMapping(value = "getRole", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional
 	public String getRoles(@RequestParam(value = "id") String id) throws Exception {
@@ -103,7 +104,7 @@ public class RoleController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "saveRole", method = RequestMethod.POST)
+	@RequestMapping(value = "saveRole", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public String saveRole(@RequestBody String payload) throws Exception {
@@ -119,7 +120,7 @@ public class RoleController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "removeRole", method = RequestMethod.GET)
+	@RequestMapping(value = "removeRole", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public String removeRole(@RequestParam(value = "id") String id) throws Exception {

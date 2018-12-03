@@ -18,23 +18,23 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.core.monitor.SystemInfo.ClassInfo;
-import net.oopscraft.application.core.monitor.SystemInfo.DiskInfo;
-import net.oopscraft.application.core.monitor.SystemInfo.MemInfo;
-import net.oopscraft.application.core.monitor.SystemInfo.OsInfo;
-import net.oopscraft.application.core.monitor.SystemInfo.ThreadInfo;
+import net.oopscraft.application.core.monitor.MonitorInfo.ClassInfo;
+import net.oopscraft.application.core.monitor.MonitorInfo.DiskInfo;
+import net.oopscraft.application.core.monitor.MonitorInfo.MemInfo;
+import net.oopscraft.application.core.monitor.MonitorInfo.OsInfo;
+import net.oopscraft.application.core.monitor.MonitorInfo.ThreadInfo;
 
 
 
-public class SystemMonitor extends Observable implements Runnable {
+public class MonitorAgent extends Observable implements Runnable {
 	
-	private static final Log LOG = LogFactory.getLog(SystemMonitor.class);
-	private static SystemMonitor instance = null;
+	private static final Log LOG = LogFactory.getLog(MonitorAgent.class);
+	private static MonitorAgent instance = null;
 	private int intervalSeconds = 3;
 	private int historySize = 10;
 
 	private Thread thread = null;
-	private List<SystemInfo> jmxInfoHistory = new CopyOnWriteArrayList<SystemInfo>();
+	private List<MonitorInfo> jmxInfoHistory = new CopyOnWriteArrayList<MonitorInfo>();
 	
 	/**
 	 * Initialize MonitorAgent
@@ -43,10 +43,10 @@ public class SystemMonitor extends Observable implements Runnable {
 	 * @return
 	 * @throws Exception
 	 */
-	public synchronized static SystemMonitor intialize(int intervalSeconds, int historySize) throws Exception {
-		synchronized(SystemMonitor.class) {
+	public synchronized static MonitorAgent intialize(int intervalSeconds, int historySize) throws Exception {
+		synchronized(MonitorAgent.class) {
 			if(instance == null) {
-				instance = new SystemMonitor(intervalSeconds, historySize);
+				instance = new MonitorAgent(intervalSeconds, historySize);
 			}
 			return instance;
 		}
@@ -56,8 +56,8 @@ public class SystemMonitor extends Observable implements Runnable {
 	 * getInstance
 	 * @return
 	 */
-	public static SystemMonitor getInstance() throws Exception {
-		synchronized(SystemMonitor.class) {
+	public static MonitorAgent getInstance() throws Exception {
+		synchronized(MonitorAgent.class) {
 			if(instance == null) {
 				throw new Exception("Monitor instance is not initialized."); 
 			}
@@ -71,7 +71,7 @@ public class SystemMonitor extends Observable implements Runnable {
 	 * @param limit
 	 * @throws Exception
 	 */
-	private SystemMonitor(int interval, int limit) throws Exception {
+	private MonitorAgent(int interval, int limit) throws Exception {
 		this.intervalSeconds = interval;
 		this.historySize = limit;
 		thread = new Thread(this);
@@ -84,7 +84,7 @@ public class SystemMonitor extends Observable implements Runnable {
 	public void run() {
 		while(!Thread.interrupted()) {
 			try {
-				SystemInfo jmxInfo = getJmxInfo();
+				MonitorInfo jmxInfo = getJmxInfo();
 				jmxInfoHistory.add(jmxInfo);
 				if(jmxInfoHistory.size() > historySize) {
 					jmxInfoHistory.remove(0);
@@ -103,8 +103,8 @@ public class SystemMonitor extends Observable implements Runnable {
 		
 	}
 	
-	public static SystemInfo getJmxInfo() throws Exception {
-		SystemInfo jmxInfo = new SystemInfo();
+	public static MonitorInfo getJmxInfo() throws Exception {
+		MonitorInfo jmxInfo = new MonitorInfo();
 		try {
 			// Getting OS info 
 			OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
@@ -192,19 +192,19 @@ public class SystemMonitor extends Observable implements Runnable {
 		return jmxInfo;
 	}
 	
-	public List<SystemInfo> getJmxInfoHistory() {
+	public List<MonitorInfo> getJmxInfoHistory() {
 		return jmxInfoHistory;
 	}
 	
-	public SystemInfo getLastestJmxInfo() {
+	public MonitorInfo getLastestJmxInfo() {
 		return jmxInfoHistory.get(jmxInfoHistory.size() -1);
 	}
 	
-	public void addListener(SystemMonitorListener listener) {
+	public void addListener(MonitorAgentListener listener) {
 		addObserver(listener);
 	}
 	
-	public void removeListener(SystemMonitorListener listener) {
+	public void removeListener(MonitorAgentListener listener) {
 		deleteObserver(listener);
 	}
 

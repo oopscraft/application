@@ -13,12 +13,12 @@ import org.springframework.web.socket.WebSocketSession;
 
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.ValueMap;
-import net.oopscraft.application.core.monitor.SystemInfo;
-import net.oopscraft.application.core.monitor.SystemMonitor;
-import net.oopscraft.application.core.monitor.SystemMonitorListener;
+import net.oopscraft.application.core.monitor.MonitorInfo;
+import net.oopscraft.application.core.monitor.MonitorAgent;
+import net.oopscraft.application.core.monitor.MonitorAgentListener;
 
 
-public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHandler {
+public class WebSocketHandler extends net.oopscraft.application.core.spring.WebSocketHandler {
 	
 	private static final Log LOG = LogFactory.getLog(WebSocketHandler.class);
 	enum Id { 
@@ -61,11 +61,11 @@ public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHa
 		
 		// creates JmxMonitor instance
 		try {
-			SystemMonitor.intialize(3, 10);
-			SystemMonitor jmxMonitor = SystemMonitor.getInstance();
-			jmxMonitor.addListener(new SystemMonitorListener() {
+			MonitorAgent.intialize(3, 10);
+			MonitorAgent jmxMonitor = MonitorAgent.getInstance();
+			jmxMonitor.addListener(new MonitorAgentListener() {
 				@Override
-				public void onCheck(SystemInfo jmxInfo, List<SystemInfo> jmxInfoHistory) throws Exception {
+				public void onCheck(MonitorInfo jmxInfo, List<MonitorInfo> jmxInfoHistory) throws Exception {
 					ValueMap messageMap = new ValueMap();
 					messageMap.set("id", Id.jmxInfo);
 					messageMap.set("result", convertJmxInfoToMap(jmxInfo));				
@@ -105,13 +105,13 @@ public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHa
 			switch(id) {
 			case jmxInfoHistory :
 				List<ValueMap> list = new ArrayList<ValueMap>();
-				for(SystemInfo jmxInfo : SystemMonitor.getInstance().getJmxInfoHistory()) {
+				for(MonitorInfo jmxInfo : MonitorAgent.getInstance().getJmxInfoHistory()) {
 					list.add(convertJmxInfoToMap(jmxInfo));
 				}
 				result = list;
 			break;
 			case jmxInfo :
-				result = convertJmxInfoToMap(SystemMonitor.getInstance().getLastestJmxInfo());
+				result = convertJmxInfoToMap(MonitorAgent.getInstance().getLastestJmxInfo());
 			break;
 			default :
 			break;
@@ -125,7 +125,7 @@ public class WebSocketHandler extends net.oopscraft.application.core.WebSocketHa
 		}
 	}
 
-	private ValueMap convertJmxInfoToMap(SystemInfo jmxInfo) throws Exception {
+	private ValueMap convertJmxInfoToMap(MonitorInfo jmxInfo) throws Exception {
 		ValueMap jmxInfoMap = new ValueMap();
 		jmxInfoMap.set("osInfo", jmxInfo.getOsInfo());
 		jmxInfoMap.set("memInfo", jmxInfo.getMemInfo());

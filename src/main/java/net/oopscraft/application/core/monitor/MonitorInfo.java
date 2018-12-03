@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SystemInfo {
+public class MonitorInfo {
 		
 	public enum OsInfo { name, version, arch, availableProcessors, systemLoadAverage }
 	public enum MemInfo { heapMemoryUsage, nonHeapMemoryUsage }

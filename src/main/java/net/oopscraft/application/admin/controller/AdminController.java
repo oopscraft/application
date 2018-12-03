@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.AuthorityService;
+import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
 import net.oopscraft.application.user.Role;
 import net.oopscraft.application.user.RoleService;
@@ -48,6 +50,19 @@ public class AdminController {
 
 	/**
 	 * Gets groups
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "getGroups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional
+	public String getGroups() throws Exception {
+		List<Group> groups = groupService.getGroups();
+		return JsonUtils.toJson(groups);
+	}
+
+	/**
+	 * Gets groups
 	 * 
 	 * @param searchKey
 	 * @param searchValue
@@ -56,7 +71,7 @@ public class AdminController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getRoles", method = RequestMethod.GET)
+	@RequestMapping(value = "getRoles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional
 	public String getRoles(@RequestParam(value = "key", required = false) String key,
@@ -88,7 +103,7 @@ public class AdminController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET)
+	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional
 	public String getAuthorities(@RequestParam(value = "key", required = false) String key,

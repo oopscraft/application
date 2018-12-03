@@ -10,6 +10,7 @@
 <script type="text/javascript">
 var groups = new juice.data.Tree();
 var group = new juice.data.Map();
+group.setReadOnly('id',true);
 var roles = new juice.data.List();
 var authorities = new juice.data.List();
 
@@ -29,7 +30,11 @@ function getGroups() {
 		,type: 'GET'
 		,data: {}
 		,success: function(data, textStatus, jqXHR) {
+			console.log(data);
 			groups.fromJson(data,'childGroups');
+
+			// animates groups
+			$('#groupsUl').hide().fadeIn();
    	 	}
 	});	
 }
@@ -46,7 +51,43 @@ function getGroup(id) {
 			group.fromJson(data);
 			roles.fromJson(data.roles);
 			authorities.fromJson(data.authorities);
+			group.setReadOnly('id',true);
+			
+			// breadcrumbs
+			getBreadCrumbs(group.get('upperId'),function(breadCrumbs){
+				var breadCrumbsNames = [];
+				breadCrumbs.forEach(function(item){
+					breadCrumbsNames.push(item.name);
+				});
+				group.set('breadCrumbs', breadCrumbsNames.join(' - '));
+			});
+			
+			// animates group.
+			$('#groupTable').hide().fadeIn();
   	 	}
+	});	
+}
+
+/**
+ * Clears group
+ */
+function clearGroup(){
+	group.fromJson({});
+	roles.fromJson([]);
+	authorities.fromJson([]);
+}
+
+/**
+ * Gets bread crumbs
+ */
+function getBreadCrumbs(id, callback) {
+	$.ajax({
+		 url: 'group/getBreadCrumbs'
+		,type: 'GET'
+		,data: {id:id}
+		,success: function(data, textStatus, jqXHR) {
+			callback.call(this, data);
+ 	 	}
 	});	
 }
 
@@ -54,7 +95,7 @@ function getGroup(id) {
  * Adds Role
  */
 function addRole(){
-	__rolesDialog.open(function (selectedRoles){
+	__rolesDialog.open(function(selectedRoles){
 		
 		// checks duplicated row
 		var duplicated = false;
@@ -70,8 +111,8 @@ function addRole(){
 			}
 		}
 		if(duplicated == true){
-			<c:set var="item"><spring:message code="text.role"/></c:set>
-			var message = '<spring:message code="message.duplicatedItem" arguments="${item}"/>';
+			<spring:message code="application.text.role" var="item"/>
+			var message = '<spring:message code="application.message.duplicatedItem" arguments="${item}"/>';
 			new juice.ui.Alert(message).open();
 			return false;
 		}
@@ -108,8 +149,8 @@ function addAuthority(){
 			}
 		}
 		if(duplicated == true){
-			<c:set var="item"><spring:message code="text.authority"/></c:set>
-			var message = '<spring:message code="message.duplicatedItem" arguments="${item}"/>';
+			<spring:message code="application.text.authority" var="item"/>
+			var message = '<spring:message code="application.message.duplicatedItem" arguments="${item}"/>';
 			new juice.ui.Alert(message).open();
 			return false;
 		}
@@ -127,21 +168,68 @@ function removeAuthority(index){
 }
 
 /**
- * Adds group
+ * Adds child group
  */
-function addGroup(upperId) {
-	group.fromJson({});
-	group.set('upperId', upperId);
+function addChildGroup(upperId) {
+	
+	<spring:message code="application.text.id" var="item"/>
+	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
+		.beforeConfirm(function(event){
+			var id = event.value;
+	
+			// checks duplicated id.
+			var isDuplicated = false;
+			$.ajax({
+				 url: 'group/getGroup'
+				,type: 'GET'
+				,data: {id: id}
+				,async: false
+				,success: function(data, textStatus, jqXHR) {
+					if(data != null && data.id == id){
+						<spring:message code="application.text.id" var="item"/>
+						new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+						isDuplicated = true;
+					}
+		 	 	}
+			});
+			if(isDuplicated == true){
+				return false;
+			}
+		})
+		.afterConfirm(function(event){
+			var id = event.value;
+	
+			// add new data.
+			clearGroup();
+			group.set('id', id);
+			group.set('upperId', upperId);
+	
+			// breadcrumbs
+			getBreadCrumbs(upperId,function(breadCrumbs){
+				var breadCrumbsNames = [];
+				breadCrumbs.forEach(function(item){
+					breadCrumbsNames.push(item.name);
+				});
+				group.set('breadCrumbs', breadCrumbsNames.join(' - '));
+			});
+		})
+		.open();
 }
 
 /**
  * Saves group
  */
 function saveGroup(){
-	<c:set var="item"><spring:message code="text.group"/></c:set>
-	var message = '<spring:message code="message.saveItem.confirm" arguments="${item}"/>';
+	<spring:message code="application.text.group" var="item"/>
+	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
-		.onConfirm(function() {
+		.beforeConfirm(function(){
+			if(group.get('name') == null){
+				alert('fdasfdsa');
+				return false;
+			}
+		})
+		.afterConfirm(function() {
 			var groupJson = group.toJson();
 			groupJson.roles = roles.toJson();
 			groupJson.authorities = authorities.toJson();
@@ -151,30 +239,53 @@ function saveGroup(){
 				,data: JSON.stringify(groupJson)
 				,contentType: "application/json"
 				,success: function(data, textStatus, jqXHR) {
-					<c:set var="item"><spring:message code="text.group"/></c:set>
-					var message = '<spring:message code="message.saveItem.complete" arguments="${item}"/>';
+					<spring:message code="application.text.group" var="item"/>
+					var message = '<spring:message code="application.message.saveItem.complete" arguments="${item}"/>';
 					new juice.ui.Alert(message)
-						.onConfirm(function(){
-							getGroup(group.get('id'));
-							getGroups();
-						}).open();
+					.afterConfirm(function(){
+						getGroup(group.get('id'));
+						getGroups();
+					}).open();
 			 	}
 			});	
-		}).open();
+		})
+		.open();
+}
+
+/**
+ * Removes group
+ */
+function removeGroup() {
+	<spring:message code="application.text.group" var="item"/>
+	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
+	new juice.ui.Confirm(message)
+	.afterConfirm(function() {
+		$.ajax({
+			 url: 'group/removeGroup'
+			,type: 'GET'
+			,data: { id: group.get('id') }
+			,success: function(data, textStatus, jqXHR) {
+				<spring:message code="application.text.group" var="item"/>
+				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
+				new juice.ui.Alert(message)
+				.afterConfirm(function(){
+					clearGroup();
+					getGroups();
+				}).open();
+	  	 	}
+		});	
+	}).open();
 }
 
 
 </script>
 <style type="text/css">
-div.active {
-	background-color: #f7f7f7;
-}
 
 </style>
 <div class="title1">
 	<i class="icon-folder"></i>
-	<spring:message code="text.group"/>
-	<spring:message code="text.management"/>
+	<spring:message code="application.text.group"/>
+	<spring:message code="application.text.management"/>
 </div>
 <hr/>
 <div class="container">
@@ -186,33 +297,27 @@ div.active {
 			<div>
 				<div class="title2">
 					<i class="icon-tree"></i>
-					<spring:message code="text.group"/>
-					<spring:message code="text.list"/>
+					<spring:message code="application.text.group"/>
+					<spring:message code="application.text.list"/>
 				</div>
 			</div>
 			<div style="width:20%;text-align:right;">
-				<button>
+				<button onclick="javascript:addChildGroup(null);">
 					<i class="icon-plus"></i>
 				</button>
 			</div>
 		</div>
-		<ul data-juice="TreeView" data-juice-bind="groups" data-juice-item="group">
+		<ul id="groupsUl" data-juice="TreeView" data-juice-bind="groups" data-juice-item="group" data-juice-editable="true">
 			<li>
-				<div 
-				class="{{JSON.stringify($context.index) == JSON.stringify(groups.getIndex()) ? 'active' : ''}}" 
-				style="display:flex;justify-content:space-between;border-bottom:dotted 1px #ccc;">
+				<div style="display:flex;justify-content:space-between;border-bottom:dotted 1px #ccc;">
 					<div data-id="{{$context.group.get('id')}}" onclick="javascript:getGroup(this.dataset.id);" style="width:80%;cursor:hand;cursor:pointer;">
 						<i class="icon-file"></i>
+						<label data-juice="Label" data-juice-bind="group.id"></label>
+						|
 						<label data-juice="Label" data-juice-bind="group.name"></label>
 					</div>
 					<div style="width:20%;min-width:100px;display:inline-block;text-align:right;">
-						<button>
-							<i class="icon-up"></i>
-						</button>
-						<button>
-							<i class="icon-down"></i>
-						</button>
-						<button data-id="{{$context.group.get('id')}}" onclick="javascript:addGroup(this.dataset.id);">
+						<button data-id="{{$context.group.get('id')}}" onclick="javascript:addChildGroup(this.dataset.id);">
 							<i class="icon-plus"></i>
 						</button>
 					</div>
@@ -229,26 +334,22 @@ div.active {
 			<div>
 				<div class="title2">
 					<i class="icon-folder"></i>
-					<spring:message code="text.group"/>
-					<spring:message code="text.details"/>
+					<spring:message code="application.text.group"/>
+					<spring:message code="application.text.details"/>
 				</div>
 			</div>
 			<div>
-				<button onclick="javascript:addGroup();">
-					<i class="icon-plus"></i>
-					<spring:message code="text.new"/>
-				</button>
 				<button onclick="javascript:saveGroup();">
 					<i class="icon-disk"></i>
-					<spring:message code="text.save"/>
+					<spring:message code="application.text.save"/>
 				</button>
 				<button onclick="javascript:removeGroup();">
 					<i class="icon-trash"></i>
-					<spring:message code="text.remove"/>
+					<spring:message code="application.text.remove"/>
 				</button>
 			</div>
 		</div>
-		<table class="detail">
+		<table id="groupTable" class="detail">
 			<colgroup>
 				<col style="width:30%;"/>
 				<col style="width:70%;"/>
@@ -256,7 +357,7 @@ div.active {
 			<tr>
 				<th>
 					<i class="icon-attention"></i>
-					<spring:message code="text.id"/>
+					<spring:message code="application.text.id"/>
 				</th>
 				<td>
 					<input class="id" data-juice="TextField" data-juice-bind="group.id"/>
@@ -265,7 +366,7 @@ div.active {
 			<tr>
 				<th>
 					<span class="must">
-						<spring:message code="text.name"/>
+						<spring:message code="application.text.name"/>
 					</span>
 				</th>
 				<td>
@@ -274,16 +375,21 @@ div.active {
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="text.upper"/>
-					<spring:message code="text.group"/>
+					<spring:message code="application.text.upper"/>
+					<spring:message code="application.text.group"/>
 				</th>
 				<td>
-					<label data-juice="Label" data-juice-bind="group.upperId"></label>
+					<label data-juice="Label" data-juice-bind="group.breadCrumbs"></label>
+					<input type="hidden" data-juice="TextField" data-juice-bind="group.upperId"/>
+					<button>
+						<i class="icon-tree"></i>
+						<spring:message code="application.text.change"/>
+					</button>
 				</td>
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="text.description"/>
+					<spring:message code="application.text.description"/>
 				</th>
 				<td>
 					<textarea data-juice="TextArea" data-juice-bind="group.description"></textarea>
@@ -292,8 +398,8 @@ div.active {
 			<tr>
 				<th>
 					<i class="icon-card"></i>
-					<spring:message code="text.own"/>
-					<spring:message code="text.roles"/>
+					<spring:message code="application.text.own"/>
+					<spring:message code="application.text.roles"/>
 				</th>
 				<td>
 					<table data-juice="Grid" data-juice-bind="roles" data-juice-item="role">
@@ -305,10 +411,10 @@ div.active {
 						<thead>
 							<tr>
 								<th>
-									<spring:message code="text.id"/>
+									<spring:message code="application.text.id"/>
 								</th>
 								<th>
-									<spring:message code="text.name"/>
+									<spring:message code="application.text.name"/>
 								</th>
 								<th>
 									<button onclick="javascript:addRole();">
@@ -334,8 +440,8 @@ div.active {
 			<tr>
 				<th>
 					<i class="icon-key"></i>
-					<spring:message code="text.own"/>
-					<spring:message code="text.authorities"/>
+					<spring:message code="application.text.own"/>
+					<spring:message code="application.text.authorities"/>
 				</th>
 				<td>
 					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
@@ -347,10 +453,10 @@ div.active {
 						<thead>
 							<tr>
 								<th>
-									<spring:message code="text.id"/>
+									<spring:message code="application.text.id"/>
 								</th>
 								<th>
-									<spring:message code="text.name"/>
+									<spring:message code="application.text.name"/>
 								</th>
 								<th>
 									<button onclick="javascript:addAuthority();">
