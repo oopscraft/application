@@ -28,6 +28,7 @@
 .icon-right:before { content: '\e81a'; } /* '' */
 .icon-barcode:before { content: '\e81b'; } /* '' */
 .icon-upload:before { content: '\e81c'; } /* '' */
+.icon-change:before { content: '\e81d'; } /* '' */
 .icon-content:before { content: '\f0f6'; } /* '' */
 .icon-code:before { content: '\f121'; } /* '' */
 .icon-attention:before { content: '\f12a'; } /* '' */

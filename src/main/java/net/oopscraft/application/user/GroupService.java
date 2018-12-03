@@ -1,6 +1,7 @@
 package net.oopscraft.application.user;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -45,7 +46,9 @@ public class GroupService {
 	 */
 	public Group getGroup(String id) throws Exception {
 		Group group = groupRepository.findOne(id);
-		fillChildGroupRecursively(group);
+		if(group != null) {
+			fillChildGroupRecursively(group);
+		}
 		return group;
 	}
 
@@ -62,6 +65,26 @@ public class GroupService {
 			fillChildGroupRecursively(childGroup);
 		}
 	}
+	
+	/**
+	 * Gets bread crumbs
+	 * @param id
+	 * @return
+	 */
+	public List<Group> getBreadCrumbs(String id){
+		List<Group> breadCrumbs = new ArrayList<Group>();
+		while(id != null) {
+			Group group = groupRepository.findOne(id);
+			if(group != null) {
+				breadCrumbs.add(group);
+				id = group.getUpperId();
+				continue;
+			}
+			break;
+		}
+		Collections.reverse(breadCrumbs);
+		return breadCrumbs;
+	}
 
 	/**
 	 * Saves group details
@@ -74,26 +97,62 @@ public class GroupService {
 		if (one == null) {
 			one = new Group();
 			one.setId(group.getId());
-			one.setRoles(new ArrayList<Role>());
-			one.setAuthorities(new ArrayList<Authority>());
+			one.setUpperId(group.upperId);
+			one.setDisplaySeq(getNewDisplaySeq(group.getUpperId()));
+		}else {
+			if(isUpperIdChanged(one.getUpperId(), group.getUpperId())) {
+				one.setUpperId(group.getUpperId());
+				one.setDisplaySeq(getNewDisplaySeq(group.getUpperId()));
+			}else {
+				one.setDisplaySeq(group.getDisplaySeq());
+			}
 		}
+		
+		// sets properties
 		one.setName(group.getName());
 		one.setDescription(group.getDescription());
-		
+
 		// adds roles
-		one.getRoles().clear();
-		for(Role role : group.getRoles()) {
-			one.getRoles().add(role);
-		}
+		one.setRoles(group.getRoles());
 		
 		// adds authorities
-		one.getAuthorities().clear();
-		for (Authority authority : group.getAuthorities()) {
-			one.getAuthorities().add(authority);
-		}
+		one.setAuthorities(group.getAuthorities());
 
 		groupRepository.save(one);
 		return groupRepository.findOne(group.getId());
+	}
+	
+	/**
+	 * Checks upperId is changed.
+	 * @param currentUpperId
+	 * @param newUpperId
+	 * @return
+	 */
+	private boolean isUpperIdChanged(String currentUpperId, String newUpperId) {
+		if(currentUpperId == null) {
+			if(newUpperId != null) {
+				return true;
+			}
+		}else {
+			if(!currentUpperId.equals(newUpperId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns new displaySeq
+	 * @param upperId
+	 * @return
+	 * @throws Exception
+	 */
+	private int getNewDisplaySeq(String upperId) throws Exception {
+		if(upperId == null) {
+			return groupRepository.findByUpperIdIsNullOrderByDisplaySeqAsc().size() + 1;
+		}else {
+			return groupRepository.findByUpperIdOrderByDisplaySeqAsc(upperId).size() + 1;
+		}
 	}
 
 	/**
@@ -104,6 +163,14 @@ public class GroupService {
 	 */
 	public Group removeGroup(String id) throws Exception {
 		Group group = groupRepository.getOne(id);
+		
+		// checks child groups
+		List<Group> childGroups = groupRepository.findByUpperIdOrderByDisplaySeqAsc(id);
+		if(childGroups.size() > 0) {
+			throw new Exception("fdsafdsa");
+		}
+		
+		// deletes group
 		groupRepository.delete(group);
 		return group;
 	}

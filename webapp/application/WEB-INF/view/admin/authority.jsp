@@ -15,38 +15,18 @@ var authoritySearch = new juice.data.Map({
 	,rows: 20
 	,totalCount:-1
 });
-authoritySearch.onChange(function(event){
+authoritySearch.afterChange(function(event){
 	if(event.name == 'key'){
 		this.set('value','');
 	}
 });
 var authoritySearchKeys = [
-	 { value:'', text:'- <spring:message code="text.all"/> -' }
-	,{ value:'id', text:'<spring:message code="text.id"/>' }
-	,{ value:'name', text:'<spring:message code="text.name"/>' }
+	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
+	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
+	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
 ];
 var authorities = new juice.data.List();
 var authority = new juice.data.Map();
-authority.onChange(function(event){
-	// Checks ID is unique.
-	if(event.name == 'id') {
-		var valid = true;
-		$.ajax({
-			 url: 'authority/getAuthority'
-			,type: 'GET'
-			,data: {id:event.value}
-			,async: false
-			,success: function(data, textStatus, jqXHR) {
-				var authorityJson = JSON.parse(data);
-				if(authorityJson != null && authorityJson.id == event.value){
-					new juice.ui.Alert('<spring:message code="message.duplicatedId"/>').open();
-					valid = false;
-				}
-	 	 	}
-		});
-		return valid;
-	}
-});
 
 /**
  * On document loaded
@@ -67,7 +47,7 @@ function getAuthorities(page) {
 		,type: 'GET'
 		,data: authoritySearch.toJson()
 		,success: function(data, textStatus, jqXHR) {
-			authorities.fromJson(JSON.parse(data));
+			authorities.fromJson(data);
 			authoritySearch.set('totalCount', __parseTotalCount(jqXHR));
 			$('#authoritiesTable > tbody').hide().fadeIn();
    	 	}
@@ -83,9 +63,7 @@ function getAuthority(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
-			var authorityJson = JSON.parse(data);
-			authority.fromJson(authorityJson);
-			authority.setReadOnly('id',true);
+			authority.fromJson(data);
 			$('#authorityTable').hide().fadeIn();
   	 	}
 	});	
@@ -95,19 +73,56 @@ function getAuthority(id) {
  * Adds authority
  */
 function addAuthority() {
-	authorities.clearIndex();
-	authority.fromJson({});
-	authority.setReadOnly('id',false);
+	
+	<spring:message code="application.text.id" var="item"/>
+	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
+		.beforeConfirm(function(event){
+			var id = event.value;
+	
+			// checks duplicated id.
+			var isDuplicated = false;
+			$.ajax({
+				 url: 'authority/getAuthority'
+				,type: 'GET'
+				,data: {id: id}
+				,async: false
+				,success: function(data, textStatus, jqXHR) {
+					if(data != null && data.id == id){
+						if(data != null && data.id == event.value){
+							isDuplicated = true;
+						}
+					}
+		 	 	}
+			});
+			if(isDuplicated == true){
+				<spring:message code="application.text.id" var="item"/>
+				new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+				return false;
+			}
+		})
+		.afterConfirm(function(event){
+			var id = event.value;
+			authorities.clearIndex();
+			authority.fromJson({});
+			authority.set('id', id);
+		})
+		.open();
 }
 
 /**
  * Saves authority.
  */
 function saveAuthority() {
-	<c:set var="item"><spring:message code="text.authority"/></c:set>
-	var message = '<spring:message code="message.saveItem.confirm" arguments="${item}"/>';
+	<spring:message code="application.text.authority" var="item"/>
+	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
-		.onConfirm(function() {
+		.beforeConfirm(function(){
+			if(authority.get('name') == null) {
+				alert('fdsa');
+				return false;
+			}
+		})
+		.afterConfirm(function() {
 			var authorityJson = authority.toJson();
 			$.ajax({
 				 url: 'authority/saveAuthority'
@@ -115,10 +130,10 @@ function saveAuthority() {
 				,data: JSON.stringify(authorityJson)
 				,contentType: "application/json"
 				,success: function(data, textStatus, jqXHR) {
-					<c:set var="item"><spring:message code="text.authority"/></c:set>
-					var message = '<spring:message code="message.saveItem.complete" arguments="${item}"/>';
+					<spring:message code="application.text.authority" var="item"/>
+					var message = '<spring:message code="application.message.saveItem.complete" arguments="${item}"/>';
 					new juice.ui.Alert(message)
-						.onConfirm(function(){
+						.afterConfirm(function(){
 							getAuthority(authority.get('id'));
 							getAuthorities();
 						}).open();
@@ -131,19 +146,19 @@ function saveAuthority() {
  * Removes authority
  */
 function removeAuthority() {
-	<c:set var="item"><spring:message code="text.authority"/></c:set>
-	var message = '<spring:message code="message.removeItem.confirm" arguments="${item}"/>';
+	<spring:message code="application.text.authority" var="item"/>
+	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
-	.onConfirm(function() {
+	.afterConfirm(function() {
 		$.ajax({
 			 url: 'authority/removeAuthority'
 			,type: 'GET'
 			,data: { id: authority.get('id') }
 			,success: function(data, textStatus, jqXHR) {
-				<c:set var="item"><spring:message code="text.authority"/></c:set>
-				var message = '<spring:message code="message.removeItem.complete" arguments="${item}"/>';
+				<spring:message code="application.text.authority" var="item"/>
+				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
 				new juice.ui.Alert(message)
-				.onConfirm(function(){
+				.afterConfirm(function(){
 					getAuthorities();
 				}).open();
 	  	 	}
@@ -166,8 +181,8 @@ function removeAuthority() {
 </style>
 <div class="title1">
 	<i class="icon-key"></i>
-	<spring:message code="text.authority"/>
-	<spring:message code="text.management"/>
+	<spring:message code="application.text.authority"/>
+	<spring:message code="application.text.management"/>
 </div>
 <hr/>
 <div class="container">
@@ -186,7 +201,7 @@ function removeAuthority() {
 			<div>
 				<button onclick="javascript:getAuthorities();">
 					<i class="icon-search"></i>
-					<spring:message code="text.search"/>
+					<spring:message code="application.text.search"/>
 				</button>
 			</div>
 		</div>
@@ -194,15 +209,15 @@ function removeAuthority() {
 			<thead>
 				<tr>
 					<th>
-						<spring:message code="text.no"/>
+						<spring:message code="application.text.no"/>
 					</th>
 					<th>
-						<spring:message code="text.authority"/>
-						<spring:message code="text.id"/>
+						<spring:message code="application.text.authority"/>
+						<spring:message code="application.text.id"/>
 					</th>
 					<th>
-						<spring:message code="text.authority"/>
-						<spring:message code="text.name"/>
+						<spring:message code="application.text.authority"/>
+						<spring:message code="application.text.name"/>
 					</th>
 				</tr>
 			</thead>
@@ -229,22 +244,22 @@ function removeAuthority() {
 			<div>
 				<div class="title2">
 					<i class="icon-key"></i>
-					<spring:message code="text.authority"/>
-					<spring:message code="text.details"/>
+					<spring:message code="application.text.authority"/>
+					<spring:message code="application.text.details"/>
 				</div>
 			</div>
 			<div>
 				<button onclick="javascript:addAuthority();">
 					<i class="icon-plus"></i>
-					<spring:message code="text.new"/>
+					<spring:message code="application.text.new"/>
 				</button>
 				<button onclick="javascript:saveAuthority();">
 					<i class="icon-disk"></i>
-					<spring:message code="text.save"/>
+					<spring:message code="application.text.save"/>
 				</button>
 				<button onclick="javascript:removeAuthority();">
 					<i class="icon-trash"></i>
-					<spring:message code="text.remove"/>
+					<spring:message code="application.text.remove"/>
 				</button>
 			</div>
 		</div>
@@ -256,7 +271,7 @@ function removeAuthority() {
 			<tr>
 				<th>
 					<i class="icon-attention"></i>
-					<spring:message code="text.id"/>
+					<spring:message code="application.text.id"/>
 				</th>
 				<td>
 					
@@ -266,7 +281,7 @@ function removeAuthority() {
 			<tr>
 				<th>
 					<span class="must">
-						<spring:message code="text.name"/>
+						<spring:message code="application.text.name"/>
 					</span>
 				</th>
 				<td>
@@ -275,7 +290,7 @@ function removeAuthority() {
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="text.description"/>
+					<spring:message code="application.text.description"/>
 				</th>
 				<td>
 					<textarea data-juice="TextArea" data-juice-bind="authority.description"></textarea>

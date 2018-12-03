@@ -77,17 +77,17 @@
 			</div>
 			<div>
 				<i class="icon-user"></i>
-				<spring:message code="text.id"/>
+				<spring:message code="application.text.id"/>
 				<input data-juice="TextField" data-juice-bind="user.id"/>
 			</div>
 			<div>
 				<i class="icon-key"></i>
-				<spring:message code="text.password"/>
+				<spring:message code="application.text.password"/>
 				<input type="password" data-juice="TextField" data-juice-bind="user.password"/>
 			</div>
 			<div>
 				<i class="icon-globe"></i>
-				<spring:message code="label.language"/>
+				<spring:message code="application.label.language"/>
 				<select onchange="javascript:window.location = '?lang=' + this.value;">
 					<option value="en" ${pageContext.response.locale == 'en'?'selected':''}>English</option>
 					<option value="ko" ${pageContext.response.locale == 'ko'?'selected':''}>한국어</option>

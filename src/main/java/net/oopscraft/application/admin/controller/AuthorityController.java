@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,7 +62,7 @@ public class AuthorityController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET)
+	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional
 	public String getAuthorities(@RequestParam(value = "key", required = false) String key,
@@ -90,7 +91,7 @@ public class AuthorityController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getAuthority", method = RequestMethod.GET)
+	@RequestMapping(value = "getAuthority", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional
 	public String getAuthority(@RequestParam(value = "id") String id) throws Exception {
@@ -105,7 +106,7 @@ public class AuthorityController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "saveAuthority", method = RequestMethod.POST)
+	@RequestMapping(value = "saveAuthority", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public String saveAuthority(@RequestBody String payload) throws Exception {
@@ -121,7 +122,7 @@ public class AuthorityController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "removeAuthority", method = RequestMethod.GET)
+	@RequestMapping(value = "removeAuthority", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public String removeAuthority(@RequestParam(value = "id") String id) throws Exception {

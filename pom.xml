@@ -443,6 +443,14 @@
 		    <artifactId>spring-security-jwt</artifactId>
 		    <version>1.0.9.RELEASE</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.fusesource/sigar -->
+		<dependency>
+		    <groupId>org.fusesource</groupId>
+		    <artifactId>sigar</artifactId>
+		    <version>1.6.4</version>
+		</dependency>
+
 
 		<!-- JJWT(Json Web Token Library) -->
 		<dependency>

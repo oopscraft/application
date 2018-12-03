@@ -11,12 +11,14 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.context.MessageSource;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
+import net.oopscraft.application.core.monitor.MonitorAgent;
 import net.oopscraft.application.core.webserver.WebServer;
 
 public class Application {
 	
 	File xmlFile;
 	File propertiesFile;
+	MonitorAgent monitorAgent;
 	Map<String,WebServer> webServers = new LinkedHashMap<String,WebServer>();
 	Map<String,DataSource> dataSources = new LinkedHashMap<String,DataSource>();
 	Map<String,LocalContainerEntityManagerFactoryBean> entityManagerFactories = new LinkedHashMap<String,LocalContainerEntityManagerFactoryBean >();
@@ -29,6 +31,14 @@ public class Application {
 	
 	final void setPropertiesFile(File propertiesFile) {
 		this.propertiesFile = propertiesFile;
+	}
+	
+	final void setMonitorAgent(MonitorAgent monitorAgent) {
+		this.monitorAgent = monitorAgent;
+	}
+	
+	public final MonitorAgent getMonitorAgent() {
+		return this.monitorAgent;
 	}
 	
 	final void setWebServers(Map<String,WebServer> webServers) {

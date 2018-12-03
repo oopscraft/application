@@ -77,6 +77,20 @@ public class GroupController {
 		Group group = groupService.getGroup(id);
 		return JsonUtils.toJson(group);
 	}
+	
+	/**
+	 * Gets bread crumbs
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "getBreadCrumbs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional
+	public String getBreadCrumbs(@RequestParam(value = "id") String id) throws Exception {
+		List<Group> breadCrumbs = groupService.getBreadCrumbs(id);
+		return JsonUtils.toJson(breadCrumbs);
+	}
 
 	/**
 	 * Saves group.
@@ -85,7 +99,7 @@ public class GroupController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "saveGroup", method = RequestMethod.POST)
+	@RequestMapping(value = "saveGroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public String saveGroup(@RequestBody String payload) throws Exception {
@@ -101,7 +115,7 @@ public class GroupController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "removeGroup", method = RequestMethod.GET)
+	@RequestMapping(value = "removeGroup", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public String removeGroup(@RequestParam(value = "id") String id) throws Exception {
