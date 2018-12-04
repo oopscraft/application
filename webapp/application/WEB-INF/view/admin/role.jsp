@@ -216,25 +216,15 @@ function removeRole() {
 
 </script>
 <style type="text/css">
-.container {
-	display: flex;
-	justify-content: space-between;
-}
-.left {
-	width: 50%;
-}
-.right {
-	width: 50%;
-}
+
 </style>
 <div class="title1">
 	<i class="icon-card"></i>
 	<spring:message code="application.text.role"/>
 	<spring:message code="application.text.management"/>
 </div>
-<hr/>
 <div class="container">
-	<div class="left">
+	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
 		<!-- Roles													-->
 		<!-- ====================================================== -->
@@ -286,8 +276,7 @@ function removeRole() {
 			</ul>
 		</div>
 	</div>
-	<hr/>
-	<div class="right">
+	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
 		<!-- Role Details											-->
 		<!-- ====================================================== -->

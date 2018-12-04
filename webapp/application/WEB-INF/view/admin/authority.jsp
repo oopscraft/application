@@ -168,25 +168,15 @@ function removeAuthority() {
 
 </script>
 <style type="text/css">
-.container {
-	display: flex;
-	justify-content: space-between;
-}
-.left {
-	width: 50%;
-}
-.right {
-	width: 50%;
-}
+
 </style>
 <div class="title1">
 	<i class="icon-key"></i>
 	<spring:message code="application.text.authority"/>
 	<spring:message code="application.text.management"/>
 </div>
-<hr/>
 <div class="container">
-	<div class="left">
+	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
 		<!-- Authorities											-->
 		<!-- ====================================================== -->
@@ -235,8 +225,7 @@ function removeAuthority() {
 			</ul>
 		</div>
 	</div>
-	<hr/>
-	<div class="right">
+	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
 		<!-- Authority Details										-->
 		<!-- ====================================================== -->

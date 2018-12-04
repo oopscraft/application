@@ -44,7 +44,7 @@ public class AdminController {
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView admin() throws Exception {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setView(new RedirectView("/admin/dash"));
+		modelAndView.setView(new RedirectView("/admin/monitor"));
 		return modelAndView;
 	}
 

@@ -10,8 +10,8 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.context.MessageSource;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
-import net.oopscraft.application.core.monitor.MonitorAgent;
 import net.oopscraft.application.core.webserver.WebServer;
+import net.oopscraft.application.monitor.MonitorAgent;
 
 public class Application {
 	

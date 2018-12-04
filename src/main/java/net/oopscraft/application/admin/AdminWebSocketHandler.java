@@ -10,9 +10,9 @@ import org.springframework.web.socket.WebSocketSession;
 
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.ValueMap;
-import net.oopscraft.application.core.monitor.MonitorAgent;
-import net.oopscraft.application.core.monitor.MonitorInfo;
-import net.oopscraft.application.core.monitor.MonitorListener;
+import net.oopscraft.application.monitor.MonitorAgent;
+import net.oopscraft.application.monitor.MonitorInfo;
+import net.oopscraft.application.monitor.MonitorListener;
 
 public class AdminWebSocketHandler extends net.oopscraft.application.core.spring.WebSocketHandler {
 

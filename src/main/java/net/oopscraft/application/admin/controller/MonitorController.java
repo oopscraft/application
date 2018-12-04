@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/admin/dash")
-public class DashController {
+@RequestMapping("/admin/monitor")
+public class MonitorController {
 	
 	@RequestMapping(method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ModelAndView dash() throws Exception {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("admin/dash.tiles");
+		modelAndView.setViewName("admin/monitor.tiles");
 		return modelAndView;
 	}
 

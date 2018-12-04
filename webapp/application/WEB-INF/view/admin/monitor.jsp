@@ -11,6 +11,10 @@
 var systemLoadAverageChart;
 var memoryUsageChart;
 var classCountChart;
+var osInfo = new juice.data.Map();
+var heapMemoryUsage = new juice.data.Map();
+var nonHeapMemoryUsage = new juice.data.Map();
+var classInfo = new juice.data.Map();
 var threadInfos = new juice.data.List();
 
 // Adds webSocket handler
@@ -21,8 +25,12 @@ __webSocketClient.addMessageHandler(function(event){
 	updateMemoryUsageChart(message);
 	updateClassCountChart(message);
 
-	
-	threadInfos.fromJson(message[message.length-1].threadInfos);
+	var lastMonitorInfo = message[message.length-1];
+	osInfo.fromJson(lastMonitorInfo.osInfo);
+	heapMemoryUsage.fromJson(lastMonitorInfo.memInfo.heapMemoryUsage);
+	nonHeapMemoryUsage.fromJson(lastMonitorInfo.memInfo.nonHeapMemoryUsage);
+	classInfo.fromJson(lastMonitorInfo.classInfo);
+	threadInfos.fromJson(lastMonitorInfo.threadInfos);
 });
 
 /**
@@ -51,7 +59,7 @@ function drawSystemLoadAverageChart(){
 					fill: false,
 					borderWidth: 1,
 					borderColor: 'steelblue',
-					pointStyle: 'cross',
+					pointStyle: 'crossRot',
 				}]
 			},
 		    options: {
@@ -59,7 +67,17 @@ function drawSystemLoadAverageChart(){
 					line: {
 						tension: 0
 					}
-				}
+				},
+				scales: {
+	                yAxes: [{
+						display: true,
+						ticks: {
+							min: 0,
+							max: 2,
+							stepSize: 0.5
+						}
+					}],
+				},
 		    }
 		}
 	);
@@ -93,21 +111,21 @@ function drawMemoryUsageChart(){
 					fill: false,
 					borderWidth: 1,
 					borderColor: 'red',
-					pointStyle: 'cross',
+					pointStyle: 'crossRot',
 				},{
 					label: 'Heap Usage',
 					data: [],
-					fill: true,
+					fill: false,
 					borderWidth: 1,
 					borderColor: 'steelblue',
-					pointStyle: 'cross',
+					pointStyle: 'crossRot',
 				},{
 					label: 'None Heap Usage',
 					data: [],
-					fill: true,
+					fill: false,
 					borderWidth: 1,
 					borderColor: '#333',
-					pointStyle: 'cross',
+					pointStyle: 'crossRot',
 				}]
 			},
 		    options: {
@@ -151,14 +169,14 @@ function drawClassCountChart(){
 					fill: false,
 					borderWidth: 1,
 					borderColor: 'red',
-					pointStyle: 'cross',
+					pointStyle: 'crossRot',
 				},{
 					label: 'Unload Class',
 					data: [],
-					fill: true,
+					fill: false,
 					borderWidth: 1,
 					borderColor: 'gray',
-					pointStyle: 'cross',
+					pointStyle: 'crossRot',
 				}]
 			},
 		    options: {
@@ -186,12 +204,6 @@ function updateClassCountChart(message){
 	classCountChart.update();
 }
 
-
-
-
-
-
-    
 </script>
 <style type="text/css">
 .container {
@@ -199,31 +211,112 @@ function updateClassCountChart(message){
 	justify-content: space-between;
 }
 </style>
+<div class="title1">
+	<i class="icon-monitor"></i>
+	<spring:message code="application.text.monitor"/>
+</div>
 <div class="container">
-	<div style="width:33%;">
+	<div class="division" style="width:33%;">
 		<div class="title2" style="width:100%;border-bottom:dotted 1px #ccc;">
 			<i class="icon-file"></i>
 			CPU Usage
 		</div>
 		<canvas id="systemLoadAverageChart"></canvas>
+		<table class="detail">
+			<colgroup>
+				<col style="width:40%;">
+				<col style="width:60%;">
+			</colgroup>
+			<tr>
+				<th>name</th>
+				<td><label data-juice="Label" data-juice-bind="osInfo.name"></label></td>
+			</tr>
+			<tr>
+				<th>version</th>
+				<td><label data-juice="Label" data-juice-bind="osInfo.version"></label></td>
+			</tr>
+			<tr>
+				<th>arch</th>
+				<td><label data-juice="Label" data-juice-bind="osInfo.arch"></label></td>
+			</tr>
+			<tr>
+				<th>availableProcessors</th>
+				<td><label data-juice="Label" data-juice-bind="osInfo.availableProcessors"></label></td>
+			</tr>
+			<tr>
+				<th>systemLoadAverage</th>
+				<td><label data-juice="Label" data-juice-bind="osInfo.systemLoadAverage"></label></td>
+			</tr>
+		</table>
 	</div>
-	<div style="width:33%;">
+	<div class="division" style="width:33%;">
 		<div class="title2" style="width:100%;border-bottom:dotted 1px #ccc;">
 			<i class="icon-file"></i>
 			Memory Usage
 		</div>
 		<canvas id="memoryUsageChart"></canvas>
+		<table class="detail">
+			<colgroup>
+				<col style="width:20%;">
+				<col style="width:30%;">
+				<col style="width:20%;">
+				<col style="width:30%;">
+			</colgroup>
+			<tr>
+				<th>-</th>
+				<th>heapMemoryUsage</th>
+				<th>nonHeapMemoryUsage</th>
+			</tr>
+			<tr>
+				<th>init</th>
+				<td><label data-juice="Label" data-juice-bind="heapMemoryUsage.init"></label></td>
+				<td><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.init"></label></td>
+			</tr>
+			<tr>
+				<th>used</th>
+				<td><label data-juice="Label" data-juice-bind="heapMemoryUsage.used"></label></td>
+				<td><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.used"></label></td>
+			</tr>
+			<tr>
+				<th>committed</th>
+				<td><label data-juice="Label" data-juice-bind="heapMemoryUsage.committed"></label></td>
+				<td><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.committed"></label></td>
+			</tr>
+			<tr>
+				<th>max</th>
+				<td><label data-juice="Label" data-juice-bind="heapMemoryUsage.max"></label></td>
+				<td><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.max"></label></td>
+			</tr>
+		</table>
 	</div>
-	<div style="width:33%;">
+	<div class="division" style="width:33%;">
 		<div class="title2" style="width:100%;border-bottom:dotted 1px #ccc;">
 			<i class="icon-file"></i>
 			Class Count
 		</div>
 		<canvas id="classCountChart"></canvas>
+		<table class="detail">
+			<colgroup>
+				<col style="width:40%;">
+				<col style="width:60%;">
+			</colgroup>
+			<tr>
+				<th>totalLoadedClassCount</th>
+				<td><label data-juice="Label" data-juice-bind="classInfo.totalLoadedClassCount"></label></td>
+			</tr>
+			<tr>
+				<th>loadedClassCount</th>
+				<td><label data-juice="Label" data-juice-bind="classInfo.loadedClassCount"></label></td>
+			</tr>
+			<tr>
+				<th>unloadedClassCount</th>
+				<td><label data-juice="Label" data-juice-bind="classInfo.unloadedClassCount"></label></td>
+			</tr>
+		</table>
 	</div>
 </div>
 <div class="container">
-	<div style="width:100%;">
+	<div class="division" style="width:100%;">
 		<div class="title2" style="width:100%;">
 			<i class="icon-file"></i>
 			Thread List
@@ -242,7 +335,7 @@ function updateClassCountChart(message){
 			</thead>
 			<tbody>
 				<tr>
-					<td><label data-juice="Label" data-juice-bind="threadInfo.threadId" class="id"></label></td>
+					<td><label data-juice="Label" data-juice-bind="threadInfo.threadId"></label></td>
 					<td><label data-juice="Label" data-juice-bind="threadInfo.threadName"></label></td>
 					<td><label data-juice="Label" data-juice-bind="threadInfo.threadState"></label></td>
 					<td><label data-juice="Label" data-juice-bind="threadInfo.waitedCount"></label></td>
