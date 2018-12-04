@@ -75,7 +75,7 @@
         /**
          * webSocketClient
          */
-        var __webSocketClient = new juice.util.WebSocketClient("ws://127.0.0.1:10001/admin/admin.ws");
+        var __webSocketClient = new juice.util.WebSocketClient("ws://192.168.0.2:10001/admin/admin.ws");
         __webSocketClient.onMessage(function(event){
         	//console.log(event.data);
         });
