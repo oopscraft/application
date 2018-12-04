@@ -181,6 +181,14 @@
 	</bean>
 	
 	<!-- ====================================================== -->
+	<!-- WebSocketHandler										-->
+	<!-- ====================================================== -->
+	<websocket:handlers>
+		<websocket:mapping path="admin/admin.ws" handler="adminWebSocketHandler"/>
+	</websocket:handlers>
+	<beans:bean id="adminWebSocketHandler" class="net.oopscraft.application.admin.AdminWebSocketHandler"/>
+
+	<!-- ====================================================== -->
 	<!-- Spring Security										-->
 	<!-- ====================================================== -->
 	<security:authentication-manager>

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
@@ -28,11 +27,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import net.oopscraft.application.core.PasswordBasedEncryptor;
-import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.XPathReader;
 import net.oopscraft.application.core.monitor.MonitorAgent;
-import net.oopscraft.application.core.monitor.MonitorAgentListener;
-import net.oopscraft.application.core.monitor.MonitorInfo;
 import net.oopscraft.application.core.webserver.WebServer;
 import net.oopscraft.application.core.webserver.WebServerContext;
 
@@ -122,14 +118,9 @@ public class ApplicationBuilder {
 	 * @throws Exception
 	 */
 	void buildMonitorAgent(Application application) throws Exception {
+		LOGGER.info("Builds monitorAgent.");
 		MonitorAgent.intialize(3, 100);
 		MonitorAgent monitorAgent = MonitorAgent.getInstance();
-		monitorAgent.addListener(new MonitorAgentListener() {
-			@Override
-			public void onCheck(MonitorInfo jmxInfo, List<MonitorInfo> jmxInfoHistory) throws Exception {
-				LOGGER.info("{}", new TextTable(jmxInfo));
-			}
-		});
 		application.setMonitorAgent(monitorAgent);
 	}
 	

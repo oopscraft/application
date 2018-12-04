@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.collections.map.LinkedMap;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.context.MessageSource;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
