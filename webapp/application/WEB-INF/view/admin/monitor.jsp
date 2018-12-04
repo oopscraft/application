@@ -68,6 +68,9 @@ function drawSystemLoadAverageChart(){
 						tension: 0
 					}
 				},
+			    animation: {
+			        duration: 0
+			    },
 				scales: {
 	                yAxes: [{
 						display: true,
