@@ -9,15 +9,15 @@ import org.apache.commons.logging.LogFactory;
 
 import net.oopscraft.application.core.monitor.MonitorInfo;
 
-public abstract class MonitorAgentListener implements Observer {
+public abstract class MonitorListener implements Observer {
 	
-	private static final Log LOG = LogFactory.getLog(MonitorAgentListener.class);
+	private static final Log LOG = LogFactory.getLog(MonitorListener.class);
 
 	@Override
 	public void update(Observable observable, Object arg1) {
 		try {
-			MonitorAgent jmxMonitor = (MonitorAgent) observable;
-			onCheck(jmxMonitor.getLastestJmxInfo(), jmxMonitor.getJmxInfoHistory());
+			MonitorAgent monitorAgent = (MonitorAgent) observable;
+			onCheck(monitorAgent.getMonitorInfoList());
 		}catch(Exception e) {
 			LOG.warn(e.getMessage(),e);
 		}
@@ -27,6 +27,6 @@ public abstract class MonitorAgentListener implements Observer {
 	 * Check 
 	 * @throws Exception
 	 */
-	public abstract void onCheck(MonitorInfo jmxInfo, List<MonitorInfo> jmxInfoHistory) throws Exception;
+	public abstract void onCheck(List<MonitorInfo> monitorInfoList) throws Exception;
 
 }

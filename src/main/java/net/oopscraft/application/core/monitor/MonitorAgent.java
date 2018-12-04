@@ -1,9 +1,5 @@
 package net.oopscraft.application.core.monitor;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -19,7 +15,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import net.oopscraft.application.core.monitor.MonitorInfo.ClassInfo;
-import net.oopscraft.application.core.monitor.MonitorInfo.DiskInfo;
 import net.oopscraft.application.core.monitor.MonitorInfo.MemInfo;
 import net.oopscraft.application.core.monitor.MonitorInfo.OsInfo;
 import net.oopscraft.application.core.monitor.MonitorInfo.ThreadInfo;
@@ -34,7 +29,7 @@ public class MonitorAgent extends Observable implements Runnable {
 	private int historySize = 10;
 
 	private Thread thread = null;
-	private List<MonitorInfo> jmxInfoHistory = new CopyOnWriteArrayList<MonitorInfo>();
+	private List<MonitorInfo> monitorInfoList = new CopyOnWriteArrayList<MonitorInfo>();
 	
 	/**
 	 * Initialize MonitorAgent
@@ -47,6 +42,8 @@ public class MonitorAgent extends Observable implements Runnable {
 		synchronized(MonitorAgent.class) {
 			if(instance == null) {
 				instance = new MonitorAgent(intervalSeconds, historySize);
+			}else {
+				throw new Exception("Monitor instance is already initialized");
 			}
 			return instance;
 		}
@@ -84,10 +81,10 @@ public class MonitorAgent extends Observable implements Runnable {
 	public void run() {
 		while(!Thread.interrupted()) {
 			try {
-				MonitorInfo jmxInfo = getJmxInfo();
-				jmxInfoHistory.add(jmxInfo);
-				if(jmxInfoHistory.size() > historySize) {
-					jmxInfoHistory.remove(0);
+				MonitorInfo monitorInfo = collectMonitorInfo();
+				monitorInfoList.add(monitorInfo);
+				if(monitorInfoList.size() > historySize) {
+					monitorInfoList.remove(0);
 				}
 				
 				// notify
@@ -103,33 +100,27 @@ public class MonitorAgent extends Observable implements Runnable {
 		
 	}
 	
-	public static MonitorInfo getJmxInfo() throws Exception {
-		MonitorInfo jmxInfo = new MonitorInfo();
+	private MonitorInfo collectMonitorInfo() throws Exception {
+		MonitorInfo monitorInfo = new MonitorInfo();
 		try {
 			// Getting OS info 
 			OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
-			jmxInfo.osInfo.put(OsInfo.name, osBean.getName());
-			jmxInfo.osInfo.put(OsInfo.version, osBean.getVersion());
-			jmxInfo.osInfo.put(OsInfo.arch, osBean.getArch());
-			jmxInfo.osInfo.put(OsInfo.availableProcessors, osBean.getAvailableProcessors());
-			jmxInfo.osInfo.put(OsInfo.systemLoadAverage, 	osBean.getSystemLoadAverage());
+			monitorInfo.osInfo.put(OsInfo.name, osBean.getName());
+			monitorInfo.osInfo.put(OsInfo.version, osBean.getVersion());
+			monitorInfo.osInfo.put(OsInfo.arch, osBean.getArch());
+			monitorInfo.osInfo.put(OsInfo.availableProcessors, osBean.getAvailableProcessors());
+			monitorInfo.osInfo.put(OsInfo.systemLoadAverage, osBean.getSystemLoadAverage());
 			
 			// Getting memory info 
 			MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
-			jmxInfo.memInfo.put(MemInfo.heapMemoryUsage, memBean.getHeapMemoryUsage());
-			jmxInfo.memInfo.put(MemInfo.nonHeapMemoryUsage, memBean.getNonHeapMemoryUsage());
-			
-			// Getting disk info 
-			File file = new File("/");
-			jmxInfo.diskInfo.put(DiskInfo.totalSpace, file.getTotalSpace());
-			jmxInfo.diskInfo.put(DiskInfo.freeSpace, file.getFreeSpace());
-			jmxInfo.diskInfo.put(DiskInfo.usableSpace, file.getUsableSpace());
-			
+			monitorInfo.memInfo.put(MemInfo.heapMemoryUsage, memBean.getHeapMemoryUsage());
+			monitorInfo.memInfo.put(MemInfo.nonHeapMemoryUsage, memBean.getNonHeapMemoryUsage());
+
 			// Getting class loader info 
 			ClassLoadingMXBean classBean = ManagementFactory.getClassLoadingMXBean();
-			jmxInfo.classInfo.put(ClassInfo.totalLoadedClassCount, classBean.getTotalLoadedClassCount());
-			jmxInfo.classInfo.put(ClassInfo.loadedClassCount, classBean.getLoadedClassCount());
-			jmxInfo.classInfo.put(ClassInfo.unloadedClassCount, classBean.getUnloadedClassCount());
+			monitorInfo.classInfo.put(ClassInfo.totalLoadedClassCount, classBean.getTotalLoadedClassCount());
+			monitorInfo.classInfo.put(ClassInfo.loadedClassCount, classBean.getLoadedClassCount());
+			monitorInfo.classInfo.put(ClassInfo.unloadedClassCount, classBean.getUnloadedClassCount());
 			
 			// Getting thread info list threadInfoList.clear();
 			ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
@@ -144,68 +135,25 @@ public class MonitorAgent extends Observable implements Runnable {
 				threadInfoMap.put(ThreadInfo.waitedTime, threadInfo.getWaitedTime());
 				threadInfoMap.put(ThreadInfo.blockCount, threadInfo.getBlockedCount());
 				threadInfoMap.put(ThreadInfo.blockTime, threadInfo.getBlockedTime());
-				jmxInfo.threadInfoList.add(threadInfoMap);
+				monitorInfo.threadInfoList.add(threadInfoMap);
 			} 
-			
-			// Getting process info via command
-		    String osName = System.getProperty("os.name").toLowerCase();
-		    String command = null;
-		    if(osName.contains("win")) {
-		    	command = "cmd /C tasklist /FI \"STATUS eq running\" /V | sort /r /+65";
-		    }else{
-		    	command = "ps aux --sort -%mem";
-		    }
-		    Process process = null;
-		    InputStream is = null;
-		    InputStreamReader isr = null;
-		    BufferedReader br = null;
-		    try {
-		    	process = Runtime.getRuntime().exec(command);
-		    	is = process.getInputStream();
-		    	isr = new InputStreamReader(is, "UTF-8");
-		    	br = new BufferedReader(isr);
-		    	String line = null;
-		    	while((line = br.readLine()) != null) {
-		    		jmxInfo.processInfoList.append(line).append(System.lineSeparator());
-		    	}
-		    }catch(Exception e) {
-		    	throw e;
-		    }finally {
-		    	if(br != null) {
-		    		try { br.close(); }catch(Exception ignore) {}
-		    	}
-		    	if(isr != null) {
-		    		try { isr.close(); }catch(Exception ignore) {}
-		    	}
-		    	if(br != null) {
-		    		try { is.close(); }catch(Exception ignore) {}
-		    	}
-		    	if(process != null) {
-		    		process.destroy();
-		    	}
-		    }
-		
 		}catch(Exception e) {
 			LOG.warn(e.getMessage(),e);
 			throw e;
 		}
-		return jmxInfo;
+		return monitorInfo;
 	}
 	
-	public List<MonitorInfo> getJmxInfoHistory() {
-		return jmxInfoHistory;
+	public List<MonitorInfo> getMonitorInfoList() {
+		return monitorInfoList;
 	}
 	
-	public MonitorInfo getLastestJmxInfo() {
-		return jmxInfoHistory.get(jmxInfoHistory.size() -1);
+	public void addListener(MonitorListener monitorListener) {
+		addObserver(monitorListener);
 	}
 	
-	public void addListener(MonitorAgentListener listener) {
-		addObserver(listener);
-	}
-	
-	public void removeListener(MonitorAgentListener listener) {
-		deleteObserver(listener);
+	public void removeListener(MonitorListener monitorListener) {
+		deleteObserver(monitorListener);
 	}
 
 }

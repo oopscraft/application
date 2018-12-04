@@ -2608,6 +2608,7 @@ juice.util.WebSocketClient = function(url) {
 	this.url = url;
 	this.listener = {};
 	this.reconnectInterval = 3*1000;	// ms
+	this.messageHandlers = [];
 }
 juice.util.WebSocketClient.prototype = {
 	open: function() {
@@ -2622,6 +2623,9 @@ juice.util.WebSocketClient.prototype = {
 			if($this.listener.onMessage){
 				$this.listener.onMessage.call($this,event);
 			}
+			$this.messageHandlers.forEach(function(messageHandler){
+				messageHandler.call(this, event);
+			});
 		}
 		this.webSocket.onclose = function(ev){
 			if($this.listener.onClose){
@@ -2655,6 +2659,9 @@ juice.util.WebSocketClient.prototype = {
 	},
 	setReconnectInterval: function(value){
 		this.reconnectInterval = value;
+	},
+	addMessageHandler: function(handler){
+		this.messageHandlers.push(handler);
 	}
 }
 
