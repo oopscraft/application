@@ -29,7 +29,7 @@ public class MonitorAgent extends Observable implements Runnable {
 	private int historySize = 10;
 
 	private Thread thread = null;
-	private List<MonitorInfo> monitorInfoList = new CopyOnWriteArrayList<MonitorInfo>();
+	private List<MonitorInfo> monitorInfos = new CopyOnWriteArrayList<MonitorInfo>();
 	
 	/**
 	 * Initialize MonitorAgent
@@ -82,9 +82,9 @@ public class MonitorAgent extends Observable implements Runnable {
 		while(!Thread.interrupted()) {
 			try {
 				MonitorInfo monitorInfo = collectMonitorInfo();
-				monitorInfoList.add(monitorInfo);
-				if(monitorInfoList.size() > historySize) {
-					monitorInfoList.remove(0);
+				monitorInfos.add(monitorInfo);
+				if(monitorInfos.size() > historySize) {
+					monitorInfos.remove(0);
 				}
 				
 				// notify
@@ -135,7 +135,7 @@ public class MonitorAgent extends Observable implements Runnable {
 				threadInfoMap.put(ThreadInfo.waitedTime, threadInfo.getWaitedTime());
 				threadInfoMap.put(ThreadInfo.blockCount, threadInfo.getBlockedCount());
 				threadInfoMap.put(ThreadInfo.blockTime, threadInfo.getBlockedTime());
-				monitorInfo.threadInfoList.add(threadInfoMap);
+				monitorInfo.threadInfos.add(threadInfoMap);
 			} 
 		}catch(Exception e) {
 			LOG.warn(e.getMessage(),e);
@@ -145,7 +145,7 @@ public class MonitorAgent extends Observable implements Runnable {
 	}
 	
 	public List<MonitorInfo> getMonitorInfoList() {
-		return monitorInfoList;
+		return monitorInfos;
 	}
 	
 	public void addListener(MonitorListener monitorListener) {
