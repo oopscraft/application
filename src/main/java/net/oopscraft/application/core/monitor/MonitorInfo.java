@@ -41,7 +41,7 @@ public class MonitorInfo {
 	Map<OsInfo, Object> osInfo = new LinkedHashMap<OsInfo, Object>();
 	Map<MemInfo, Object> memInfo = new LinkedHashMap<MemInfo, Object>();
 	Map<ClassInfo, Object> classInfo = new LinkedHashMap<ClassInfo, Object>();
-	List<Map<ThreadInfo, Object>> threadInfoList = new CopyOnWriteArrayList<Map<ThreadInfo, Object>>();
+	List<Map<ThreadInfo, Object>> threadInfos = new CopyOnWriteArrayList<Map<ThreadInfo, Object>>();
 	
 	public Date getDate() {
 		return date;
@@ -63,8 +63,8 @@ public class MonitorInfo {
 		this.classInfo = classInfo;
 	}
 
-	public void setThreadInfoList(List<Map<ThreadInfo, Object>> threadInfoList) {
-		this.threadInfoList = threadInfoList;
+	public void setThreadInfos(List<Map<ThreadInfo, Object>> threadInfos) {
+		this.threadInfos = threadInfos;
 	}
 
 	public Map<OsInfo, Object> getOsInfo() {
@@ -79,8 +79,8 @@ public class MonitorInfo {
 		return classInfo;
 	}
 
-	public List<Map<ThreadInfo, Object>> getThreadInfoList() {
-		return threadInfoList;
+	public List<Map<ThreadInfo, Object>> getThreadInfos() {
+		return threadInfos;
 	}
 
 }

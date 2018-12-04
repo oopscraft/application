@@ -8,26 +8,32 @@
 <%@page import="java.text.*" %>
 
 <script type="text/javascript">
+var systemLoadAverageChart;
+var memoryUsageChart;
+var classCountChart;
+var threadInfos = new juice.data.List();
 
 // Adds webSocket handler
 __webSocketClient.addMessageHandler(function(event){
 	var message = JSON.parse(event.data).message;
-	console.log(message);
+	//console.log(message);
 	updateSystemLoadAverageChart(message);
 	updateMemoryUsageChart(message);
+	updateClassCountChart(message);
+
+	
+	threadInfos.fromJson(message[message.length-1].threadInfos);
 });
-
-var systemLoadAverageChart;
-var memoryUsageChart;
-
 
 /**
  * On document loaded
  */
 $( document ).ready(function() {
-	
 	drawSystemLoadAverageChart();
 	drawMemoryUsageChart();
+	drawClassCountChart();
+	
+	__webSocketClient.send(JSON.stringify({id:'monitorInfo'}));
 });
 
 /**
@@ -130,51 +136,61 @@ function updateMemoryUsageChart(message){
 	memoryUsageChart.update();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function createMemoryUsageChart(){
-	var data = [20, 10];
-	var ctx = document.getElementById('memoryUsageChart').getContext('2d');
-	var myLineChart = new Chart(ctx, {
-	    type: 'line',
-	    data: data,
-	    options: {
-	        elements: {
-	            line: {
-	                tension: 0, // disables bezier curves
-	            }
-	        }
-	    }
-	});
+/**
+ * Draws classCountChart
+ */
+function drawClassCountChart(){
+	classCountChart = new Chart(
+		document.getElementById('classCountChart').getContext('2d'),{
+		    type: 'line',
+		    data:  {
+				labels: [],
+				datasets: [{
+					label: 'Loaded Class',
+					data: [],
+					fill: false,
+					borderWidth: 1,
+					borderColor: 'red',
+					pointStyle: 'cross',
+				},{
+					label: 'Unload Class',
+					data: [],
+					fill: true,
+					borderWidth: 1,
+					borderColor: 'gray',
+					pointStyle: 'cross',
+				}]
+			},
+		    options: {
+				elements: {
+					line: {
+						tension: 0
+					}
+				}
+		    }
+		}
+	);
 }
 
-function createClassCountChart(){
-	var data = [20, 10];
-	var ctx = document.getElementById('classCountChart').getContext('2d');
-	var myLineChart = new Chart(ctx, {
-	    type: 'line',
-	    data: data,
-	    options: {
-	        elements: {
-	            line: {
-	                tension: 0, // disables bezier curves
-	            }
-	        }
-	    }
+/**
+ * Updates classCountChart
+ */
+function updateClassCountChart(message){
+	classCountChart.data.labels = [];
+	classCountChart.data.datasets[0].data = [];
+	message.forEach(function(monitorInfo){
+		classCountChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
+		classCountChart.data.datasets[0].data.push(monitorInfo.classInfo.loadedClassCount);
+		classCountChart.data.datasets[1].data.push(monitorInfo.classInfo.unloadedClassCount);
 	});
+	classCountChart.update();
 }
+
+
+
+
+
+
     
 </script>
 <style type="text/css">
@@ -186,21 +202,55 @@ function createClassCountChart(){
 <div class="container">
 	<div style="width:33%;">
 		<div class="title2" style="width:100%;border-bottom:dotted 1px #ccc;">
-			<i class="icon-user"></i>
+			<i class="icon-file"></i>
 			CPU Usage
 		</div>
 		<canvas id="systemLoadAverageChart"></canvas>
 	</div>
-	
 	<div style="width:33%;">
 		<div class="title2" style="width:100%;border-bottom:dotted 1px #ccc;">
-			<i class="icon-user"></i>
-			CPU Usage
+			<i class="icon-file"></i>
+			Memory Usage
 		</div>
 		<canvas id="memoryUsageChart"></canvas>
 	</div>
-	
 	<div style="width:33%;">
+		<div class="title2" style="width:100%;border-bottom:dotted 1px #ccc;">
+			<i class="icon-file"></i>
+			Class Count
+		</div>
 		<canvas id="classCountChart"></canvas>
+	</div>
+</div>
+<div class="container">
+	<div style="width:100%;">
+		<div class="title2" style="width:100%;">
+			<i class="icon-file"></i>
+			Thread List
+		</div>
+		<table id="threadInfosTable" data-juice="Grid" data-juice-bind="threadInfos" data-juice-item="threadInfo">
+			<thead>
+				<tr>
+					<th>threadId</th>
+					<th>threadName</th>
+					<th>threadState</th>
+					<th>waitedCount</th>
+					<th>waitedTime</th>
+					<th>blockCount</th>
+					<th>blockTime</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><label data-juice="Label" data-juice-bind="threadInfo.threadId" class="id"></label></td>
+					<td><label data-juice="Label" data-juice-bind="threadInfo.threadName"></label></td>
+					<td><label data-juice="Label" data-juice-bind="threadInfo.threadState"></label></td>
+					<td><label data-juice="Label" data-juice-bind="threadInfo.waitedCount"></label></td>
+					<td><label data-juice="Label" data-juice-bind="threadInfo.waitedTime"></label></td>
+					<td><label data-juice="Label" data-juice-bind="threadInfo.blockCount"></label></td>
+					<td><label data-juice="Label" data-juice-bind="threadInfo.blockTime"></label></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </div>
