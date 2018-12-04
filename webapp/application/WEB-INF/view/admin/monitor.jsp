@@ -136,7 +136,10 @@ function drawMemoryUsageChart(){
 					line: {
 						tension: 0
 					}
-				}
+				},
+			    animation: {
+			        duration: 0
+			    },
 		    }
 		}
 	);
@@ -187,7 +190,10 @@ function drawClassCountChart(){
 					line: {
 						tension: 0
 					}
-				}
+				},
+			    animation: {
+			        duration: 0
+			    },
 		    }
 		}
 	);
