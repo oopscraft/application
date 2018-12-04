@@ -119,7 +119,7 @@ public class ApplicationBuilder {
 	 */
 	void buildMonitorAgent(Application application) throws Exception {
 		LOGGER.info("Builds monitorAgent.");
-		MonitorAgent.intialize(3, 100);
+		MonitorAgent.intialize(3, 10);
 		MonitorAgent monitorAgent = MonitorAgent.getInstance();
 		application.setMonitorAgent(monitorAgent);
 	}
