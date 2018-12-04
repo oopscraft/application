@@ -21,12 +21,6 @@ public class MonitorInfo {
 		nonHeapMemoryUsage;
 	}
 
-	public enum DiskInfo {
-		totalSpace,
-		freeSpace,
-		usableSpace;
-	}
-
 	public enum ClassInfo {
 		totalLoadedClassCount,
 		loadedClassCount,

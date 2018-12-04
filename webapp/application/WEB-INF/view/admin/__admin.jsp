@@ -16,7 +16,7 @@
 		<script src="${pageContext.request.contextPath}/lib/jquery.js"></script>
  		<link href="${pageContext.request.contextPath}/lib/icon/css/icon.css" rel="stylesheet">
  		<script src="${pageContext.request.contextPath}/lib/moment-with-locales.min.js"></script>
- 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+ 		<script src="${pageContext.request.contextPath}/lib/Chart.js/Chart.js"></script>
 		
 		<!-- global -->
 		<script type="text/javascript">
@@ -75,7 +75,12 @@
         /**
          * webSocketClient
          */
-        var __webSocketClient = new juice.util.WebSocketClient("ws://192.168.0.2:10001/admin/admin.ws");
+        var __wsUrl = (window.location.protocol == 'https' ? 'wss' : 'ws') + '://'
+        			+ window.location.hostname 
+        			+ (window.location.port ? ':'+window.location.port: '') + '/'
+        			+ '${pageContext.request.contextPath}'
+        			+ 'admin/admin.ws';
+        var __webSocketClient = new juice.util.WebSocketClient(__wsUrl);
         __webSocketClient.onMessage(function(event){
         	//console.log(event.data);
         });
