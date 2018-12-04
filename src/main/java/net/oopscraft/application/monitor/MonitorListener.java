@@ -1,4 +1,4 @@
-package net.oopscraft.application.core.monitor;
+package net.oopscraft.application.monitor;
 
 import java.util.List;
 import java.util.Observable;
@@ -7,7 +7,7 @@ import java.util.Observer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.core.monitor.MonitorInfo;
+import net.oopscraft.application.monitor.MonitorInfo;
 
 public abstract class MonitorListener implements Observer {
 	

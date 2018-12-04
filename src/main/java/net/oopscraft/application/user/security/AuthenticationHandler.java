@@ -2,6 +2,7 @@ package net.oopscraft.application.user.security;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -55,10 +56,13 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 		String message = null;
+		Locale locale = localeResolver.resolveLocale(request);
 		if(exception instanceof UsernameNotFoundException) {
-			message = messageSource.getMessage("message.userNotFound", null, localeResolver.resolveLocale(request));
+			String item = messageSource.getMessage("application.text.user", null, locale);
+			message = messageSource.getMessage("application.message.itemNotFound", new Object[]{ item }, locale);
 		}else if(exception instanceof BadCredentialsException) {
-			message = messageSource.getMessage("message.passwordIncorrect", null, localeResolver.resolveLocale(request));
+			String item = messageSource.getMessage("application.text.password", null, locale);
+			message = messageSource.getMessage("application.message.invalidItem", new Object[]{ item }, locale);
 		}else {
 			message = exception.getMessage();
 		}

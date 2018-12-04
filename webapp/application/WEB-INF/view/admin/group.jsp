@@ -287,9 +287,8 @@ function removeGroup() {
 	<spring:message code="application.text.group"/>
 	<spring:message code="application.text.management"/>
 </div>
-<hr/>
 <div class="container">
-	<div class="left">
+	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
 		<!-- Group Tree												-->
 		<!-- ====================================================== -->
@@ -325,8 +324,7 @@ function removeGroup() {
 			</li>
 		</ul>
 	</div>
-	<hr/>
-	<div class="right">
+	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
 		<!-- Group Details											-->
 		<!-- ====================================================== -->

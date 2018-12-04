@@ -282,25 +282,14 @@ function removeUser(){
 
 </script>
 <style type="text/css">
-.container {
-	display: flex;
-	justify-content: space-between;
-}
-.left {
-	width: 50%;
-}
-.right {
-	width: 50%;
-}
 </style>
 <div class="title1">
 	<i class="icon-user"></i>
 	<spring:message code="application.text.user"/>
 	<spring:message code="application.text.management"/>
 </div>
-<hr/>
 <div class="container">
-	<div class="left">
+	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
 		<!-- User List												-->
 		<!-- ====================================================== -->
@@ -355,8 +344,7 @@ function removeUser(){
 			</ul>
 		</div>
 	</div>
-	<hr/>
-	<div class="right">
+	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
 		<!-- User Details											-->
 		<!-- ====================================================== -->

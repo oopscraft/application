@@ -182,7 +182,7 @@
 		table.detail > tbody > tr > th {
 			border: solid 1px #efefef;
 			background-color: #fafafa;
-			text-align: right;
+			padding-left: 1.0rem;
 			padding-right: 1.0rem;
 		}
 		table.detail > tbody > tr > td {
@@ -203,10 +203,6 @@
 			cursor: hand;
 			cursor: pointer;
 		}
-		hr {
-			margin: 2px;
-			border: 0px;
-		}
 		a {
 			text-decoration: none;
 			cursor: hand;
@@ -219,18 +215,11 @@
 			display: flex;
 			justify-content: space-between;
 		}
-		.left {
-			width: 50%;
+		.division {
 			border: dotted 1px #ccc;
 			border-radius: 3px;
-			padding:1rem;
-			min-height:400px;
-		}
-		.right {
-			width: 50%;
-			border: dotted 1px #ccc;
-			border-radius: 3px;
-			padding:1rem;
+			margin: 5px;
+			padding: 1rem;
 			min-height:400px;
 		}
 		.id {
@@ -253,7 +242,7 @@
 		<!-- ====================================================== -->
 		<header>
 			<span>
-				<a href="dash">
+				<a href="monitor">
 					<img src="${pageContext.request.contextPath}/img/application.png"/>
 				</a>
 			</span>
@@ -285,9 +274,9 @@
 			<nav>
 				<ul>
 					<li>
-						<a href="dash">
+						<a href="monitor">
 							<i class="icon-monitor"></i>
-							<spring:message code="application.label.dash"/>
+							<spring:message code="application.label.monitor"/>
 						</a>
 					</li>
 					<li>
@@ -448,7 +437,6 @@
 						<li>
 							<div data-index="{{$context.index}}" onclick="javascript:__groupsDialog.select(this.dataset.index);" style="width:100%;cursor:hand;cursor:pointer;">
 								<input data-juice="CheckBox" data-juice-bind="group.__selected"/>
-								<i class="icon-file"></i>
 								<label data-juice="Label" data-juice-bind="group.id"></label>
 								|
 								<label data-juice="Label" data-juice-bind="group.name"></label>
