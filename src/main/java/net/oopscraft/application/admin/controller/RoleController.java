@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,12 +22,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.user.Authority;
-import net.oopscraft.application.user.AuthorityService;
 import net.oopscraft.application.user.Role;
 import net.oopscraft.application.user.RoleService;
-import net.oopscraft.application.user.AuthorityService.SearchCondition;
 
+@PreAuthorize("hasAuthority('ADMIN_ROLE')")
 @Controller
 @RequestMapping("/admin/role")
 public class RoleController {

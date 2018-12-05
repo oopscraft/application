@@ -3,6 +3,8 @@
  */
 .juice-ui-label {
 	margin: 0px;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
     font-weight: inherit;
     cursor: inherit;
 }
@@ -12,11 +14,11 @@
  */
 .juice-ui-textField {
 	margin: 0px;
-	padding-left: 1%;
-	padding-right: 1%;
-	width: 100%;
-	border-radius: 2px;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
 	border: 1px solid #cccccc;
+	width: calc(100% - 1rem - 2px);
+	border-radius: 2px;
 	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
 .juice-ui-textField:-moz-read-only { /* For Firefox */
@@ -31,8 +33,8 @@
  */
 .juice-ui-comboBox {
 	margin: 0px;
-	padding-left: 1%;
-    padding-right: 1%;
+	padding-left: 1rem;
+    padding-right: 1rem;
     width: 98%;
     color: #495057;
     -webkit-appearance: none;
@@ -70,11 +72,14 @@
  */
 .juice-ui-textArea {
 	white-space: nowrap;
-	padding: .2rem .5rem;
+	padding: .5rem .5rem;
 	border-radius: 2px;
 	border: 1px solid #ced4da;
 	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-	width: 98%;
+	box-sizing: border-box;         
+	-moz-box-sizing: border-box;    
+	-webkit-box-sizing: border-box; 
+	width: 100%;
 	height: 100%;
 }
 
@@ -260,8 +265,8 @@
 }
 .juice-ui-grid thead th {
 	border: solid 1px #efefef;
-	padding: 0.4rem 0.2rem;
 	text-align: center;
+	height: 2rem;
 }
 .juice-ui-grid tbody {
 	cursor:pointer;
@@ -275,7 +280,8 @@
 }
 .juice-ui-grid tbody td {
 	border: solid 1px #efefef;
-	text-align: center;
+	text-align: left;
+	height: 2rem;
 }
 .juice-ui-grid .juice-ui-grid-index {
 	background-color: #fafafa;
@@ -287,7 +293,7 @@
 	display: flex;
     align-items: center;
 	justify-content: center;
-	height: 3rem;
+	height: 4rem;
 }
 .juice-ui-grid .juice-ui-grid-empty .juice-ui-grid-empty-message:before {
 	content: 'No Data Found';

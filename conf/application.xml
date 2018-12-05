@@ -10,9 +10,9 @@
 		<keyStorePath>${application.webSerer.keyStorePath}</keyStorePath>
 		<keyStoreType>${application.webSerer.keyStoreType}</keyStoreType>
 		<keyStorePass>${application.webSerer.keyStorePass}</keyStorePass>
-		<context path="/">
+		<context path="">
 			<resourceBase>webapp/application</resourceBase>
-			<descriptor>webapp/application/WEB-INF/web.xml</descriptor>
+			<descriptor>conf/web.xml</descriptor>
 		</context>
 	</webServer>
 

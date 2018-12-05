@@ -116,16 +116,11 @@ juice.data.Map.prototype = {
 		this.childNodes.splice(index,1);
 		this.notifyObservers();
 	},
-	/* sets readOnly property */
+	/* sets readonly property */
 	setReadOnly: function(name, readOnly){
 		this.readOnly[name] = readOnly;
 		this.notifyObservers();
 	},
-	/*//Deprecated listen change event 
-	onChange: function(listener){
-		this.listener.change = listener;
-	},
-	*/
 	beforeChange: function(listener){
 		this.listener.beforeChange = listener;
 	},
@@ -343,7 +338,7 @@ juice.data.Tree.prototype = {
 		var depth = -1;
 		var cursor = [];
 		findChild(this.rootNode);
-		$this = this;
+		var $this = this;
 		function findChild(node) {
 			depth ++;
 			cursor.push(-1);
@@ -351,7 +346,6 @@ juice.data.Tree.prototype = {
 			for(var i = 0, size = childNodes.length; i < size; i ++){
 				var childNode = childNodes[i];
 				cursor[depth] = i;
-				console.log('cursor:' + cursor);
 				if(handler.call($this,childNode) == true){
 					indexes.push(JSON.parse(JSON.stringify(cursor)));
 				}
@@ -360,6 +354,7 @@ juice.data.Tree.prototype = {
 			depth --;
 			cursor.pop();
 		}
+		console.log($this);
 		return indexes;
 	},
 	/* clear current select row index */
@@ -489,9 +484,9 @@ juice.ui.TextField.prototype = {
 			this.input.value = value;
 		}
 		if(this.map.readOnly[this.name]){
-			this.input.readOnly = true;
+			this.input.readonly = true;
 		}else{
-			this.input.readOnly = false;
+			this.input.readonly = false;
 		}
 	},
 	setMask: function(mask){

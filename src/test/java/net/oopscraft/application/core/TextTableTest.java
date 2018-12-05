@@ -12,7 +12,7 @@ public class TextTableTest {
 		ValueMap map = new ValueMap();
 		map.setString("id", "james");
 		map.setString("name", "Name");
-		System.out.println(new TextTable(map));
+		System.out.println("#map" + new TextTable(map));
 	}
 	
 	@Test
@@ -24,7 +24,16 @@ public class TextTableTest {
 			map.setString("name", String.format("Name-%d",i));
 			list.add(map);
 		}
-		System.out.println(new TextTable(list));
+		System.out.println("#list:" + new TextTable(list));
+	}
+	
+	@Test
+	public void testNull() {
+		ValueMap map = null;
+		System.out.println("map null:" + new TextTable(map));
+		
+		List<ValueMap> list = null;
+		System.out.println("list null:" + new TextTable(list));
 	}
 
 }

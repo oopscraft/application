@@ -4,13 +4,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.enums.Enum;
-import org.apache.commons.lang.enums.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,14 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import antlr.StringUtils;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.AuthorityService;
-import net.oopscraft.application.user.Role;
-import net.oopscraft.application.user.RoleService;
 
+@PreAuthorize("hasAuthority('ADMIN_AUTHORITY')")
 @Controller
 @RequestMapping("/admin/authority")
 public class AuthorityController {

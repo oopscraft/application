@@ -108,6 +108,11 @@ public class GroupService {
 			}
 		}
 		
+		// Checks id and upperId is same.
+		if(one.getId().equals(one.getUpperId()) == true) {
+			throw new Exception("Group.id and Group.upperId is same.(infinit loop)");
+		}
+		
 		// sets properties
 		one.setName(group.getName());
 		one.setDescription(group.getDescription());

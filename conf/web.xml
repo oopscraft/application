@@ -24,15 +24,26 @@
 	</context-param>
     
 	<!-- ====================================================== -->
+	<!-- Defines Spring Application Context						-->
+	<!-- ====================================================== -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>file:conf/spring.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+    
+	<!-- ====================================================== -->
 	<!-- Defines Spring Dispatcher Servlet						-->
 	<!-- ====================================================== -->
     <servlet>  
         <servlet-name>dispatcherServlet</servlet-name>  
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>  
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class> 
         <init-param>  
             <param-name>contextConfigLocation</param-name>  
-            <param-value>/WEB-INF/conf/spring.xml</param-value>
-        </init-param>  
+            <param-value>file:conf/dispatcher-servlet.xml</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>  
     </servlet>
     <servlet-mapping>  
@@ -58,6 +69,19 @@
           <filter-name>encodingFilter</filter-name>
           <url-pattern>/*</url-pattern>
      </filter-mapping>
+     
+    <!-- ====================================================== -->
+	<!-- Defines Spring Data JPA session enable					-->
+	<!-- ====================================================== -->
+	<filter>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
     
     <!-- ====================================================== -->
 	<!-- Defines Spring Security Filter							-->
