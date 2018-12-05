@@ -130,7 +130,12 @@ function addUser() {
  * Adds groups
  */
 function addGroup() {
-	__groupsDialog.open(function(selectedGroups){
+	__groupsDialog
+	.disable(function(node){
+		if(node.get('id') == 'admin'){
+			return true;
+		}
+	}).open(function(selectedGroups){
 		selectedGroups.forEach(function(group){
 			groups.addRow(group);
 		});
@@ -309,6 +314,13 @@ function removeUser(){
 			</div>
 		</div>
 		<table id="usersTable" data-juice="Grid" data-juice-bind="users" data-juice-item="user">
+			<colgroup>
+				<col style="width:10%;"/>
+				<col/>
+				<col/>
+				<col/>
+				<col/>
+			</colgroup>
 			<thead>
 				<tr>
 					<th>
@@ -330,7 +342,7 @@ function removeUser(){
 			</thead>
 			<tbody>
 				<tr data-id="{{$context.user.get('id')}}" onclick="javascript:getUser(this.dataset.id);">
-					<td>{{$context.index+1}}</td>
+					<td class="text-center">{{$context.index+1}}</td>
 					<td><label data-juice="Label" data-juice-bind="user.id" class="id"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.email"></label></td>
@@ -486,9 +498,13 @@ function removeUser(){
 						</thead>
 						<tbody>
 							<tr data-id="{{$context.group.get('id')}}">
-								<td><label data-juice="Label" data-juice-bind="group.id" class="id"></label></td>
-								<td><label data-juice="Label" data-juice-bind="group.name"></label></td>
 								<td>
+									<label data-juice="Label" data-juice-bind="group.id" class="id"></label>
+								</td>
+								<td>
+									<label data-juice="Label" data-juice-bind="group.name"></label>
+								</td>
+								<td class="text-center">
 									<button data-index="{{$context.index}}" onclick="javascript:removeGroup(this.dataset.index);">
 										<i class="icon-minus"></i>
 									</button>
@@ -528,9 +544,13 @@ function removeUser(){
 						</thead>
 						<tbody>
 							<tr data-id="{{$context.role.get('id')}}">
-								<td><label data-juice="Label" data-juice-bind="role.id" class="id"></label></td>
-								<td><label data-juice="Label" data-juice-bind="role.name"></label></td>
 								<td>
+									<label data-juice="Label" data-juice-bind="role.id" class="id"></label>
+								</td>
+								<td>
+									<label data-juice="Label" data-juice-bind="role.name"></label>
+								</td>
+								<td class="text-center">
 									<button data-index="{{$context.index}}" onclick="javascript:removeRole(this.dataset.index);">
 										<i class="icon-minus"></i>
 									</button>
@@ -576,7 +596,7 @@ function removeUser(){
 								<td>
 									<label data-juice="Label" data-juice-bind="authority.name"></label>
 								</td>
-								<td>
+								<td class="text-center">
 									<button data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
 										<i class="icon-minus"></i>
 									</button>

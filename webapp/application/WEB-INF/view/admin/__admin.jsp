@@ -37,15 +37,6 @@
         	alert(jqXHR.responseText);
         });
         
-        /**
-         * Prevents Enter keydown event.
-         */ 
-        document.addEventListener('keydown', function(event) {
-            if (event.keyCode === 13) {
-                event.preventDefault();
-            }
-        }, true);
-        
         /* slide mobile navigation */
         function __viewResponsiveNav() {
         	var mainNav = $('main > nav');
@@ -234,6 +225,17 @@
 			cursor: pointer;
 			text-decoration: underline;
 		}
+		.text-left {
+			text-align: left !important;
+			padding-left: 1rem !important;
+		}
+		.text-center {
+			text-align: center !important;
+		}
+		.text-right {
+			text-align: right !important;
+			padding-right: 1rem;
+		}
 		</style>
 	</head>
 	<body>
@@ -367,9 +369,14 @@
 		<script type="text/javascript">
         /**
          * Gets roles and open dialog
-         */        
+         */
         var __groupsDialog = {
 	 		groups: new juice.data.Tree(),
+	 		handler: {},
+	 		disable: function(handler){
+	 			this.handler.disable = handler;
+	 			return this;
+	 		},
 	 		// open dialog
 			open: function(callback){
 				this.callback = callback;
@@ -380,7 +387,7 @@
 			},
 			// gets roles
 	 		getGroups: function(){
-            	$this = this;
+            	var $this = this;
             	$.ajax({
             		 url: '${pageContext.request.contextPath}/admin/getGroups'
             		,type: 'GET'
@@ -388,8 +395,18 @@
             		,success: function(data, textStatus, jqXHR) {
             			$this.groups.fromJson(data,'childGroups');
             			$('#__groupsUl').hide().fadeIn();
+            			
+            			// disable
+            			if($this.handler.disable){
+            				var indexes = $this.groups.findIndexes($this.handler.disable);
+            				indexes.forEach(function(index){
+            					var node = $this.groups.getNode(index);
+            					node.set('__disabled', true);
+            				});
+            			}
                	 	}
             	});	
+            	console.log('@@@@@@@@@@@@@@@@@@' + $this.groups);
 	 		},
 	 		// selects rows by index
 			select: function(index){
@@ -436,9 +453,7 @@
 					<ul id="__groupsUl" data-juice="TreeView" data-juice-bind="__groupsDialog.groups" data-juice-item="group">
 						<li>
 							<div data-index="{{$context.index}}" onclick="javascript:__groupsDialog.select(this.dataset.index);" style="width:100%;cursor:hand;cursor:pointer;">
-								<input data-juice="CheckBox" data-juice-bind="group.__selected"/>
-								<label data-juice="Label" data-juice-bind="group.id"></label>
-								|
+								<input data-juice="CheckBox" data-juice-bind="group.__selected" readonly/>
 								<label data-juice="Label" data-juice-bind="group.name"></label>
 								{{$context.index}}
 							</div>

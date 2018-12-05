@@ -2,31 +2,31 @@ package net.oopscraft.application.core;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
 
 public class TextTable {
 	
-	enum Type { OBJECT, LIST }
 	Object obj;
-	List<?> list;
+	Collection<?> collection;
 	
 	public TextTable(Object obj) {
 		this.obj = obj;
 	}
 	
-	public TextTable(List<?> list) {
-		this.list = list;
+	public TextTable(Collection<?> collection) {
+		this.collection = collection;
 	}
 	
 	@Override
     public String toString() {
 		if(obj != null) {
 			return build(obj);
-		}else if(list != null) {
-			return build(list);
+		}else if(collection != null) {
+			return build(collection);
 		}else {
 			return null;
 		}
@@ -236,19 +236,21 @@ public class TextTable {
 	}
 	
 	
-	private static String build(List<?> list) {
+	private static String build(Collection<?> collection) {
 		StringBuffer buffer = new StringBuffer();
 		
 		// Appends data
-		if(list == null || list.size() < 1) {
+		if(collection == null || collection.size() < 1) {
 			buffer.append("\n-- EMPTY DATA --");
 			return buffer.toString();
 		}
-		
-		String[] columnNames = parseColumnNames(list.get(0));
-		String[][] columnValuesList = new String[list.size()][];  
-		for(int idx = 0, size = list.size(); idx < size; idx ++ ) {
-			columnValuesList[idx] = parseColumnValues(list.get(idx), columnNames);
+		String[] columnNames = parseColumnNames(collection.iterator().next());
+		String[][] columnValuesList = new String[collection.size()][];
+		Iterator<?> iter = collection.iterator();
+		int idx = -1;
+		while(iter.hasNext()) {
+			idx ++;
+			columnValuesList[idx] = parseColumnValues(iter.next(), columnNames);
 		}
 		
 		buffer.append(build(columnNames, columnValuesList));

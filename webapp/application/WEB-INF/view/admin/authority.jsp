@@ -196,6 +196,11 @@ function removeAuthority() {
 			</div>
 		</div>
 		<table id="authoritiesTable" data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
+			<colgroup>
+				<col style="width:10%"/>
+				<col style="width:30%"/>
+				<col style="width:60%"/>
+			</colgroup>
 			<thead>
 				<tr>
 					<th>
@@ -214,8 +219,8 @@ function removeAuthority() {
 			<tbody>
 				<tr data-id="{{$context.authority.get('id')}}" onclick="javascript:getAuthority(this.dataset.id);">
 					<td>{{$context.index+1}}</td>
-					<td><label data-juice="Label" data-juice-bind="authority.id" class="id"></label></td>
-					<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
+					<td class="text-left"><label data-juice="Label" data-juice-bind="authority.id" class="id"></label></td>
+					<td class="text-left"><label data-juice="Label" data-juice-bind="authority.name"></label></td>
 				</tr>
 			</tbody>
 		</table>

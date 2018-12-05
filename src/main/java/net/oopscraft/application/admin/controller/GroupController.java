@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,7 @@ import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
 
+@PreAuthorize("hasAuthority('ADMIN_GROUP')")
 @Controller
 @RequestMapping("/admin/group")
 public class GroupController {

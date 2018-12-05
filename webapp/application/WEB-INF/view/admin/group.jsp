@@ -59,7 +59,7 @@ function getGroup(id) {
 				breadCrumbs.forEach(function(item){
 					breadCrumbsNames.push(item.name);
 				});
-				group.set('breadCrumbs', breadCrumbsNames.join(' - '));
+				group.set('breadCrumbs', breadCrumbsNames.join(' > '));
 			});
 			
 			// animates group.
@@ -89,6 +89,13 @@ function getBreadCrumbs(id, callback) {
 			callback.call(this, data);
  	 	}
 	});	
+}
+
+/**
+ * Changes upperId
+ */
+function changeUpperId(){
+	alert('fdasfdas');
 }
 
 /**
@@ -311,8 +318,6 @@ function removeGroup() {
 				<div style="display:flex;justify-content:space-between;border-bottom:dotted 1px #ccc;">
 					<div data-id="{{$context.group.get('id')}}" onclick="javascript:getGroup(this.dataset.id);" style="width:80%;cursor:hand;cursor:pointer;">
 						<i class="icon-file"></i>
-						<label data-juice="Label" data-juice-bind="group.id"></label>
-						|
 						<label data-juice="Label" data-juice-bind="group.name"></label>
 					</div>
 					<div style="width:20%;min-width:100px;display:inline-block;text-align:right;">
@@ -379,7 +384,7 @@ function removeGroup() {
 				<td>
 					<label data-juice="Label" data-juice-bind="group.breadCrumbs"></label>
 					<input type="hidden" data-juice="TextField" data-juice-bind="group.upperId"/>
-					<button>
+					<button onclick="javascript:changeUpperId();">
 						<i class="icon-tree"></i>
 						<spring:message code="application.text.change"/>
 					</button>
@@ -423,9 +428,13 @@ function removeGroup() {
 						</thead>
 						<tbody>
 							<tr data-id="{{$context.role.get('id')}}">
-								<td><label data-juice="Label" data-juice-bind="role.id" class="id"></label></td>
-								<td><label data-juice="Label" data-juice-bind="role.name"></label></td>
 								<td>
+									<label data-juice="Label" data-juice-bind="role.id" class="id"></label>
+								</td>
+								<td>
+									<label data-juice="Label" data-juice-bind="role.name"></label>
+								</td>
+								<td class="text-center">
 									<button data-index="{{$context.index}}" onclick="javascript:removeRole(this.dataset.index);">
 										<i class="icon-minus"></i>
 									</button>
@@ -465,9 +474,13 @@ function removeGroup() {
 						</thead>
 						<tbody>
 							<tr data-id="{{$context.authority.get('id')}}">
-								<td><label data-juice="Label" data-juice-bind="authority.id" class="id"></label></td>
-								<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
 								<td>
+									<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+								</td>
+								<td>
+									<label data-juice="Label" data-juice-bind="authority.name"></label>
+								</td>
+								<td class="text-center">
 									<button data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
 										<i class="icon-minus"></i>
 									</button>

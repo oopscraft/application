@@ -8,6 +8,8 @@
  */
 package net.oopscraft.application.user.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,11 +19,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
 
 @Component
 public class AuthenticationProvider implements org.springframework.security.authentication.AuthenticationProvider {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationProvider.class);
 	
 	@Autowired
 	UserService userService;
@@ -56,6 +61,8 @@ public class AuthenticationProvider implements org.springframework.security.auth
 
 		// return authentication token.
 		UserDetails userDetails = new UserDetails(user);
+		userDetails.loadAuthorities();
+		LOGGER.info("{}", new TextTable(userDetails.getAuthorities()));
 		authentication = new UsernamePasswordAuthenticationToken(id, password, userDetails.getAuthorities());
 		return authentication;
 	}

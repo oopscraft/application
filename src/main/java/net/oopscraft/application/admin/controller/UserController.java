@@ -19,6 +19,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +38,7 @@ import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.RoleService.SearchCondition;
 
+@PreAuthorize("hasAuthority('ADMIN_USER')")
 @Controller
 @RequestMapping("/admin/user")
 public class UserController {
@@ -54,6 +57,7 @@ public class UserController {
 	 * @return
 	 * @throws Exception
 	 */
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView user() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/user.tiles");
@@ -72,7 +76,6 @@ public class UserController {
 	 */
 	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional
 	public String getUsers(@RequestParam(value = "key", required = false) String key,
 			@RequestParam(value = "value", required = false) String value,
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
@@ -107,7 +110,6 @@ public class UserController {
 	 */
 	@RequestMapping(value = "getUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional
 	public String getUser(@RequestParam(value = "id") String id) throws Exception {
 		User user = userService.getUser(id);
 		return JsonUtils.toJson(user);
