@@ -10,6 +10,8 @@ import net.oopscraft.application.user.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 	
+	public Page<User> findAllByOrderByJoinDateDesc(Pageable pageable) throws Exception;
+	
 	public Page<User> findByIdStartingWith(String id, Pageable pageable) throws Exception;
 	
 	public Page<User> findByNameStartingWith(String name, Pageable pageable) throws Exception;

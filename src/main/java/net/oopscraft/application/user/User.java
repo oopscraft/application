@@ -3,7 +3,6 @@ package net.oopscraft.application.user;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,11 +38,11 @@ public class User {
 	@Column(name = "USER_NICK")
 	String nickname;
 
-	@Column(name = "USER_PHOTO")
-	String photo;
+	@Column(name = "USER_AVAT")
+	String avatar;
 
-	@Column(name = "USER_PRFL")
-	String profile;
+	@Column(name = "USER_SIGN")
+	String signature;
 
 	@Column(name = "USER_JOIN_DTTM")
 	Date joinDate;
@@ -110,20 +109,20 @@ public class User {
 		this.nickname = nickname;
 	}
 
-	public String getPhoto() {
-		return photo;
+	public String getAvatar() {
+		return avatar;
 	}
 
-	public void setPhoto(String photo) {
-		this.photo = photo;
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
-	public String getProfile() {
-		return profile;
+	public String getSignature() {
+		return signature;
 	}
 
-	public void setProfile(String profile) {
-		this.profile = profile;
+	public void setSignature(String signature) {
+		this.signature = signature;
 	}
 
 	public Date getJoinDate() {

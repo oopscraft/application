@@ -9,6 +9,7 @@
 package net.oopscraft.application.user;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -97,13 +98,12 @@ public class UserService {
 		} else if (!StringUtils.isEmpty(searchCondition.getPhone())) {
 			page = userRepository.findByPhoneStartingWith(searchCondition.getName(), pageable);
 		} else {
-			page = userRepository.findAll(pageable);
+			page = userRepository.findAllByOrderByJoinDateDesc(pageable);
 		}
 		users = page.getContent();
 		if (pageInfo.isEnableTotalCount() == true) {
 			pageInfo.setTotalCount(page.getTotalElements());
 		}
-		LOGGER.info(new TextTable(users).toString());
 		LOGGER.info("+ users: {}", new TextTable(users));
 		return page.getContent();
 	}
@@ -128,9 +128,12 @@ public class UserService {
 	 */
 	public User saveUser(User user) throws Exception {
 		User one = userRepository.findOne(user.getId());
+		
+		// In case of new user
 		if(one == null) {
 			one = new User();
 			one.setId(user.getId());
+			one.setJoinDate(new Date());
 			one.setGroups(new ArrayList<Group>());
 			one.setRoles(new ArrayList<Role>());
 			one.setAuthorities(new ArrayList<Authority>());
@@ -139,8 +142,22 @@ public class UserService {
 		one.setNickname(user.getNickname());
 		one.setEmail(user.getEmail());
 		one.setPhone(user.getPhone());
-		one.setPhoto(user.getPhoto());
-		one.setProfile(user.getProfile());
+		
+		// AVATAR property
+		if(user.getAvatar() != null) {
+			if(user.getAvatar().length() > 1024*1024) {
+				throw new Exception("Avatar image size exceeds the limit.");
+			}
+		}
+		one.setAvatar(user.getAvatar());
+		
+		// Signature property
+		if(user.getSignature() != null) {
+			if(user.getSignature().length() > 1024*1024) {
+				throw new Exception("Signature size exceeds the limit.");
+			}
+		}
+		one.setSignature(user.getSignature());
 		
 		// add groups
 		one.getGroups().clear();
