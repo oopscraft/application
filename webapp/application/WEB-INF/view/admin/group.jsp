@@ -10,7 +10,7 @@
 <script type="text/javascript">
 var groups = new juice.data.Tree();
 var group = new juice.data.Map();
-group.setReadOnly('id',true);
+group.setReadonly('id',true);
 var roles = new juice.data.List();
 var authorities = new juice.data.List();
 
@@ -51,7 +51,7 @@ function getGroup(id) {
 			group.fromJson(data);
 			roles.fromJson(data.roles);
 			authorities.fromJson(data.authorities);
-			group.setReadOnly('id',true);
+			group.setReadonly('id',true);
 			
 			// breadcrumbs
 			getBreadCrumbs(group.get('upperId'),function(breadCrumbs){
@@ -183,7 +183,7 @@ function addChildGroup(upperId) {
 	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
 		.beforeConfirm(function(event){
 			var id = event.value;
-	
+			
 			// checks duplicated id.
 			var isDuplicated = false;
 			$.ajax({
@@ -318,6 +318,8 @@ function removeGroup() {
 				<div style="display:flex;justify-content:space-between;border-bottom:dotted 1px #ccc;">
 					<div data-id="{{$context.group.get('id')}}" onclick="javascript:getGroup(this.dataset.id);" style="width:80%;cursor:hand;cursor:pointer;">
 						<i class="icon-file"></i>
+						<label data-juice="Label" data-juice-bind="group.id"></label>
+						|
 						<label data-juice="Label" data-juice-bind="group.name"></label>
 					</div>
 					<div style="width:20%;min-width:100px;display:inline-block;text-align:right;">

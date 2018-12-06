@@ -29,7 +29,8 @@ juice.data.Map = function(json) {
 	if(json) {
 		this.fromJson(json);
 	}
-	this.readOnly = {};
+	this.readonly = {};
+	this.enable = true;
 	this.focus = null;
 }
 juice.data.Map.prototype = {
@@ -117,9 +118,12 @@ juice.data.Map.prototype = {
 		this.notifyObservers();
 	},
 	/* sets readonly property */
-	setReadOnly: function(name, readOnly){
-		this.readOnly[name] = readOnly;
+	setReadonly: function(name, readonly){
+		this.readonly[name] = readonly;
 		this.notifyObservers();
+	},
+	setEnable: function(enable){
+		this.enable = enable;
 	},
 	beforeChange: function(listener){
 		this.listener.beforeChange = listener;
@@ -186,6 +190,16 @@ juice.data.List.prototype = {
 	/* get current select row index */
 	getIndex: function() {
 		return this.index;
+	},
+	findIndexes: function(handler){
+		var indexes = [];
+		var $this = this;
+		for(var i = 0, size = mapList.length; i < size; i ++){
+			if(handler.call($this, mapList[i]) == true){
+				indexes.push(i);
+			}
+		}
+		return indexes;
 	},
 	/* clear current select row index */
 	clearIndex: function() {
@@ -483,10 +497,17 @@ juice.ui.TextField.prototype = {
 		}else{
 			this.input.value = value;
 		}
-		if(this.map.readOnly[this.name]){
-			this.input.readonly = true;
+		if(this.map.enable == false){
+			this.setReadonly(true);
 		}else{
-			this.input.readonly = false;
+			this.setReadonly(this.map.readonly[this.name]);	
+		}
+	},
+	setReadonly: function(readonly){
+		if(readonly){
+			this.input.setAttribute('readOnly',true);
+		}else{
+			this.input.removeAttribute('readOnly');
 		}
 	},
 	setMask: function(mask){
@@ -557,6 +578,14 @@ juice.ui.CheckBox.prototype = {
 		}else{
 			this.input.checked = false;
 		}
+		this.setReadonly(this.map.readonly[this.name]);
+	},
+	setReadonly: function(readonly){
+		if(readonly == true){
+			this.input.disabled = true;
+		}else{
+			this.input.disabled = false;
+		}
 	}
 }
 
@@ -607,6 +636,20 @@ juice.ui.TextArea.prototype = {
 	},
 	update: function() {
 		this.textarea.value = this.map.get(this.name) || '';
+		
+		// sets enable and read only
+		if(this.map.enable == false){
+			this.setReadonly(true);
+		}else{
+			this.setReadonly(this.map.readonly[this.name]);	
+		}
+	}
+	,setReadonly: function(readonly){
+		if(readonly){
+			this.textarea.setAttribute('readonly','readonly');
+		}else{
+			this.textarea.removeAttribute('readonly');
+		}
 	}
 }
 
@@ -820,7 +863,6 @@ juice.ui.HtmlEditor.prototype = {
  */
 juice.ui.CronExpression = function(input) {
 	this.input = input;
-	
 	
 	this.second = this.createSelectSecond();
 	this.minute = this.createSelectMinute();
@@ -1118,6 +1160,78 @@ juice.ui.CronExpression.prototype = {
 			selectWeek.classList.add(this.input.classList[0]);
 		}
 		return selectWeek;
+	}
+}
+
+/**
+ * Thumbnail Prototype
+ */
+juice.ui.Thumbnail = function(img) {
+	this.img = img;
+	this.img.classList.add('juice-ui-thumbnail');
+	this.input = document.createElement('input');
+	this.input.setAttribute("type", "file");
+	this.input.setAttribute("accept", "image/gif, image/jpeg, image/png");
+	this.width = 100;
+	this.height = 100;
+	this.blank = img.src;
+}
+juice.ui.Thumbnail.prototype = {
+	bind: function(map, name) {
+		var $this = this;
+		this.map = map;
+		this.name = name;
+		this.map.addObserver(this);
+		
+		// Adds click event
+		var $this = this;
+		this.img.addEventListener('click', function(){
+			$this.input.click();
+		});
+		
+		this.img.addEventListener('error', function() {
+			console.log('error');
+			$this.img.src = $this.blank;
+		});
+		
+		// on file change
+		this.input.addEventListener('change', function(e){
+			var fileReader = new FileReader();
+			if (this.files && this.files[0]) {
+				fileReader.addEventListener("load", function(e) {
+					var value = e.target.result;
+					var width = $this.width;
+					var height = $this.height;
+				    var canvas = document.createElement("canvas");
+				    var ctx = canvas.getContext("2d");
+		            canvas.width = width;
+		            canvas.height = height;
+				    var image = document.createElement('img');
+				    image.onload = function(){
+						ctx.drawImage(image, 0, 0, width, height);
+						value = canvas.toDataURL("image/jpeg");
+				    	$this.map.set($this.name, value);
+				    };
+				    image.src = value;
+			    }); 
+				fileReader.readAsDataURL(this.files[0]);
+			}
+		});
+	},
+	update: function() {
+		var $this = this;
+		if(this.map.get(this.name)) {
+			var src = this.map.get(this.name);
+			this.img.src = src; 
+		}else{
+			this.img.src = this.blank;
+		}
+	},
+	setWidth: function(width){
+		this.width = width;
+	},
+	setHeight: function(height){
+		this.height = height;
 	}
 }
 
@@ -2774,6 +2888,9 @@ juice.initialize = function(container, $context) {
 				element.dataset.juiceMask && textField.setMask(element.dataset.juiceMask);
 				element.dataset.juiceValidator && textField.setValidator(eval(element.dataset.juiceValidator));
 				textField.update();
+				if(element.dataset.juiceReadonly){
+					textField.setReadonly(eval(element.dataset.juiceReadonly));
+				}
 			break;
 			case 'ComboBox':
 				var comboBox = new juice.ui.ComboBox(element);
@@ -2786,6 +2903,9 @@ juice.initialize = function(container, $context) {
 				var checkBox = new juice.ui.CheckBox(element);
 				checkBox.bind(map, name);
 				checkBox.update();
+				if(element.dataset.juiceReadonly){
+					checkBox.setReadonly(eval(element.dataset.juiceReadonly));
+				}
 			break;
 			case 'Radio':
 				var radio = new juice.ui.Radio(element);
@@ -2809,6 +2929,11 @@ juice.initialize = function(container, $context) {
 				if(element.dataset.juiceReadonly){
 					cronExpression.setReadonly(eval(element.dataset.juiceReadonly));
 				}
+			break;
+			case 'Thumbnail':
+				var thumbnail = new juice.ui.Thumbnail(element);
+				thumbnail.bind(map, name);
+				thumbnail.update();
 			break;
 		}
 		element.dataset.juice = id;

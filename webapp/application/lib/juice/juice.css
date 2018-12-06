@@ -82,6 +82,14 @@
 	width: 100%;
 	height: 100%;
 }
+.juice-ui-textArea:-moz-read-only { /* For Firefox */
+    background-color: #fafafa;
+    outline: none;
+}
+.juice-ui-textArea:read-only {
+	background-color: #fafafa;
+	outline: none;
+}
 
 /**
  * juice.ui.Editor
@@ -250,6 +258,11 @@
     background-color: #fff;
     background-clip: padding-box;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.juice-ui-thumbnail {
+	cursor: hand;
+	cursor: pointer;
 }
 
 /**
@@ -476,10 +489,10 @@
 .juice-ui-blocker {
 	padding: 0px;
 	margin: 0px;
-    background-color: rgba(0, 0, 0, 0.54);
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.5);
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.5);
 	overflow: hidden;
-	opacity: 0.7;
+	opacity: 0.5;
 }
 
 /**

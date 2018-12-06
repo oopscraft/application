@@ -766,10 +766,10 @@
                       <defaultValue></defaultValue>
                     </net.java.amateras.db.visual.model.ColumnModel>
                     <net.java.amateras.db.visual.model.ColumnModel>
-                      <columnName>USER_PHOTO</columnName>
-                      <logicalName>User Photo</logicalName>
+                      <columnName>USER_AVAT</columnName>
+                      <logicalName>User Avatar</logicalName>
                       <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>TEXT</name>
+                        <name>MEDIUMTEXT</name>
                         <logicalName>String</logicalName>
                         <supportSize>false</supportSize>
                         <type>12</type>
@@ -782,14 +782,9 @@
                       <defaultValue></defaultValue>
                     </net.java.amateras.db.visual.model.ColumnModel>
                     <net.java.amateras.db.visual.model.ColumnModel>
-                      <columnName>USER_PRFL</columnName>
-                      <logicalName>User Profile</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>TEXT</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>false</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnName>USER_SIGN</columnName>
+                      <logicalName>User Signiture</logicalName>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[7]/columnType"/>
                       <size>65535</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -814,7 +809,17 @@
                       <defaultValue></defaultValue>
                     </net.java.amateras.db.visual.model.ColumnModel>
                   </columns>
-                  <indices/>
+                  <indices>
+                    <net.java.amateras.db.visual.model.IndexModel>
+                      <indexName>APP_USER_INFO_IX_1</indexName>
+                      <indexType class="net.java.amateras.db.dialect.IndexType">
+                        <name>INDEX</name>
+                      </indexType>
+                      <columns>
+                        <string>USER_EMAIL</string>
+                      </columns>
+                    </net.java.amateras.db.visual.model.IndexModel>
+                  </indices>
                   <backgroundColor>
                     <red>255</red>
                     <green>255</green>

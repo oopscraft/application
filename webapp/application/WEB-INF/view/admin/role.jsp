@@ -30,7 +30,7 @@ var roleSearchKeys = [
 ];
 var roles = new juice.data.List();
 var role = new juice.data.Map();
-role.setReadOnly('id', true);
+role.setReadonly('id', true);
 var authorities = new juice.data.List();
 
 /**
@@ -94,8 +94,7 @@ function addRole() {
 				,async: false
 				,success: function(data, textStatus, jqXHR) {
 					if(data != null && data.id == id){
-						var groupJson = JSON.parse(data);
-						if(groupJson != null && groupJson.id == event.value){
+						if(data != null && data.id == event.value){
 							isDuplicated = true;
 						}
 					}

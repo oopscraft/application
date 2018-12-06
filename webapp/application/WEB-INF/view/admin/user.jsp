@@ -31,7 +31,8 @@ var userSearchKeys = [
 ];
 var users = new juice.data.List();
 var user = new juice.data.Map();
-user.setReadOnly('id', true);
+user.setReadonly('id', true);
+user.setEnable(false);
 var groups = new juice.data.List();
 var roles = new juice.data.List();
 var authorities = new juice.data.List();
@@ -66,6 +67,8 @@ function getUsers(page) {
  * Gets user
  */
 function getUser(id) {
+	user.setEnable(true);
+	
 	$.ajax({
 		 url: 'user/getUser'
 		,type: 'GET'
@@ -76,9 +79,6 @@ function getUser(id) {
 			roles.fromJson(data.roles);
 			authorities.fromJson(data.authorities);
 			$('#userTable').hide().fadeIn();
-			
-			// setting user photo
-			$('#userPhotoImg').src = user.get('photo');
   	 	}
 	});	
 }
@@ -96,7 +96,7 @@ function addUser() {
 			// checks duplicated id.
 			var isDuplicated = false;
 			$.ajax({
-				 url: 'group/getGroup'
+				 url: 'user/getUser'
 				,type: 'GET'
 				,data: {id: id}
 				,async: false
@@ -118,8 +118,10 @@ function addUser() {
 			var id = event.value;
 			users.clearIndex();
 			user.fromJson({});
+			user.setEnable(true);
 			user.set('id', id);
-			user.setReadOnly('id',true);
+			user.setReadonly('id',true);
+			groups.fromJson([]);
 			roles.fromJson([]);
 			authorities.fromJson([]);
 		})
@@ -243,6 +245,7 @@ function saveUser() {
 			userJson.groups = groups.toJson();
 			userJson.roles = roles.toJson();
 			userJson.authorities = authorities.toJson();
+			console.log(userJson);
 			$.ajax({
 				 url: 'user/saveUser'
 				,type: 'POST'
@@ -311,6 +314,10 @@ function removeUser(){
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
 				</button>
+				<button onclick="javascript:addUser();">
+					<i class="icon-plus"></i>
+					<spring:message code="application.text.new"/>
+				</button>
 			</div>
 		</div>
 		<table id="usersTable" data-juice="Grid" data-juice-bind="users" data-juice-item="user">
@@ -369,10 +376,6 @@ function removeUser(){
 				</div>
 			</div>
 			<div>
-				<button onclick="javascript:addUser();">
-					<i class="icon-plus"></i>
-					<spring:message code="application.text.new"/>
-				</button>
 				<button onclick="javascript:saveUser();">
 					<i class="icon-disk"></i>
 					<spring:message code="application.text.save"/>
@@ -404,8 +407,8 @@ function removeUser(){
 					</span>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="user.password" style="width:30%;"/>
-					<input class="id" data-juice="TextField" data-juice-bind="user.passwordConfirm" style="width:30%;"/>
+					<input type="password" class="id" data-juice="TextField" data-juice-bind="user.password" style="width:30%;"/>
+					<input type="password" class="id" data-juice="TextField" data-juice-bind="user.passwordConfirm" style="width:30%;"/>
 					<button>
 						<i class="icon-key"></i>
 						<spring:message code="application.text.change"/>
@@ -454,18 +457,18 @@ function removeUser(){
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="application.text.photo"/>
+					<spring:message code="application.text.avatar"/>
 				</th>
 				<td>
-					<img id="userPhotoImg" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTI4IDEyOCIgaWQ9ItCh0LvQvtC5XzEiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDEyOCAxMjgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxnPjxnPjxwYXRoIGQ9Ik02My45MTExMzI4LDcyLjAzNTY0NDVjLTEwLjI2NTYyNSwwLTE4LjYxNzE4NzUtOC4zNTIwNTA4LTE4LjYxNzE4NzUtMTguNjE3Njc1OCAgICBTNTMuNjQ1NTA3OCwzNC44MDAyOTMsNjMuOTExMTMyOCwzNC44MDAyOTNzMTguNjE4MTY0MSw4LjM1MjA1MDgsMTguNjE4MTY0MSwxOC42MTc2NzU4ICAgIFM3NC4xNzY3NTc4LDcyLjAzNTY0NDUsNjMuOTExMTMyOCw3Mi4wMzU2NDQ1eiBNNjMuOTExMTMyOCwzOC44MDAyOTNjLTguMDU5NTcwMywwLTE0LjYxNzE4NzUsNi41NTc2MTcyLTE0LjYxNzE4NzUsMTQuNjE3Njc1OCAgICBzNi41NTc2MTcyLDE0LjYxNzY3NTgsMTQuNjE3MTg3NSwxNC42MTc2NzU4YzguMDYwNTQ2OSwwLDE0LjYxODE2NDEtNi41NTc2MTcyLDE0LjYxODE2NDEtMTQuNjE3Njc1OCAgICBTNzEuOTcxNjc5NywzOC44MDAyOTMsNjMuOTExMTMyOCwzOC44MDAyOTN6IiBmaWxsPSIjMzM5OUNDIi8+PC9nPjxnPjxwYXRoIGQ9Ik0zMi43MDAxOTUzLDk0LjE4NTU0NjljLTEuMTA0NDkyMiwwLTItMC44OTU1MDc4LTItMiAgICBjMC0xMy4xOTkyMTg4LDE0LjgyNzE0ODQtMjMuOTM3OTg4MywzMy4wNTE3NTc4LTIzLjkzNzk4ODNjOC40MTAxNTYyLDAsMTYuNDE2MDE1NiwyLjI3MjQ2MDksMjIuNTQxOTkyMiw2LjM5ODkyNTggICAgYzAuOTE2MDE1NiwwLjYxNzE4NzUsMS4xNTgyMDMxLDEuODU5ODYzMywwLjU0MTk5MjIsMi43NzU4Nzg5Yy0wLjYxNzE4NzUsMC45MTYwMTU2LTEuODU4Mzk4NCwxLjE2MDE1NjItMi43NzYzNjcyLDAuNTQxNTAzOSAgICBDNzguNTg2OTE0MSw3NC4yNzc4MzIsNzEuMzc1LDcyLjI0NzU1ODYsNjMuNzUxOTUzMSw3Mi4yNDc1NTg2Yy0xNi4wMTk1MzEyLDAtMjkuMDUxNzU3OCw4Ljk0NDMzNTktMjkuMDUxNzU3OCwxOS45Mzc5ODgzICAgIEMzNC43MDAxOTUzLDkzLjI5MDAzOTEsMzMuODA0Njg3NSw5NC4xODU1NDY5LDMyLjcwMDE5NTMsOTQuMTg1NTQ2OXoiIGZpbGw9IiMzMzk5Q0MiLz48L2c+PGc+PHBhdGggZD0iTTg5LjEyOTg4MjgsODEuMzg5NjQ4NGMtMC41MjA1MDc4LDAtMS4wNDAwMzkxLTAuMjE5NzI2Ni0xLjQxMDE1NjItMC41ODk4NDM4ICAgIHMtMC41ODk4NDM4LTAuODkwMTM2Ny0wLjU4OTg0MzgtMS40MTAxNTYyYzAtMC41Mjk3ODUyLDAuMjE5NzI2Ni0xLjA0MDAzOTEsMC41ODk4NDM4LTEuNDE5OTIxOSAgICBjMC43MzA0Njg4LTAuNzM5NzQ2MSwyLjA4OTg0MzgtMC43Mzk3NDYxLDIuODMwMDc4MSwwYzAuMzcwMTE3MiwwLjM3OTg4MjgsMC41ODAwNzgxLDAuODkwMTM2NywwLjU4MDA3ODEsMS40MTk5MjE5ICAgIGMwLDAuNTIwMDE5NS0wLjIwOTk2MDksMS4wNDAwMzkxLTAuNTgwMDc4MSwxLjQxMDE1NjJDOTAuMTY5OTIxOSw4MS4xNjk5MjE5LDg5LjY2MDE1NjIsODEuMzg5NjQ4NCw4OS4xMjk4ODI4LDgxLjM4OTY0ODR6IiBmaWxsPSIjMzM5OUNDIi8+PC9nPjxnPjxwYXRoIGQ9Ik05MS44Mzk4NDM4LDg1Yy0wLjUzMDI3MzQsMC0xLjA0MDAzOTEtMC4yMjAyMTQ4LTEuNDEwMTU2Mi0wLjU5MDMzMiAgICBDOTAuMDQ5ODA0Nyw4NC4wNDAwMzkxLDg5LjgzOTg0MzgsODMuNTIwMDE5NSw4OS44Mzk4NDM4LDgzYzAtMC41MzAyNzM0LDAuMjA5OTYwOS0xLjA0MDAzOTEsMC41ODk4NDM4LTEuNDIwNDEwMiAgICBjMC43NDAyMzQ0LTAuNzM5NzQ2MSwyLjA4MDA3ODEtMC43Mzk3NDYxLDIuODIwMzEyNSwwQzkzLjYyOTg4MjgsODEuOTU5OTYwOSw5My44Mzk4NDM4LDgyLjQ2OTcyNjYsOTMuODM5ODQzOCw4MyAgICBjMCwwLjUyMDAxOTUtMC4yMDk5NjA5LDEuMDQwMDM5MS0wLjU4OTg0MzgsMS40MDk2NjhDOTIuODc5ODgyOCw4NC43Nzk3ODUyLDkyLjM1OTM3NSw4NSw5MS44Mzk4NDM4LDg1eiIgZmlsbD0iIzMzOTlDQyIvPjwvZz48Zz48cGF0aCBkPSJNOTQuNTQ5ODA0Nyw5NC4wMjAwMTk1Yy0wLjUzMDI3MzQsMC0xLjA0OTgwNDctMC4yMDk5NjA5LTEuNDE5OTIxOS0wLjU5MDMzMiAgICBjLTAuMzcwMTE3Mi0wLjM2OTYyODktMC41ODAwNzgxLTAuODg5NjQ4NC0wLjU4MDA3ODEtMS40MDk2NjhjMC0wLjUzMDI3MzQsMC4yMDk5NjA5LTEuMDQwMDM5MSwwLjU4MDA3ODEtMS40MjA0MTAyICAgIGMwLjc1LTAuNzM5NzQ2MSwyLjA4MDA3ODEtMC43Mzk3NDYxLDIuODMwMDc4MSwwYzAuMzcwMTE3MiwwLjM4MDM3MTEsMC41ODk4NDM4LDAuODkwMTM2NywwLjU4OTg0MzgsMS40MjA0MTAyICAgIGMwLDAuNTIwMDE5NS0wLjIxOTcyNjYsMS4wNDAwMzkxLTAuNTg5ODQzOCwxLjQwOTY2OEM5NS41ODk4NDM4LDkzLjgxMDA1ODYsOTUuMDY5MzM1OSw5NC4wMjAwMTk1LDk0LjU0OTgwNDcsOTQuMDIwMDE5NXoiIGZpbGw9IiMzMzk5Q0MiLz48L2c+PGc+PHBhdGggZD0iTTkzLjYzOTY0ODQsODkuNTA5NzY1NmMtMC41MTk1MzEyLDAtMS4wNDAwMzkxLTAuMjE5NzI2Ni0xLjQxMDE1NjItMC41ODk4NDM4ICAgIHMtMC41ODk4NDM4LTAuODkwMTM2Ny0wLjU4OTg0MzgtMS40MTAxNTYyYzAtMC41Mjk3ODUyLDAuMjE5NzI2Ni0xLjA0OTgwNDcsMC41ODk4NDM4LTEuNDE5OTIxOSAgICBjMC43NS0wLjc0MDIzNDQsMi4wODAwNzgxLTAuNzQwMjM0NCwyLjgzMDA3ODEsMGMwLjM3MDExNzIsMC4zNzk4ODI4LDAuNTgwMDc4MSwwLjg5MDEzNjcsMC41ODAwNzgxLDEuNDE5OTIxOSAgICBjMCwwLjUyMDAxOTUtMC4yMDk5NjA5LDEuMDQwMDM5MS0wLjU4MDA3ODEsMS40MTAxNTYyQzk0LjY3OTY4NzUsODkuMjkwMDM5MSw5NC4xNjk5MjE5LDg5LjUwOTc2NTYsOTMuNjM5NjQ4NCw4OS41MDk3NjU2eiIgZmlsbD0iIzMzOTlDQyIvPjwvZz48L2c+PC9zdmc+" style="height:5rem;"/>
+					<img data-juice="Thumbnail" data-juice-bind="user.avatar" src="data:image/gif;base64,R0lGODlhZABkANUAAMPM1OHm6drg5NDX3f7+/ubq7fDy9Pr7/MXO1dzh5vHz9eTo7MPN1Pb3+Ont79HY3sfQ1+Xp7fT299vh5eHl6eXp7O7x8/X3+NTb4M/X3fb4+dje4+Dl6MHK0tbc4e3w8sjR187V3Pj5+vP199fd4v39/snR2N3i5uPn6/X2+Pv7/Pz8/cXO1tPa4O/x9O7w8/z8/Nnf4/r7+7/J0f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAABkAGQAAAb/wJlwSCwaj8ikcslsOp/QqHRKrVqv2Kx2y+16v+CweEwum8/otPoMGEwilsuBQDhcLJHJALA2AzAVEjSDhIWFEhUYfH1fEAkGhpGSgwYJEIxbAAIKk52SCgKLmFUDDp6nkg4Do1QCDaiwhg0CrFAMAQSxuoQEAQy1TAgLu8SECwjASQzDxc0Lv8lGAc3UNAHRRQK51cUEtNgzA6/czQ2r0QCm5NQOorUC69zftRCc8dQKl7UJ99wJtQAg9aNmwF0fDAO5YWBVIWG1CqMACHLYTILBNAMoVjvXZ4JGahMwRfjYLAImCySLWcB0ISWxC5gOuNx1ANO2mbAI2MQZSycj/5k8UdVk1DLoKZiMUBr1tJLRyKWdTDLyCHVSSEYZq0riuEaiVkMWRzX8SgjiKIRkBy2MKPBrwX1p/9GzVzVfMnha5wFUt7QdNnFLzYGboS2ot8FCpvG8hnjGMpzPGgsR5vKY5CG3bibsBe3yEFcOZ3k+UmqgqtFINNGtBuoiaiKO2hKrpO81EhYtAriAUQyGiwAtWNgugsBDAQ33NBTwgOx1iAAjNI4IEMLzgwJASR4o8ABxhgIrgq4okCGaCQoiqoqgYKIWCdlVDZDABAJFibSDSqAAsebBB/yGfNAdGhukAGAkKWxwxgkqHCiJCieQ0QEHDnrCQQdhdEBBhadQgL/hFxRyeAoHX5wgIiwRcrFBgyeeooKCWjxgYIuopDDgFSD8RyMsH/B3BQo76oLCFSTcFyQsJcxHhQnwHemJAe1NsaGTulAwRQbpURmLCOVFUYCWuxQQxQPhgRnLCjc28aWZuojpRAjZsSlUdU0oJmcsjC2BQHR3xjJCc0p40OcuHjCx5qCwuJkEC8ghCosGwiXRgqO6tKCEnZSekucRL2QKywtJICCDp6jIAGgRGZAKS5dGxKAqKjEggemrkmwaBAA7" style="width:100px; height:100px;"/>
 				</td>
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="application.text.profile"/>
+					<spring:message code="application.text.signature"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="user.message"></textarea>
+					<textarea data-juice="TextArea" data-juice-bind="user.signature"></textarea>
 				</td>
 			</tr>
 			<tr>
