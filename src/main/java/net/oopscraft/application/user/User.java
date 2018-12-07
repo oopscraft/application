@@ -57,6 +57,9 @@ public class User {
 
 	@Column(name = "USER_SIGN", table = "APP_USER_DTL")
 	String signature;
+	
+	@Column(name = "USER_PRFL", table = "APP_USER_DTL")
+	String profile;
 
 	@Column(name = "USER_JOIN_DTTM")
 	Date joinDate;
@@ -153,6 +156,14 @@ public class User {
 
 	public void setSignature(String signature) {
 		this.signature = signature;
+	}
+
+	public String getProfile() {
+		return profile;
+	}
+
+	public void setProfile(String profile) {
+		this.profile = profile;
 	}
 
 	public Date getJoinDate() {

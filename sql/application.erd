@@ -872,8 +872,13 @@
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>USER_SIGN</columnName>
                             <logicalName>User Signature</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
-                            <size>10</size>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType">
+                              <name>VARCHAR</name>
+                              <logicalName>String</logicalName>
+                              <supportSize>true</supportSize>
+                              <type>12</type>
+                            </columnType>
+                            <size>1024</size>
                             <notNull>false</notNull>
                             <primaryKey>false</primaryKey>
                             <description></description>
@@ -881,9 +886,14 @@
                             <defaultValue></defaultValue>
                           </net.java.amateras.db.visual.model.ColumnModel>
                           <net.java.amateras.db.visual.model.ColumnModel>
-                            <columnName>USER_PROF</columnName>
+                            <columnName>USER_PRFL</columnName>
                             <logicalName>User Profile</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType">
+                              <name>MEDIUMTEXT</name>
+                              <logicalName>String</logicalName>
+                              <supportSize>false</supportSize>
+                              <type>12</type>
+                            </columnType>
                             <size>10</size>
                             <notNull>false</notNull>
                             <primaryKey>false</primaryKey>

@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -32,6 +34,8 @@ public class UserService {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
 	/**
 	 * Search condition class
@@ -137,7 +141,11 @@ public class UserService {
 			one.setGroups(new ArrayList<Group>());
 			one.setRoles(new ArrayList<Role>());
 			one.setAuthorities(new ArrayList<Authority>());
+			
+			// Encodes password
+			one.setPassword(passwordEncoder.encode(user.getPassword()));
 		}
+		
 		one.setName(user.getName());
 		one.setNickname(user.getNickname());
 		one.setEmail(user.getEmail());
@@ -159,6 +167,14 @@ public class UserService {
 		}
 		one.setSignature(user.getSignature());
 		
+		// Profile property
+		if(user.getProfile() != null) {
+			if(user.getProfile().length() > 1024*1024) {
+				throw new Exception("Profile size exceeds the limit.");
+			}
+		}
+		one.setProfile(user.getProfile());
+		
 		// add groups
 		one.getGroups().clear();
 		for (Group group : user.getGroups()) {
@@ -179,6 +195,49 @@ public class UserService {
 		
 		userRepository.save(one);
 		return userRepository.findOne(user.getId());
+	}
+	
+	/**
+	 * Verify Password
+	 * @param id
+	 * @param password
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isValidPassword(String id, String password) {
+		
+		// gets user data
+		User one = userRepository.findOne(id);
+		if(one == null) {
+			 return false;
+		}
+		// checking current password
+		if(passwordEncoder.matches(password, one.getPassword()) == true) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Changes password
+	 * @param id
+	 * @param currentPassword
+	 * @param newPassword
+	 * @throws Exception
+	 */
+	public void changePassword(String id, String currentPassword, String newPassword) throws Exception {
+		
+		// checking current password
+		if(isValidPassword(id, currentPassword) == false) {
+			throw new Exception("Current password is invalid.");
+		}
+		
+		// Updates new password
+		User one = userRepository.findOne(id);
+		one.setPassword(passwordEncoder.encode(newPassword));
+		
+		// Saves user
+		userRepository.save(one);
 	}
 
 	/**
