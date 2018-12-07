@@ -255,6 +255,8 @@
 					<select onchange="javascript:__changeLanguage(this.value)">
 						<option value="en" ${pageContext.response.locale == 'en'?'selected':''}>English</option>
 						<option value="ko" ${pageContext.response.locale == 'ko'?'selected':''}>한국어</option>
+						<option value="ja" ${pageContext.response.locale == 'ja'?'selected':''}>日本</option>
+						<option value="zh" ${pageContext.response.locale == 'zh'?'selected':''}>中国</option>
 					</select>
 				</span>
 				&nbsp;
