@@ -32,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.Role;
 import net.oopscraft.application.user.RoleService;
 import net.oopscraft.application.user.User;
@@ -112,6 +113,7 @@ public class UserController {
 	@ResponseBody
 	public String getUser(@RequestParam(value = "id") String id) throws Exception {
 		User user = userService.getUser(id);
+		LOGGER.debug("{}", new TextTable(user));
 		return JsonUtils.toJson(user);
 	}
 

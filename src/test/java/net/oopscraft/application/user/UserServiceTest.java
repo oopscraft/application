@@ -8,13 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.test.ApplicationSpringTestRunner;
+import net.oopscraft.application.user.repository.UserRepository;
 
 public class UserServiceTest extends ApplicationSpringTestRunner {
 	
 	private static final String USER_ID = "JUnit";
+	private static final String USER_PASSWORD = "1234";
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	UserRepository userRepository;
 	
 	public UserServiceTest() throws Exception {
 		super();
@@ -39,6 +44,46 @@ public class UserServiceTest extends ApplicationSpringTestRunner {
 	public void testSaveUser() throws Exception {
 		User user = userService.getUser(USER_ID);
 		userService.saveUser(user);
+	}
+	
+	@Test
+	public void testIsValidPassword() throws Exception {
+		
+		String password = "1111";
+		String wrongPassword = "1212";
+		
+		// sets password and save new user.
+		User user = userService.removeUser(USER_ID);
+		user.setPassword(password);
+		userService.saveUser(user);
+		
+		// checks correct password
+		if(userService.isValidPassword(user.getId(), password) == false) {
+			assert(false);
+		}
+		
+		// checks incorrect password
+		if(userService.isValidPassword(user.getId(), wrongPassword) == true) {
+			assert(false);
+		}
+		assert(true);
+	}
+	
+	@Test
+	public void testChangePassword() throws Exception {
+		String currentPassword = "1111";
+		String newPassword = "2222";
+		
+		// sets password and save new user.
+		User user = userService.removeUser(USER_ID);
+		user.setPassword(currentPassword);
+		userService.saveUser(user);
+		
+		// changes password
+		userService.changePassword(user.getId(), currentPassword, newPassword);
+		if(userService.isValidPassword(user.getId(), newPassword) == false) {
+			assert(false);
+		}
 	}
 	
 	@Test

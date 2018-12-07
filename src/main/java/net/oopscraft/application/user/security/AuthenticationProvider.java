@@ -11,6 +11,7 @@ package net.oopscraft.application.user.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -54,10 +55,10 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			throw new UsernameNotFoundException(String.format("user[%s] not found.", id));	
 		}
 		
-//		// checking password
-//		if(passwordEncoder.matches(password, user.getPassword()) == false) {
-//			throw new BadCredentialsException("password is incorrect.");
-//		}
+		// checking password
+		if(userService.isValidPassword(id, password) == false) {
+			throw new BadCredentialsException("password is incorrect.");
+		}
 
 		// return authentication token.
 		UserDetails userDetails = new UserDetails(user);
