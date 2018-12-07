@@ -12,6 +12,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSession;
+import org.junit.Before;
 import org.junit.Test;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
@@ -31,18 +32,19 @@ public class ApplicationBuilderTest {
 	private static final File APPLICATION_XML = new File("conf/application.xml");
 	private static final File APPLICATION_PROPERTIES = new File("conf/application.properties");
 	
-	private static Application application = null;
-	private static XPathReader xPathReader = null;
-	private static Properties properties = null;
-
-	static {
+	private Application application = null;
+	private XPathReader xPathReader = null;
+	private Properties properties = null;
+	
+	@Before
+	public void before() {
 		try {
 			application = new Application();
 			xPathReader = new XPathReader(APPLICATION_XML);
 			properties = new Properties();
 			properties.load(new FileInputStream(APPLICATION_PROPERTIES));
 		}catch(Exception e) {
-			assert(false);
+			e.printStackTrace(System.err);
 		}
 	}
 	
@@ -59,6 +61,7 @@ public class ApplicationBuilderTest {
 			}
 			assert(true);
 		}catch(Exception e) {
+			e.printStackTrace(System.err);
 			assert(false);
 		}
 	}
@@ -76,6 +79,7 @@ public class ApplicationBuilderTest {
 			}
 			assert(true);
 		}catch(Exception e) {
+			e.printStackTrace(System.err);
 			assert(false);
 		}
 	}
@@ -157,39 +161,5 @@ public class ApplicationBuilderTest {
 			assert(false);
 		}
 	}
-	
-//	@Test
-//	public void getApplication() {
-//		try {
-//			Application application = ApplicationFactory.getApplication(Application.class, APPLICATION_XML, APPLICATION_PROPERTIES);
-//			LOGGER.info(application.toString());
-//			assert(true);
-//		}catch(Exception e) {
-//			LOGGER.error(e.getMessage(),e);
-//			assert(false);
-//		}
-//	}
-//	
-//	
-//	@Test
-//	public void test() {
-//		try {
-//
-//			Application application = ApplicationFactory.getApplication(Application.class, APPLICATION_XML, APPLICATION_PROPERTIES);
-//			LOGGER.info("application:{}", application.toString());
-//			EntityManagerFactory entityManagerFactory = application.getEntityManagerFactory("entityManagerFactory");
-//			LOGGER.info("entityManagerFactory:{}", entityManagerFactory);
-//			
-//			EntityManager entityManager = entityManagerFactory.createEntityManager();
-//
-//			entityManager.getTransaction().begin();
-//			entityManager.getTransaction().rollback();
-//			
-//			assert(true);
-//		}catch(Exception e) {
-//			LOGGER.error(e.getMessage(),e);
-//			assert(false);
-//		}
-//	}
 
 }
