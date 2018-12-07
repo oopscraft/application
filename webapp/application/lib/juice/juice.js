@@ -2195,6 +2195,9 @@ juice.ui.Dialog.prototype = {
 		this.div.style.height = Math.min(this.getWindow().screen.height, computedHeight) + 'px';
 		this.div.style.left = Math.max(10,this.getWindow().innerWidth/2 - computedWidth/2) + 'px';
 		this.div.style.top = Math.max(0,this.getWindow().innerHeight/2 - computedHeight/2) + 'px';
+		
+		// adjust top
+		this.div.style.top = '20vh';
 	},
 	/* sets title */
 	setTitle: function(title){
@@ -2601,6 +2604,9 @@ juice.ui.Progress.prototype = {
 		this.div.style.height = Math.min(this.getWindow().screen.height, computedHeight) + 'px';
 		this.div.style.left = Math.max(10,this.getWindow().innerWidth/2 - computedWidth/2) + 'px';
 		this.div.style.top = Math.max(0,this.getWindow().innerHeight/2 - computedHeight/2) + 'px';
+		
+		// adjust top
+		this.div.style.top = '30vh';
 	},
 	start: function(){
 		this.getWindow().document.body.appendChild(this.div);
