@@ -10,13 +10,21 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
+import javax.persistence.SecondaryTables;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Formula;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "APP_USER_INFO")
+@SecondaryTables({
+	 @SecondaryTable(name = "APP_USER_DTL", pkJoinColumns = @PrimaryKeyJoinColumn(name = "USER_ID", referencedColumnName = "USER_ID"))
+})
 public class User {
 
 	@Id
@@ -38,10 +46,16 @@ public class User {
 	@Column(name = "USER_NICK")
 	String nickname;
 
-	@Column(name = "USER_AVAT")
+	@Column(name = "USER_STAT_CD")
+	String statusCd;
+
+	@Formula("(SELECT A.USER_STAT_NAME FROM APP_USER_STAT_CD A WHERE A.USER_STAT_CD = USER_STAT_CD)")
+	String statusName;
+
+	@Column(name = "USER_AVAT", table = "APP_USER_DTL")
 	String avatar;
 
-	@Column(name = "USER_SIGN")
+	@Column(name = "USER_SIGN", table = "APP_USER_DTL")
 	String signature;
 
 	@Column(name = "USER_JOIN_DTTM")
@@ -108,6 +122,22 @@ public class User {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
+	
+	public String getStatusCd() {
+		return statusCd;
+	}
+
+	public void setStatusCd(String statusCd) {
+		this.statusCd = statusCd;
+	}
+
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
+	}
 
 	public String getAvatar() {
 		return avatar;
@@ -140,11 +170,11 @@ public class User {
 	public void setGroups(List<Group> groups) {
 		this.groups = groups;
 	}
-	
+
 	public List<Role> getRoles() {
 		return roles;
 	}
-	
+
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
@@ -152,7 +182,7 @@ public class User {
 	public List<Authority> getAuthorities() {
 		return authorities;
 	}
-	
+
 	public void setAuthorities(List<Authority> authorities) {
 		this.authorities = authorities;
 	}

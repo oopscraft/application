@@ -1901,7 +1901,8 @@ juice.ui.Pagination.prototype = {
 		var	totalCount = parseInt(this.map.get(this.totalCount));
 
 		// creates previous item
-		var itemPrev = this.createItemPrev(page-1);
+		var itemPrev = this.createItemPrev(Math.max(page-this.pageSize,1));
+		
 		this.ul.appendChild(itemPrev);
 		if(page == 1){
 			itemPrev.onclick = null;
@@ -1925,7 +1926,7 @@ juice.ui.Pagination.prototype = {
 			}
 			
 			// create next item
-			var itemNext = this.createItemNext(page+1);
+			var itemNext = this.createItemNext(Math.min(page+this.pageSize,totalPage));
 			this.ul.appendChild(itemNext);
 			if(page == totalPage) {
 				itemNext.onclick = null;

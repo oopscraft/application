@@ -308,12 +308,12 @@ function removeUser(){
 				</span>
 				<select data-juice="ComboBox" data-juice-bind="userSearch.key" data-juice-options="userSearchKeys" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="userSearch.value" style="width:100px;"/>
-			</div>
-			<div>
 				<button onclick="javascript:getUsers();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
 				</button>
+			</div>
+			<div>
 				<button onclick="javascript:addUser();">
 					<i class="icon-plus"></i>
 					<spring:message code="application.text.new"/>
@@ -349,7 +349,9 @@ function removeUser(){
 			</thead>
 			<tbody>
 				<tr data-id="{{$context.user.get('id')}}" onclick="javascript:getUser(this.dataset.id);">
-					<td class="text-center">{{$context.index+1}}</td>
+					<td class="text-center">
+						{{userSearch.get('rows')*(userSearch.get('page')-1)+$context.index+1}}
+					</td>
 					<td><label data-juice="Label" data-juice-bind="user.id" class="id"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.email"></label></td>
