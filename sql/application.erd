@@ -918,7 +918,7 @@
                   <error></error>
                   <linkedPath></linkedPath>
                   <tableName>APP_USER_INFO</tableName>
-                  <logicalName>Application User Info</logicalName>
+                  <logicalName>User Info</logicalName>
                   <description></description>
                   <columns>
                     <net.java.amateras.db.visual.model.ColumnModel>
