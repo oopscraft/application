@@ -56,6 +56,7 @@
 			border: solid 1px #777;
 			border-radius: 2px;
 			padding: 20px;
+			margin-bottom: 20vh;
 		}
 		#loginButton {
 			width: 100%;
