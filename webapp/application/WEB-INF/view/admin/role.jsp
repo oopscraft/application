@@ -54,7 +54,7 @@ function getRoles(page) {
 		,success: function(data, textStatus, jqXHR) {
 			roles.fromJson(data);
 			roleSearch.set('totalCount', __parseTotalCount(jqXHR));
-			$('#rolesTable > tbody').hide().fadeIn();
+			$('#rolesTable').hide().fadeIn();
    	 	}
 	});	
 }

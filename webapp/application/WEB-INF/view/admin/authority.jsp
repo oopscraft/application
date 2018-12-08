@@ -49,7 +49,7 @@ function getAuthorities(page) {
 		,success: function(data, textStatus, jqXHR) {
 			authorities.fromJson(data);
 			authoritySearch.set('totalCount', __parseTotalCount(jqXHR));
-			$('#authoritiesTable > tbody').hide().fadeIn();
+			$('#authoritiesTable').hide().fadeIn();
    	 	}
 	});	
 }

@@ -58,7 +58,7 @@ function getUsers(page) {
 		,success: function(data, textStatus, jqXHR) {
 			users.fromJson(data);
 			userSearch.set('totalCount', __parseTotalCount(jqXHR));
-			$('#usersTable > tbody').hide().fadeIn();
+			$('#usersTable').hide().fadeIn();
    	 	}
 	});	
 }
@@ -355,7 +355,9 @@ function removeUser(){
 					<td><label data-juice="Label" data-juice-bind="user.id" class="id"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.email"></label></td>
-					<td><label data-juice="Label" data-juice-bind="user.phone"></label></td>
+					<td>
+						<label data-juice="Label" data-juice-bind="user.phone" data-juice-mask="###-####-####"></label>
+					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -424,7 +426,7 @@ function removeUser(){
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="user.email"/>
+					<input data-juice="TextField" data-juice-bind="user.email" placeholder="_____@__________"/>
 				</td>
 			</tr>
 			<tr>
@@ -434,7 +436,7 @@ function removeUser(){
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="user.phone"/>
+					<input data-juice="TextField" data-juice-bind="user.phone" placeholder="___-____-____"/>
 				</td>
 			</tr>
 			<tr>
@@ -475,7 +477,7 @@ function removeUser(){
 					<spring:message code="application.text.profile"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="user.profile" style="height:100px;"></textarea>
+					<div data-juice="HtmlEditor" data-juice-bind="user.profile" style="height:200px;"></div>
 				</td>
 			</tr>
 			<tr>

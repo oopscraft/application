@@ -20,13 +20,24 @@
 		
 		<!-- global -->
 		<script type="text/javascript">
-		var __progress = new juice.ui.Progress();
+		console.log(document.body);
+		var __loading; 
         $(document).ajaxStart(function () {
-        	__progress.start();
+        	try {
+        		__loading = new juice.ui.__().loading(document.body);
+        	}catch(e){
+        		console.log(e);
+        	}
         });
 
         $(document).ajaxStop(function () {
-        	__progress.end();
+        	if(__loading){
+        		try {
+        			__loading.release();
+        		}catch(e){
+        			console.log(e);
+        		}
+        	}
         });
         
         $(document).ajaxError(function(event, jqXHR, ajaxSettings,thrownError ){
