@@ -150,6 +150,7 @@ public class UserService {
 		one.setNickname(user.getNickname());
 		one.setEmail(user.getEmail());
 		one.setPhone(user.getPhone());
+		one.setStatusCd(user.getStatusCd());
 		
 		// AVATAR property
 		if(user.getAvatar() != null) {
@@ -166,14 +167,6 @@ public class UserService {
 			}
 		}
 		one.setSignature(user.getSignature());
-		
-		// Profile property
-		if(user.getProfile() != null) {
-			if(user.getProfile().length() > 1024*1024) {
-				throw new Exception("Profile size exceeds the limit.");
-			}
-		}
-		one.setProfile(user.getProfile());
 		
 		// add groups
 		one.getGroups().clear();

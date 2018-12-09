@@ -7,7 +7,7 @@
 // Copyright (C) 2017 juice.oopscraft.net
 // =============================================================================
 "use strict";
-var juice = {};
+var juice = {}
 
 //-----------------------------------------------------------------------------
 // Data structure package
@@ -572,10 +572,21 @@ juice.ui.Label.prototype.update = function() {
 	while (this.label.firstChild) {
 	    this.label.removeChild(this.label.firstChild);
 	}
-	var value = this.map.get(this.name) == undefined ? '' : this.map.get(this.name);
+	var value = '';
+	if(this.map.get(this.name)){
+		value = this.map.get(this.name);
+	}
+	if(this.format){
+		var $format = this.format.split(':');
+		if($format.shift() == 'date'){
+			value = juice.util.Formatter.toDateFormat(value, $format.join(':'));
+		}
+	}
 	this.label.appendChild(document.createTextNode(value));
 }
-
+juice.ui.Label.prototype.setFormat = function(format) {
+	this.format = format;
+}
 
 //-----------------------------------------------------------------------------
 // juice.ui.TextField prototype
@@ -2599,6 +2610,51 @@ juice.util.Validator = {
 }
 
 //-----------------------------------------------------------------------------
+//juice.util.Formatter
+//-----------------------------------------------------------------------------
+juice.util.Formatter = {
+	toDateFormat: function(date, format){
+		String.prototype.string = function(len){var s = '', i = 0; while (i++ < len) { s += this; } return s;};
+		String.prototype.zf = function(len){return "0".string(len - this.length) + this;};
+		Number.prototype.zf = function(len){return this.toString().zf(len);};
+		
+		var weekName = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+		var d = date instanceof Date ? d : new Date(date);
+	
+		// check date
+		if(isNaN(d.getTime())){
+			return '';
+		}
+
+		var formatRex = /yyyy|yy|MM|dd|E|HH|hh|mm|ss|ap/gi;
+		var dateString = format.replace(formatRex, function($1) {
+			switch ($1) {
+				case "yyyy": return d.getFullYear();
+				case "yy": return (d.getFullYear() % 1000).zf(2);
+				case "MM": return (d.getMonth() + 1).zf(2);
+				case "dd": return d.getDate().zf(2);
+				case "E": return weekName[d.getDay()];
+				case "HH": return d.getHours().zf(2);
+				case "hh": return (d.getHours() <= 12 ? d.getHours() : d.getHours()%12).zf(2);
+				case "mm": return d.getMinutes().zf(2);
+				case "ss": return d.getSeconds().zf(2);
+				case "ap": return d.getHours() < 12 ? "오전" : "오후";
+				default: return $1;
+			}
+		});
+		return dateString;
+	},
+	toNumberFormat: function(number, format){
+	    var reg = /(^[+-]?\d+)(\d{3})/;
+	    var n = (number + '');
+	    while (reg.test(n)) {
+	    	n = n.replace(reg, '$1' + ',' + '$2');
+	    }
+	    return n;
+	}
+}
+
+//-----------------------------------------------------------------------------
 // juice.util.WebSocketClient prototype
 //-----------------------------------------------------------------------------
 juice.util.WebSocketClient = function(url) {
@@ -2800,6 +2856,8 @@ juice.initialize = function(container, $context) {
 			switch(type) {
 				case 'Label':
 					var label = new juice.ui.Label(element);
+					var format = element.dataset.juiceFormat;
+					format && label.setFormat(format);
 					label.bind(map,name);
 					label.update();
 				break;

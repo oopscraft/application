@@ -5,14 +5,12 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
-import javax.persistence.SecondaryTables;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
@@ -20,12 +18,13 @@ import org.hibernate.annotations.Formula;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import net.oopscraft.application.core.jpa.SystemEntity;
+import net.oopscraft.application.core.jpa.SystemEntityListener;
+
 @Entity
 @Table(name = "APP_USER_INFO")
-@SecondaryTables({
-	 @SecondaryTable(name = "APP_USER_DTL", pkJoinColumns = @PrimaryKeyJoinColumn(name = "USER_ID", referencedColumnName = "USER_ID"))
-})
-public class User {
+@EntityListeners(SystemEntityListener.class)
+public class User extends SystemEntity {
 
 	@Id
 	@Column(name = "USER_ID")
@@ -52,17 +51,17 @@ public class User {
 	@Formula("(SELECT A.USER_STAT_NAME FROM APP_USER_STAT_CD A WHERE A.USER_STAT_CD = USER_STAT_CD)")
 	String statusName;
 
-	@Column(name = "USER_AVAT", table = "APP_USER_DTL")
+	@Column(name = "USER_AVAT")
 	String avatar;
 
-	@Column(name = "USER_SIGN", table = "APP_USER_DTL")
+	@Column(name = "USER_SIGN")
 	String signature;
 	
-	@Column(name = "USER_PRFL", table = "APP_USER_DTL")
-	String profile;
-
 	@Column(name = "USER_JOIN_DTTM")
 	Date joinDate;
+	
+	@Column(name = "USER_CLOSE_DTTM")
+	Date closeDate;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APP_USER_GROUP_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
@@ -157,21 +156,21 @@ public class User {
 	public void setSignature(String signature) {
 		this.signature = signature;
 	}
-
-	public String getProfile() {
-		return profile;
-	}
-
-	public void setProfile(String profile) {
-		this.profile = profile;
-	}
-
+	
 	public Date getJoinDate() {
 		return joinDate;
 	}
 
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
+	}
+
+	public Date getCloseDate() {
+		return closeDate;
+	}
+
+	public void setCloseDate(Date closeDate) {
+		this.closeDate = closeDate;
 	}
 
 	public List<Group> getGroups() {

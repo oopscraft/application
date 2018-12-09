@@ -16,10 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,11 +30,10 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.user.Role;
-import net.oopscraft.application.user.RoleService;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
-import net.oopscraft.application.user.RoleService.SearchCondition;
+import net.oopscraft.application.user.UserStatusCd;
+import net.oopscraft.application.user.UserStatusCdService;
 
 @PreAuthorize("hasAuthority('ADMIN_USER')")
 @Controller
@@ -48,6 +44,9 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	UserStatusCdService userStatusCdService;
 
 	@Autowired
 	HttpServletResponse response;
@@ -146,6 +145,18 @@ public class UserController {
 	public String removeRole(@RequestParam(value = "id") String id) throws Exception {
 		User user = userService.removeUser(id);
 		return JsonUtils.toJson(user);
+	}
+	
+	/**
+	 * getUserStatusCds
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "getUserStatusCds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public String getUserStatusCds() throws Exception {
+		List<UserStatusCd> userStatusCds = userStatusCdService.getUserStatusCds();
+		return JsonUtils.toJson(userStatusCds);
 	}
 
 }
