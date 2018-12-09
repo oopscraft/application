@@ -32,17 +32,22 @@
  * juice.ui.ComboBox
  */
 .juice-ui-comboBox {
+	position:relative;
+	top:0px;
+	left:0px;
 	margin: 0px;
 	padding-left: 1rem;
     padding-right: 1rem;
-    width: 98%;
     color: #495057;
     -webkit-appearance: none;
     border-radius: 2px;
     border: 1px solid #cccccc;
-    background-color: #fff;
     background-clip: padding-box;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+	overflow: hidden;
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAzElEQVQ4T6XTsQqDMBAG4HPywUJEjCJm65apz5WtmyJqECVv0FexewaxpK3RcrQEkjn35e4nF0HgiQLr4QVIKbdfkBDi7yMO4Jwjo65r8AaqqkJA0zT+gDEGAXEc+wNFUSCg67o3cL3jjNYHwLocITLGwM68H5vJMAxHB2fkUwzyErkQsyxDHSilvkewyKnYFjggTVNo29YhZVnCOI44A3Hb7Mv7RQckSYI6mKbJP0RKKfR975A8z2GeZ3+AEII60Fr7A0FfOWShgrfxCahjbhcIp6k5AAAAAElFTkSuQmCC);
+	background-repeat: no-repeat;
+	background-position: right 5px center; 
 }
 .juice-ui-comboBox:disabled { 
     background-color: #fafafa;

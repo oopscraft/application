@@ -37,6 +37,24 @@ var groups = new juice.data.List();
 var roles = new juice.data.List();
 var authorities = new juice.data.List();
 
+// code
+var userStatusCds = new Array();
+$.ajax({
+	 url: 'user/getUserStatusCds'
+	,type: 'GET'
+	,data: {}
+	,success: function(data, textStatus, jqXHR) {
+		console.log(data);
+		data.forEach(function(item){
+			console.log(item);
+			userStatusCds.push({
+				value: item.cd,
+				text: item.name
+			});
+		});
+	}
+});
+
 /**
  * On document loaded
  */
@@ -326,6 +344,7 @@ function removeUser(){
 				<col/>
 				<col/>
 				<col/>
+				<col/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -344,6 +363,9 @@ function removeUser(){
 					<th>
 						<spring:message code="application.text.phone"/>
 					</th>
+					<th>
+						<spring:message code="application.text.status"/>
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -354,9 +376,8 @@ function removeUser(){
 					<td><label data-juice="Label" data-juice-bind="user.id" class="id"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.email"></label></td>
-					<td>
-						<label data-juice="Label" data-juice-bind="user.phone" data-juice-mask="###-####-####"></label>
-					</td>
+					<td><label data-juice="Label" data-juice-bind="user.phone"></label></td>
+					<td><label data-juice="Label" data-juice-bind="user.statusName"></label></td>
 				</tr>
 			</tbody>
 		</table>
@@ -460,23 +481,48 @@ function removeUser(){
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="application.text.avatar"/>
-					+
-					<spring:message code="application.text.signature"/>
+					<span class="must">
+						<spring:message code="application.text.status"/>
+					</span>
 				</th>
 				<td>
-					<div style="display:flex;">
-					<img data-juice="Thumbnail" data-juice-bind="user.avatar" src="data:image/gif;base64,R0lGODlhZABkANUAAMPM1OHm6drg5NDX3f7+/ubq7fDy9Pr7/MXO1dzh5vHz9eTo7MPN1Pb3+Ont79HY3sfQ1+Xp7fT299vh5eHl6eXp7O7x8/X3+NTb4M/X3fb4+dje4+Dl6MHK0tbc4e3w8sjR187V3Pj5+vP199fd4v39/snR2N3i5uPn6/X2+Pv7/Pz8/cXO1tPa4O/x9O7w8/z8/Nnf4/r7+7/J0f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAABkAGQAAAb/wJlwSCwaj8ikcslsOp/QqHRKrVqv2Kx2y+16v+CweEwum8/otPoMGEwilsuBQDhcLJHJALA2AzAVEjSDhIWFEhUYfH1fEAkGhpGSgwYJEIxbAAIKk52SCgKLmFUDDp6nkg4Do1QCDaiwhg0CrFAMAQSxuoQEAQy1TAgLu8SECwjASQzDxc0Lv8lGAc3UNAHRRQK51cUEtNgzA6/czQ2r0QCm5NQOorUC69zftRCc8dQKl7UJ99wJtQAg9aNmwF0fDAO5YWBVIWG1CqMACHLYTILBNAMoVjvXZ4JGahMwRfjYLAImCySLWcB0ISWxC5gOuNx1ANO2mbAI2MQZSycj/5k8UdVk1DLoKZiMUBr1tJLRyKWdTDLyCHVSSEYZq0riuEaiVkMWRzX8SgjiKIRkBy2MKPBrwX1p/9GzVzVfMnha5wFUt7QdNnFLzYGboS2ot8FCpvG8hnjGMpzPGgsR5vKY5CG3bibsBe3yEFcOZ3k+UmqgqtFINNGtBuoiaiKO2hKrpO81EhYtAriAUQyGiwAtWNgugsBDAQ33NBTwgOx1iAAjNI4IEMLzgwJASR4o8ABxhgIrgq4okCGaCQoiqoqgYKIWCdlVDZDABAJFibSDSqAAsebBB/yGfNAdGhukAGAkKWxwxgkqHCiJCieQ0QEHDnrCQQdhdEBBhadQgL/hFxRyeAoHX5wgIiwRcrFBgyeeooKCWjxgYIuopDDgFSD8RyMsH/B3BQo76oLCFSTcFyQsJcxHhQnwHemJAe1NsaGTulAwRQbpURmLCOVFUYCWuxQQxQPhgRnLCjc28aWZuojpRAjZsSlUdU0oJmcsjC2BQHR3xjJCc0p40OcuHjCx5qCwuJkEC8ghCosGwiXRgqO6tKCEnZSekucRL2QKywtJICCDp6jIAGgRGZAKS5dGxKAqKjEggemrkmwaBAA7" style="width:100px; height:100px; margin:1px;"/>
-					<textarea data-juice="TextArea" data-juice-bind="user.signature" style="height:100px;"></textarea>
-					</div>
+					<select data-juice="ComboBox" data-juice-bind="user.statusCd" data-juice-options="userStatusCds" style="width:100px;"></select>
 				</td>
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="application.text.profile"/>
+					<spring:message code="application.text.avatar"/>
 				</th>
 				<td>
-					<div data-juice="HtmlEditor" data-juice-bind="user.profile" style="height:200px;"></div>
+					<img data-juice="Thumbnail" data-juice-bind="user.avatar" src="data:image/gif;base64,R0lGODlhZABkANUAAMPM1OHm6drg5NDX3f7+/ubq7fDy9Pr7/MXO1dzh5vHz9eTo7MPN1Pb3+Ont79HY3sfQ1+Xp7fT299vh5eHl6eXp7O7x8/X3+NTb4M/X3fb4+dje4+Dl6MHK0tbc4e3w8sjR187V3Pj5+vP199fd4v39/snR2N3i5uPn6/X2+Pv7/Pz8/cXO1tPa4O/x9O7w8/z8/Nnf4/r7+7/J0f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAABkAGQAAAb/wJlwSCwaj8ikcslsOp/QqHRKrVqv2Kx2y+16v+CweEwum8/otPoMGEwilsuBQDhcLJHJALA2AzAVEjSDhIWFEhUYfH1fEAkGhpGSgwYJEIxbAAIKk52SCgKLmFUDDp6nkg4Do1QCDaiwhg0CrFAMAQSxuoQEAQy1TAgLu8SECwjASQzDxc0Lv8lGAc3UNAHRRQK51cUEtNgzA6/czQ2r0QCm5NQOorUC69zftRCc8dQKl7UJ99wJtQAg9aNmwF0fDAO5YWBVIWG1CqMACHLYTILBNAMoVjvXZ4JGahMwRfjYLAImCySLWcB0ISWxC5gOuNx1ANO2mbAI2MQZSycj/5k8UdVk1DLoKZiMUBr1tJLRyKWdTDLyCHVSSEYZq0riuEaiVkMWRzX8SgjiKIRkBy2MKPBrwX1p/9GzVzVfMnha5wFUt7QdNnFLzYGboS2ot8FCpvG8hnjGMpzPGgsR5vKY5CG3bibsBe3yEFcOZ3k+UmqgqtFINNGtBuoiaiKO2hKrpO81EhYtAriAUQyGiwAtWNgugsBDAQ33NBTwgOx1iAAjNI4IEMLzgwJASR4o8ABxhgIrgq4okCGaCQoiqoqgYKIWCdlVDZDABAJFibSDSqAAsebBB/yGfNAdGhukAGAkKWxwxgkqHCiJCieQ0QEHDnrCQQdhdEBBhadQgL/hFxRyeAoHX5wgIiwRcrFBgyeeooKCWjxgYIuopDDgFSD8RyMsH/B3BQo76oLCFSTcFyQsJcxHhQnwHemJAe1NsaGTulAwRQbpURmLCOVFUYCWuxQQxQPhgRnLCjc28aWZuojpRAjZsSlUdU0oJmcsjC2BQHR3xjJCc0p40OcuHjCx5qCwuJkEC8ghCosGwiXRgqO6tKCEnZSekucRL2QKywtJICCDp6jIAGgRGZAKS5dGxKAqKjEggemrkmwaBAA7" style="width:100px; height:100px; margin:1px;"/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<spring:message code="application.text.signature"/>
+				</th>
+				<td>
+					<textarea data-juice="TextArea" data-juice-bind="user.signature" style="height:100px;"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>
+						<spring:message code="application.text.joinDate"/>
+					</span>
+				</th>
+				<td>
+					<label data-juice="Label" data-juice-bind="user.joinDate" data-juice-format="date:yyyy-MM-dd hh:mm:ss"></label>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>
+						<spring:message code="application.text.closeDate"/>
+					</span>
+				</th>
+				<td>
+					<label data-juice="Label" data-juice-bind="user.closeDate"></label>
 				</td>
 			</tr>
 			<tr>

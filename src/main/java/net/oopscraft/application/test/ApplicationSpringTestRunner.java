@@ -13,5 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(transactionManager = "jpaTransactionManager")
 @Rollback
 public class ApplicationSpringTestRunner {
+	
+	public ApplicationSpringTestRunner() {
+		System.out.println("+ ApplicationSpringTestRunner");
+	}
 
 }
