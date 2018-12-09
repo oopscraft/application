@@ -20,7 +20,6 @@
 		
 		<!-- global -->
 		<script type="text/javascript">
-		console.log(document.body);
 		var __loading; 
         $(document).ajaxStart(function () {
         	try {

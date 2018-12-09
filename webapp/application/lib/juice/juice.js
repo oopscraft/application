@@ -9,12 +9,6 @@
 "use strict";
 var juice = {};
 
-
-var juice = {
-	ui:{},		// UI component package
-	util:{}		// Utilities package
-};
-
 //-----------------------------------------------------------------------------
 // Data structure package
 //-----------------------------------------------------------------------------
@@ -33,7 +27,7 @@ juice.data.__.prototype.notifyObservers = function(observer) {
 		this.observers[i].update();
 	}
 }
-Object.freeze(juice.data.__.prototype);
+
 
 //-----------------------------------------------------------------------------
 // juice.data.DataMap prototype
@@ -557,7 +551,7 @@ juice.ui.__.prototype.loading = function(element){
 		}
 	}
 }
-Object.freeze(juice.ui.__.prototype);
+
 
 //-----------------------------------------------------------------------------
 // juice.ui.Label prototype
@@ -2685,136 +2679,174 @@ juice.initialize = function(container, $context) {
 			var obj = eval("$context." + name);
 			return obj;
 		}catch(e){
-			console.log('invalid object:' + name);
+			console.error(e,$context, name);
+			throw e;
 		}
 	};
 
 	// creates TreeView 
 	var treeViewElements = container.querySelectorAll('ul[data-juice="TreeView"]');
 	for(var i = 0; i < treeViewElements.length; i++ ) {
-		var element = treeViewElements[i];
-		var treeView = new juice.ui.TreeView(element);
-		var bind = element.dataset.juiceBind;
-		var list = getObject($context,bind);
-		treeView.bind(list);
-		treeView.setItem(element.dataset.juiceItem);
-		element.dataset.juiceEditable && treeView.setEditable(eval(element.dataset.juiceEditable));
-		treeView.update();
-		var id = generateUUID();
-		element.dataset.juice = id;
+		try {
+			var element = treeViewElements[i];
+			var treeView = new juice.ui.TreeView(element);
+			var bind = element.dataset.juiceBind;
+			var list = getObject($context,bind);
+			treeView.bind(list);
+			treeView.setItem(element.dataset.juiceItem);
+			element.dataset.juiceEditable && treeView.setEditable(eval(element.dataset.juiceEditable));
+			treeView.update();
+			var id = generateUUID();
+			element.dataset.juice += id;
+		}catch(e){
+			console.error(e,treeViewElements[i]);
+			throw e;
+		}
 	}
 	
 	// creates Grid
 	var gridElements = container.querySelectorAll('table[data-juice="Grid"]');
 	for(var i = 0; i < gridElements.length; i++ ) {
-		var element = gridElements[i];
-		var grid = new juice.ui.Grid(element);
-		var bind = element.dataset.juiceBind;
-		var list = getObject($context,bind);
-		grid.bind(list);
-		grid.setItem(element.dataset.juiceItem);
-		element.dataset.juiceEditable && grid.setEditable(eval(element.dataset.juiceEditable));
-		element.dataset.juiceFilter && grid.setFilter(eval(element.dataset.juiceFilter));
-		grid.update();
-		var id = generateUUID();
-		element.dataset.juice = id;
+		try {
+			var element = gridElements[i];
+			var grid = new juice.ui.Grid(element);
+			var bind = element.dataset.juiceBind;
+			var list = getObject($context,bind);
+			grid.bind(list);
+			grid.setItem(element.dataset.juiceItem);
+			element.dataset.juiceEditable && grid.setEditable(eval(element.dataset.juiceEditable));
+			element.dataset.juiceFilter && grid.setFilter(eval(element.dataset.juiceFilter));
+			grid.update();
+			var id = generateUUID();
+			element.dataset.juice += id;
+		}catch(e){
+			console.error(e,gridElements[i]);
+			throw e;
+		}
 	}
 	
 	// creates Workflow
 	var workflowElements = container.querySelectorAll('ul[data-juice="Workflow"]');
 	for(var i = 0; i < workflowElements.length; i++ ) {
-		var element = workflowElements[i];
-		var workflow = new juice.ui.Workflow(element);
-		var bind = element.dataset.juiceBind.split(',');
-		var nodeList = getObject($context,bind[0]);
-		var linkList = getObject($context,bind[1]);
-		workflow.bind(nodeList, linkList);
-		workflow.setNodeId(element.dataset.juiceNodeId);
-		workflow.setNodeX(element.dataset.juiceNodeX);
-		workflow.setNodeY(element.dataset.juiceNodeY);
-		workflow.setLinkFrom(element.dataset.juiceLinkFrom);
-		workflow.setLinkTo(element.dataset.juiceLinkTo);
-		element.dataset.juiceLinkText && workflow.setLinkText(element.dataset.juiceLinkText);
-		workflow.update();
-		var id = generateUUID();
-		element.dataset.juice = id;
+		try {
+			var element = workflowElements[i];
+			var workflow = new juice.ui.Workflow(element);
+			var bind = element.dataset.juiceBind.split(',');
+			var nodeList = getObject($context,bind[0]);
+			var linkList = getObject($context,bind[1]);
+			workflow.bind(nodeList, linkList);
+			workflow.setNodeId(element.dataset.juiceNodeId);
+			workflow.setNodeX(element.dataset.juiceNodeX);
+			workflow.setNodeY(element.dataset.juiceNodeY);
+			workflow.setLinkFrom(element.dataset.juiceLinkFrom);
+			workflow.setLinkTo(element.dataset.juiceLinkTo);
+			element.dataset.juiceLinkText && workflow.setLinkText(element.dataset.juiceLinkText);
+			workflow.update();
+			var id = generateUUID();
+			element.dataset.juice = +id;
+		}catch(e){
+			console.error(e,workflowElements[i]);
+			throw e;
+		}
 	}
-	
+
 	// creates Pagination
 	var paginationElements = container.querySelectorAll('ul[data-juice="Pagination"]');
 	for(var i = 0; i < paginationElements.length; i++ ) {
-		var element = paginationElements[i];
-		var pagination = new juice.ui.Pagination(element);
-		pagination.bind(getObject($context,element.dataset.juiceBind));
-		pagination.setRows(element.dataset.juiceRows);
-		pagination.setPage(element.dataset.juicePage);
-		pagination.setTotalCount(element.dataset.juiceTotalCount);
-		pagination.setPageSize(element.dataset.juicePageSize);
-		pagination.update();
-		var id = generateUUID();
-		element.dataset.juice = id;
+		try {
+			var element = paginationElements[i];
+			var pagination = new juice.ui.Pagination(element);
+			pagination.bind(getObject($context,element.dataset.juiceBind));
+			pagination.setRows(element.dataset.juiceRows);
+			pagination.setPage(element.dataset.juicePage);
+			pagination.setTotalCount(element.dataset.juiceTotalCount);
+			pagination.setPageSize(element.dataset.juicePageSize);
+			pagination.update();
+			var id = generateUUID();
+			element.dataset.juice += id;
+		}catch(e){
+			console.error(e,paginationElements[i]);
+			throw e;
+		}
 	}
 		
 	// creates unit elements
-	var elements = container.querySelectorAll('[data-juice]');
+	var elementTags = [
+		 '[data-juice="Label"]'
+		,'[data-juice="TextField"]'
+		,'[data-juice="ComboBox"]'
+		,'[data-juice="CheckBox"]'
+		,'[data-juice="Radio"]'
+		,'[data-juice="TextArea"]'
+		,'[data-juice="HtmlEditor"]'
+		,'[data-juice="CronExpression"]'
+		,'[data-juice="Thumbnail"]'
+	];
+	var elements = container.querySelectorAll(elementTags.join(','));
 	for(var i = 0; i < elements.length; i ++ ) {
-		var element = elements[i];
-		var type = element.dataset.juice;
-		var bind = element.dataset.juiceBind.split('.');
-		var name = bind.pop();
-		var map = getObject($context,bind.join('.'));
-		var id = generateUUID();
-		switch(type) {
-			case 'Label':
-				var label = new juice.ui.Label(element);
-				label.bind(map,name);
-				label.update();
-			break;
-			case 'TextField':
-				var textField = new juice.ui.TextField(element);
-				textField.bind(map,name);
-				textField.update();
-			break;
-			case 'ComboBox':
-				var comboBox = new juice.ui.ComboBox(element);
-				var options = element.dataset.juiceOptions;
-				comboBox.options(getObject($context,options));
-				comboBox.bind(map, name);
-				comboBox.update();
-			break;
-			case 'CheckBox':
-				var checkBox = new juice.ui.CheckBox(element);
-				checkBox.bind(map, name);
-				checkBox.update();
-			break;
-			case 'Radio':
-				var radio = new juice.ui.Radio(element);
-				radio.bind(map, name);
-				radio.update();
-			break;
-			case 'TextArea':
-				var textArea = new juice.ui.TextArea(element);
-				textArea.bind(map, name);
-				textArea.update();
-			break;
-			case 'HtmlEditor':
-				var htmlEditor = new juice.ui.HtmlEditor(element);
-				htmlEditor.bind(map, name);
-				htmlEditor.update();
-			break;
-			case 'CronExpression':
-				var cronExpression = new juice.ui.CronExpression(element);
-				cronExpression.bind(map, name);
-				cronExpression.update();				
-			break;
-			case 'Thumbnail':
-				var thumbnail = new juice.ui.Thumbnail(element);
-				thumbnail.bind(map, name);
-				thumbnail.update();
-			break;
+		try {
+			var element = elements[i];
+			var type = element.dataset.juice;
+			var bind = element.dataset.juiceBind.split('.');
+			var name = bind.pop();
+			var map = getObject($context,bind.join('.'));
+			var id = generateUUID();
+			switch(type) {
+				case 'Label':
+					var label = new juice.ui.Label(element);
+					label.bind(map,name);
+					label.update();
+				break;
+				case 'TextField':
+					var textField = new juice.ui.TextField(element);
+					textField.bind(map,name);
+					textField.update();
+				break;
+				case 'ComboBox':
+					var comboBox = new juice.ui.ComboBox(element);
+					var options = element.dataset.juiceOptions;
+					comboBox.options(getObject($context,options));
+					comboBox.bind(map, name);
+					comboBox.update();
+				break;
+				case 'CheckBox':
+					var checkBox = new juice.ui.CheckBox(element);
+					checkBox.bind(map, name);
+					checkBox.update();
+				break;
+				case 'Radio':
+					var radio = new juice.ui.Radio(element);
+					radio.bind(map, name);
+					radio.update();
+				break;
+				case 'TextArea':
+					var textArea = new juice.ui.TextArea(element);
+					textArea.bind(map, name);
+					textArea.update();
+				break;
+				case 'HtmlEditor':
+					var htmlEditor = new juice.ui.HtmlEditor(element);
+					htmlEditor.bind(map, name);
+					htmlEditor.update();
+				break;
+				case 'CronExpression':
+					var cronExpression = new juice.ui.CronExpression(element);
+					cronExpression.bind(map, name);
+					cronExpression.update();				
+				break;
+				case 'Thumbnail':
+					var thumbnail = new juice.ui.Thumbnail(element);
+					thumbnail.bind(map, name);
+					thumbnail.update();
+				break;
+			}
+			element.dataset.juice += id;
+		}catch(e){
+			console.error(e, elements[i]);
+			throw e;
 		}
-		element.dataset.juice = id;
 	}
+
 }
 
 //-----------------------------------------------------------------------------
