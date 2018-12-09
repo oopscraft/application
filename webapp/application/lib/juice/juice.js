@@ -519,7 +519,7 @@ juice.ui.__.prototype.block = function(element){
 	}
 }
 // progress
-juice.ui.__.prototype.loading = function(element){
+juice.ui.__.prototype.load = function(element){
 	var $this = this;
 	
 	// creates div
