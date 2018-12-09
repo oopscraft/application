@@ -20,21 +20,21 @@
 		
 		<!-- global -->
 		<script type="text/javascript">
-		var __loading; 
+		var __loader; 
         $(document).ajaxStart(function () {
         	try {
-        		__loading = new juice.ui.__().loading(document.body);
+        		__loader = new juice.ui.__().load(document.body);
         	}catch(e){
-        		console.log(e);
+        		throw e;
         	}
         });
 
         $(document).ajaxStop(function () {
-        	if(__loading){
+        	if(__loader){
         		try {
-        			__loading.release();
+        			__loader.release();
         		}catch(e){
-        			console.log(e);
+            		throw e;
         		}
         	}
         });
