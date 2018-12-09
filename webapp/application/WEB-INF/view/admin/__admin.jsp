@@ -22,20 +22,12 @@
 		<script type="text/javascript">
 		var __loader; 
         $(document).ajaxStart(function () {
-        	try {
-        		__loader = new juice.ui.__().load(document.body);
-        	}catch(e){
-        		throw e;
-        	}
+       		__loader = new juice.ui.__().load(document.body);
         });
 
         $(document).ajaxStop(function () {
         	if(__loader){
-        		try {
-        			__loader.release();
-        		}catch(e){
-            		throw e;
-        		}
+       			__loader.release();
         	}
         });
         

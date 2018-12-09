@@ -245,7 +245,6 @@ function saveUser() {
 			userJson.groups = groups.toJson();
 			userJson.roles = roles.toJson();
 			userJson.authorities = authorities.toJson();
-			console.log(userJson);
 			$.ajax({
 				 url: 'user/saveUser'
 				,type: 'POST'

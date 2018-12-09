@@ -21,18 +21,19 @@ juice.data.__.prototype.addObserver = function(observer){
 }
 juice.data.__.prototype.notifyObservers = function(observer) {
 	for(var i = 0; i < this.observers.length; i++){
-		if(this.observers[i] == observer){
+		if(this.observers[i] === observer){
 			continue;
 		}
 		this.observers[i].update();
 	}
 }
-
+juice.data.__.prototype.update = function(){
+	this.notifyObservers(this);
+}
 
 //-----------------------------------------------------------------------------
 // juice.data.DataMap prototype
 //-----------------------------------------------------------------------------
-
 juice.data.Map = function(json) {
 	juice.data.__.call(this);
 	this.data = {};
@@ -2279,18 +2280,23 @@ juice.ui.Alert.prototype.open = function(){
 // confirm 
 juice.ui.Alert.prototype.confirm = function(){
 	var $this = this;
+	
+	// calls beforeConfirm
 	if(this.listener.beforeConfirm){
 		if(this.listener.beforeConfirm.call(this) == false){
 			return false;
 		}
 	}
 
-	this.dialog.close();	
-	this.delay(function(){
-		if($this.afterConfirm){
-			$this.afterConfirm.call($this);
-		}
-	});
+	// closes dialog
+	this.dialog.close();
+	
+	// calls afterConfirm events
+	if(this.listener.afterConfirm){
+		this.delay(function(){
+			$this.listener.afterConfirm.call($this);
+		});
+	}
 }
 // defines before confirm event listener
 juice.ui.Alert.prototype.beforeConfirm = function(listener){
