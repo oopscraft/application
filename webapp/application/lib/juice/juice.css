@@ -32,12 +32,10 @@
  * juice.ui.ComboBox
  */
 .juice-ui-comboBox {
-	position:relative;
-	top:0px;
-	left:0px;
 	margin: 0px;
-	padding-left: 1rem;
-    padding-right: 1rem;
+	padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    width: 100%;
     color: #495057;
     -webkit-appearance: none;
     border-radius: 2px;
@@ -47,7 +45,7 @@
 	overflow: hidden;
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAzElEQVQ4T6XTsQqDMBAG4HPywUJEjCJm65apz5WtmyJqECVv0FexewaxpK3RcrQEkjn35e4nF0HgiQLr4QVIKbdfkBDi7yMO4Jwjo65r8AaqqkJA0zT+gDEGAXEc+wNFUSCg67o3cL3jjNYHwLocITLGwM68H5vJMAxHB2fkUwzyErkQsyxDHSilvkewyKnYFjggTVNo29YhZVnCOI44A3Hb7Mv7RQckSYI6mKbJP0RKKfR975A8z2GeZ3+AEII60Fr7A0FfOWShgrfxCahjbhcIp6k5AAAAAElFTkSuQmCC);
 	background-repeat: no-repeat;
-	background-position: right 5px center; 
+	background-position: right 0.5rem center;
 }
 .juice-ui-comboBox:disabled { 
     background-color: #fafafa;
@@ -399,9 +397,10 @@
 	visibility: hidden;
 }
 .juice-ui-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	margin: 0.5rem 0.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 .juice-ui-pagination .juice-ui-pagination-item-page {
 	width: 2rem;
@@ -556,7 +555,7 @@
 	cursor: hand;
 }
 .juice-ui-dialog > .juice-ui-dialog-body {
-	padding: 10px 10px;
+	padding: 2rem 2rem;
     overflow: auto;
 }
 .juice-ui-dialog > .juice-ui-dialog-body::-webkit-scrollbar-track {

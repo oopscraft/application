@@ -173,18 +173,23 @@ function removeGroup(index) {
  * Adds Role
  */
 function addRole(){
-	__rolesDialog.open(function (selectedRoles){
-		
+	__rolesDialog.setFilter(function(row){
+		var index = roles.indexOf(function(role){
+			return role.get('id') == row.get('id');
+		});
+		if(index > -1){
+			return false;
+		}
+	}).open(function(selectedRoles){
 		// checks duplicated row
 		var duplicated = false;
 		for(var i = 0, size = selectedRoles.getRowCount(); i < size; i ++){
 			var row = selectedRoles.getRow(i);
-			duplicated = roles.containsRow(row, function(src,tar){
-				if(src.get('id') == tar.get('id')){
-					return true;
-				}
+			var indexOf = roles.indexOf(function(item){
+				return item.get('id') == row.get('id');
 			});
-			if(duplicated == true){
+			if(indexOf > -1){
+				duplicated = true;
 				break;
 			}
 		}
@@ -197,7 +202,7 @@ function addRole(){
 
 		// add selected rows.
 		roles.addAll(selectedRoles);
-	});
+	});	
 }
 
 /**
@@ -211,18 +216,23 @@ function removeRole(index){
  * Adds Authority
  */
 function addAuthority(){
-	__authoritiesDialog.open(function (selectedAuthorities){
-		
+	__authoritiesDialog.setFilter(function(row){
+		var index = authorities.indexOf(function(authority){
+			return authority.get('id') == row.get('id');
+		});
+		if(index > -1){
+			return false;
+		}
+	}).open(function(selectedAuthorities){
 		// checks duplicated row
 		var duplicated = false;
 		for(var i = 0, size = selectedAuthorities.getRowCount(); i < size; i ++){
 			var row = selectedAuthorities.getRow(i);
-			duplicated = authorities.containsRow(row, function(src,tar){
-				if(src.get('id') == tar.get('id')){
-					return true;
-				}
+			var indexOf = authorities.indexOf(function(item){
+				return item.get('id') == row.get('id');
 			});
-			if(duplicated == true){
+			if(indexOf > -1){
+				duplicated = true;
 				break;
 			}
 		}
@@ -344,7 +354,7 @@ function removeUser(){
 				<col/>
 				<col/>
 				<col/>
-				<col/>
+				<col style="width:100px;"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -377,7 +387,9 @@ function removeUser(){
 					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.email"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.phone"></label></td>
-					<td><label data-juice="Label" data-juice-bind="user.statusName"></label></td>
+					<td>
+						<select data-juice="ComboBox" data-juice-bind="user.statusCd" data-juice-options="userStatusCds" disabled></select>
+					</td>
 				</tr>
 			</tbody>
 		</table>

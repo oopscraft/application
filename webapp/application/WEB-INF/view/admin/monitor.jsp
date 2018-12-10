@@ -278,23 +278,23 @@ function updateClassCountChart(message){
 			</tr>
 			<tr>
 				<th>init</th>
-				<td><label data-juice="Label" data-juice-bind="heapMemoryUsage.init"></label></td>
-				<td><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.init"></label></td>
+				<td class="text-right"><label data-juice="Label" data-juice-bind="heapMemoryUsage.init" data-juice-format="number:0,0"></label>bytes</td>
+				<td class="text-right"><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.init" data-juice-format="number:0,0"></label>bytes</td>
 			</tr>
 			<tr>
 				<th>used</th>
-				<td><label data-juice="Label" data-juice-bind="heapMemoryUsage.used"></label></td>
-				<td><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.used"></label></td>
+				<td class="text-right"><label data-juice="Label" data-juice-bind="heapMemoryUsage.used" data-juice-format="number:0,0"></label>bytes</td>
+				<td class="text-right"><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.used" data-juice-format="number:0,0"></label>bytes</td>
 			</tr>
 			<tr>
 				<th>committed</th>
-				<td><label data-juice="Label" data-juice-bind="heapMemoryUsage.committed"></label></td>
-				<td><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.committed"></label></td>
+				<td class="text-right"><label data-juice="Label" data-juice-bind="heapMemoryUsage.committed" data-juice-format="number:0,0"></label>bytes</td>
+				<td class="text-right"><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.committed" data-juice-format="number:0,0"></label>bytes</td>
 			</tr>
 			<tr>
 				<th>max</th>
-				<td><label data-juice="Label" data-juice-bind="heapMemoryUsage.max"></label></td>
-				<td><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.max"></label></td>
+				<td class="text-right"><label data-juice="Label" data-juice-bind="heapMemoryUsage.max" data-juice-format="number:0,0"></label>bytes</td>
+				<td class="text-right"><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.max" data-juice-format="number:0,0"></label>bytes</td>
 			</tr>
 		</table>
 	</div>
@@ -311,15 +311,15 @@ function updateClassCountChart(message){
 			</colgroup>
 			<tr>
 				<th>totalLoadedClassCount</th>
-				<td><label data-juice="Label" data-juice-bind="classInfo.totalLoadedClassCount"></label></td>
+				<td class="text-right"><label data-juice="Label" data-juice-bind="classInfo.totalLoadedClassCount" data-juice-format="number:0,0"></label></td>
 			</tr>
 			<tr>
 				<th>loadedClassCount</th>
-				<td><label data-juice="Label" data-juice-bind="classInfo.loadedClassCount"></label></td>
+				<td class="text-right"><label data-juice="Label" data-juice-bind="classInfo.loadedClassCount" data-juice-format="number:0,0"></label></td>
 			</tr>
 			<tr>
 				<th>unloadedClassCount</th>
-				<td><label data-juice="Label" data-juice-bind="classInfo.unloadedClassCount"></label></td>
+				<td class="text-right"><label data-juice="Label" data-juice-bind="classInfo.unloadedClassCount" data-juice-format="number:0,0"></label></td>
 			</tr>
 		</table>
 	</div>
@@ -347,10 +347,10 @@ function updateClassCountChart(message){
 					<td><label data-juice="Label" data-juice-bind="threadInfo.threadId"></label></td>
 					<td><label data-juice="Label" data-juice-bind="threadInfo.threadName"></label></td>
 					<td><label data-juice="Label" data-juice-bind="threadInfo.threadState"></label></td>
-					<td><label data-juice="Label" data-juice-bind="threadInfo.waitedCount"></label></td>
-					<td><label data-juice="Label" data-juice-bind="threadInfo.waitedTime"></label></td>
-					<td><label data-juice="Label" data-juice-bind="threadInfo.blockCount"></label></td>
-					<td><label data-juice="Label" data-juice-bind="threadInfo.blockTime"></label></td>
+					<td class="text-right"><label data-juice="Label" data-juice-bind="threadInfo.waitedCount" data-juice-format="number:0,0"></label></td>
+					<td class="text-right"><label data-juice="Label" data-juice-bind="threadInfo.waitedTime" data-juice-format="number:0,0"></label>m</td>
+					<td class="text-right"><label data-juice="Label" data-juice-bind="threadInfo.blockCount" data-juice-format="number:0,0"></label></td>
+					<td class="text-right"><label data-juice="Label" data-juice-bind="threadInfo.blockTime" data-juice-format="number:0,0"></label>m</td>
 				</tr>
 			</tbody>
 		</table>
