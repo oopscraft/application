@@ -30,6 +30,7 @@ juice.data.__.prototype.notifyObservers = function(observer) {
 juice.data.__.prototype.update = function(){
 	this.notifyObservers(this);
 }
+Object.freeze(juice.data.__.prototype);
 
 //-----------------------------------------------------------------------------
 // juice.data.DataMap prototype
@@ -176,17 +177,6 @@ juice.data.List.prototype.setIndex = function(index) {
 juice.data.List.prototype.getIndex = function() {
 	return this.index;
 }
-/* finds indexes by handler */
-juice.data.List.prototype.findIndexes = function(handler){
-	var indexes = [];
-	var $this = this;
-	for(var i = 0, size = mapList.length; i < size; i ++){
-		if(handler.call($this, mapList[i]) == true){
-			indexes.push(i);
-		}
-	}
-	return indexes;
-}
 /* clear current select row index */
 juice.data.List.prototype.clearIndex = function() {
 	this.index = -1;
@@ -226,15 +216,24 @@ juice.data.List.prototype.removeRow = function(index){
 	this.mapList.splice(index, 1);
 	this.notifyObservers();
 }
-/* checks contains row via compare */
-juice.data.List.prototype.containsRow = function(map, compare) {
-	for(var i = 0, size = this.getRowCount(); i < size; i ++){
-		var row = this.getRow(i);
-		if(compare.call(this,row,map) == true){
-			return true;
+// finds index
+juice.data.List.prototype.indexOf = function(handler){
+	for(var i = 0, size = this.mapList.length; i < size; i ++){
+		if(handler.call(this, this.mapList[i]) == true){
+			return i;
 		}
 	}
-	return false;
+	return -1;
+}
+// finds indexes by handler
+juice.data.List.prototype.findIndexes = function(handler){
+	var indexes = [];
+	for(var i = 0, size = this.mapList.length; i < size; i ++){
+		if(handler.call(this, this.mapList[i]) == true){
+			indexes.push(i);
+		}
+	}
+	return indexes;
 }
 /* add all rows */
 juice.data.List.prototype.addAll = function(list){
@@ -420,6 +419,11 @@ juice.ui.__.prototype.executeExpression = function(element,$context) {
 	template.innerHTML = string;
 	return template.content.firstChild;
 }
+juice.ui.__.prototype.html = function(string){
+	var template = document.createElement('template');
+	template.innerHTML = string;
+	return template.content;
+}
 // returns current window
 juice.ui.__.prototype.getWindow = function() {
 	if(window.frameElement){
@@ -437,6 +441,12 @@ juice.ui.__.prototype.setPosition = function(element){
 	element.style.height = Math.min(window.screen.height, computedHeight) + 'px';
 	element.style.left = Math.max(10,window.innerWidth/2 - computedWidth/2) + 'px';
 	element.style.top = Math.max(0,window.innerHeight/2 - computedHeight/2) + 'px';
+}
+juice.ui.__.prototype.parseFormat = function(format){
+	var splitedFormat = format.split(':');
+	var formatType = splitedFormat.shift();
+	var formatBody = splitedFormat.join(':');
+	return { type: formatType, body: formatBody };
 }
 juice.ui.__.prototype.delay = function(callback){
 	var interval = setInterval(function() {
@@ -552,7 +562,7 @@ juice.ui.__.prototype.load = function(element){
 		}
 	}
 }
-
+Object.freeze(juice.ui.__.prototype);
 
 //-----------------------------------------------------------------------------
 // juice.ui.Label prototype
@@ -577,9 +587,11 @@ juice.ui.Label.prototype.update = function() {
 		value = this.map.get(this.name);
 	}
 	if(this.format){
-		var $format = this.format.split(':');
-		if($format.shift() == 'date'){
-			value = juice.util.Formatter.toDateFormat(value, $format.join(':'));
+		var parsedFormat = this.parseFormat(this.format);
+		if(parsedFormat.type == 'date'){
+			value = juice.util.Formatter.toDateFormat(value, parsedFormat.body);
+		}else if(parsedFormat.type == 'number'){
+			value = juice.util.Formatter.toNumberFormat(value, parsedFormat.body);
 		}
 	}
 	this.label.appendChild(document.createTextNode(value));
@@ -633,24 +645,9 @@ juice.ui.ComboBox = function(select) {
 	juice.ui.__.call(this);
 	this.select = select;
 	this.select.classList.add('juice-ui-comboBox');
+	this.options = [];
 }
 juice.ui.ComboBox.prototype = Object.create(juice.ui.__.prototype);
-juice.ui.ComboBox.prototype.options = function(options){
-	for(var i = 0; i < options.length; i++){
-		var option = document.createElement('option');
-		option.value = options[i]['value'] || '';
-		option.appendChild(document.createTextNode(options[i]['text']));
-		if(options[i]['disabled']){
-			option.disabled = options[i]['disabled'];
-		}
-		if(options[i].style){
-			for(var property in options[i].style){
-				option.style[property] = options[i].style[property];
-			}
-		}
-		this.select.appendChild(option);
-	}
-}
 juice.ui.ComboBox.prototype.bind = function(map, name) {
 	this.map = map;
 	this.name = name;
@@ -660,7 +657,30 @@ juice.ui.ComboBox.prototype.bind = function(map, name) {
 	});
 }
 juice.ui.ComboBox.prototype.update = function() {
+	// creates options
+	while (this.select.firstChild) {
+	    this.select.removeChild(this.select.firstChild);
+	}
+	for(var i = 0; i < this.options.length; i++){
+		var option = document.createElement('option');
+		option.value = this.options[i]['value'] || '';
+		option.appendChild(document.createTextNode(this.options[i]['text']));
+		if(this.options[i]['disabled']){
+			option.disabled = this.options[i]['disabled'];
+		}
+		if(this.options[i].style){
+			for(var property in this.options[i].style){
+				option.style[property] = this.options[i].style[property];
+			}
+		}
+		this.select.appendChild(option);
+	}
+	
+	// sets value
 	this.select.value = this.map.get(this.name) || '';
+}
+juice.ui.ComboBox.prototype.setOptions = function(options){
+	this.options = options;
 }
 juice.ui.ComboBox.prototype.setReadonly = function(readonly){
 	if(readonly){
@@ -698,6 +718,9 @@ juice.ui.CheckBox.prototype.update = function() {
 		this.input.checked = false;
 	}
 	this.setReadonly(this.map.readonly[this.name]);
+	if(this.map.enable == false){
+		this.setReadonly(true);
+	}
 }
 juice.ui.CheckBox.prototype.setReadonly = function(readonly){
 	if(readonly == true){
@@ -2170,7 +2193,7 @@ juice.ui.Dialog = function(content) {
 juice.ui.Dialog.prototype = Object.create(juice.ui.__.prototype);
 // sets title 
 juice.ui.Dialog.prototype.setTitle = function(title){
-	this.title.appendChild(document.createTextNode(title));
+	this.title.appendChild(this.html(title));
 }
 // open dialog window 
 juice.ui.Dialog.prototype.open = function(){
@@ -2739,6 +2762,9 @@ juice.initialize = function(container, $context) {
 	function getObject($context, name) {
 		try {
 			var obj = eval("$context." + name);
+			if(!obj) {
+				obj = eval(name);
+			}
 			return obj;
 		}catch(e){
 			console.error(e,$context, name);
@@ -2869,8 +2895,8 @@ juice.initialize = function(container, $context) {
 				case 'ComboBox':
 					var comboBox = new juice.ui.ComboBox(element);
 					var options = element.dataset.juiceOptions;
-					comboBox.options(getObject($context,options));
 					comboBox.bind(map, name);
+					comboBox.setOptions(getObject($context,options));
 					comboBox.update();
 				break;
 				case 'CheckBox':
