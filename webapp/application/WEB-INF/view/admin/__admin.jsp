@@ -48,6 +48,7 @@
         
         /**
          * Changes language
+         * @Param {String} language code
          */
         function __changeLanguage(lang) {
         	window.location = "?lang=" + lang;
@@ -55,6 +56,7 @@
         
         /**
          * Parsed total count from Content-Range header
+         * @Param {Object} jqXHR
          */
         function __parseTotalCount(jqXHR){
         	var contentRange = jqXHR.getResponseHeader("Content-Range");
@@ -67,7 +69,7 @@
         }
         
         /**
-         * webSocketClient
+         * Creates WebSocketClient instance
          */
         var __wsUrl = (window.location.protocol == 'https' ? 'wss' : 'ws') + '://'
         			+ window.location.hostname 
@@ -214,7 +216,6 @@
 			border-radius: 3px;
 			margin: 5px;
 			padding: 1rem;
-			min-height:400px;
 		}
 		.id {
 			font-weight: bold;
@@ -376,76 +377,111 @@
          * Gets roles and open dialog
          */
         var __groupsDialog = {
-	 		groups: new juice.data.Tree(),
+	 		items: new juice.data.Tree(),
+	 		unique: false,
 	 		handler: {},
-	 		disable: function(handler){
+	 		setUnique: function(unique){
+	 			this.unique = unique;
+	 			return this;
+	 		},
+	 		setDisable: function(handler){
 	 			this.handler.disable = handler;
 	 			return this;
 	 		},
-	 		// open dialog
+	 		afterConfirm: function(handler){
+	 			this.handler.afterConfirm = handler;
+	 			return this;
+	 		},
 			open: function(callback){
-				this.callback = callback;
+				var $this = this;
+		 		this.items.fromJson([],'childGroups');
 				this.dialog = new juice.ui.Dialog($('#__groupsDialog')[0]);
-				this.dialog.setTitle('<spring:message code="application.text.group"/> <spring:message code="application.text.list"/>');
-				this.getGroups(); 
+				this.dialog.setTitle('<i class="icon-folder"> </i><spring:message code="application.text.group"/> <spring:message code="application.text.list"/>');
 				this.dialog.open();
+				this.search();
 			},
-			// gets roles
-	 		getGroups: function(){
-            	var $this = this;
+	 		search: function(){
+	 			var $this = this;
             	$.ajax({
             		 url: '${pageContext.request.contextPath}/admin/getGroups'
             		,type: 'GET'
             		,data: {}
             		,success: function(data, textStatus, jqXHR) {
-            			$this.groups.fromJson(data,'childGroups');
-            			$('#__groupsUl').hide().fadeIn();
-            			
-            			// disable
+            			$this.items.fromJson(data,'childGroups');
+
+            			// Disabled node
             			if($this.handler.disable){
-            				var indexes = $this.groups.findIndexes($this.handler.disable);
-            				indexes.forEach(function(index){
-            					var node = $this.groups.getNode(index);
-            					node.set('__disabled', true);
+            				$this.items.startTransaction();
+            				$this.items.forEach(function(node){
+            					if($this.handler.disable.call($this,node)){
+            						node.set('__selected', true);
+            						node.setEnable(false);
+            					}
             				});
+            				$this.items.endTransaction();
             			}
+            			$('#__groupsUl').hide().fadeIn();
                	 	}
             	});	
-            	console.log('@@@@@@@@@@@@@@@@@@' + $this.groups);
 	 		},
-	 		// selects rows by index
-			select: function(index){
-				index = JSON.parse(index);
-				var node = this.groups.getNode(index);
-				if(node.get('__selected') == true){
-					node.set('__selected', false);
-				}else{
-					node.set('__selected', true);
-				}
-			},
-			// confirm
-			confirm: function(){
-				var indexes = this.groups.findIndexes(function(node){
-					if(node.get('__selected') == true){
-						return true;
-					}
-				});
-				var selectedGroups = []; 
-				var $this = this;
-				indexes.forEach(function(index){
-					var node = $this.groups.getNode(index);
-					selectedGroups.push(node);
-				});
-				this.callback.call(this,selectedGroups);
-				this.dialog.close();
-			}
+	 		select: function(id){
+	 			if(this.unique == true){
+					this.items.forEach(function(node){
+						if(node.enable == true){
+							if(node.get('id') == id){
+								node.set('__selected', true);
+							}else{
+								node.set('__selected', false);
+							}
+						}
+					});
+	 			}else{
+	 				this.items.forEach(function(node){
+						if(node.enable == true){
+							if(node.get('id') == id){
+								if(node.get('__selected')){
+									node.set('__selected', false);
+								}else{
+									node.set('__selected', true);
+								}
+							}
+						}
+	 				});
+	 			}
+	 		},
+	 		confirm: function(){
+	 			if(this.unique == true){
+	 				var node = this.items.findNode(function(node){
+	 					if(node.enable == true && node.get('__selected') == true){
+	 						return true;
+	 					}
+	 				});
+		 			this.handler.afterConfirm.call(this, node);
+	 			}else{
+	 				var nodes = new juice.data.List();
+	 				this.items.findNodes(function(node){
+	 					if(node.enable == true && node.get('__selected') == true){
+	 						return true;
+	 					}
+	 				}).forEach(function(item){
+	 					nodes.addRow(item);
+	 				});
+	 				this.handler.afterConfirm.call(this, nodes);
+	 			}
+	 			// close
+	 			this.close();
+	 		},
+	 		close: function() {
+	 			this.unique = false;
+	 			this.handler = {};
+	 			this.dialog.close();
+	 		}
         };
         </script>
         <style type="text/css">
 		#__groupsDialog {
 			width: 500px;
 			max-height: 100vh;
-			padding: 1rem;
 		}
 		#__groupsDialog li > div {
 			border-bottom:dotted 1px #ccc;
@@ -455,12 +491,11 @@
 		<dialog>
 			<div id="__groupsDialog">
 				<div>
-					<ul id="__groupsUl" data-juice="TreeView" data-juice-bind="__groupsDialog.groups" data-juice-item="group">
+					<ul id="__groupsUl" data-juice="TreeView" data-juice-bind="__groupsDialog.items" data-juice-item="item">
 						<li>
-							<div data-index="{{$context.index}}" onclick="javascript:__groupsDialog.select(this.dataset.index);" style="width:100%;cursor:hand;cursor:pointer;">
-								<input data-juice="CheckBox" data-juice-bind="group.__selected" readonly/>
-								<label data-juice="Label" data-juice-bind="group.name"></label>
-								{{$context.index}}
+							<div data-id="{{$context.item.get('id')}}" data-enable="{{$context.item.enable}}" onclick="javascript:this.dataset.enable == 'false' || __groupsDialog.select(this.dataset.id);" style="width:100%;cursor:hand;cursor:pointer;">
+								<input data-juice="CheckBox" data-juice-bind="item.__selected"/>
+								<label data-juice="Label" data-juice-bind="item.name"></label>
 							</div>
 						</li>
 					</ul>
@@ -483,125 +518,110 @@
          * Gets roles and open dialog
          */        
         var __rolesDialog = {
-           	search: new juice.data.Map(),
-	 		searchKeys: [
+           	searchCondition: new juice.data.Map(),
+           	searchConditionKeys: [
 				 { value:'', text:'- <spring:message code="application.text.all"/> -' }
 				,{ value:'id', text:'<spring:message code="application.text.id"/>' }
 				,{ value:'name', text:'<spring:message code="application.text.name"/>' }
 	 		],
-	 		searchList: new juice.data.List(),
-	 		selectList: new juice.data.List(),
+	 		searchItems: new juice.data.List(),
+	 		selectItems: new juice.data.List(),
+	 		handler: {},
 	 		option: new juice.data.Map(),
-	 		setFilter: function(filter){
-	 			this.filter = filter;
+	 		setDisable: function(handler){
+	 			this.handler.disable = handler;
 	 			return this;
 	 		},
-			open: function(callback){
+	 		afterConfirm: function(handler){
+	 			this.handler.afterConfirm = handler;
+	 			return this;
+	 		},
+			open: function(){
 				var $this = this;
-				this.callback = callback;
-	 			this.search.fromJson({
+	 			this.searchCondition.fromJson({
 		   			 key: null
 		 			,value: null
 		 			,page: 1
 		 			,rows: 10
 		 			,totalCount:-1
 	 			});
-		 		this.searchList.fromJson([]);
-		 		this.selectList.fromJson([]);
+		 		this.searchItems.fromJson([]);
+		 		this.selectItems.fromJson([]);
 				this.dialog = new juice.ui.Dialog($('#__rolesDialog')[0]);
 				this.dialog.setTitle('<i class="icon-card"> </i><spring:message code="application.text.role"/> <spring:message code="application.text.list"/>');
-				this.doSearch(1); 
-				this.dialog.afterClose(function() {
-					$this.close();
-				}).open();
+				this.dialog.open();
+				this.search(1);
 			},
-			close: function() {
-				this.filter = null;
-				this.dialog.close();
-			},
-			/* gets role */
-	 		doSearch: function(page){
+	 		search: function(page){
 	 			var $this = this;
 	 			if(page){
-            		this.search.set('page',page);
+            		this.searchCondition.set('page',page);
             	}
             	$.ajax({
             		 url: '${pageContext.request.contextPath}/admin/getRoles'
             		,type: 'GET'
-            		,data: this.search.toJson()
+            		,data: this.searchCondition.toJson()
             		,success: function(data, textStatus, jqXHR) {
-        				$this.searchList.fromJson([]);
-            			data.forEach(function(item){
-            				var row = new juice.data.Map(item);
-            				
-            				// checks filter
-            				if($this.filter){
-            					if($this.filter.call($this,row) == false){
+        				$this.searchItems.fromJson(data);
+        				
+            			// Disabled node
+            			if($this.handler.disable){
+            				console.log($this.searchItems);
+            				$this.searchItems.forEach(function(row){
+            					if($this.handler.disable.call($this,row) == false){
             						row.set('__selected', true);
             						row.setEnable(false);
             					}
-            				}
-            				// exites in selected row
-            				if($this.isAlreadySelected(row.get('id'))){
+            				});
+            			}
+            			
+            			// check selected
+            			$this.searchItems.forEach(function(row){
+            				var $row = row;
+            				var alreadySelected = $this.selectItems.contains(function(row){
+            					return row.get('id') == $row.get('id'); 
+            				});
+            				if(alreadySelected){
             					row.set('__selected',true);
             				}
-            				
-            				// adds row into list.
-        					$this.searchList.addRow(row);
             			});
-            			$this.search.set('totalCount', __parseTotalCount(jqXHR));
+            			
+            			$this.searchCondition.set('totalCount', __parseTotalCount(jqXHR));
             			$('#__rolesTable > tbody').hide().fadeIn();
                	 	}
             	});	
 	 		},
-	 		isAlreadySelected: function(id){
-	 			var indexOf = this.selectList.indexOf(function(row){
-	 				return row.get('id') == id;
-	 			});
-	 			return indexOf > -1;
-	 		},
-	 		/* selects rows by index */
 			select: function(id){
-				var index = this.searchList.indexOf(function(row){
-					return row.get('id') == id;
-				});
-				if(index > -1){
-					var row = this.searchList.getRow(index);
-					row.set('__selected', true);
-				}
-				this.selectList.addRow(row);
+				var $this = this;
+ 				this.searchItems.forEach(function(row){
+ 					if(row.enable == false) {
+ 						return;
+ 					}
+					if(row.get('id') == id){
+						if(row.get('__selected')){
+							row.set('__selected', false);
+							var index = $this.selectItems.indexOf(function(row){
+								return row.get('id') == id;
+							});
+							$this.selectItems.removeRow(index);
+						}else{
+							row.set('__selected', true);
+							$this.selectItems.addRow(row);
+						}
+					}
+ 				});
 			},
-			unselect: function(id){
-				var index = this.searchList.indexOf(function(row){
-					return row.get('id') == id;
-				});
-				if(index > -1){
-					this.searchList.getRow(index).set('__selected', false);
+			confirm: function() {
+				if(this.handler.afterConfirm){
+					this.handler.afterConfirm.call(this, this.selectItems);
 				}
-				
-				// removes from selectList
-				var index = this.selectList.indexOf(function(row){
-					return row.get('id') == id;
-				});
-				if(index > -1){
-					this.selectList.removeRow(index);
-				}
+	 			// close
+	 			this.close();
 			},
-			toggleSelect: function(id){
-				if(this.isAlreadySelected(id) == true){
-					this.unselect(id);
-				}else{
-					this.select(id);
-				}
-			},
-			/* confirm selected rows */
-			doConfirm: function(){		
-				if(this.callback.call(this, this.selectList) == false){
-					return false;
-				}else{
-					this.close();			
-				}
-			}
+	 		close: function() {
+	 			this.handler = {};
+	 			this.dialog.close();
+	 		}
         };
         </script>
         <style type="text/css">
@@ -616,17 +636,17 @@
 						<div class="title2">
 							<i class="icon-search"></i>
 						</div>
-						<select data-juice="ComboBox" data-juice-bind="__rolesDialog.search.key" data-juice-options="__rolesDialog.searchKeys" style="width:100px;"></select>
-						<input data-juice="TextField" data-juice-bind="__rolesDialog.search.value" style="width:100px;"/>
+						<select data-juice="ComboBox" data-juice-bind="__rolesDialog.searchCondition.key" data-juice-options="__rolesDialog.searchConditionKeys" style="width:100px;"></select>
+						<input data-juice="TextField" data-juice-bind="__rolesDialog.searchCondition.value" style="width:100px;"/>
 					</div>
 					<div>
-						<button onclick="javascript:__rolesDialog.doSearch();">
+						<button onclick="javascript:__rolesDialog.search();">
 							<i class="icon-search"></i>
 							<spring:message code="application.text.search"/>
 						</button>
 					</div>
 				</div>
-				<table id="__rolesTable" data-juice="Grid" data-juice-bind="__rolesDialog.searchList" data-juice-item="item">
+				<table id="__rolesTable" data-juice="Grid" data-juice-bind="__rolesDialog.searchItems" data-juice-item="item">
 					<thead>
 						<tr>
 							<th>
@@ -644,10 +664,10 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr data-id="{{$context.item.get('id')}}" data-enable="{{$context.item.enable}}" onclick="javascript:this.dataset.enable == 'false' ||  __rolesDialog.toggleSelect(this.dataset.id);">
+						<tr data-id="{{$context.item.get('id')}}" data-enable="{{$context.item.enable}}" onclick="javascript:this.dataset.enable == 'false' ||  __rolesDialog.select(this.dataset.id);">
 							<td class="text-center"><input data-juice="CheckBox" data-juice-bind="item.__selected"/></td>
 							<td class="text-center">
-								{{__rolesDialog.search.get('rows')*(__rolesDialog.search.get('page')-1)+$context.index+1}}
+								{{__rolesDialog.searchCondition.get('rows')*(__rolesDialog.searchCondition.get('page')-1)+$context.index+1}}
 							</td>
 							<td><label data-juice="Label" data-juice-bind="item.id" class="id"></label></td>
 							<td><label data-juice="Label" data-juice-bind="item.name"></label></td>
@@ -655,12 +675,12 @@
 					</tbody>
 				</table>
 				<div>
-					<ul data-juice="Pagination" data-juice-bind="__rolesDialog.search" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
+					<ul data-juice="Pagination" data-juice-bind="__rolesDialog.searchCondition" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
 						<li data-page="{{$context.page}}" onclick="javascript:__rolesDialog.doSearch(this.dataset.page);">{{$context.page}}</li>
 					</ul>
 				</div>
 				<br/>
-				<table data-juice="Grid" data-juice-bind="__rolesDialog.selectList" data-juice-item="item">
+				<table data-juice="Grid" data-juice-bind="__rolesDialog.selectItems" data-juice-item="item">
 					<thead>
 						<tr>
 							<th><spring:message code="application.text.id"/></th>
@@ -682,7 +702,7 @@
 				</table>
 				<br/>
 				<div style="text-align:right;">
-					<button onclick="javascript:__rolesDialog.doConfirm();">
+					<button onclick="javascript:__rolesDialog.confirm();">
 						<i class="icon-check"></i>
 						<spring:message code="application.text.confirm"/>
 					</button>
@@ -860,7 +880,9 @@
 					</thead>
 					<tbody>
 						<tr data-id="{{$context.item.get('id')}}" data-enable="{{$context.item.enable}}" onclick="javascript:this.dataset.enable == 'false' ||  __authoritiesDialog.toggleSelect(this.dataset.id);">
-							<td class="text-center"><input data-juice="CheckBox" data-juice-bind="item.__selected"/></td>
+							<td class="text-center">
+								<input data-juice="CheckBox" data-juice-bind="item.__selected"/>
+							</td>
 							<td class="text-center">
 								{{__authoritiesDialog.search.get('rows')*(__authoritiesDialog.search.get('page')-1)+$context.index+1}}
 							</td>

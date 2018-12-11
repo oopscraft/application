@@ -164,6 +164,7 @@ function updateMemoryUsageChart(message){
  * Draws classCountChart
  */
 function drawClassCountChart(){
+	$('#classCountChart').hide();
 	classCountChart = new Chart(
 		document.getElementById('classCountChart').getContext('2d'),{
 		    type: 'line',
@@ -197,6 +198,7 @@ function drawClassCountChart(){
 		    }
 		}
 	);
+	$('#classCountChart').hide().fadeIn();
 }
 
 /**

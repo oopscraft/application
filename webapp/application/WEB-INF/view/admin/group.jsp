@@ -59,7 +59,7 @@ function getGroup(id) {
 				breadCrumbs.forEach(function(item){
 					breadCrumbsNames.push(item.name);
 				});
-				group.set('breadCrumbs', breadCrumbsNames.join(' > '));
+				group.set('breadCrumbs', breadCrumbsNames.join('<i class="icon-right"></i>'));
 			});
 			
 			// animates group.
@@ -95,7 +95,31 @@ function getBreadCrumbs(id, callback) {
  * Changes upperId
  */
 function changeUpperId(){
-	alert('fdasfdas');
+	__groupsDialog
+		.setUnique(true)
+		.setDisable(function(node){
+			if(node.get('id') == group.get('id')
+			|| node.get('id') == group.get('upperId')
+			){
+				return true;
+			}
+		}).afterConfirm(function(node){
+			console.log(node.get('name'));
+			group.set('upperId', node.get('id'));
+			
+			// find breadCrumbs
+			var breadCrumbsNames = new Array();
+			var upperNode = node;
+			while(upperNode){
+				if(upperNode.get('name')){
+					breadCrumbsNames.push(upperNode.get('name'));	
+				}
+				upperNode = upperNode.getParentNode();
+			}
+			breadCrumbsNames.reverse();
+			console.log(breadCrumbsNames);
+			group.set('breadCrumbs', breadCrumbsNames.join('<i class="icon-right"></i>'));
+		}).open();
 }
 
 /**
@@ -217,7 +241,7 @@ function addChildGroup(upperId) {
 				breadCrumbs.forEach(function(item){
 					breadCrumbsNames.push(item.name);
 				});
-				group.set('breadCrumbs', breadCrumbsNames.join(' - '));
+				group.set('breadCrumbs', breadCrumbsNames.join('<i class="icon-right"></i>'));
 			});
 		})
 		.open();
@@ -283,8 +307,6 @@ function removeGroup() {
 		});	
 	}).open();
 }
-
-
 </script>
 <style type="text/css">
 
@@ -294,12 +316,12 @@ function removeGroup() {
 	<spring:message code="application.text.group"/>
 	<spring:message code="application.text.management"/>
 </div>
-<div class="container">
+<div class="container" style="min-height:70vh;">
 	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
 		<!-- Group Tree												-->
 		<!-- ====================================================== -->
-		<div style="display:flex; justify-content: space-between;border-bottom:solid 1px #ccc;">
+		<div style="display:flex; justify-content: space-between;border-bottom:solid 1px #eee;">
 			<div>
 				<div class="title2">
 					<i class="icon-tree"></i>
@@ -310,16 +332,16 @@ function removeGroup() {
 			<div style="width:20%;text-align:right;">
 				<button onclick="javascript:addChildGroup(null);">
 					<i class="icon-plus"></i>
+					<spring:message code="application.text.upper"/>
+					<spring:message code="application.text.group"/>
 				</button>
 			</div>
 		</div>
-		<ul id="groupsUl" data-juice="TreeView" data-juice-bind="groups" data-juice-item="group" data-juice-editable="true">
+		<ul id="groupsUl" data-juice="TreeView" data-juice-bind="groups" data-juice-item="group">
 			<li>
 				<div style="display:flex;justify-content:space-between;border-bottom:dotted 1px #ccc;">
 					<div data-id="{{$context.group.get('id')}}" onclick="javascript:getGroup(this.dataset.id);" style="width:80%;cursor:hand;cursor:pointer;">
-						<i class="icon-file"></i>
-						<label data-juice="Label" data-juice-bind="group.id"></label>
-						|
+						<i class="icon-file-o"></i>
 						<label data-juice="Label" data-juice-bind="group.name"></label>
 					</div>
 					<div style="width:20%;min-width:100px;display:inline-block;text-align:right;">
@@ -387,7 +409,7 @@ function removeGroup() {
 					<label data-juice="Label" data-juice-bind="group.breadCrumbs"></label>
 					<input type="hidden" data-juice="TextField" data-juice-bind="group.upperId"/>
 					<button onclick="javascript:changeUpperId();">
-						<i class="icon-tree"></i>
+						<i class="icon-change"></i>
 						<spring:message code="application.text.change"/>
 					</button>
 				</td>
