@@ -222,7 +222,7 @@ function removeRole() {
 	<spring:message code="application.text.role"/>
 	<spring:message code="application.text.management"/>
 </div>
-<div class="container">
+<div class="container" style="min-height:70vh;">
 	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
 		<!-- Roles													-->

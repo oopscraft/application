@@ -12,7 +12,7 @@ var userSearch = new juice.data.Map({
 	 key: null
 	,value: null
 	,page: 1
-	,rows: 20
+	,rows: 30
 	,totalCount: -1
 });
 /* defines roleSearch Map change event handler */
@@ -151,15 +151,18 @@ function addUser() {
  */
 function addGroup() {
 	__groupsDialog
-	.disable(function(node){
-		if(node.get('id') == 'admin'){
-			return true;
-		}
-	}).open(function(selectedGroups){
-		selectedGroups.forEach(function(group){
-			groups.addRow(group);
+	.setUnique(false)
+	.setDisable(function(node){
+		var contains = groups.contains(function(row){
+			return row.get('id') == node.get('id');
 		});
-	});
+		if(contains){
+			return false;
+		}
+	}).afterConfirm(function(nodes){
+		groups.addRows(nodes);
+	}).open();
+
 }
 
 /**
@@ -173,36 +176,18 @@ function removeGroup(index) {
  * Adds Role
  */
 function addRole(){
-	__rolesDialog.setFilter(function(row){
-		var index = roles.indexOf(function(role){
-			return role.get('id') == row.get('id');
-		});
-		if(index > -1){
+	__rolesDialog
+	.setDisable(function(row){
+		var $row = row;
+		var contains = roles.contains(function(row){
+			return row.get('id') == $row.get('id');
+		})
+		if(contains){
 			return false;
 		}
-	}).open(function(selectedRoles){
-		// checks duplicated row
-		var duplicated = false;
-		for(var i = 0, size = selectedRoles.getRowCount(); i < size; i ++){
-			var row = selectedRoles.getRow(i);
-			var indexOf = roles.indexOf(function(item){
-				return item.get('id') == row.get('id');
-			});
-			if(indexOf > -1){
-				duplicated = true;
-				break;
-			}
-		}
-		if(duplicated == true){
-			<spring:message code="application.text.role" var="item"/>
-			var message = '<spring:message code="application.message.duplicatedItem" arguments="${item}"/>';
-			new juice.ui.Alert(message).open();
-			return false;
-		}
-
-		// add selected rows.
-		roles.addAll(selectedRoles);
-	});	
+	}).afterConfirm(function(rows){
+		roles.addRows(rows);
+	}).open();
 }
 
 /**
@@ -244,7 +229,7 @@ function addAuthority(){
 		}
 
 		// add selected rows.
-		authorities.addAll(selectedAuthorities);
+		authorities.addRows(selectedAuthorities);
 	});
 }
 
@@ -387,8 +372,8 @@ function removeUser(){
 					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.email"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.phone"></label></td>
-					<td>
-						<select data-juice="ComboBox" data-juice-bind="user.statusCd" data-juice-options="userStatusCds" disabled></select>
+					<td class="text-center">
+						<label data-juice="Label" data-juice-bind="user.statusName"></label>
 					</td>
 				</tr>
 			</tbody>

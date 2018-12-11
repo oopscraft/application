@@ -7,29 +7,77 @@
 // Copyright (C) 2017 juice.oopscraft.net
 // =============================================================================
 "use strict";
+if(!console.debug){
+	console.debug = console.log;
+}
 var juice = {}
 
 //-----------------------------------------------------------------------------
 // Data structure package
 //-----------------------------------------------------------------------------
+/**
+ * juice.Data package object
+ */
 juice.data = {};
+/**
+ * Super prototype of juice.data
+ */
 juice.data.__ = function(){
 	this.observers = new Array();
+	this.fireEvent = true;
 }
+/**
+ * Adds observer
+ * @Param {Object} observer for adding
+ */
 juice.data.__.prototype.addObserver = function(observer){
+	for(var i = 0; i < this.observers.length; i++){
+		if(this.observers[i] === observer){
+			return;
+		}
+	}
 	this.observers.push(observer);
 }
+/**
+ * Notifies all observer
+ * @Param {Object} caller observer
+ */
 juice.data.__.prototype.notifyObservers = function(observer) {
+	if(this.fireEvent = false){
+		return;
+	}
 	for(var i = 0; i < this.observers.length; i++){
 		if(this.observers[i] === observer){
 			continue;
 		}
+		console.debug('update', this.observers[i]);
 		this.observers[i].update();
 	}
 }
-juice.data.__.prototype.update = function(){
+/**
+ * Updates
+ */
+juice.data.__.prototype.update = function() {
+	if(this.fireEvent == true){
+		this.notifyObservers(this);
+	}
+}
+/**
+ * Starts transaction for bulk handling
+ */
+juice.data.__.prototype.startTransaction = function() {
+	var $this = this;
+	this.fireEvent = false;
+}
+/**
+ * Ends transaction for bulk handling
+ */
+juice.data.__.prototype.endTransaction = function() {
+	this.fireEvent = true;
 	this.notifyObservers(this);
 }
+
+// Prevents prototype changed.
 Object.freeze(juice.data.__.prototype);
 
 //-----------------------------------------------------------------------------
@@ -57,7 +105,7 @@ juice.data.Map.prototype.fromJson = function(json) {
 	}
 	this.notifyObservers();
 }
-/* convert data into JSON object */
+// convert data into JSON object
 juice.data.Map.prototype.toJson = function() {
 	var json = {};
 	for(var name in this.data){
@@ -66,7 +114,7 @@ juice.data.Map.prototype.toJson = function() {
 	}
 	return json;
 }
-/* setting value */
+// setting value 
 juice.data.Map.prototype.set = function(name,value) {
 	if(this.listener.beforeChange){
 		if(this.listener.beforeChange.call(this,{name:name, value:value}) == false){
@@ -80,11 +128,11 @@ juice.data.Map.prototype.set = function(name,value) {
 	}
 	this.notifyObservers();
 }
-/* getting value */
+// getting value 
 juice.data.Map.prototype.get = function(name){
 	return this.data[name];
 }
-/* getting column names */
+// getting column names
 juice.data.Map.prototype.getNames = function() {
 	var names = new Array();
 	for(var name in this.data){
@@ -92,42 +140,42 @@ juice.data.Map.prototype.getNames = function() {
 	}
 	return names;
 }
-/* get parent node */
+// get parent node
 juice.data.Map.prototype.getParentNode = function(){
 	return this.parentNode;
 }
-/* get child node */
+// get child node
 juice.data.Map.prototype.getChildNodes = function(){
 	return this.childNodes;
 }
-/* return specified child node */
+// return specified child node
 juice.data.Map.prototype.getChildNode = function(index){
 	return this.childNodes[index];
 }
-/* adds child node */
+// adds child node
 juice.data.Map.prototype.addChildNode = function(map){
 	map.parentNode = this;
 	this.childNodes.push(map);
-	this.notifyObservers();
+	map.addObserver(this);
 }
-/* insert child node */
+// insert child node 
 juice.data.Map.prototype.insertChildNode = function(index,map){
 	map.parentNode = this;
 	this.childNodes.splice(index,0,map);
-	this.notifyObservers();
+	map.addObserver(this);
 }
-/* remove specified child node */
+// remove specified child node
 juice.data.Map.prototype.removeChildNode = function(index){
 	this.childNodes.splice(index,1);
-	this.notifyObservers();
 }
-/* sets readonly property */
+// sets readonly property
 juice.data.Map.prototype.setReadonly = function(name, readonly){
 	this.readonly[name] = readonly;
 	this.notifyObservers();
 }
 juice.data.Map.prototype.setEnable = function(enable){
 	this.enable = enable;
+	this.notifyObservers();
 }
 juice.data.Map.prototype.beforeChange = function(listener){
 	this.listener.beforeChange = listener;
@@ -148,7 +196,7 @@ juice.data.List = function(json) {
 	}
 }
 juice.data.List.prototype = Object.create(juice.data.__.prototype);
-/* load data from json */
+// load data from JSON
 juice.data.List.prototype.fromJson = function(json){
 	this.mapList = new Array();
 	for(var i = 0; i < json.length; i ++ ) {
@@ -160,7 +208,7 @@ juice.data.List.prototype.fromJson = function(json){
 	this.index = -1;
 	this.notifyObservers();
 }
-/* convert to json object */
+// convert to JSON object
 juice.data.List.prototype.toJson = function() {
 	var json = new Array();
 	for(var i = 0; i < this.mapList.length; i ++){
@@ -168,55 +216,79 @@ juice.data.List.prototype.toJson = function() {
 	}
 	return json;
 }
-/* set index */
+// set index
 juice.data.List.prototype.setIndex = function(index) {
 	this.index = index;
 	this.notifyObservers();
 }
-/* get current select row index */
+// get current select row index 
 juice.data.List.prototype.getIndex = function() {
 	return this.index;
 }
-/* clear current select row index */
+// clear current select row index 
 juice.data.List.prototype.clearIndex = function() {
 	this.index = -1;
 	this.notifyObservers();
 }
-/* returns current row count */
+// returns current row count
 juice.data.List.prototype.getRowCount = function() {
 	return this.mapList.length;
 }
-/* returns specified row */
+// returns specified row
 juice.data.List.prototype.getRow = function(index) {
 	return this.mapList[index];
 }
-/* adds new row map into list */
+// adds new row map into list
 juice.data.List.prototype.addRow = function(map){
 	map.addObserver(this);
 	this.mapList.push(map);
 	this.index = this.getRowCount();
 	this.notifyObservers();
 }
-/* moves from row into to row */
+/**
+ * Adds all rows
+ * @Param {juice.data.List}
+ * @Return {void}
+ */
+juice.data.List.prototype.addRows = function(list){
+	for(var i = 0, size = list.getRowCount(); i < size; i ++){
+		var map = list.getRow(i);
+		this.addRow(map);
+	}
+	this.notifyObservers();
+}
+// moves from row into to row
 juice.data.List.prototype.moveRow = function(from, to) {
 	this.index = from;
 	this.mapList.splice(to, 0, this.mapList.splice(from, 1)[0]);
 	this.index = to;
 	this.notifyObservers();
 }
-/* insert row map into specified position */
+// insert row map into specified position 
 juice.data.List.prototype.insertRow = function(index, map){
 	map.addObserver(this);
 	this.mapList.splice(index, 0, map);
 	this.index = index;
 	this.notifyObservers();
 }
-/* removes specified row map */
+// removes specified row map
 juice.data.List.prototype.removeRow = function(index){
 	this.mapList.splice(index, 1);
 	this.notifyObservers();
 }
-// finds index
+/**
+ * Loop forEach function
+ */
+juice.data.List.prototype.forEach = function(handler) {
+	for(var i = 0, size = this.mapList.length; i < size; i ++){
+		handler.call(this, this.mapList[i]);
+	}
+}
+/**
+ * Finds first index by handler
+ * @Param {function}	handler - searching handler function
+ * @Return {Number}	-  first index of searching
+ */
 juice.data.List.prototype.indexOf = function(handler){
 	for(var i = 0, size = this.mapList.length; i < size; i ++){
 		if(handler.call(this, this.mapList[i]) == true){
@@ -225,7 +297,11 @@ juice.data.List.prototype.indexOf = function(handler){
 	}
 	return -1;
 }
-// finds indexes by handler
+/**
+ * Finds indexes by handler
+ * @Param {function} handler - handler function for searching.
+ * @return {Array} - founded indexes array.
+ */
 juice.data.List.prototype.findIndexes = function(handler){
 	var indexes = [];
 	for(var i = 0, size = this.mapList.length; i < size; i ++){
@@ -235,12 +311,37 @@ juice.data.List.prototype.findIndexes = function(handler){
 	}
 	return indexes;
 }
-/* add all rows */
-juice.data.List.prototype.addAll = function(list){
-	for(var i = 0, size = list.getRowCount(); i < size; i ++){
-		var map = list.getRow(i);
-		this.addRow(map);
+/**
+ * Checks contains by handler
+ * @Param {function} handler
+ * @Return {Boolean}
+ */
+juice.data.List.prototype.contains = function(handler){
+	var index = this.indexOf(handler);
+	return (index > -1);
+}
+/**
+ * Finds row with handler
+ * @Param {function} handler
+ * @Return {juice.data.Map}
+ */
+juice.data.List.prototype.findRow = function(handler) {
+	var index = this.indexOf(handler);
+	return this.getRow(index);
+}
+/**
+ * Finds rows with handler
+ * @Param {function} handler
+ * @Return {Array<juice.data.Map>}
+ */
+juice.data.List.prototype.findRows = function(handler) {
+	var indexes = this.findIndexes(handler);
+	var rows = new Array();
+	for(var i = 0, size = indexes.length; i < size; i ++){
+		var node = this.getRow(indexes[i]);
+		rows.push(node);
 	}
+	return rows;
 }
 /* beforeChange */
 juice.data.List.prototype.beforeChange = function(beforeChangeListener){
@@ -266,6 +367,7 @@ juice.data.Tree.prototype = Object.create(juice.data.__.prototype);
 // load data from JSON Array  
 juice.data.Tree.prototype.fromJson = function(json,linkNodeName){
 	this.rootNode = new juice.data.Map();
+	this.rootNode.addObserver(this);
 	for(var i = 0; i < json.length; i ++){
 		var node = new juice.data.Map();
 		node.fromJson(json[i]);
@@ -319,30 +421,6 @@ juice.data.Tree.prototype.setIndex = function(index) {
 juice.data.Tree.prototype.getIndex = function() {
 	return this.index;
 }
-/* fines indexes by handler */
-juice.data.Tree.prototype.findIndexes = function(handler){
-	var indexes = [];
-	var depth = -1;
-	var cursor = [];
-	findChild(this.rootNode);
-	var $this = this;
-	function findChild(node) {
-		depth ++;
-		cursor.push(-1);
-		var childNodes = node.getChildNodes();
-		for(var i = 0, size = childNodes.length; i < size; i ++){
-			var childNode = childNodes[i];
-			cursor[depth] = i;
-			if(handler.call($this,childNode) == true){
-				indexes.push(JSON.parse(JSON.stringify(cursor)));
-			}
-			findChild(childNode);
-		}
-		depth --;
-		cursor.pop();
-	}
-	return indexes;
-}
 /* clear current select row index */
 juice.data.Tree.prototype.clearIndex = function() {
 	this.index = [];
@@ -391,6 +469,98 @@ juice.data.Tree.prototype.moveNode = function(fromIndex, toIndex){
 	this.index = toIndex;
 	this.notifyObservers();
 }
+/**
+ * Loop forEach
+ * @Param {function} handler
+ */
+juice.data.Tree.prototype.forEach = function(handler) {
+	this.startTransaction();
+	findChild(this.rootNode);
+	var $this = this;
+	function findChild(node) {
+		var childNodes = node.getChildNodes();
+		for(var i = 0, size = childNodes.length; i < size; i ++){
+			var childNode = childNodes[i];
+			handler.call($this,childNode);
+			findChild(childNode);
+		}
+	}
+	this.endTransaction();
+}
+/**
+ * Finds indexes by handler
+ * @Param {function} handler
+ * @Return {Array} - result of finding as array containing index.
+ */
+juice.data.Tree.prototype.findIndexes = function(handler){
+	var indexes = [];
+	var depth = -1;
+	var cursor = [];
+	findChild(this.rootNode);
+	var $this = this;
+	function findChild(node) {
+		depth ++;
+		cursor.push(-1);
+		var childNodes = node.getChildNodes();
+		for(var i = 0, size = childNodes.length; i < size; i ++){
+			var childNode = childNodes[i];
+			cursor[depth] = i;
+			if(handler.call($this,childNode) == true){
+				indexes.push(JSON.parse(JSON.stringify(cursor)));
+			}
+			findChild(childNode);
+		}
+		depth --;
+		cursor.pop();
+	}
+	return indexes;
+}
+/**
+ * Find first index by handler
+ * @Param {function} handler - function(node){...}
+ * @Return {Array} - result of finding result
+ */
+juice.data.Tree.prototype.indexOf = function(handler){
+	var indexes = this.findIndexes(handler);
+	if(indexes.length > 0){
+		return indexes[0];
+	}else{
+		return [];
+	}
+}
+/**
+ * Checks contains node by handler
+ * @Param {function} handler - function(node){...}
+ * @Return {Boolean}
+ */
+juice.data.Tree.prototype.contains = function(handler) {
+	var indexes = this.findIndexes(handler);
+	return (indexes.length > 0);
+}
+/**
+ * Find node
+ * @Param {function} handler - function(node){...}
+ * @Return {juice.data.Node}
+ */
+juice.data.Tree.prototype.findNode = function(handler) {
+	var index = this.indexOf(handler);
+	return this.getNode(index);
+}
+/**
+ * Finds nodes
+ * @Param {function} handler - function(node){...}
+ * @Return {Array<juice.data.Map>}
+ */
+juice.data.Tree.prototype.findNodes = function(handler){
+	var indexes = this.findIndexes(handler);
+	var nodes = new Array();
+	for(var i = 0, size = indexes.length; i < size; i ++){
+		var node = this.getNode(indexes[i]);
+		nodes.push(node);
+	}
+	return nodes;
+}
+
 juice.data.Tree.prototype.beforeNodeChange = function(listener){
 	// TODO
 }
@@ -419,7 +589,7 @@ juice.ui.__.prototype.executeExpression = function(element,$context) {
 	template.innerHTML = string;
 	return template.content.firstChild;
 }
-juice.ui.__.prototype.html = function(string){
+juice.ui.__.prototype.createHtml = function(string){
 	var template = document.createElement('template');
 	template.innerHTML = string;
 	return template.content;
@@ -594,7 +764,7 @@ juice.ui.Label.prototype.update = function() {
 			value = juice.util.Formatter.toNumberFormat(value, parsedFormat.body);
 		}
 	}
-	this.label.appendChild(document.createTextNode(value));
+	this.label.appendChild(this.createHtml(value));
 }
 juice.ui.Label.prototype.setFormat = function(format) {
 	this.format = format;
@@ -2193,7 +2363,7 @@ juice.ui.Dialog = function(content) {
 juice.ui.Dialog.prototype = Object.create(juice.ui.__.prototype);
 // sets title 
 juice.ui.Dialog.prototype.setTitle = function(title){
-	this.title.appendChild(this.html(title));
+	this.title.appendChild(this.createHtml(title));
 }
 // open dialog window 
 juice.ui.Dialog.prototype.open = function(){
