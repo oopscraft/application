@@ -9,6 +9,7 @@ public class SystemEntityListener {
 	
 	@PrePersist
 	public void prePersist(SystemEntity systemEntity) {
+		systemEntity.setEmbeddedYn("N");
 		systemEntity.setInsertDate(new Date());
 	}
 	

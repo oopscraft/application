@@ -164,7 +164,6 @@ function updateMemoryUsageChart(message){
  * Draws classCountChart
  */
 function drawClassCountChart(){
-	$('#classCountChart').hide();
 	classCountChart = new Chart(
 		document.getElementById('classCountChart').getContext('2d'),{
 		    type: 'line',
@@ -198,7 +197,6 @@ function drawClassCountChart(){
 		    }
 		}
 	);
-	$('#classCountChart').hide().fadeIn();
 }
 
 /**
@@ -227,7 +225,7 @@ function updateClassCountChart(message){
 	<spring:message code="application.text.monitor"/>
 </div>
 <div class="container">
-	<div class="division" style="width:33%;">
+	<div id="systemLoadAverageDiv" class="division" style="width:33%;">
 		<div class="title2" style="width:100%;border-bottom:dotted 1px #ccc;">
 			<i class="icon-file"></i>
 			CPU Usage
@@ -260,7 +258,7 @@ function updateClassCountChart(message){
 			</tr>
 		</table>
 	</div>
-	<div class="division" style="width:33%;">
+	<div id="memoryUsageDiv" class="division" style="width:33%;">
 		<div class="title2" style="width:100%;border-bottom:dotted 1px #ccc;">
 			<i class="icon-file"></i>
 			Memory Usage
@@ -300,7 +298,7 @@ function updateClassCountChart(message){
 			</tr>
 		</table>
 	</div>
-	<div class="division" style="width:33%;">
+	<div id="classCountDiv" class="division" style="width:33%;">
 		<div class="title2" style="width:100%;border-bottom:dotted 1px #ccc;">
 			<i class="icon-file"></i>
 			Class Count
@@ -327,7 +325,7 @@ function updateClassCountChart(message){
 	</div>
 </div>
 <div class="container">
-	<div class="division" style="width:100%;">
+	<div id="threadInfosDiv" class="division" style="width:100%;">
 		<div class="title2" style="width:100%;">
 			<i class="icon-file"></i>
 			Thread List

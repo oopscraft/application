@@ -28,9 +28,10 @@
 .icon-right:before { content: '\e81a'; } /* '' */
 .icon-barcode:before { content: '\e81b'; } /* '' */
 .icon-upload:before { content: '\e81c'; } /* '' */
-.icon-change:before { content: '\e81d'; } /* '' */
+.icon-tree:before { content: '\e81d'; } /* '' */
+.icon-change:before { content: '\e81e'; } /* '' */
+.icon-alert:before { content: '\e820'; } /* '' */
 .icon-content:before { content: '\f0f6'; } /* '' */
 .icon-code:before { content: '\f121'; } /* '' */
 .icon-attention:before { content: '\f12a'; } /* '' */
 .icon-file:before { content: '\f15b'; } /* '' */
-.icon-tree:before { content: '\f527'; } /* '' */

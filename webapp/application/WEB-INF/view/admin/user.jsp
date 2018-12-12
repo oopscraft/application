@@ -77,6 +77,12 @@ function getUsers(page) {
 			users.fromJson(data);
 			userSearch.set('totalCount', __parseTotalCount(jqXHR));
 			$('#usersTable').hide().fadeIn();
+			
+			//  find current row index.			
+			var index = users.indexOf(function(row){
+				return row.get('id') == user.get('id');
+			});
+			users.setIndex(index);
    	 	}
 	});	
 }
@@ -157,7 +163,7 @@ function addGroup() {
 			return row.get('id') == node.get('id');
 		});
 		if(contains){
-			return false;
+			return true;
 		}
 	}).afterConfirm(function(nodes){
 		groups.addRows(nodes);
@@ -183,7 +189,7 @@ function addRole(){
 			return row.get('id') == $row.get('id');
 		})
 		if(contains){
-			return false;
+			return true;
 		}
 	}).afterConfirm(function(rows){
 		roles.addRows(rows);
@@ -201,36 +207,18 @@ function removeRole(index){
  * Adds Authority
  */
 function addAuthority(){
-	__authoritiesDialog.setFilter(function(row){
-		var index = authorities.indexOf(function(authority){
-			return authority.get('id') == row.get('id');
-		});
-		if(index > -1){
-			return false;
+	__authoritiesDialog
+	.setDisable(function(row){
+		var $row = row;
+		var contains = authorities.contains(function(row){
+			return row.get('id') == $row.get('id');
+		})
+		if(contains){
+			return true;
 		}
-	}).open(function(selectedAuthorities){
-		// checks duplicated row
-		var duplicated = false;
-		for(var i = 0, size = selectedAuthorities.getRowCount(); i < size; i ++){
-			var row = selectedAuthorities.getRow(i);
-			var indexOf = authorities.indexOf(function(item){
-				return item.get('id') == row.get('id');
-			});
-			if(indexOf > -1){
-				duplicated = true;
-				break;
-			}
-		}
-		if(duplicated == true){
-			<spring:message code="application.text.authority" var="item"/>
-			var message = '<spring:message code="application.message.duplicatedItem" arguments="${item}"/>';
-			new juice.ui.Alert(message).open();
-			return false;
-		}
-
-		// add selected rows.
-		authorities.addRows(selectedAuthorities);
-	});
+	}).afterConfirm(function(rows){
+		authorities.addRows(rows);
+	}).open();
 }
 
 /**
@@ -280,6 +268,13 @@ function saveUser() {
  * Removes User
  */
 function removeUser(){
+	
+	// check embedded data
+	if(user.get('embeddedYn') == 'Y'){
+		new juice.ui.Alert('<spring:message code="application.message.notAllowRemoveEmbeddedItem"/>').open();
+		return false;
+	}
+	
 	<spring:message code="application.text.user" var="item"/>
 	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
@@ -368,7 +363,9 @@ function removeUser(){
 					<td class="text-center">
 						{{userSearch.get('rows')*(userSearch.get('page')-1)+$context.index+1}}
 					</td>
-					<td><label data-juice="Label" data-juice-bind="user.id" class="id"></label></td>
+					<td class="{{$context.user.get('embeddedYn')=='Y'?'embedded':''}}">
+						<label data-juice="Label" data-juice-bind="user.id" class="id"></label>
+					</td>
 					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.email"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.phone"></label></td>

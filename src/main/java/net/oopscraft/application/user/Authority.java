@@ -2,12 +2,17 @@ package net.oopscraft.application.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import net.oopscraft.application.core.jpa.SystemEntity;
+import net.oopscraft.application.core.jpa.SystemEntityListener;
+
 @Entity
 @Table(name = "APP_AUTH_INFO")
-public class Authority {
+@EntityListeners(SystemEntityListener.class)
+public class Authority extends SystemEntity {
 
 	@Id
 	@Column(name = "AUTH_ID")

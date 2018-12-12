@@ -102,7 +102,7 @@ public class UserService {
 		} else if (!StringUtils.isEmpty(searchCondition.getPhone())) {
 			page = userRepository.findByPhoneStartingWith(searchCondition.getName(), pageable);
 		} else {
-			page = userRepository.findAllByOrderByJoinDateDesc(pageable);
+			page = userRepository.findAllByOrderByEmbeddedYnDescJoinDateDesc(pageable);
 		}
 		users = page.getContent();
 		if (pageInfo.isEnableTotalCount() == true) {

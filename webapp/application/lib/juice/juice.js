@@ -583,7 +583,13 @@ juice.ui.__ = function(){}
 juice.ui.__.prototype.executeExpression = function(element,$context) {
 	var string = element.outerHTML;
 	string = string.replace(/\{\{(.*?)\}\}/gi,function(match, command){
-		return eval(command);
+		try {
+			var result = eval(command);
+			return result;
+		}catch(e){
+			console.error(e,command);
+			throw e;
+		}
 	});
 	var template = document.createElement('template');
 	template.innerHTML = string;
@@ -787,6 +793,7 @@ juice.ui.TextField.prototype.bind = function(map, name) {
 	this.input.addEventListener('change',function(){
 		map.set(name, this.value);
 	});
+	
 }
 juice.ui.TextField.prototype.update = function() {
 	var value = this.map.get(this.name) == undefined ? '' : this.map.get(this.name);
@@ -2776,6 +2783,13 @@ juice.util = {};
 // juice.util.Validator
 //-----------------------------------------------------------------------------
 juice.util.Validator = {
+	isEmpty: function(value) {
+		if(value === null || value === undefined || value.trim().length < 1){
+			return true;
+		}else{
+			return false;
+		}
+	},
 	isAphabet: function(value){
 		var pattern = /[a-zA-Z]{1,}/;
 		return pattern.test(value);

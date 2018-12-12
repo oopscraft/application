@@ -13,7 +13,7 @@ var roleSearch = new juice.data.Map({
 	 key: null
 	,value: null
 	,page: 1
-	,rows: 20
+	,rows: 30
 	,totalCount:-1
 });
 /* defines roleSearch Map change event handler */
@@ -37,7 +37,7 @@ var authorities = new juice.data.List();
  * On document loaded
  */
 $( document ).ready(function() {
-	getRoles();
+	getRoles(1);
 });
 
 /**
@@ -120,32 +120,20 @@ function addRole() {
  * Adds Authority
  */
 function addAuthority(){
-	__authoritiesDialog.open(function (selectedAuthorities){
-		
-		// checks duplicated row
-		var duplicated = false;
-		for(var i = 0, size = selectedAuthorities.getRowCount(); i < size; i ++){
-			var row = selectedAuthorities.getRow(i);
-			duplicated = authorities.containsRow(row, function(src,tar){
-				if(src.get('id') == tar.get('id')){
-					return true;
-				}
-			});
-			if(duplicated == true){
-				break;
-			}
+	__authoritiesDialog
+	.setDisable(function(row){
+		var $row = row;
+		var contains = authorities.contains(function(row){
+			return row.get('id') == $row.get('id');
+		})
+		if(contains){
+			return true;
 		}
-		if(duplicated == true){
-			<spring:message code="application.text.authority" var="item"/>
-			var message = '<spring:message code="application.message.duplicatedItem" arguments="${item}"/>';
-			new juice.ui.Alert(message).open();
-			return false;
-		}
-
-		// add selected rows.
-		authorities.addAll(selectedAuthorities);
-	});
+	}).afterConfirm(function(rows){
+		authorities.addRows(rows);
+	}).open();
 }
+
 
 /**
  * Removes authoritiy.
@@ -234,11 +222,15 @@ function removeRole() {
 				</div>
 				<select data-juice="ComboBox" data-juice-bind="roleSearch.key" data-juice-options="roleSearchKeys" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="roleSearch.value" style="width:100px;"/>
-			</div>
-			<div>
 				<button onclick="javascript:getRoles();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
+				</button>
+			</div>
+			<div>
+				<button onclick="javascript:addRole();">
+					<i class="icon-plus"></i>
+					<spring:message code="application.text.new"/>
 				</button>
 			</div>
 		</div>
@@ -263,7 +255,9 @@ function removeRole() {
 			</thead>
 			<tbody>
 				<tr data-id="{{$context.role.get('id')}}" onclick="javascript:getRole(this.dataset.id);">
-					<td>{{$context.index+1}}</td>
+					<td class="text-center">
+						{{roleSearch.get('rows')*(roleSearch.get('page')-1)+$context.index+1}}
+					</td>
 					<td><label data-juice="Label" data-juice-bind="role.id" class="id"></label></td>
 					<td><label data-juice="Label" data-juice-bind="role.name"></label></td>
 				</tr>
@@ -288,10 +282,6 @@ function removeRole() {
 				</div>
 			</div>
 			<div>
-				<button onclick="javascript:addRole();">
-					<i class="icon-plus"></i>
-					<spring:message code="application.text.new"/>
-				</button>
 				<button onclick="javascript:saveRole();">
 					<i class="icon-disk"></i>
 					<spring:message code="application.text.save"/>
@@ -364,7 +354,7 @@ function removeRole() {
 							<tr data-id="{{$context.authority.get('id')}}">
 								<td><label data-juice="Label" data-juice-bind="authority.id" class="id"></label></td>
 								<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
-								<td>
+								<td class="text-center">
 									<button data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
 										<i class="icon-minus"></i>
 									</button>

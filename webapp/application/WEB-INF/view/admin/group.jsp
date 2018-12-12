@@ -126,31 +126,18 @@ function changeUpperId(){
  * Adds Role
  */
 function addRole(){
-	__rolesDialog.open(function(selectedRoles){
-		
-		// checks duplicated row
-		var duplicated = false;
-		for(var i = 0, size = selectedRoles.getRowCount(); i < size; i ++){
-			var row = selectedRoles.getRow(i);
-			duplicated = roles.containsRow(row, function(src,tar){
-				if(src.get('id') == tar.get('id')){
-					return true;
-				}
-			});
-			if(duplicated == true){
-				break;
-			}
+	__rolesDialog
+	.setDisable(function(row){
+		var $row = row;
+		var contains = roles.contains(function(row){
+			return row.get('id') == $row.get('id');
+		})
+		if(contains){
+			return true;
 		}
-		if(duplicated == true){
-			<spring:message code="application.text.role" var="item"/>
-			var message = '<spring:message code="application.message.duplicatedItem" arguments="${item}"/>';
-			new juice.ui.Alert(message).open();
-			return false;
-		}
-
-		// add selected rows.
-		roles.addAll(selectedRoles);
-	});
+	}).afterConfirm(function(rows){
+		roles.addRows(rows);
+	}).open();
 }
 
 /**
@@ -164,31 +151,18 @@ function removeRole(index){
  * Adds Authority
  */
 function addAuthority(){
-	__authoritiesDialog.open(function (selectedAuthorities){
-		
-		// checks duplicated row
-		var duplicated = false;
-		for(var i = 0, size = selectedAuthorities.getRowCount(); i < size; i ++){
-			var row = selectedAuthorities.getRow(i);
-			duplicated = authorities.containsRow(row, function(src,tar){
-				if(src.get('id') == tar.get('id')){
-					return true;
-				}
-			});
-			if(duplicated == true){
-				break;
-			}
+	__authoritiesDialog
+	.setDisable(function(row){
+		var $row = row;
+		var contains = authorities.contains(function(row){
+			return row.get('id') == $row.get('id');
+		})
+		if(contains){
+			return true;
 		}
-		if(duplicated == true){
-			<spring:message code="application.text.authority" var="item"/>
-			var message = '<spring:message code="application.message.duplicatedItem" arguments="${item}"/>';
-			new juice.ui.Alert(message).open();
-			return false;
-		}
-
-		// add selected rows.
-		authorities.addAll(selectedAuthorities);
-	});
+	}).afterConfirm(function(rows){
+		authorities.addRows(rows);
+	}).open();
 }
 
 /**

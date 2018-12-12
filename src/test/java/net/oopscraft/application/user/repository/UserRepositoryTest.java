@@ -60,7 +60,7 @@ public class UserRepositoryTest extends ApplicationTestRunner {
 	@Test
 	public void testFindAllByOrderByJoinDateDesc() throws Exception {
 		Pageable pageable = new PageRequest(0, 10);
-		Page<User> page = userRepository.findAllByOrderByJoinDateDesc(pageable);
+		Page<User> page = userRepository.findAllByOrderByEmbeddedYnDescJoinDateDesc(pageable);
 		List<User> users = page.getContent();
 		System.out.println(new TextTable(users));
 		assert(true);
