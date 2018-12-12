@@ -92,10 +92,12 @@ function drawSystemLoadAverageChart(){
 function updateSystemLoadAverageChart(message){
 	
 	// adjust core number to yAxes(core number = load average number)
-	systemLoadAverageChart.options.scales.yAxes[0].ticks.max = Math.max(
-		 Math.ceil(message[0].osInfo.systemLoadAverage + 1)
-		,systemLoadAverageChart.options.scales.yAxes[0].ticks.max
-	);
+	var availableProcessors = message[0].osInfo.availableProcessors;
+	var stepNumber = 3; 
+	var max = availableProcessors + (stepNumber - availableProcessors%stepNumber);
+	var stepSize = max/stepNumber; 
+	systemLoadAverageChart.options.scales.yAxes[0].ticks.max = max;
+	systemLoadAverageChart.options.scales.yAxes[0].ticks.stepSize = stepSize;
 	
 	systemLoadAverageChart.data.labels = [];
 	systemLoadAverageChart.data.datasets[0].data = [];
