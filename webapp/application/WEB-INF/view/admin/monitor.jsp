@@ -90,6 +90,13 @@ function drawSystemLoadAverageChart(){
  * Updates systemLoadAverageChart
  */
 function updateSystemLoadAverageChart(message){
+	
+	// adjust core number to yAxes(core number = load average number)
+	systemLoadAverageChart.options.scales.yAxes[0].ticks.max = Math.max(
+		 Math.ceil(message[0].osInfo.systemLoadAverage + 1)
+		,systemLoadAverageChart.options.scales.yAxes[0].ticks.max
+	);
+	
 	systemLoadAverageChart.data.labels = [];
 	systemLoadAverageChart.data.datasets[0].data = [];
 	message.forEach(function(monitorInfo){
