@@ -12,7 +12,7 @@ var authoritySearch = new juice.data.Map({
 	 key: null
 	,value: null
 	,page: 1
-	,rows: 20
+	,rows: 30
 	,totalCount:-1
 });
 authoritySearch.afterChange(function(event){
@@ -27,6 +27,8 @@ var authoritySearchKeys = [
 ];
 var authorities = new juice.data.List();
 var authority = new juice.data.Map();
+authority.setReadonly('id', true);
+authority.setEnable(false);
 
 /**
  * On document loaded
@@ -50,6 +52,12 @@ function getAuthorities(page) {
 			authorities.fromJson(data);
 			authoritySearch.set('totalCount', __parseTotalCount(jqXHR));
 			$('#authoritiesTable').hide().fadeIn();
+			
+			//  find current row index.			
+			var index = authorities.indexOf(function(row){
+				return row.get('id') == authority.get('id');
+			});
+			authorities.setIndex(index);
    	 	}
 	});	
 }
@@ -58,6 +66,7 @@ function getAuthorities(page) {
  * Gets authority
  */
 function getAuthority(id) {
+	authority.setEnable(true);
 	$.ajax({
 		 url: 'authority/getAuthority'
 		,type: 'GET'
@@ -146,6 +155,13 @@ function saveAuthority() {
  * Removes authority
  */
 function removeAuthority() {
+
+	// check embedded data
+	if(authority.get('embeddedYn') == 'Y'){
+		new juice.ui.Alert('<spring:message code="application.message.notAllowRemoveEmbeddedItem"/>').open();
+		return false;
+	}
+	
 	<spring:message code="application.text.authority" var="item"/>
 	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
@@ -187,11 +203,15 @@ function removeAuthority() {
 				</div>
 				<select data-juice="ComboBox" data-juice-bind="authoritySearch.key" data-juice-options="authoritySearchKeys" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="authoritySearch.value" style="width:100px;"/>
-			</div>
-			<div>
 				<button onclick="javascript:getAuthorities();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
+				</button>
+			</div>
+			<div>
+				<button onclick="javascript:addAuthority();">
+					<i class="icon-plus"></i>
+					<spring:message code="application.text.new"/>
 				</button>
 			</div>
 		</div>
@@ -218,8 +238,12 @@ function removeAuthority() {
 			</thead>
 			<tbody>
 				<tr data-id="{{$context.authority.get('id')}}" onclick="javascript:getAuthority(this.dataset.id);">
-					<td>{{$context.index+1}}</td>
-					<td class="text-left"><label data-juice="Label" data-juice-bind="authority.id" class="id"></label></td>
+					<td class="text-center">
+						{{authoritySearch.get('rows')*(authoritySearch.get('page')-1)+$context.index+1}}
+					</td>
+					<td class="text-left {{$context.authority.get('embeddedYn')=='Y'?'embedded':''}}">
+						<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+					</td>
 					<td class="text-left"><label data-juice="Label" data-juice-bind="authority.name"></label></td>
 				</tr>
 			</tbody>
@@ -243,10 +267,6 @@ function removeAuthority() {
 				</div>
 			</div>
 			<div>
-				<button onclick="javascript:addAuthority();">
-					<i class="icon-plus"></i>
-					<spring:message code="application.text.new"/>
-				</button>
 				<button onclick="javascript:saveAuthority();">
 					<i class="icon-disk"></i>
 					<spring:message code="application.text.save"/>

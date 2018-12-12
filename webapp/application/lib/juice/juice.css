@@ -27,6 +27,11 @@
 .juice-ui-textField:read-only { 
     background-color: #fafafa;
 }
+.juice-ui-textField:focus {
+	outline: none;
+	border: solid 1px gray;
+}
+
 
 /**
  * juice.ui.ComboBox
@@ -49,6 +54,10 @@
 }
 .juice-ui-comboBox:disabled { 
     background-color: #fafafa;
+}
+.juice-ui-comboBox:focus {
+	outline: none;
+	border: solid 1px gray;
 }
 
 /**
@@ -92,6 +101,10 @@
 .juice-ui-textArea:read-only {
 	background-color: #fafafa;
 	outline: none;
+}
+.juice-ui-textArea:focus {
+	outline: none;
+	border: solid 1px gray;
 }
 
 /**
@@ -542,6 +555,9 @@
 	border-radius: 2px;
 	border: 0px;
 	box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 45px, rgba(0, 0, 0, 0.22) 0px 10px 18px;
+	
+	
+
 }
 .juice-ui-dialog > .juice-ui-dialog-header {
 	display: flex;
@@ -623,14 +639,15 @@
 	cursor: hand;
 	transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 }
-.juice-ui-alert .juice-ui-alert-button button.juice-ui-alert-button-confirm {
-	background-color: #ffffff;
+.juice-ui-alert .juice-ui-alert-button button:focus {
+	border: solid 1px gray;
+}
+.juice-ui-alert .juice-ui-alert-button button:hover {
+	border: solid 1px gray;
+	background-color: #efefef;
 }
 .juice-ui-alert .juice-ui-alert-button button.juice-ui-alert-button-confirm:after {
 	content: 'OK';
-}
-.juice-ui-alert .juice-ui-alert-button button.juice-ui-alert-button-confirm:hover {
-	background-color: #efefef;
 }
 
 /**
@@ -671,23 +688,18 @@
 	cursor: hand;
 	transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 }
-.juice-ui-confirm .juice-ui-confirm-button button.juice-ui-confirm-button-confirm {
-	background-color: #ffffff;
+.juice-ui-confirm .juice-ui-confirm-button button:focus {
+	border: solid 1px gray;
+}
+.juice-ui-confirm .juice-ui-confirm-button button:hover {
+	border: solid 1px gray;
+	background-color: #efefef;
 }
 .juice-ui-confirm .juice-ui-confirm-button button.juice-ui-confirm-button-confirm:after {
 	content: 'OK';
 }
-.juice-ui-confirm .juice-ui-confirm-button button.juice-ui-confirm-button-confirm:hover {
-	background-color: #efefef;
-}
-.juice-ui-confirm .juice-ui-confirm-button button.juice-ui-confirm-button-cancel {
-	background-color: #ffffff;
-}
 .juice-ui-confirm .juice-ui-confirm-button button.juice-ui-confirm-button-cancel:after {
 	content: 'CANCEL';
-}
-.juice-ui-confirm .juice-ui-confirm-button button.juice-ui-confirm-button-cancel:hover {
-	background-color: #efefef;
 }
 
 /**
@@ -740,20 +752,15 @@
 	cursor: hand;
 	transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 }
-.juice-ui-prompt .juice-ui-prompt-button button.juice-ui-prompt-button-confirm {
-	background-color: #ffffff;
+.juice-ui-prompt .juice-ui-prompt-button button:focus {
+	border: solid 1px gray;
 }
-.juice-ui-prompt .juice-ui-prompt-button button.juice-ui-prompt-button-confirm:hover {
+.juice-ui-prompt .juice-ui-prompt-button button:hover {
+	border: solid 1px gray;
 	background-color: #efefef;
 }
 .juice-ui-prompt .juice-ui-prompt-button button.juice-ui-prompt-button-confirm:after {
 	content: 'OK';
-}
-.juice-ui-prompt .juice-ui-prompt-button button.juice-ui-prompt-button-cancel {
-	background-color: #ffffff;
-}
-.juice-ui-prompt .juice-ui-prompt-button button.juice-ui-prompt-button-cancel:hover {
-	background-color: #efefef;
 }
 .juice-ui-prompt .juice-ui-prompt-button button.juice-ui-prompt-button-cancel:after {
 	content: 'CANCEL';

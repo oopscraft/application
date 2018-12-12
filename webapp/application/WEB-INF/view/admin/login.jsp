@@ -13,11 +13,53 @@
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/lib/juice/juice.css">
 		<script src="${pageContext.request.contextPath}/lib/juice/juice.js"></script>
 		<script src="${pageContext.request.contextPath}/lib/jquery.js"></script>
-		<link href="${pageContext.request.contextPath}/lib/icon/css/icon.css" rel="stylesheet">
+		<link href="${pageContext.request.contextPath}/icon/css/icon.css" rel="stylesheet">
+		
+ 		<!-- web font -->
+ 		<link href="${pageContext.request.contextPath}/font/font.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/font/font-kr.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/font/font-ja.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/font/font-zh.css" rel="stylesheet" type="text/css" />
+ 		
 		<script type="text/javascript">
-		var user = new juice.data.Map();
+		var user = new juice.data.Map({
+			id: null,
+			pasword: null
+		});
+		
+		/**
+		 * On document loaded
+		 */
+		$( document ).ready(function() {
+			$('#idInput').val('').focus();
+			
+			// enter key login
+			$(document).on('keyup', function(e) {
+				if(e.which == 13) {
+					console.log('13');
+					doLogin();
+				}
+			});
+			
+		});
+
+		/**
+		 * Login 
+		 */
 		function doLogin() {
-			var id = user.get('id');
+
+			if(juice.util.Validator.isEmpty(user.get('id'))){
+				$('#idInput').focus();
+				alert('아이디입력해라.');
+				return false;
+			}
+			
+			if(juice.util.Validator.isEmpty(user.get('password'))){
+				$('#passwordInput').focus();
+				alert('패스워드 입력해라');
+				return false;
+			}
+			
 			$.ajax({
 				 url: '/admin/login/processing'
 				,type: 'POST'
@@ -26,7 +68,8 @@
 					location.href='${pageContext.request.contextPath}/admin';
 		    	 }
 			 	,error: function(jqXHR, textStatus, errorThrown) {
-					$('#messageDiv').text(jqXHR.responseText);
+			 		var messageDiv = $('#messageDiv');
+			 		messageDiv.hide().html('<i class="icon-alert"></i>' + jqXHR.responseText).fadeIn();
 				 }
 			});
 		}
@@ -37,8 +80,7 @@
 			padding: 0px;
 			margin:0px;
 			padding:0px;
-			letter-spacing: -1px;
-			font-family: Verdana,Dotum,sans-serif;
+			font-family: font, font-kr, font-ja, font-zh, sans-serif;
 			font-size:11px;
 			color: #555;
 			line-height: 20px;
@@ -57,6 +99,35 @@
 			border-radius: 2px;
 			padding: 20px;
 			margin-bottom: 20vh;
+		}
+		#languageSelect {
+			margin: 0px;
+			padding-left: 0.5rem;
+			padding-right: 0.5rem;
+			color: #495057;
+			min-width: 100px;
+			-webkit-appearance: none;
+			border-radius: 2px;
+			border: 1px solid #cccccc;
+			background-clip: padding-box;
+			transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+			overflow: hidden;
+		}
+		button{
+			position:relative;
+			border: solid 1px #ccc;
+			border-radius: 1px;
+			background-color: #fafafa;
+			padding:0 1rem;
+			cursor:pointer;
+			transition:200ms ease all;
+			outline:none;
+			cursor: pointer;
+			cursor: hand;
+		}
+		button:hover{
+			border: solid 1px steelblue;
+			box-shadow: 0px 0px 1px 1px #ccc;
 		}
 		#loginButton {
 			width: 100%;
@@ -78,26 +149,30 @@
 			</div>
 			<div>
 				<i class="icon-user"></i>
-				<spring:message code="application.text.id"/>
-				<input data-juice="TextField" data-juice-bind="user.id"/>
+				<span style="font-weight:bold;"><spring:message code="application.text.id"/></span>
+				<input id="idInput" data-juice="TextField" data-juice-bind="user.id"/>
 			</div>
 			<div>
 				<i class="icon-key"></i>
-				<spring:message code="application.text.password"/>
-				<input type="password" data-juice="TextField" data-juice-bind="user.password"/>
+				<span style="font-weight:bold;"><spring:message code="application.text.password"/></span>
+				<input id="passwordInput" type="password" data-juice="TextField" data-juice-bind="user.password"/>
 			</div>
-			<div>
+			<div style="line-height:3rem;">
 				<i class="icon-globe"></i>
-				<spring:message code="application.label.language"/>
-				<select onchange="javascript:window.location = '?lang=' + this.value;">
-					<option value="en" ${pageContext.response.locale == 'en'?'selected':''}>English</option>
-					<option value="ko" ${pageContext.response.locale == 'ko'?'selected':''}>한국어</option>
+				<span style="font-weight:bold;">
+					<spring:message code="application.label.language"/>
+				</span>
+				<select id="languageSelect" onchange="javascript:window.location = '?lang=' + this.value;">
+						<option value="en" ${pageContext.response.locale == 'en'?'selected':''}>English</option>
+						<option value="ko" ${pageContext.response.locale == 'ko'?'selected':''}>한국어</option>
+						<option value="ja" ${pageContext.response.locale == 'ja'?'selected':''}>日本</option>
+						<option value="zh" ${pageContext.response.locale == 'zh'?'selected':''}>中国</option>
 				</select>
 			</div>
 			<div>
 				<button id="loginButton" onclick="javascript:doLogin();">
 					<i class="icon-login"></i>
-					Login
+					<spring:message code="application.label.login"/>
 				</button>
 			</div>
 			<div id="messageDiv">

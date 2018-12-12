@@ -8,6 +8,9 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class SystemEntity {
 	
+	@Column(name="SYS_EMBD_YN")
+	String embeddedYn;
+	
 	@Column(name="SYS_INST_DTTM")
 	Date insertDate;
 	
@@ -20,6 +23,12 @@ public class SystemEntity {
 	@Column(name="SYS_UPDT_USER_ID")
 	String updateUserId;
 	
+	public String getEmbeddedYn() {
+		return embeddedYn;
+	}
+	public void setEmbeddedYn(String embeddedYn) {
+		this.embeddedYn = embeddedYn;
+	}
 	public Date getInsertDate() {
 		return insertDate;
 	}
