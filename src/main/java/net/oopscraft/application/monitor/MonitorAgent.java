@@ -151,8 +151,8 @@ public class MonitorAgent extends Observable implements Runnable {
 		    	command = "cmd /C tasklist /FI \"STATUS eq running\" /V | sort /r /+65";
 		    	
 		    }else{
-		    	//command = "top -b -n1 -c";
-		    	command = "echo q | htop | aha --black --line-fix";
+		    	command = "top -b -n1 -c";
+		    	//command = "echo q | htop | aha --black --line-fix";
 		    }
 		    final StringBuffer topBuffer = new StringBuffer();
 		    try {
