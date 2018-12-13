@@ -105,28 +105,10 @@ function drawSystemLoadAverageChart(monitorInfos){
 				},
 			    animation: {
 			        duration: 0
-			    },
-				scales: {
-	                yAxes: [{
-						display: true,
-						ticks: {
-							min: 0,
-							max: 2,
-							stepSize: 0.5
-						}
-					}],
-				},
+			    }
 		    }
 		}
 	);
-	
-	// adjust core number to yAxes(core number = load average number)
-	var availableProcessors = monitorInfos[0].osInfo.availableProcessors;
-	var stepNumber = 3; 
-	var max = availableProcessors + (stepNumber - availableProcessors%stepNumber);
-	var stepSize = max/stepNumber; 
-	systemLoadAverageChart.options.scales.yAxes[0].ticks.max = max;
-	systemLoadAverageChart.options.scales.yAxes[0].ticks.stepSize = stepSize;
 	
 	systemLoadAverageChart.data.labels = [];
 	systemLoadAverageChart.data.datasets[0].data = [];
