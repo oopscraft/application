@@ -286,6 +286,8 @@ function updateClassCountChart(monitorInfo){
 	overflow: auto;
 	color: white;
 	background-color: black;
+	font-family: Courier New, Consolas;
+	line-height: 1rem;
 }
 </style>
 <div class="title1">
