@@ -147,7 +147,7 @@ public class MonitorAgent extends Observable implements Runnable {
 		    if(osName.contains("win")) {
 		    	command = "cmd /C tasklist /FI \"STATUS eq running\" /V | sort /r /+65";
 		    }else{
-		    	command = "top -b -n1";
+		    	command = "top -b -n1 -c";
 		    }
 		    Process process = null;
 		    InputStream is = null;
