@@ -35,12 +35,17 @@ function getMonitorInfos() {
 		,success: function(data, textStatus, jqXHR) {
 			console.log(data);
 			var monitorInfos = data;
+			var lastMonitorInfo = monitorInfos[monitorInfos.length-1];
+			
+			// updates top message.
+			$('#topDiv').html(lastMonitorInfo.top);
+			
+			// draws chart
 			drawSystemLoadAverageChart(monitorInfos);
 			drawMemoryUsageChart(monitorInfos);
 			drawClassCountChart(monitorInfos);
 			
 			// updates data
-			var lastMonitorInfo = monitorInfos[monitorInfos.length-1];
 			osInfo.fromJson(lastMonitorInfo.osInfo);
 			heapMemoryUsage.fromJson(lastMonitorInfo.memInfo.heapMemoryUsage);
 			nonHeapMemoryUsage.fromJson(lastMonitorInfo.memInfo.nonHeapMemoryUsage);
@@ -61,10 +66,14 @@ function startWebSocketReceive() {
 		var data = JSON.parse(event.data);
 		var id = data.id;
 		var message = data.message;
-		
-		//console.log(message);
+
 		if(id == 'monitorInfo'){
 			var monitorInfo = message;
+			
+			// updates top message
+			$('#topDiv').html(monitorInfo.top);
+
+			// updates chart
 			updateSystemLoadAverageChart(monitorInfo);
 			updateMemoryUsageChart(monitorInfo);
 			updateClassCountChart(monitorInfo);
@@ -271,10 +280,27 @@ function updateClassCountChart(monitorInfo){
 	display: flex;
 	justify-content: space-between;
 }
+#topDiv {
+	height: 25rem;
+	padding: 0rem 1rem;
+	overflow: auto;
+	color: white;
+	background-color: black;
+}
 </style>
 <div class="title1">
 	<i class="icon-monitor"></i>
 	<spring:message code="application.text.monitor"/>
+</div>
+<div class="container">
+	<div id="threadInfosDiv" class="division" style="width:100%;">
+		<div class="title2" style="width:100%;border-bottom:dotted 1px #ccc;">
+			<i class="icon-file"></i>
+			Table of Processes
+		</div>
+		<pre id="topDiv">
+		</pre>
+	</div>
 </div>
 <div class="container">
 	<div id="systemLoadAverageDiv" class="division" style="width:33%;">

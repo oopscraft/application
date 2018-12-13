@@ -38,6 +38,7 @@ public class MonitorInfo {
 	}
 
 	Date date = new Date();
+	String top;
 	Map<OsInfo, Object> osInfo = new LinkedHashMap<OsInfo, Object>();
 	Map<MemInfo, Object> memInfo = new LinkedHashMap<MemInfo, Object>();
 	Map<ClassInfo, Object> classInfo = new LinkedHashMap<ClassInfo, Object>();
@@ -47,6 +48,14 @@ public class MonitorInfo {
 		return date;
 	}
 
+	public void setTop(String top) {
+		this.top = top;
+	}
+	
+	public String getTop() {
+		return this.top;
+	}
+	
 	public void setDate(Date date) {
 		this.date = date;
 	}
