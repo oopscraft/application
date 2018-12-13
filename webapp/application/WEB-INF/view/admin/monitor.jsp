@@ -291,6 +291,7 @@ function updateClassCountChart(monitorInfo){
 #topDiv {
 	width: 100%;
 	height: 20rem;
+    padding: 0rem 1rem;
 	white-space: pre-wrap;       /* css-3 */
 	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
 	white-space: -pre-wrap;      /* Opera 4-6 */
@@ -298,7 +299,7 @@ function updateClassCountChart(monitorInfo){
 	word-wrap: break-word;       /* Internet Explorer 5.5+ */
 	background-color: black;
 	color: white;
-	font-family: Courier New;
+	font-family: Consolas;
 	overflow: scroll;
 }
 </style>
