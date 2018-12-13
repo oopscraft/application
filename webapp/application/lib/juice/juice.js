@@ -94,7 +94,6 @@ juice.data.Map = function(json) {
 	}
 	this.readonly = {};
 	this.enable = true;
-	this.focus = null;
 }
 juice.data.Map.prototype = Object.create(juice.data.__.prototype);
 juice.data.Map.prototype.fromJson = function(json) {
@@ -168,13 +167,13 @@ juice.data.Map.prototype.insertChildNode = function(index,map){
 juice.data.Map.prototype.removeChildNode = function(index){
 	this.childNodes.splice(index,1);
 }
-// sets readonly property
-juice.data.Map.prototype.setReadonly = function(name, readonly){
-	this.readonly[name] = readonly;
-	this.notifyObservers();
-}
 juice.data.Map.prototype.setEnable = function(enable){
 	this.enable = enable;
+	this.notifyObservers();
+}
+//sets readonly property
+juice.data.Map.prototype.setReadonly = function(name, readonly){
+	this.readonly[name] = readonly;
 	this.notifyObservers();
 }
 juice.data.Map.prototype.beforeChange = function(listener){
@@ -183,6 +182,8 @@ juice.data.Map.prototype.beforeChange = function(listener){
 juice.data.Map.prototype.afterChange = function(listener){
 	this.listener.afterChange = listener;
 }
+//Prevents prototype changed.
+Object.freeze(juice.data.Map.prototype);
 
 //-----------------------------------------------------------------------------
 // juice.data.List prototype
@@ -765,9 +766,9 @@ juice.ui.Label.prototype.update = function() {
 	if(this.format){
 		var parsedFormat = this.parseFormat(this.format);
 		if(parsedFormat.type == 'date'){
-			value = juice.util.Formatter.toDateFormat(value, parsedFormat.body);
+			value = juice.util.formatter.toDateFormat(value, parsedFormat.body);
 		}else if(parsedFormat.type == 'number'){
-			value = juice.util.Formatter.toNumberFormat(value, parsedFormat.body);
+			value = juice.util.formatter.toNumberFormat(value, parsedFormat.body);
 		}
 	}
 	this.label.appendChild(this.createHtml(value));
@@ -810,9 +811,6 @@ juice.ui.TextField.prototype.setReadonly = function(readonly){
 	}else{
 		this.input.removeAttribute('readOnly');
 	}
-}
-juice.ui.TextField.prototype.focus = function(){
-	this.input.focus();
 }
 
 //-----------------------------------------------------------------------------
@@ -865,9 +863,6 @@ juice.ui.ComboBox.prototype.setReadonly = function(readonly){
 	}else{
 		this.removeAttribute('readonly');
 	}
-}
-juice.ui.ComboBox.prototype.focus = function() {
-	this.select.focus();
 }
 
 //-----------------------------------------------------------------------------
@@ -935,9 +930,6 @@ juice.ui.Radio.prototype.update = function(){
 juice.ui.Radio.prototype.setReadonly = function(readonly){
 	// TODO
 }
-juice.ui.Radio.prototype.focus = function(){
-	// TODO
-}
 
 //-----------------------------------------------------------------------------
 // juice.ui.TextArea prototype
@@ -975,9 +967,6 @@ juice.ui.TextArea.prototype.setReadonly = function(readonly){
 	}else{
 		this.textarea.removeAttribute('readonly');
 	}
-}
-juice.ui.TextArea.prototype.focus = function(){
-	// TODO
 }
 
 //-----------------------------------------------------------------------------
@@ -2780,9 +2769,9 @@ juice.ui.Prompt.prototype.afterCancel = function(listener){
 juice.util = {};
 
 //-----------------------------------------------------------------------------
-// juice.util.Validator
+// juice.util.validator
 //-----------------------------------------------------------------------------
-juice.util.Validator = {
+juice.util.validator = {
 	isEmpty: function(value) {
 		if(value === null || value === undefined || value.trim().length < 1){
 			return true;
@@ -2790,16 +2779,28 @@ juice.util.Validator = {
 			return false;
 		}
 	},
-	isAphabet: function(value){
-		var pattern = /[a-zA-Z]{1,}/;
-		return pattern.test(value);
-	},
-	isAphabatNumber: function(value){
-		var pattern = /[a-zA-Z0-9]{1,}/;
-		return pattern.test(value);
-	},
 	isNumber: function(value){
-		var pattern = /[0-9]{1,}/;
+		var pattern = /^[0-9]{1,}$/;
+		return pattern.test(value);
+	},
+	isAphabet: function(value){
+		var pattern = /^[a-zA-Z]{1,}$/;
+		return pattern.test(value);
+	},
+	isAphabetNumber: function(value){
+		var pattern = /^[a-zA-Z0-9]{1,}$/;
+		return pattern.test(value);
+	},
+	isDecimal: function(value){
+		var pattern = /^[0-9\,\.]{1,}$/;
+		return pattern.test(value);
+	},
+	/**
+	 * Checks generic ID (alphabet + number + -,_), but does not check length.
+	 * @Param {String} value for checking.
+	 */
+	isGenericId: function(value){
+		var pattern = /^[a-zA-Z0-9\-\_]{1,}$/;
 		return pattern.test(value);
 	},
 	isEmailAddress: function(value){
@@ -2817,9 +2818,9 @@ juice.util.Validator = {
 }
 
 //-----------------------------------------------------------------------------
-//juice.util.Formatter
+//juice.util.formatter
 //-----------------------------------------------------------------------------
-juice.util.Formatter = {
+juice.util.formatter = {
 	toDateFormat: function(date, format){
 		String.prototype.string = function(len){var s = '', i = 0; while (i++ < len) { s += this; } return s;};
 		String.prototype.zf = function(len){return "0".string(len - this.length) + this;};

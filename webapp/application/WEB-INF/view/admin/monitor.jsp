@@ -17,37 +17,72 @@ var nonHeapMemoryUsage = new juice.data.Map();
 var classInfo = new juice.data.Map();
 var threadInfos = new juice.data.List();
 
-// Adds webSocket handler
-__webSocketClient.addMessageHandler(function(event){
-	var message = JSON.parse(event.data).message;
-	//console.log(message);
-	updateSystemLoadAverageChart(message);
-	updateMemoryUsageChart(message);
-	updateClassCountChart(message);
-
-	var lastMonitorInfo = message[message.length-1];
-	osInfo.fromJson(lastMonitorInfo.osInfo);
-	heapMemoryUsage.fromJson(lastMonitorInfo.memInfo.heapMemoryUsage);
-	nonHeapMemoryUsage.fromJson(lastMonitorInfo.memInfo.nonHeapMemoryUsage);
-	classInfo.fromJson(lastMonitorInfo.classInfo);
-	threadInfos.fromJson(lastMonitorInfo.threadInfos);
-});
-
 /**
  * On document loaded
  */
 $( document ).ready(function() {
-	drawSystemLoadAverageChart();
-	drawMemoryUsageChart();
-	drawClassCountChart();
-	
-	__webSocketClient.send(JSON.stringify({id:'monitorInfo'}));
+	getMonitorInfos();
 });
+
+/**
+ * Gets monitorInfos
+ */
+function getMonitorInfos() {
+	$.ajax({
+		 url: 'monitor/getMonitorInfos'
+		,type: 'GET'
+		,data: {}
+		,success: function(data, textStatus, jqXHR) {
+			console.log(data);
+			var monitorInfos = data;
+			drawSystemLoadAverageChart(monitorInfos);
+			drawMemoryUsageChart(monitorInfos);
+			drawClassCountChart(monitorInfos);
+			
+			// updates data
+			var lastMonitorInfo = monitorInfos[monitorInfos.length-1];
+			osInfo.fromJson(lastMonitorInfo.osInfo);
+			heapMemoryUsage.fromJson(lastMonitorInfo.memInfo.heapMemoryUsage);
+			nonHeapMemoryUsage.fromJson(lastMonitorInfo.memInfo.nonHeapMemoryUsage);
+			classInfo.fromJson(lastMonitorInfo.classInfo);
+			threadInfos.fromJson(lastMonitorInfo.threadInfos);
+			
+			// starts websocket receive
+			startWebSocketReceive();
+  	 	}
+	});	
+}
+
+/**
+ * Starts webSocket receive
+ */
+function startWebSocketReceive() {
+	__webSocketClient.addMessageHandler(function(event){
+		var data = JSON.parse(event.data);
+		var id = data.id;
+		var message = data.message;
+		
+		//console.log(message);
+		if(id == 'monitorInfo'){
+			var monitorInfo = message;
+			updateSystemLoadAverageChart(monitorInfo);
+			updateMemoryUsageChart(monitorInfo);
+			updateClassCountChart(monitorInfo);
+
+			// updates data
+			osInfo.fromJson(monitorInfo.osInfo);
+			heapMemoryUsage.fromJson(monitorInfo.memInfo.heapMemoryUsage);
+			nonHeapMemoryUsage.fromJson(monitorInfo.memInfo.nonHeapMemoryUsage);
+			classInfo.fromJson(monitorInfo.classInfo);
+			threadInfos.fromJson(monitorInfo.threadInfos);
+		}
+	});
+}
 
 /**
  * Draws systemLoadAverageChart
  */
-function drawSystemLoadAverageChart(){
+function drawSystemLoadAverageChart(monitorInfos){
 	systemLoadAverageChart = new Chart(
 		document.getElementById('systemLoadAverageChart').getContext('2d'),{
 		    type: 'line',
@@ -84,15 +119,9 @@ function drawSystemLoadAverageChart(){
 		    }
 		}
 	);
-}
-
-/**
- * Updates systemLoadAverageChart
- */
-function updateSystemLoadAverageChart(message){
 	
 	// adjust core number to yAxes(core number = load average number)
-	var availableProcessors = message[0].osInfo.availableProcessors;
+	var availableProcessors = monitorInfos[0].osInfo.availableProcessors;
 	var stepNumber = 3; 
 	var max = availableProcessors + (stepNumber - availableProcessors%stepNumber);
 	var stepSize = max/stepNumber; 
@@ -101,7 +130,7 @@ function updateSystemLoadAverageChart(message){
 	
 	systemLoadAverageChart.data.labels = [];
 	systemLoadAverageChart.data.datasets[0].data = [];
-	message.forEach(function(monitorInfo){
+	monitorInfos.forEach(function(monitorInfo){
 		systemLoadAverageChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
 		systemLoadAverageChart.data.datasets[0].data.push(monitorInfo.osInfo.systemLoadAverage);
 	});
@@ -109,9 +138,20 @@ function updateSystemLoadAverageChart(message){
 }
 
 /**
+ * Updates systemLoadAverageChart
+ */
+function updateSystemLoadAverageChart(monitorInfo){
+	systemLoadAverageChart.data.labels.shift();
+	systemLoadAverageChart.data.datasets[0].data.shift();
+	systemLoadAverageChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
+	systemLoadAverageChart.data.datasets[0].data.push(monitorInfo.osInfo.systemLoadAverage);
+	systemLoadAverageChart.update();
+}
+
+/**
  * Draws memoryUsageChart
  */
-function drawMemoryUsageChart(){
+function drawMemoryUsageChart(monitorInfos){
 	memoryUsageChart = new Chart(
 		document.getElementById('memoryUsageChart').getContext('2d'),{
 		    type: 'line',
@@ -152,15 +192,11 @@ function drawMemoryUsageChart(){
 		    }
 		}
 	);
-}
-
-/**
- * Updates systemLoadAverageChart
- */
-function updateMemoryUsageChart(message){
+	
+	// updates chart data
 	memoryUsageChart.data.labels = [];
 	memoryUsageChart.data.datasets[0].data = [];
-	message.forEach(function(monitorInfo){
+	monitorInfos.forEach(function(monitorInfo){
 		memoryUsageChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
 		memoryUsageChart.data.datasets[0].data.push(monitorInfo.memInfo.heapMemoryUsage.max/1024);
 		memoryUsageChart.data.datasets[1].data.push(monitorInfo.memInfo.heapMemoryUsage.used/1024);
@@ -170,9 +206,24 @@ function updateMemoryUsageChart(message){
 }
 
 /**
+ * Updates systemLoadAverageChart
+ */
+function updateMemoryUsageChart(monitorInfo){
+	memoryUsageChart.data.labels.shift();
+	memoryUsageChart.data.datasets[0].data.shift();
+	memoryUsageChart.data.datasets[1].data.shift();
+	memoryUsageChart.data.datasets[2].data.shift();
+	memoryUsageChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
+	memoryUsageChart.data.datasets[0].data.push(monitorInfo.memInfo.heapMemoryUsage.max/1024);
+	memoryUsageChart.data.datasets[1].data.push(monitorInfo.memInfo.heapMemoryUsage.used/1024);
+	memoryUsageChart.data.datasets[2].data.push(monitorInfo.memInfo.nonHeapMemoryUsage.used/1024);
+	memoryUsageChart.update();
+}
+
+/**
  * Draws classCountChart
  */
-function drawClassCountChart(){
+function drawClassCountChart(monitorInfos){
 	classCountChart = new Chart(
 		document.getElementById('classCountChart').getContext('2d'),{
 		    type: 'line',
@@ -206,19 +257,29 @@ function drawClassCountChart(){
 		    }
 		}
 	);
+	
+	// updates chart data
+	classCountChart.data.labels = [];
+	classCountChart.data.datasets[0].data = [];
+	classCountChart.data.datasets[1].data = [];
+	monitorInfos.forEach(function(monitorInfo){
+		classCountChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
+		classCountChart.data.datasets[0].data.push(monitorInfo.classInfo.loadedClassCount);
+		classCountChart.data.datasets[1].data.push(monitorInfo.classInfo.unloadedClassCount);
+	});
+	classCountChart.update();
 }
 
 /**
  * Updates classCountChart
  */
-function updateClassCountChart(message){
-	classCountChart.data.labels = [];
-	classCountChart.data.datasets[0].data = [];
-	message.forEach(function(monitorInfo){
-		classCountChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
-		classCountChart.data.datasets[0].data.push(monitorInfo.classInfo.loadedClassCount);
-		classCountChart.data.datasets[1].data.push(monitorInfo.classInfo.unloadedClassCount);
-	});
+function updateClassCountChart(monitorInfo){
+	classCountChart.data.labels.shift();
+	classCountChart.data.datasets[0].data.shift();
+	classCountChart.data.datasets[1].data.shift();
+	classCountChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
+	classCountChart.data.datasets[0].data.push(monitorInfo.classInfo.loadedClassCount);
+	classCountChart.data.datasets[1].data.push(monitorInfo.classInfo.unloadedClassCount);
 	classCountChart.update();
 }
 

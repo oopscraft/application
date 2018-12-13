@@ -14,7 +14,7 @@ import net.oopscraft.application.user.repository.GroupRepository;
 
 @Service
 public class GroupService {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(GroupService.class);
 
 	@Autowired
@@ -46,7 +46,7 @@ public class GroupService {
 	 */
 	public Group getGroup(String id) throws Exception {
 		Group group = groupRepository.findOne(id);
-		if(group != null) {
+		if (group != null) {
 			fillChildGroupRecursively(group);
 		}
 		return group;
@@ -65,17 +65,18 @@ public class GroupService {
 			fillChildGroupRecursively(childGroup);
 		}
 	}
-	
+
 	/**
 	 * Gets bread crumbs
+	 * 
 	 * @param id
 	 * @return
 	 */
-	public List<Group> getBreadCrumbs(String id){
+	public List<Group> getBreadCrumbs(String id) {
 		List<Group> breadCrumbs = new ArrayList<Group>();
-		while(id != null) {
+		while (id != null) {
 			Group group = groupRepository.findOne(id);
-			if(group != null) {
+			if (group != null) {
 				breadCrumbs.add(group);
 				id = group.getUpperId();
 				continue;
@@ -97,67 +98,27 @@ public class GroupService {
 		if (one == null) {
 			one = new Group();
 			one.setId(group.getId());
-			one.setUpperId(group.upperId);
-			one.setDisplaySeq(getNewDisplaySeq(group.getUpperId()));
-		}else {
-			if(isUpperIdChanged(one.getUpperId(), group.getUpperId())) {
-				one.setUpperId(group.getUpperId());
-				one.setDisplaySeq(getNewDisplaySeq(group.getUpperId()));
-			}else {
-				one.setDisplaySeq(group.getDisplaySeq());
-			}
 		}
-		
+
 		// Checks id and upperId is same.
-		if(one.getId().equals(one.getUpperId()) == true) {
+		if (one.getId().equals(one.getUpperId()) == true) {
 			throw new Exception("Group.id and Group.upperId is same.(infinit loop)");
 		}
-		
+
 		// sets properties
+		one.setUpperId(group.upperId);
 		one.setName(group.getName());
 		one.setDescription(group.getDescription());
+		one.setDisplaySeq(group.getDisplaySeq());
 
 		// adds roles
 		one.setRoles(group.getRoles());
-		
+
 		// adds authorities
 		one.setAuthorities(group.getAuthorities());
 
 		groupRepository.save(one);
 		return groupRepository.findOne(group.getId());
-	}
-	
-	/**
-	 * Checks upperId is changed.
-	 * @param currentUpperId
-	 * @param newUpperId
-	 * @return
-	 */
-	private boolean isUpperIdChanged(String currentUpperId, String newUpperId) {
-		if(currentUpperId == null) {
-			if(newUpperId != null) {
-				return true;
-			}
-		}else {
-			if(!currentUpperId.equals(newUpperId)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Returns new displaySeq
-	 * @param upperId
-	 * @return
-	 * @throws Exception
-	 */
-	private int getNewDisplaySeq(String upperId) throws Exception {
-		if(upperId == null) {
-			return groupRepository.findByUpperIdIsNullOrderByDisplaySeqAsc().size() + 1;
-		}else {
-			return groupRepository.findByUpperIdOrderByDisplaySeqAsc(upperId).size() + 1;
-		}
 	}
 
 	/**
@@ -168,13 +129,13 @@ public class GroupService {
 	 */
 	public Group removeGroup(String id) throws Exception {
 		Group group = groupRepository.getOne(id);
-		
+
 		// checks child groups
 		List<Group> childGroups = groupRepository.findByUpperIdOrderByDisplaySeqAsc(id);
-		if(childGroups.size() > 0) {
-			throw new Exception("fdsafdsa");
+		if (childGroups.size() > 0) {
+			throw new Exception("Can not remove.because has child groups.");
 		}
-		
+
 		// deletes group
 		groupRepository.delete(group);
 		return group;

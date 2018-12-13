@@ -66,12 +66,12 @@ function getAuthorities(page) {
  * Gets authority
  */
 function getAuthority(id) {
-	authority.setEnable(true);
 	$.ajax({
 		 url: 'authority/getAuthority'
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
+			authority.setEnable(true);
 			authority.fromJson(data);
 			$('#authorityTable').hide().fadeIn();
   	 	}
@@ -114,6 +114,7 @@ function addAuthority() {
 			authorities.clearIndex();
 			authority.fromJson({});
 			authority.set('id', id);
+			authority.setEnable(true);
 		})
 		.open();
 }
@@ -122,15 +123,18 @@ function addAuthority() {
  * Saves authority.
  */
 function saveAuthority() {
+	
+	// Checks validation of authority
+	if(juice.util.validator.isEmpty(authority.get('name'))){
+		<spring:message code="application.text.name" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		return false;
+	}
+	
+	// Saves authority
 	<spring:message code="application.text.authority" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
-		.beforeConfirm(function(){
-			if(authority.get('name') == null) {
-				alert('fdsa');
-				return false;
-			}
-		})
 		.afterConfirm(function() {
 			var authorityJson = authority.toJson();
 			$.ajax({
@@ -156,12 +160,13 @@ function saveAuthority() {
  */
 function removeAuthority() {
 
-	// check embedded data
+	// Checks embedded data
 	if(authority.get('embeddedYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemoveEmbeddedItem"/>').open();
+		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.embeddedData"/>').open();
 		return false;
 	}
 	
+	// Removes authority
 	<spring:message code="application.text.authority" var="item"/>
 	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
@@ -175,6 +180,8 @@ function removeAuthority() {
 				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
 				new juice.ui.Alert(message)
 				.afterConfirm(function(){
+					authority.fromJson({});
+					authority.setEnable(false);
 					getAuthorities();
 				}).open();
 	  	 	}
@@ -241,10 +248,10 @@ function removeAuthority() {
 					<td class="text-center">
 						{{authoritySearch.get('rows')*(authoritySearch.get('page')-1)+$context.index+1}}
 					</td>
-					<td class="text-left {{$context.authority.get('embeddedYn')=='Y'?'embedded':''}}">
+					<td class="{{$context.authority.get('embeddedYn')=='Y'?'embedded':''}}">
 						<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
 					</td>
-					<td class="text-left"><label data-juice="Label" data-juice-bind="authority.name"></label></td>
+					<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
 				</tr>
 			</tbody>
 		</table>

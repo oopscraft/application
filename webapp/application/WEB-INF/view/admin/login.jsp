@@ -48,13 +48,13 @@
 		 */
 		function doLogin() {
 
-			if(juice.util.Validator.isEmpty(user.get('id'))){
+			if(juice.util.validator.isEmpty(user.get('id'))){
 				$('#idInput').focus();
 				alert('아이디입력해라.');
 				return false;
 			}
 			
-			if(juice.util.Validator.isEmpty(user.get('password'))){
+			if(juice.util.validator.isEmpty(user.get('password'))){
 				$('#passwordInput').focus();
 				alert('패스워드 입력해라');
 				return false;

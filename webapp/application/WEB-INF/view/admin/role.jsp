@@ -31,13 +31,14 @@ var roleSearchKeys = [
 var roles = new juice.data.List();
 var role = new juice.data.Map();
 role.setReadonly('id', true);
+role.setEnable(false);
 var authorities = new juice.data.List();
 
 /**
  * On document loaded
  */
 $( document ).ready(function() {
-	getRoles(1);
+	getRoles();
 });
 
 /**
@@ -55,6 +56,12 @@ function getRoles(page) {
 			roles.fromJson(data);
 			roleSearch.set('totalCount', __parseTotalCount(jqXHR));
 			$('#rolesTable').hide().fadeIn();
+			
+			//  find current row index.			
+			var index = roles.indexOf(function(row){
+				return row.get('id') == role.get('id');
+			});
+			roles.setIndex(index);
    	 	}
 	});	
 }
@@ -68,6 +75,7 @@ function getRole(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
+			role.setEnable(true);
 			role.fromJson(data);
 			authorities.fromJson(data.authorities);
 			$('#roleTable').hide().fadeIn();
@@ -111,6 +119,7 @@ function addRole() {
 			roles.clearIndex();
 			role.fromJson({});
 			role.set('id', id);
+			role.setEnable(true);
 			authorities.fromJson([]);
 		})
 		.open();
@@ -146,15 +155,18 @@ function removeAuthority(index){
  * Saves Role
  */
 function saveRole(){
+	
+	// Checks validation of authority
+	if(juice.util.validator.isEmpty(role.get('name'))){
+		<spring:message code="application.text.name" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		return false;
+	}
+	
+	// Saves role
 	<spring:message code="application.text.role" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
-		.beforeConfirm(function(){
-			if(role.get('name') == null){
-				alert('fdsafdsa');
-				return false;
-			}
-		})
 		.afterConfirm(function() {
 			var roleJson = role.toJson();
 			roleJson.authorities = authorities.toJson();
@@ -181,6 +193,14 @@ function saveRole(){
  * Removes role
  */
 function removeRole() {
+	
+	// Checks embedded data
+	if(role.get('embeddedYn') == 'Y'){
+		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.embeddedData"/>').open();
+		return false;
+	}
+	
+	// Removes role
 	<spring:message code="application.text.role" var="item"/>
 	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
@@ -194,6 +214,8 @@ function removeRole() {
 				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
 				new juice.ui.Alert(message)
 				.afterConfirm(function(){
+					role.fromJson({});
+					role.setEnable(false);
 					getRoles();
 				}).open();
 	  	 	}
@@ -258,8 +280,12 @@ function removeRole() {
 					<td class="text-center">
 						{{roleSearch.get('rows')*(roleSearch.get('page')-1)+$context.index+1}}
 					</td>
-					<td><label data-juice="Label" data-juice-bind="role.id" class="id"></label></td>
-					<td><label data-juice="Label" data-juice-bind="role.name"></label></td>
+					<td class="{{$context.role.get('embeddedYn')=='Y'?'embedded':''}}">
+						<label data-juice="Label" data-juice-bind="role.id" class="id"></label>
+					</td>
+					<td>
+						<label data-juice="Label" data-juice-bind="role.name"></label>
+					</td>
 				</tr>
 			</tbody>
 		</table>

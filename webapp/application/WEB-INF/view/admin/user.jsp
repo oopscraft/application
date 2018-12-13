@@ -271,7 +271,7 @@ function removeUser(){
 	
 	// check embedded data
 	if(user.get('embeddedYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemoveEmbeddedItem"/>').open();
+		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.embeddedData"/>').open();
 		return false;
 	}
 	

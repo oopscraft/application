@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -12,9 +13,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import net.oopscraft.application.core.jpa.SystemEntity;
+import net.oopscraft.application.core.jpa.SystemEntityListener;
+
 @Entity
 @Table(name = "APP_GROUP_INFO")
-public class Group {
+@EntityListeners(SystemEntityListener.class)
+public class Group extends SystemEntity {
 
 	@Id
 	@Column(name = "GROUP_ID")
