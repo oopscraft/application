@@ -88,13 +88,11 @@ function startWebSocketReceive() {
 	});
 }
 
+/**
+ * Prints TOP contents.
+ */
 function printTop(top) {
-	var iframe = document.getElementById('topFrame');
-	var resultDoc = iframe.contentDocument;
-	resultDoc.open();
-	resultDoc.write(top);
-	resultDoc.close();
-
+	$('#topDiv').html(top);
 }
 
 /**
@@ -290,21 +288,19 @@ function updateClassCountChart(monitorInfo){
 	justify-content: space-between;
 }
 
-#topFrame {
-	width: 100%;
-	border: none;
-}
-/*
 #topDiv {
-	height: 25rem;
-	padding: 0rem 1rem;
-	overflow: auto;
-	color: white;
+	width: 100%;
+	height: 20rem;
+	white-space: pre-wrap;       /* css-3 */
+	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
 	background-color: black;
-	font-family: Courier New, Consolas;
-	line-height: 1rem;
+	color: white;
+	font-family: Courier New;
+	overflow: scroll;
 }
-*/
 </style>
 <div class="title1">
 	<i class="icon-monitor"></i>
@@ -316,11 +312,9 @@ function updateClassCountChart(monitorInfo){
 			<i class="icon-file"></i>
 			Table of Processes
 		</div>
-		<!-- 
-		<pre id="topDiv">
-		</pre>
-		 -->
-		<iframe id="topFrame"></iframe>
+		<br/>
+		<div id="topDiv">
+		</div>
 	</div>
 </div>
 <div class="container">

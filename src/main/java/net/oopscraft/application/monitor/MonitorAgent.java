@@ -1,8 +1,5 @@
 package net.oopscraft.application.monitor;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -14,7 +11,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -154,7 +150,9 @@ public class MonitorAgent extends Observable implements Runnable {
 			    }else{
 			    	//processExecutor.setCommand("top -b -n1 -c");
 			    	processExecutor.setCommand(new String[] {
-			    		"/bin/sh","-c","echo q | htop | aha --black --line-fix" 
+			    		"/bin/sh"
+			    		,"-c"
+			    		,"ps aux --sort -%cpu,%mem | head -30" 
 			    	});
 			    }
 			    processExecutor.setProcessStreamHandler(new ProcessStreamHandler() {
