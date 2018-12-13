@@ -145,19 +145,18 @@ public class MonitorAgent extends Observable implements Runnable {
 			}
 			
 			// Getting process info via command
-		    String osName = System.getProperty("os.name").toLowerCase();
-		    String command = null;
-		    if(osName.contains("win")) {
-		    	command = "cmd /C tasklist /FI \"STATUS eq running\" /V | sort /r /+65";
-		    	
-		    }else{
-		    	command = "top -b -n1 -c";
-		    	//command = "echo q | htop | aha --black --line-fix";
-		    }
 		    final StringBuffer topBuffer = new StringBuffer();
+		    ProcessExecutor processExecutor = new ProcessExecutor();
 		    try {
-			    ProcessExecutor processExecutor = new ProcessExecutor();
-			    processExecutor.setCommand(command);
+			    String osName = System.getProperty("os.name").toLowerCase();
+			    if(osName.contains("win")) {
+				    processExecutor.setCommand("cmd /C tasklist /FI \"STATUS eq running\" /V | sort /r /+65");
+			    }else{
+			    	//processExecutor.setCommand("top -b -n1 -c");
+			    	processExecutor.setCommand(new String[] {
+			    		"/bin/sh","-c","echo q | htop | aha --black --line-fix" 
+			    	});
+			    }
 			    processExecutor.setProcessStreamHandler(new ProcessStreamHandler() {
 					@Override
 					public void readLine(String line) {
