@@ -154,7 +154,7 @@ public class MonitorAgent extends Observable implements Runnable {
 			    }else{
 			    	//processExecutor.setCommand("top -b -n1 -c");
 			    	processExecutor.setCommand(new String[] {
-			    		"/bin/sh","-c","echo q | htop | aha --black --line-fix" 
+			    		"/bin/sh","-c","echo q | htop | aha --black --line-fix --no-header" 
 			    	});
 			    }
 			    processExecutor.setProcessStreamHandler(new ProcessStreamHandler() {
