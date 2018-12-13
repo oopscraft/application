@@ -1,7 +1,5 @@
 package net.oopscraft.application.admin;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -19,7 +17,8 @@ public class AdminWebSocketHandler extends net.oopscraft.application.core.spring
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdminWebSocketHandler.class);
 
 	public enum MessageId {
-		monitorInfo;
+		 monitorInfos
+		,monitorInfo
 	}
 
 	MonitorAgent monitorAgent;
@@ -34,8 +33,8 @@ public class AdminWebSocketHandler extends net.oopscraft.application.core.spring
 			monitorAgent = MonitorAgent.getInstance();
 			monitorListener = new MonitorListener() {
 				@Override
-				public void onCheck(List<MonitorInfo> monitorInfoList) throws Exception {
-					String message = createMessage(MessageId.monitorInfo, monitorInfoList);
+				public void onCheck(MonitorInfo monitorInfo) throws Exception {
+					String message = createMessage(MessageId.monitorInfo, monitorInfo);
 					broadcastMessage(message);
 				}
 			};
@@ -84,12 +83,16 @@ public class AdminWebSocketHandler extends net.oopscraft.application.core.spring
 		try {
 			ValueMap messageMap = JsonUtils.toObject(message.getPayload(), ValueMap.class);
 			MessageId messageId = MessageId.valueOf(messageMap.getString("id"));
+			String responseMessage = null;
 			switch(messageId){
-			case monitorInfo :
-				String responseMessage = createMessage(messageId, monitorAgent.getMonitorInfoList());
-				this.sendMessage(session, responseMessage);
+			case monitorInfos :
+				responseMessage = createMessage(messageId, monitorAgent.getMonitorInfos());
+			break;
+			case monitorInfo : 
+				responseMessage = createMessage(messageId, monitorAgent.getMonitorInfo());
 			break;
 			}
+			this.sendMessage(session, responseMessage);
 		} catch (Exception ignore) {
 			LOGGER.warn(ignore.getMessage());
 			sendMessage(session, ignore.getMessage());

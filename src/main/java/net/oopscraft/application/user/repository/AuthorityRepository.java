@@ -6,9 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import net.oopscraft.application.user.Authority;
+import net.oopscraft.application.user.User;
 
 @Repository
 public interface AuthorityRepository extends JpaRepository<Authority,String> {
+	
+	public Page<Authority> findAllByOrderByEmbeddedYnDescInsertDateDesc(Pageable pageable) throws Exception;
 
 	public Page<Authority> findByIdStartingWith(String id, Pageable pageable) throws Exception;
 	

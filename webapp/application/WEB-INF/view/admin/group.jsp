@@ -11,6 +11,7 @@
 var groups = new juice.data.Tree();
 var group = new juice.data.Map();
 group.setReadonly('id',true);
+group.setEnable(false);
 var roles = new juice.data.List();
 var authorities = new juice.data.List();
 
@@ -35,6 +36,12 @@ function getGroups() {
 
 			// animates groups
 			$('#groupsUl').hide().fadeIn();
+			
+			// find current node index
+			var index = groups.indexOf(function(node){
+				return node.get('id') == group.get('id');
+			});
+			groups.setIndex(index);
    	 	}
 	});	
 }
@@ -48,10 +55,10 @@ function getGroup(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
+			group.setEnable(true);
 			group.fromJson(data);
 			roles.fromJson(data.roles);
 			authorities.fromJson(data.authorities);
-			group.setReadonly('id',true);
 			
 			// breadcrumbs
 			getBreadCrumbs(group.get('upperId'),function(breadCrumbs){
@@ -123,6 +130,14 @@ function changeUpperId(){
 }
 
 /**
+ * Clears upperId
+ */
+function clearUpperId(){
+	group.set('upperId',null);
+	group.set('breadCrumbs', '');
+}
+
+/**
  * Adds Role
  */
 function addRole(){
@@ -175,12 +190,18 @@ function removeAuthority(index){
 /**
  * Adds child group
  */
-function addChildGroup(upperId) {
+function addGroup(upperId) {
 	
 	<spring:message code="application.text.id" var="item"/>
 	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
 		.beforeConfirm(function(event){
 			var id = event.value;
+			
+			// Validates id value
+			if(juice.util.validator.isGenericId(id) == false){
+				new juice.ui.Alert('<spring:message code="application.message.invalidIdValue"/>').open();
+				return false;
+			}
 			
 			// checks duplicated id.
 			var isDuplicated = false;
@@ -225,15 +246,18 @@ function addChildGroup(upperId) {
  * Saves group
  */
 function saveGroup(){
+	
+	// Checks validation of authority
+	if(juice.util.validator.isEmpty(group.get('name'))){
+		<spring:message code="application.text.name" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		return false;
+	}
+	
+	// Saves group
 	<spring:message code="application.text.group" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
-		.beforeConfirm(function(){
-			if(group.get('name') == null){
-				alert('fdasfdsa');
-				return false;
-			}
-		})
 		.afterConfirm(function() {
 			var groupJson = group.toJson();
 			groupJson.roles = roles.toJson();
@@ -261,6 +285,25 @@ function saveGroup(){
  * Removes group
  */
 function removeGroup() {
+	
+	// Checks embedded data
+	if(group.get('embeddedYn') == 'Y'){
+		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.embeddedData"/>').open();
+		return false;
+	}
+	
+	// Checks child node exists.
+	var index = groups.indexOf(function(node){
+		return node.get('id') == group.get('id');
+	});
+	console.log(groups.getNode(index).getChildNodes());
+	if(groups.getNode(index).getChildNodes().length > 0){
+		<spring:message code="application.text.group" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.hasChildItem" arguments="${item}"/>').open();
+		return false;
+	}
+	
+	// Removes group
 	<spring:message code="application.text.group" var="item"/>
 	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
@@ -275,6 +318,7 @@ function removeGroup() {
 				new juice.ui.Alert(message)
 				.afterConfirm(function(){
 					clearGroup();
+					group.setEnable(false);
 					getGroups();
 				}).open();
 	  	 	}
@@ -283,7 +327,16 @@ function removeGroup() {
 }
 </script>
 <style type="text/css">
-
+div.groupItem {
+	display:flex;
+	justify-content:space-between;
+	border-bottom:dotted 1px #ccc;
+	cursor:hand;
+	cursor:pointer;
+}
+div.groupItem:hover {
+	background-color: #fafafa;
+}
 </style>
 <div class="title1">
 	<i class="icon-folder"></i>
@@ -303,23 +356,24 @@ function removeGroup() {
 					<spring:message code="application.text.list"/>
 				</div>
 			</div>
-			<div style="width:20%;text-align:right;">
-				<button onclick="javascript:addChildGroup(null);">
+			<div>
+				<button onclick="javascript:addGroup(null);">
 					<i class="icon-plus"></i>
-					<spring:message code="application.text.upper"/>
-					<spring:message code="application.text.group"/>
+					<spring:message code="application.text.new"/>
 				</button>
 			</div>
 		</div>
 		<ul id="groupsUl" data-juice="TreeView" data-juice-bind="groups" data-juice-item="group">
 			<li>
-				<div style="display:flex;justify-content:space-between;border-bottom:dotted 1px #ccc;">
-					<div data-id="{{$context.group.get('id')}}" onclick="javascript:getGroup(this.dataset.id);" style="width:80%;cursor:hand;cursor:pointer;">
+				<div class="groupItem" data-id="{{$context.group.get('id')}}" onclick="javascript:getGroup(this.dataset.id);">
+					<div>
 						<i class="icon-file-o"></i>
-						<label data-juice="Label" data-juice-bind="group.name"></label>
+						<span class="{{$context.group.get('embeddedYn')=='Y'?'embedded':''}}">
+							<label data-juice="Label" data-juice-bind="group.name"></label>
+						</span>
 					</div>
-					<div style="width:20%;min-width:100px;display:inline-block;text-align:right;">
-						<button data-id="{{$context.group.get('id')}}" onclick="javascript:addChildGroup(this.dataset.id);">
+					<div style="display:inline-block;text-align:right;">
+						<button class="small" data-id="{{$context.group.get('id')}}" onclick="javascript:addGroup(this.dataset.id);">
 							<i class="icon-plus"></i>
 						</button>
 					</div>
@@ -380,12 +434,19 @@ function removeGroup() {
 					<spring:message code="application.text.group"/>
 				</th>
 				<td>
-					<label data-juice="Label" data-juice-bind="group.breadCrumbs"></label>
-					<input type="hidden" data-juice="TextField" data-juice-bind="group.upperId"/>
-					<button onclick="javascript:changeUpperId();">
-						<i class="icon-change"></i>
-						<spring:message code="application.text.change"/>
-					</button>
+					<div style="display:flex; justify-content:space-between;">
+						<label data-juice="Label" data-juice-bind="group.breadCrumbs"></label>
+						<input type="hidden" data-juice="TextField" data-juice-bind="group.upperId"/>
+						<div>
+							<button class="small" onclick="javascript:changeUpperId();">
+								<i class="icon-change"></i>
+								<spring:message code="application.text.change"/>
+							</button>
+							<button class="small" onclick="javascript:clearUpperId();">
+								<i class="icon-cancel"></i>
+							</button>
+						</div>
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -394,6 +455,14 @@ function removeGroup() {
 				</th>
 				<td>
 					<textarea data-juice="TextArea" data-juice-bind="group.description"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<spring:message code="application.text.displaySeq"/>
+				</th>
+				<td>
+					<input data-juice="TextField" data-juice-bind="group.displaySeq" style="width:5rem; text-align:right;"/>
 				</td>
 			</tr>
 			<tr>
@@ -418,7 +487,7 @@ function removeGroup() {
 									<spring:message code="application.text.name"/>
 								</th>
 								<th>
-									<button onclick="javascript:addRole();">
+									<button class="small" onclick="javascript:addRole();">
 										<i class="icon-plus"></i>
 									</button>
 								</th>
@@ -433,7 +502,7 @@ function removeGroup() {
 									<label data-juice="Label" data-juice-bind="role.name"></label>
 								</td>
 								<td class="text-center">
-									<button data-index="{{$context.index}}" onclick="javascript:removeRole(this.dataset.index);">
+									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeRole(this.dataset.index);">
 										<i class="icon-minus"></i>
 									</button>
 								</td>
@@ -464,7 +533,7 @@ function removeGroup() {
 									<spring:message code="application.text.name"/>
 								</th>
 								<th>
-									<button onclick="javascript:addAuthority();">
+									<button class="small" onclick="javascript:addAuthority();">
 										<i class="icon-plus"></i>
 									</button>
 								</th>
@@ -479,7 +548,7 @@ function removeGroup() {
 									<label data-juice="Label" data-juice-bind="authority.name"></label>
 								</td>
 								<td class="text-center">
-									<button data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
+									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
 										<i class="icon-minus"></i>
 									</button>
 								</td>

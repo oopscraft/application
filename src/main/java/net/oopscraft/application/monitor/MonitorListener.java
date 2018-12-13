@@ -1,13 +1,10 @@
 package net.oopscraft.application.monitor;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import net.oopscraft.application.monitor.MonitorInfo;
 
 public abstract class MonitorListener implements Observer {
 	
@@ -17,7 +14,7 @@ public abstract class MonitorListener implements Observer {
 	public void update(Observable observable, Object arg1) {
 		try {
 			MonitorAgent monitorAgent = (MonitorAgent) observable;
-			onCheck(monitorAgent.getMonitorInfoList());
+			onCheck(monitorAgent.getMonitorInfo());
 		}catch(Exception e) {
 			LOG.warn(e.getMessage(),e);
 		}
@@ -27,6 +24,6 @@ public abstract class MonitorListener implements Observer {
 	 * Check 
 	 * @throws Exception
 	 */
-	public abstract void onCheck(List<MonitorInfo> monitorInfoList) throws Exception;
+	public abstract void onCheck(MonitorInfo monitorInfo) throws Exception;
 
 }

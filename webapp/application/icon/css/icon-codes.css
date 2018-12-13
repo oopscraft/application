@@ -29,9 +29,15 @@
 .icon-barcode:before { content: '\e81b'; } /* '' */
 .icon-upload:before { content: '\e81c'; } /* '' */
 .icon-tree:before { content: '\e81d'; } /* '' */
-.icon-change:before { content: '\e81e'; } /* '' */
+.icon-level-down:before { content: '\e81e'; } /* '' */
+.icon-change:before { content: '\e81f'; } /* '' */
 .icon-alert:before { content: '\e820'; } /* '' */
+.icon-level-up:before { content: '\e821'; } /* '' */
+.icon-cancel:before { content: '\e823'; } /* '' */
+.icon-move:before { content: '\f047'; } /* '' */
 .icon-content:before { content: '\f0f6'; } /* '' */
 .icon-code:before { content: '\f121'; } /* '' */
 .icon-attention:before { content: '\f12a'; } /* '' */
+.icon-level-up-1:before { content: '\f148'; } /* '' */
+.icon-level-down-1:before { content: '\f149'; } /* '' */
 .icon-file:before { content: '\f15b'; } /* '' */

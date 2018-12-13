@@ -144,7 +144,11 @@ public class MonitorAgent extends Observable implements Runnable {
 		return monitorInfo;
 	}
 	
-	public List<MonitorInfo> getMonitorInfoList() {
+	public MonitorInfo getMonitorInfo() {
+		return monitorInfos.get(monitorInfos.size()-1);
+	}
+	
+	public List<MonitorInfo> getMonitorInfos() {
 		return monitorInfos;
 	}
 	

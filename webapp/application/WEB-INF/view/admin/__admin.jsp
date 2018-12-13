@@ -79,7 +79,7 @@
         		return -1;
         	}
         }
-        
+
         /**
          * Creates WebSocketClient instance
          */
@@ -212,6 +212,13 @@
 		button:hover{
 			outline: none;
 			border: solid 1px gray;
+		}
+		button.small {
+			background-color: #fff;
+			padding: 0rem 0.4rem;
+		}
+		button.small:hover {
+			background-color: #efefef;
 		}
 		a {
 			text-decoration: none;
