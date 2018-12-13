@@ -1,5 +1,8 @@
 package net.oopscraft.application.monitor;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -136,7 +139,49 @@ public class MonitorAgent extends Observable implements Runnable {
 				threadInfoMap.put(ThreadInfo.blockCount, threadInfo.getBlockedCount());
 				threadInfoMap.put(ThreadInfo.blockTime, threadInfo.getBlockedTime());
 				monitorInfo.threadInfos.add(threadInfoMap);
-			} 
+			}
+			
+			// Getting process info via command
+		    String osName = System.getProperty("os.name").toLowerCase();
+		    String command = null;
+		    if(osName.contains("win")) {
+		    	command = "cmd /C tasklist /FI \"STATUS eq running\" /V | sort /r /+65";
+		    }else{
+		    	command = "top -b -n1";
+		    }
+		    Process process = null;
+		    InputStream is = null;
+		    InputStreamReader isr = null;
+		    BufferedReader br = null;
+		    StringBuffer outBuffer = new StringBuffer();
+		    try {
+		    	process = Runtime.getRuntime().exec(command);
+		    	is = process.getInputStream();
+		    	isr = new InputStreamReader(is, "UTF-8");
+		    	br = new BufferedReader(isr);
+		    	String line = null;
+		    	while((line = br.readLine()) != null) {
+		    		outBuffer.append(line).append(System.lineSeparator());
+		    	}
+		    }catch(Exception e) {
+		    	outBuffer.append(e.getMessage());
+		    	throw e;
+		    }finally {
+		    	monitorInfo.setTop(outBuffer.toString());
+		    	if(br != null) {
+		    		try { br.close(); }catch(Exception ignore) {}
+		    	}
+		    	if(isr != null) {
+		    		try { isr.close(); }catch(Exception ignore) {}
+		    	}
+		    	if(br != null) {
+		    		try { is.close(); }catch(Exception ignore) {}
+		    	}
+		    	if(process != null) {
+		    		process.destroy();
+		    	}
+		    }
+			
 		}catch(Exception e) {
 			LOG.warn(e.getMessage(),e);
 			throw e;
