@@ -17,6 +17,8 @@ public class ProcessExecutor {
 	private ProcessBuilder processBuilder = new ProcessBuilder();
 	private Process process;
 	private ProcessStreamHandler processStreamHandler;
+	private Thread stdThread;
+	private Thread errThread;
 	
 	public void setCommand(String command) throws Exception {
         if (command.length() == 0) {
@@ -44,8 +46,6 @@ public class ProcessExecutor {
 
 	public int execute() throws Exception {
 		int exitValue = -1;
-		Thread stdThread = null;
-		Thread errThread = null;
 		try {
 			// starts process
 			process = processBuilder.start();
@@ -73,16 +73,6 @@ public class ProcessExecutor {
 			return exitValue;
 		}catch(Exception e) {
 			throw e;
-		}finally {
-			if(stdThread != null) {
-				try { stdThread.interrupt(); }catch(Exception ignore) {}
-			}
-			if(errThread != null) {
-				try { errThread.interrupt(); }catch(Exception ignore) {}
-			}
-			if(process != null) {
-				try { process.destroy(); }catch(Exception ignore) {}
-			}
 		}
 	}
 	
@@ -142,7 +132,13 @@ public class ProcessExecutor {
 	 */
 	public void destroy() {
 		if(process != null) {
-			process.destroy();
+			try { process.destroyForcibly(); }catch(Exception ignore) {}
+		}
+		if(stdThread != null) {
+			try { stdThread.interrupt(); }catch(Exception ignore) {}
+		}
+		if(errThread != null) {
+			try { errThread.interrupt(); }catch(Exception ignore) {}
 		}
 	}
 	
