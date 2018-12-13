@@ -289,7 +289,6 @@ function updateClassCountChart(monitorInfo){
 }
 
 #topDiv {
-	width: 100%;
 	height: 20rem;
     padding: 0rem 1rem;
 	white-space: pre-wrap;       /* css-3 */
