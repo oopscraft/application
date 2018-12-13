@@ -14,9 +14,12 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import net.oopscraft.application.core.process.ProcessExecutor;
+import net.oopscraft.application.core.process.ProcessStreamHandler;
 import net.oopscraft.application.monitor.MonitorInfo.ClassInfo;
 import net.oopscraft.application.monitor.MonitorInfo.MemInfo;
 import net.oopscraft.application.monitor.MonitorInfo.OsInfo;
@@ -149,39 +152,22 @@ public class MonitorAgent extends Observable implements Runnable {
 		    }else{
 		    	command = "top -b -n1 -c";
 		    }
-		    Process process = null;
-		    InputStream is = null;
-		    InputStreamReader isr = null;
-		    BufferedReader br = null;
-		    StringBuffer outBuffer = new StringBuffer();
+		    final StringBuffer topBuffer = new StringBuffer();
 		    try {
-		    	process = Runtime.getRuntime().exec(command);
-		    	is = process.getInputStream();
-		    	isr = new InputStreamReader(is, "UTF-8");
-		    	br = new BufferedReader(isr);
-		    	String line = null;
-		    	while((line = br.readLine()) != null) {
-		    		outBuffer.append(line).append(System.lineSeparator());
-		    	}
+			    ProcessExecutor processExecutor = new ProcessExecutor();
+			    processExecutor.setCommand(command);
+			    processExecutor.setProcessStreamHandler(new ProcessStreamHandler() {
+					@Override
+					public void readLine(String line) {
+						topBuffer.append(line).append(System.lineSeparator());
+					}
+			    });
+			    processExecutor.execute();
 		    }catch(Exception e) {
-		    	outBuffer.append(e.getMessage());
-		    	throw e;
-		    }finally {
-		    	monitorInfo.setTop(outBuffer.toString());
-		    	if(br != null) {
-		    		try { br.close(); }catch(Exception ignore) {}
-		    	}
-		    	if(isr != null) {
-		    		try { isr.close(); }catch(Exception ignore) {}
-		    	}
-		    	if(br != null) {
-		    		try { is.close(); }catch(Exception ignore) {}
-		    	}
-		    	if(process != null) {
-		    		process.destroy();
-		    	}
+		    	topBuffer.append(e.getMessage());
+		    } finally {
+		    	monitorInfo.setTop(topBuffer.toString());
 		    }
-			
 		}catch(Exception e) {
 			LOG.warn(e.getMessage(),e);
 			throw e;

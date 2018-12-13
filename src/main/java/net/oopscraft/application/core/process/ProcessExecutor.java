@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,42 +14,76 @@ public class ProcessExecutor {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProcessExecutor.class);
 
+	private ProcessBuilder processBuilder = new ProcessBuilder();
 	private Process process;
+	private ProcessStreamHandler processStreamHandler;
 	
-	/**
-	 * Executes command as process.
-	 * @param command
-	 * @param processStreamHandler
-	 * @return	
-	 * @throws Exception
-	 */
-	public int execute(List<String> command, final ProcessStreamHandler processStreamHandler) throws Exception {
-		
-		ProcessBuilder processBuilder = new ProcessBuilder();
-		processBuilder.command(command);
-		process = processBuilder.start();
+	public void setCommand(String command) throws Exception {
+        if (command.length() == 0) {
+        	throw new IllegalArgumentException("Empty command");
+        }
+        StringTokenizer st = new StringTokenizer(command);
+        String[] cmdarray = new String[st.countTokens()];
+        for (int i = 0; st.hasMoreTokens(); i++) {
+            cmdarray[i] = st.nextToken();
+        }
+        processBuilder.command(cmdarray);
+	}
+	
+	public void setCommand(String... commands) {
+		processBuilder.command(commands);
+	}
 
-		// standard out stream
-		Thread stdThread = createStreamReadThread(process.getInputStream(),processStreamHandler);
-		stdThread.start();
-		
-		// error stream
-		final StringBuffer errorMessage = new StringBuffer();
-		Thread errThread = createStreamReadThread(process.getErrorStream(),new ProcessStreamHandler() {
-			@Override
-			public void readLine(String line) {
-				processStreamHandler.readLine(line);
-				errorMessage.append(System.lineSeparator()).append(line);
+	public void setCommand(List<String> commands) {
+		processBuilder.command(commands);
+	}
+	
+	public void setProcessStreamHandler(ProcessStreamHandler processStreamHandler) {
+		this.processStreamHandler = processStreamHandler;
+	}
+
+	public int execute() throws Exception {
+		int exitValue = -1;
+		Thread stdThread = null;
+		Thread errThread = null;
+		try {
+			// starts process
+			process = processBuilder.start();
+	
+			// standard out stream
+			stdThread = createStreamReadThread(process.getInputStream(),processStreamHandler);
+			stdThread.start();
+			
+			// error stream
+			final StringBuffer errorMessage = new StringBuffer();
+			errThread = createStreamReadThread(process.getErrorStream(),new ProcessStreamHandler() {
+				@Override
+				public void readLine(String line) {
+					processStreamHandler.readLine(line);
+					errorMessage.append(System.lineSeparator()).append(line);
+				}
+			});
+			errThread.start();
+			
+			// wait and check exit value
+			exitValue = process.waitFor();
+			if(exitValue != 0) {
+				throw new ProcessException(exitValue, errorMessage.toString());
 			}
-		});
-		errThread.start();
-		
-		// wait and check exit value
-		int exitValue = process.waitFor();
-		if(exitValue != 0) {
-			throw new ProcessException(exitValue, errorMessage.toString());
+			return exitValue;
+		}catch(Exception e) {
+			throw e;
+		}finally {
+			if(stdThread != null) {
+				try { stdThread.interrupt(); }catch(Exception ignore) {}
+			}
+			if(errThread != null) {
+				try { errThread.interrupt(); }catch(Exception ignore) {}
+			}
+			if(process != null) {
+				try { process.destroy(); }catch(Exception ignore) {}
+			}
 		}
-		return exitValue;
 	}
 	
 	/**
@@ -103,7 +138,7 @@ public class ProcessExecutor {
 	}
 	
 	/**
-	 * Destroies process.
+	 * Destroys process.
 	 */
 	public void destroy() {
 		if(process != null) {
