@@ -149,8 +149,9 @@ public class UserService {
 		one.setName(user.getName());
 		one.setNickname(user.getNickname());
 		one.setEmail(user.getEmail());
+		one.setLocale(user.getLocale());
 		one.setPhone(user.getPhone());
-		one.setStatusCd(user.getStatusCd());
+		one.setStatusCode(user.getStatusCode());
 		
 		// AVATAR property
 		if(user.getAvatar() != null) {

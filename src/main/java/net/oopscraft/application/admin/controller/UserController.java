@@ -8,7 +8,9 @@
  */
 package net.oopscraft.application.admin.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,10 +32,11 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
-import net.oopscraft.application.user.UserStatusCd;
-import net.oopscraft.application.user.UserStatusCdService;
+import net.oopscraft.application.user.UserStatus;
+import net.oopscraft.application.user.UserStatusService;
 
 @PreAuthorize("hasAuthority('ADMIN_USER')")
 @Controller
@@ -46,7 +49,7 @@ public class UserController {
 	UserService userService;
 	
 	@Autowired
-	UserStatusCdService userStatusCdService;
+	UserStatusService userStatusService;
 
 	@Autowired
 	HttpServletResponse response;
@@ -146,17 +149,38 @@ public class UserController {
 		User user = userService.removeUser(id);
 		return JsonUtils.toJson(user);
 	}
+
 	
 	/**
-	 * getUserStatusCds
+	 * getLocales
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getUserStatusCds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "getLocales", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getUserStatusCds() throws Exception {
-		List<UserStatusCd> userStatusCds = userStatusCdService.getUserStatusCds();
-		return JsonUtils.toJson(userStatusCds);
+	public String getLocales() throws Exception {
+		List<ValueMap> locales = new ArrayList<ValueMap>();
+		for(Locale locale : Locale.getAvailableLocales()) {
+			ValueMap localeMap = new ValueMap();
+			if(locale.toString().length() == 5) {
+				localeMap.setString("locale", locale.toString());
+				localeMap.setString("displayName", locale.getDisplayCountry(locale));
+				locales.add(localeMap);
+			}
+		}
+		return JsonUtils.toJson(locales);
+	}
+	
+	/**
+	 * getUserStatuses
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "getUserStatuses", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public String getUserStatuses() throws Exception {
+		List<UserStatus> userStatuses = userStatusService.getUserStatuses();
+		return JsonUtils.toJson(userStatuses);
 	}
 
 }

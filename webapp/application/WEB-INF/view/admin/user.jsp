@@ -38,17 +38,32 @@ var roles = new juice.data.List();
 var authorities = new juice.data.List();
 
 // code
-var userStatusCds = new Array();
+var locales = new Array();
 $.ajax({
-	 url: 'user/getUserStatusCds'
+	 url: 'user/getLocales'
 	,type: 'GET'
 	,data: {}
 	,success: function(data, textStatus, jqXHR) {
-		console.log(data);
 		data.forEach(function(item){
 			console.log(item);
-			userStatusCds.push({
-				value: item.cd,
+			locales.push({
+				value: item.locale,
+				text: item.displayName
+			});
+		});
+	}
+});
+
+var userStatuses = new Array();
+$.ajax({
+	 url: 'user/getUserStatuses'
+	,type: 'GET'
+	,data: {}
+	,success: function(data, textStatus, jqXHR) {
+		data.forEach(function(item){
+			console.log(item);
+			userStatuses.push({
+				value: item.code,
 				text: item.name
 			});
 		});
@@ -102,6 +117,7 @@ function getUser(id) {
 			groups.fromJson(data.groups);
 			roles.fromJson(data.roles);
 			authorities.fromJson(data.authorities);
+			$('#passwordTr').hide();
 			$('#userTable').hide().fadeIn();
   	 	}
 	});	
@@ -116,6 +132,14 @@ function addUser() {
 	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
 		.beforeConfirm(function(event){
 			var id = event.value;
+			
+			// Validates id value
+			try {
+				__validator.checkId(id);
+			}catch(e){
+				new juice.ui.Alert(e).open();
+				return false;
+			}
 	
 			// checks duplicated id.
 			var isDuplicated = false;
@@ -142,12 +166,15 @@ function addUser() {
 			var id = event.value;
 			users.clearIndex();
 			user.fromJson({});
+			user.set('__new', true);
 			user.setEnable(true);
 			user.set('id', id);
+			user.set('statusCode', userStatuses[0].value);
 			user.setReadonly('id',true);
 			groups.fromJson([]);
 			roles.fromJson([]);
 			authorities.fromJson([]);
+			$('#passwordTr').show();
 		})
 		.open();
 }
@@ -232,15 +259,96 @@ function removeAuthority(index){
  * Saves user
  */
 function saveUser() {
+	
+	// Checks id
+	try {
+		__validator.checkId(user.get('id'));
+	}catch(e){
+		new juice.ui.Alert(e)
+		.afterConfirm(function(){
+			$('input[data-juice-bind="user.id"]').select();
+		})
+		.open();
+		return false;
+	}
+	
+	// Checks password
+	if(user.get('__new') == true){
+		console.log(user.get('__new'));
+		try {
+			__validator.checkPassword(user.get('password'), user.get('passwordConfirm'));
+		}catch(e){
+			new juice.ui.Alert(e)
+			.afterConfirm(function(){
+				$('input[data-juice-bind="user.password"]').select();
+			})
+			.open();
+			return false;
+		}
+	}
+	
+	// Checks email
+	try {
+		__validator.checkEmailAddress(user.get('email'));
+	}catch(e){
+		new juice.ui.Alert(e)
+		.afterConfirm(function(){
+			$('input[data-juice-bind="user.email"]').select();
+		})
+		.open();
+		return false;
+	}
+	
+	// Checks locale
+	try {
+		__validator.checkLocale(user.get('locale'));
+	}catch(e){
+		new juice.ui.Alert(e)
+		.afterConfirm(function(){
+			$('select[data-juice-bind="user.locale"]').select();
+		})
+		.open();
+		return false;
+	}
+	
+	// Check phone number
+	try {
+		__validator.checkPhoneNumber(user.get('phone'));
+	}catch(e){
+		new juice.ui.Alert(e)
+		.afterConfirm(function(){
+			$('input[data-juice-bind="user.phone"]').select();
+		})
+		.open();
+		return false;
+	}
+
+	// Checks name
+	try {
+		__validator.checkName(user.get('name'));
+	}catch(e){
+		new juice.ui.Alert(e)
+		.afterConfirm(function(){
+			$('input[data-juice-bind="user.name"]').select();
+		})
+		.open();
+		return false;
+	}
+	
+	// Checks statusCode
+	if(juice.util.isEmpty(user.get('StatusCode'))){
+		<spring:message code="application.text.id" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>')
+		.afterConfirm(function(){
+			$('select[data-juice-bind="user.statusCode"]').select();
+		})
+		.open();
+	}
+	
+	// Saves user info
 	<spring:message code="application.text.user" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
-		.beforeConfirm(function(){
-			if(user.get('name') == null){
-				alert('fdsafdsa');
-				return false;
-			}
-		})
 		.afterConfirm(function() {
 			var userJson = user.toJson();
 			userJson.groups = groups.toJson();
@@ -394,6 +502,11 @@ function removeUser(){
 				</div>
 			</div>
 			<div>
+				<button>
+					<i class="icon-key"></i>
+					<spring:message code="application.text.password"/>
+					<spring:message code="application.text.change"/>
+				</button>
 				<button onclick="javascript:saveUser();">
 					<i class="icon-disk"></i>
 					<spring:message code="application.text.save"/>
@@ -418,19 +531,15 @@ function removeUser(){
 					<input class="id" data-juice="TextField" data-juice-bind="user.id"/>
 				</td>
 			</tr>
-			<tr>
+			<tr id="passwordTr">
 				<th>
 					<span class="must">
 						<spring:message code="application.text.password"/>
 					</span>
 				</th>
 				<td>
-					<input type="password" class="id" data-juice="TextField" data-juice-bind="user.password" style="width:30%;"/>
-					<input type="password" class="id" data-juice="TextField" data-juice-bind="user.passwordConfirm" style="width:30%;"/>
-					<button>
-						<i class="icon-key"></i>
-						<spring:message code="application.text.change"/>
-					</button>
+					<input type="password" class="id" data-juice="TextField" data-juice-bind="user.password" style="width:15rem;"/>
+					<input type="password" class="id" data-juice="TextField" data-juice-bind="user.passwordConfirm" style="width:15rem;"/>
 				</td>
 			</tr>
 			<tr>
@@ -441,6 +550,16 @@ function removeUser(){
 				</th>
 				<td>
 					<input data-juice="TextField" data-juice-bind="user.email" placeholder="_____@__________"/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span class="must">
+						<spring:message code="application.text.locale"/>
+					</span>
+				</th>
+				<td>
+					<select data-juice="ComboBox" data-juice-bind="user.locale" data-juice-options="locales" style="width:15rem;"></select>
 				</td>
 			</tr>
 			<tr>
@@ -466,21 +585,19 @@ function removeUser(){
 			<tr>
 				<th>
 					<span class="must">
-						<spring:message code="application.text.nickname"/>
-					</span>
-				</th>
-				<td>
-					<input data-juice="TextField" data-juice-bind="user.nickname"/>
-				</td>
-			</tr>
-			<tr>
-				<th>
-					<span class="must">
 						<spring:message code="application.text.status"/>
 					</span>
 				</th>
 				<td>
-					<select data-juice="ComboBox" data-juice-bind="user.statusCd" data-juice-options="userStatusCds" style="width:100px;"></select>
+					<select data-juice="ComboBox" data-juice-bind="user.statusCode" data-juice-options="userStatuses" style="width:15rem;"></select>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<spring:message code="application.text.nickname"/>
+				</th>
+				<td>
+					<input data-juice="TextField" data-juice-bind="user.nickname"/>
 				</td>
 			</tr>
 			<tr>

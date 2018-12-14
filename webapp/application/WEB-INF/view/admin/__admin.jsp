@@ -79,6 +79,75 @@
         		return -1;
         	}
         }
+         
+        /**
+         * Validates ID value
+         * @Param {String} id value
+         */
+        var __validator = {
+        	// Checks ID	 
+         	checkId: function(id) {
+         		// Checks empty
+         		if(juice.util.validator.isEmpty(id)){
+             		<spring:message code="application.text.id" var="item"/>
+       				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
+         		}
+				// Validates generic
+				if(juice.util.validator.isGenericId(id) == false){
+					throw '<spring:message code="application.message.invalidIdFormat"/>';
+				}
+				// length
+				if(juice.util.validator.isLengthBetween(id,4,32) == false){
+					<spring:message code="application.text.id" var="item"/>
+					throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
+				}
+         	},
+         	checkPassword: function(password, passwordConfirm){
+         		if(juice.util.validator.isEmpty(password)){
+             		<spring:message code="application.text.password" var="item"/>
+       				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
+         		}
+        		if(password != passwordConfirm){
+        			<spring:message code="application.text.password" var="item"/>
+        			throw '<spring:message code="application.message.itemNotMatch" arguments="${item}"/>';
+        		}
+        		if(juice.util.validator.isGenericPassword(password) == false){
+        			throw '<spring:message code="application.message.invalidPassowrdFormat"/>';
+        		}
+         	},
+         	// Checks name
+         	checkName: function(name){
+         		// Checks empty
+         		if(juice.util.validator.isEmpty(name)){
+             		<spring:message code="application.text.name" var="item"/>
+       				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
+         		}
+         		// check length
+         		if(juice.util.validator.isLengthBetween(name,1,256) == false){
+					<spring:message code="application.text.name" var="item"/>
+					throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
+         		}
+         	},
+         	// Checks email address
+         	checkEmailAddress: function(value){
+         		if(juice.util.validator.isEmailAddress(value) == false){
+         			throw '<spring:message code="application.message.invalidEmailAddressFormat"/>';
+         		}
+         	},
+         	// Checks locale 
+         	checkLocale: function(value){
+         		if(juice.util.validator.isEmpty(value)){
+					<spring:message code="application.text.locale" var="item"/>
+					throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
+         		}
+         	},
+         	// Checks phone number
+         	checkPhoneNumber: function(value){
+         		if(juice.util.validator.isPhoneNumber(value) == false){
+         			throw '<spring:message code="application.message.invalidPhoneNumberFormat"/>';
+         		}
+         	}
+        }
 
         /**
          * Creates WebSocketClient instance

@@ -7,11 +7,11 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "APP_USER_STAT_CD")
-public class UserStatusCd {
+public class UserStatus {
 
 	@Id
 	@Column(name = "USER_STAT_CD")
-	String cd;
+	String code;
 	
 	@Column(name = "USER_STAT_NAME")
 	String name;
@@ -22,11 +22,11 @@ public class UserStatusCd {
 	@Column(name = "DISP_SEQ")
 	String displaySeq;
 	
-	public String getCd() {
-		return cd;
+	public String getCode() {
+		return code;
 	}
-	public void setCd(String cd) {
-		this.cd = cd;
+	public void setCode(String code) {
+		this.code = code;
 	}
 	public String getName() {
 		return name;
