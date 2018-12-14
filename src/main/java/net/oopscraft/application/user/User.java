@@ -1,7 +1,9 @@
 package net.oopscraft.application.user;
 
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,25 +34,28 @@ public class User extends SystemEntity {
 
 	@Column(name = "USER_PWD")
 	String password;
-
+	
 	@Column(name = "USER_EMAIL")
 	String email;
 
+	@Column(name = "USER_LOCALE")
+	String locale;
+	
 	@Column(name = "USER_PHONE")
 	String phone;
 
 	@Column(name = "USER_NAME")
 	String name;
 
-	@Column(name = "USER_NICK")
-	String nickname;
-
 	@Column(name = "USER_STAT_CD")
-	String statusCd;
+	String statusCode;
 
 	@Formula("(SELECT A.USER_STAT_NAME FROM APP_USER_STAT_CD A WHERE A.USER_STAT_CD = USER_STAT_CD)")
 	String statusName;
 
+	@Column(name = "USER_NICK")
+	String nickname;
+	
 	@Column(name = "USER_AVAT")
 	String avatar;
 
@@ -101,6 +106,14 @@ public class User extends SystemEntity {
 		this.email = email;
 	}
 
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
+	}
+
 	public String getPhone() {
 		return phone;
 	}
@@ -117,6 +130,14 @@ public class User extends SystemEntity {
 		this.name = name;
 	}
 
+	public String getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
+	}
+
 	public String getNickname() {
 		return nickname;
 	}
@@ -125,14 +146,6 @@ public class User extends SystemEntity {
 		this.nickname = nickname;
 	}
 	
-	public String getStatusCd() {
-		return statusCd;
-	}
-
-	public void setStatusCd(String statusCd) {
-		this.statusCd = statusCd;
-	}
-
 	public String getStatusName() {
 		return statusName;
 	}

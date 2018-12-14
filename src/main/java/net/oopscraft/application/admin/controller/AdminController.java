@@ -25,6 +25,7 @@ import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
 import net.oopscraft.application.user.Role;
 import net.oopscraft.application.user.RoleService;
+import net.oopscraft.application.user.UserStatus;
 
 @Controller
 @RequestMapping("/admin")
@@ -128,5 +129,5 @@ public class AdminController {
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return JsonUtils.toJson(roles);
 	}
-	
+
 }

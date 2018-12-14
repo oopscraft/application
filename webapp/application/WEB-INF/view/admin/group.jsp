@@ -198,8 +198,10 @@ function addGroup(upperId) {
 			var id = event.value;
 			
 			// Validates id value
-			if(juice.util.validator.isGenericId(id) == false){
-				new juice.ui.Alert('<spring:message code="application.message.invalidIdValue"/>').open();
+			try {
+				__validator.checkId(id);
+			}catch(e){
+				new juice.ui.Alert(e).open();
 				return false;
 			}
 			

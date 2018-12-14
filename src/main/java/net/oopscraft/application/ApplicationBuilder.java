@@ -314,6 +314,7 @@ public class ApplicationBuilder {
 			ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 			String basename = xPathReader.getTextContent(messageSourceExpression + "/basename");
 			messageSource.setBasename(basename);
+			messageSource.setFallbackToSystemLocale(false);
 			messageSource.setDefaultEncoding("UTF-8");
 			String cacheSeconds = xPathReader.getTextContent(messageSourceExpression + "/cacheSeconds");
 			messageSource.setCacheSeconds(Integer.parseInt(cacheSeconds));

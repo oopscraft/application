@@ -8,14 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.test.ApplicationSpringTestRunner;
 
-public class UserStatusCdServiceTest extends ApplicationSpringTestRunner {
+public class UserStatusServiceTest extends ApplicationSpringTestRunner {
 
 	@Autowired
-	UserStatusCdService userStatusCdService;
+	UserStatusService userStatusService;
 	
 	@Test
 	public void test() throws Exception {
-		List<UserStatusCd> userStatusCds = userStatusCdService.getUserStatusCds();
+		List<UserStatus> userStatusCds = userStatusService.getUserStatuses();
 		System.out.println(new TextTable(userStatusCds));
 		assert(true);
 	}

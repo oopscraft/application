@@ -92,8 +92,8 @@ juice.data.Map = function(json) {
 	if(json) {
 		this.fromJson(json);
 	}
-	this.readonly = {};
 	this.enable = true;
+	this.readonly = {};
 }
 juice.data.Map.prototype = Object.create(juice.data.__.prototype);
 juice.data.Map.prototype.fromJson = function(json) {
@@ -2783,17 +2783,32 @@ juice.util.validator = {
 		var pattern = /^[0-9]{1,}$/;
 		return pattern.test(value);
 	},
-	isAphabet: function(value){
+	isAlphabet: function(value){
 		var pattern = /^[a-zA-Z]{1,}$/;
 		return pattern.test(value);
 	},
-	isAphabetNumber: function(value){
+	isAlphabetNumber: function(value){
 		var pattern = /^[a-zA-Z0-9]{1,}$/;
 		return pattern.test(value);
 	},
 	isDecimal: function(value){
 		var pattern = /^[0-9\,\.]{1,}$/;
 		return pattern.test(value);
+	},
+	/**
+	 * Checks value size
+	 * @Param {String} value for checking
+	 * @Param {Number} valid minimum length
+	 * @Param {Number} valid maximum length
+	 */
+	isLengthBetween(value, min, max){
+		if(!value) return false;
+		var length = value.length;
+		if(min <= length && length <= max){
+			return true;
+		}else{
+			return false;
+		}
 	},
 	/**
 	 * Checks generic ID (alphabet + number + -,_), but does not check length.
@@ -2803,12 +2818,19 @@ juice.util.validator = {
 		var pattern = /^[a-zA-Z0-9\-\_]{1,}$/;
 		return pattern.test(value);
 	},
+	/**
+	 * Checks generic password (At least 1 alphabet, 1 number, 1 special char)
+	 */
+	isGenericPassword: function(value){
+		var pattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
+		return pattern.test(value);
+	},
 	isEmailAddress: function(value){
 		var pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 		return pattern.test(value);
 	},
 	isPhoneNumber: function(value){
-		var pattern = /^(1\s|1|)?((\(\d{3}\))|\d{3})(\-|\s)?(\d{3})(\-|\s)?(\d{4})$/;
+		var pattern =/^[0-9\-]{11,}$/; 
 		return pattern.test(value);
 	},
 	isUrlAddress: function(value){

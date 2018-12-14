@@ -7,24 +7,24 @@ import org.junit.Test;
 
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.test.ApplicationTestRunner;
-import net.oopscraft.application.user.UserStatusCd;
+import net.oopscraft.application.user.UserStatus;
 
-public class UserStatusCdRepositoryTest extends ApplicationTestRunner {
+public class UserStatusRepositoryTest extends ApplicationTestRunner {
 	
-	UserStatusCdRepository userStatusCdRepository;
+	UserStatusRepository userStatusCdRepository;
 
-	public UserStatusCdRepositoryTest() throws Exception {
+	public UserStatusRepositoryTest() throws Exception {
 		super();
 	}
 	
 	@Before
 	public void before() throws Exception {
-		userStatusCdRepository = this.getJpaRepository(UserStatusCdRepository.class);
+		userStatusCdRepository = this.getJpaRepository(UserStatusRepository.class);
 	}
 
 	@Test
 	public void test() throws Exception {
-		List<UserStatusCd> userStatusCds = userStatusCdRepository.findAllByOrderByDisplaySeqAsc();
+		List<UserStatus> userStatusCds = userStatusCdRepository.findAllByOrderByDisplaySeqAsc();
 		System.out.println(new TextTable(userStatusCds));
 	}
 }
