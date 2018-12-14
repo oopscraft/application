@@ -237,6 +237,9 @@
 			justify-content: space-between;
 			border: solid 1px #efefef;
 		}
+		dialog {
+			display: none;
+		}
 		.title1 {
             font-size: 18px;
             font-weight: bold;
@@ -411,6 +414,12 @@
 						<a href="#menu">
 							<i class="icon-list"></i>
 							<spring:message code="application.label.menu"/>
+						</a>
+					</li>
+					<li>
+						<a href="#acl">
+							<i class="icon-list"></i>
+							접근제어
 						</a>
 					</li>
 					<li>
