@@ -336,7 +336,7 @@ function saveUser() {
 	}
 	
 	// Checks statusCode
-	if(juice.util.isEmpty(user.get('StatusCode'))){
+	if(juice.util.validator.isEmpty(user.get('StatusCode'))){
 		<spring:message code="application.text.id" var="item"/>
 		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>')
 		.afterConfirm(function(){
