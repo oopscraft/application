@@ -49,14 +49,18 @@
 		function doLogin() {
 
 			if(juice.util.validator.isEmpty(user.get('id'))){
+				<spring:message code="application.text.id" var="item"/>
+				var message = '<i class="icon-attention"></i><spring:message code="application.message.enterItem" arguments="${item}"/>';
+				printMessage(message);
 				$('#idInput').focus();
-				alert('아이디입력해라.');
 				return false;
 			}
 			
 			if(juice.util.validator.isEmpty(user.get('password'))){
+				<spring:message code="application.text.password" var="item"/>
+				var message = '<i class="icon-attention"></i><spring:message code="application.message.enterItem" arguments="${item}"/>';
+				printMessage(message);
 				$('#passwordInput').focus();
-				alert('패스워드 입력해라');
 				return false;
 			}
 			
@@ -68,10 +72,18 @@
 					location.href='${pageContext.request.contextPath}/admin';
 		    	 }
 			 	,error: function(jqXHR, textStatus, errorThrown) {
-			 		var messageDiv = $('#messageDiv');
-			 		messageDiv.hide().html('<i class="icon-alert"></i>' + jqXHR.responseText).fadeIn();
+			 		var message = '<i class="icon-alert"></i>' + jqXHR.responseText;
+			 		printMessage(message);
 				 }
 			});
+		}
+		
+		/**
+		 * Prints message
+		 */
+		function printMessage(message) {
+			var messageDiv = $('#messageDiv');
+			messageDiv.hide().html(message).fadeIn();
 		}
 		</script>
 		<style type="text/css">
@@ -95,9 +107,9 @@
 		#loginDiv {
 			width: 300px;
 			background-color: white;
-			border: solid 1px #777;
+			border: solid 1px #ccc;
 			border-radius: 2px;
-			padding: 20px;
+			padding: 3rem;
 			margin-bottom: 20vh;
 		}
 		#languageSelect {
