@@ -337,12 +337,13 @@ function saveUser() {
 	
 	// Checks statusCode
 	if(juice.util.validator.isEmpty(user.get('StatusCode'))){
-		<spring:message code="application.text.id" var="item"/>
+		<spring:message code="application.text.status" var="item"/>
 		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>')
 		.afterConfirm(function(){
 			$('select[data-juice-bind="user.statusCode"]').select();
 		})
 		.open();
+		return false;
 	}
 	
 	// Saves user info
