@@ -128,6 +128,7 @@
 	<!-- ====================================================== -->
 	<!-- Scans Components 										-->
 	<!-- ====================================================== -->
+	<mvc:annotation-driven/>
 	<context:component-scan base-package="net.oopscraft.application" name-generator="net.oopscraft.application.core.spring.FullBeanNameGenerator"/>
 
 	<!-- ====================================================== -->
@@ -154,32 +155,6 @@
 			<property name="paramName" value="lang" />
 		</bean>
     </mvc:interceptors>
-    
-	<!-- ====================================================== -->
-	<!-- Default Servlet Handler								-->
-	<!-- ====================================================== -->
-    <mvc:default-servlet-handler default-servlet-name="default"/>
-    <mvc:annotation-driven/>
-    
-	<!-- ====================================================== -->
-	<!-- View Resolver											-->
-	<!-- ====================================================== -->
-	<bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
-		<property name="order" value="0"/>
-	</bean>
-   	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
-        <property name="definitions">
-            <list>
-				<value>file:conf/tiles.xml</value>
-            </list>
-        </property>
-   	</bean>
-	<bean id="jstlViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-	    <property name="prefix" value="/WEB-INF/view/"/>
-	    <property name="order" value="1"/>
-	</bean>
 	
 	<!-- ====================================================== -->
 	<!-- WebSocketHandler										-->
@@ -196,9 +171,11 @@
 		<security:authentication-provider ref="net.oopscraft.application.user.security.AuthenticationProvider"/>
 	</security:authentication-manager>
 	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
-	<security:http pattern="/admin/login" security="none" />
+
+	<!-- Administrator Channel -->
 	<security:http pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
 		<security:csrf disabled="true" />
+		<security:intercept-url pattern="/admin/login" access="isAnonymous()"/>
 		<security:intercept-url pattern="/admin/**/*" access="isAuthenticated() and hasAuthority('ADMIN')" />
 		<security:form-login 
 			login-page="/admin/login" 
@@ -210,5 +187,12 @@
 			/>
 		<security:logout invalidate-session="true" logout-url="/admin/logout" logout-success-url="/admin" />
 	</security:http>
+	
+	<!-- RESTful API Channel -->
+	<security:http pattern="/api*/**/*" disable-url-rewriting="true" use-expressions="true">
+		<security:intercept-url pattern="/api/**/*" access="isAuthenticated()" />
+		<security:http-basic/>
+	</security:http>
+
 
 </beans>
