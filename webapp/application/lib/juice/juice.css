@@ -482,17 +482,17 @@
 }
 
 /**
- * juice.ui.Animator
+ * juice.ui.__.fadeIn/fadeOut
  */
-.juice-ui-animator-fadeIn {
+.juice-ui-fadeIn {
 	-webkit-animation-duration: 0.5s;
 	animation-duration: 0.5s;
 	-webkit-animation-fill-mode: both;
 	animation-fill-mode: both;
-	-webkit-animation-name: juice-ui-animator-fadeIn;
-	animation-name: juice-ui-animator-fadeIn;
+	-webkit-animation-name: juice-ui-fadeIn;
+	animation-name: juice-ui-fadeIn;
 }
-@-webkit-keyframes juice-ui-animator-fadeIn {
+@-webkit-keyframes juice-ui-fadeIn {
 	from {
 	  opacity: 0;
 	}
@@ -500,7 +500,7 @@
 	  opacity: 1;
 	}
 }
-@keyframes juice-ui-animator-fadeIn {
+@keyframes juice-ui-fadeIn {
 	from {
 	  opacity: 0;
 	}
@@ -508,15 +508,15 @@
 	  opacity: 1;
 	}
 }
-.juice-ui-animator-fadeOut {
+.juice-ui-fadeOut {
 	-webkit-animation-duration: 0.5s;
 	animation-duration: 0.5s;
 	-webkit-animation-fill-mode: both;
 	animation-fill-mode: both;
-	-webkit-animation-name: juice-ui-animator-fadeOut;
-	animation-name: juice-ui-animator-fadeOut;
+	-webkit-animation-name: juice-ui-fadeOut;
+	animation-name: juice-ui-fadeOut;
 }
-@-webkit-keyframes juice-ui-animator-fadeOut {
+@-webkit-keyframes juice-ui-fadeOut {
 	from {
 	  opacity: 1;
 	}
@@ -524,7 +524,7 @@
 	  opacity: 0;
 	}
 }
-@keyframes juice-ui-animator-fadeOut {
+@keyframes juice-ui-fadeOut {
 	from {
 	  opacity: 1;
 	}
@@ -534,9 +534,9 @@
 }
 
 /**
- * juice-ui-blocker
+ * juice-ui-block
  */
-.juice-ui-blocker {
+.juice-ui-block {
 	padding: 0px;
 	margin: 0px;
     background-color: rgba(0, 0, 0, 0.5);
