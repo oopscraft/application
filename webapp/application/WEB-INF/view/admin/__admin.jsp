@@ -251,6 +251,15 @@
 			border-top: solid 1px #ccc;
 			padding: 0rem 0.5rem;
 		}
+		body > footer > #copyright {
+			font-weight: bold;
+			font-family: verdana;
+			font-size: 11px;
+			color: #aaa;
+			text-shadow: 1px 1px #fff;
+			letter-spacing: -0.5px;
+			font-style: italic;
+		}
 		dialog {
 			display: none;
 		}
@@ -353,7 +362,6 @@
 			text-align: right !important;
 			padding-right: 1rem;
 		}
-		
 		
 
 		</style>
@@ -491,7 +499,11 @@
 		<!-- Footer													-->
 		<!-- ====================================================== -->
 		<footer>
-			
+			<span id="copyright">
+			Licence: LGPL(GNU Lesser General Public License version 3)
+			<br/>
+			Copyright (C) 2017 application.oopscraft.net
+			</span>
 		</footer>
 
 		<!-- ====================================================== -->

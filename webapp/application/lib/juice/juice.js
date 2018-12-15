@@ -650,12 +650,12 @@ juice.ui.__.prototype.delay = function(callback){
 	},400);	
 }
 juice.ui.__.prototype.fadeIn = function(element){
-	element.classList.remove('juice-ui-animator-fadeOut');
-	element.classList.add('juice-ui-animator-fadeIn');
+	element.classList.remove('juice-ui-fadeOut');
+	element.classList.add('juice-ui-fadeIn');
 }
 juice.ui.__.prototype.fadeOut = function(element) {
-	element.classList.remove('juice-ui-animator-fadeIn');
-	element.classList.add('juice-ui-animator-fadeOut');
+	element.classList.remove('juice-ui-fadeIn');
+	element.classList.add('juice-ui-fadeOut');
 }
 juice.ui.__.prototype.getMaxZIndex = function(){
 	var zIndex,
@@ -673,7 +673,7 @@ juice.ui.__.prototype.block = function(element){
 	var $this = this;
 	
 	var div = document.createElement('div');
-	div.classList.add('juice-ui-blocker');
+	div.classList.add('juice-ui-block');
 	
 	// defines maxZIndex
 	var zIndex = this.getMaxZIndex() + 1;
