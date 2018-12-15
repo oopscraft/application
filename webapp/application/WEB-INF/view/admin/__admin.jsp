@@ -19,6 +19,11 @@
  		<script src="${pageContext.request.contextPath}/lib/Chart.js/Chart.js"></script>
  		<link href="${pageContext.request.contextPath}/icon/css/icon.css" rel="stylesheet">
  		
+ 		<!-- polyfill -->
+		<script src="${pageContext.request.contextPath}/lib/polyfill/dataset.js"></script>
+		<script src="${pageContext.request.contextPath}/lib/polyfill/classList.js"></script>
+
+
  		<!-- web font -->
  		<link href="${pageContext.request.contextPath}/font/font.css" rel="stylesheet" type="text/css" />
  		<link href="${pageContext.request.contextPath}/font/font-kr.css" rel="stylesheet" type="text/css" />
@@ -165,14 +170,16 @@
 		</script>
 		<style type="text/css">
 		* {
-			margin: 0px;
-			padding: 0px;
 			margin:0px;
 			padding:0px;
 			font-family: font, font-kr, font-ja, font-zh, sans-serif;
 			font-size:11px;
 			color: #555;
 			line-height: 20px;
+		}
+		html {
+			overflow: -moz-scrollbars-vertical; 
+			overflow-y: scroll;
 		}
 		body {
 			min-width: 1024px;
@@ -183,7 +190,9 @@
 			justify-content: space-between;
 			height: 50px;
 			background-color: #f7f7f7;
-			border: solid 1px #ccc;
+			border: none;
+			border-bottom: solid 1px #ccc;
+			padding: 0rem 0.5rem;
 		}
 		body > header nav.topNav {
 			display: inline-block;
@@ -192,7 +201,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			min-height: 768px;
+			min-height: 90vh;
 			border: solid 0px #efefef;
 		}
 		body > main > nav {
@@ -201,7 +210,8 @@
 			width: 200px;
 			min-width: 100px;
 			padding: 0px;
-			border: solid 1px #ccc;
+			border: none;
+			border-right: solid 1px #ccc;
    			background-color: #fff;
 		}
 		body > main > nav > ul {
@@ -211,8 +221,8 @@
 			font-weight: bold;
 			background-color: white;
 			padding: 5px;
-			border-top: solid 1px white;
-			border-bottom: solid 1px #ccc;
+			border: none;
+			border-bottom: dotted 1px #ccc;
 			transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 		}
 		body > main > nav > ul li:hover {
@@ -228,14 +238,18 @@
 		body > main > section {
 			align-self: stretch;
 			width: 100%;
-			border: solid 1px #efefef;
+			border: none;
 			padding: 10px;
 		}
 		body > footer {
+			height: 50px;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			border: solid 1px #efefef;
+			background-color: #f7f7f7;
+			border: none;
+			border-top: solid 1px #ccc;
+			padding: 0rem 0.5rem;
 		}
 		dialog {
 			display: none;
@@ -411,15 +425,21 @@
 						</a>
 					</li>
 					<li>
-						<a href="#menu">
+						<a href="#acl">
 							<i class="icon-list"></i>
-							<spring:message code="application.label.menu"/>
+							ACL(접근제어)
 						</a>
 					</li>
 					<li>
-						<a href="#acl">
+						<a href="#code">
+							<i class="icon-code"></i>
+							프로퍼티
+						</a>
+					</li>
+					<li>
+						<a href="#menu">
 							<i class="icon-list"></i>
-							접근제어
+							<spring:message code="application.label.menu"/>
 						</a>
 					</li>
 					<li>
@@ -471,7 +491,7 @@
 		<!-- Footer													-->
 		<!-- ====================================================== -->
 		<footer>
-			FOOTER
+			
 		</footer>
 
 		<!-- ====================================================== -->
@@ -515,14 +535,12 @@
 
             			// Disabled node
             			if($this.handler.disable){
-            				$this.items.startTransaction();
             				$this.items.forEach(function(node){
             					if($this.handler.disable.call($this,node)){
             						node.set('__selected', true);
             						node.setEnable(false);
             					}
             				});
-            				$this.items.endTransaction();
             			}
             			$('#__groupsUl').hide().fadeIn();
             			$this.dialog.open();

@@ -1,9 +1,7 @@
 package net.oopscraft.application.user;
 
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

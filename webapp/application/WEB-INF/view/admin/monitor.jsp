@@ -289,17 +289,14 @@ function updateClassCountChart(monitorInfo){
 }
 
 #topDiv {
+	width: 100%;
 	height: 20rem;
     padding: 0rem 1rem;
-	white-space: pre-wrap;       /* css-3 */
-	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-	white-space: -pre-wrap;      /* Opera 4-6 */
-	white-space: -o-pre-wrap;    /* Opera 7 */
-	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    overflow: scroll;
 	background-color: black;
 	color: white;
-	font-family: Consolas;
-	overflow: scroll;
+	font-family: Consolas, Courier New;
+	white-space: pre-wrap;
 }
 </style>
 <div class="title1">
