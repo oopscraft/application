@@ -10,7 +10,7 @@
 if(!console.debug){
 	console.debug = console.log;
 }
-var juice = {}
+var juice = {};
 
 //-----------------------------------------------------------------------------
 // Data structure package
@@ -31,7 +31,7 @@ juice.data.__ = function(){
  * @Param {Object} observer for adding
  */
 juice.data.__.prototype.addObserver = function(observer){
-	for(var i = 0; i < this.observers.length; i++){
+	for(var i = 0, size=this.observers.length; i < size; i++){
 		if(this.observers[i] === observer){
 			return;
 		}
@@ -46,11 +46,10 @@ juice.data.__.prototype.notifyObservers = function(observer) {
 	if(this.fireEvent = false){
 		return;
 	}
-	for(var i = 0; i < this.observers.length; i++){
+	for(var i = 0, size = this.observers.length; i < size; i++){
 		if(this.observers[i] === observer){
 			continue;
 		}
-		console.debug('update', this.observers[i]);
 		this.observers[i].update();
 	}
 }
@@ -63,18 +62,13 @@ juice.data.__.prototype.update = function() {
 	}
 }
 /**
- * Starts transaction for bulk handling
+ * Sets fireEvent flag
  */
-juice.data.__.prototype.startTransaction = function() {
-	var $this = this;
-	this.fireEvent = false;
-}
-/**
- * Ends transaction for bulk handling
- */
-juice.data.__.prototype.endTransaction = function() {
-	this.fireEvent = true;
-	this.notifyObservers(this);
+juice.data.__.prototype.setFireEvent = function(fireEvent) {
+	this.fireEvent = fireEvent;
+	if(fireEvent == true){
+		this.notifyObservers(this);
+	}
 }
 
 // Prevents prototype changed.
@@ -475,7 +469,7 @@ juice.data.Tree.prototype.moveNode = function(fromIndex, toIndex){
  * @Param {function} handler
  */
 juice.data.Tree.prototype.forEach = function(handler) {
-	this.startTransaction();
+	this.setFireEvent(false);
 	findChild(this.rootNode);
 	var $this = this;
 	function findChild(node) {
@@ -486,7 +480,7 @@ juice.data.Tree.prototype.forEach = function(handler) {
 			findChild(childNode);
 		}
 	}
-	this.endTransaction();
+	this.setFireEvent(true);
 }
 /**
  * Finds indexes by handler
@@ -595,6 +589,25 @@ juice.ui.__.prototype.executeExpression = function(element,$context) {
 	var template = document.createElement('template');
 	template.innerHTML = string;
 	return template.content.firstChild;
+}
+juice.ui.__.prototype.removeChildNodes = function(element){
+	// Remove element nodes and prevent memory leaks
+    var node, nodes = element.childNodes, i = 0;
+    while (node = nodes[i++]) {
+        if (node.nodeType === 1 ) {
+    		element.removeChild(node);
+        }
+    }
+
+    // Remove any remaining nodes
+    while (element.firstChild) {
+    	element.removeChild(element.firstChild);
+    }
+
+    // If this is a select, ensure that it displays empty
+    if (element.options && element.nodeName === "select") {
+    	element.options.length = 0;
+    }
 }
 juice.ui.__.prototype.createHtml = function(string){
 	var template = document.createElement('template');
@@ -756,9 +769,12 @@ juice.ui.Label.prototype.bind = function(map, name) {
 	this.map.addObserver(this);
 }
 juice.ui.Label.prototype.update = function() {
+	this.removeChildNodes(this.label);
+	/*
 	while (this.label.firstChild) {
 	    this.label.removeChild(this.label.firstChild);
 	}
+	*/
 	var value = '';
 	if(this.map.get(this.name)){
 		value = this.map.get(this.name);
@@ -833,9 +849,12 @@ juice.ui.ComboBox.prototype.bind = function(map, name) {
 }
 juice.ui.ComboBox.prototype.update = function() {
 	// creates options
+	this.removeChildNodes(this.select);
+	/*
 	while (this.select.firstChild) {
 	    this.select.removeChild(this.select.firstChild);
 	}
+	*/
 	for(var i = 0; i < this.options.length; i++){
 		var option = document.createElement('option');
 		option.value = this.options[i]['value'] || '';
@@ -1703,9 +1722,13 @@ juice.ui.Grid.prototype.createRow = function(index,map) {
 // creates not found row 
 juice.ui.Grid.prototype.createEmptyRow = function() {
 	var tbody = this.tbody.cloneNode(true);
+	this.removeChildNodes(tbody);
+	/*
 	while (tbody.firstChild) {
 		tbody.removeChild(tbody.firstChild);
 	}
+	*/
+	
 	tbody.dataset.juiceIndex = -1;
 	tbody.classList.add('juice-ui-grid-empty')
 	var tr = document.createElement('tr');
@@ -2801,8 +2824,10 @@ juice.util.validator = {
 	 * @Param {Number} valid minimum length
 	 * @Param {Number} valid maximum length
 	 */
-	isLengthBetween(value, min, max){
-		if(!value) return false;
+	isLengthBetween: function(value, min, max) {
+		if(!value) {
+			return false;
+		}
 		var length = value.length;
 		if(min <= length && length <= max){
 			return true;
