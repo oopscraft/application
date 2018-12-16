@@ -13,8 +13,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Formula;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,7 +23,7 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 @Table(name = "APP_USER_INFO")
 @EntityListeners(SystemEntityListener.class)
 public class User extends SystemEntity {
-
+	
 	@Id
 	@Column(name = "USER_ID")
 	String id;
@@ -33,23 +31,23 @@ public class User extends SystemEntity {
 	@Column(name = "USER_PWD")
 	String password;
 	
-	@Column(name = "USER_EMAIL")
+	@Column(name = "USER_EMIL")
 	String email;
 
-	@Column(name = "USER_LOCALE")
+	@Column(name = "USER_LC")
 	String locale;
 	
-	@Column(name = "USER_PHONE")
+	@Column(name = "USER_PHON")
 	String phone;
 
 	@Column(name = "USER_NAME")
 	String name;
 
-	@Column(name = "USER_STAT_CD")
-	String statusCode;
-
-	@Formula("(SELECT A.USER_STAT_NAME FROM APP_USER_STAT_CD A WHERE A.USER_STAT_CD = USER_STAT_CD)")
-	String statusName;
+	public enum Status {
+		ACTIVE, SUSPENDED, CLOSED
+	}
+	@Column(name = "USER_STAT")
+	Status status;
 
 	@Column(name = "USER_NICK")
 	String nickname;
@@ -63,11 +61,11 @@ public class User extends SystemEntity {
 	@Column(name = "USER_JOIN_DTTM")
 	Date joinDate;
 	
-	@Column(name = "USER_CLOSE_DTTM")
+	@Column(name = "USER_CLOS_DTTM")
 	Date closeDate;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_USER_GROUP_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
+	@JoinTable(name = "APP_USER_GROP_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROP_ID"))
 	List<Group> groups;
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -128,12 +126,12 @@ public class User extends SystemEntity {
 		this.name = name;
 	}
 
-	public String getStatusCode() {
-		return statusCode;
+	public Status getStatus() {
+		return status;
 	}
 
-	public void setStatusCode(String statusCode) {
-		this.statusCode = statusCode;
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 	public String getNickname() {
@@ -142,14 +140,6 @@ public class User extends SystemEntity {
 
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
-	}
-	
-	public String getStatusName() {
-		return statusName;
-	}
-
-	public void setStatusName(String statusName) {
-		this.statusName = statusName;
 	}
 
 	public String getAvatar() {

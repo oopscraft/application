@@ -10,7 +10,7 @@ import net.oopscraft.application.user.Role;
 @Repository
 public interface RoleRepository extends JpaRepository<Role,String> {
 	
-	public Page<Role> findAllByOrderByEmbeddedYnDescInsertDateDesc(Pageable pageable) throws Exception;
+	public Page<Role> findAllByOrderBySystemDataYnDescSystemInsertDateDesc(Pageable pageable) throws Exception;
 
 	public Page<Role> findByIdStartingWith(String id, Pageable pageable) throws Exception;
 	

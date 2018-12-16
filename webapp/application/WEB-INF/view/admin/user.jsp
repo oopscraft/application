@@ -54,16 +54,16 @@ $.ajax({
 	}
 });
 
-var userStatuses = new Array();
+var statuses = new Array();
 $.ajax({
-	 url: 'user/getUserStatuses'
+	 url: 'user/getStatuses'
 	,type: 'GET'
 	,data: {}
 	,success: function(data, textStatus, jqXHR) {
 		data.forEach(function(item){
 			console.log(item);
-			userStatuses.push({
-				value: item.code,
+			statuses.push({
+				value: item.name,
 				text: item.name
 			});
 		});
@@ -169,7 +169,7 @@ function addUser() {
 			user.set('__new', true);
 			user.setEnable(true);
 			user.set('id', id);
-			user.set('statusCode', userStatuses[0].value);
+			user.set('status', statuses[0].value);
 			user.setReadonly('id',true);
 			groups.fromJson([]);
 			roles.fromJson([]);
@@ -336,11 +336,11 @@ function saveUser() {
 	}
 	
 	// Checks statusCode
-	if(juice.util.validator.isEmpty(user.get('statusCode'))){
+	if(juice.util.validator.isEmpty(user.get('status'))){
 		<spring:message code="application.text.status" var="item"/>
 		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>')
 		.afterConfirm(function(){
-			$('select[data-juice-bind="user.statusCode"]').select();
+			$('select[data-juice-bind="user.status"]').select();
 		})
 		.open();
 		return false;
@@ -378,9 +378,9 @@ function saveUser() {
  */
 function removeUser(){
 	
-	// check embedded data
-	if(user.get('embeddedYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.embeddedData"/>').open();
+	// check system data
+	if(user.get('systemDataYn') == 'Y'){
+		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
@@ -472,14 +472,14 @@ function removeUser(){
 					<td class="text-center">
 						{{userSearch.get('rows')*(userSearch.get('page')-1)+$context.index+1}}
 					</td>
-					<td class="{{$context.user.get('embeddedYn')=='Y'?'embedded':''}}">
+					<td class="{{$context.user.get('systemDataYn')=='Y'?'systemData':''}}">
 						<label data-juice="Label" data-juice-bind="user.id" class="id"></label>
 					</td>
 					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.email"></label></td>
 					<td><label data-juice="Label" data-juice-bind="user.phone"></label></td>
 					<td class="text-center">
-						<label data-juice="Label" data-juice-bind="user.statusName"></label>
+						<label data-juice="Label" data-juice-bind="user.status"></label>
 					</td>
 				</tr>
 			</tbody>
@@ -590,7 +590,7 @@ function removeUser(){
 					</span>
 				</th>
 				<td>
-					<select data-juice="ComboBox" data-juice-bind="user.statusCode" data-juice-options="userStatuses" style="width:15rem;"></select>
+					<select data-juice="ComboBox" data-juice-bind="user.status" data-juice-options="statuses" style="width:15rem;"></select>
 				</td>
 			</tr>
 			<tr>

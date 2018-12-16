@@ -160,9 +160,9 @@ function saveAuthority() {
  */
 function removeAuthority() {
 
-	// Checks embedded data
-	if(authority.get('embeddedYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.embeddedData"/>').open();
+	// Checks system data
+	if(authority.get('systemDataYn') == 'Y'){
+		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
@@ -248,7 +248,7 @@ function removeAuthority() {
 					<td class="text-center">
 						{{authoritySearch.get('rows')*(authoritySearch.get('page')-1)+$context.index+1}}
 					</td>
-					<td class="{{$context.authority.get('embeddedYn')=='Y'?'embedded':''}}">
+					<td class="{{$context.authority.get('systemDataYn')=='Y'?'systemData':''}}">
 						<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
 					</td>
 					<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>

@@ -25,7 +25,6 @@ import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
 import net.oopscraft.application.user.Role;
 import net.oopscraft.application.user.RoleService;
-import net.oopscraft.application.user.UserStatus;
 
 @Controller
 @RequestMapping("/admin")

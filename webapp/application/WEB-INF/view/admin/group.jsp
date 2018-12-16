@@ -231,6 +231,7 @@ function addGroup(upperId) {
 			clearGroup();
 			group.set('id', id);
 			group.set('upperId', upperId);
+			group.setEnable(true);
 	
 			// breadcrumbs
 			getBreadCrumbs(upperId,function(breadCrumbs){
@@ -289,8 +290,8 @@ function saveGroup(){
 function removeGroup() {
 	
 	// Checks embedded data
-	if(group.get('embeddedYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.embeddedData"/>').open();
+	if(group.get('systemDataYn') == 'Y'){
+		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
@@ -370,7 +371,7 @@ div.groupItem:hover {
 				<div class="groupItem" data-id="{{$context.group.get('id')}}" onclick="javascript:getGroup(this.dataset.id);">
 					<div>
 						<i class="icon-file-o"></i>
-						<span class="{{$context.group.get('embeddedYn')=='Y'?'embedded':''}}">
+						<span class="{{$context.group.get('systemDataYn')=='Y'?'systemData':''}}">
 							<label data-juice="Label" data-juice-bind="group.name"></label>
 						</span>
 					</div>

@@ -91,4 +91,6 @@ public class UserServiceTest extends ApplicationSpringTestRunner {
 		User user = userService.getUser(USER_ID);
 		userService.removeUser(user.getId());
 	}
+	
+
 }

@@ -62,7 +62,7 @@ public class AuthorityService {
 		}else if(!StringUtils.isEmpty(searchCondition.getId())) {
 			page = authorityRepository.findByNameStartingWith(searchCondition.getName(), pageable);
 		}else {
-			page = authorityRepository.findAllByOrderByEmbeddedYnDescInsertDateDesc(pageable);
+			page = authorityRepository.findAllByOrderBySystemDataYnDescSystemInsertDateDesc(pageable);
 		}
 		authorities = page.getContent();
 		if (pageInfo.isEnableTotalCount() == true) {

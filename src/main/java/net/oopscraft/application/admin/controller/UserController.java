@@ -35,8 +35,6 @@ import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
-import net.oopscraft.application.user.UserStatus;
-import net.oopscraft.application.user.UserStatusService;
 
 @PreAuthorize("hasAuthority('ADMIN_USER')")
 @Controller
@@ -47,9 +45,6 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
-	
-	@Autowired
-	UserStatusService userStatusService;
 
 	@Autowired
 	HttpServletResponse response;
@@ -172,15 +167,20 @@ public class UserController {
 	}
 	
 	/**
-	 * getUserStatuses
+	 * getStatuses
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getUserStatuses", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "getStatuses", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getUserStatuses() throws Exception {
-		List<UserStatus> userStatuses = userStatusService.getUserStatuses();
-		return JsonUtils.toJson(userStatuses);
+	public String getStatuses() throws Exception {
+		List<ValueMap> statuses = new ArrayList<ValueMap>();
+		for(User.Status status : User.Status.values()) {
+			ValueMap statusMap = new ValueMap();
+			statusMap.set("name", status.name());
+			statuses.add(statusMap);
+		}
+		return JsonUtils.toJson(statuses);
 	}
 
 }

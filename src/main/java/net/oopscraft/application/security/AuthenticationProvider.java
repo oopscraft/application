@@ -6,7 +6,7 @@
  * Released under the LGPL-3.0 licence
  * https://opensource.org/licenses/lgpl-3.0.html
  */
-package net.oopscraft.application.user.security;
+package net.oopscraft.application.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
