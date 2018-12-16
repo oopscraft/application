@@ -24,7 +24,32 @@
 		<script type="text/javascript">
 		var user = new juice.data.Map({
 			id: null,
-			pasword: null
+			pasword: null,
+			language: '${pageContext.response.locale}'
+		});
+		user.afterChange(function(event){
+			if(event.name == 'language'){
+				window.location = '?lang=' + event.value;
+			}
+		});
+		
+		// locales
+		var languages = new Array();
+		$( document ).ready(function() {
+			$.ajax({
+				 url: 'login/getLanguages'
+				,type: 'GET'
+				,data: {}
+				,success: function(data, textStatus, jqXHR) {
+					data.forEach(function(item){
+						languages.push({
+							value: item.language,
+							text: item.displayName
+						});
+					});
+					user.notifyObservers();
+				}
+			});
 		});
 		
 		/**
@@ -112,19 +137,6 @@
 			padding: 3rem;
 			margin-bottom: 20vh;
 		}
-		#languageSelect {
-			margin: 0px;
-			padding-left: 0.5rem;
-			padding-right: 0.5rem;
-			color: #495057;
-			min-width: 100px;
-			-webkit-appearance: none;
-			border-radius: 2px;
-			border: 1px solid #cccccc;
-			background-clip: padding-box;
-			transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-			overflow: hidden;
-		}
 		button{
 			position:relative;
 			border: solid 1px #ccc;
@@ -174,12 +186,7 @@
 				<span style="font-weight:bold;">
 					<spring:message code="application.label.language"/>
 				</span>
-				<select id="languageSelect" onchange="javascript:window.location = '?lang=' + this.value;">
-						<option value="en" ${pageContext.response.locale == 'en'?'selected':''}>English</option>
-						<option value="ko" ${pageContext.response.locale == 'ko'?'selected':''}>한국어</option>
-						<option value="ja" ${pageContext.response.locale == 'ja'?'selected':''}>日本</option>
-						<option value="zh" ${pageContext.response.locale == 'zh'?'selected':''}>中国</option>
-				</select>
+				<select data-juice="ComboBox" data-juice-bind="user.language" data-juice-options="languages" style="width:10rem;"></select>
 			</div>
 			<div>
 				<button id="loginButton" onclick="javascript:doLogin();">

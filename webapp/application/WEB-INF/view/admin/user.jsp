@@ -37,7 +37,7 @@ var groups = new juice.data.List();
 var roles = new juice.data.List();
 var authorities = new juice.data.List();
 
-// code
+// locales
 var locales = new Array();
 $.ajax({
 	 url: 'user/getLocales'
@@ -45,7 +45,6 @@ $.ajax({
 	,data: {}
 	,success: function(data, textStatus, jqXHR) {
 		data.forEach(function(item){
-			console.log(item);
 			locales.push({
 				value: item.locale,
 				text: item.displayName
@@ -54,6 +53,7 @@ $.ajax({
 	}
 });
 
+// statuses
 var statuses = new Array();
 $.ajax({
 	 url: 'user/getStatuses'
@@ -61,7 +61,6 @@ $.ajax({
 	,data: {}
 	,success: function(data, textStatus, jqXHR) {
 		data.forEach(function(item){
-			console.log(item);
 			statuses.push({
 				value: item.name,
 				text: item.name

@@ -121,12 +121,6 @@
       "src": "elusive"
     },
     {
-      "uid": "pzy4lq1ak4datbxpdfj3ya74vjfhwxg1",
-      "css": "notice",
-      "code": 59410,
-      "src": "modernpics"
-    },
-    {
       "uid": "3d8cc269fdad8a4cda55a20542a84e5c",
       "css": "card",
       "code": 59411,
@@ -257,6 +251,24 @@
       "css": "cancel",
       "code": 59427,
       "src": "entypo"
+    },
+    {
+      "uid": "44a0e2660ac966cdfaa04deb6aac51df",
+      "css": "shield",
+      "code": 61746,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "26eb5e234f87bad251fdd8e285b6fae7",
+      "css": "property",
+      "code": 62088,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "671f29fa10dda08074a4c6a341bb4f39",
+      "css": "bell",
+      "code": 61683,
+      "src": "fontawesome"
     }
   ]
 }
