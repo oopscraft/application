@@ -58,7 +58,7 @@ public class RoleService {
 		} else if (!StringUtils.isEmpty(searchCondition.getId())) {
 			page = roleRepository.findByNameStartingWith(searchCondition.getName(), pageable);
 		} else {
-			page = roleRepository.findAllByOrderByEmbeddedYnDescInsertDateDesc(pageable);
+			page = roleRepository.findAllByOrderBySystemDataYnDescSystemInsertDateDesc(pageable);
 		}
 		roles = page.getContent();
 		if (pageInfo.isEnableTotalCount() == true) {

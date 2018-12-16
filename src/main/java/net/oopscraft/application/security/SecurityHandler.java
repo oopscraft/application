@@ -1,4 +1,4 @@
-package net.oopscraft.application.user.security;
+package net.oopscraft.application.security;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -8,19 +8,26 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 
 @Component
-public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler {
+public class SecurityHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityHandler.class);
 
 	@Autowired
 	HttpServletRequest request;
@@ -69,6 +76,22 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		OutputStream out = response.getOutputStream();
 		out.write(message.getBytes());
+	}
+
+	@Override
+	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    	LOGGER.warn(authException.getMessage());
+    	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    	response.getWriter().write("Invalid Token Claims.");
+    	response.getWriter().flush();
+	}
+	
+	@Override
+	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+		LOGGER.warn(accessDeniedException.getMessage());
+		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+    	response.getWriter().write("Unauthorized.");
+    	response.getWriter().flush();
 	}
 	
 

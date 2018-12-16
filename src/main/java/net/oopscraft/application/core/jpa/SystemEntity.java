@@ -8,50 +8,61 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class SystemEntity {
 	
-	@Column(name="SYS_EMBD_YN")
-	String embeddedYn;
+	@Column(name="SYS_DATA_YN")
+	String systemDataYn;
 	
 	@Column(name="SYS_INST_DTTM")
-	Date insertDate;
+	Date systemInsertDate;
 	
 	@Column(name="SYS_INST_USER_ID")
-	String insertUserId;
+	String systemInsertUserId;
 	
 	@Column(name="SYS_UPDT_DTTM")
-	Date updateDate;
+	Date systemUpdateDate;
 	
 	@Column(name="SYS_UPDT_USER_ID")
-	String updateUserId;
+	String systemUpdateUserId;
+
+	public String getSystemDataYn() {
+		return systemDataYn;
+	}
+
+	public void setSystemDataYn(String systemDataYn) {
+		this.systemDataYn = systemDataYn;
+	}
+
+	public Date getSystemInsertDate() {
+		return systemInsertDate;
+	}
+
+	public void setSystemInsertDate(Date systemInsertDate) {
+		this.systemInsertDate = systemInsertDate;
+	}
+
+	public String getSystemInsertUserId() {
+		return systemInsertUserId;
+	}
+
+	public void setSystemInsertUserId(String systemInsertUserId) {
+		this.systemInsertUserId = systemInsertUserId;
+	}
+
+	public Date getSystemUpdateDate() {
+		return systemUpdateDate;
+	}
+
+	public void setSystemUpdateDate(Date systemUpdateDate) {
+		this.systemUpdateDate = systemUpdateDate;
+	}
+
+	public String getSystemUpdateUserId() {
+		return systemUpdateUserId;
+	}
+
+	public void setSystemUpdateUserId(String systemUpdateUserId) {
+		this.systemUpdateUserId = systemUpdateUserId;
+	}
 	
-	public String getEmbeddedYn() {
-		return embeddedYn;
-	}
-	public void setEmbeddedYn(String embeddedYn) {
-		this.embeddedYn = embeddedYn;
-	}
-	public Date getInsertDate() {
-		return insertDate;
-	}
-	public void setInsertDate(Date insertDate) {
-		this.insertDate = insertDate;
-	}
-	public String getInsertUserId() {
-		return insertUserId;
-	}
-	public void setInsertUserId(String insertUserId) {
-		this.insertUserId = insertUserId;
-	}
-	public Date getUpdateDate() {
-		return updateDate;
-	}
-	public void setUpdateDate(Date updateDate) {
-		this.updateDate = updateDate;
-	}
-	public String getUpdateUserId() {
-		return updateUserId;
-	}
-	public void setUpdateUserId(String updateUserId) {
-		this.updateUserId = updateUserId;
-	}
+	
 	
 }

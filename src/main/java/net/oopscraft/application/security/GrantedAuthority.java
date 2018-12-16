@@ -1,4 +1,4 @@
-package net.oopscraft.application.user.security;
+package net.oopscraft.application.security;
 
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.Role;

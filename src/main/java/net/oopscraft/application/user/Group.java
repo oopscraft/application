@@ -17,21 +17,21 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_GROUP_INFO")
+@Table(name = "APP_GROP_INFO")
 @EntityListeners(SystemEntityListener.class)
 public class Group extends SystemEntity {
 
 	@Id
-	@Column(name = "GROUP_ID")
+	@Column(name = "GROP_ID")
 	String id;
 
-	@Column(name = "UPPER_GROUP_ID")
+	@Column(name = "UPER_GROP_ID")
 	String upperId;
 
-	@Column(name = "GROUP_NAME")
+	@Column(name = "GROP_NAME")
 	String name;
 
-	@Column(name = "GROUP_DESC")
+	@Column(name = "GROP_DESC")
 	String description;
 
 	@Column(name = "DISP_SEQ")
@@ -41,11 +41,11 @@ public class Group extends SystemEntity {
 	List<Group> childGroups;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_GROUP_ROLE_MAP", joinColumns = @JoinColumn(name = "GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+	@JoinTable(name = "APP_GROP_ROLE_MAP", joinColumns = @JoinColumn(name = "GROP_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
 	List<Role> roles;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_GROUP_AUTH_MAP", joinColumns = @JoinColumn(name = "GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@JoinTable(name = "APP_GROP_AUTH_MAP", joinColumns = @JoinColumn(name = "GROP_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
 	List<Authority> authorities;
 
 	public void setChildGroups(List<Group> childGroups) {

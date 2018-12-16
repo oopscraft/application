@@ -194,9 +194,9 @@ function saveRole(){
  */
 function removeRole() {
 	
-	// Checks embedded data
-	if(role.get('embeddedYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.embeddedData"/>').open();
+	// Checks system data
+	if(role.get('systemDataYn') == 'Y'){
+		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
@@ -280,7 +280,7 @@ function removeRole() {
 					<td class="text-center">
 						{{roleSearch.get('rows')*(roleSearch.get('page')-1)+$context.index+1}}
 					</td>
-					<td class="{{$context.role.get('embeddedYn')=='Y'?'embedded':''}}">
+					<td class="{{$context.role.get('systemDataYn')=='Y'?'systemData':''}}">
 						<label data-juice="Label" data-juice-bind="role.id" class="id"></label>
 					</td>
 					<td>

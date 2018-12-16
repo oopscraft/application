@@ -102,7 +102,7 @@ public class UserService {
 		} else if (!StringUtils.isEmpty(searchCondition.getPhone())) {
 			page = userRepository.findByPhoneStartingWith(searchCondition.getName(), pageable);
 		} else {
-			page = userRepository.findAllByOrderByEmbeddedYnDescJoinDateDesc(pageable);
+			page = userRepository.findAllByOrderBySystemDataYnDescJoinDateDesc(pageable);
 		}
 		users = page.getContent();
 		if (pageInfo.isEnableTotalCount() == true) {
@@ -151,7 +151,7 @@ public class UserService {
 		one.setEmail(user.getEmail());
 		one.setLocale(user.getLocale());
 		one.setPhone(user.getPhone());
-		one.setStatusCode(user.getStatusCode());
+		one.setStatus(user.getStatus());
 		
 		// AVATAR property
 		if(user.getAvatar() != null) {

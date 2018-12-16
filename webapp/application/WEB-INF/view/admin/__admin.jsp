@@ -333,7 +333,7 @@
 			margin: 5px;
 			padding: 1rem;
 		}
-		.embedded:after {
+		.systemData:after {
 			content:"*";
 			font-weight: bold;
 			color: red;

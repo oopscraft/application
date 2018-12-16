@@ -168,29 +168,46 @@
 	<!-- Spring Security										-->
 	<!-- ====================================================== -->
 	<security:authentication-manager>
-		<security:authentication-provider ref="net.oopscraft.application.user.security.AuthenticationProvider"/>
+		<security:authentication-provider ref="net.oopscraft.application.security.AuthenticationProvider"/>
 	</security:authentication-manager>
 	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
+	
+	<!-- Static Resource -->
+	<security:http pattern="/lib/**/*" security="none"/>
+	<security:http pattern="/img/**/*" security="none"/>
+	<security:http pattern="/font/**/*" security="none"/>	
 
 	<!-- Administrator Channel -->
-	<security:http pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
+	<security:http realm="admin" pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
 		<security:csrf disabled="true" />
-		<security:intercept-url pattern="/admin/login" access="isAnonymous()"/>
+		<security:intercept-url pattern="/admin/login" access="permitAll()"/>
 		<security:intercept-url pattern="/admin/**/*" access="isAuthenticated() and hasAuthority('ADMIN')" />
 		<security:form-login 
 			login-page="/admin/login" 
 			login-processing-url="/admin/login/processing" 
 			username-parameter="id" 
 			password-parameter="password" 
-			authentication-success-handler-ref="net.oopscraft.application.user.security.AuthenticationHandler"
-			authentication-failure-handler-ref="net.oopscraft.application.user.security.AuthenticationHandler"
+			authentication-success-handler-ref="net.oopscraft.application.security.SecurityHandler"
+			authentication-failure-handler-ref="net.oopscraft.application.security.SecurityHandler"
 			/>
 		<security:logout invalidate-session="true" logout-url="/admin/logout" logout-success-url="/admin" />
 	</security:http>
 	
-	<!-- RESTful API Channel -->
-	<security:http pattern="/api*/**/*" disable-url-rewriting="true" use-expressions="true">
-		<security:intercept-url pattern="/api/**/*" access="isAuthenticated()" />
+	<!-- RESTful API Security Realm 
+	<security:http realm="api" pattern="/api/**/*" disable-url-rewriting="true" use-expressions="true">
+		<security:intercept-url pattern="/api/token" access="permitAll()"/>
+		<security:intercept-url pattern="/api/**/*" access="isAuthenticated()"/>
+		<security:access-denied-handler ref="net.oopscraft.application.security.AuthenticationHandler" />
+		<security:custom-filter ref="net.oopscraft.application.security.SecurityFilter" after="CHANNEL_FILTER"/>
+		<security:http-basic/>
+	</security:http>
+	-->
+	
+	<!-- Base Security Realm -->
+	<security:http disable-url-rewriting="true" use-expressions="true">
+		<security:intercept-url pattern="/admin/**/*" access="permitAll()"/>
+		<security:access-denied-handler ref="net.oopscraft.application.security.SecurityHandler" />
+		<security:custom-filter ref="net.oopscraft.application.security.SecurityFilter" after="CHANNEL_FILTER"/>
 		<security:http-basic/>
 	</security:http>
 
