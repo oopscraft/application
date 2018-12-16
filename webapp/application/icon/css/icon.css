@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'icon';
-  src: url('../font/icon.eot?80738427');
-  src: url('../font/icon.eot?80738427#iefix') format('embedded-opentype'),
-       url('../font/icon.woff2?80738427') format('woff2'),
-       url('../font/icon.woff?80738427') format('woff'),
-       url('../font/icon.ttf?80738427') format('truetype'),
-       url('../font/icon.svg?80738427#icon') format('svg');
+  src: url('../font/icon.eot?8108978');
+  src: url('../font/icon.eot?8108978#iefix') format('embedded-opentype'),
+       url('../font/icon.woff2?8108978') format('woff2'),
+       url('../font/icon.woff?8108978') format('woff'),
+       url('../font/icon.ttf?8108978') format('truetype'),
+       url('../font/icon.svg?8108978#icon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'icon';
-    src: url('../font/icon.svg?80738427#icon') format('svg');
+    src: url('../font/icon.svg?8108978#icon') format('svg');
   }
 }
 */
@@ -73,7 +73,6 @@
 .icon-check:before { content: '\e80f'; } /* '' */
 .icon-globe:before { content: '\e810'; } /* '' */
 .icon-config:before { content: '\e811'; } /* '' */
-.icon-notice:before { content: '\e812'; } /* '' */
 .icon-card:before { content: '\e813'; } /* '' */
 .icon-download:before { content: '\e814'; } /* '' */
 .icon-folder-open:before { content: '\e815'; } /* '' */
@@ -91,9 +90,12 @@
 .icon-level-up:before { content: '\e821'; } /* '' */
 .icon-cancel:before { content: '\e823'; } /* '' */
 .icon-move:before { content: '\f047'; } /* '' */
+.icon-bell:before { content: '\f0f3'; } /* '' */
 .icon-content:before { content: '\f0f6'; } /* '' */
 .icon-code:before { content: '\f121'; } /* '' */
 .icon-attention:before { content: '\f12a'; } /* '' */
+.icon-shield:before { content: '\f132'; } /* '' */
 .icon-level-up-1:before { content: '\f148'; } /* '' */
 .icon-level-down-1:before { content: '\f149'; } /* '' */
 .icon-file:before { content: '\f15b'; } /* '' */
+.icon-property:before { content: '\f288'; } /* '' */

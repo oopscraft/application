@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.LocaleUtils;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.ValueMap;
@@ -154,16 +155,7 @@ public class UserController {
 	@RequestMapping(value = "getLocales", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public String getLocales() throws Exception {
-		List<ValueMap> locales = new ArrayList<ValueMap>();
-		for(Locale locale : Locale.getAvailableLocales()) {
-			ValueMap localeMap = new ValueMap();
-			if(locale.toString().length() == 5) {
-				localeMap.setString("locale", locale.toString());
-				localeMap.setString("displayName", locale.getDisplayCountry(locale));
-				locales.add(localeMap);
-			}
-		}
-		return JsonUtils.toJson(locales);
+		return JsonUtils.toJson(LocaleUtils.getLocales());
 	}
 	
 	/**

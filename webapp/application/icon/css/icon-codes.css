@@ -17,7 +17,6 @@
 .icon-check:before { content: '\e80f'; } /* '' */
 .icon-globe:before { content: '\e810'; } /* '' */
 .icon-config:before { content: '\e811'; } /* '' */
-.icon-notice:before { content: '\e812'; } /* '' */
 .icon-card:before { content: '\e813'; } /* '' */
 .icon-download:before { content: '\e814'; } /* '' */
 .icon-folder-open:before { content: '\e815'; } /* '' */
@@ -35,9 +34,12 @@
 .icon-level-up:before { content: '\e821'; } /* '' */
 .icon-cancel:before { content: '\e823'; } /* '' */
 .icon-move:before { content: '\f047'; } /* '' */
+.icon-bell:before { content: '\f0f3'; } /* '' */
 .icon-content:before { content: '\f0f6'; } /* '' */
 .icon-code:before { content: '\f121'; } /* '' */
 .icon-attention:before { content: '\f12a'; } /* '' */
+.icon-shield:before { content: '\f132'; } /* '' */
 .icon-level-up-1:before { content: '\f148'; } /* '' */
 .icon-level-down-1:before { content: '\f149'; } /* '' */
 .icon-file:before { content: '\f15b'; } /* '' */
+.icon-property:before { content: '\f288'; } /* '' */

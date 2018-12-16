@@ -63,13 +63,35 @@
         	}
         });
 
-        /**
-         * Changes language
-         * @Param {String} language code
-         */
-        function __changeLanguage(lang) {
-        	window.location = "?lang=" + lang;
-        }
+		/**
+		 * login user information
+		 */
+		var __user = new juice.data.Map({
+			language: '${pageContext.response.locale}'
+		});
+		__user.afterChange(function(event){
+			if(event.name == 'language'){
+				window.location = '?lang=' + event.value;
+			}
+		});	 
+		var __languages = new Array();
+		$( document ).ready(function() {
+			$.ajax({
+				 url: '/admin/getLanguages'
+				,type: 'GET'
+				,data: {}
+				,success: function(data, textStatus, jqXHR) {
+					console.log(data);
+					data.forEach(function(item){
+						__languages.push({
+							value: item.language,
+							text: item.displayName
+						});
+					});
+					__user.notifyObservers();
+				}
+			});
+		});
         
         /**
          * Parsed total count from Content-Range header
@@ -380,12 +402,7 @@
 				<span>
 					<i class="icon-globe"></i>
 					<spring:message code="application.label.language"/>
-					<select onchange="javascript:__changeLanguage(this.value)">
-						<option value="en" ${pageContext.response.locale == 'en'?'selected':''}>English</option>
-						<option value="ko" ${pageContext.response.locale == 'ko'?'selected':''}>한국어</option>
-						<option value="ja" ${pageContext.response.locale == 'ja'?'selected':''}>日本</option>
-						<option value="zh" ${pageContext.response.locale == 'zh'?'selected':''}>中国</option>
-					</select>
+					<select data-juice="ComboBox" data-juice-bind="__user.language" data-juice-options="__languages" style="width:10rem;"></select>
 				</span>
 				&nbsp;
 				<span>
@@ -433,15 +450,15 @@
 						</a>
 					</li>
 					<li>
-						<a href="#acl">
-							<i class="icon-list"></i>
-							ACL(접근제어)
+						<a href="#security">
+							<i class="icon-shield"></i>
+							<spring:message code="application.label.security"/>
 						</a>
 					</li>
 					<li>
-						<a href="#code">
-							<i class="icon-code"></i>
-							프로퍼티
+						<a href="#property">
+							<i class="icon-property"></i>
+							<spring:message code="application.label.property"/>
 						</a>
 					</li>
 					<li>
@@ -482,7 +499,7 @@
 					</li>
 					<li>
 						<a href="#notice">
-							<i class="icon-notice"></i>
+							<i class="icon-bell"></i>
 							<spring:message code="application.label.notice"/>
 						</a>
 					</li>

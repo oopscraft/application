@@ -181,6 +181,7 @@
 	<security:http realm="admin" pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
 		<security:csrf disabled="true" />
 		<security:intercept-url pattern="/admin/login" access="permitAll()"/>
+		<security:intercept-url pattern="/admin/login/*" access="permitAll()"/>
 		<security:intercept-url pattern="/admin/**/*" access="isAuthenticated() and hasAuthority('ADMIN')" />
 		<security:form-login 
 			login-page="/admin/login" 
