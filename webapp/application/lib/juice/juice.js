@@ -1545,7 +1545,7 @@ juice.ui.Thumbnail.prototype.bind = function(map, name) {
 			    var image = document.createElement('img');
 			    image.onload = function(){
 					ctx.drawImage(image, 0, 0, width, height);
-					value = canvas.toDataURL("image/jpeg");
+					value = canvas.toDataURL("image/png");
 			    	$this.map.set($this.name, value);
 			    };
 			    image.src = value;
@@ -1564,10 +1564,14 @@ juice.ui.Thumbnail.prototype.update = function() {
 	}
 }
 juice.ui.Thumbnail.prototype.setWidth = function(width){
-	this.width = width;
+	if(width){
+		this.width = width;
+	}
 }
 juice.ui.Thumbnail.prototype.setHeight = function(height){
-	this.height = height;
+	if(height){
+		this.height = height;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -3158,6 +3162,10 @@ juice.initialize = function(container, $context) {
 				break;
 				case 'Thumbnail':
 					var thumbnail = new juice.ui.Thumbnail(element);
+					var width = element.dataset.juiceWidth;
+					var height = element.dataset.juiceHeight;
+					thumbnail.setWidth(width);
+					thumbnail.setHeight(height);
 					thumbnail.bind(map, name);
 					thumbnail.update();
 				break;

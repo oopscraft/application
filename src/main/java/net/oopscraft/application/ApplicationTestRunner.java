@@ -1,4 +1,4 @@
-package net.oopscraft.application.test;
+package net.oopscraft.application;
 
 import javax.persistence.EntityManager;
 
@@ -7,9 +7,6 @@ import org.junit.Before;
 import org.junit.runners.model.InitializationError;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-
-import net.oopscraft.application.Application;
-import net.oopscraft.application.ApplicationContainer;
 
 public class ApplicationTestRunner {
 	
@@ -39,7 +36,7 @@ public class ApplicationTestRunner {
 	
 	@After
 	public final void afterSuper() {
-		entityManager.getTransaction().commit();
+		entityManager.getTransaction().rollback();
 		entityManager.close();
 	}
 	

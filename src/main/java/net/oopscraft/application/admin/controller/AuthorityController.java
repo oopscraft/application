@@ -44,7 +44,7 @@ public class AuthorityController {
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView role() throws Exception {
+	public ModelAndView index() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/authority.tiles");
 		return modelAndView;
 	}
