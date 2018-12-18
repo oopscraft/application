@@ -338,7 +338,7 @@ div.groupItem {
 	cursor:pointer;
 }
 div.groupItem:hover {
-	background-color: #fafafa;
+	background-color: #eee;
 }
 </style>
 <div class="title1">

@@ -25,6 +25,7 @@
 
 
  		<!-- web font -->
+ 		<link href="${pageContext.request.contextPath}/font/code.css" rel="stylesheet" type="text/css" />
  		<link href="${pageContext.request.contextPath}/font/font.css" rel="stylesheet" type="text/css" />
  		<link href="${pageContext.request.contextPath}/font/font-kr.css" rel="stylesheet" type="text/css" />
  		<link href="${pageContext.request.contextPath}/font/font-ja.css" rel="stylesheet" type="text/css" />
@@ -211,9 +212,9 @@
 			align-items: center;
 			justify-content: space-between;
 			height: 50px;
-			background-color: #f7f7f7;
+			background-color: #eee;
 			border: none;
-			border-bottom: solid 1px #ccc;
+			border-bottom: solid 1px #ddd;
 			padding: 0rem 0.5rem;
 		}
 		body > header nav.topNav {
@@ -224,7 +225,7 @@
 			align-items: center;
 			justify-content: space-between;
 			min-height: 90vh;
-			border: solid 0px #efefef;
+			border: solid 0px #eee;
 		}
 		body > main > nav {
 			display: block;
@@ -233,7 +234,7 @@
 			min-width: 100px;
 			padding: 0px;
 			border: none;
-			border-right: solid 1px #ccc;
+			border-right: solid 1px #ddd;
    			background-color: #fff;
 		}
 		body > main > nav > ul {
@@ -241,7 +242,7 @@
 		}
 		body > main > nav > ul li {
 			font-weight: bold;
-			background-color: white;
+			background-color: #fff;
 			padding: 5px;
 			border: none;
 			border-bottom: dotted 1px #ccc;
@@ -249,7 +250,7 @@
 		}
 		body > main > nav > ul li:hover {
 			font-weight: bold;
-			background-color: #f7f7f7;
+			background-color: #eee;
 			cursor: hand;
 			cursor: pointer;
 		}
@@ -268,9 +269,9 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			background-color: #f7f7f7;
+			background-color: #eee;
 			border: none;
-			border-top: solid 1px #ccc;
+			border-top: solid 1px #ddd;
 			padding: 0rem 0.5rem;
 		}
 		dialog {
@@ -292,16 +293,16 @@
 		table.detail {
 			width: 100%;
 			border-collapse: collapse;
-			border: solid 1px #cccccc;
+			border: solid 1px #ddd;
 		}
 		table.detail > tbody > tr > th {
-			border: solid 1px #efefef;
-			background-color: #fafafa;
+			border: solid 1px #ddd;
+			background-color: #eee;
 			padding-left: 1.0rem;
 			padding-right: 1.0rem;
 		}
 		table.detail > tbody > tr > td {
-			border: solid 1px #efefef;
+			border: solid 1px #ddd;
 			padding: 1px;
 		}
 		table.detail > tbody > tr > td > table {
@@ -311,7 +312,7 @@
 			position:relative;
 			border: solid 1px #ccc;
 			border-radius: 1px;
-			background-color: #fafafa;
+			background-color: #fff;
 			padding:0 1rem;
 			cursor:pointer;
 			transition:200ms ease all;
@@ -319,6 +320,7 @@
 		}
 		button:hover{
 			outline: none;
+			background-color: #eee;
 			border: solid 1px gray;
 		}
 		button.small {
@@ -326,7 +328,7 @@
 			padding: 0rem 0.4rem;
 		}
 		button.small:hover {
-			background-color: #efefef;
+			background-color: #eee;
 		}
 		a {
 			text-decoration: none;
@@ -363,6 +365,9 @@
 			cursor: hand;
 			cursor: pointer;
 			text-decoration: underline;
+		}
+		.code {
+			font-family: code, consolas;
 		}
 		.text-left {
 			text-align: left !important;
@@ -441,21 +446,23 @@
 						</a>
 					</li>
 					<li>
+						<a href="menu">
+							<i class="icon-list"></i>
+							<spring:message code="application.label.menu"/>
+						</a>
+					</li>
+					<!--
+					<li>
 						<a href="#security">
 							<i class="icon-shield"></i>
 							<spring:message code="application.label.security"/>
 						</a>
 					</li>
+					-->
 					<li>
 						<a href="#property">
 							<i class="icon-property"></i>
 							<spring:message code="application.label.property"/>
-						</a>
-					</li>
-					<li>
-						<a href="#menu">
-							<i class="icon-list"></i>
-							<spring:message code="application.label.menu"/>
 						</a>
 					</li>
 					<li>
@@ -1069,6 +1076,116 @@
 				</div>
 			</div>
 		</dialog>		
+		
+		<!-- ====================================================== -->
+		<!-- Menus Dialog											-->
+		<!-- ====================================================== -->
+		<script type="text/javascript">
+        /**
+         * Gets menus dialog
+         */
+        var __menusDialog = {
+	 		items: new juice.data.Tree(),
+	 		handler: {},
+	 		setDisable: function(handler){
+	 			this.handler.disable = handler;
+	 			return this;
+	 		},
+	 		afterConfirm: function(handler){
+	 			this.handler.afterConfirm = handler;
+	 			return this;
+	 		},
+			open: function(callback){
+				var $this = this;
+		 		this.items.fromJson([],'childGroups');
+				this.dialog = new juice.ui.Dialog($('#__menusDialog')[0]);
+				this.dialog.setTitle('<i class="icon-folder"> </i><spring:message code="application.text.group"/> <spring:message code="application.text.list"/>');
+				this.search();
+			},
+	 		search: function(){
+	 			var $this = this;
+            	$.ajax({
+            		 url: '${pageContext.request.contextPath}/admin/getMenus'
+            		,type: 'GET'
+            		,data: {}
+            		,success: function(data, textStatus, jqXHR) {
+            			$this.items.fromJson(data,'childMenus');
+
+            			// Disabled node
+            			if($this.handler.disable){
+            				$this.items.forEach(function(node){
+            					if($this.handler.disable.call($this,node)){
+            						node.set('__selected', true);
+            						node.setEnable(false);
+            					}
+            				});
+            			}
+            			$('#__menusUl').hide().fadeIn();
+            			$this.dialog.open();
+               	 	}
+            	});	
+	 		},
+	 		select: function(id){
+				this.items.forEach(function(node){
+					if(node.enable == true){
+						if(node.get('id') == id){
+							node.set('__selected', true);
+						}else{
+							node.set('__selected', false);
+						}
+					}
+				});
+	 		},
+	 		confirm: function(){
+ 				var node = this.items.findNode(function(node){
+ 					if(node.enable == true && node.get('__selected') == true){
+ 						return true;
+ 					}
+ 				});
+	 			this.handler.afterConfirm.call(this, node);
+
+		 		// close
+	 			this.close();
+	 		},
+	 		close: function() {
+	 			this.handler = {};
+	 			this.dialog.close();
+	 		}
+        };
+        </script>
+        <style type="text/css">
+		#__menusDialog {
+			width: 500px;
+			max-height: 100vh;
+		}
+		#__menusDialog li > div {
+			border-bottom:dotted 1px #ccc;
+			padding: 0.25rem 0rem;
+			line-height: 2rem;
+		}
+        </style>
+		<dialog>
+			<div id="__menusDialog">
+				<div>
+					<ul id="__menusUl" data-juice="TreeView" data-juice-bind="__menusDialog.items" data-juice-item="item">
+						<li>
+							<div data-id="{{$context.item.get('id')}}" data-enable="{{$context.item.enable}}" onclick="javascript:this.dataset.enable == 'false' || __menusDialog.select(this.dataset.id);" style="width:100%;cursor:hand;cursor:pointer;">
+								<input data-juice="CheckBox" data-juice-bind="item.__selected"/>
+								<img data-juice="Thumbnail" data-juice-bind="item.icon" data-juice-width="24" data-juice-height="24" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAABGdBTUEAALGOfPtRkwAAACBjSFJNAAB6JQAAgIMAAPn/AACA6QAAdTAAAOpgAAA6mAAAF2+SX8VGAAADe0lEQVR42mL8//8/w7J1Wxl+//4t+vf3r3RGJiZ+BgYGRgbiwf9fv36fY+PgWM7OxsYAMg8GooN9GAACiAXE+PfvHwMnO1u0jZ1FMxsbO0QR1ApGKIORkQHFXhD/H0gdEL9+85bh+u173p+/fi9iYWV9xYBkCUAAMYEtAArwcHOLc3JyMvz8/Yfh95+/DH/+/GP48xeG/zMAKSAG0kC1IO3/wJYwAR3HwKCipMDg6+EczcnOOvXnz58sjIwIhwAEEBPcn////fsLMgVqAJiEOBDCA4tDBMA+BHkShJmYGH7++s3AysLCYGagG8LJyrIAGNwCMEsAAghhAdTfjGAMCxpGBiYmiBgsuBjBfCaIPBNELdBxDEDXMQgLCTA42JhFs7EyZ4KCHQQAAghuASMstJEMR/Ip0GAGiOUwWagkCwszw/sPHxmu37zF8PDxE2DQ/mEQFuDL+frtmwhIHiCAWFDSAyMjwuWM0JiEIKiroQ6BijNBHcDDzcPAycEF9i0rKwsDCzOzyO9fv4SAUm8AAgjJgv9QOxgZkJINqquRDGdkRDiIBRj+rGwQB3BycDCwc3D8ZYQaCBBATCgegGOoIUwwQzENh1sM4QAj/D/coUxIYQsQQCwY2QZuCCOS4Qx4DEf4mhGJDQMAAcSCajaSITBf4HU5MB6QEwcjQhwGAAIILZIZ4N6Du5wJ1XUoFoKMZ0LkckZGzEIGIIBYsIXQ///oBiGlIkaEz5hQfIucGBAAIIBQgwgsxQTU+B/hcnhKYkAKFojLkcIGkUrQAEAAYcQBcrJkwBos0IhnRMqe4FSEHMEImwACCDOIkBgIy7C7HCHOAC820AFAAGFEMs6kiNXlqCmHEUsYAQQQC3oEMyEbiFQ2geME3eWMjEjFCarhsGwHEEAsGB5AKiIghjAhJVsCLscSRAABBNbNzMyMko5QS1XiDYflIVC9wQasPkEAIIDAFnz5/BlRxsPKFuS6ATlnMzKCDWJE8zojUi7jYOdguHLpIpgNEEDg2omHl5dh+pwF3UD2/99//oExsHoE43//SQfXbt39Z2JupQEyGyCAWKA+YFm/ZtVVHW2tD0xMTGyQepIR1YXIgcyIFIuMqBkVqJ9h7769269dufQeJAYQQIwgW4DeYwNiHikZOTFeXj5WEpstKA75C6zYnzx88Pr7929fgWZ/AQgwAKHLIxFKOBpdAAAAAElFTkSuQmCC" style="vertical-align:middle;"/>
+								<label data-juice="Label" data-juice-bind="item.name"></label>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<br/>
+				<div style="text-align:right;">
+					<button onclick="javascript:__menusDialog.confirm();">
+						<i class="icon-check"></i>
+						<spring:message code="application.text.confirm"/>
+					</button>
+				</div>
+			</div>
+		</dialog>
 		
 	</body>
 </html>

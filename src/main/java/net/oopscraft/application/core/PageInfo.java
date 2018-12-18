@@ -49,10 +49,18 @@ public class PageInfo {
 		return totalCount;
 	}
 
+	/**
+	 * Returns spring-data Pageable instance.
+	 * @return
+	 */
 	public Pageable toPageable() {
 		return new PageRequest(page - 1, rows);
 	}
 
+	/**
+	 * Returns MYBATIS RowBounds instance.
+	 * @return
+	 */
 	public RowBounds toRowBounds() {
 		return new RowBounds(getOffset(), getLimit());
 	}

@@ -20,6 +20,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.LocaleUtils;
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.menu.Menu;
+import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.AuthorityService;
 import net.oopscraft.application.user.Group;
@@ -42,6 +44,9 @@ public class AdminController {
 	
 	@Autowired
 	AuthorityService authorityService;
+	
+	@Autowired
+	MenuService menuService;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView admin() throws Exception {
@@ -135,6 +140,20 @@ public class AdminController {
 		List<Authority> roles = authorityService.getAuthorities(searchCondition, pageInfo);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return JsonUtils.toJson(roles);
+	}
+	
+	/**
+	 * Gets menus
+	 * @return
+	 * @throws Exception
+	 */
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@RequestMapping(value = "getMenus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional
+	public String getMenus() throws Exception {
+		List<Menu> groups = menuService.getMenus();
+		return JsonUtils.toJson(groups);
 	}
 
 }
