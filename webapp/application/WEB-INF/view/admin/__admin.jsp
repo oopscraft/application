@@ -460,7 +460,7 @@
 					</li>
 					-->
 					<li>
-						<a href="#property">
+						<a href="property">
 							<i class="icon-property"></i>
 							<spring:message code="application.label.property"/>
 						</a>

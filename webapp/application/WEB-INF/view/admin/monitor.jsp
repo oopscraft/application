@@ -434,7 +434,7 @@ function updateClassCountChart(monitorInfo){
 			</thead>
 			<tbody>
 				<tr>
-					<td><label data-juice="Label" data-juice-bind="threadInfo.threadId"></label></td>
+					<td class="text-center"><label data-juice="Label" data-juice-bind="threadInfo.threadId"></label></td>
 					<td><label data-juice="Label" data-juice-bind="threadInfo.threadName"></label></td>
 					<td><label data-juice="Label" data-juice-bind="threadInfo.threadState"></label></td>
 					<td class="text-right"><label data-juice="Label" data-juice-bind="threadInfo.waitedCount" data-juice-format="number:0,0"></label></td>
