@@ -127,21 +127,21 @@
 			height: 100vh;
 			justify-content: center;
 			align-items: center;
-			background-color: #f7f7f7;
+			background-color: #eee;
 		}
 		#loginDiv {
 			width: 300px;
 			background-color: white;
-			border: solid 1px #ccc;
+			border: solid 1px #ddd;
 			border-radius: 2px;
 			padding: 3rem;
 			margin-bottom: 20vh;
 		}
 		button{
 			position:relative;
-			border: solid 1px #ccc;
+			border: solid 1px #ddd;
 			border-radius: 1px;
-			background-color: #fafafa;
+			background-color: #eee;
 			padding:0 1rem;
 			cursor:pointer;
 			transition:200ms ease all;
