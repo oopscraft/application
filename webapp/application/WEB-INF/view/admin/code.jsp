@@ -117,6 +117,7 @@ function addCode() {
 			code.fromJson({});
 			code.set('id', id);
 			code.setEnable(true);
+			items.fromJson([]);
 		})
 		.open();
 }

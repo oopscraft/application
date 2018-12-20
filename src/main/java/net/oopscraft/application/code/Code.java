@@ -1,5 +1,6 @@
 package net.oopscraft.application.code;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -32,7 +33,7 @@ public class Code extends SystemEntity {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "codeId", cascade = CascadeType.ALL)
 	@OrderBy("displaySeq")
-	List<CodeItem> items;
+	List<CodeItem> items = new ArrayList<CodeItem>();
 	
 	/**
 	 * Gets Code Item by id
