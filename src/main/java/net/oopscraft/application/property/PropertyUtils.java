@@ -40,18 +40,5 @@ public class PropertyUtils {
 		return property;
 	}
 
-	/**
-	 * getValue
-	 * @param id
-	 * @return
-	 */
-	public static String getValue(String id) {
-		Property property = propertyRepository.findOne(id);
-		if(property != null && property.getValue() != null) {
-			return property.getValue();
-		}else {
-			return null;
-		}
-	}
 	
 }

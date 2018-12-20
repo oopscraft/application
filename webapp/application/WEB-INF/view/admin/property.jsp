@@ -130,6 +130,11 @@ function saveProperty() {
 		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
 	}
+	if(juice.util.validator.isEmpty(property.get('value'))){
+		<spring:message code="application.text.value" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		return false;
+	}
 	
 	// Saves property
 	<spring:message code="application.text.property" var="item"/>
@@ -311,7 +316,9 @@ function removeProperty() {
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="application.text.value"/>
+					<span class="must">
+						<spring:message code="application.text.value"/>
+					</span>
 				</th>
 				<td>
 					<textarea data-juice="TextArea" data-juice-bind="property.value"></textarea>
