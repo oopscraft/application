@@ -17,13 +17,5 @@ public class PropertyUtilsTest extends ApplicationTestRunner {
 		System.out.println(new TextTable(property));
 		assert(true);
 	}
-	
-	@Test
-	public void testGetValue() throws Exception {
-		String value = PropertyUtils.getValue("TEST");
-		System.out.println(String.format("value is [%s]", value));
-		assert(true);
-	}
-	
 
 }

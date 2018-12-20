@@ -446,35 +446,27 @@
 						</a>
 					</li>
 					<li>
-						<a href="menu">
-							<i class="icon-list"></i>
-							<spring:message code="application.label.menu"/>
-						</a>
-					</li>
-					<!--
-					<li>
-						<a href="#security">
-							<i class="icon-shield"></i>
-							<spring:message code="application.label.security"/>
-						</a>
-					</li>
-					-->
-					<li>
 						<a href="property">
 							<i class="icon-property"></i>
 							<spring:message code="application.label.property"/>
 						</a>
 					</li>
 					<li>
-						<a href="#code">
+						<a href="message">
+							<i class="icon-message"></i>
+							<spring:message code="application.label.message"/>
+						</a>
+					</li>
+					<li>
+						<a href="code">
 							<i class="icon-code"></i>
 							<spring:message code="application.label.code"/>
 						</a>
 					</li>
 					<li>
-						<a href="#message">
-							<i class="icon-message"></i>
-							<spring:message code="application.label.message"/>
+						<a href="menu">
+							<i class="icon-list"></i>
+							<spring:message code="application.label.menu"/>
 						</a>
 					</li>
 					<li>

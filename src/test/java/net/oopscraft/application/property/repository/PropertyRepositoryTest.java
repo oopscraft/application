@@ -4,14 +4,10 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.property.Property;
-import net.oopscraft.application.security.Acl;
 
 public class PropertyRepositoryTest extends ApplicationTestRunner {
 	
