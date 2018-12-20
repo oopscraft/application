@@ -1583,88 +1583,6 @@ INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_ME
             <constraint>
               <height>-1</height>
               <width>-1</width>
-              <x>220</x>
-              <y>1020</y>
-            </constraint>
-            <sourceConnections>
-              <net.java.amateras.db.visual.model.ForeignKeyModel reference="../../.."/>
-            </sourceConnections>
-            <targetConnections/>
-            <error></error>
-            <linkedPath></linkedPath>
-            <tableName>APP_TAB_COL_CODE_MAP</tableName>
-            <logicalName>Application Table Column Code Map</logicalName>
-            <description></description>
-            <columns>
-              <net.java.amateras.db.visual.model.ColumnModel>
-                <columnName>TAB</columnName>
-                <logicalName>Table</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[8]/columnType"/>
-                <size>32</size>
-                <notNull>true</notNull>
-                <primaryKey>true</primaryKey>
-                <description></description>
-                <autoIncrement>false</autoIncrement>
-                <defaultValue></defaultValue>
-              </net.java.amateras.db.visual.model.ColumnModel>
-              <net.java.amateras.db.visual.model.ColumnModel>
-                <columnName>COL</columnName>
-                <logicalName>Column</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[8]/columnType"/>
-                <size>32</size>
-                <notNull>true</notNull>
-                <primaryKey>true</primaryKey>
-                <description></description>
-                <autoIncrement>false</autoIncrement>
-                <defaultValue></defaultValue>
-              </net.java.amateras.db.visual.model.ColumnModel>
-              <net.java.amateras.db.visual.model.ColumnModel>
-                <columnName>CD_ID</columnName>
-                <logicalName>Code Id</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
-                <size>32</size>
-                <notNull>false</notNull>
-                <primaryKey>false</primaryKey>
-                <description></description>
-                <autoIncrement>false</autoIncrement>
-                <defaultValue></defaultValue>
-              </net.java.amateras.db.visual.model.ColumnModel>
-            </columns>
-            <indices/>
-            <backgroundColor>
-              <red>255</red>
-              <green>255</green>
-              <blue>206</blue>
-            </backgroundColor>
-            <sql></sql>
-          </source>
-          <target class="net.java.amateras.db.visual.model.TableModel" reference="../../.."/>
-          <foreignKeyName>APP_TAB_COL_CODE_MAP_FK_1</foreignKeyName>
-          <references/>
-        </net.java.amateras.db.visual.model.ForeignKeyModel>
-        <net.java.amateras.db.visual.model.ForeignKeyModel>
-          <listeners serialization="custom">
-            <java.beans.PropertyChangeSupport>
-              <default>
-                <source class="net.java.amateras.db.visual.model.ForeignKeyModel" reference="../../../.."/>
-                <propertyChangeSupportSerializedDataVersion>2</propertyChangeSupportSerializedDataVersion>
-              </default>
-              <null/>
-            </java.beans.PropertyChangeSupport>
-          </listeners>
-          <source class="net.java.amateras.db.visual.model.TableModel">
-            <listeners serialization="custom">
-              <java.beans.PropertyChangeSupport>
-                <default>
-                  <source class="net.java.amateras.db.visual.model.TableModel" reference="../../../.."/>
-                  <propertyChangeSupportSerializedDataVersion>2</propertyChangeSupportSerializedDataVersion>
-                </default>
-                <null/>
-              </java.beans.PropertyChangeSupport>
-            </listeners>
-            <constraint>
-              <height>-1</height>
-              <width>-1</width>
               <x>570</x>
               <y>820</y>
             </constraint>
@@ -1701,74 +1619,14 @@ INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_ME
                 <defaultValue></defaultValue>
               </net.java.amateras.db.visual.model.ColumnModel>
               <net.java.amateras.db.visual.model.ColumnModel>
-                <columnName>SYS_DATA_YN</columnName>
-                <logicalName>System Data Yn</logicalName>
+                <columnName>CD_ITEM_NAME</columnName>
+                <logicalName>Code Item Value</logicalName>
                 <columnType class="net.java.amateras.db.dialect.ColumnType">
                   <name>VARCHAR</name>
                   <logicalName>String</logicalName>
                   <supportSize>true</supportSize>
                   <type>12</type>
                 </columnType>
-                <size>1</size>
-                <notNull>false</notNull>
-                <primaryKey>false</primaryKey>
-                <description></description>
-                <autoIncrement>false</autoIncrement>
-                <defaultValue></defaultValue>
-              </net.java.amateras.db.visual.model.ColumnModel>
-              <net.java.amateras.db.visual.model.ColumnModel>
-                <columnName>SYS_INST_DTTM</columnName>
-                <logicalName>System Insert Datetime</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType">
-                  <name>DATETIME</name>
-                  <logicalName>Datetime</logicalName>
-                  <supportSize>false</supportSize>
-                  <type>91</type>
-                </columnType>
-                <size>10</size>
-                <notNull>false</notNull>
-                <primaryKey>false</primaryKey>
-                <description></description>
-                <autoIncrement>false</autoIncrement>
-                <defaultValue></defaultValue>
-              </net.java.amateras.db.visual.model.ColumnModel>
-              <net.java.amateras.db.visual.model.ColumnModel>
-                <columnName>SYS_INST_USER_ID</columnName>
-                <logicalName>System Insert User ID</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
-                <size>32</size>
-                <notNull>false</notNull>
-                <primaryKey>false</primaryKey>
-                <description></description>
-                <autoIncrement>false</autoIncrement>
-                <defaultValue></defaultValue>
-              </net.java.amateras.db.visual.model.ColumnModel>
-              <net.java.amateras.db.visual.model.ColumnModel>
-                <columnName>SYS_UPDT_DTTM</columnName>
-                <logicalName>System Update Datetime</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
-                <size>10</size>
-                <notNull>false</notNull>
-                <primaryKey>false</primaryKey>
-                <description></description>
-                <autoIncrement>false</autoIncrement>
-                <defaultValue></defaultValue>
-              </net.java.amateras.db.visual.model.ColumnModel>
-              <net.java.amateras.db.visual.model.ColumnModel>
-                <columnName>SYS_UPDT_USER_ID</columnName>
-                <logicalName>System Update User ID</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
-                <size>32</size>
-                <notNull>false</notNull>
-                <primaryKey>false</primaryKey>
-                <description></description>
-                <autoIncrement>false</autoIncrement>
-                <defaultValue></defaultValue>
-              </net.java.amateras.db.visual.model.ColumnModel>
-              <net.java.amateras.db.visual.model.ColumnModel>
-                <columnName>CD_ITEM_NAME</columnName>
-                <logicalName>Code Item Name</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                 <size>256</size>
                 <notNull>false</notNull>
                 <primaryKey>false</primaryKey>
@@ -1777,10 +1635,15 @@ INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_ME
                 <defaultValue></defaultValue>
               </net.java.amateras.db.visual.model.ColumnModel>
               <net.java.amateras.db.visual.model.ColumnModel>
-                <columnName>CD_ITEM_DESC</columnName>
-                <logicalName>Code Item Description</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[3]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[8]/columnType"/>
-                <size>65535</size>
+                <columnName>DISP_SEQ</columnName>
+                <logicalName>Display Sequence</logicalName>
+                <columnType class="net.java.amateras.db.dialect.ColumnType">
+                  <name>INT</name>
+                  <logicalName>Integer</logicalName>
+                  <supportSize>true</supportSize>
+                  <type>4</type>
+                </columnType>
+                <size>10</size>
                 <notNull>false</notNull>
                 <primaryKey>false</primaryKey>
                 <description></description>
@@ -1794,11 +1657,11 @@ INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_ME
               <green>255</green>
               <blue>206</blue>
             </backgroundColor>
-            <sql>INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VALUES (&apos;SAMPLE_CD&apos;, &apos;ITEM_1&apos;,&apos;Sample Code Item Name&apos;,&apos;Sample Code Item Description&apos;);&#xd;
-INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VALUES (&apos;SAMPLE_CD&apos;, &apos;ITEM_2&apos;,&apos;Sample Code Item Name&apos;,&apos;Sample Code Item Description&apos;);&#xd;
-INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VALUES (&apos;SAMPLE_CD&apos;, &apos;ITEM_3&apos;,&apos;Sample Code Item Name&apos;,&apos;Sample Code Item Description&apos;);&#xd;
-INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VALUES (&apos;SAMPLE_CD&apos;, &apos;ITEM_4&apos;,&apos;Sample Code Item Name&apos;,&apos;Sample Code Item Description&apos;);&#xd;
-INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VALUES (&apos;SAMPLE_CD&apos;, &apos;ITEM_5&apos;,&apos;Sample Code Item Name&apos;,&apos;Sample Code Item Description&apos;);</sql>
+            <sql>INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES (&apos;SAMPLE_CD&apos;, &apos;ITEM_1&apos;,&apos;Sample Code Item Name&apos;, 1);&#xd;
+INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES (&apos;SAMPLE_CD&apos;, &apos;ITEM_2&apos;,&apos;Sample Code Item Name&apos;, 2);&#xd;
+INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES (&apos;SAMPLE_CD&apos;, &apos;ITEM_3&apos;,&apos;Sample Code Item Name&apos;, 3);&#xd;
+INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES (&apos;SAMPLE_CD&apos;, &apos;ITEM_4&apos;,&apos;Sample Code Item Name&apos;, 4);&#xd;
+INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES (&apos;SAMPLE_CD&apos;, &apos;ITEM_5&apos;,&apos;Sample Code Item Name&apos;, 5);</sql>
           </source>
           <target class="net.java.amateras.db.visual.model.TableModel" reference="../../.."/>
           <foreignKeyName>APP_CD_ITEM_INFO_FK_1</foreignKeyName>
@@ -1825,7 +1688,12 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VAL
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_DATA_YN</columnName>
           <logicalName>System Data Yn</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType">
+            <name>VARCHAR</name>
+            <logicalName>String</logicalName>
+            <supportSize>true</supportSize>
+            <type>12</type>
+          </columnType>
           <size>1</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -1836,7 +1704,12 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VAL
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_INST_DTTM</columnName>
           <logicalName>System Insert Datetime</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/columns/net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType">
+            <name>DATETIME</name>
+            <logicalName>Datetime</logicalName>
+            <supportSize>false</supportSize>
+            <type>91</type>
+          </columnType>
           <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -1847,7 +1720,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VAL
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_INST_USER_ID</columnName>
           <logicalName>System Insert User ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
           <size>32</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -1858,7 +1731,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VAL
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_UPDT_DTTM</columnName>
           <logicalName>System Update Datetime</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/columns/net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
           <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -1869,7 +1742,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VAL
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_UPDT_USER_ID</columnName>
           <logicalName>System Update User ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
           <size>32</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -1913,7 +1786,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VAL
       </backgroundColor>
       <sql>INSERT INTO APP_CD_INFO (CD_ID,CD_NAME,CD_DESC) VALUES (&apos;SAMPLE_CD&apos;,&apos;Sample Code Name&apos;,&apos;Sample Code Description&apos;);</sql>
     </net.java.amateras.db.visual.model.TableModel>
-    <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel[2]/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source"/>
+    <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel[2]/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source"/>
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[3]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[3]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source"/>
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[3]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[3]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target"/>
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[3]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[3]/source"/>
@@ -1921,7 +1794,6 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VAL
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[4]/source"/>
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[3]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source"/>
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[3]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target"/>
-    <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel[2]/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source"/>
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source"/>
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source"/>
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target"/>
@@ -1939,8 +1811,8 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VAL
       <constraint>
         <height>-1</height>
         <width>-1</width>
-        <x>140</x>
-        <y>1130</y>
+        <x>170</x>
+        <y>1030</y>
       </constraint>
       <sourceConnections/>
       <targetConnections/>
@@ -2087,8 +1959,8 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, CD_ITEM_DESC) VAL
       <constraint>
         <height>-1</height>
         <width>-1</width>
-        <x>540</x>
-        <y>1120</y>
+        <x>490</x>
+        <y>1030</y>
       </constraint>
       <sourceConnections/>
       <targetConnections/>

@@ -2,12 +2,14 @@ package net.oopscraft.application.code;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
@@ -28,7 +30,8 @@ public class Code extends SystemEntity {
 	@Column(name = "CD_DESC")
 	String description;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "codeId")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "codeId", cascade = CascadeType.ALL)
+	@OrderBy("displaySeq")
 	List<CodeItem> items;
 	
 	/**
