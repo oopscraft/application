@@ -27,6 +27,7 @@ var codeSearchKeys = [
 ];
 var codes = new juice.data.List();
 var code = new juice.data.Map();
+var items = new juice.data.List();
 code.setReadonly('id', true);
 code.setEnable(false);
 
@@ -73,6 +74,7 @@ function getCode(id) {
 		,success: function(data, textStatus, jqXHR) {
 			code.setEnable(true);
 			code.fromJson(data);
+			items.fromJson(data.items);
 			$('#codeTable').hide().fadeIn();
   	 	}
 	});	
@@ -137,6 +139,7 @@ function saveCode() {
 	new juice.ui.Confirm(message)
 		.afterConfirm(function() {
 			var codeJson = code.toJson();
+			codeJson.items = items.toJson();
 			$.ajax({
 				 url: 'code/saveCode'
 				,type: 'POST'
@@ -187,6 +190,44 @@ function removeCode() {
 	  	 	}
 		});	
 	}).open();
+}
+
+/**
+ * Adds item
+ */
+function addItem() {
+	var item = new juice.data.Map({
+		codeId: code.get('id'),
+		id: null,
+		name: null
+	});
+	items.addRow(item);
+	console.log(items);
+}
+
+/**
+ * Moves item up.
+ */
+function moveItemUp(index){
+	var from = parseInt(index);
+	var to = from - 1;
+	items.moveRow(from, to);
+}
+
+/**
+ * Moves item down.
+ */
+function moveItemDown(index) {
+	var from = parseInt(index);
+	var to = from + 1;
+	items.moveRow(from, to);
+}
+
+/**
+ * Removes item
+ */
+function removeItem(index){
+	items.removeRow(index);
 }
 
 </script>
@@ -311,18 +352,62 @@ function removeCode() {
 			</tr>
 			<tr>
 				<th>
-					<spring:message code="application.text.value"/>
-				</th>
-				<td>
-					<textarea data-juice="TextArea" data-juice-bind="code.value"></textarea>
-				</td>
-			</tr>
-			<tr>
-				<th>
 					<spring:message code="application.text.description"/>
 				</th>
 				<td>
 					<textarea data-juice="TextArea" data-juice-bind="code.description"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<i class="icon-list"></i>
+					<spring:message code="application.text.items"/>
+				</th>
+				<td>
+					<table data-juice="Grid" data-juice-bind="items" data-juice-item="item">
+						<colgroup>
+							<col style="width:40%;"/>
+							<col style="width:40%;"/>
+							<col style="width:20%;"/>
+						</colgroup>
+						<thead>
+							<tr>
+								<th>
+									<spring:message code="application.text.id"/>
+								</th>
+								<th>
+									<spring:message code="application.text.name"/>
+								</th>
+								<th style="text-align:right;">
+									<button class="small" onclick="javascript:addItem();">
+										<i class="icon-plus"></i>
+									</button>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr data-id="{{$context.item.get('id')}}">
+								<td>
+									<input data-juice="TextField" data-juice-bind="item.id"/>
+								</td>
+								<td>
+									<input data-juice="TextField" data-juice-bind="item.name"/>
+								</td>
+								<td style="text-align:right;">
+									<button class="small" data-index="{{$context.index}}" onclick="javascript:moveItemUp(this.dataset.index);">
+										<i class="icon-up"></i>
+									</button>
+									<button class="small" data-index="{{$context.index}}" onclick="javascript:moveItemDown(this.dataset.index);">
+										<i class="icon-down"></i>
+									</button>
+								
+									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeItem(this.dataset.index);">
+										<i class="icon-minus"></i>
+									</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</td>
 			</tr>
 		</table>

@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.code.repository.CodeRepository;
 
 @Service
@@ -99,6 +100,15 @@ public class CodeService {
 		}
 		one.setName(code.getName());
 		one.setDescription(code.getDescription());
+		
+		// add items
+		one.getItems().clear();
+		int displaySeq = 0;
+		for (CodeItem item : code.getItems()) {
+			item.setDisplaySeq(displaySeq ++);
+			one.getItems().add(item);
+		}
+		
 		codeRepository.save(one);
 		return codeRepository.findOne(code.getId());
 	}
