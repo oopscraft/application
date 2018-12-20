@@ -8,153 +8,185 @@
 <%@page import="java.text.*" %>
 <!-- global -->
 <script type="text/javascript">
-var aclSearch = new juice.data.Map({
+var codeSearch = new juice.data.Map({
 	 key: null
 	,value: null
 	,page: 1
 	,rows: 30
 	,totalCount:-1
 });
-aclSearch.afterChange(function(event){
+codeSearch.afterChange(function(event){
 	if(event.name == 'key'){
 		this.set('value','');
 	}
 });
-var aclSearchKeys = [
+var codeSearchKeys = [
 	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
 	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
 	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
 ];
-var acls = new juice.data.List();
-var acl = new juice.data.Map();
-acl.setReadonly('id', true);
-acl.setEnable(false);
+var codes = new juice.data.List();
+var code = new juice.data.Map();
+code.setReadonly('id', true);
+code.setEnable(false);
 
 /**
  * On document loaded
  */
 $( document ).ready(function() {
-	getAcls();
+	getCodes();
 });
 
 /**
- * Gets ACL list
+ * Gets code list
  */
-function getAcls(page) {
+function getCodes(page) {
 	if(page){
-		aclSearch.set('page',page);
+		codeSearch.set('page',page);
 	}
 	$.ajax({
-		 url: 'security/getAcls'
+		 url: 'code/getCodes'
 		,type: 'GET'
-		,data: aclSearch.toJson()
+		,data: codeSearch.toJson()
 		,success: function(data, textStatus, jqXHR) {
-			acls.fromJson(data);
-			aclSearch.set('totalCount', __parseTotalCount(jqXHR));
-			$('#aclsTable').hide().fadeIn();
+			codes.fromJson(data);
+			codeSearch.set('totalCount', __parseTotalCount(jqXHR));
+			$('#codesTable').hide().fadeIn();
 			
 			//  find current row index.			
-			var index = acls.indexOf(function(row){
-				return row.get('id') == acl.get('id');
+			var index = codes.indexOf(function(row){
+				return row.get('id') == code.get('id');
 			});
-			acls.setIndex(index);
+			codes.setIndex(index);
    	 	}
 	});	
 }
 
 /**
- * Gets ACL info
+ * Gets code
  */
-function getAcl(uri, method) {
+function getCode(id) {
 	$.ajax({
-		 url: 'authority/getAcl'
+		 url: 'code/getCode'
 		,type: 'GET'
-		,data: { uri:uri, method:method }
+		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
-			acl.setEnable(true);
-			acl.fromJson(data);
-			$('#aclTable').hide().fadeIn();
+			code.setEnable(true);
+			code.fromJson(data);
+			$('#codeTable').hide().fadeIn();
   	 	}
 	});	
 }
 
 /**
- * Adds authority
+ * Adds code
  */
-function addAcl() {
-	alert('addAcl');	
+function addCode() {
+	
+	<spring:message code="application.text.id" var="item"/>
+	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
+		.beforeConfirm(function(event){
+			var id = event.value;
+	
+			// checks duplicated id.
+			var isDuplicated = false;
+			$.ajax({
+				 url: 'code/getCode'
+				,type: 'GET'
+				,data: {id: id}
+				,async: false
+				,success: function(data, textStatus, jqXHR) {
+					if(data != null && data.id == id){
+						if(data != null && data.id == event.value){
+							isDuplicated = true;
+						}
+					}
+		 	 	}
+			});
+			if(isDuplicated == true){
+				<spring:message code="application.text.id" var="item"/>
+				new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+				return false;
+			}
+		})
+		.afterConfirm(function(event){
+			var id = event.value;
+			codes.clearIndex();
+			code.fromJson({});
+			code.set('id', id);
+			code.setEnable(true);
+		})
+		.open();
 }
 
 /**
- * Saves authority.
+ * Saves code.
  */
-function saveAcl() {
-/*
-	// Checks validation of authority
-	if(juice.util.validator.isEmpty(authority.get('name'))){
+function saveCode() {
+	
+	// Checks validation of code
+	if(juice.util.validator.isEmpty(code.get('name'))){
 		<spring:message code="application.text.name" var="item"/>
 		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
 	}
 	
-	// Saves authority
-	<spring:message code="application.text.authority" var="item"/>
+	// Saves code
+	<spring:message code="application.text.code" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
 		.afterConfirm(function() {
-			var authorityJson = authority.toJson();
+			var codeJson = code.toJson();
 			$.ajax({
-				 url: 'authority/saveAuthority'
+				 url: 'code/saveCode'
 				,type: 'POST'
-				,data: JSON.stringify(authorityJson)
+				,data: JSON.stringify(codeJson)
 				,contentType: "application/json"
 				,success: function(data, textStatus, jqXHR) {
-					<spring:message code="application.text.authority" var="item"/>
+					<spring:message code="application.text.code" var="item"/>
 					var message = '<spring:message code="application.message.saveItem.complete" arguments="${item}"/>';
 					new juice.ui.Alert(message)
 						.afterConfirm(function(){
-							getAuthority(authority.get('id'));
-							getAuthorities();
+							getCode(code.get('id'));
+							getCodes();
 						}).open();
 			 	}
 			});	
 		}).open();
-*/
 }
 
 /**
- * Removes authority
+ * Removes code
  */
-function removeAcl() {
-/*
+function removeCode() {
+
 	// Checks system data
-	if(authority.get('systemDataYn') == 'Y'){
+	if(code.get('systemDataYn') == 'Y'){
 		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
-	// Removes authority
-	<spring:message code="application.text.authority" var="item"/>
+	// Removes code
+	<spring:message code="application.text.code" var="item"/>
 	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
-			 url: 'authority/removeAuthority'
+			 url: 'code/removeCode'
 			,type: 'GET'
-			,data: { id: authority.get('id') }
+			,data: { id: code.get('id') }
 			,success: function(data, textStatus, jqXHR) {
-				<spring:message code="application.text.authority" var="item"/>
+				<spring:message code="application.text.code" var="item"/>
 				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
 				new juice.ui.Alert(message)
 				.afterConfirm(function(){
-					authority.fromJson({});
-					authority.setEnable(false);
-					getAuthorities();
+					code.fromJson({});
+					code.setEnable(false);
+					getCodes();
 				}).open();
 	  	 	}
 		});	
 	}).open();
-*/
 }
 
 </script>
@@ -163,39 +195,38 @@ function removeAcl() {
 </style>
 <div class="title1">
 	<i class="icon-key"></i>
-	<spring:message code="application.text.authority"/>
+	<spring:message code="application.text.code"/>
 	<spring:message code="application.text.management"/>
 </div>
 <div class="container" style="min-height:70vh;">
 	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
-		<!-- Authorities											-->
+		<!-- Codes											-->
 		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
 				<div class="title2">
 					<i class="icon-search"></i>
 				</div>
-				<select data-juice="ComboBox" data-juice-bind="aclSearch.key" data-juice-options="aclSearchKeys" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="aclSearch.value" style="width:100px;"/>
-				<button onclick="javascript:getAuthorities();">
+				<select data-juice="ComboBox" data-juice-bind="codeSearch.key" data-juice-options="codeSearchKeys" style="width:100px;"></select>
+				<input data-juice="TextField" data-juice-bind="codeSearch.value" style="width:100px;"/>
+				<button onclick="javascript:getCodes();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
 				</button>
 			</div>
 			<div>
-				<button onclick="javascript:addAuthority();">
+				<button onclick="javascript:addCode();">
 					<i class="icon-plus"></i>
 					<spring:message code="application.text.new"/>
 				</button>
 			</div>
 		</div>
-		<table id="aclsTable" data-juice="Grid" data-juice-bind="acls" data-juice-item="acl">
+		<table id="codesTable" data-juice="Grid" data-juice-bind="codes" data-juice-item="code">
 			<colgroup>
 				<col style="width:10%"/>
-				<col style="width:40%"/>
-				<col style="width:10%"/>
-				<col style="width:10%"/>
+				<col style="width:30%"/>
+				<col style="width:60%"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -203,63 +234,57 @@ function removeAcl() {
 						<spring:message code="application.text.no"/>
 					</th>
 					<th>
-						<spring:message code="application.text.uri"/>
+						<spring:message code="application.text.code"/>
+						<spring:message code="application.text.id"/>
 					</th>
 					<th>
-						<spring:message code="application.text.method"/>
-					</th>
-					<th>
-						<spring:message code="application.text.accessPolicy"/>
+						<spring:message code="application.text.code"/>
+						<spring:message code="application.text.name"/>
 					</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-uri="{{$context.acl.get('uri')}}" data-method="{{$context.acl.get('method')}}" onclick="javascript:getAcl(this.dataset.uri, this.dataset.method);">
-					<td class="text-center {{$context.acl.get('systemDataYn')=='Y'?'systemData':''}}">
-						{{aclSearch.get('rows')*(aclSearch.get('page')-1)+$context.index+1}}
+				<tr data-id="{{$context.code.get('id')}}" onclick="javascript:getCode(this.dataset.id);">
+					<td class="text-center">
+						{{codeSearch.get('rows')*(codeSearch.get('page')-1)+$context.index+1}}
 					</td>
-					<td>
-						<label data-juice="Label" data-juice-bind="acl.uri" class="id code"></label>
+					<td class="{{$context.code.get('systemDataYn')=='Y'?'systemData':''}}">
+						<label data-juice="Label" data-juice-bind="code.id" class="id"></label>
 					</td>
-					<td>
-						<label data-juice="Label" data-juice-bind="acl.method" class="id code"></label>
-					</td>
-					<td>
-						<label data-juice="Label" data-juice-bind="acl.accessPolicy"></label>
-					</td>
+					<td><label data-juice="Label" data-juice-bind="code.name"></label></td>
 				</tr>
 			</tbody>
 		</table>
 		<div>
-			<ul data-juice="Pagination" data-juice-bind="aclSearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
-				<li data-page="{{$context.page}}" onclick="javascript:getAcls(this.dataset.page);">{{$context.page}}</li>
+			<ul data-juice="Pagination" data-juice-bind="codeSearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
+				<li data-page="{{$context.page}}" onclick="javascript:getCodes(this.dataset.page);">{{$context.page}}</li>
 			</ul>
 		</div>
 	</div>
 	<div class="division" style="width:50%;">
 		<!-- ====================================================== -->
-		<!-- ACL Details										-->
+		<!-- Code Details										-->
 		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
 					<i class="icon-key"></i>
-					<spring:message code="application.text.acl"/>
+					<spring:message code="application.text.code"/>
 					<spring:message code="application.text.details"/>
 				</div>
 			</div>
 			<div>
-				<button onclick="javascript:saveAcl();">
+				<button onclick="javascript:saveCode();">
 					<i class="icon-disk"></i>
 					<spring:message code="application.text.save"/>
 				</button>
-				<button onclick="javascript:removeAcl();">
+				<button onclick="javascript:removeCode();">
 					<i class="icon-trash"></i>
 					<spring:message code="application.text.remove"/>
 				</button>
 			</div>
 		</div>
-		<table id="aclTable" class="detail">
+		<table id="codeTable" class="detail">
 			<colgroup>
 				<col style="width:30%;">
 				<col style="width:70%;">
@@ -270,7 +295,8 @@ function removeAcl() {
 					<spring:message code="application.text.id"/>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="acl.uri"/>
+					
+					<input class="id" data-juice="TextField" data-juice-bind="code.id"/>
 				</td>
 			</tr>
 			<tr>
@@ -280,7 +306,15 @@ function removeAcl() {
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="acl.name"/>
+					<input data-juice="TextField" data-juice-bind="code.name"/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<spring:message code="application.text.value"/>
+				</th>
+				<td>
+					<textarea data-juice="TextArea" data-juice-bind="code.value"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -288,7 +322,7 @@ function removeAcl() {
 					<spring:message code="application.text.description"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="acl.description"></textarea>
+					<textarea data-juice="TextArea" data-juice-bind="code.description"></textarea>
 				</td>
 			</tr>
 		</table>
