@@ -10,8 +10,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "APP_ATCL_RPLY_INFO")
-@IdClass(ArticleReply.Pk.class)
-public class ArticleReply {
+@IdClass(BoardArticleReply.Pk.class)
+public class BoardArticleReply {
 	
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
@@ -65,17 +65,27 @@ public class ArticleReply {
 	@Id
 	@Column(name = "RPLY_NO")
 	long no;
-
-	public long getArticleNo() {
-		return articleNo;
-	}
+	
+	@Column(name = "RPLY_LEVL")
+	String level;
 	
 	@Column(name = "RPLY_CNTS")
 	String contents;
 	
+	public long getArticleNo() {
+		return articleNo;
+	}
 
 	public void setArticleNo(long articleNo) {
 		this.articleNo = articleNo;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
 	}
 
 	public long getNo() {

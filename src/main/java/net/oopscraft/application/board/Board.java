@@ -1,11 +1,19 @@
 package net.oopscraft.application.board;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
+
 
 @Entity
 @Table(name = "APP_BORD_INFO")
@@ -34,11 +42,18 @@ public class Board {
 	@Enumerated(EnumType.STRING)
 	Policy writePolicy = Policy.ANONYMOUS;
 	
+	@Column(name = "PAGE_PER_ROWS")
+	int listPerRows = 10;
+	
 	@Column(name = "RPLY_USE_YN")
 	String replyUseYn;
 	
 	@Column(name = "FILE_USE_YN")
 	String fileUseYn;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "boardId", cascade = CascadeType.ALL)
+	@OrderBy("displaySeq")
+	List<BoardCategory> categories = new ArrayList<BoardCategory>();
 	
 	public String getId() {
 		return id;
@@ -79,6 +94,14 @@ public class Board {
 	public void setWritePolicy(Policy writePolicy) {
 		this.writePolicy = writePolicy;
 	}
+	
+	public int getListPerRows() {
+		return listPerRows;
+	}
+
+	public void setListPerRows(int listPerRows) {
+		this.listPerRows = listPerRows;
+	}
 
 	public String getReplyUseYn() {
 		return replyUseYn;
@@ -94,6 +117,14 @@ public class Board {
 
 	public void setFileUseYn(String fileUseYn) {
 		this.fileUseYn = fileUseYn;
+	}
+
+	public List<BoardCategory> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<BoardCategory> categories) {
+		this.categories = categories;
 	}
 
 }
