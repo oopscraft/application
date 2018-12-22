@@ -10,8 +10,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "APP_CD_ITEM_INFO")
-@IdClass(CodeItem.Pk.class)
-public class CodeItem {
+@IdClass(Item.Pk.class)
+public class Item {
 	
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;

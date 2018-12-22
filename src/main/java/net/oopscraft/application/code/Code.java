@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
@@ -20,6 +21,9 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 @Table(name = "APP_CD_INFO")
 @EntityListeners(SystemEntityListener.class)
 public class Code extends SystemEntity {
+	
+	@Transient
+	CodeFactory codeFactory;
 
 	@Id
 	@Column(name = "CD_ID")
@@ -33,15 +37,15 @@ public class Code extends SystemEntity {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "codeId", cascade = CascadeType.ALL)
 	@OrderBy("displaySeq")
-	List<CodeItem> items = new ArrayList<CodeItem>();
+	List<Item> items = new ArrayList<Item>();
 	
 	/**
 	 * Gets Code Item by id
 	 * @param id
 	 * @return
 	 */
-	public CodeItem getItem(String id) {
-		for(CodeItem item : this.items) {
+	public Item getItem(String id) {
+		for(Item item : this.items) {
 			if(item.getId().equals(id)) {
 				return item;
 			}
@@ -73,11 +77,11 @@ public class Code extends SystemEntity {
 		this.description = description;
 	}
 
-	public List<CodeItem> getItems() {
+	public List<Item> getItems() {
 		return items;
 	}
 
-	public void setItems(List<CodeItem> items) {
+	public void setItems(List<Item> items) {
 		this.items = items;
 	}
 
