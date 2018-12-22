@@ -10,8 +10,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "APP_BORD_CATE_INFO")
-@IdClass(BoardCategory.Pk.class)
-public class BoardCategory {
+@IdClass(Category.Pk.class)
+public class Category {
 	
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;

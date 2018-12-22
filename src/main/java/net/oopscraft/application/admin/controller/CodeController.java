@@ -68,7 +68,7 @@ public class CodeController {
 			@RequestParam(value = "value", required = false) String value,
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
-		CodeService.SearchCondition searchCondition = codeService.new SearchCondition();
+		CodeService.CodeSearch searchCondition = codeService.new CodeSearch();
 		switch ((key == null ? "" : key)) {
 		case "id":
 			searchCondition.setId(value);

@@ -53,7 +53,7 @@ public class Board {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "boardId", cascade = CascadeType.ALL)
 	@OrderBy("displaySeq")
-	List<BoardCategory> categories = new ArrayList<BoardCategory>();
+	List<Category> categories = new ArrayList<Category>();
 	
 	public String getId() {
 		return id;
@@ -119,11 +119,11 @@ public class Board {
 		this.fileUseYn = fileUseYn;
 	}
 
-	public List<BoardCategory> getCategories() {
+	public List<Category> getCategories() {
 		return categories;
 	}
 
-	public void setCategories(List<BoardCategory> categories) {
+	public void setCategories(List<Category> categories) {
 		this.categories = categories;
 	}
 

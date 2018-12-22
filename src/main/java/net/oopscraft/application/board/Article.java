@@ -11,22 +11,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
-import javax.persistence.SecondaryTables;
 import javax.persistence.Table;
-
-import net.oopscraft.application.board.BoardArticle.Pk;
 
 @Entity
 @Table(name = "APP_ATCL_INFO")
-@SecondaryTables({
-	@SecondaryTable(name="APP_ATCL_CNTS_INFO", pkJoinColumns={
-		@PrimaryKeyJoinColumn(name="ATCL_NO", referencedColumnName="ATCL_NO") 
-	})
-})
-public class BoardArticle {
+public class Article {
 	
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
@@ -52,12 +41,13 @@ public class BoardArticle {
 			}else {
 				return false;
 			}
-		}
+		}	
 		
 		@Override
 		public int hashCode() {
 			return (boardId + Long.toString(no)).hashCode();
 		}
+		
 		public String getBoardId() {
 			return boardId;
 		}
@@ -71,14 +61,13 @@ public class BoardArticle {
 			this.no = no;
 		}
 	}
-
-	@Id
-	@Column(name = "BORD_ID")
-	String boardId;
 	
 	@Id
 	@Column(name = "ATCL_NO")
 	long no;
+
+	@Column(name = "BORD_ID")
+	String boardId;
 	
 	@Column(name = "CATE_ID")
 	String categoryId;
@@ -94,16 +83,9 @@ public class BoardArticle {
 	
 	@Column(name = "ATCL_MDFY_DTTM")
 	Date modifyDate;
-	
-	@Column(table="APP_ATCL_CNTS_INFO", name="ATCL_CNTS")
-	String contents;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL)
-	List<BoardArticleFile> files = new ArrayList<BoardArticleFile>();
-	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL)
-	@OrderBy("no,level")
-	List<BoardArticleReply> replies = new ArrayList<BoardArticleReply>();
+	List<ArticleFile> files = new ArrayList<ArticleFile>();
 
 	public long getNo() {
 		return no;
@@ -145,28 +127,12 @@ public class BoardArticle {
 		this.modifyDate = modifyDate;
 	}
 	
-	public List<BoardArticleFile> getFiles() {
+	public List<ArticleFile> getFiles() {
 		return files;
 	}
 
-	public String getContents() {
-		return contents;
-	}
-
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-
-	public void setFiles(List<BoardArticleFile> files) {
+	public void setFiles(List<ArticleFile> files) {
 		this.files = files;
-	}
-
-	public List<BoardArticleReply> getReplies() {
-		return replies;
-	}
-
-	public void setReplies(List<BoardArticleReply> replies) {
-		this.replies = replies;
 	}
 
 }
