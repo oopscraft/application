@@ -28,7 +28,7 @@ public class AuthorityService {
 	 * Search condition class 
 	 *
 	 */
-	public class SearchCondition {
+	public class AuthoritySearch {
 		String id;
 		String name;
 		public String getId() {
@@ -53,14 +53,14 @@ public class AuthorityService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Authority> getAuthorities(SearchCondition searchCondition, PageInfo pageInfo ) throws Exception {
+	public List<Authority> getAuthorities(AuthoritySearch authoritySearch, PageInfo pageInfo ) throws Exception {
 		List<Authority> authorities = null;
 		Page<Authority> page = null;
 		Pageable pageable = new PageRequest(pageInfo.getPage() - 1, pageInfo.getRows());
-		if(!StringUtils.isEmpty(searchCondition.getId())) {
-			page = authorityRepository.findByIdStartingWith(searchCondition.getId(), pageable);
-		}else if(!StringUtils.isEmpty(searchCondition.getId())) {
-			page = authorityRepository.findByNameStartingWith(searchCondition.getName(), pageable);
+		if(!StringUtils.isEmpty(authoritySearch.getId())) {
+			page = authorityRepository.findByIdStartingWith(authoritySearch.getId(), pageable);
+		}else if(!StringUtils.isEmpty(authoritySearch.getId())) {
+			page = authorityRepository.findByNameStartingWith(authoritySearch.getName(), pageable);
 		}else {
 			page = authorityRepository.findAllByOrderBySystemDataYnDescSystemInsertDateDesc(pageable);
 		}

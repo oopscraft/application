@@ -11,10 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import net.oopscraft.application.code.repository.CodeRepository;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.user.Authority;
-import net.oopscraft.application.code.repository.CodeRepository;
 
 @Service
 public class CodeService {
@@ -29,7 +28,7 @@ public class CodeService {
 	 * Search condition class 
 	 *
 	 */
-	public class SearchCondition {
+	public class CodeSearch {
 		String id;
 		String name;
 		public String getId() {
@@ -54,14 +53,14 @@ public class CodeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Code> getCodes(SearchCondition searchCondition, PageInfo pageInfo ) throws Exception {
+	public List<Code> getCodes(CodeSearch codeSearch, PageInfo pageInfo ) throws Exception {
 		List<Code> codes = null;
 		Page<Code> page = null;
 		Pageable pageable = new PageRequest(pageInfo.getPage() - 1, pageInfo.getRows());
-		if(!StringUtils.isEmpty(searchCondition.getId())) {
-			page = codeRepository.findByIdStartingWith(searchCondition.getId(), pageable);
-		}else if(!StringUtils.isEmpty(searchCondition.getId())) {
-			page = codeRepository.findByNameStartingWith(searchCondition.getName(), pageable);
+		if(!StringUtils.isEmpty(codeSearch.getId())) {
+			page = codeRepository.findByIdStartingWith(codeSearch.getId(), pageable);
+		}else if(!StringUtils.isEmpty(codeSearch.getId())) {
+			page = codeRepository.findByNameStartingWith(codeSearch.getName(), pageable);
 		}else {
 			page = codeRepository.findAllByOrderBySystemDataYn(pageable);
 		}

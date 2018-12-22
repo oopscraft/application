@@ -127,7 +127,7 @@ public class AdminController {
 			@RequestParam(value = "value", required = false) String value,
 			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
-		AuthorityService.SearchCondition searchCondition = authorityService.new SearchCondition();
+		AuthorityService.AuthoritySearch searchCondition = authorityService.new AuthoritySearch();
 		switch ((key == null ? "" : key)) {
 		case "id":
 			searchCondition.setId(value);
