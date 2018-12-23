@@ -11,11 +11,7 @@ package net.oopscraft.application.core.captcha;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * @author chomookun@gmail.com
- *
- */
-public class CaptchaUtility {
+public class CaptchaUtils {
 	
 	public static void prepareCaptcha(String answer, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Captcha captcha = new CaptchaBuilder(answer).build();
