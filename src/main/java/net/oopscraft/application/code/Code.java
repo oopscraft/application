@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
@@ -21,9 +20,6 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 @Table(name = "APP_CD_INFO")
 @EntityListeners(SystemEntityListener.class)
 public class Code extends SystemEntity {
-	
-	@Transient
-	CodeFactory codeFactory;
 
 	@Id
 	@Column(name = "CD_ID")
