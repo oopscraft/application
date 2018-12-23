@@ -6,19 +6,19 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
 import net.oopscraft.application.code.repository.CodeRepository;
 
-public class CodeFactoryBuilder {
+public class CodeServiceBuilder {
 
 	EntityManager entityManager;
 	
-	public CodeFactoryBuilder setEntityManagerFactory(EntityManager entityManager) {
+	public CodeServiceBuilder setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
 		return this;
 	}
 	
-	public CodeFactory build() {
-		CodeFactory codeFactory = new CodeFactory();
+	public CodeService build() {
+		CodeService codeService = new CodeService();
 		JpaRepositoryFactory jpaRepositoryFactory = new JpaRepositoryFactory(entityManager);
-		codeFactory.codeRepository = jpaRepositoryFactory.getRepository(CodeRepository.class);
-		return codeFactory;
+		codeService.codeRepository = jpaRepositoryFactory.getRepository(CodeRepository.class);
+		return codeService;
 	}
 }

@@ -6,7 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runners.model.InitializationError;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+
+import net.oopscraft.application.core.jpa.EntityManagerUtils;
 
 public class ApplicationTestRunner {
 	
@@ -28,9 +29,7 @@ public class ApplicationTestRunner {
 	@Before
 	public final void beforeSuper() throws Exception {
 		// Creates entityManager
-		Application application = ApplicationContainer.getApplication();
-		LocalContainerEntityManagerFactoryBean entityManagerFactory = application.getEntityManagerFactory("entityManagerFactory");
-		entityManager = entityManagerFactory.getObject().createEntityManager();
+		entityManager = EntityManagerUtils.getEntityManager("entityManagerFactory");
 		entityManager.getTransaction().begin();
 	}
 	

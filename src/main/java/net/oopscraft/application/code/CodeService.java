@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -56,7 +55,7 @@ public class CodeService {
 	public List<Code> getCodes(CodeSearch codeSearch, PageInfo pageInfo ) throws Exception {
 		List<Code> codes = null;
 		Page<Code> page = null;
-		Pageable pageable = new PageRequest(pageInfo.getPage() - 1, pageInfo.getRows());
+		Pageable pageable = pageInfo.toPageable();
 		if(!StringUtils.isEmpty(codeSearch.getId())) {
 			page = codeRepository.findByIdStartingWith(codeSearch.getId(), pageable);
 		}else if(!StringUtils.isEmpty(codeSearch.getId())) {
@@ -68,8 +67,8 @@ public class CodeService {
 		if (pageInfo.isEnableTotalCount() == true) {
 			pageInfo.setTotalCount(page.getTotalElements());
 		}
-		LOGGER.debug("+ codes: {}", new TextTable(codes));
-		return page.getContent();
+		LOGGER.debug("{}", new TextTable(codes));
+		return codes;
 	}
 	
 	/**
