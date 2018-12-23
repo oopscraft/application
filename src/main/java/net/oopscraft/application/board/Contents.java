@@ -2,7 +2,7 @@ package net.oopscraft.application.board;
 
 import java.io.Serializable;
 
-public class ArticleContents {
+public class Contents {
 
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;

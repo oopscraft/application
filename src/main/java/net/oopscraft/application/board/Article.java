@@ -85,7 +85,7 @@ public class Article {
 	Date modifyDate;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL)
-	List<ArticleFile> files = new ArrayList<ArticleFile>();
+	List<File> files = new ArrayList<File>();
 
 	public long getNo() {
 		return no;
@@ -127,11 +127,11 @@ public class Article {
 		this.modifyDate = modifyDate;
 	}
 	
-	public List<ArticleFile> getFiles() {
+	public List<File> getFiles() {
 		return files;
 	}
 
-	public void setFiles(List<ArticleFile> files) {
+	public void setFiles(List<File> files) {
 		this.files = files;
 	}
 

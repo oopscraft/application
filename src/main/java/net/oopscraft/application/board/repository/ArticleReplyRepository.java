@@ -4,9 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import net.oopscraft.application.board.Article.Pk;
-import net.oopscraft.application.board.ArticleReply;
+import net.oopscraft.application.board.Reply;
 
 @Repository
-public interface ArticleReplyRepository extends JpaRepository<ArticleReply,Pk>{
+public interface ArticleReplyRepository extends JpaRepository<Reply,Pk>{
 
 }
