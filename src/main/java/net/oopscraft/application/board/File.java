@@ -10,8 +10,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "APP_ATCL_FILE_INFO")
-@IdClass(ArticleFile.Pk.class)
-public class ArticleFile {
+@IdClass(File.Pk.class)
+public class File {
 	
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;

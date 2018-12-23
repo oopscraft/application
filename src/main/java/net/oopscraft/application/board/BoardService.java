@@ -86,7 +86,7 @@ public class BoardService {
 		return null;
 	}
 	
-	public List<ArticleReply> getArticleReplies(String boardId, long no, PageInfo pageInfo) throws Exception {
+	public List<Reply> getArticleReplies(String boardId, long no, PageInfo pageInfo) throws Exception {
 		return null;
 	}
 
