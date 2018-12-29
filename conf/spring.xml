@@ -206,6 +206,7 @@
 	
 	<!-- Base Security Realm -->
 	<security:http disable-url-rewriting="true" use-expressions="true">
+		<security:csrf disabled="true" />
 		<security:intercept-url pattern="/admin/**/*" access="permitAll()"/>
 		<security:access-denied-handler ref="net.oopscraft.application.security.SecurityHandler" />
 		<security:custom-filter ref="net.oopscraft.application.security.SecurityFilter" after="CHANNEL_FILTER"/>

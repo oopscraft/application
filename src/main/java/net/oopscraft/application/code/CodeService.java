@@ -102,7 +102,7 @@ public class CodeService {
 		// add items
 		one.getItems().clear();
 		int displaySeq = 0;
-		for (Item item : code.getItems()) {
+		for (CodeItem item : code.getItems()) {
 			item.setDisplaySeq(displaySeq ++);
 			one.getItems().add(item);
 		}

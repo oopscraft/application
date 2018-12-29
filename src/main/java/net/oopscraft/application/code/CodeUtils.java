@@ -19,15 +19,20 @@ public class CodeUtils {
 	 * @return
 	 */
 	public static Code getCode(String id) throws Exception {
+		EntityManager entityManager = null;
 		try {
 			Application application = ApplicationContainer.getApplication();
 			LocalContainerEntityManagerFactoryBean entityManagerFactory = application.getEntityManagerFactory("entityManagerFactory");
-			EntityManager entityManager = entityManagerFactory.getObject().createEntityManager();
+			entityManager = entityManagerFactory.getObject().createEntityManager();
 			CodeService codeService = new CodeServiceBuilder().setEntityManager(entityManager).build();
 			return codeService.getCode(id);
 		}catch(Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			throw e;
+		}finally {
+			if(entityManager != null) {
+				entityManager.close();
+			}
 		}
 	}
 	

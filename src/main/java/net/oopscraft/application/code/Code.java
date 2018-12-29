@@ -33,15 +33,15 @@ public class Code extends SystemEntity {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "codeId", cascade = CascadeType.ALL)
 	@OrderBy("displaySeq")
-	List<Item> items = new ArrayList<Item>();
+	List<CodeItem> items = new ArrayList<CodeItem>();
 	
 	/**
 	 * Gets Code Item by id
 	 * @param id
 	 * @return
 	 */
-	public Item getItem(String id) {
-		for(Item item : this.items) {
+	public CodeItem getItem(String id) {
+		for(CodeItem item : this.items) {
 			if(item.getId().equals(id)) {
 				return item;
 			}
@@ -73,11 +73,11 @@ public class Code extends SystemEntity {
 		this.description = description;
 	}
 
-	public List<Item> getItems() {
+	public List<CodeItem> getItems() {
 		return items;
 	}
 
-	public void setItems(List<Item> items) {
+	public void setItems(List<CodeItem> items) {
 		this.items = items;
 	}
 

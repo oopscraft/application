@@ -9,26 +9,26 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_ATCL_RPLY_INFO")
-@IdClass(Reply.Pk.class)
-public class Reply {
+@Table(name = "APP_ATCL_FILE_INFO")
+@IdClass(ArticleFile.Pk.class)
+public class ArticleFile {
 	
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
-		public Pk(long articleNo, long no) {
+		public Pk(long articleNo, String id) {
 			this.articleNo = articleNo;
-			this.no = no;
+			this.id = id;
 		}
 		long articleNo;
-		long no;
+		String id;
 		
 		@Override
 		public boolean equals(Object obj) {
 			if(obj instanceof Pk) {
 				Pk pk = (Pk)obj;
 				if(this.getArticleNo() == pk.getArticleNo()
-				&& this.getNo() == pk.getNo()
+				&& this.getId().equals(pk.getId())
 				) {
 					return true;
 				}else {
@@ -41,7 +41,7 @@ public class Reply {
 		
 		@Override
 		public int hashCode() {
-			return (Long.toString(articleNo) + Long.toString(no)).hashCode();
+			return (Long.toString(articleNo) + id).hashCode();
 		}
 		
 		public long getArticleNo() {
@@ -50,11 +50,11 @@ public class Reply {
 		public void setArticleNo(long articleNo) {
 			this.articleNo = articleNo;
 		}
-		public long getNo() {
-			return no;
+		public String getId() {
+			return id;
 		}
-		public void setNo(long no) {
-			this.no = no;
+		public void setId(String id) {
+			this.id = id;
 		}
 	}
 	
@@ -63,45 +63,16 @@ public class Reply {
 	long articleNo;
 	
 	@Id
-	@Column(name = "RPLY_NO")
-	long no;
+	@Column(name = "FILE_ID")
+	String id;
 	
-	@Column(name = "RPLY_LEVL")
-	String level;
+	@Column(name = "FILE_NAME")
+	String name;
 	
-	@Column(name = "RPLY_CNTS")
-	String contents;
+	@Column(name = "FILE_TYPE")
+	String type;
 	
-	public long getArticleNo() {
-		return articleNo;
-	}
+	@Column(name = "FILE_SIZE")
+	long size;
 
-	public void setArticleNo(long articleNo) {
-		this.articleNo = articleNo;
-	}
-
-	public String getLevel() {
-		return level;
-	}
-
-	public void setLevel(String level) {
-		this.level = level;
-	}
-
-	public long getNo() {
-		return no;
-	}
-
-	public void setNo(long no) {
-		this.no = no;
-	}
-
-	public String getContents() {
-		return contents;
-	}
-
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-	
 }
