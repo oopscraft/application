@@ -1,4 +1,4 @@
-package net.oopscraft.application.board;
+package net.oopscraft.application.code;
 
 import java.io.Serializable;
 
@@ -9,26 +9,26 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_BORD_CATE_INFO")
-@IdClass(Category.Pk.class)
-public class Category {
+@Table(name = "APP_CD_ITEM_INFO")
+@IdClass(CodeItem.Pk.class)
+public class CodeItem {
 	
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
-		public Pk(String boardId, String id) {
-			this.boardId = boardId;
+		public Pk(String codeId, String id) {
+			this.codeId = codeId;
 			this.id = id;
 		}
-		String boardId;
+		String codeId;
 		String id;
 		
 		@Override
 		public boolean equals(Object obj) {
 			if(obj instanceof Pk) {
-				Pk pk = (Pk)obj;
-				if(this.getBoardId().equals(pk.getBoardId())
-				&& this.getId().equals(pk.getId())
+				Pk codeItemPk = (Pk)obj;
+				if(this.getCodeId().equals(codeItemPk.getCodeId())
+				&& this.getId().equals(codeItemPk.getId())
 				) {
 					return true;
 				}else {
@@ -37,18 +37,18 @@ public class Category {
 			}else {
 				return false;
 			}
-		}	
+		}
 		
 		@Override
 		public int hashCode() {
-			return (boardId + id).hashCode();
+			return (codeId + id).hashCode();
 		}
 		
-		public String getBoardId() {
-			return boardId;
+		public String getCodeId() {
+			return codeId;
 		}
-		public void setBoardId(String boardId) {
-			this.boardId = boardId;
+		public void setCodeId(String codeId) {
+			this.codeId = codeId;
 		}
 		public String getId() {
 			return id;
@@ -57,27 +57,27 @@ public class Category {
 			this.id = id;
 		}
 	}
+
+	@Id
+	@Column(name = "CD_ID")
+	String codeId;
 	
 	@Id
-	@Column(name = "BORD_ID")
-	String boardId;
-	
-	@Id
-	@Column(name = "CATE_ID")
+	@Column(name = "CD_ITEM_ID")
 	String id;
 	
-	@Column(name = "CATE_NAME")
+	@Column(name = "CD_ITEM_NAME")
 	String name;
 	
 	@Column(name = "DISP_SEQ")
 	int displaySeq;
-
-	public String getBoardId() {
-		return boardId;
+	
+	public String getCodeId() {
+		return codeId;
 	}
 
-	public void setBoardId(String boardId) {
-		this.boardId = boardId;
+	public void setCodeId(String codeId) {
+		this.codeId = codeId;
 	}
 
 	public String getId() {
@@ -103,6 +103,7 @@ public class Category {
 	public void setDisplaySeq(int displaySeq) {
 		this.displaySeq = displaySeq;
 	}
-
+	
+	
 	
 }
