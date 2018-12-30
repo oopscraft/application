@@ -21,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
-import net.oopscraft.application.board.repository.ArticleContentsRepository;
 import net.oopscraft.application.board.repository.ArticleRepository;
 import net.oopscraft.application.core.PageInfo;
 
@@ -98,9 +97,6 @@ public class Board {
 	public Article getArticle(long no) throws Exception {
 		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
 		Article article = articleRepository.findOne(no);
-		ArticleContentsRepository articleContentsRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleContentsRepository.class);
-		ArticleContents contents = articleContentsRepository.findOne(no);
-		article.setContents(contents);
 		return article;
 	}
 	
@@ -119,12 +115,6 @@ public class Board {
 		article.setBoardId(id);
 		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
 		article = articleRepository.saveAndFlush(article);
-
-		// Saves contents
-		ArticleContents articleContents = article.getContents();
-		articleContents.setArticleNo(article.getNo());
-		ArticleContentsRepository articleContentsRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleContentsRepository.class);
-		articleContentsRepository.saveAndFlush(articleContents);
 		return article;
 	}
 	

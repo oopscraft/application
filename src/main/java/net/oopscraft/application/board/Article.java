@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name = "APP_ATCL_INFO")
@@ -34,7 +33,10 @@ public class Article {
 	
 	@Column(name = "ATCL_TITL")
 	String title;
-	
+
+	@Column(name = "ATCL_CNTS")
+	String contents;
+
 	@Column(name = "ATCL_USER_ID")
 	String userId;
 	
@@ -43,9 +45,6 @@ public class Article {
 	
 	@Column(name = "ATCL_MDFY_DTTM")
 	Date modifyDate;
-	
-	@Transient
-	ArticleContents contents;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL)
 	List<ArticleFile> files = new ArrayList<ArticleFile>();
@@ -82,6 +81,14 @@ public class Article {
 		this.title = title;
 	}
 
+	public String getContents() {
+		return contents;
+	}
+
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
+
 	public String getUserId() {
 		return userId;
 	}
@@ -104,14 +111,6 @@ public class Article {
 
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
-	}
-
-	public ArticleContents getContents() {
-		return contents;
-	}
-
-	public void setContents(ArticleContents contents) {
-		this.contents = contents;
 	}
 
 	public List<ArticleFile> getFiles() {
