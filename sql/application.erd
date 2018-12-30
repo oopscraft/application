@@ -2391,7 +2391,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
                         <targetConnections/>
                         <error></error>
                         <linkedPath></linkedPath>
-                        <tableName>APP_ATCL_CNTS</tableName>
+                        <tableName>APP_ATCL_CNTS_INFO</tableName>
                         <logicalName>Application Board Article Contents Info</logicalName>
                         <description></description>
                         <columns>
@@ -2407,8 +2407,8 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
                             <defaultValue></defaultValue>
                           </net.java.amateras.db.visual.model.ColumnModel>
                           <net.java.amateras.db.visual.model.ColumnModel>
-                            <columnName>ATCL_CNTS</columnName>
-                            <logicalName>Article Contents</logicalName>
+                            <columnName>CNTS_VAL</columnName>
+                            <logicalName>Contents</logicalName>
                             <columnType class="net.java.amateras.db.dialect.ColumnType">
                               <name>MEDIUMTEXT</name>
                               <logicalName>String</logicalName>
@@ -3127,7 +3127,12 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>PAGE_CNTS</columnName>
           <logicalName>Page Contents</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel[17]/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/columns/net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType">
+            <name>MEDIUMTEXT</name>
+            <logicalName>String</logicalName>
+            <supportSize>false</supportSize>
+            <type>12</type>
+          </columnType>
           <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>

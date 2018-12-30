@@ -26,12 +26,27 @@ public class BoardController {
 	@Autowired
 	BoardService boardService;
 	
+	/**
+	 * Gets board info
+	 * @param boardId
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/{boardId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getBoard(@PathVariable("boardId") String boardId) throws Exception {
 		Board board = boardService.getBoard(boardId);
 		return new ResponseEntity<>(JsonUtils.toJson(board), HttpStatus.OK);
 	}
 	
+	/**
+	 * Gets article list.
+	 * @param boardId
+	 * @param page
+	 * @param searchKey
+	 * @param searchValue
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/{boardId}/articles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getArticles(
 		@PathVariable("boardId") String boardId,
@@ -40,18 +55,23 @@ public class BoardController {
 		@RequestParam(value = "searchValue", required = false)String searchValue
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		//board.setEntityManager(entityManager);
 		List<Article> articles = board.getArticles(page, searchKey, searchValue);
 		return new ResponseEntity<>(JsonUtils.toJson(articles), HttpStatus.OK);
 	}
 	
+	/**
+	 * Gets article detail
+	 * @param boardId
+	 * @param articleNo
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/{boardId}/article/{articleNo}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getArticle(
 		@PathVariable("boardId") String boardId,
 		@PathVariable("articleNo") long articleNo
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		//board.setEntityManager(entityManager);
 		Article article = board.getArticle(articleNo);
 		return new ResponseEntity<>(JsonUtils.toJson(article), HttpStatus.OK);
 	}
@@ -64,7 +84,6 @@ public class BoardController {
 	) throws Exception {
 		Article article = JsonUtils.toObject(payload, Article.class);
 		Board board = boardService.getBoard(boardId);
-		//board.setEntityManager(entityManager);
 		article = board.saveArticle(article);
 		return new ResponseEntity<>(JsonUtils.toJson(article), HttpStatus.OK);
 	}
@@ -76,7 +95,6 @@ public class BoardController {
 		@PathVariable("articleNo") long articleNo
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		//board.setEntityManager(entityManager);
 		board.deleteArticle(articleNo);
 		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
 	}
@@ -111,11 +129,5 @@ public class BoardController {
 	) throws Exception {
 		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
 	}
-
-	
-	
-
-
-	
 
 }
