@@ -76,6 +76,13 @@ public class BoardController {
 		return new ResponseEntity<>(JsonUtils.toJson(article), HttpStatus.OK);
 	}
 	
+	/**
+	 * Saves articles
+	 * @param boardId
+	 * @param payload
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/{boardId}/article", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> saveArticles(
@@ -88,6 +95,13 @@ public class BoardController {
 		return new ResponseEntity<>(JsonUtils.toJson(article), HttpStatus.OK);
 	}
 	
+	/**
+	 * Deletes article
+	 * @param boardId
+	 * @param articleNo
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/{boardId}/article/{articleNo}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> deleteArticle(

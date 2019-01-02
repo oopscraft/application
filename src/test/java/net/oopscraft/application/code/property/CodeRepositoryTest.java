@@ -5,10 +5,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.code.Code;
 import net.oopscraft.application.code.repository.CodeRepository;
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class CodeRepositoryTest extends ApplicationTestRunner {
 	

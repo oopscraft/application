@@ -1,7 +1,8 @@
-package net.oopscraft.application.security;
+package net.oopscraft.application.user.security;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
@@ -16,6 +17,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -23,6 +25,10 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
+
+import net.oopscraft.application.user.User;
+import net.oopscraft.application.user.UserLogin;
+import net.oopscraft.application.user.repository.UserLoginRepository;
 
 @Component
 public class SecurityHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler {
@@ -38,8 +44,11 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
 	@Autowired
 	LocaleResolver localeResolver;
 	
+	@Autowired
+	UserLoginRepository userLoginRepository;
+	
 	/**
-	 * 인증 성공시 호출 핸들러
+	 * On authentication is success.
 	 * @param HttpServletRequest, HttpServletResponse, Authentication
 	 * @return void
 	 */
@@ -53,10 +62,23 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
 		}else {
 			out.write("/admin".getBytes());
 		}
+		
+		// Saves Login History
+		UserLogin userLogin = new UserLogin();
+        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userDetails.getUser();
+		userLogin.setUserId(user.getId());
+		userLogin.setDatetime(new Date());
+		userLogin.setSuccessYn("Y");
+		userLogin.setFailReason(null);
+		userLogin.setIp(request.getRemoteAddr());
+		userLogin.setAgent(request.getHeader("User-Agent"));
+		userLogin.setReferer(request.getHeader("referer"));
+		userLoginRepository.saveAndFlush(userLogin);
 	}
 	
 	/**
-	 * 인증 실패시 호출 핸들러
+	 * On authentication is failed.
 	 * @param HttpServletRequest, HttpServletResponse, AuthenticationException
 	 * @return void
 	 */
@@ -76,6 +98,38 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		OutputStream out = response.getOutputStream();
 		out.write(message.getBytes());
+		
+		// Saves Login History
+		if(exception instanceof UsernameNotFoundException == false) {
+			UserLogin userLogin = new UserLogin();
+			userLogin.setUserId(request.getParameter("id"));
+			userLogin.setDatetime(new Date());
+			userLogin.setSuccessYn("N");
+			userLogin.setFailReason(message);
+			userLogin.setIp(request.getRemoteAddr());
+			userLogin.setAgent(request.getHeader("User-Agent"));
+			userLogin.setReferer(request.getHeader("referer"));
+			userLoginRepository.saveAndFlush(userLogin);
+		}
+	}
+	
+	/**
+	 * Saves Login History
+	 * @param request
+	 * @throws IOException
+	 */
+	private void saveLoginHistory(HttpServletRequest request, String successYn, String failReason) throws IOException {
+        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userDetails.getUser();
+		UserLogin userLogin = new UserLogin();
+		userLogin.setUserId(user.getId());
+		userLogin.setDatetime(new Date());
+		userLogin.setSuccessYn(successYn);
+		userLogin.setFailReason(failReason);
+		userLogin.setIp(request.getRemoteAddr());
+		userLogin.setAgent(request.getHeader("User-Agent"));
+		userLogin.setReferer(request.getHeader("referer"));
+		userLoginRepository.saveAndFlush(userLogin);
 	}
 
 	@Override
@@ -93,6 +147,5 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
     	response.getWriter().write("Unauthorized.");
     	response.getWriter().flush();
 	}
-	
 
 }

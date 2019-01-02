@@ -10,16 +10,16 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/lib/juice/juice.css">
-		<script src="${pageContext.request.contextPath}/lib/juice/juice.js"></script>
-		<script src="${pageContext.request.contextPath}/lib/jquery.js"></script>
-		<link href="${pageContext.request.contextPath}/icon/css/icon.css" rel="stylesheet">
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/lib/juice/juice.css">
+		<script src="${pageContext.request.contextPath}/assets/lib/juice/juice.js"></script>
+		<script src="${pageContext.request.contextPath}/assets/lib/jquery.js"></script>
+		<link href="${pageContext.request.contextPath}/assets/icon/css/icon.css" rel="stylesheet">
 		
  		<!-- web font -->
- 		<link href="${pageContext.request.contextPath}/font/font.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/font/font-kr.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/font/font-ja.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/font/font-zh.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/assets/font/font.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/assets/font/font-kr.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/assets/font/font-ja.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/assets/font/font-zh.css" rel="stylesheet" type="text/css" />
  		
 		<script type="text/javascript">
 		var user = new juice.data.Map({
@@ -132,7 +132,7 @@
 		#loginDiv {
 			width: 300px;
 			background-color: white;
-			border: solid 1px #ddd;
+			border: solid 1px #aaa;
 			border-radius: 2px;
 			padding: 3rem;
 			margin-bottom: 20vh;

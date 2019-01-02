@@ -11,59 +11,27 @@
 	<head>
 		<meta name="viewport" content="width=1024, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta http-equiv="refresh" content="${pageContext.session.maxInactiveInterval+10}">
-		<link rel="SHORTCUT ICON" href="${pageContext.request.contextPath}/img/application.ico">
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/lib/juice/juice.css">
-		<script src="${pageContext.request.contextPath}/lib/juice/juice.js"></script>
-		<script src="${pageContext.request.contextPath}/lib/jquery.js"></script>
- 		<script src="${pageContext.request.contextPath}/lib/moment-with-locales.min.js"></script>
- 		<script src="${pageContext.request.contextPath}/lib/Chart.js/Chart.js"></script>
- 		<link href="${pageContext.request.contextPath}/icon/css/icon.css" rel="stylesheet">
+		<link rel="SHORTCUT ICON" href="${pageContext.request.contextPath}/assets/img/application.ico">
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/lib/juice/juice.css">
+		<script src="${pageContext.request.contextPath}/assets/lib/juice/juice.js"></script>
+		<script src="${pageContext.request.contextPath}/assets/lib/jquery.js"></script>
+ 		<script src="${pageContext.request.contextPath}/assets/lib/moment-with-locales.min.js"></script>
+ 		<script src="${pageContext.request.contextPath}/assets/lib/Chart.js/Chart.js"></script>
+ 		<link href="${pageContext.request.contextPath}/assets/icon/css/icon.css" rel="stylesheet">
  		
  		<!-- polyfill -->
-		<script src="${pageContext.request.contextPath}/lib/polyfill/dataset.js"></script>
-		<script src="${pageContext.request.contextPath}/lib/polyfill/classList.js"></script>
-
+		<script src="${pageContext.request.contextPath}/assets/lib/polyfill/dataset.js"></script>
+		<script src="${pageContext.request.contextPath}/assets/lib/polyfill/classList.js"></script>
 
  		<!-- web font -->
- 		<link href="${pageContext.request.contextPath}/font/code.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/font/font.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/font/font-kr.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/font/font-ja.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/font/font-zh.css" rel="stylesheet" type="text/css" />
-		
+ 		<link href="${pageContext.request.contextPath}/assets/font/code.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/assets/font/font.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/assets/font/font-kr.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/assets/font/font-ja.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/assets/font/font-zh.css" rel="stylesheet" type="text/css" />
+
 		<!-- global -->
 		<script type="text/javascript">
-		var __loader; 
-        $(document).ajaxStart(function(event) {
-       		__loader = new juice.ui.__().load(document.body);
-        });
-
-        // If not configure, "Provisional headers are shown" error occured in chrome.
-        $(document).ajaxSend(function(event, jqxhr, settings) {
-        	jqxhr.setRequestHeader('Cache-Control','no-cache, no-store, must-revalidate');
-        	jqxhr.setRequestHeader('Pragma','no-cache');
-        	jqxhr.setRequestHeader('Expires','0');
-        });
-
-		// checks stop event
-        $(document).ajaxStop(function(event) {
-        	if(__loader){
-       			__loader.release();
-        	}
-        });
-        
-		// Checks error except cancelation(readyState = 0)
-        $(document).ajaxError(function(event, jqXHR, ajaxSettings,thrownError ){
-        	console.log(jqXHR);
-        	if(jqXHR.readyState > 0){
-	        	console.log(event);
-	        	console.log(jqXHR);
-	        	console.log(ajaxSettings);
-	        	console.log(thrownError);
-	        	alert(jqXHR.responseText);
-        	}
-        });
-
 		/**
 		 * login user information
 		 */
@@ -100,8 +68,8 @@
          */
         function __parseTotalCount(jqXHR){
         	var contentRange = jqXHR.getResponseHeader("Content-Range");
-        	var totalCount = contentRange.split(' ')[1].split('/')[1];
         	try {
+            	var totalCount = contentRange.split(' ')[1].split('/')[1];
         		return parseInt(totalCount);
         	}catch(e){
         		return -1;

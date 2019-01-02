@@ -1,4 +1,4 @@
-package net.oopscraft.application;
+package net.oopscraft.application.test;
 
 import javax.persistence.EntityManager;
 
@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.runners.model.InitializationError;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
+import net.oopscraft.application.ApplicationContainer;
 import net.oopscraft.application.core.jpa.EntityManagerUtils;
 
 public class ApplicationTestRunner {

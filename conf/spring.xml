@@ -168,14 +168,12 @@
 	<!-- Spring Security										-->
 	<!-- ====================================================== -->
 	<security:authentication-manager>
-		<security:authentication-provider ref="net.oopscraft.application.security.AuthenticationProvider"/>
+		<security:authentication-provider ref="net.oopscraft.application.user.security.AuthenticationProvider"/>
 	</security:authentication-manager>
 	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
 	
 	<!-- Static Resource -->
-	<security:http pattern="/lib/**/*" security="none"/>
-	<security:http pattern="/img/**/*" security="none"/>
-	<security:http pattern="/font/**/*" security="none"/>	
+	<security:http pattern="/assets/**/*" security="none"/>
 
 	<!-- Administrator Channel -->
 	<security:http realm="admin" pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
@@ -188,8 +186,8 @@
 			login-processing-url="/admin/login/processing" 
 			username-parameter="id" 
 			password-parameter="password" 
-			authentication-success-handler-ref="net.oopscraft.application.security.SecurityHandler"
-			authentication-failure-handler-ref="net.oopscraft.application.security.SecurityHandler"
+			authentication-success-handler-ref="net.oopscraft.application.user.security.SecurityHandler"
+			authentication-failure-handler-ref="net.oopscraft.application.user.security.SecurityHandler"
 			/>
 		<security:logout invalidate-session="true" logout-url="/admin/logout" logout-success-url="/admin" />
 	</security:http>
@@ -199,7 +197,7 @@
 		<security:intercept-url pattern="/api/token" access="permitAll()"/>
 		<security:intercept-url pattern="/api/**/*" access="isAuthenticated()"/>
 		<security:access-denied-handler ref="net.oopscraft.application.security.AuthenticationHandler" />
-		<security:custom-filter ref="net.oopscraft.application.security.SecurityFilter" after="CHANNEL_FILTER"/>
+		<security:custom-filter ref="net.oopscraft.application.user.security.SecurityFilter" after="CHANNEL_FILTER"/>
 		<security:http-basic/>
 	</security:http>
 	-->
@@ -208,8 +206,8 @@
 	<security:http disable-url-rewriting="true" use-expressions="true">
 		<security:csrf disabled="true" />
 		<security:intercept-url pattern="/admin/**/*" access="permitAll()"/>
-		<security:access-denied-handler ref="net.oopscraft.application.security.SecurityHandler" />
-		<security:custom-filter ref="net.oopscraft.application.security.SecurityFilter" after="CHANNEL_FILTER"/>
+		<security:access-denied-handler ref="net.oopscraft.application.user.security.SecurityHandler" />
+		<security:custom-filter ref="net.oopscraft.application.user.security.SecurityFilter" after="CHANNEL_FILTER"/>
 		<security:http-basic/>
 	</security:http>
 
