@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import net.oopscraft.application.ApplicationTestRunnerWithSpring;
+import net.oopscraft.application.test.ApplicationTestRunnerWithSpring;
 
 public class SecurityControllerTest extends ApplicationTestRunnerWithSpring {
 

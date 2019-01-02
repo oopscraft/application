@@ -26,9 +26,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 import net.oopscraft.application.core.JsonUtils;
-import net.oopscraft.application.security.UserDetails;
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.User;
+import net.oopscraft.application.user.security.UserDetails;
 
 public class SecurityFilter implements Filter {
 	

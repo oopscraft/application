@@ -45,6 +45,7 @@ public class BoardController {
 	@RequestMapping(value="{id}", method = RequestMethod.GET)
 	public ModelAndView index(@PathVariable("id")String id) throws Exception {
 		ModelAndView modelAndView = new ModelAndView("board/board.tiles");
+		modelAndView.addObject("skin","default");
 		return modelAndView;
 	}
 //

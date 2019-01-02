@@ -1,4 +1,4 @@
-package net.oopscraft.application.security;
+package net.oopscraft.application.user.security;
 
 import java.io.IOException;
 

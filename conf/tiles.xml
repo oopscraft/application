@@ -5,9 +5,14 @@
       
 <tiles-definitions>
 	
-	<!-- Admin Layout -->
+	<!-- Administrator Layout -->
     <definition name="admin/*.tiles" template="/WEB-INF/view/admin/__admin.jsp">
         <put-attribute name="main" value="/WEB-INF/view/admin/{1}.jsp" />
+    </definition>
+    
+	<!-- Application Layout -->
+    <definition name="*/*.tiles" template="/WEB-INF/view/__application.jsp">
+        <put-attribute name="main" value="/WEB-INF/view/{1}/{2}.jsp" />
     </definition>
     
 </tiles-definitions>
