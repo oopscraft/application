@@ -10,16 +10,16 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/lib/juice/juice.css">
-		<script src="${pageContext.request.contextPath}/assets/lib/juice/juice.js"></script>
-		<script src="${pageContext.request.contextPath}/assets/lib/jquery.js"></script>
-		<link href="${pageContext.request.contextPath}/assets/icon/css/icon.css" rel="stylesheet">
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/juice/juice.css">
+		<script src="${pageContext.request.contextPath}/static/lib/juice/juice.js"></script>
+		<script src="${pageContext.request.contextPath}/static/lib/jquery.js"></script>
+		<link href="${pageContext.request.contextPath}/static/icon/css/icon.css" rel="stylesheet">
 		
  		<!-- web font -->
- 		<link href="${pageContext.request.contextPath}/assets/font/font.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/assets/font/font-kr.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/assets/font/font-ja.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/assets/font/font-zh.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/static/font/font.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/static/font/font-kr.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/static/font/font-ja.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/static/font/font-zh.css" rel="stylesheet" type="text/css" />
  		
 		<script type="text/javascript">
 		var user = new juice.data.Map({
@@ -169,7 +169,7 @@
 	<body>
 		<div id="loginDiv">
 			<div>
-				<img src="${pageContext.request.contextPath}/img/application.png"/>
+				<img src="${pageContext.request.contextPath}/static/img/application.png"/>
 			</div>
 			<div>
 				<i class="icon-user"></i>

@@ -26,6 +26,8 @@ var articleSearchKeys = [
 	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
 ];
 var articles = new juice.data.List();
+var article = new juice.data.Map();
+
 /**
  * On document loaded
  */
@@ -41,7 +43,7 @@ function getArticles(page) {
 		articleSearch.set('page',page);
 	}
 	$.ajax({
-		 url: '${pageContext.request.contextPath}/api/board/${id}/articles'
+		 url: '${pageContext.request.contextPath}/api/board/${boardId}/articles'
 		,type: 'GET'
 		,data: articleSearch.toJson()
 		,success: function(data, textStatus, jqXHR) {
@@ -51,44 +53,21 @@ function getArticles(page) {
    	 	}
 	});	
 }
+
+/**
+ * Gets article
+ */
+function getArticle(articleNo) {
+	location.href = '${pageContext.request.contextPath}/board/${boardId}/view?articleNo=' + articleNo;
+}
+
+/**
+ * Posts article
+ */
+function postArticle() {
+	location.href = '${pageContext.request.contextPath}/board/${boardId}/post';
+}
 </script>
 <style type="text/css">
 </style>
-
-<table id="articleTable" data-juice="Grid" data-juice-bind="articles" data-juice-item="article">
-	<colgroup>
-		<col style="width:10%"/>
-		<col/>
-		<col style="width:10%"/>
-	</colgroup>
-	<thead>
-		<tr>
-			<th>
-				fdsa
-			</th>
-			<th>
-				fdsa
-			</th>
-			<th>
-				22
-			</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr data-no="{{$context.article.get('no')}}" onclick="javascript:getArticle(this.dataset.no);">
-			<td class="text-center">
-				<label data-juice="Label" data-juice-bind="article.no"></label>
-			</td>
-			<td>
-				<label data-juice="Label" data-juice-bind="article.title"></label>
-			</td>
-			<td>
-			</td>
-		</tr>
-	</tbody>
-</table>
-<div>
-	<ul data-juice="Pagination" data-juice-bind="articleSearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
-		<li data-page="{{$context.page}}" onclick="javascript:getMessages(this.dataset.page);">{{$context.page}}</li>
-	</ul>
-</div>
+<jsp:include page="/WEB-INF/view/board/list.jsp" flush="true"/>

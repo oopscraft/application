@@ -1,30 +1,22 @@
 package net.oopscraft.application.board.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtils;
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.board.Board;
+import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.property.Property;
-import net.oopscraft.application.property.PropertyService;
+import net.oopscraft.application.layout.Layout;
+import net.oopscraft.application.layout.LayoutService;
 
 
 @Controller
@@ -35,19 +27,70 @@ public class BoardController {
 
 	@Autowired
 	HttpServletResponse response;
+	
+	@Autowired
+	BoardService boardService;
+	
+	@Autowired
+	LayoutService layoutService;
 
 	/**
-	 * Forwards page
+	 * list
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value="{id}", method = RequestMethod.GET)
-	public ModelAndView index(@PathVariable("id")String id) throws Exception {
-		ModelAndView modelAndView = new ModelAndView("board/board.tiles");
-		modelAndView.addObject("skin","default");
+	@RequestMapping(value="{boardId}/list", method = RequestMethod.GET)
+	public ModelAndView list(@PathVariable("boardId")String boardId) throws Exception {
+		Board board = boardService.getBoard(boardId);
+		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
+		ModelAndView modelAndView = new ModelAndView("board/__list.tiles");
+		modelAndView.addObject("board", board);
+		modelAndView.addObject("layout", layout);
 		return modelAndView;
 	}
+	
+	/**
+	 * view
+	 * @param boardId
+	 * @param articleNo
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="{boardId}/view", method = RequestMethod.GET)
+	public ModelAndView view(
+		@PathVariable("boardId")String boardId,
+		@RequestParam(value="articleNo", required=false)Integer articleNo
+	) throws Exception {
+		Board board = boardService.getBoard(boardId);
+		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
+		ModelAndView modelAndView = new ModelAndView("board/__view.tiles");
+		modelAndView.addObject("board", board);
+		modelAndView.addObject("layout", layout);
+		return modelAndView;
+	}
+	
+	/**
+	 * post
+	 * @param boardId
+	 * @param articleNo
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="{boardId}/post", method = RequestMethod.GET)
+	public ModelAndView post(
+		@PathVariable("boardId")String boardId,
+		@RequestParam(value="articleNo", required=false)Integer articleNo
+	) throws Exception {
+		Board board = boardService.getBoard(boardId);
+		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
+		ModelAndView modelAndView = new ModelAndView("board/__post.tiles");
+		modelAndView.addObject("board", board);
+		modelAndView.addObject("layout", layout);
+		return modelAndView;
+	}
+	
+	
 //
 //	/**
 //	 * Gets authorities

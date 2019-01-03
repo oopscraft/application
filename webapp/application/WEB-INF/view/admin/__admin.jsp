@@ -11,24 +11,24 @@
 	<head>
 		<meta name="viewport" content="width=1024, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta http-equiv="refresh" content="${pageContext.session.maxInactiveInterval+10}">
-		<link rel="SHORTCUT ICON" href="${pageContext.request.contextPath}/assets/img/application.ico">
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/lib/juice/juice.css">
-		<script src="${pageContext.request.contextPath}/assets/lib/juice/juice.js"></script>
-		<script src="${pageContext.request.contextPath}/assets/lib/jquery.js"></script>
- 		<script src="${pageContext.request.contextPath}/assets/lib/moment-with-locales.min.js"></script>
- 		<script src="${pageContext.request.contextPath}/assets/lib/Chart.js/Chart.js"></script>
- 		<link href="${pageContext.request.contextPath}/assets/icon/css/icon.css" rel="stylesheet">
+		<link rel="SHORTCUT ICON" href="${pageContext.request.contextPath}/static/img/application.ico">
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/juice/juice.css">
+		<script src="${pageContext.request.contextPath}/static/lib/juice/juice.js"></script>
+		<script src="${pageContext.request.contextPath}/static/lib/jquery.js"></script>
+ 		<script src="${pageContext.request.contextPath}/static/lib/moment-with-locales.min.js"></script>
+ 		<script src="${pageContext.request.contextPath}/static/lib/Chart.js/Chart.js"></script>
+ 		<link href="${pageContext.request.contextPath}/static/icon/css/icon.css" rel="stylesheet">
  		
  		<!-- polyfill -->
-		<script src="${pageContext.request.contextPath}/assets/lib/polyfill/dataset.js"></script>
-		<script src="${pageContext.request.contextPath}/assets/lib/polyfill/classList.js"></script>
+		<script src="${pageContext.request.contextPath}/static/lib/polyfill/dataset.js"></script>
+		<script src="${pageContext.request.contextPath}/static/lib/polyfill/classList.js"></script>
 
  		<!-- web font -->
- 		<link href="${pageContext.request.contextPath}/assets/font/code.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/assets/font/font.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/assets/font/font-kr.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/assets/font/font-ja.css" rel="stylesheet" type="text/css" />
- 		<link href="${pageContext.request.contextPath}/assets/font/font-zh.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/static/font/code.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/static/font/font.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/static/font/font-kr.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/static/font/font-ja.css" rel="stylesheet" type="text/css" />
+ 		<link href="${pageContext.request.contextPath}/static/font/font-zh.css" rel="stylesheet" type="text/css" />
 
 		<!-- global -->
 		<script type="text/javascript">
@@ -173,7 +173,7 @@
 			overflow-y: scroll;
 		}
 		body {
-			min-width: 1024px;
+			min-width: 1280px;
 		}
 		body > header {
 			display: flex;
@@ -193,7 +193,7 @@
 			align-items: center;
 			justify-content: space-between;
 			min-height: 90vh;
-			border: solid 0px #eee;
+			border: none;
 		}
 		body > main > nav {
 			display: block;
@@ -359,7 +359,7 @@
 		<header>
 			<span>
 				<a href="monitor">
-					<img src="${pageContext.request.contextPath}/img/application.png"/>
+					<img src="${pageContext.request.contextPath}/static/img/application.png"/>
 				</a>
 			</span>
 			<nav class="topNav" style="padding-right:10px;">
@@ -432,15 +432,15 @@
 						</a>
 					</li>
 					<li>
-						<a href="menu">
-							<i class="icon-list"></i>
-							<spring:message code="application.label.menu"/>
-						</a>
-					</li>
-					<li>
 						<a href="#template">
 							<i class="icon-template"></i>
 							<spring:message code="application.label.template"/>
+						</a>
+					</li>
+					<li>
+						<a href="menu">
+							<i class="icon-list"></i>
+							<spring:message code="application.label.menu"/>
 						</a>
 					</li>
 					<li>
@@ -474,7 +474,7 @@
 		<!-- Footer													-->
 		<!-- ====================================================== -->
 		<footer>
-			<img src="${pageContext.request.contextPath}/img/copyright.png"/>
+			<img src="${pageContext.request.contextPath}/static/img/copyright.png"/>
 		</footer>
 
 		<!-- ====================================================== -->

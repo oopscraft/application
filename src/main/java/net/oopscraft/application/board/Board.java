@@ -36,6 +36,9 @@ public class Board {
 	@Column(name = "BORD_NAME")
 	String name;
 	
+	@Column(name = "LAYT_ID")
+	String layoutId;
+	
 	public enum Policy {
 		ANONYMOUS, AUTHENTICATED, AUTHORIZED
 	}
@@ -143,6 +146,14 @@ public class Board {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getLayoutId() {
+		return layoutId;
+	}
+
+	public void setLayoutId(String layoutId) {
+		this.layoutId = layoutId;
 	}
 
 	public Policy getAccessPolicy() {
