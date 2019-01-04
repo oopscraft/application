@@ -68,7 +68,7 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
         UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
 		userLogin.setUserId(user.getId());
-		userLogin.setDatetime(new Date());
+		userLogin.setDate(new Date());
 		userLogin.setSuccessYn("Y");
 		userLogin.setFailReason(null);
 		userLogin.setIp(request.getRemoteAddr());
@@ -103,7 +103,7 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
 		if(exception instanceof UsernameNotFoundException == false) {
 			UserLogin userLogin = new UserLogin();
 			userLogin.setUserId(request.getParameter("id"));
-			userLogin.setDatetime(new Date());
+			userLogin.setDate(new Date());
 			userLogin.setSuccessYn("N");
 			userLogin.setFailReason(message);
 			userLogin.setIp(request.getRemoteAddr());
@@ -111,25 +111,6 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
 			userLogin.setReferer(request.getHeader("referer"));
 			userLoginRepository.saveAndFlush(userLogin);
 		}
-	}
-	
-	/**
-	 * Saves Login History
-	 * @param request
-	 * @throws IOException
-	 */
-	private void saveLoginHistory(HttpServletRequest request, String successYn, String failReason) throws IOException {
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userDetails.getUser();
-		UserLogin userLogin = new UserLogin();
-		userLogin.setUserId(user.getId());
-		userLogin.setDatetime(new Date());
-		userLogin.setSuccessYn(successYn);
-		userLogin.setFailReason(failReason);
-		userLogin.setIp(request.getRemoteAddr());
-		userLogin.setAgent(request.getHeader("User-Agent"));
-		userLogin.setReferer(request.getHeader("referer"));
-		userLoginRepository.saveAndFlush(userLogin);
 	}
 
 	@Override

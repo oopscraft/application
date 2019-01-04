@@ -54,5 +54,11 @@
 	    <property name="prefix" value="/WEB-INF/view/"/>
 	    <property name="order" value="1"/>
 	</bean>
+	
+	<!-- ====================================================== -->
+	<!-- Resource Path											-->
+	<!-- ====================================================== -->
+	<mvc:resources location="/WEB-INF/view/layout/" mapping="/resource/layout/**"/>
+	<mvc:resources location="/WEB-INF/view/board/skin/" mapping="/resource/board/skin/**"/>
 
 </beans>

@@ -2,7 +2,10 @@ package net.oopscraft.application.api.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,9 @@ import net.oopscraft.application.board.Article;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.user.User;
 
 @Controller
 @RequestMapping("/api/board")
@@ -25,6 +31,9 @@ public class BoardController {
 
 	@Autowired
 	BoardService boardService;
+	
+	@Autowired
+	HttpServletResponse response;
 	
 	/**
 	 * Gets board info
@@ -50,12 +59,14 @@ public class BoardController {
 	@RequestMapping(value = "/{boardId}/articles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getArticles(
 		@PathVariable("boardId") String boardId,
-		@RequestParam(value = "page", required = true, defaultValue="1")int page,
+		@RequestParam(value = "page", required = true, defaultValue="1")Integer page,
 		@RequestParam(value = "searchKey", required = false)String searchKey,
 		@RequestParam(value = "searchValue", required = false)String searchValue
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		List<Article> articles = board.getArticles(page, searchKey, searchValue);
+		PageInfo pageInfo = new PageInfo(page, board.getListPerRows(),true);
+		List<Article> articles = board.getArticles(pageInfo, searchKey, searchValue);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return new ResponseEntity<>(JsonUtils.toJson(articles), HttpStatus.OK);
 	}
 	

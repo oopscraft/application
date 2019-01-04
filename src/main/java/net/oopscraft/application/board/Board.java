@@ -81,12 +81,13 @@ public class Board {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Article> getArticles(int page, String searchKey, String searchValue) throws Exception {
+	public List<Article> getArticles(PageInfo pageInfo, String searchKey, String searchValue) throws Exception {
 		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
-		PageInfo pageInfo = new PageInfo(page, listPerRows);
 		Pageable pageable = pageInfo.toPageable();
 		Page<Article> articlesPage = articleRepository.findByBoardIdOrderByNoDesc(id, pageable);
-		pageInfo.setTotalCount(articlesPage.getTotalPages());
+		if(pageInfo.isEnableTotalCount()) {
+			pageInfo.setTotalCount(articlesPage.getTotalElements());
+		}
 		List<Article> articles = articlesPage.getContent();
 		return articles;
 	}
@@ -110,15 +111,21 @@ public class Board {
 	 * @throws Exception
 	 */
 	public Article saveArticle(Article article) throws Exception {
-		if(article.getNo() < 1) {
-			article.setRegistDate(new Date());
-		}else {
-			article.setModifyDate(new Date());
-		}
-		article.setBoardId(id);
 		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
-		article = articleRepository.saveAndFlush(article);
-		return article;
+		if(article.getNo() < 1) {
+			article.setBoardId(id);
+			article.setRegistDate(new Date());
+			article.setReadCount(0);
+			article.setVotePositiveCount(0);
+			article.setVoteNegativeCount(0);
+			return articleRepository.saveAndFlush(article);
+		}else {
+			Article one = articleRepository.findOne(article.getNo());
+			one.setTitle(article.getTitle());
+			one.setContents(article.getContents());
+			one.setModifyDate(new Date());
+			return articleRepository.saveAndFlush(one);
+		}
 	}
 	
 	/**

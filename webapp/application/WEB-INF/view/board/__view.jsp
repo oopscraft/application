@@ -8,24 +8,6 @@
 <%@page import="java.text.*" %>
 <!-- global -->
 <script type="text/javascript">
-var articleSearch = new juice.data.Map({
-	 key: null
-	,value: null
-	,page: 1
-	,rows: 30
-	,totalCount:-1
-});
-articleSearch.afterChange(function(event){
-	if(event.name == 'key'){
-		this.set('value','');
-	}
-});
-var articleSearchKeys = [
-	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
-	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
-	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
-];
-var articles = new juice.data.List();
 var article = new juice.data.Map();
 
 /**
@@ -42,11 +24,17 @@ function getArticle() {
 	$.ajax({
 		 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}'
 		,type: 'GET'
-		,data: articleSearch.toJson()
 		,success: function(data, textStatus, jqXHR) {
 			article.fromJson(data);
   	 	}
 	});	
+}
+
+/**
+ * Modifies article
+ */
+function modifyArticle(){
+	location.href = '${pageContext.request.contextPath}/board/${boardId}/write?articleNo=${param.articleNo}';
 }
 </script>
 <style type="text/css">

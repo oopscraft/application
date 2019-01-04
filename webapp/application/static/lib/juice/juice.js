@@ -275,9 +275,11 @@ juice.data.List.prototype.removeRow = function(index){
  * Loop forEach function
  */
 juice.data.List.prototype.forEach = function(handler) {
+	this.setFireEvent(false);
 	for(var i = 0, size = this.mapList.length; i < size; i ++){
 		handler.call(this, this.mapList[i]);
 	}
+	this.setFireEvent(true);
 }
 /**
  * Finds first index by handler
@@ -577,8 +579,11 @@ juice.ui = {};
 juice.ui.__ = function(){}
 juice.ui.__.prototype.executeExpression = function(element,$context) {
 	var string = element.outerHTML;
-	string = string.replace(/\{\{(.*?)\}\}/gi,function(match, command){
+	string = string.replace(/\{\{(.*?)\}\}/mgi,function(match, command){
 		try {
+			command = command.replace('&amp;', '&');
+			command = command.replace('&lt;', '<');
+			command = command.replace('&gt;', '>');
 			var result = eval(command);
 			return result;
 		}catch(e){
@@ -770,13 +775,8 @@ juice.ui.Label.prototype.bind = function(map, name) {
 }
 juice.ui.Label.prototype.update = function() {
 	this.removeChildNodes(this.label);
-	/*
-	while (this.label.firstChild) {
-	    this.label.removeChild(this.label.firstChild);
-	}
-	*/
 	var value = '';
-	if(this.map.get(this.name)){
+	if(this.map.get(this.name) !== null || this.map.get(this.name) !== undefined){
 		value = this.map.get(this.name);
 	}
 	if(this.format){
@@ -791,6 +791,28 @@ juice.ui.Label.prototype.update = function() {
 }
 juice.ui.Label.prototype.setFormat = function(format) {
 	this.format = format;
+}
+
+//-----------------------------------------------------------------------------
+//juice.ui.Contents prototype
+//-----------------------------------------------------------------------------
+juice.ui.Contents = function(pre) {
+	juice.ui.__.call(this);
+	this.pre = pre;
+	this.pre.classList.add('juice-ui-contents');
+}
+juice.ui.Contents.prototype = Object.create(juice.ui.__.prototype);
+juice.ui.Contents.prototype.bind = function(map, name) {
+	this.map = map;
+	this.name = name;
+	this.map.addObserver(this);
+}
+juice.ui.Contents.prototype.update = function() {
+	var value = '';
+	if(this.map.get(this.name) !== null || this.map.get(this.name) !== undefined){
+		value = this.map.get(this.name);
+	}
+	this.pre.innerHTML = value;
 }
 
 //-----------------------------------------------------------------------------
@@ -3097,6 +3119,7 @@ juice.initialize = function(container, $context) {
 	// creates unit elements
 	var elementTags = [
 		 '[data-juice="Label"]'
+		,'[data-juice="Contents"]'
 		,'[data-juice="TextField"]'
 		,'[data-juice="ComboBox"]'
 		,'[data-juice="CheckBox"]'
@@ -3122,6 +3145,11 @@ juice.initialize = function(container, $context) {
 					format && label.setFormat(format);
 					label.bind(map,name);
 					label.update();
+				break;
+				case 'Contents':
+					var contents = new juice.ui.Contents(element);
+					contents.bind(map,name);
+					contents.update();
 				break;
 				case 'TextField':
 					var textField = new juice.ui.TextField(element);
