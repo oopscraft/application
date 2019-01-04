@@ -71,20 +71,20 @@ public class BoardController {
 	}
 	
 	/**
-	 * post
+	 * write
 	 * @param boardId
 	 * @param articleNo
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value="{boardId}/post", method = RequestMethod.GET)
-	public ModelAndView post(
+	@RequestMapping(value="{boardId}/write", method = RequestMethod.GET)
+	public ModelAndView write(
 		@PathVariable("boardId")String boardId,
 		@RequestParam(value="articleNo", required=false)Integer articleNo
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
 		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
-		ModelAndView modelAndView = new ModelAndView("board/__post.tiles");
+		ModelAndView modelAndView = new ModelAndView("board/__write.tiles");
 		modelAndView.addObject("board", board);
 		modelAndView.addObject("layout", layout);
 		return modelAndView;

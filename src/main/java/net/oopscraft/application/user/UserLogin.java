@@ -17,19 +17,19 @@ public class UserLogin {
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
-		public Pk(String userId, Date datetime) {
+		public Pk(String userId, Date date) {
 			this.userId = userId;
-			this.datetime = datetime;
+			this.date = date;
 		}
 		String userId;
-		Date datetime;
+		Date date;
 		
 		@Override
 		public boolean equals(Object obj) {
 			if(obj instanceof Pk) {
 				Pk pk = (Pk)obj;
 				if(this.getUserId().equals(pk.getUserId())
-				&& this.getDatetime().equals(pk.getDatetime())
+				&& this.getDate().equals(pk.getDate())
 				) {
 					return true;
 				}else {
@@ -42,7 +42,7 @@ public class UserLogin {
 		
 		@Override
 		public int hashCode() {
-			return (userId + Long.toString(datetime.getTime())).hashCode();
+			return (userId + Long.toString(date.getTime())).hashCode();
 		}
 		public String getUserId() {
 			return userId;
@@ -50,11 +50,11 @@ public class UserLogin {
 		public void setUserId(String userId) {
 			this.userId = userId;
 		}
-		public Date getDatetime() {
-			return datetime;
+		public Date getDate() {
+			return date;
 		}
-		public void setDatetime(Date datetime) {
-			this.datetime = datetime;
+		public void setDate(Date date) {
+			this.date = date;
 		}
 	}
 	
@@ -64,7 +64,7 @@ public class UserLogin {
 
 	@Id
 	@Column(name = "LOGN_DTTM")
-	Date datetime;
+	Date date;
 	
 	@Column(name = "LOGN_SUCS_YN")
 	String successYn;
@@ -89,12 +89,12 @@ public class UserLogin {
 		this.userId = userId;
 	}
 
-	public Date getDatetime() {
-		return datetime;
+	public Date getDate() {
+		return date;
 	}
 
-	public void setDatetime(Date datetime) {
-		this.datetime = datetime;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	public String getSuccessYn() {

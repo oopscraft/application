@@ -269,6 +269,24 @@
       "css": "bell",
       "code": 61683,
       "src": "fontawesome"
+    },
+    {
+      "uid": "0464d6f35a7fe587434173f42ddace88",
+      "css": "thumbs-up",
+      "code": 59410,
+      "src": "elusive"
+    },
+    {
+      "uid": "3849753858193b4d6e07afa834aff979",
+      "css": "thumbs-down",
+      "code": 59426,
+      "src": "elusive"
+    },
+    {
+      "uid": "6059b7737287728091ce7e4c600cca56",
+      "css": "edit",
+      "code": 59428,
+      "src": "elusive"
     }
   ]
 }

@@ -10,6 +10,18 @@
 }
 
 /**
+ * juice.ui.Contents
+ */
+.juice-ui-contents {
+	margin: 0px;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	white-space: pre-wrap;
+    font-weight: inherit;
+    cursor: inherit;
+}
+
+/**
  * juice.ui.TextField
  */
 .juice-ui-textField {
@@ -114,17 +126,20 @@
  * juice.ui.Editor
  */
 .juice-ui-htmlEditor {
-	display: flex;
-	flex-direction: column; 
 	margin: 0px;
 	padding: 1px;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
 	border-radius: 2px;
-	border: 1px solid #cccccc;
+	border: 1px solid #ddd;
 	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
 .juice-ui-htmlEditor .juice-ui-htmlEditor-toolbar {
-	margin: 0px;
-	padding: 2px;
+	display: flex;
+    justify-content: start;
+	padding: 0.3rem;
 	border: 0px;
 	border-bottom: dotted 1px #cccccc;
 	
@@ -213,15 +228,15 @@
 }
 .juice-ui-htmlEditor .juice-ui-htmlEditor-content textarea {
 	margin: 0px;
-	padding: 0px;
+	padding: 1rem;
 	border: 0px;
-	width: 100%;
 	height: 100%;
     overflow-y: scroll;
     overflow-x: auto;
-	background-image: linear-gradient(#fafafa 50%,#ffffff 50%);
-	background-size: 100% 2rem;
-	line-height: 1rem;
+  	background-color: #f7f7f7;
+}
+.juice-ui-htmlEditor .juice-ui-htmlEditor-content textarea:focus {
+	outline: none;
 }
 
 /**

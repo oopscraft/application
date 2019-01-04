@@ -26,13 +26,35 @@ function getArticle() {
 	$.ajax({
 		 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}'
 		,type: 'GET'
-		,data: articleSearch.toJson()
 		,success: function(data, textStatus, jqXHR) {
 			article.fromJson(data);
   	 	}
 	});	
 }
+
+/**
+ * Saves article
+ */
+function saveArticle() {
+	<spring:message code="application.text.article" var="item"/>
+	new juice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
+		.afterConfirm(function() {
+			$.ajax({
+				 url: '${pageContext.request.contextPath}/api/board/${boardId}/article'
+				,type: 'POST'
+				,data: JSON.stringify(article.toJson())
+				,contentType: "application/json"
+				,success: function(data, textStatus, jqXHR) {
+					<spring:message code="application.text.article" var="item"/>
+					new juice.ui.Alert('<spring:message code="application.message.saveItem.complete" arguments="${item}"/>')
+						.afterConfirm(function(){
+							history.back();
+						}).open();
+		 	 	}
+			});
+		}).open();
+}
 </script>
 <style type="text/css">
 </style>
-<jsp:include page="/WEB-INF/view/board/post.jsp" flush="true"/>
+<jsp:include page="/WEB-INF/view/board/write.jsp" flush="true"/>

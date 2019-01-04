@@ -12,7 +12,7 @@ var articleSearch = new juice.data.Map({
 	 key: null
 	,value: null
 	,page: 1
-	,rows: 30
+	,rows: ${board.listPerRows}
 	,totalCount:-1
 });
 articleSearch.afterChange(function(event){
@@ -26,7 +26,6 @@ var articleSearchKeys = [
 	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
 ];
 var articles = new juice.data.List();
-var article = new juice.data.Map();
 
 /**
  * On document loaded
@@ -49,7 +48,7 @@ function getArticles(page) {
 		,success: function(data, textStatus, jqXHR) {
 			articles.fromJson(data);
 			articleSearch.set('totalCount', __parseTotalCount(jqXHR));
-			$('#articleTable').hide().fadeIn();
+			$('#articlesTable').hide().fadeIn();
    	 	}
 	});	
 }
@@ -62,10 +61,10 @@ function getArticle(articleNo) {
 }
 
 /**
- * Posts article
+ * Writes article
  */
-function postArticle() {
-	location.href = '${pageContext.request.contextPath}/board/${boardId}/post';
+function writeArticle() {
+	location.href = '${pageContext.request.contextPath}/board/${boardId}/write';
 }
 </script>
 <style type="text/css">

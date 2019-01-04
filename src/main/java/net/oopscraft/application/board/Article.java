@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.Formula;
+
 @Entity
 @Table(name = "APP_ATCL_INFO")
 public class Article {
@@ -40,11 +42,32 @@ public class Article {
 	@Column(name = "ATCL_USER_ID")
 	String userId;
 	
+	@Formula("(SELECT A.USER_NICK FROM APP_USER_INFO A WHERE A.USER_ID = ATCL_USER_ID)")
+	String userNickname;
+	
+	@Formula("(SELECT A.USER_AVAT FROM APP_USER_INFO A WHERE A.USER_ID = ATCL_USER_ID)")
+	String userAvatar;
+	
 	@Column(name = "ATCL_RGST_DTTM")
 	Date registDate;
 	
 	@Column(name = "ATCL_MDFY_DTTM")
 	Date modifyDate;
+	
+	@Column(name = "READ_CNT")
+	int readCount;
+	
+	@Column(name = "VOTE_PSTV_CNT")
+	int votePositiveCount;
+	
+	@Column(name = "VOTE_NGTV_CNT")
+	int voteNegativeCount;
+	
+	@Formula("(SELECT COUNT(*)FROM APP_ATCL_RPLY_INFO A WHERE A.ATCL_NO = ATCL_NO)")
+	int replyCount;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL)
+	List<ArticleReply> replies = new ArrayList<ArticleReply>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL)
 	List<ArticleFile> files = new ArrayList<ArticleFile>();
@@ -96,6 +119,22 @@ public class Article {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
+	
+	public String getUserNickname() {
+		return userNickname;
+	}
+
+	public void setUserNickname(String userNickname) {
+		this.userNickname = userNickname;
+	}
+	
+	public String getUserAvatar() {
+		return userAvatar;
+	}
+
+	public void setUserAvatar(String userAvatar) {
+		this.userAvatar = userAvatar;
+	}
 
 	public Date getRegistDate() {
 		return registDate;
@@ -111,6 +150,46 @@ public class Article {
 
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
+	}
+
+	public int getReadCount() {
+		return readCount;
+	}
+
+	public void setReadCount(int readCount) {
+		this.readCount = readCount;
+	}
+
+	public int getVotePositiveCount() {
+		return votePositiveCount;
+	}
+
+	public void setVotePositiveCount(int votePositiveCount) {
+		this.votePositiveCount = votePositiveCount;
+	}
+
+	public int getVoteNegativeCount() {
+		return voteNegativeCount;
+	}
+
+	public void setVoteNegativeCount(int voteNegativeCount) {
+		this.voteNegativeCount = voteNegativeCount;
+	}
+	
+	public int getReplyCount() {
+		return replyCount;
+	}
+
+	public void setReplyCount(int replyCount) {
+		this.replyCount = replyCount;
+	}
+
+	public List<ArticleReply> getReplies() {
+		return replies;
+	}
+
+	public void setReplies(List<ArticleReply> replies) {
+		this.replies = replies;
 	}
 
 	public List<ArticleFile> getFiles() {

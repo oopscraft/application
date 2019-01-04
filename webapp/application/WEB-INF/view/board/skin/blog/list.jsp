@@ -1,4 +1,9 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
+<%@taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%> 
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <table id="articleTable" data-juice="Grid" data-juice-bind="articles" data-juice-item="article">
 	<colgroup>
 		<col style="width:10%"/>
@@ -8,13 +13,13 @@
 	<thead>
 		<tr>
 			<th>
-				fdsa
+				<spring:message code="application.text.no"/>
 			</th>
 			<th>
-				fdsa
+				<spring:message code="application.text.title"/>
 			</th>
 			<th>
-				작성자
+				<spring:message code="application.text.writer"/>
 			</th>
 		</tr>
 	</thead>
