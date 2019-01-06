@@ -71,13 +71,13 @@
 		});
 		__user.afterChange(function(event){
 			if(event.name == 'language'){
-				window.location = '?lang=' + event.value;
+				window.location = '?language=' + event.value;
 			}
 		});	 
 		var __languages = new Array();
 		$( document ).ready(function() {
 			$.ajax({
-				 url: '/admin/getLanguages'
+				 url: '${pageContext.request.contextPath}/api/locale/languages'
 				,type: 'GET'
 				,data: {}
 				,success: function(data, textStatus, jqXHR) {

@@ -152,7 +152,7 @@
 	</bean>
 	<mvc:interceptors>
 		<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
-			<property name="paramName" value="lang" />
+			<property name="paramName" value="language" />
 		</bean>
     </mvc:interceptors>
 	

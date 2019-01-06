@@ -17,6 +17,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.junit.platform.commons.util.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
@@ -39,6 +40,9 @@ public class Board {
 	@Column(name = "LAYT_ID")
 	String layoutId;
 	
+	@Column(name = "SKIN_ID")
+	String skinId;
+	
 	public enum Policy {
 		ANONYMOUS, AUTHENTICATED, AUTHORIZED
 	}
@@ -55,8 +59,8 @@ public class Board {
 	@Enumerated(EnumType.STRING)
 	Policy writePolicy = Policy.ANONYMOUS;
 	
-	@Column(name = "PAGE_PER_ROWS")
-	int listPerRows = 10;
+	@Column(name = "ROWS_PER_PAGE")
+	int rowsPerPage = 10;
 	
 	@Column(name = "RPLY_USE_YN")
 	String replyUseYn;
@@ -75,16 +79,55 @@ public class Board {
 		this.entityManager = entityManager;
 	}
 
+	public enum ArticleSearchType {
+		TITLE,
+		TITLE_CONTENTS,
+		USER
+	}
+	
 	/**
 	 * Gets articles
 	 * @param page
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Article> getArticles(PageInfo pageInfo, String searchKey, String searchValue) throws Exception {
+	public List<Article> getArticles(PageInfo pageInfo, String categoryId, ArticleSearchType searchType, String searchValue) throws Exception {
 		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
 		Pageable pageable = pageInfo.toPageable();
-		Page<Article> articlesPage = articleRepository.findByBoardIdOrderByNoDesc(id, pageable);
+		Page<Article> articlesPage = null;
+		if(categoryId == null || categoryId.trim().length() < 1) {
+			if(searchType == null) {
+				articlesPage = articleRepository.findByBoardIdOrderByNoDesc(id, pageable);			
+			}else {
+				switch(searchType) {
+					case TITLE :
+						articlesPage = articleRepository.findByBoardIdAndTitleContainingOrderByNoDesc(id, searchValue, pageable);
+					break;
+					case TITLE_CONTENTS :
+						articlesPage = articleRepository.findByBoardIdAndTitleContainingOrContentsContainingOrderByNoDesc(id, searchValue, searchValue, pageable);	
+					break;
+					case USER :
+						articlesPage = articleRepository.findByBoardIdAndUserIdContainingOrUserNicknameContainingOrderByNoDesc(id, searchValue, searchValue, pageable);	
+					break;
+				}
+			}
+		}else {
+			if(searchType == null) {
+				articlesPage = articleRepository.findByBoardIdAndCategoryIdOrderByNoDesc(id, categoryId, pageable);			
+			}else {
+				switch(searchType) {
+					case TITLE :
+						articlesPage = articleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrderByNoDesc(id, categoryId, searchValue, pageable);
+					break;
+					case TITLE_CONTENTS :
+						articlesPage = articleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrContentsContainingOrderByNoDesc(id, categoryId, searchValue, searchValue, pageable);	
+					break;
+					case USER :
+						articlesPage = articleRepository.findByBoardIdAndCategoryIdAndUserIdContainingOrUserNicknameContainingOrderByNoDesc(id, categoryId, searchValue, searchValue, pageable);	
+					break;
+				}
+			}
+		}
 		if(pageInfo.isEnableTotalCount()) {
 			pageInfo.setTotalCount(articlesPage.getTotalElements());
 		}
@@ -101,6 +144,7 @@ public class Board {
 	public Article getArticle(long no) throws Exception {
 		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
 		Article article = articleRepository.findOne(no);
+		article.setEntityManager(entityManager);
 		return article;
 	}
 	
@@ -116,8 +160,6 @@ public class Board {
 			article.setBoardId(id);
 			article.setRegistDate(new Date());
 			article.setReadCount(0);
-			article.setVotePositiveCount(0);
-			article.setVoteNegativeCount(0);
 			return articleRepository.saveAndFlush(article);
 		}else {
 			Article one = articleRepository.findOne(article.getNo());
@@ -163,6 +205,14 @@ public class Board {
 		this.layoutId = layoutId;
 	}
 
+	public String getSkinId() {
+		return skinId;
+	}
+
+	public void setSkinId(String skinId) {
+		this.skinId = skinId;
+	}
+
 	public Policy getAccessPolicy() {
 		return accessPolicy;
 	}
@@ -187,12 +237,12 @@ public class Board {
 		this.writePolicy = writePolicy;
 	}
 	
-	public int getListPerRows() {
-		return listPerRows;
+	public int getRowsPerPage() {
+		return rowsPerPage;
 	}
 
-	public void setListPerRows(int listPerRows) {
-		this.listPerRows = listPerRows;
+	public void setRowsPerPage(int rowsPerPage) {
+		this.rowsPerPage = rowsPerPage;
 	}
 
 	public String getReplyUseYn() {

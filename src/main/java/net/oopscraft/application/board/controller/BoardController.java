@@ -6,12 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import net.oopscraft.application.board.Article;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.core.TextTable;
@@ -45,8 +47,8 @@ public class BoardController {
 		Board board = boardService.getBoard(boardId);
 		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
 		ModelAndView modelAndView = new ModelAndView("board/__list.tiles");
-		modelAndView.addObject("board", board);
 		modelAndView.addObject("layout", layout);
+		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
 	
@@ -58,15 +60,18 @@ public class BoardController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value="{boardId}/view", method = RequestMethod.GET)
+	@Transactional(rollbackFor = Exception.class)
 	public ModelAndView view(
 		@PathVariable("boardId")String boardId,
 		@RequestParam(value="articleNo", required=false)Integer articleNo
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
+		Article article = board.getArticle(articleNo);
+		article.increaseReadCount();
 		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
 		ModelAndView modelAndView = new ModelAndView("board/__view.tiles");
-		modelAndView.addObject("board", board);
 		modelAndView.addObject("layout", layout);
+		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
 	
@@ -85,8 +90,8 @@ public class BoardController {
 		Board board = boardService.getBoard(boardId);
 		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
 		ModelAndView modelAndView = new ModelAndView("board/__write.tiles");
-		modelAndView.addObject("board", board);
 		modelAndView.addObject("layout", layout);
+		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
 	

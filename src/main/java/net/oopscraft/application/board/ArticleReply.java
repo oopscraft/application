@@ -4,9 +4,12 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 @Entity
 @Table(name = "APP_ATCL_RPLY_INFO")
@@ -64,7 +67,15 @@ public class ArticleReply {
 	
 	@Id
 	@Column(name = "RPLY_NO")
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
+	@TableGenerator(name = "hibernate_sequence", allocationSize = 1)
 	long no;
+	
+	@Column(name = "UPER_RPLY_NO")
+	long upperNo;
+	
+	@Column(name = "RPLY_SEQ")
+	int sequence;
 	
 	@Column(name = "RPLY_LEVL")
 	String level;
@@ -80,20 +91,36 @@ public class ArticleReply {
 		this.articleNo = articleNo;
 	}
 
-	public String getLevel() {
-		return level;
-	}
-
-	public void setLevel(String level) {
-		this.level = level;
-	}
-
 	public long getNo() {
 		return no;
 	}
 
 	public void setNo(long no) {
 		this.no = no;
+	}
+
+	public long getUpperNo() {
+		return upperNo;
+	}
+
+	public void setUpperNo(long upperNo) {
+		this.upperNo = upperNo;
+	}
+
+	public int getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
 	}
 
 	public String getContents() {

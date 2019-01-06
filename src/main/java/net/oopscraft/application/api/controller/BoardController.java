@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import net.oopscraft.application.board.Article;
+import net.oopscraft.application.board.ArticleReply;
 import net.oopscraft.application.board.Board;
+import net.oopscraft.application.board.Board.ArticleSearchType;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.user.User;
 
 @Controller
 @RequestMapping("/api/board")
@@ -52,20 +53,27 @@ public class BoardController {
 	 * @param boardId
 	 * @param page
 	 * @param searchKey
-	 * @param searchValue
+	 * @param value
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/{boardId}/articles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getArticles(
 		@PathVariable("boardId") String boardId,
-		@RequestParam(value = "page", required = true, defaultValue="1")Integer page,
-		@RequestParam(value = "searchKey", required = false)String searchKey,
+		@RequestParam(value = "page", required = false, defaultValue="1")Integer page,
+		@RequestParam(value = "categoryId", required = false)String categoryId,
+		@RequestParam(value = "searchType", required = false)String searchType,
 		@RequestParam(value = "searchValue", required = false)String searchValue
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		PageInfo pageInfo = new PageInfo(page, board.getListPerRows(),true);
-		List<Article> articles = board.getArticles(pageInfo, searchKey, searchValue);
+		PageInfo pageInfo = new PageInfo(page, board.getRowsPerPage(),true);
+		ArticleSearchType articleSearchType;
+		if(StringUtils.isNotBlank(searchType)) {
+			articleSearchType = ArticleSearchType.valueOf(searchType);
+		}else {
+			articleSearchType = null;
+		}
+		List<Article> articles = board.getArticles(pageInfo, categoryId, articleSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return new ResponseEntity<>(JsonUtils.toJson(articles), HttpStatus.OK);
 	}
@@ -124,34 +132,61 @@ public class BoardController {
 		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
 	}
 
-	
-	
-	
+	/**
+	 * Gets article replies	
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/{boardId}/article/{articleNo}/replies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getArticleReplies(
-		@PathVariable("id") String id
+		@PathVariable("boardId") String boardId,
+		@PathVariable("articleNo")long articleNo
 	) throws Exception {
-		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
+		Board board = boardService.getBoard(boardId);
+		Article article = board.getArticle(articleNo);
+		List<ArticleReply> articleReplies = article.getReplies();
+		return new ResponseEntity<>(JsonUtils.toJson(articleReplies), HttpStatus.OK);
 	}
 	
+	/**
+	 * Saves article reply
+	 * @param boardId
+	 * @param articleNo
+	 * @param payload
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/{boardId}/article/{articleNo}/reply", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> addArticleReply(
-		@PathVariable("id") String id
-	) throws Exception {
-		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
-	}
-	
-	@RequestMapping(value = "/{boardId}/article/{articleNo}/reply/{replyNo}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> saveArticleReply(
-		@PathVariable("id") String id
+		@PathVariable("boardId")String boardId,
+		@PathVariable("articleNo")long articleNo,
+		@RequestBody String payload
 	) throws Exception {
-		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
+		ArticleReply articleReply = JsonUtils.toObject(payload, ArticleReply.class);
+		Board board = boardService.getBoard(boardId);
+		Article article = board.getArticle(articleNo);
+		articleReply = article.saveReply(articleReply);
+		return new ResponseEntity<>(JsonUtils.toJson(articleReply), HttpStatus.OK);
 	}
 	
+	/**
+	 * Deletes article reply
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/{boardId}/article/{articleNo}/reply/{replyNo}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> deleteArticleReply(
-		@PathVariable("id") String id
+		@PathVariable("boardId")String boardId,
+		@PathVariable("articleNo")long articleNo,
+		@PathVariable("replyNo")long replyNo
 	) throws Exception {
+		Board board = boardService.getBoard(boardId);
+		Article article = board.getArticle(articleNo);
+		article.deleteReply(replyNo);
 		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
 	}
 

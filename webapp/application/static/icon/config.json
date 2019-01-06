@@ -287,6 +287,18 @@
       "css": "edit",
       "code": 59428,
       "src": "elusive"
+    },
+    {
+      "uid": "85528017f1e6053b2253785c31047f44",
+      "css": "reply",
+      "code": 59429,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "cf1d7ee3d5c367a5c5a3cc9e77acec68",
+      "css": "category",
+      "code": 59430,
+      "src": "websymbols"
     }
   ]
 }
