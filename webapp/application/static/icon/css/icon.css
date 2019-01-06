@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'icon';
-  src: url('../font/icon.eot?98747195');
-  src: url('../font/icon.eot?98747195#iefix') format('embedded-opentype'),
-       url('../font/icon.woff2?98747195') format('woff2'),
-       url('../font/icon.woff?98747195') format('woff'),
-       url('../font/icon.ttf?98747195') format('truetype'),
-       url('../font/icon.svg?98747195#icon') format('svg');
+  src: url('../font/icon.eot?25631794');
+  src: url('../font/icon.eot?25631794#iefix') format('embedded-opentype'),
+       url('../font/icon.woff2?25631794') format('woff2'),
+       url('../font/icon.woff?25631794') format('woff'),
+       url('../font/icon.ttf?25631794') format('truetype'),
+       url('../font/icon.svg?25631794#icon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'icon';
-    src: url('../font/icon.svg?98747195#icon') format('svg');
+    src: url('../font/icon.svg?25631794#icon') format('svg');
   }
 }
 */
@@ -92,6 +92,8 @@
 .icon-thumbs-down:before { content: '\e822'; } /* '' */
 .icon-cancel:before { content: '\e823'; } /* '' */
 .icon-edit:before { content: '\e824'; } /* '' */
+.icon-reply:before { content: '\e825'; } /* '' */
+.icon-category:before { content: '\e826'; } /* '' */
 .icon-move:before { content: '\f047'; } /* '' */
 .icon-bell:before { content: '\f0f3'; } /* '' */
 .icon-content:before { content: '\f0f6'; } /* '' */

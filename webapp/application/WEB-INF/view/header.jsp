@@ -1,4 +1,9 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
+<%@taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%> 
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <style type="text/css">
 * {
 	margin:0px;
@@ -43,9 +48,7 @@ body > main {
 		<span>
 			<i class="icon-globe"></i>
 			<spring:message code="application.label.language"/>
-			<!-- 
 			<select data-juice="ComboBox" data-juice-bind="__user.language" data-juice-options="__languages" style="width:10rem;"></select>
-			-->
 		</span>
 		&nbsp;
 		<span>

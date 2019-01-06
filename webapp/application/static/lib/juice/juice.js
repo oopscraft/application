@@ -776,7 +776,7 @@ juice.ui.Label.prototype.bind = function(map, name) {
 juice.ui.Label.prototype.update = function() {
 	this.removeChildNodes(this.label);
 	var value = '';
-	if(this.map.get(this.name) !== null || this.map.get(this.name) !== undefined){
+	if(this.map.get(this.name) !== null && this.map.get(this.name) !== undefined){
 		value = this.map.get(this.name);
 	}
 	if(this.format){
@@ -794,22 +794,22 @@ juice.ui.Label.prototype.setFormat = function(format) {
 }
 
 //-----------------------------------------------------------------------------
-//juice.ui.Contents prototype
+//juice.ui.Text prototype
 //-----------------------------------------------------------------------------
-juice.ui.Contents = function(pre) {
+juice.ui.Text = function(pre) {
 	juice.ui.__.call(this);
 	this.pre = pre;
-	this.pre.classList.add('juice-ui-contents');
+	this.pre.classList.add('juice-ui-text');
 }
-juice.ui.Contents.prototype = Object.create(juice.ui.__.prototype);
-juice.ui.Contents.prototype.bind = function(map, name) {
+juice.ui.Text.prototype = Object.create(juice.ui.__.prototype);
+juice.ui.Text.prototype.bind = function(map, name) {
 	this.map = map;
 	this.name = name;
 	this.map.addObserver(this);
 }
-juice.ui.Contents.prototype.update = function() {
+juice.ui.Text.prototype.update = function() {
 	var value = '';
-	if(this.map.get(this.name) !== null || this.map.get(this.name) !== undefined){
+	if(this.map.get(this.name) !== null && this.map.get(this.name) !== undefined){
 		value = this.map.get(this.name);
 	}
 	this.pre.innerHTML = value;
@@ -870,13 +870,10 @@ juice.ui.ComboBox.prototype.bind = function(map, name) {
 	});
 }
 juice.ui.ComboBox.prototype.update = function() {
-	// creates options
+	// removes all options
 	this.removeChildNodes(this.select);
-	/*
-	while (this.select.firstChild) {
-	    this.select.removeChild(this.select.firstChild);
-	}
-	*/
+	
+	// creates options
 	for(var i = 0; i < this.options.length; i++){
 		var option = document.createElement('option');
 		option.value = this.options[i]['value'] || '';
@@ -1597,6 +1594,227 @@ juice.ui.Thumbnail.prototype.setHeight = function(height){
 }
 
 //-----------------------------------------------------------------------------
+// juice.ui.ListView prototype
+//-----------------------------------------------------------------------------
+juice.ui.ListView = function(ul){
+	juice.ui.__.call(this);
+	this.ul = ul;
+	this.ul.classList.add('juice-ui-listView');
+	this.li = this.ul.querySelector('li');
+	this.ul.removeChild(this.li);
+	this.rows = new Array();
+}
+juice.ui.ListView.prototype = Object.create(juice.ui.__.prototype);
+// bind data
+juice.ui.ListView.prototype.bind = function(list){
+	this.list = list;
+	this.list.addObserver(this);
+}
+// sets item
+juice.ui.ListView.prototype.setItem = function(item){
+	this.item = item;
+}
+// update
+juice.ui.ListView.prototype.update = function(){
+	
+	// remove previous rows
+	for(var i = 0; i < this.rows.length; i ++ ) {
+		this.ul.removeChild(this.rows[i]);
+	}
+	this.rows.length = 0;
+	
+	// creates new rows
+	for(var index = 0; index < this.list.getRowCount(); index ++ ) {
+		var map = this.list.getRow(index);
+		var li = this.createRow(index,map);
+		this.ul.appendChild(li);
+		this.rows.push(li);
+	}
+}
+// creates row
+juice.ui.ListView.prototype.createRow = function(index, map){
+	var $this = this;
+	var ul = this.ul;
+	var li = this.li.cloneNode(true);
+	
+	// setting index
+	li.dataset.juiceIndex = index;
+	
+	// executes expression
+	var $context = {};
+	$context['index'] = index;
+	$context[this.item] = map;
+	li = this.executeExpression(li, $context);
+	
+	// creates juice element.
+	juice.initialize(li, $context);
+	
+	// returns
+	return li;
+}
+
+//-----------------------------------------------------------------------------
+// juice.ui.TreeView prototype
+//-----------------------------------------------------------------------------
+juice.ui.TreeView = function(ul){
+	juice.ui.__.call(this);
+	this.ul = ul;
+	this.ul.classList.add('juice-ui-treeView');
+	this.li = this.ul.querySelector('li');
+	this.ul.removeChild(this.li);
+}
+juice.ui.TreeView.prototype = Object.create(juice.ui.__.prototype);
+//bind data 
+juice.ui.TreeView.prototype.bind = function(tree) {
+	this.tree = tree;
+	this.tree.addObserver(this);
+}
+//set item 
+juice.ui.TreeView.prototype.setItem = function(item){
+	this.item = item;
+}
+//setting editable 
+juice.ui.TreeView.prototype.setEditable = function(editable) {
+	this.editable = editable;
+}
+//update
+juice.ui.TreeView.prototype.update = function() {
+
+	// remove previous li
+	while (this.ul.hasChildNodes()) {
+		this.ul.removeChild(this.ul.lastChild);
+	}
+
+	// creates new li
+	var rootChildNodes = this.tree.getRootNode().getChildNodes();
+	for(var i = 0; i < rootChildNodes.length; i ++) {
+		var rootChildNode = rootChildNodes[i];
+		var index = [i];
+		var li = this.createNode(index, rootChildNode);
+		this.ul.appendChild(li);
+	}
+}
+
+//creates node 
+juice.ui.TreeView.prototype.createNode = function(index, node){
+	var $this = this;
+	var li = this.li.cloneNode(true);
+	var index = JSON.parse(JSON.stringify(index)); 	// deep copy
+	
+	// setting index
+	li.dataset.juiceIndex = JSON.stringify(index);
+	
+	// executes expression
+	var $context = {};
+	$context['index'] = JSON.stringify(index);
+	$context['depth'] = index.length - 1;
+	$context[this.item] = node;
+	li = this.executeExpression(li, $context);
+	
+	// creates juice element.
+	juice.initialize(li,$context);
+	
+	// active index item
+	if(JSON.stringify(index) == JSON.stringify(this.tree.index)){
+		li.childNodes.forEach(function(item){
+			if(item.nodeType == 1){
+				item.classList.add('juice-ui-treeView-index');
+			}
+		});
+	}
+	
+	// on click event
+	li.addEventListener('click', function(event){
+		event.stopPropagation();
+		$this.tree.setIndex(eval(this.dataset.juiceIndex));
+	});
+
+	// child node
+	var childNodes = node.getChildNodes();
+	if(childNodes){
+		index.push(-1);
+		var childUl = document.createElement('ul');
+		for(var i = 0; i < childNodes.length; i ++){
+			var childNode = childNodes[i];
+			index[index.length-1] = i;
+			var childLi = this.createNode(index, childNode);
+			childUl.appendChild(childLi);
+		}
+		li.appendChild(childUl);
+	}
+
+	// editable
+	if(this.editable){
+		var $li = li;
+		
+		// disable drag
+		if(li.dataset.juiceDraggable && eval(li.dataset.juiceDraggable) == false){
+			li.setAttribute('draggable', false);
+			li.classList.remove('juice-ui-treeView-draggable');
+		}
+		// enable drag
+		else{
+			li.setAttribute('draggable', true);
+			li.classList.add('juice-ui-treeView-draggable');
+			// setting row drag and drop
+			li.addEventListener('dragstart', function(ev) {
+				ev.stopPropagation();
+				ev.target.id = new Date().getMilliseconds();
+				ev.dataTransfer.setData("id", ev.target.id);
+				this.classList.add('juice-ui-treeView-dragstart');
+			});
+			li.addEventListener('dragend', function(ev){
+				this.classList.remove('juice-ui-treeView-dragstart');
+			});
+		}
+
+		// disable drop
+		if(li.dataset.juiceDroppable && eval(li.dataset.juiceDroppable) == false){
+			li.addEventListener('drop', function(ev) {
+			    ev.preventDefault();
+			    ev.stopPropagation();
+			    return false;
+			});
+			li.addEventListener('dragover', function(ev){
+				ev.preventDefault();
+				ev.stopPropagation();
+				return false;
+			});
+		}
+		// enable drop
+		else{
+			li.addEventListener('drop', function(ev) {
+			    ev.preventDefault();
+			    ev.stopPropagation();
+			    var dragedLi = document.getElementById(ev.dataTransfer.getData("id"));
+			    var dropedLi = ev.target;
+			    while(dropedLi){
+			    	if(dropedLi.tagName == 'LI'){
+			    		break;
+			    	}
+			    	dropedLi = dropedLi.parentElement;
+			    }
+			    var fromIndex = eval(dragedLi.dataset.juiceIndex);
+			    var toIndex = eval(dropedLi.dataset.juiceIndex);
+			    if(fromIndex.toString() == toIndex.toString()) {
+			    	return false;
+			    }
+			    
+			    // moves node
+			    $this.tree.moveNode(fromIndex, toIndex);
+			});
+			li.addEventListener('dragover', function(ev){
+				ev.preventDefault();
+				ev.stopPropagation();
+			});
+		}
+	}
+	
+	// return li
+	return li;
+}
+
+//-----------------------------------------------------------------------------
 // juice.ui.Grid prototype
 //-----------------------------------------------------------------------------
 juice.ui.Grid = function(table) {
@@ -1767,168 +1985,6 @@ juice.ui.Grid.prototype.createEmptyRow = function() {
 	tr.appendChild(td);
 	tbody.appendChild(tr);
 	return tbody;
-}
-
-
-//-----------------------------------------------------------------------------
-// juice.ui.Tree prototype
-//-----------------------------------------------------------------------------
-juice.ui.TreeView = function(ul){
-	juice.ui.__.call(this);
-	this.ul = ul;
-	this.ul.classList.add('juice-ui-treeView');
-	this.li = this.ul.querySelector('li');
-	this.ul.removeChild(this.li);
-}
-juice.ui.TreeView.prototype = Object.create(juice.ui.__.prototype);
-// bind data 
-juice.ui.TreeView.prototype.bind = function(tree) {
-	this.tree = tree;
-	this.tree.addObserver(this);
-}
-// set item 
-juice.ui.TreeView.prototype.setItem = function(item){
-	this.item = item;
-}
-// setting editable 
-juice.ui.TreeView.prototype.setEditable = function(editable) {
-	this.editable = editable;
-}
-// update
-juice.ui.TreeView.prototype.update = function() {
-
-	// remove previous li
-	while (this.ul.hasChildNodes()) {
-		this.ul.removeChild(this.ul.lastChild);
-	}
-
-	// creates new li
-	var rootChildNodes = this.tree.getRootNode().getChildNodes();
-	for(var i = 0; i < rootChildNodes.length; i ++) {
-		var rootChildNode = rootChildNodes[i];
-		var index = [i];
-		var li = this.createNode(index, rootChildNode);
-		this.ul.appendChild(li);
-	}
-}
-
-// creates node 
-juice.ui.TreeView.prototype.createNode = function(index, node){
-	var $this = this;
-	var li = this.li.cloneNode(true);
-	var index = JSON.parse(JSON.stringify(index)); 	// deep copy
-	
-	// setting index
-	li.dataset.juiceIndex = JSON.stringify(index);
-	
-	// executes expression
-	var $context = {};
-	$context['index'] = JSON.stringify(index);
-	$context['depth'] = index.length - 1;
-	$context[this.item] = node;
-	li = this.executeExpression(li, $context);
-	
-	// creates juice element.
-	juice.initialize(li,$context);
-	
-	// active index item
-	if(JSON.stringify(index) == JSON.stringify(this.tree.index)){
-		li.childNodes.forEach(function(item){
-			if(item.nodeType == 1){
-				item.classList.add('juice-ui-treeView-index');
-			}
-		});
-	}
-	
-	// on click event
-	li.addEventListener('click', function(event){
-		event.stopPropagation();
-		$this.tree.setIndex(eval(this.dataset.juiceIndex));
-	});
-
-	// child node
-	var childNodes = node.getChildNodes();
-	if(childNodes){
-		index.push(-1);
-		var childUl = document.createElement('ul');
-		for(var i = 0; i < childNodes.length; i ++){
-			var childNode = childNodes[i];
-			index[index.length-1] = i;
-			var childLi = this.createNode(index, childNode);
-			childUl.appendChild(childLi);
-		}
-		li.appendChild(childUl);
-	}
-
-	// editable
-	if(this.editable){
-		var $li = li;
-		
-		// disable drag
-		if(li.dataset.juiceDraggable && eval(li.dataset.juiceDraggable) == false){
-			li.setAttribute('draggable', false);
-			li.classList.remove('juice-ui-treeView-draggable');
-		}
-		// enable drag
-		else{
-			li.setAttribute('draggable', true);
-			li.classList.add('juice-ui-treeView-draggable');
-			// setting row drag and drop
-			li.addEventListener('dragstart', function(ev) {
-				ev.stopPropagation();
-				ev.target.id = new Date().getMilliseconds();
-				ev.dataTransfer.setData("id", ev.target.id);
-				this.classList.add('juice-ui-treeView-dragstart');
-			});
-			li.addEventListener('dragend', function(ev){
-				this.classList.remove('juice-ui-treeView-dragstart');
-			});
-		}
-
-		// disable drop
-		if(li.dataset.juiceDroppable && eval(li.dataset.juiceDroppable) == false){
-			li.addEventListener('drop', function(ev) {
-			    ev.preventDefault();
-			    ev.stopPropagation();
-			    return false;
-			});
-			li.addEventListener('dragover', function(ev){
-				ev.preventDefault();
-				ev.stopPropagation();
-				return false;
-			});
-		}
-		// enable drop
-		else{
-			li.addEventListener('drop', function(ev) {
-			    ev.preventDefault();
-			    ev.stopPropagation();
-			    var dragedLi = document.getElementById(ev.dataTransfer.getData("id"));
-			    var dropedLi = ev.target;
-			    while(dropedLi){
-			    	if(dropedLi.tagName == 'LI'){
-			    		break;
-			    	}
-			    	dropedLi = dropedLi.parentElement;
-			    }
-			    var fromIndex = eval(dragedLi.dataset.juiceIndex);
-			    var toIndex = eval(dropedLi.dataset.juiceIndex);
-			    if(fromIndex.toString() == toIndex.toString()) {
-			    	return false;
-			    }
-			    
-			    // moves node
-			    $this.tree.moveNode(fromIndex, toIndex);
-			});
-			li.addEventListener('dragover', function(ev){
-				ev.preventDefault();
-				ev.stopPropagation();
-			});
-		}
-	}
-	
-	// return li
-	return li;
 }
 
 //-----------------------------------------------------------------------------
@@ -3029,6 +3085,25 @@ juice.initialize = function(container, $context) {
 			throw e;
 		}
 	};
+	
+	// creates ListView 
+	var listViewElements = container.querySelectorAll('ul[data-juice="ListView"]');
+	for(var i = 0; i < listViewElements.length; i++ ) {
+		try {
+			var element = listViewElements[i];
+			var listView = new juice.ui.ListView(element);
+			var bind = element.dataset.juiceBind;
+			var list = getObject($context,bind);
+			listView.bind(list);
+			listView.setItem(element.dataset.juiceItem);
+			listView.update();
+			var id = generateUUID();
+			element.dataset.juice += id;
+		}catch(e){
+			console.error(e,listViewElements[i]);
+			throw e;
+		}
+	}
 
 	// creates TreeView 
 	var treeViewElements = container.querySelectorAll('ul[data-juice="TreeView"]');
@@ -3119,7 +3194,7 @@ juice.initialize = function(container, $context) {
 	// creates unit elements
 	var elementTags = [
 		 '[data-juice="Label"]'
-		,'[data-juice="Contents"]'
+		,'[data-juice="Text"]'
 		,'[data-juice="TextField"]'
 		,'[data-juice="ComboBox"]'
 		,'[data-juice="CheckBox"]'
@@ -3146,8 +3221,8 @@ juice.initialize = function(container, $context) {
 					label.bind(map,name);
 					label.update();
 				break;
-				case 'Contents':
-					var contents = new juice.ui.Contents(element);
+				case 'Text':
+					var contents = new juice.ui.Text(element);
 					contents.bind(map,name);
 					contents.update();
 				break;

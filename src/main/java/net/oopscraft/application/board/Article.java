@@ -1,21 +1,25 @@
 package net.oopscraft.application.board;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
+import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import net.oopscraft.application.board.repository.ArticleReplyRepository;
+import net.oopscraft.application.board.repository.ArticleRepository;
 
 @Entity
 @Table(name = "APP_ATCL_INFO")
@@ -42,7 +46,7 @@ public class Article {
 	@Column(name = "ATCL_USER_ID")
 	String userId;
 	
-	@Formula("(SELECT A.USER_NICK FROM APP_USER_INFO A WHERE A.USER_ID = ATCL_USER_ID)")
+	@Column(name = "ATCL_USER_NICK")
 	String userNickname;
 	
 	@Formula("(SELECT A.USER_AVAT FROM APP_USER_INFO A WHERE A.USER_ID = ATCL_USER_ID)")
@@ -57,20 +61,88 @@ public class Article {
 	@Column(name = "READ_CNT")
 	int readCount;
 	
-	@Column(name = "VOTE_PSTV_CNT")
-	int votePositiveCount;
-	
-	@Column(name = "VOTE_NGTV_CNT")
-	int voteNegativeCount;
-	
 	@Formula("(SELECT COUNT(*)FROM APP_ATCL_RPLY_INFO A WHERE A.ATCL_NO = ATCL_NO)")
 	int replyCount;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL)
-	List<ArticleReply> replies = new ArrayList<ArticleReply>();
+	@Transient
+	EntityManager entityManager;
+	
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL)
-	List<ArticleFile> files = new ArrayList<ArticleFile>();
+	/**
+	 * Increases read count.
+	 * @throws Exception
+	 */
+	public void increaseReadCount() throws Exception {
+		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
+		articleRepository.increaseReadCount(no);
+	}
+
+	/**
+	 * Gets replies.
+	 * @return
+	 * @throws Exception
+	 */
+	@JsonIgnore
+	public List<ArticleReply> getReplies() throws Exception {
+		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
+		return articleReplyRepository.findByArticleNoOrderBySequenceAscLevelAsc(no);
+	}
+	
+	/**
+	 * Saves reply.
+	 * @param reply
+	 * @return
+	 * @throws Exception
+	 */
+	public ArticleReply saveReply(ArticleReply reply) throws Exception {
+		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
+		if(reply.getNo() < 1) {
+			reply.setArticleNo(no);
+			
+			// In case of child reply(has upper no)
+			if(reply.getUpperNo() > 0) {
+				ArticleReply upperArticleReply = articleReplyRepository.findOne(new ArticleReply.Pk(no,reply.getUpperNo()));
+				reply.setSequence(upperArticleReply.getSequence());
+				StringBuffer level = new StringBuffer();
+				level.append(upperArticleReply.getLevel() == null ? "" : upperArticleReply.getLevel());
+				String siblingMaxLevel = articleReplyRepository.getSiblingMaxLevel(reply.getUpperNo());
+				if(siblingMaxLevel == null) {
+					level.append("A");
+				}else {
+					char lastChar = siblingMaxLevel.charAt(siblingMaxLevel.length()-1);
+					char newChar = (char)((int)lastChar + 1);
+					level.append(newChar);
+				}
+				reply.setLevel(level.toString());
+			}
+			// just root reply	
+			else {
+				Integer maxSequence = articleReplyRepository.getMaxSequence(no);
+				reply.setSequence((maxSequence == null ? 0 : maxSequence.intValue()) + 1);
+				reply.setLevel("");
+			}
+			return articleReplyRepository.saveAndFlush(reply);
+		}else {
+			ArticleReply one = articleReplyRepository.findOne(new ArticleReply.Pk(no,reply.getNo()));
+			one.setContents(reply.getContents());
+			return articleReplyRepository.saveAndFlush(one);
+		}
+	}
+
+	/**
+	 * Deletes reply 
+	 * @param replyNo
+	 * @throws Exception
+	 */
+	public void deleteReply(long replyNo) throws Exception {
+		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
+		articleReplyRepository.delete(new ArticleReply.Pk(no,replyNo));
+	}
+	
+	
 
 	public String getBoardId() {
 		return boardId;
@@ -160,44 +232,12 @@ public class Article {
 		this.readCount = readCount;
 	}
 
-	public int getVotePositiveCount() {
-		return votePositiveCount;
-	}
-
-	public void setVotePositiveCount(int votePositiveCount) {
-		this.votePositiveCount = votePositiveCount;
-	}
-
-	public int getVoteNegativeCount() {
-		return voteNegativeCount;
-	}
-
-	public void setVoteNegativeCount(int voteNegativeCount) {
-		this.voteNegativeCount = voteNegativeCount;
-	}
-	
 	public int getReplyCount() {
 		return replyCount;
 	}
 
 	public void setReplyCount(int replyCount) {
 		this.replyCount = replyCount;
-	}
-
-	public List<ArticleReply> getReplies() {
-		return replies;
-	}
-
-	public void setReplies(List<ArticleReply> replies) {
-		this.replies = replies;
-	}
-
-	public List<ArticleFile> getFiles() {
-		return files;
-	}
-
-	public void setFiles(List<ArticleFile> files) {
-		this.files = files;
 	}
 
 }

@@ -62,6 +62,40 @@
 	        	alert(jqXHR.responseText);
         	}
         });
+
+		/**
+		 * login user information
+		 */
+		var __user = new juice.data.Map({
+			language: '${pageContext.response.locale}'
+		});
+		__user.afterChange(function(event){
+			if(event.name == 'language'){
+				window.location = '?language=' + event.value;
+			}
+		});	
+		
+		/**
+		 * Gets languages
+		 */
+		var __languages = new Array();
+		$( document ).ready(function() {
+			$.ajax({
+				 url: '${pageContext.request.contextPath}/api/locale/languages'
+				,type: 'GET'
+				,data: {}
+				,success: function(data, textStatus, jqXHR) {
+					console.log(data);
+					data.forEach(function(item){
+						__languages.push({
+							value: item.language,
+							text: item.displayName
+						});
+					});
+					__user.notifyObservers();
+				}
+			});
+		});
 		
         /**
          * Parsed total count from Content-Range header
