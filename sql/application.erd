@@ -3476,8 +3476,8 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
           <defaultValue></defaultValue>
         </net.java.amateras.db.visual.model.ColumnModel>
         <net.java.amateras.db.visual.model.ColumnModel>
-          <columnName>PAGE_PER_ROWS</columnName>
-          <logicalName>Page Per Rows</logicalName>
+          <columnName>ROWS_PER_PAGE</columnName>
+          <logicalName>Rows Per Page</logicalName>
           <columnType class="net.java.amateras.db.dialect.ColumnType">
             <name>INT</name>
             <logicalName>Integer</logicalName>
