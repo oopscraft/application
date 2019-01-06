@@ -1,0 +1,35 @@
+.app-board {
+	margin:1rem; 
+	padding:1rem;
+}
+
+.app-board-name {
+	padding: 0.2rem;
+	font-size:1.5rem; 
+	font-weight:bold;
+}
+
+.app-board-button {
+	margin: 0.2rem 0rem;
+	border: solid 1px #ccc;
+	border-radius: 2px;
+	background-color: #fff;
+	padding:0 1rem;
+	cursor:pointer;
+	transition:200ms ease all;
+	outline:none;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.app-board-button:hover {
+	background-color: #f7f7f7;
+	border: solid 1px steelblue;
+	box-shadow: 0px 0px 1px 1px #ccc;	
+}
+
+.app-board-clickable {
+	cursor: pointer;
+	cursor: hand;
+}
+
