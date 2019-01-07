@@ -49,7 +49,6 @@
 			<span id="app-board-reply-count"></span>
 		</div>
 		<div>
-
 			<ul data-juice="ListView" data-juice-bind="replies" data-juice-item="reply" style="padding:0.5rem;">
 				<li style="margin:0.5rem; padding-left:{{$context.reply.get('indent')*2}}rem;">
 					<div style="border-bottom: dotted 1px #ccc;">
