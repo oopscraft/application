@@ -51,7 +51,7 @@
 		<div>
 
 			<ul data-juice="ListView" data-juice-bind="replies" data-juice-item="reply" style="padding:0.5rem;">
-				<li style="margin:0.5rem; padding-left:{{$context.reply.get('level').length*2}}rem;">
+				<li style="margin:0.5rem; padding-left:{{$context.reply.get('indent')*2}}rem;">
 					<div style="border-bottom: dotted 1px #ccc;">
 						<div style="display:flex; justify-content:space-between;">
 							<div>
