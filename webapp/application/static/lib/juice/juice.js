@@ -1024,39 +1024,38 @@ juice.ui.HtmlEditor = function(div) {
 	// create content
 	this.content = document.createElement('div');
 	this.content.classList.add('juice-ui-htmlEditor-content');
-	this.iframe = document.createElement('iframe');
-	this.content.appendChild(this.iframe);
+	this.pre = document.createElement('pre');
+	this.content.appendChild(this.pre);
 	this.textarea = document.createElement('textarea');
 	this.textarea.style.display = 'none';
 	this.content.appendChild(this.textarea);
 	this.div.appendChild(this.content);
 	
-	// iframe designMode 
-	this.iframe.contentDocument.designMode = "on";
-
-	// iframe specific
-	this.iframe.addEventListener('DOMNodeInsertedIntoDocument', function(){
-		$this.bind($this.map, $this.name);
-	});
+	// pre element designMode 
+	this.pre.contentEditable = 'true';
 }
 juice.ui.HtmlEditor.prototype = Object.create(juice.ui.__.prototype);
 juice.ui.HtmlEditor.prototype.bind = function(map,name) {
+	var $this = this;
 	this.map = map;
 	this.name = name;
 	this.map.addObserver(this);
-	this.iframe.contentDocument.designMode = "on";
-	this.iframe.contentDocument.addEventListener('DOMSubtreeModified', function(){
-		if(map.get(name) != this.body.innerHTML){
-			map.set(name, this.body.innerHTML);
+	
+	// adds event listener to text area element.
+	this.pre.addEventListener('DOMSubtreeModified', function(event){
+		if(map.get(name) != this.innerHTML){
+			map.set(name, this.innerHTML);
 		}
 	});
+	
+	// add event listener to pre element.
 	this.textarea.addEventListener('change', function(){
 		map.set(name, this.value);
 	});
 }
 juice.ui.HtmlEditor.prototype.update = function() {
-	if(this.iframe.contentDocument.body.innerHTML != this.map.get(this.name)) {
-		this.iframe.contentDocument.body.innerHTML = this.map.get(this.name) || '';
+	if(this.pre.innerHTML != this.map.get(this.name)) {
+		this.pre.innerHTML = this.map.get(this.name) || '';
 	}
 	if(this.textarea.value != this.map.get(this.name)){
 		this.textarea.value = this.map.get(this.name) || '';
@@ -1198,16 +1197,16 @@ juice.ui.HtmlEditor.prototype.createToolbar = function() {
 	return toolbar;
 }
 juice.ui.HtmlEditor.prototype.execCommand = function(commandName, showDefaultUI, valueArgument) {
-	this.iframe.contentDocument.execCommand(commandName, showDefaultUI, valueArgument);
+	document.execCommand(commandName, showDefaultUI, valueArgument);
 }
 juice.ui.HtmlEditor.prototype.toggleHtml = function() {
 	if(this.html == true){
 		this.html = false;
-		this.iframe.style.display = 'block';
+		this.pre.style.display = 'block';
 		this.textarea.style.display = 'none';
 	}else{
 		this.html = true;
-		this.iframe.style.display = 'none';
+		this.pre.style.display = 'none';
 		this.textarea.style.display = 'block';
 	}
 }

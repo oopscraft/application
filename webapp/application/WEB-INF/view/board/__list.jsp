@@ -20,7 +20,8 @@ categories.forEach(function(item){
 	});
 });
 var articleSearch = new juice.data.Map({
-	 page: 1
+	 rows:${board.rowsPerPage}
+	,page: 1
 	,categoryId: null
 	,searchType: null
 	,searchValue: null

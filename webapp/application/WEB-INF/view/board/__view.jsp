@@ -68,6 +68,15 @@ function getReplies() {
 		 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}/replies'
 		,type: 'GET'
 		,success: function(data, textStatus, jqXHR) {
+			// defines indent depth
+			data.forEach(function(item){
+				if(item.level) {
+					item.indent = item.level.length;
+				}else{
+					item.indent = 0;
+				}
+				console.log(item.indent);
+			});
 			replies.fromJson(data);
 			$('#app-board-reply-count').text(replies.getRowCount());
  	 	}
