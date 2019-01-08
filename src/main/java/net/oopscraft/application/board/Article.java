@@ -1,14 +1,18 @@
 package net.oopscraft.application.board;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -63,6 +67,9 @@ public class Article {
 	
 	@Formula("(SELECT COUNT(*)FROM APP_ATCL_RPLY_INFO A WHERE A.ATCL_NO = ATCL_NO)")
 	int replyCount;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<ArticleFile> files = new ArrayList<ArticleFile>();
 	
 	@Transient
 	EntityManager entityManager;
@@ -142,6 +149,35 @@ public class Article {
 		articleReplyRepository.delete(new ArticleReply.Pk(no,replyNo));
 	}
 	
+	/**
+	 * Gets file.
+	 * @param fileId
+	 * @return
+	 * @throws Exception
+	 */
+	public ArticleFile getFile(String fileId) throws Exception {
+		for(ArticleFile file : getFiles()) {
+			if(fileId.equals(file.getId()) == true) {
+				return file;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Removes file.
+	 * @param fileId
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean removeFile(String fileId) throws Exception {
+		for(ArticleFile file : getFiles()) {
+			if(fileId.equals(file.getId()) == true) {
+				return files.remove(file);
+			}
+		}
+		return false;
+	}
 	
 
 	public String getBoardId() {
@@ -238,6 +274,14 @@ public class Article {
 
 	public void setReplyCount(int replyCount) {
 		this.replyCount = replyCount;
+	}
+
+	public List<ArticleFile> getFiles() {
+		return files;
+	}
+
+	public void setFiles(List<ArticleFile> files) {
+		this.files = files;
 	}
 
 }

@@ -12,6 +12,7 @@
 <script type="text/javascript">
 var board = new juice.data.Map(${app:toJson(board)});
 var article = new juice.data.Map();
+var files = new juice.data.List();
 var replies = new juice.data.List();
 var reply = new juice.data.Map();
 
@@ -32,6 +33,7 @@ function getArticle() {
 		,type: 'GET'
 		,success: function(data, textStatus, jqXHR) {
 			article.fromJson(data);
+			files.fromJson(data.files);
   	 	}
 	});	
 }
@@ -158,6 +160,15 @@ function deleteReply(no) {
 		 	}
 		});
 	}).open();
+}
+
+/**
+ * Download file
+ */
+function downloadFile(id){
+    var link = document.createElement('a');
+    link.href = '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}/file/' + id;
+    link.click();
 }
 </script>
 <style type="text/css">

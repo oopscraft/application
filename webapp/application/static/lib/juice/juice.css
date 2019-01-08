@@ -363,7 +363,7 @@
 .juice-ui-grid thead th {
 	border: solid 1px #ddd;
 	text-align: center;
-	height: 2rem;
+	font-weight: bold;
 }
 .juice-ui-grid tbody {
 	cursor:pointer;
@@ -377,9 +377,8 @@
 	cursor: move;
 }
 .juice-ui-grid tbody td {
-	border: solid 1px #ddd;
+	border: dotted 1px #ddd;
 	text-align: left;
-	height: 2rem;
 }
 .juice-ui-grid .juice-ui-grid-index {
 	background-color: #f7f7f7;
@@ -665,6 +664,7 @@
 	background-color: #ffffff;
 	border: solid 1px #ccc;
 	border-radius: 1px;
+	line-height: 2rem;
 	font-weight: bold;
 	cursor: pointer;
 	cursor: hand;
@@ -714,6 +714,7 @@
 	background-color: #ffffff;
 	border: solid 1px #ccc;
 	border-radius: 1px;
+	line-height: 2rem;
 	font-weight: bold;
 	cursor: pointer;
 	cursor: hand;
@@ -778,6 +779,7 @@
 	background-color: #ffffff;
 	border: solid 1px #ccc;
 	border-radius: 1px;
+	line-height: 2rem;
 	font-weight: bold;
 	cursor: pointer;
 	cursor: hand;

@@ -16,7 +16,7 @@
 	</div>
 	<div style="border:solid 1px #ccc; border-radius:1px; padding:1rem;">
 		<div style="display:flex; justify-content:space-between; border-bottom:dotted 1px #ccc; padding-bottom: 0.2rem;">
-			<div style="width:70%; font-size:1.3rem; font-weight:bold;">
+			<div style="width:70%; font-size:1.25rem; font-weight:bold;">
 				<label data-juice="Label" data-juice-bind="article.title" style="font-size:inherit;"></label>
 			</div>
 			<div style="width:30%; text-align:right;">
@@ -43,6 +43,21 @@
 		<div style="min-height:50rem;">
 			<pre data-juice="Text" data-juice-bind="article.contents"></pre>
 		</div>
+		<div style="padding:1rem;">
+			<div style="text-align:right;">
+				<ul data-juice="ListView" data-juice-bind="files" data-juice-item="file">
+					<li>
+						<i class="icon-attach"></i>
+						<Label data-juice="Label" data-juice-bind="file.name" style="font-weight:bold; border-bottom:dotted 1px #ccc;"></Label>
+						(<Label data-juice="Label" data-juice-bind="file.size" data-juice-format="number:0,0"></Label>)
+						bytes
+						<button class="app-board-button" data-id="{{$context.file.get('id')}}" onclick="javascript:downloadFile(this.dataset.id)">
+							<i class="icon-download"></i>
+						</button>
+					</li>
+				</ul>
+			</div>
+		</div>
 		<div style="margin:0rem 1rem; border-bottom:dotted 1px #ccc; font-weight:bold;">
 			<i class="icon-reply"></i>
 			<spring:message code="application.text.reply"/>:
@@ -68,10 +83,10 @@
 							</div>
 							<div>
 								<button data-no="{{$context.reply.get('no')}}" onclick="javascript:modifyReply(this.dataset.no);" class="app-board-button">
-									수정
+									<spring:message code="application.text.modify"/>
 								</button>
 								<button data-no="{{$context.reply.get('no')}}" onclick="javascript:deleteReply(this.dataset.no);" class="app-board-button">
-									삭제
+									<spring:message code="application.text.delete"/>
 								</button>
 							</div>
 						</div>

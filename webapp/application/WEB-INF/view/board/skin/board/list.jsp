@@ -7,7 +7,7 @@
 <style type="text/css">
 </style>
 <div class="app-board">
-	<div style="display:flex; justify-content:space-between;">
+	<div style="display:flex; justify-content:space-between; align-items: baseline;"">
 		<div class="app-board-name">
 			<c:out value="${board.name}"/>
 		</div>

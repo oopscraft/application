@@ -28,8 +28,30 @@
 				</button>
 			</div>
 		</div>
-		<div style="height:70vh;">
+		<div style="height:50rem;">
 			<div data-juice="HtmlEditor" data-juice-bind="article.contents"></div>
+		</div>
+		<div style="text-align:right; padding:1rem;">
+			<div>
+				<ul data-juice="ListView" data-juice-bind="files" data-juice-item="file">
+					<li>
+						<i class="icon-attach"></i>
+						<Label data-juice="Label" data-juice-bind="file.name" style="font-weight:bold; border-bottom:dotted 1px #ccc;"></Label>
+						(<Label data-juice="Label" data-juice-bind="file.size" data-juice-format="number:0,0"></Label>)
+						bytes
+						<button class="app-board-button" data-index="{{$context.index}}" onclick="javascript:removeFile(this.dataset.index);">
+							<i class="icon-cancel"></i>
+						</button>
+					</li>
+				</ul>
+			</div>
+			<div>
+				<button class="app-board-button" onclick="javascript:uploadFile();">
+					<i class="icon-attach"></i>
+					<spring:message code="application.text.file"/>
+					<spring:message code="application.text.attach"/>
+				</button>
+			</div>
 		</div>
 	</div>
 </div>

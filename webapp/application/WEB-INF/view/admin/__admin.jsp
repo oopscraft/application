@@ -192,16 +192,17 @@
 		</script>
 		<style type="text/css">
 		* {
-			margin:0px;
-			padding:0px;
-			font-family: font, font-kr, font-ja, font-zh, sans-serif;
-			font-size:11px;
-			color: #555;
-			line-height: 20px;
+			margin: 0px;
+			padding: 0px;
+			font-size: inherit;
+			font-family: inherit;
+			line-height: inherit;
 		}
 		html {
-			overflow: -moz-scrollbars-vertical; 
-			overflow-y: scroll;
+			font-size: 0.75rem;
+			line-height: 2;
+			font-family: font, font-kr, font-ja, font-zh, sans-serif;
+			color: #555;
 		}
 		body {
 			min-width: 1280px;

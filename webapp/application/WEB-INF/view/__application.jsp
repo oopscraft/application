@@ -32,6 +32,11 @@
  		
 		<!-- global -->
 		<script type="text/javascript">
+		$( document ).ready(function() {
+			__getMenus();
+			__getLanguages();
+		});
+		
 		var __loader; 
         $(document).ajaxStart(function(event) {
        		__loader = new juice.ui.__().load(document.body);
@@ -79,7 +84,7 @@
 		 * Gets languages
 		 */
 		var __languages = new Array();
-		$( document ).ready(function() {
+		function __getLanguages() {
 			$.ajax({
 				 url: '${pageContext.request.contextPath}/api/locale/languages'
 				,type: 'GET'
@@ -95,7 +100,22 @@
 					__user.notifyObservers();
 				}
 			});
-		});
+		}
+		
+		/**
+		 * Gets menus
+		 */
+		var __menus = new juice.data.Tree();
+		function __getMenus() {
+			$.ajax({
+				 url: '${pageContext.request.contextPath}/api/menus'
+				,type: 'GET'
+				,data: {}
+				,success: function(data, textStatus, jqXHR) {
+					__menus.fromJson(data,'childMenus');
+		   	 	}
+			});	
+		}
 		
         /**
          * Parsed total count from Content-Range header
