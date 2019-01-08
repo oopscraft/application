@@ -342,7 +342,7 @@ div.groupItem:hover {
 }
 </style>
 <div class="title1">
-	<i class="icon-folder"></i>
+	<img src="${pageContext.request.contextPath}/static/img/icon_group.png"/>&nbsp;
 	<spring:message code="application.text.group"/>
 	<spring:message code="application.text.management"/>
 </div>

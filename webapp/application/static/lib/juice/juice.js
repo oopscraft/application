@@ -998,8 +998,10 @@ juice.ui.__.prototype.load = function(element){
 
 	// on resize event
 	this.getWindow().addEventListener('resize', function(ev) {
-		$this.setPosition(div);
-		this.div.style.top = '30vh';	// adjust top
+		if($this.div){
+			$this.setPosition(div);
+			$this.div.style.top = '30vh';	// adjust top
+		}
 	});
 	
 	// start
@@ -1837,7 +1839,9 @@ juice.ui.Thumbnail.prototype.update = function() {
 	var $this = this;
 	if(this.map.get(this.name)) {
 		var src = this.map.get(this.name);
+		console.log(src);
 		this.img.src = src; 
+		console.log(this.img.src);
 	}else{
 		this.img.src = this.blank;
 	}
@@ -1976,24 +1980,34 @@ juice.ui.TreeView.prototype.createNode = function(index, node){
 	
 	// active index item
 	if(JSON.stringify(index) == JSON.stringify(this.tree.index)){
-		li.childNodes.forEach(function(item){
-			if(item.nodeType == 1){
-				item.classList.add('juice-ui-treeView-index');
-			}
-		});
+		li.classList.add('juice-ui-treeView-index');
 	}
 	
 	// on click event
 	li.addEventListener('click', function(event){
-		event.stopPropagation();
-		$this.tree.setIndex(eval(this.dataset.juiceIndex));
+		li.classList.add('juice-ui-treeView-index');
+		$this.tree.index = eval(this.dataset.juiceIndex);
 	});
 
 	// child node
 	var childNodes = node.getChildNodes();
-	if(childNodes){
+	if(childNodes && childNodes.length > 0){
+		
+		// fold & unfold class
+		li.classList.add('juice-ui-treeView-fold');
+		li.addEventListener('click', function(event){
+			if(event.target == this){
+				this.classList.toggle('juice-ui-treeView-fold');
+				this.classList.toggle('juice-ui-treeView-unfold');
+			}
+		});
+		
+		// creates child node
 		index.push(-1);
 		var childUl = document.createElement('ul');
+		childUl.addEventListener('click', function(event){
+			event.stopPropagation();
+		});
 		for(var i = 0; i < childNodes.length; i ++){
 			var childNode = childNodes[i];
 			index[index.length-1] = i;
