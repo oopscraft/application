@@ -1,5 +1,6 @@
 package net.oopscraft.application.board;
 
+import java.io.File;
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -12,7 +13,11 @@ import javax.persistence.Table;
 @Table(name = "APP_ATCL_FILE_INFO")
 @IdClass(ArticleFile.Pk.class)
 public class ArticleFile {
-	
+
+	/**
+	 * ID Class
+	 *
+	 */
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
@@ -74,5 +79,61 @@ public class ArticleFile {
 	
 	@Column(name = "FILE_SIZE")
 	long size;
+	
+	/**
+	 * Returns temporary file.
+	 * @return
+	 */
+	public File getTemporaryFile() {
+		return new File(".temp" + File.separator + "board" + File.separator + id);
+	}
+	
+	/**
+	 * Returns real file.
+	 * @return
+	 */
+	public File getRealFile() {
+		return new File("data" + File.separator + "board" + File.separator + id);
+	}
+
+	public long getArticleNo() {
+		return articleNo;
+	}
+
+	public void setArticleNo(long articleNo) {
+		this.articleNo = articleNo;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
+	}
 
 }

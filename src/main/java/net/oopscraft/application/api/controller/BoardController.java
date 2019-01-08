@@ -1,10 +1,15 @@
 package net.oopscraft.application.api.controller;
 
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,18 +22,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import net.oopscraft.application.board.Article;
+import net.oopscraft.application.board.ArticleFile;
 import net.oopscraft.application.board.ArticleReply;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.Board.ArticleSearchType;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.TextTable;
 
 @Controller
 @RequestMapping("/api/board")
 public class BoardController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(BoardController.class);
 
 	@Autowired
 	BoardService boardService;
@@ -189,5 +200,71 @@ public class BoardController {
 		article.deleteReply(replyNo);
 		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
 	}
+	
+	/**
+	 * Uploads file
+	 * @param multipartFile
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/{boardId}/article/{articleNo}/file", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> uploadArticleFile(
+		@PathVariable("boardId")String boardId,
+		@PathVariable("articleNo")long articleNo,
+		@RequestParam("file")MultipartFile multipartFile,
+		MultipartHttpServletRequest request
+	) throws Exception {
+		
+		// creates id
+		UUID uuid = UUID.randomUUID();
+		String id = uuid.toString().replaceAll("-", "");
+		
+		// defines object
+		ArticleFile articleFile = new ArticleFile();
+		articleFile.setArticleNo(articleNo);
+		articleFile.setId(id);
+		articleFile.setName(multipartFile.getOriginalFilename());
+		articleFile.setType(multipartFile.getContentType());
+		articleFile.setSize(multipartFile.getSize());
+
+		// writes file
+		FileUtils.copyInputStreamToFile(multipartFile.getInputStream(), articleFile.getTemporaryFile());
+		
+		// sends response
+		LOGGER.debug("{}", new TextTable(articleFile));
+		return new ResponseEntity<>(JsonUtils.toJson(articleFile), HttpStatus.OK);
+	}
+	
+
+	/**
+	 * Downloads file.
+	 * @param boardId
+	 * @param articleNo
+	 * @param fileId
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/{boardId}/article/{articleNo}/file/{fileId}", method = RequestMethod.GET)
+	public void downloadArticleFile(
+		@PathVariable("boardId")String boardId,
+		@PathVariable("articleNo")long articleNo,	
+		@PathVariable("fileId")String fileId
+	) throws Exception {
+		
+		Board board = boardService.getBoard(boardId);
+		Article article = board.getArticle(articleNo);
+		ArticleFile articleFile = article.getFile(fileId);
+		
+		// sends file
+		response.setContentType(articleFile.getType());
+		response.setContentLengthLong(articleFile.getSize());
+		StringBuffer contentDisposition = new StringBuffer()
+			.append("attachment")
+			.append(";filename=" + articleFile.getName())
+			.append(";filename*=UTF-8''" + URLEncoder.encode(articleFile.getName(),"UTF-8"));
+		response.setHeader("Content-Disposition", contentDisposition.toString());
+		FileUtils.copyFile(articleFile.getRealFile(), response.getOutputStream());
+	}
+	
 
 }

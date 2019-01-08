@@ -12,6 +12,7 @@
 <script type="text/javascript">
 var board = new juice.data.Map(${app:toJson(board)});
 var article = new juice.data.Map();
+var files = new juice.data.List();
 
 /**
  * On document loaded
@@ -38,6 +39,7 @@ function getArticle() {
 		,type: 'GET'
 		,success: function(data, textStatus, jqXHR) {
 			article.fromJson(data);
+			files.fromJson(data.files);
   	 	}
 	});	
 }
@@ -49,21 +51,72 @@ function saveArticle() {
 	<spring:message code="application.text.article" var="item"/>
 	new juice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
 	.afterConfirm(function() {
+		
+		var articleData = article.toJson();
+		articleData.files = files.toJson();
+		
 		$.ajax({
 			 url: '${pageContext.request.contextPath}/api/board/${boardId}/article'
 			,type: 'POST'
-			,data: JSON.stringify(article.toJson())
+			,data: JSON.stringify(articleData)
 			,contentType: "application/json"
 			,success: function(data, textStatus, jqXHR) {
 				<spring:message code="application.text.article" var="item"/>
 				new juice.ui.Alert('<spring:message code="application.message.saveItem.complete" arguments="${item}"/>')
-					.afterConfirm(function(){
-						$(window).off('beforeunload');
-						history.back();
-					}).open();
+				.afterConfirm(function(){
+					$(window).off('beforeunload');
+					history.back();
+				}).open();
 	 	 	}
 		});
 	}).open();
+}
+
+/**
+ * Uploads file
+ */
+function uploadFile() {
+	
+	var file = document.createElement('input');
+	file.setAttribute('type', 'file');
+	file.addEventListener('change', function(e){
+		var formData = new FormData();
+		formData.append('file', this.files[0]);
+		$.ajax({
+			 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}/file'
+			,type: 'POST'
+			,data: formData
+			,enctype: 'multipart/form-data'
+			,cache: false
+			,contentType: false
+			,processData: false
+			,xhr: function() {
+				var xhr = new window.XMLHttpRequest();
+				xhr.upload.addEventListener("progress", function(evt) {
+					if (evt.lengthComputable) {
+						var percentComplete = evt.loaded / evt.total;
+						percentComplete = parseInt(percentComplete * 100);
+						console.log(percentComplete);
+						if (percentComplete === 100) {
+							// TODO
+						}
+					}
+				}, false);
+			    return xhr;
+			}
+			,success: function(data, textStatus, jqXHR) {
+				files.addRow(new juice.data.Map(data));
+	 	 	}
+		});
+	});
+	file.click();
+}
+
+/**
+ * Removes file
+ */
+function removeFile(index) {
+	files.removeRow(index);
 }
 </script>
 <style type="text/css">

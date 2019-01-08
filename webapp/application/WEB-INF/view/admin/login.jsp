@@ -10,6 +10,7 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/reset.css">
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/juice/juice.css">
 		<script src="${pageContext.request.contextPath}/static/lib/juice/juice.js"></script>
 		<script src="${pageContext.request.contextPath}/static/lib/jquery.js"></script>

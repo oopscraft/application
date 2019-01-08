@@ -5,12 +5,272 @@
 // - However, we can not grant patents or licenses for reproductives. (Modifications or reproductions must be shared with the public.)
 // Licence: LGPL(GNU Lesser General Public License version 3)
 // Copyright (C) 2017 juice.oopscraft.net
+// -------------------------
+// juice
+// juice.initialize
+// -------------------------
+// juice.data
+// juice.data.__
+// juice.data.Map
+// juice.data.List
+// juice.data.Tree
+// -------------------------
+// juice.ui
+// juice.ui.__
+// juice.ui.Label
+// juice.ui.Text
+// juice.ui.TextField
+// juice.ui.ComboBox
+// juice.ui.CheckBox
+// juice.ui.Radio
+// juice.ui.TextArea
+// juice.ui.HtmlEditor
+// juice.ui.CronExpression
+// juice.ui.Thumbnail
+// juice.ui.ListView
+// juice.ui.TreeView
+// juice.ui.Grid
+// juice.ui.Workflow
+// juice.ui.Pagination
+// juice.ui.Dialog
+// juice.ui.Alert
+// juice.ui.Confirm
+// juice.ui.Prompt
+// -------------------------
+// juice.util.validator
+// juice.util.formatter
+// juice.util.WebSocketClient
 // =============================================================================
 "use strict";
 if(!console.debug){
 	console.debug = console.log;
 }
 var juice = {};
+
+//-----------------------------------------------------------------------------
+//initialize juice component.
+//-----------------------------------------------------------------------------
+juice.initialize = function(container, $context) {
+	
+	// generateUUID
+	function generateUUID() {
+		var dt = new Date().getTime();
+		var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+			var r = (dt + Math.random()*16)%16 | 0;
+			dt = Math.floor(dt/16);
+			return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+		});
+		return uuid;
+	};
+	
+	// getObject
+	function getObject($context, name) {
+		try {
+			var obj = eval("$context." + name);
+			if(!obj) {
+				obj = eval(name);
+			}
+			return obj;
+		}catch(e){
+			console.error(e,$context, name);
+			throw e;
+		}
+	};
+	
+	// creates ListView 
+	var listViewElements = container.querySelectorAll('ul[data-juice="ListView"]');
+	for(var i = 0; i < listViewElements.length; i++ ) {
+		try {
+			var element = listViewElements[i];
+			var listView = new juice.ui.ListView(element);
+			var bind = element.dataset.juiceBind;
+			var list = getObject($context,bind);
+			listView.bind(list);
+			listView.setItem(element.dataset.juiceItem);
+			listView.update();
+			var id = generateUUID();
+			element.dataset.juice += id;
+		}catch(e){
+			console.error(e,listViewElements[i]);
+			throw e;
+		}
+	}
+
+	// creates TreeView 
+	var treeViewElements = container.querySelectorAll('ul[data-juice="TreeView"]');
+	for(var i = 0; i < treeViewElements.length; i++ ) {
+		try {
+			var element = treeViewElements[i];
+			var treeView = new juice.ui.TreeView(element);
+			var bind = element.dataset.juiceBind;
+			var list = getObject($context,bind);
+			treeView.bind(list);
+			treeView.setItem(element.dataset.juiceItem);
+			element.dataset.juiceEditable && treeView.setEditable(eval(element.dataset.juiceEditable));
+			treeView.update();
+			var id = generateUUID();
+			element.dataset.juice += id;
+		}catch(e){
+			console.error(e,treeViewElements[i]);
+			throw e;
+		}
+	}
+	
+	// creates Grid
+	var gridElements = container.querySelectorAll('table[data-juice="Grid"]');
+	for(var i = 0; i < gridElements.length; i++ ) {
+		try {
+			var element = gridElements[i];
+			var grid = new juice.ui.Grid(element);
+			var bind = element.dataset.juiceBind;
+			var list = getObject($context,bind);
+			grid.bind(list);
+			grid.setItem(element.dataset.juiceItem);
+			element.dataset.juiceEditable && grid.setEditable(eval(element.dataset.juiceEditable));
+			element.dataset.juiceFilter && grid.setFilter(eval(element.dataset.juiceFilter));
+			grid.update();
+			var id = generateUUID();
+			element.dataset.juice += id;
+		}catch(e){
+			console.error(e,gridElements[i]);
+			throw e;
+		}
+	}
+	
+	// creates Workflow
+	var workflowElements = container.querySelectorAll('ul[data-juice="Workflow"]');
+	for(var i = 0; i < workflowElements.length; i++ ) {
+		try {
+			var element = workflowElements[i];
+			var workflow = new juice.ui.Workflow(element);
+			var bind = element.dataset.juiceBind.split(',');
+			var nodeList = getObject($context,bind[0]);
+			var linkList = getObject($context,bind[1]);
+			workflow.bind(nodeList, linkList);
+			workflow.setNodeId(element.dataset.juiceNodeId);
+			workflow.setNodeX(element.dataset.juiceNodeX);
+			workflow.setNodeY(element.dataset.juiceNodeY);
+			workflow.setLinkFrom(element.dataset.juiceLinkFrom);
+			workflow.setLinkTo(element.dataset.juiceLinkTo);
+			element.dataset.juiceLinkText && workflow.setLinkText(element.dataset.juiceLinkText);
+			workflow.update();
+			var id = generateUUID();
+			element.dataset.juice = +id;
+		}catch(e){
+			console.error(e,workflowElements[i]);
+			throw e;
+		}
+	}
+
+	// creates Pagination
+	var paginationElements = container.querySelectorAll('ul[data-juice="Pagination"]');
+	for(var i = 0; i < paginationElements.length; i++ ) {
+		try {
+			var element = paginationElements[i];
+			var pagination = new juice.ui.Pagination(element);
+			pagination.bind(getObject($context,element.dataset.juiceBind));
+			pagination.setRows(element.dataset.juiceRows);
+			pagination.setPage(element.dataset.juicePage);
+			pagination.setTotalCount(element.dataset.juiceTotalCount);
+			pagination.setPageSize(element.dataset.juicePageSize);
+			pagination.update();
+			var id = generateUUID();
+			element.dataset.juice += id;
+		}catch(e){
+			console.error(e,paginationElements[i]);
+			throw e;
+		}
+	}
+		
+	// creates unit elements
+	var elementTags = [
+		 '[data-juice="Label"]'
+		,'[data-juice="Text"]'
+		,'[data-juice="TextField"]'
+		,'[data-juice="ComboBox"]'
+		,'[data-juice="CheckBox"]'
+		,'[data-juice="Radio"]'
+		,'[data-juice="TextArea"]'
+		,'[data-juice="HtmlEditor"]'
+		,'[data-juice="CronExpression"]'
+		,'[data-juice="Thumbnail"]'
+	];
+	var elements = container.querySelectorAll(elementTags.join(','));
+	for(var i = 0; i < elements.length; i ++ ) {
+		try {
+			var element = elements[i];
+			var type = element.dataset.juice;
+			var bind = element.dataset.juiceBind.split('.');
+			var name = bind.pop();
+			var map = getObject($context,bind.join('.'));
+			var id = generateUUID();
+			switch(type) {
+				case 'Label':
+					var label = new juice.ui.Label(element);
+					var format = element.dataset.juiceFormat;
+					format && label.setFormat(format);
+					label.bind(map,name);
+					label.update();
+				break;
+				case 'Text':
+					var contents = new juice.ui.Text(element);
+					contents.bind(map,name);
+					contents.update();
+				break;
+				case 'TextField':
+					var textField = new juice.ui.TextField(element);
+					textField.bind(map,name);
+					textField.update();
+				break;
+				case 'ComboBox':
+					var comboBox = new juice.ui.ComboBox(element);
+					var options = element.dataset.juiceOptions;
+					comboBox.bind(map, name);
+					comboBox.setOptions(getObject($context,options));
+					comboBox.update();
+				break;
+				case 'CheckBox':
+					var checkBox = new juice.ui.CheckBox(element);
+					checkBox.bind(map, name);
+					checkBox.update();
+				break;
+				case 'Radio':
+					var radio = new juice.ui.Radio(element);
+					radio.bind(map, name);
+					radio.update();
+				break;
+				case 'TextArea':
+					var textArea = new juice.ui.TextArea(element);
+					textArea.bind(map, name);
+					textArea.update();
+				break;
+				case 'HtmlEditor':
+					var htmlEditor = new juice.ui.HtmlEditor(element);
+					htmlEditor.bind(map, name);
+					htmlEditor.update();
+				break;
+				case 'CronExpression':
+					var cronExpression = new juice.ui.CronExpression(element);
+					cronExpression.bind(map, name);
+					cronExpression.update();				
+				break;
+				case 'Thumbnail':
+					var thumbnail = new juice.ui.Thumbnail(element);
+					var width = element.dataset.juiceWidth;
+					var height = element.dataset.juiceHeight;
+					thumbnail.setWidth(width);
+					thumbnail.setHeight(height);
+					thumbnail.bind(map, name);
+					thumbnail.update();
+				break;
+			}
+			element.dataset.juice += id;
+		}catch(e){
+			console.error(e, elements[i]);
+			throw e;
+		}
+	}
+}
 
 //-----------------------------------------------------------------------------
 // Data structure package
@@ -593,6 +853,7 @@ juice.ui.__.prototype.executeExpression = function(element,$context) {
 	});
 	var template = document.createElement('template');
 	template.innerHTML = string;
+	console.debug('executeExpression', template.content.firstChild);
 	return template.content.firstChild;
 }
 juice.ui.__.prototype.removeChildNodes = function(element){
@@ -3052,233 +3313,6 @@ juice.util.WebSocketClient.prototype = {
 	addMessageHandler: function(handler){
 		this.messageHandlers.push(handler);
 	}
-}
-
-
-//-----------------------------------------------------------------------------
-// initialize juice component.
-//-----------------------------------------------------------------------------
-juice.initialize = function(container, $context) {
-	
-	// generateUUID
-	function generateUUID() {
-		var dt = new Date().getTime();
-		var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-			var r = (dt + Math.random()*16)%16 | 0;
-			dt = Math.floor(dt/16);
-			return (c=='x' ? r :(r&0x3|0x8)).toString(16);
-		});
-		return uuid;
-	};
-	
-	// getObject
-	function getObject($context, name) {
-		try {
-			var obj = eval("$context." + name);
-			if(!obj) {
-				obj = eval(name);
-			}
-			return obj;
-		}catch(e){
-			console.error(e,$context, name);
-			throw e;
-		}
-	};
-	
-	// creates ListView 
-	var listViewElements = container.querySelectorAll('ul[data-juice="ListView"]');
-	for(var i = 0; i < listViewElements.length; i++ ) {
-		try {
-			var element = listViewElements[i];
-			var listView = new juice.ui.ListView(element);
-			var bind = element.dataset.juiceBind;
-			var list = getObject($context,bind);
-			listView.bind(list);
-			listView.setItem(element.dataset.juiceItem);
-			listView.update();
-			var id = generateUUID();
-			element.dataset.juice += id;
-		}catch(e){
-			console.error(e,listViewElements[i]);
-			throw e;
-		}
-	}
-
-	// creates TreeView 
-	var treeViewElements = container.querySelectorAll('ul[data-juice="TreeView"]');
-	for(var i = 0; i < treeViewElements.length; i++ ) {
-		try {
-			var element = treeViewElements[i];
-			var treeView = new juice.ui.TreeView(element);
-			var bind = element.dataset.juiceBind;
-			var list = getObject($context,bind);
-			treeView.bind(list);
-			treeView.setItem(element.dataset.juiceItem);
-			element.dataset.juiceEditable && treeView.setEditable(eval(element.dataset.juiceEditable));
-			treeView.update();
-			var id = generateUUID();
-			element.dataset.juice += id;
-		}catch(e){
-			console.error(e,treeViewElements[i]);
-			throw e;
-		}
-	}
-	
-	// creates Grid
-	var gridElements = container.querySelectorAll('table[data-juice="Grid"]');
-	for(var i = 0; i < gridElements.length; i++ ) {
-		try {
-			var element = gridElements[i];
-			var grid = new juice.ui.Grid(element);
-			var bind = element.dataset.juiceBind;
-			var list = getObject($context,bind);
-			grid.bind(list);
-			grid.setItem(element.dataset.juiceItem);
-			element.dataset.juiceEditable && grid.setEditable(eval(element.dataset.juiceEditable));
-			element.dataset.juiceFilter && grid.setFilter(eval(element.dataset.juiceFilter));
-			grid.update();
-			var id = generateUUID();
-			element.dataset.juice += id;
-		}catch(e){
-			console.error(e,gridElements[i]);
-			throw e;
-		}
-	}
-	
-	// creates Workflow
-	var workflowElements = container.querySelectorAll('ul[data-juice="Workflow"]');
-	for(var i = 0; i < workflowElements.length; i++ ) {
-		try {
-			var element = workflowElements[i];
-			var workflow = new juice.ui.Workflow(element);
-			var bind = element.dataset.juiceBind.split(',');
-			var nodeList = getObject($context,bind[0]);
-			var linkList = getObject($context,bind[1]);
-			workflow.bind(nodeList, linkList);
-			workflow.setNodeId(element.dataset.juiceNodeId);
-			workflow.setNodeX(element.dataset.juiceNodeX);
-			workflow.setNodeY(element.dataset.juiceNodeY);
-			workflow.setLinkFrom(element.dataset.juiceLinkFrom);
-			workflow.setLinkTo(element.dataset.juiceLinkTo);
-			element.dataset.juiceLinkText && workflow.setLinkText(element.dataset.juiceLinkText);
-			workflow.update();
-			var id = generateUUID();
-			element.dataset.juice = +id;
-		}catch(e){
-			console.error(e,workflowElements[i]);
-			throw e;
-		}
-	}
-
-	// creates Pagination
-	var paginationElements = container.querySelectorAll('ul[data-juice="Pagination"]');
-	for(var i = 0; i < paginationElements.length; i++ ) {
-		try {
-			var element = paginationElements[i];
-			var pagination = new juice.ui.Pagination(element);
-			pagination.bind(getObject($context,element.dataset.juiceBind));
-			pagination.setRows(element.dataset.juiceRows);
-			pagination.setPage(element.dataset.juicePage);
-			pagination.setTotalCount(element.dataset.juiceTotalCount);
-			pagination.setPageSize(element.dataset.juicePageSize);
-			pagination.update();
-			var id = generateUUID();
-			element.dataset.juice += id;
-		}catch(e){
-			console.error(e,paginationElements[i]);
-			throw e;
-		}
-	}
-		
-	// creates unit elements
-	var elementTags = [
-		 '[data-juice="Label"]'
-		,'[data-juice="Text"]'
-		,'[data-juice="TextField"]'
-		,'[data-juice="ComboBox"]'
-		,'[data-juice="CheckBox"]'
-		,'[data-juice="Radio"]'
-		,'[data-juice="TextArea"]'
-		,'[data-juice="HtmlEditor"]'
-		,'[data-juice="CronExpression"]'
-		,'[data-juice="Thumbnail"]'
-	];
-	var elements = container.querySelectorAll(elementTags.join(','));
-	for(var i = 0; i < elements.length; i ++ ) {
-		try {
-			var element = elements[i];
-			var type = element.dataset.juice;
-			var bind = element.dataset.juiceBind.split('.');
-			var name = bind.pop();
-			var map = getObject($context,bind.join('.'));
-			var id = generateUUID();
-			switch(type) {
-				case 'Label':
-					var label = new juice.ui.Label(element);
-					var format = element.dataset.juiceFormat;
-					format && label.setFormat(format);
-					label.bind(map,name);
-					label.update();
-				break;
-				case 'Text':
-					var contents = new juice.ui.Text(element);
-					contents.bind(map,name);
-					contents.update();
-				break;
-				case 'TextField':
-					var textField = new juice.ui.TextField(element);
-					textField.bind(map,name);
-					textField.update();
-				break;
-				case 'ComboBox':
-					var comboBox = new juice.ui.ComboBox(element);
-					var options = element.dataset.juiceOptions;
-					comboBox.bind(map, name);
-					comboBox.setOptions(getObject($context,options));
-					comboBox.update();
-				break;
-				case 'CheckBox':
-					var checkBox = new juice.ui.CheckBox(element);
-					checkBox.bind(map, name);
-					checkBox.update();
-				break;
-				case 'Radio':
-					var radio = new juice.ui.Radio(element);
-					radio.bind(map, name);
-					radio.update();
-				break;
-				case 'TextArea':
-					var textArea = new juice.ui.TextArea(element);
-					textArea.bind(map, name);
-					textArea.update();
-				break;
-				case 'HtmlEditor':
-					var htmlEditor = new juice.ui.HtmlEditor(element);
-					htmlEditor.bind(map, name);
-					htmlEditor.update();
-				break;
-				case 'CronExpression':
-					var cronExpression = new juice.ui.CronExpression(element);
-					cronExpression.bind(map, name);
-					cronExpression.update();				
-				break;
-				case 'Thumbnail':
-					var thumbnail = new juice.ui.Thumbnail(element);
-					var width = element.dataset.juiceWidth;
-					var height = element.dataset.juiceHeight;
-					thumbnail.setWidth(width);
-					thumbnail.setHeight(height);
-					thumbnail.bind(map, name);
-					thumbnail.update();
-				break;
-			}
-			element.dataset.juice += id;
-		}catch(e){
-			console.error(e, elements[i]);
-			throw e;
-		}
-	}
-
 }
 
 //-----------------------------------------------------------------------------
