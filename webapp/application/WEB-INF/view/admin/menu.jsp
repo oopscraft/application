@@ -330,7 +330,7 @@ div.menuItem:hover {
 }
 </style>
 <div class="title1">
-		<img src="${pageContext.request.contextPath}/static/img/icon_menu.png"/>&nbsp;
+	<img src="${pageContext.request.contextPath}/static/img/icon_menu.png"/>&nbsp;
 	<spring:message code="application.text.menu"/>
 	<spring:message code="application.text.management"/>
 </div>

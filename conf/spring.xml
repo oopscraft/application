@@ -173,7 +173,7 @@
 	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
 	
 	<!-- Static Resource -->
-	<security:http pattern="/assets/**/*" security="none"/>
+	<security:http pattern="/resource/**/*" security="none"/>
 
 	<!-- Administrator Channel -->
 	<security:http realm="admin" pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">

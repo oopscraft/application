@@ -17,11 +17,12 @@ a, a:hover, a:active {
 	text-decoration: none; 
 	outline: none
 }
-hr {
+img {
 	border: none;
-	height: 1px;
-	color: #eee; /* old IE */
-	background-color: #eee; /* Modern Browsers */
+	vertical-align: middle;
+}
+th {
+	font-weight:normal;
 }
 html {
 	font-size: 0.75rem;
@@ -51,6 +52,12 @@ body > main {
 	justify-content: space-between;
 	min-height: 90vh;
 	border: none;
+}
+body > main > section {
+    align-self: stretch;
+    width: 100%;
+    border: none;
+    padding: 10px;
 }
 .leftNav {
 	display: block;

@@ -67,5 +67,6 @@
 	<!-- ====================================================== -->
 	<mvc:resources location="/WEB-INF/view/layout/" mapping="/resource/layout/**"/>
 	<mvc:resources location="/WEB-INF/view/board/skin/" mapping="/resource/board/skin/**"/>
+	<mvc:resources location="file:doc/" mapping="/resource/doc/**"/>
 
 </beans>
