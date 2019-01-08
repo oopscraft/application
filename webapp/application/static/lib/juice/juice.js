@@ -1808,7 +1808,6 @@ juice.ui.Thumbnail.prototype.bind = function(map, name) {
 	
 	this.img.addEventListener('error', function() {
 		console.log('error');
-		$this.img.src = $this.blank;
 	});
 	
 	// on file change
@@ -1839,9 +1838,7 @@ juice.ui.Thumbnail.prototype.update = function() {
 	var $this = this;
 	if(this.map.get(this.name)) {
 		var src = this.map.get(this.name);
-		console.log(src);
 		this.img.src = src; 
-		console.log(this.img.src);
 	}else{
 		this.img.src = this.blank;
 	}

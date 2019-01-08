@@ -9,6 +9,7 @@
 <div class="app-board">
 	<div style="display:flex; justify-content:space-between; align-items: baseline;"">
 		<div class="app-board-name">
+			<img src="${pageContext.request.contextPath}/static/img/icon_menu.png"/>&nbsp;
 			<c:out value="${board.name}"/>
 		</div>
 		<div style="text-align:right;">
