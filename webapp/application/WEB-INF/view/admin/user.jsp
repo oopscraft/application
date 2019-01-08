@@ -407,7 +407,7 @@ function removeUser(){
 <style type="text/css">
 </style>
 <div class="title1">
-	<i class="icon-user"></i>
+	<img src="${pageContext.request.contextPath}/static/img/icon_user.png"/>&nbsp;
 	<spring:message code="application.text.user"/>
 	<spring:message code="application.text.management"/>
 </div>

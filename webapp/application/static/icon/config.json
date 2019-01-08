@@ -305,6 +305,12 @@
       "css": "attach",
       "code": 59431,
       "src": "websymbols"
+    },
+    {
+      "uid": "9x8p16w516pn1b19chr85japkedporm7",
+      "css": "menu",
+      "code": 59432,
+      "src": "typicons"
     }
   ]
 }

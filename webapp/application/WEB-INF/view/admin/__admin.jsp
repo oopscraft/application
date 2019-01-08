@@ -63,6 +63,65 @@
         	}
         });
 		
+		var __menus = new juice.data.Tree([
+			{
+				name:'<spring:message code="application.label.monitor"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_monitor.png',
+				link:'monitor' 
+			},
+			{
+				name:'<spring:message code="application.label.user"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_user.png',
+				link:'user' 
+			},
+			{
+				name:'<spring:message code="application.label.group"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_group.png',
+				link:'group'
+				 
+			},
+			{
+				name:'<spring:message code="application.label.role"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_role.png',
+				link:'role' 
+			},
+			{
+				name:'<spring:message code="application.label.authority"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_authority.png',
+				link:'authority' 
+			},
+			{
+				name:'<spring:message code="application.label.property"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_property.png',
+				link:'property'
+			},
+			{
+				name:'<spring:message code="application.label.message"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_message.png',
+				link:'message'
+			},
+			{
+				name:'<spring:message code="application.label.code"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_code.png',
+				link:'code' 
+			},
+			{
+				name:'<spring:message code="application.label.menu"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_menu.png',
+				link:'menu'
+			},
+			{
+				name:'<spring:message code="application.label.board"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_board.png',
+				link:'board'
+			},
+			{
+				name:'<spring:message code="application.label.page"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_page.png',
+				link:'page'
+			}
+		]);
+		
 		/**
 		 * login user information
 		 */
@@ -198,8 +257,20 @@
 			font-family: inherit;
 			line-height: inherit;
 		}
+		a, a:hover, a:active {
+			color: inherit;
+			text-decoration: none; 
+			outline: none
+		}
+		img {
+			border: none;
+			vertical-align: middle;
+		}
+		th {
+			font-weight:normal;
+		}
 		html {
-			font-size: 0.75rem;
+			font-size: 12px;
 			line-height: 2;
 			font-family: font, font-kr, font-ja, font-zh, sans-serif;
 			color: #555;
@@ -227,36 +298,25 @@
 			min-height: 90vh;
 			border: none;
 		}
-		body > main > nav {
+		.leftNav {
 			display: block;
 			align-self: stretch;
-			width: 200px;
-			min-width: 100px;
-			padding: 0px;
+		    margin: 0.1rem;
+		    padding: 1rem;
+			width: 15%;
+			min-width: 150px;
 			border: none;
-			border-right: solid 1px #ddd;
-   			background-color: #fff;
+		    border-right: solid 1px #eee;
 		}
-		body > main > nav > ul {
-		    list-style: none;
+		.leftNav .menuItem {
+			padding: 0.25rem 0rem;
+			border-bottom:dotted 1px #ccc;
+			cursor:hand;
+			cursor:pointer;
 		}
-		body > main > nav > ul li {
-			font-weight: bold;
-			background-color: #fff;
-			padding: 5px;
-			border: none;
-			border-bottom: dotted 1px #ccc;
-			transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-		}
-		body > main > nav > ul li:hover {
-			font-weight: bold;
+		.leftNav .menuItem:hover {
 			background-color: #eee;
-			cursor: hand;
-			cursor: pointer;
-		}
-		body > main > nav > ul li > a {
-			display: block;
-			text-decoration: none !important;
+			transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 		}
 		body > main > section {
 			align-self: stretch;
@@ -278,13 +338,14 @@
 			display: none;
 		}
 		.title1 {
-            font-size: 18px;
+		    padding: 0rem 0.5rem;
+            font-size: 1.2rem;
             font-weight: bold;
             width: 100%;
 		}
 		.title2 {
 			display: inline-block;
-			font-size: 14px;
+			font-size: 1.1rem;
 			font-weight: bold;
 		}
 		i {
@@ -330,14 +391,6 @@
 		button.small:hover {
 			background-color: #eee;
 		}
-		a {
-			text-decoration: none;
-			cursor: hand;
-			cursor: pointer;
-		}
-		a:hover {
-			text-decoration: underline;
-		}
 		.container {
 			display: flex;
 			justify-content: space-between;
@@ -354,7 +407,7 @@
 			color: red;
 		}
 		.id {
-			font-weight: bold;
+			color: black;
 		}
 		.must:before {
 			content:"*";
@@ -411,84 +464,15 @@
 			<!-- ====================================================== -->
 			<!-- Navigation												-->
 			<!-- ====================================================== -->
-			<nav>
-				<ul>
+			<nav class="leftNav">
+				<div style="border-bottom:dotted 1px #ccc;">
+					<i class="icon-menu"></i>
+				</div>
+				<ul data-juice="TreeView" data-juice-bind="__menus" data-juice-item="menu">
 					<li>
-						<a href="monitor">
-							<i class="icon-monitor"></i>
-							<spring:message code="application.label.monitor"/>
-						</a>
-					</li>
-					<li>
-						<a href="user">
-							<i class="icon-user"></i>
-							<spring:message code="application.label.user"/>
-						</a>
-					</li>
-					<li>
-						<a href="group">
-							<i class="icon-folder"></i>
-							<spring:message code="application.label.group"/>
-						</a>
-					</li>
-					<li>
-						<a href="role">
-							<i class="icon-card"></i>
-							<spring:message code="application.label.role"/>
-						</a>
-					</li>
-					<li>
-						<a href="authority">
-							<i class="icon-key"></i>
-							<spring:message code="application.label.authority"/>
-						</a>
-					</li>
-					<li>
-						<a href="property">
-							<i class="icon-property"></i>
-							<spring:message code="application.label.property"/>
-						</a>
-					</li>
-					<li>
-						<a href="message">
-							<i class="icon-message"></i>
-							<spring:message code="application.label.message"/>
-						</a>
-					</li>
-					<li>
-						<a href="code">
-							<i class="icon-code"></i>
-							<spring:message code="application.label.code"/>
-						</a>
-					</li>
-					<li>
-						<a href="#template">
-							<i class="icon-template"></i>
-							<spring:message code="application.label.template"/>
-						</a>
-					</li>
-					<li>
-						<a href="menu">
-							<i class="icon-list"></i>
-							<spring:message code="application.label.menu"/>
-						</a>
-					</li>
-					<li>
-						<a href="#content">
-							<i class="icon-content"></i>
-							<spring:message code="application.label.content"/>
-						</a>
-					</li>
-					<li>
-						<a href="#board">
-							<i class="icon-bbs"></i>
-							<spring:message code="application.label.board"/>
-						</a>
-					</li>
-					<li>
-						<a href="#notice">
-							<i class="icon-bell"></i>
-							<spring:message code="application.label.notice"/>
+						<a href="{{$context.menu.get('link')}}" class="menuItem" style="display:block;">
+							<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII=" style="vertical-align:middle;"/>
+							<label data-juice="Label" data-juice-bind="menu.name"></label>
 						</a>
 					</li>
 				</ul>

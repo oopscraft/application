@@ -196,7 +196,7 @@ function removeMessage() {
 
 </style>
 <div class="title1">
-	<i class="icon-key"></i>
+	<img src="${pageContext.request.contextPath}/static/img/icon_message.png"/>&nbsp;
 	<spring:message code="application.text.message"/>
 	<spring:message code="application.text.management"/>
 </div>
