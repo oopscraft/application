@@ -447,13 +447,13 @@
 			</span>
 			<nav class="topNav" style="padding-right:10px;">
 				<span>
-					<i class="icon-globe"></i>
+					<img src="${pageContext.request.contextPath}/static/img/icon_language.png"/>
 					<spring:message code="application.label.language"/>
 					<select data-juice="ComboBox" data-juice-bind="__user.language" data-juice-options="__languages" style="width:10rem;"></select>
 				</span>
-				&nbsp;
+				&nbsp;&nbsp;|&nbsp;&nbsp;
 				<span>
-					<i class="icon-logout"></i>
+					<img src="${pageContext.request.contextPath}/static/img/icon_logout.png"/>
 					<a href="${pageContext.request.contextPath}/admin/logout">
 						<spring:message code="application.label.logout"/>
 					</a>

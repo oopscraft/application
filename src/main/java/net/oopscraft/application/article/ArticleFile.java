@@ -1,4 +1,4 @@
-package net.oopscraft.application.board;
+package net.oopscraft.application.article;
 
 import java.io.File;
 import java.io.Serializable;
