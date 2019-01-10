@@ -1,6 +1,23 @@
 package net.oopscraft.application.core;
 
-public class NotationUtils {
+public class StringUtils {
+	
+	
+	/**
+	 * Checks if delimiter char
+	 * @param c
+	 * @return
+	 */
+	private static boolean isDelimeterChar(char c) {
+		if(c == ' ' 
+		|| c == '-'
+		|| c == '_'
+		){
+			return true;
+		}else {
+			return false;
+		}
+	}
 	
 	/**
 	 * Convert string into camel case notation.
@@ -18,18 +35,12 @@ public class NotationUtils {
 			char currentChar = chars[idx];			
 			
 			// Checks camel case.
-			if(previousChar == ' ' 
-			|| previousChar == '-'
-			|| previousChar == '_'
-			){
+			if(isDelimeterChar(previousChar)) {
 				isCamelCase = true;
 			}
 			
 			// Checks skip chars.
-			if(currentChar == ' '
-			|| currentChar == '-'
-			|| currentChar == '_'
-			){
+			if(isDelimeterChar(currentChar)) {
 				continue;
 			}
 	
@@ -68,18 +79,12 @@ public class NotationUtils {
 			char currentChar = chars[idx];			
 			
 			// Checks camel case.
-			if(previousChar == ' ' 
-			|| previousChar == '-'
-			|| previousChar == '_'
-			){
+			if(isDelimeterChar(previousChar)) {
 				isPascalCase = true;
 			}
 			
 			// Checks skip chars.
-			if(currentChar == ' '
-			|| currentChar == '-'
-			|| currentChar == '_'
-			){
+			if(isDelimeterChar(currentChar)) {
 				continue;
 			}
 	
@@ -102,5 +107,45 @@ public class NotationUtils {
 		}
 		
 		return convertedName.toString();
+	}
+	
+	/**
+	 * Remove line break and white space chars.
+	 * @param value
+	 * @return
+	 */
+	public static String stripWhitespace(String value) {
+        if(value == null || value.length() <= 2) {
+            return value;
+        }
+        StringBuffer b = new StringBuffer(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (Character.isWhitespace(c)) {
+                if (i > 0 && !Character.isWhitespace(value.charAt(i - 1))) {
+                    b.append(' ');
+                }
+            } else {
+                b.append(c);
+            }
+        }
+        return b.toString();
+	}
+	
+	/**
+	 * Makes string to ellipsis
+	 * @param value
+	 * @param size
+	 * @return
+	 */
+	public static String toEllipsis(String value, int size) {
+		if(value == null) {
+			return null;
+		}
+		if(value.length() > size) {
+			return value.substring(0, value.length()-3) + "...";
+		}else {
+			return value;
+		}
 	}
 }

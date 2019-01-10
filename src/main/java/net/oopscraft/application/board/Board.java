@@ -1,8 +1,6 @@
 package net.oopscraft.application.board;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -18,15 +16,13 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
-import net.oopscraft.application.board.repository.ArticleReplyRepository;
-import net.oopscraft.application.board.repository.ArticleRepository;
+import net.oopscraft.application.board.repository.BoardArticleRepository;
 import net.oopscraft.application.core.PageInfo;
 
 
@@ -97,48 +93,48 @@ public class Board {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Article> getArticles(PageInfo pageInfo, String categoryId, ArticleSearchType searchType, String searchValue) throws Exception {
-		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
+	public List<BoardArticle> getArticles(PageInfo pageInfo, String categoryId, ArticleSearchType searchType, String searchValue) throws Exception {
+		BoardArticleRepository boardArticleRepository = new JpaRepositoryFactory(entityManager).getRepository(BoardArticleRepository.class);
 		Pageable pageable = pageInfo.toPageable();
-		Page<Article> articlesPage = null;
+		Page<BoardArticle> boardArticlesPage = null;
 		if(categoryId == null || categoryId.trim().length() < 1) {
 			if(searchType == null) {
-				articlesPage = articleRepository.findByBoardIdOrderByNoDesc(id, pageable);			
+				boardArticlesPage = boardArticleRepository.findByBoardIdOrderByNoDesc(id, pageable);			
 			}else {
 				switch(searchType) {
 					case TITLE :
-						articlesPage = articleRepository.findByBoardIdAndTitleContainingOrderByNoDesc(id, searchValue, pageable);
+						boardArticlesPage = boardArticleRepository.findByBoardIdAndTitleContainingOrderByNoDesc(id, searchValue, pageable);
 					break;
 					case TITLE_CONTENTS :
-						articlesPage = articleRepository.findByBoardIdAndTitleContainingOrContentsContainingOrderByNoDesc(id, searchValue, searchValue, pageable);	
+						boardArticlesPage = boardArticleRepository.findByBoardIdAndTitleContainingOrContentsContainingOrderByNoDesc(id, searchValue, searchValue, pageable);	
 					break;
 					case USER :
-						articlesPage = articleRepository.findByBoardIdAndUserIdContainingOrUserNicknameContainingOrderByNoDesc(id, searchValue, searchValue, pageable);	
+						boardArticlesPage = boardArticleRepository.findByBoardIdAndUserIdContainingOrUserNicknameContainingOrderByNoDesc(id, searchValue, searchValue, pageable);	
 					break;
 				}
 			}
 		}else {
 			if(searchType == null) {
-				articlesPage = articleRepository.findByBoardIdAndCategoryIdOrderByNoDesc(id, categoryId, pageable);			
+				boardArticlesPage = boardArticleRepository.findByBoardIdAndCategoryIdOrderByNoDesc(id, categoryId, pageable);			
 			}else {
 				switch(searchType) {
 					case TITLE :
-						articlesPage = articleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrderByNoDesc(id, categoryId, searchValue, pageable);
+						boardArticlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrderByNoDesc(id, categoryId, searchValue, pageable);
 					break;
 					case TITLE_CONTENTS :
-						articlesPage = articleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrContentsContainingOrderByNoDesc(id, categoryId, searchValue, searchValue, pageable);	
+						boardArticlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrContentsContainingOrderByNoDesc(id, categoryId, searchValue, searchValue, pageable);	
 					break;
 					case USER :
-						articlesPage = articleRepository.findByBoardIdAndCategoryIdAndUserIdContainingOrUserNicknameContainingOrderByNoDesc(id, categoryId, searchValue, searchValue, pageable);	
+						boardArticlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndUserIdContainingOrUserNicknameContainingOrderByNoDesc(id, categoryId, searchValue, searchValue, pageable);	
 					break;
 				}
 			}
 		}
 		if(pageInfo.isEnableTotalCount()) {
-			pageInfo.setTotalCount(articlesPage.getTotalElements());
+			pageInfo.setTotalCount(boardArticlesPage.getTotalElements());
 		}
-		List<Article> articles = articlesPage.getContent();
-		return articles;
+		List<BoardArticle> boardArticles = boardArticlesPage.getContent();
+		return boardArticles;
 	}
 	
 	/**
@@ -147,9 +143,9 @@ public class Board {
 	 * @return
 	 * @throws Exception
 	 */
-	public Article getArticle(long no) throws Exception {
-		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
-		Article article = articleRepository.findOne(no);
+	public BoardArticle getArticle(long no) throws Exception {
+		BoardArticleRepository boardArticleRepository = new JpaRepositoryFactory(entityManager).getRepository(BoardArticleRepository.class);
+		BoardArticle article = boardArticleRepository.findOne(no);
 		article.setEntityManager(entityManager);
 		return article;
 	}
@@ -160,52 +156,9 @@ public class Board {
 	 * @return
 	 * @throws Exception
 	 */
-	public Article saveArticle(Article article) throws Exception {
-		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
-		
-		// In case of new article(articleNo is empty)
-		if(article.getNo() < 1) {
-			article.setBoardId(id);
-			article.setRegistDate(new Date());
-			article.setReadCount(0);
-			return articleRepository.saveAndFlush(article);
-		}
-		// In case of existing article updates
-		else {
-			Article one = articleRepository.findOne(article.getNo());
-			one.setTitle(article.getTitle());
-			one.setContents(article.getContents());
-			one.setModifyDate(new Date());
-			
-			// add new file
-			for(ArticleFile file : article.getFiles()) {
-				if(one.getFile(file.getId()) == null) {
-					file.setArticleNo(article.getNo());
-					one.getFiles().add(file);
-					
-					// move file from temporary directory
-					try {
-						FileUtils.moveFile(file.getTemporaryFile(), file.getRealFile());
-					}catch(Exception ignore) {
-						LOGGER.warn(ignore.getMessage(), ignore);
-					}
-				}
-			}
-			
-			// remove deleted file
-			for(int index = one.getFiles().size()-1; index >= 0; index --) {
-				ArticleFile file = one.getFiles().get(index);
-				if(article.getFile(file.getId()) == null) {
-					one.removeFile(file.getId());
-					
-					// remove real file.
-					FileUtils.deleteQuietly(file.getRealFile());
-				}
-			}
-			
-			// saves data
-			return articleRepository.saveAndFlush(one);
-		}
+	public void saveArticle(BoardArticle article) throws Exception {
+		article.setEntityManager(entityManager);
+		article.save();
 	}
 	
 	/**
@@ -215,23 +168,10 @@ public class Board {
 	 * @throws Exception
 	 */
 	public void deleteArticle(long no) throws Exception {
-		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
-		Article article = articleRepository.findOne(no);
-		article.setEntityManager(entityManager);
-		
-		// deletes replies
-		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
-		for(ArticleReply reply : article.getReplies()) {
-			articleReplyRepository.delete(reply);	
-		}
-		
-		// deletes attached files.
-		for(ArticleFile file : article.getFiles()) {
-			FileUtils.deleteQuietly(file.getRealFile());
-		}
-		
-		// deletes entity
-		articleRepository.delete(no);
+		BoardArticleRepository boardArticleRepository = new JpaRepositoryFactory(entityManager).getRepository(BoardArticleRepository.class);
+		BoardArticle boardArticle = boardArticleRepository.findOne(no);
+		boardArticle.setEntityManager(entityManager);
+		boardArticle.delete();
 	}
 	
 	public String getId() {

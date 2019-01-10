@@ -237,6 +237,7 @@ public class ApplicationBuilder {
 	        
 	        // JPA properties
 	        Properties jpaProperties = new Properties();
+	        jpaProperties.setProperty("hibernate.hql.bulk_id_strategy", "org.hibernate.hql.spi.id.inline.InlineIdsOrClauseBulkIdStrategy");	// Bulk-id strategies when you can’t use temporary tables	
 	        entityManagerFactory.setJpaProperties(jpaProperties);
 	        
 	        entityManagerFactory.afterPropertiesSet();

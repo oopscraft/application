@@ -2,13 +2,18 @@ package net.oopscraft.application.core;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 
 public class TextTable {
+	
+	private static final int MAX_COLUMN_SIZE = 32;
 	
 	Object obj;
 	Collection<?> collection;
@@ -163,19 +168,10 @@ public class TextTable {
 		}else {
 			Class<?> objClass = obj.getClass();
 			Vector<String> columnNamesVector = new Vector<String>();
-			Field[] fields = obj.getClass().getDeclaredFields();
+			Field[] fields = ObjectUtils.getAllFields(objClass);
 			for(Field field : fields) {
 				String fieldName = field.getName();
-				try {
-					field.get(obj);
-					columnNamesVector.add(fieldName);
-				}catch(Exception e) {
-					try {
-						Method getterMethod = objClass.getMethod("get" + NotationUtils.toPascalCase(fieldName));
-						getterMethod.invoke(obj);
-						columnNamesVector.add(fieldName);
-					}catch(Exception ignore) {}
-				}
+				columnNamesVector.add(fieldName);
 			}
 			columnNames = columnNamesVector.toArray(new String[columnNamesVector.size()]);
 		}
@@ -195,31 +191,30 @@ public class TextTable {
 			Map<String,Object> map = (Map<String,Object>)obj;
 			columnValues = new String[columnNames.length];
 			for(int i = 0, iSize = columnNames.length; i < iSize; i ++ ) {
-				columnValues[i] = String.valueOf(map.get(columnNames[i]));
+				columnValues[i] = toPrintableValue(map.get(columnNames[i]));
 			}
 		}else {
-			Class<?> objClass = obj.getClass();
 			columnValues = new String[columnNames.length];
 			for(int i = 0, iSize = columnNames.length; i < iSize; i ++ ) {
 				String columnName = columnNames[i];
-				Object columnValue = null;
-				try {
-					Field field = objClass.getField(columnName);
-					columnValue = field.get(obj);
-				}catch(Exception e) {
-					try {
-						Method getterMethod = objClass.getMethod("get" + NotationUtils.toPascalCase(columnName));
-						columnValue = getterMethod.invoke(obj);
-					}catch(Exception e1) {
-						columnValue = e1.getMessage();
-					}
-				}
-				columnValues[i] = columnValue == null ? null : columnValue.toString();
+				Object columnValue = ObjectUtils.getFieldValue(obj, columnName);
+				columnValues[i] = toPrintableValue(columnValue);
 			}
 		}
 		return columnValues;
 	}
 	
+	private static String toPrintableValue(Object obj) {
+		if(obj == null) {
+			return null;
+		}
+		String printableValue = StringUtils.stripWhitespace(obj.toString());
+		printableValue = StringUtils.toEllipsis(printableValue, MAX_COLUMN_SIZE - 3);
+		return printableValue;
+	}
+	
+
+
 	private static String build(Object obj) {
 		StringBuffer buffer = new StringBuffer();
 		

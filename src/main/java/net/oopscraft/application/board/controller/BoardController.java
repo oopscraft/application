@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.board.Article;
+import net.oopscraft.application.article.Article;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.core.TextTable;

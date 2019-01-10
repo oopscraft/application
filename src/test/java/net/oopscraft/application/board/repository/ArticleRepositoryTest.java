@@ -1,18 +1,18 @@
 package net.oopscraft.application.board.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import net.oopscraft.application.board.Article;
-import net.oopscraft.application.board.Board;
+import net.oopscraft.application.article.Article;
+import net.oopscraft.application.article.repository.ArticleRepository;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class ArticleRepositoryTest extends ApplicationTestRunner {
 	
-	private static String TEST_BOARD_ID = "JUnit";
 	private static long TEST_ARTICLE_NO = System.currentTimeMillis();
 	
 	BoardRepository boardRepository;
@@ -30,19 +30,10 @@ public class ArticleRepositoryTest extends ApplicationTestRunner {
 	
 	@Test 
 	public void testSave() throws Exception {
-		
-		// Inserts board data.
-		Board board = new Board();
-		board.setId(TEST_BOARD_ID);
-		boardRepository.saveAndFlush(board);
-		
-		// Inserts article data.
 		Article article = new Article();
-		article.setBoardId(TEST_BOARD_ID);
+		article.setNo(TEST_ARTICLE_NO);
 		article = articleRepository.saveAndFlush(article);
 		System.out.println(new TextTable(article));
-		
-		// assert
 		assert(true);
 	}
 	
