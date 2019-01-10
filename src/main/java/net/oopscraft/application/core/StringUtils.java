@@ -2,6 +2,30 @@ package net.oopscraft.application.core;
 
 public class StringUtils {
 	
+	/**
+	 * Checks value is empty
+	 * @param value
+	 * @return
+	 */
+	public static boolean isEmpty(String value) {
+		if(value == null || value.trim().length() < 1) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks value is not empty
+	 * @param value
+	 * @return
+	 */
+	public static boolean isNotEmpty(String value) {
+		if(value != null && value.trim().length() > 0) {
+			return true;
+		}
+		return false;
+	}
+	
 	
 	/**
 	 * Checks if delimiter char

@@ -29,6 +29,10 @@ public class JsonUtils {
 		return objectMapper.writeValueAsString(list);
 	}
 	
+	public static String toJson1(Enum<?> enm) throws Exception {
+		return null;
+	}
+	
 	public static <T> T toObject(String json, Class<T> clazz) throws Exception {
 		return objectMapper.readValue(json, clazz);
 	}

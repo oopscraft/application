@@ -114,11 +114,6 @@
 				name:'<spring:message code="application.label.board"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_board.png',
 				link:'board'
-			},
-			{
-				name:'<spring:message code="application.label.page"/>', 
-				icon:'${pageContext.request.contextPath}/static/img/icon_page.png',
-				link:'page'
 			}
 		], 'childMenus');
 		
