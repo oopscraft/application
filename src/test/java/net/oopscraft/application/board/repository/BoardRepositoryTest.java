@@ -39,6 +39,7 @@ public class BoardRepositoryTest extends ApplicationTestRunner {
 	public void testFindOne() throws Exception {
 		this.testSave();
 		Board board = boardRepository.findOne(TEST_ID);
+		board.getAccessAuthorities();
 		System.out.println(new TextTable(board));
 		assert(true);
 	}

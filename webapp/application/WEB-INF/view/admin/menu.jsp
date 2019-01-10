@@ -477,7 +477,8 @@ div.menuItem:hover {
 			<tr>
 				<th>
 					<span class="must">
-						<spring:message code="application.text.displayPolicy"/>
+						<spring:message code="application.text.display"/>
+						<spring:message code="application.text.policy"/>
 					</span>
 				</th>
 				<td>

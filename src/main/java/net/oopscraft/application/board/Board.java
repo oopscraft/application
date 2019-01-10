@@ -11,26 +11,29 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hibernate.annotations.SQLInsert;
+import org.hibernate.annotations.Where;
+import org.hibernate.annotations.WhereJoinTable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
 import net.oopscraft.application.board.repository.BoardArticleRepository;
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.user.Authority;
 
 
 @Entity
 @Table(name = "APP_BORD_INFO")
 public class Board {
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(Board.class);
 
 	@Id
 	@Column(name = "BORD_ID")
@@ -52,17 +55,38 @@ public class Board {
 	@Column(name = "ACES_PLCY")
 	@Enumerated(EnumType.STRING)
 	Policy accessPolicy = Policy.ANONYMOUS;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "APP_BORD_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@WhereJoinTable(clause = "AUTH_TYPE ='ACES_PLCY'")
+	@SQLInsert(sql = "INSERT INTO APP_BORD_AUTH_MAP (BORD_ID, AUTH_TYPE, AUTH_ID) VALUES (?, 'ACES_PLCY', ?)") 
+	List<Authority> accessAuthorities = new ArrayList<Authority>();
 
 	@Column(name = "READ_PLCY")
 	@Enumerated(EnumType.STRING)
 	Policy readPolicy = Policy.ANONYMOUS;
 	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "APP_BORD_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@WhereJoinTable(clause = "AUTH_TYPE ='READ_PLCY'")
+	@SQLInsert(sql = "INSERT INTO APP_BORD_AUTH_MAP (BORD_ID, AUTH_TYPE, AUTH_ID) VALUES (?, 'READ_PLCY', ?)")
+	List<Authority> readAuthorities = new ArrayList<Authority>();
+	
 	@Column(name = "WRIT_PLCY")
 	@Enumerated(EnumType.STRING)
 	Policy writePolicy = Policy.ANONYMOUS;
 	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "APP_BORD_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@WhereJoinTable(clause = "AUTH_TYPE ='WRIT_PLCY'")
+	@SQLInsert(sql = "INSERT INTO APP_BORD_AUTH_MAP (BORD_ID, AUTH_TYPE, AUTH_ID) VALUES (?, 'WRIT_PLCY', ?)")
+	List<Authority> writeAuthorities = new ArrayList<Authority>();
+	
 	@Column(name = "ROWS_PER_PAGE")
 	int rowsPerPage = 10;
+	
+	@Column(name = "CATE_USE_YN")
+	String categoryUseYn;
 	
 	@Column(name = "RPLY_USE_YN")
 	String replyUseYn;
@@ -214,8 +238,24 @@ public class Board {
 		this.accessPolicy = accessPolicy;
 	}
 
+	public List<Authority> getAccessAuthorities() {
+		return accessAuthorities;
+	}
+
+	public void setAccessAuthorities(List<Authority> accessAuthorities) {
+		this.accessAuthorities = accessAuthorities;
+	}
+
 	public Policy getReadPolicy() {
 		return readPolicy;
+	}
+
+	public List<Authority> getReadAuthorities() {
+		return readAuthorities;
+	}
+
+	public void setReadAuthorities(List<Authority> readAuthorities) {
+		this.readAuthorities = readAuthorities;
 	}
 
 	public void setReadPolicy(Policy readPolicy) {
@@ -230,6 +270,14 @@ public class Board {
 		this.writePolicy = writePolicy;
 	}
 	
+	public List<Authority> getWriteAuthorities() {
+		return writeAuthorities;
+	}
+
+	public void setWriteAuthorities(List<Authority> writeAuthorities) {
+		this.writeAuthorities = writeAuthorities;
+	}
+
 	public int getRowsPerPage() {
 		return rowsPerPage;
 	}
