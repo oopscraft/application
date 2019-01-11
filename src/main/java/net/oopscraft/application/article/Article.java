@@ -19,17 +19,11 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
-import org.apache.commons.io.FileUtils;
 import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import net.oopscraft.application.article.repository.ArticleFileRepository;
 import net.oopscraft.application.article.repository.ArticleReplyRepository;
 import net.oopscraft.application.article.repository.ArticleRepository;
 
@@ -37,8 +31,13 @@ import net.oopscraft.application.article.repository.ArticleRepository;
 @Table(name = "APP_ATCL_INFO")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Article {
+    
+	@Transient
+	EntityManager entityManager;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(Article.class);
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
 	
 	@Id
 	@Column(name = "ATCL_NO")
@@ -75,88 +74,6 @@ public class Article {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<ArticleFile> files = new ArrayList<ArticleFile>();
-
-	@Transient
-	EntityManager entityManager;
-	
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
-	
-	/**
-	 * Saves
-	 * @return
-	 * @throws Exception
-	 */
-	public void save() throws Exception {
-		
-		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
-		
-		// In case of new article(articleNo is empty)
-		if(no < 1) {
-			articleRepository.saveAndFlush(this);
-		}
-		// In case of existing article updates
-		else {
-			Article one = articleRepository.findOne(no);
-			one.setTitle(title);
-			one.setContents(contents);
-			one.setModifyDate(new Date());
-			
-			// add new file
-			for(ArticleFile file : this.getFiles()) {
-				if(one.getFile(file.getId()) == null) {
-					file.setArticleNo(no);
-					one.getFiles().add(file);
-					
-					// move file from temporary directory
-					try {
-						FileUtils.moveFile(file.getTemporaryFile(), file.getRealFile());
-					}catch(Exception ignore) {
-						LOGGER.warn(ignore.getMessage(), ignore);
-					}
-				}
-			}
-			
-			// remove deleted file
-			for(int index = one.getFiles().size()-1; index >= 0; index --) {
-				ArticleFile file = one.getFiles().get(index);
-				if(this.getFile(file.getId()) == null) {
-					one.removeFile(file.getId());
-					
-					// remove real file.
-					FileUtils.deleteQuietly(file.getRealFile());
-				}
-			}
-			
-			// saves data
-			articleRepository.saveAndFlush(one);
-		}
-	}
-
-	/**
-	 * Deletes
-	 * @throws Exception
-	 */
-	public void delete() throws Exception {
-		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
-		
-		// deletes replies
-		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
-		for(ArticleReply reply : this.getReplies()) {
-			articleReplyRepository.delete(reply);	
-		}
-		
-		// deletes attached files.
-		ArticleFileRepository articleFileRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleFileRepository.class);
-		for(ArticleFile file : this.getFiles()) {
-			articleFileRepository.delete(file);
-			FileUtils.deleteQuietly(file.getRealFile());
-		}
-		
-		// deletes entity
-		articleRepository.delete(this);
-	}
 
 	/**
 	 * Increases read count.
@@ -245,9 +162,12 @@ public class Article {
 	 * @throws Exception
 	 */
 	public ArticleFile getFile(String fileId) throws Exception {
-		ArticleFileRepository articleFileRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleFileRepository.class);
-		ArticleFile articleFile = articleFileRepository.findOne(new ArticleFile.Pk(no, fileId));
-		return articleFile;
+		for(ArticleFile file : getFiles()) {
+			if(file.getId().equals(fileId) == true) {
+				return file;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -257,10 +177,6 @@ public class Article {
 	 * @throws Exception
 	 */
 	public boolean removeFile(String fileId) throws Exception {
-		ArticleFileRepository articleFileRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleFileRepository.class);
-		ArticleFile articleFileEntity = articleFileRepository.findOne(new ArticleFile.Pk(no, fileId));
-		articleFileRepository.delete(articleFileEntity);
-		
 		for(ArticleFile file : getFiles()) {
 			if(fileId.equals(file.getId()) == true) {
 				return files.remove(file);
