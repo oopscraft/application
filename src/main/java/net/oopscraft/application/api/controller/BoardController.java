@@ -25,13 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import net.oopscraft.application.article.Article;
 import net.oopscraft.application.article.ArticleFile;
 import net.oopscraft.application.article.ArticleReply;
-import net.oopscraft.application.article.Article;
 import net.oopscraft.application.board.Board;
-import net.oopscraft.application.board.Board.ArticleSearchType;
 import net.oopscraft.application.board.BoardArticle;
+import net.oopscraft.application.board.BoardArticleService;
+import net.oopscraft.application.board.BoardArticleService.ArticleSearchType;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
@@ -45,6 +44,9 @@ public class BoardController {
 
 	@Autowired
 	BoardService boardService;
+	
+	@Autowired
+	BoardArticleService boardArticleService;
 	
 	@Autowired
 	HttpServletResponse response;
@@ -86,9 +88,9 @@ public class BoardController {
 		}else {
 			articleSearchType = null;
 		}
-		List<BoardArticle> boardArticles = board.getArticles(pageInfo, categoryId, articleSearchType, searchValue);
+		List<BoardArticle> articles = boardArticleService.getArticles(pageInfo, boardId, categoryId, articleSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return new ResponseEntity<>(JsonUtils.toJson(boardArticles), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtils.toJson(articles), HttpStatus.OK);
 	}
 	
 	/**
@@ -103,8 +105,7 @@ public class BoardController {
 		@PathVariable("boardId") String boardId,
 		@PathVariable("articleNo") long articleNo
 	) throws Exception {
-		Board board = boardService.getBoard(boardId);
-		BoardArticle article = board.getArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleNo);
 		return new ResponseEntity<>(JsonUtils.toJson(article), HttpStatus.OK);
 	}
 	
@@ -121,11 +122,10 @@ public class BoardController {
 		@PathVariable("boardId") String boardId,
 		@RequestBody String payload
 	) throws Exception {
-		BoardArticle boardArticle = JsonUtils.toObject(payload, BoardArticle.class);
-		boardArticle.setBoardId(boardId);
-		Board board = boardService.getBoard(boardId);
-		board.saveArticle(boardArticle);
-		return new ResponseEntity<>(JsonUtils.toJson(boardArticle), HttpStatus.OK);
+		BoardArticle article = JsonUtils.toObject(payload, BoardArticle.class);
+		article.setBoardId(boardId);
+		boardArticleService.saveArticle(article);
+		return new ResponseEntity<>(JsonUtils.toJson(article), HttpStatus.OK);
 	}
 	
 	/**
@@ -141,8 +141,8 @@ public class BoardController {
 		@PathVariable("boardId") String boardId,
 		@PathVariable("articleNo") long articleNo
 	) throws Exception {
-		Board board = boardService.getBoard(boardId);
-		board.deleteArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleNo);
+		boardArticleService.deleteArticle(article);
 		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
 	}
 
@@ -157,8 +157,7 @@ public class BoardController {
 		@PathVariable("boardId") String boardId,
 		@PathVariable("articleNo")long articleNo
 	) throws Exception {
-		Board board = boardService.getBoard(boardId);
-		BoardArticle article = board.getArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleNo);
 		List<ArticleReply> articleReplies = article.getReplies();
 		return new ResponseEntity<>(JsonUtils.toJson(articleReplies), HttpStatus.OK);
 	}
@@ -179,8 +178,7 @@ public class BoardController {
 		@RequestBody String payload
 	) throws Exception {
 		ArticleReply articleReply = JsonUtils.toObject(payload, ArticleReply.class);
-		Board board = boardService.getBoard(boardId);
-		BoardArticle article = board.getArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleNo);
 		articleReply = article.saveReply(articleReply);
 		return new ResponseEntity<>(JsonUtils.toJson(articleReply), HttpStatus.OK);
 	}
@@ -198,8 +196,7 @@ public class BoardController {
 		@PathVariable("articleNo")long articleNo,
 		@PathVariable("replyNo")long replyNo
 	) throws Exception {
-		Board board = boardService.getBoard(boardId);
-		BoardArticle article = board.getArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleNo);
 		article.deleteReply(replyNo);
 		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
 	}
@@ -254,8 +251,7 @@ public class BoardController {
 		@PathVariable("fileId")String fileId
 	) throws Exception {
 		
-		Board board = boardService.getBoard(boardId);
-		BoardArticle article = board.getArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleNo);
 		ArticleFile articleFile = article.getFile(fileId);
 		
 		// sends file

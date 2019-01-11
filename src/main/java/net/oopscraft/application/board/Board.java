@@ -20,14 +20,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.SQLInsert;
-import org.hibernate.annotations.Where;
 import org.hibernate.annotations.WhereJoinTable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
-import net.oopscraft.application.board.repository.BoardArticleRepository;
-import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.Authority;
 
 
@@ -109,93 +103,6 @@ public class Board {
 		TITLE,
 		TITLE_CONTENTS,
 		USER
-	}
-	
-	/**
-	 * Gets articles
-	 * @param page
-	 * @return
-	 * @throws Exception
-	 */
-	public List<BoardArticle> getArticles(PageInfo pageInfo, String categoryId, ArticleSearchType searchType, String searchValue) throws Exception {
-		BoardArticleRepository boardArticleRepository = new JpaRepositoryFactory(entityManager).getRepository(BoardArticleRepository.class);
-		Pageable pageable = pageInfo.toPageable();
-		Page<BoardArticle> boardArticlesPage = null;
-		if(categoryId == null || categoryId.trim().length() < 1) {
-			if(searchType == null) {
-				boardArticlesPage = boardArticleRepository.findByBoardIdOrderByNoDesc(id, pageable);			
-			}else {
-				switch(searchType) {
-					case TITLE :
-						boardArticlesPage = boardArticleRepository.findByBoardIdAndTitleContainingOrderByNoDesc(id, searchValue, pageable);
-					break;
-					case TITLE_CONTENTS :
-						boardArticlesPage = boardArticleRepository.findByBoardIdAndTitleContainingOrContentsContainingOrderByNoDesc(id, searchValue, searchValue, pageable);	
-					break;
-					case USER :
-						boardArticlesPage = boardArticleRepository.findByBoardIdAndUserIdContainingOrUserNicknameContainingOrderByNoDesc(id, searchValue, searchValue, pageable);	
-					break;
-				}
-			}
-		}else {
-			if(searchType == null) {
-				boardArticlesPage = boardArticleRepository.findByBoardIdAndCategoryIdOrderByNoDesc(id, categoryId, pageable);			
-			}else {
-				switch(searchType) {
-					case TITLE :
-						boardArticlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrderByNoDesc(id, categoryId, searchValue, pageable);
-					break;
-					case TITLE_CONTENTS :
-						boardArticlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrContentsContainingOrderByNoDesc(id, categoryId, searchValue, searchValue, pageable);	
-					break;
-					case USER :
-						boardArticlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndUserIdContainingOrUserNicknameContainingOrderByNoDesc(id, categoryId, searchValue, searchValue, pageable);	
-					break;
-				}
-			}
-		}
-		if(pageInfo.isEnableTotalCount()) {
-			pageInfo.setTotalCount(boardArticlesPage.getTotalElements());
-		}
-		List<BoardArticle> boardArticles = boardArticlesPage.getContent();
-		return boardArticles;
-	}
-	
-	/**
-	 * Gets article
-	 * @param no
-	 * @return
-	 * @throws Exception
-	 */
-	public BoardArticle getArticle(long no) throws Exception {
-		BoardArticleRepository boardArticleRepository = new JpaRepositoryFactory(entityManager).getRepository(BoardArticleRepository.class);
-		BoardArticle article = boardArticleRepository.findOne(no);
-		article.setEntityManager(entityManager);
-		return article;
-	}
-	
-	/**
-	 * Saves article
-	 * @param article
-	 * @return
-	 * @throws Exception
-	 */
-	public void saveArticle(BoardArticle article) throws Exception {
-		article.setEntityManager(entityManager);
-		article.save();
-	}
-	
-	/**
-	 * Deletes article
-	 * @param no
-	 * @return
-	 * @throws Exception
-	 */
-	public void deleteArticle(long no) throws Exception {
-		BoardArticleRepository boardArticleRepository = new JpaRepositoryFactory(entityManager).getRepository(BoardArticleRepository.class);
-		BoardArticle boardArticle = boardArticleRepository.findOne(no);
-		boardArticle.setEntityManager(entityManager);
-		boardArticle.delete();
 	}
 	
 	public String getId() {

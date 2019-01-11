@@ -4,9 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import net.oopscraft.application.article.Article;
 
 @Entity
@@ -33,16 +30,6 @@ public class BoardArticle extends Article {
 
 	public void setCategoryId(String categoryId) {
 		this.categoryId = categoryId;
-	}
-	
-	public void save() throws Exception {
-		System.out.println("BoardArticle.save()");
-		super.save();
-	}
-	
-	public void delete() throws Exception {
-		System.out.println("BoardArticle.delete()");
-		super.delete();
 	}
 	
 }
