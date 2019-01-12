@@ -10,12 +10,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.article.Article;
 import net.oopscraft.application.article.repository.ArticleRepository;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.BoardArticle;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.test.ApplicationTestRunner;
 import net.oopscraft.application.user.User;
 
 public class BoardArticleRepositoryTest extends ApplicationTestRunner {

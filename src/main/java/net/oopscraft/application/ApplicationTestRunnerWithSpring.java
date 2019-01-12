@@ -1,4 +1,4 @@
-package net.oopscraft.application.test;
+package net.oopscraft.application;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;

@@ -36,6 +36,9 @@ public class Board {
 	@Column(name = "BORD_NAME")
 	String name;
 	
+	@Column(name = "BORD_ICON")
+	String icon;
+	
 	@Column(name = "LAYT_ID")
 	String layoutId;
 	
@@ -91,13 +94,6 @@ public class Board {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "boardId", cascade = CascadeType.ALL)
 	@OrderBy("displaySeq")
 	List<BoardCategory> categories = new ArrayList<BoardCategory>();
-	
-	@Transient
-	EntityManager entityManager;
-	
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
 
 	public enum ArticleSearchType {
 		TITLE,
@@ -119,6 +115,14 @@ public class Board {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 	public String getLayoutId() {
@@ -191,6 +195,14 @@ public class Board {
 
 	public void setRowsPerPage(int rowsPerPage) {
 		this.rowsPerPage = rowsPerPage;
+	}
+
+	public String getCategoryUseYn() {
+		return categoryUseYn;
+	}
+
+	public void setCategoryUseYn(String categoryUseYn) {
+		this.categoryUseYn = categoryUseYn;
 	}
 
 	public String getReplyUseYn() {

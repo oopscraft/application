@@ -66,7 +66,7 @@
 	<!-- Resource Path											-->
 	<!-- ====================================================== -->
 	<mvc:resources location="/WEB-INF/view/layout/" mapping="/resource/layout/**"/>
-	<mvc:resources location="/WEB-INF/view/board/skin/" mapping="/resource/board/skin/**"/>
-	<mvc:resources location="file:doc/" mapping="/resource/doc/**"/>
+	<mvc:resources location="/WEB-INF/view/page/" mapping="/resource/page/**"/>
+	<mvc:resources location="/WEB-INF/view/board/" mapping="/resource/board/**"/>
 
 </beans>

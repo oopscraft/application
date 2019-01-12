@@ -4,8 +4,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<style type="text/css">
-</style>
+<link href="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/style.css" rel="stylesheet" type="text/css" />
 <div class="app-board">
 	<div style="display:flex; justify-content:space-between;">
 		<div class="app-board-name">

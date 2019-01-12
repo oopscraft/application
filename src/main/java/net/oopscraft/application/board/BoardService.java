@@ -22,11 +22,16 @@ public class BoardService {
 	@Autowired
 	BoardRepository boardRepository;
 	
-	public enum BoardSearchType {
-		ID,
-		NAME
-	}
+	public enum BoardSearchType { ID,NAME	}
 	
+	/**
+	 * Gets boards
+	 * @param pageInfo
+	 * @param searchType
+	 * @param searchValue
+	 * @return
+	 * @throws Exception
+	 */
 	public List<Board> getBoards(PageInfo pageInfo, BoardSearchType searchType, String searchValue) throws Exception {
 		Pageable pageable = pageInfo.toPageable();
 		Page<Board> boardsPage = null;
@@ -37,18 +42,54 @@ public class BoardService {
 		return boardsPage.getContent();
 	}
 	
+	/**
+	 * Gets board
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
 	public Board getBoard(String id) throws Exception {
 		Board board = boardRepository.findOne(id);
-		board.setEntityManager(entityManager);
 		return board;
 	}
 	
+	/**
+	 * Saves board
+	 * @param board
+	 * @throws Exception
+	 */
 	public void saveBoard(Board board) throws Exception {
-		boardRepository.saveAndFlush(board);
+		Board one = boardRepository.findOne(board.getId());
+		if(one == null) {
+			boardRepository.saveAndFlush(board);
+		}else {
+			one.setName(board.getName());
+			one.setIcon(board.getIcon());
+			one.setLayoutId(board.getLayoutId());
+			one.setSkinId(board.getSkinId());
+			one.setAccessPolicy(board.getAccessPolicy());
+			one.setAccessAuthorities(board.getAccessAuthorities());
+			one.setReadPolicy(board.getReadPolicy());
+			one.setReadAuthorities(board.getReadAuthorities());
+			one.setWritePolicy(board.getWritePolicy());
+			one.setWriteAuthorities(board.getWriteAuthorities());
+			one.setRowsPerPage(board.getRowsPerPage());
+			one.setCategoryUseYn(board.getCategoryUseYn());
+			one.setCategories(board.getCategories());
+			one.setReplyUseYn(board.getReplyUseYn());
+			one.setFileUseYn(board.getFileUseYn());
+			boardRepository.saveAndFlush(one);
+		}
 	}
 	
+	/**
+	 * Deletes board
+	 * @param id
+	 * @throws Exception
+	 */
 	public void deleteBoard(String id) throws Exception {
-		boardRepository.delete(id);
+		Board board = boardRepository.findOne(id);
+		boardRepository.delete(board);
 	}
 
 }
