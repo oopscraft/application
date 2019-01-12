@@ -300,7 +300,7 @@ function updateClassCountChart(monitorInfo){
 }
 </style>
 <div class="title1">
-	<img src="${pageContext.request.contextPath}/static/img/icon_monitor.png"/>&nbsp;
+	<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_monitor.png"/>&nbsp;
 	<spring:message code="application.text.monitor"/>
 </div>
 <div class="container">

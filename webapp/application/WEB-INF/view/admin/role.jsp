@@ -228,7 +228,7 @@ function removeRole() {
 
 </style>
 <div class="title1">
-	<img src="${pageContext.request.contextPath}/static/img/icon_role.png"/>&nbsp;
+	<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_role.png"/>&nbsp;
 	<spring:message code="application.text.role"/>
 	<spring:message code="application.text.management"/>
 </div>

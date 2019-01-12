@@ -205,7 +205,7 @@
 		<!-- ====================================================== -->
 		<!-- Header													-->
 		<!-- ====================================================== -->
-		<jsp:include page="${layout.headerPage}" flush="true"/>
+		<jsp:include page="/WEB-INF/view/layout/__application/header.jsp" flush="true"/>
 		
 		<!-- ====================================================== -->
 		<!-- Main													-->
@@ -215,6 +215,6 @@
 		<!-- ====================================================== -->
 		<!-- Footer													-->
 		<!-- ====================================================== -->
-		<jsp:include page="${layout.footerPage}" flush="true"/>
+		<jsp:include page="/WEB-INF/view/layout/__application/footer.jsp" flush="true"/>
 	</body>
 </html>
