@@ -36,4 +36,12 @@
 	cursor: pointer;
 	cursor: hand;
 }
+img.icon {
+	width: 1.5em;
+	height: 1.5em;
+}
+button img.icon,td img.icon {
+	height: 1em;
+	width: 1em;
+}
 

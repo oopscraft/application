@@ -2,8 +2,8 @@ package net.oopscraft.application.code;
 
 import org.junit.Test;
 
+import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class CodeUtilsTest extends ApplicationTestRunner {
 

@@ -4,19 +4,20 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<style type="text/css">
-</style>
+<link href="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/style.css" rel="stylesheet" type="text/css" />
 <div class="app-board">
 	<div style="display:flex; justify-content:space-between; align-items: baseline;"">
 		<div class="app-board-name">
-			<img src="${pageContext.request.contextPath}/static/img/icon_menu.png"/>&nbsp;
+			<img data-juice="Thumbnail" data-juice-bind="board.icon" data-juice-width="24" data-juice-height="24" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_board.png" style="vertical-align:middle; width:1.25em; height:1.25em;"/>&nbsp;
 			<c:out value="${board.name}"/>
 		</div>
-		<div style="text-align:right;">
-			<i class="icon-category"></i>
-			<spring:message code="application.text.category"/>&nbsp;
-			<select data-juice="ComboBox" data-juice-bind="articleSearch.categoryId" data-juice-options="categoryOptions" style="width:15em;"></select>
-		</div>
+		<c:if test="${board.categoryUseYn == 'Y'}">
+			<div style="text-align:right;">
+				<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_category.png"/>&nbsp;
+				<spring:message code="application.text.category"/>&nbsp;
+				<select data-juice="ComboBox" data-juice-bind="articleSearch.categoryId" data-juice-options="categoryOptions" style="width:15em;"></select>
+			</div>
+		</c:if>
 	</div>
 	<div>
 		<table data-juice="Grid" data-juice-bind="articles" data-juice-item="article">
@@ -47,15 +48,25 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-no="{{$context.article.get('no')}}" onclick="javascript:getArticle(this.dataset.no);">
+				<tr data-no="{{$context.article.get('no')}}" onclick="javascript:readArticle(this.dataset.no);">
 					<td style="text-align:center;">
 						<label data-juice="Label" data-juice-bind="article.no"></label>
 					</td>
 					<td>
 						<label data-juice="Label" data-juice-bind="article.title"></label>
-						<span style="display:{{$context.article.get('replyCount') > 0 ? 'inline-block' : 'none'}}">
-						(<label data-juice="Label" data-juice-bind="article.replyCount"></label>)
-						</span>
+						<c:if test="${board.replyUseYn == 'Y'}">
+							<span style="display:{{$context.article.get('replyCount') > 0 ? 'inline-block' : 'none'}}">
+								(<label data-juice="Label" data-juice-bind="article.replyCount"></label>)
+							</span>
+						</c:if>
+						<c:if test="${board.fileUseYn == 'Y'}">
+							<span style="display:{{$context.article.get('fileCount') > 0 ? 'inline-block' : 'none'}}">
+								<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_file.png"/>
+							</span>
+						</c:if>
+						<c:if test="${board.categoryUseYn == 'Y'}">
+							<label data-juice="Label" data-juice-bind="article.categoryName" style="color:#aaa; font-style:italic;"></label>
+						</c:if>
 					</td>
 					<td style="text-align:center;">
 						<label data-juice="Label" data-juice-bind="article.registDate" data-juice-format="date:yyyy-MM-dd hh:mm:ss"></label>
@@ -76,7 +87,7 @@
 			<select data-juice="ComboBox" data-juice-bind="articleSearch.searchType" data-juice-options="articleSearchTypes" style="width:10rem;"></select>
 			<input data-juice="TextField" data-juice-bind="articleSearch.searchValue" style="width:15rem;"/>
 			<button class="app-board-button" onclick="javascript:getArticles();">
-				<i class="icon-search"></i>
+				<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_search.png"/>
 				<spring:message code="application.text.search"/>
 			</button>
 		</div>
@@ -87,7 +98,7 @@
 		</div>
 		<div style="width:33%; text-align:right;">
 			<button class="app-board-button" onclick="javascript:writeArticle();">
-				<i class="icon-edit"></i>
+				<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_write.png"/>
 				<spring:message code="application.text.article"/>
 				<spring:message code="application.text.write"/>
 			</button>

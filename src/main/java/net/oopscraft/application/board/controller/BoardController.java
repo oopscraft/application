@@ -41,7 +41,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value="{boardId}/list", method = RequestMethod.GET)
+	@RequestMapping(value="{boardId}", method = RequestMethod.GET)
 	public ModelAndView list(@PathVariable("boardId")String boardId) throws Exception {
 		Board board = boardService.getBoard(boardId);
 		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
@@ -58,7 +58,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value="{boardId}/view", method = RequestMethod.GET)
+	@RequestMapping(value="{boardId}/read", method = RequestMethod.GET)
 	@Transactional(rollbackFor = Exception.class)
 	public ModelAndView view(
 		@PathVariable("boardId")String boardId,
@@ -68,7 +68,7 @@ public class BoardController {
 		BoardArticle article = boardArticleService.getArticle(articleNo);
 		article.increaseReadCount();
 		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
-		ModelAndView modelAndView = new ModelAndView("board/__view.tiles");
+		ModelAndView modelAndView = new ModelAndView("board/__read.tiles");
 		modelAndView.addObject("layout", layout);
 		modelAndView.addObject("board", board);
 		return modelAndView;

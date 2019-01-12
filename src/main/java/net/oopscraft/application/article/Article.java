@@ -69,8 +69,11 @@ public class Article {
 	@Column(name = "READ_CNT")
 	int readCount;
 	
-	@Formula("(SELECT COUNT(*)FROM APP_ATCL_RPLY_INFO A WHERE A.ATCL_NO = ATCL_NO)")
+	@Formula("(SELECT COUNT(*) FROM APP_ATCL_RPLY_INFO A WHERE A.ATCL_NO = ATCL_NO)")
 	int replyCount;
+	
+	@Formula("(SELECT COUNT(*) FROM APP_ATCL_FILE_INFO A WHERE A.ATCL_NO = ATCL_NO)")
+	int fileCount;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<ArticleFile> files = new ArrayList<ArticleFile>();
@@ -264,6 +267,14 @@ public class Article {
 
 	public void setReplyCount(int replyCount) {
 		this.replyCount = replyCount;
+	}
+	
+	public int getFileCount() {
+		return fileCount;
+	}
+
+	public void setFileCount(int fileCount) {
+		this.fileCount = fileCount;
 	}
 
 	public List<ArticleFile> getFiles() {
