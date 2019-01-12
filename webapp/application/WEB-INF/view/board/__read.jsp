@@ -7,8 +7,6 @@
 <%@taglib prefix="app" uri="/WEB-INF/tld/application.tld"%>
 <%@page import="java.util.*" %>
 <%@page import="java.text.*" %>
-<link href="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/style.css" rel="stylesheet" type="text/css" />
-<!-- global -->
 <script type="text/javascript">
 var board = new juice.data.Map(${app:toJson(board)});
 var article = new juice.data.Map();
@@ -171,8 +169,4 @@ function downloadFile(id){
     link.click();
 }
 </script>
-<style type="text/css">
-</style>
-<jsp:include page="/WEB-INF/view/board/skin/${board.skinId}/view.jsp" flush="true"/>
-
-
+<jsp:include page="/WEB-INF/view/board/skin/${board.skinId}/read.jsp" flush="true"/>
