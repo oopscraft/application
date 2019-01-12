@@ -7,8 +7,6 @@
 <%@taglib prefix="app" uri="/WEB-INF/tld/application.tld"%>
 <%@page import="java.util.*" %>
 <%@page import="java.text.*" %>
-<link href="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/style.css" rel="stylesheet" type="text/css" />
-<!-- global -->
 <script type="text/javascript">
 var board = new juice.data.Map(${app:toJson(board)});
 var categories = new juice.data.List(${app:toJson(board.categories)});
@@ -72,8 +70,8 @@ function getArticles(page) {
 /**
  * Gets article
  */
-function getArticle(articleNo) {
-	location.href = '${pageContext.request.contextPath}/board/${boardId}/view?articleNo=' + articleNo;
+function readArticle(articleNo) {
+	location.href = '${pageContext.request.contextPath}/board/${boardId}/read?articleNo=' + articleNo;
 }
 
 /**
@@ -83,6 +81,4 @@ function writeArticle() {
 	location.href = '${pageContext.request.contextPath}/board/${boardId}/write';
 }
 </script>
-<style type="text/css">
-</style>
-<jsp:include page="/WEB-INF/view/board/skin/${board.skinId}/list.jsp" flush="true"/>
+<jsp:include page="/WEB-INF/view/board/skin/${board.skinId}/index.jsp" flush="true"/>
