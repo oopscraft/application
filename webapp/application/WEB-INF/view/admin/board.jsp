@@ -32,6 +32,11 @@ board.setEnable(false);
 var accessAuthorities = new juice.data.List();
 var readAuthorities = new juice.data.List();
 var writeAuthorities = new juice.data.List();
+var categories = new juice.data.List();
+
+// skinIds
+var skinIds = new Array();
+skinIds.push({value:'__board', text:'__board'});
 
 //policies
 var policies = new Array();
@@ -51,7 +56,7 @@ $.ajax({
 
 // rowsPerPage options
 var rowsPerPage = [
-	{text:'10 Rows',value:'10'},
+	{text:'10',value:'10'},
 	{text:'20',value:'20'},
 	{text:'30',value:'30'},
 	{text:'40',value:'40'},
@@ -73,6 +78,11 @@ $( document ).ready(function() {
 	$('#writePolicySelect').change(function(event){
 		onPolicyChanged('write');
 	});
+	$('input[name="categoryUseYn"]').each(function(){
+		$(this).click(function(event){
+			onCategoryUseYnChanged($(this).val());
+		});
+	});
 });
 
 /**
@@ -85,6 +95,17 @@ function onPolicyChanged(type) {
 		authoritiesTable.show();
 	}else{
 		authoritiesTable.hide();
+	}
+}
+
+/**
+ * on cateogry use or not changed
+ */
+function onCategoryUseYnChanged(categoryUseYn){
+	if(categoryUseYn == 'Y'){
+		$('#categoriesTable').show();
+	}else{
+		$('#categoriesTable').hide();
 	}
 }
 
@@ -127,10 +148,14 @@ function getBoard(id) {
 			accessAuthorities.fromJson(data.accessAuthorities);
 			readAuthorities.fromJson(data.readAuthorities);
 			writeAuthorities.fromJson(data.writeAuthorities);
+			categories.fromJson(data.categories);
 			$('#boardTable').hide().fadeIn();
 			
 			// hide or show authorities table.
 			onPolicyChanged('access');
+			
+			// hide or show categories table
+			onCategoryUseYnChanged(board.get('categoryUseYn'));
   	 	}
 	});	
 }
@@ -171,6 +196,14 @@ function addBoard() {
 			boards.clearIndex();
 			board.fromJson({});
 			board.set('id', id);
+			board.set('skinId', 'board');
+			board.set('accessPolicy', 'ANONYMOUS');
+			board.set('readPolicy', 'ANONYMOUS');
+			board.set('writePolicy', 'ANONYMOUS');
+			board.set('rowsPerPage', 20);
+			board.set('categoryUseYn', 'N');
+			board.set('replyUseYn', 'N');
+			board.set('fileUseYn', 'N');
 			board.setEnable(true);
 		})
 		.open();
@@ -201,6 +234,7 @@ function saveBoard() {
 			boardJson.accessAuthorities = accessAuthorities.toJson();
 			boardJson.readAuthorities = readAuthorities.toJson();
 			boardJson.writeAuthorities = writeAuthorities.toJson();
+			boardJson.categories = categories.toJson();
 			$.ajax({
 				 url: 'board/saveBoard'
 				,type: 'POST'
@@ -320,12 +354,56 @@ function removeWriteAuthority(index){
 	writeAuthorities.removeRow(index);
 }
 
+/**
+ * Adds category.
+ */
+function addCategory(){
+	categories.addRow(new juice.data.Map({
+		boardId: board.get('id'),
+		id: null,
+		name: null
+	}));
+	makeCategoryDisplaySeq();
+}
+
+/**
+ * Removes category.
+ */
+function removeCategory(index){
+	categories.removeRow(index);
+	makeCategoryDisplaySeq();
+}
+
+/**
+ * moveUpCategory 
+ */
+function moveUpCategory(index){
+	categories.moveRow(index, Math.max(index-1,0));
+}
+
+/**
+ * moveDownCategory
+ */
+function moveDownCategory(index){
+	categories.moveRow(index, Math.min(index+1,categories.getRowCount()));
+}
+
+/**
+ * makeCategoryDisplaySeq
+ */
+function makeCategoryDisplaySeq() {
+	var displaySeq = 1;
+	categories.forEach(function(item){
+		item.set('displaySeq', displaySeq ++);
+	});
+}
+
 </script>
 <style type="text/css">
 
 </style>
 <div class="title1">
-	<img src="${pageContext.request.contextPath}/static/img/icon_board.png"/>&nbsp;
+	<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_board.png"/>&nbsp;
 	<spring:message code="application.text.board"/>
 	<spring:message code="application.text.management"/>
 </div>
@@ -336,9 +414,6 @@ function removeWriteAuthority(index){
 		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<div class="title2">
-					<i class="icon-search"></i>
-				</div>
 				<select data-juice="ComboBox" data-juice-bind="boardSearch.key" data-juice-options="boardSearchKeys" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="boardSearch.value" style="width:100px;"/>
 				<button onclick="javascript:getBoards();">
@@ -347,7 +422,7 @@ function removeWriteAuthority(index){
 				</button>
 			</div>
 			<div>
-				<button onclick="javascript:addMessage();">
+				<button onclick="javascript:addBoard();">
 					<i class="icon-plus"></i>
 					<spring:message code="application.text.new"/>
 				</button>
@@ -365,11 +440,11 @@ function removeWriteAuthority(index){
 						<spring:message code="application.text.no"/>
 					</th>
 					<th>
-						<spring:message code="application.text.message"/>
+						<spring:message code="application.text.board"/>
 						<spring:message code="application.text.id"/>
 					</th>
 					<th>
-						<spring:message code="application.text.message"/>
+						<spring:message code="application.text.board"/>
 						<spring:message code="application.text.name"/>
 					</th>
 				</tr>
@@ -399,7 +474,6 @@ function removeWriteAuthority(index){
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
-					<i class="icon-key"></i>
 					<spring:message code="application.text.board"/>
 					<spring:message code="application.text.details"/>
 				</div>
@@ -422,11 +496,11 @@ function removeWriteAuthority(index){
 			</colgroup>
 			<tr>
 				<th>
-					<i class="icon-attention"></i>
-					<spring:message code="application.text.id"/>
+					<span class="must">
+						<spring:message code="application.text.id"/>
+					</span>
 				</th>
 				<td>
-					
 					<input class="id" data-juice="TextField" data-juice-bind="board.id"/>
 				</td>
 			</tr>
@@ -443,6 +517,28 @@ function removeWriteAuthority(index){
 			<tr>
 				<th>
 					<span>
+						<spring:message code="application.text.icon"/>
+					</span>
+				</th>
+				<td>
+					<img class="icon" style="width:32px; height:32px;" data-juice="Thumbnail" data-juice-bind="board.icon" data-juice-width="32" data-juice-height="32" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII="/>
+					<img class="icon" style="width:24px; height:24px;" data-juice="Thumbnail" data-juice-bind="board.icon" data-juice-width="32" data-juice-height="32" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII="/>
+					<img class="icon" style="width:16px; height:16px;" data-juice="Thumbnail" data-juice-bind="board.icon" data-juice-width="32" data-juice-height="32" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII="/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>
+						<spring:message code="application.text.skin"/>
+					</span>
+				</th>
+				<td>
+					<select data-juice="ComboBox" data-juice-bind="board.skinId" data-juice-options="skinIds" style="width:15rem;"></select>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>
 						<spring:message code="application.text.layout"/>
 					</span>
 				</th>
@@ -453,17 +549,6 @@ function removeWriteAuthority(index){
 			<tr>
 				<th>
 					<span>
-						<spring:message code="application.text.skin"/>
-					</span>
-				</th>
-				<td>
-					<input data-juice="TextField" data-juice-bind="board.skinId"/>
-				</td>
-			</tr>
-			<tr>
-				<th>
-					<span>
-						<i class="icon-key"></i>
 						<spring:message code="application.text.access"/>
 						<spring:message code="application.text.policy"/>
 					</span>
@@ -473,8 +558,8 @@ function removeWriteAuthority(index){
 					<table id="accessAuthoritiesTable" data-juice="Grid" data-juice-bind="accessAuthorities" data-juice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
-							<col style="width:50%;"/>
-							<col style="width:10%;"/>
+							<col/>
+							<col style="width:5%;"/>
 						</colgroup>
 						<thead>
 							<tr>
@@ -513,7 +598,6 @@ function removeWriteAuthority(index){
 			</tr>
 			<tr>
 				<th>
-					<i class="icon-key"></i>
 					<spring:message code="application.text.read"/>
 					<spring:message code="application.text.policy"/>
 				</th>
@@ -522,8 +606,8 @@ function removeWriteAuthority(index){
 					<table id="readAuthoritiesTable" data-juice="Grid" data-juice-bind="readAuthorities" data-juice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
-							<col style="width:50%;"/>
-							<col style="width:10%;"/>
+							<col/>
+							<col style="width:5%;"/>
 						</colgroup>
 						<thead>
 							<tr>
@@ -562,7 +646,6 @@ function removeWriteAuthority(index){
 			</tr>
 			<tr>
 				<th>
-					<i class="icon-key"></i>
 					<spring:message code="application.text.write"/>
 					<spring:message code="application.text.policy"/>
 				</th>
@@ -571,8 +654,8 @@ function removeWriteAuthority(index){
 					<table id="writeAuthoritiesTable" data-juice="Grid" data-juice-bind="writeAuthorities" data-juice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
-							<col style="width:50%;"/>
-							<col style="width:10%;"/>
+							<col/>
+							<col style="width:5%;"/>
 						</colgroup>
 						<thead>
 							<tr>
@@ -615,18 +698,104 @@ function removeWriteAuthority(index){
 				</th>
 				<td>
 					<select data-juice="ComboBox" data-juice-bind="board.rowsPerPage" data-juice-options="rowsPerPage" style="width:10rem;"></select>
+					
 				</td>
 			</tr>
 			<tr>
 				<th>
-					카테고리 사용
+					<spring:message code="application.text.category"/>
+					<spring:message code="application.text.use"/>
 				</th>
 				<td>
-					<input type="radio" data-juice="Radio" data-juice-bind="board.categoryUseYn" value="N"/>
-					미사용
-					<input type="radio" data-juice="Radio" data-juice-bind="board.categoryUseYn" value="Y"/>
-					사용
-					<select data-juice="ComboBox" data-juice-bind="board.rowsPerPage" data-juice-options="rowsPerPage" style="width:10rem;"></select>
+					<div style="padding-left:0.5rem;">
+						<input name="categoryUseYn" type="radio" data-juice="Radio" data-juice-bind="board.categoryUseYn" value="Y"/>
+						<spring:message code="application.text.use.yes"/>
+						<input name="categoryUseYn" type="radio" data-juice="Radio" data-juice-bind="board.categoryUseYn" value="N"/>
+						<spring:message code="application.text.use.no"/>
+					</div>
+					<table id="categoriesTable" data-juice="Grid" data-juice-bind="categories" data-juice-item="category">
+						<colgroup>
+							<col style="width:10%;"/>
+							<col style="width:30%;"/>
+							<col/>
+							<col style="width:5%;"/>
+						</colgroup>
+						<thead>
+							<tr>
+								<th>
+									<spring:message code="application.text.no"/>
+								</th>
+								<th>
+									<spring:message code="application.text.id"/>
+								</th>
+								<th>
+									<spring:message code="application.text.name"/>
+								</th>
+								<th>
+									<div style="display:flex;justify-content:center;">
+										<button class="small" onclick="javascript:addCategory();">
+											<i class="icon-plus"></i>
+										</button>
+									</div>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center">
+									<label data-juice="Label" data-juice-bind="category.displaySeq"></label>
+								</td>
+								<td class="text-center">
+									<input data-juice="TextField" data-juice-bind="category.id" class="id"/>
+								</td>
+								<td>
+									<input data-juice="TextField" data-juice-bind="category.name" class="id"/>
+								</td>
+								<td class="text-center">
+									<div style="display:flex;justify-content:center;">
+										<button class="small" data-index="{{$context.index}}" onclick="javascript:moveUpCategory(this.dataset.index);">
+											<i class="icon-up"></i>
+										</button>
+										<button class="small" data-index="{{$context.index}}" onclick="javascript:moveDownCategory(this.dataset.index);">
+											<i class="icon-down"></i>
+										</button>
+										<button class="small" data-index="{{$context.index}}" onclick="javascript:removeCategory(this.dataset.index);">
+											<i class="icon-minus"></i>
+										</button>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<spring:message code="application.text.reply"/>
+					<spring:message code="application.text.use"/>
+				</th>
+				<td>
+					<div style="padding-left:0.5rem;">
+						<input type="radio" data-juice="Radio" data-juice-bind="board.replyUseYn" value="Y"/>
+						<spring:message code="application.text.use.yes"/>
+						<input type="radio" data-juice="Radio" data-juice-bind="board.replyUseYn" value="N"/>
+						<spring:message code="application.text.use.no"/>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<spring:message code="application.text.file"/>
+					<spring:message code="application.text.attach"/>
+					<spring:message code="application.text.use"/>
+				</th>
+				<td>
+					<div style="padding-left:0.5rem;">
+						<input type="radio" data-juice="Radio" data-juice-bind="board.fileUseYn" value="Y"/>
+						<spring:message code="application.text.use.yes"/>
+						<input type="radio" data-juice="Radio" data-juice-bind="board.fileUseYn" value="N"/>
+						<spring:message code="application.text.use.no"/>
+					</div>
 				</td>
 			</tr>
 		</table>

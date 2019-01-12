@@ -81,4 +81,4 @@ function writeArticle() {
 	location.href = '${pageContext.request.contextPath}/board/${boardId}/write';
 }
 </script>
-<jsp:include page="/WEB-INF/view/board/skin/${board.skinId}/index.jsp" flush="true"/>
+<jsp:include page="/WEB-INF/view/board/skin/${board.skinId}/list.jsp" flush="true"/>

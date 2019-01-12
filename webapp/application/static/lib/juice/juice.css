@@ -371,6 +371,7 @@
 .juice-ui-grid thead th {
 	border: solid 1px #ddd;
 	text-align: center;
+	text-overflow: ellipsis;
 }
 .juice-ui-grid tbody {
 	cursor:pointer;
@@ -386,6 +387,7 @@
 .juice-ui-grid tbody td {
 	border: dotted 1px #ddd;
 	text-align: left;
+	text-overflow: ellipsis;
 }
 .juice-ui-grid .juice-ui-grid-index {
 	background-color: #f7f7f7;

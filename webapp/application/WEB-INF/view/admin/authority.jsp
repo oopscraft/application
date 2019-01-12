@@ -194,7 +194,7 @@ function removeAuthority() {
 
 </style>
 <div class="title1">
-	<img src="${pageContext.request.contextPath}/static/img/icon_authority.png"/>&nbsp;
+	<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_authority.png"/>&nbsp;
 	<spring:message code="application.text.authority"/>
 	<spring:message code="application.text.management"/>
 </div>

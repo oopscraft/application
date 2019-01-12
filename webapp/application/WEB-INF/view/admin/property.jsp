@@ -199,7 +199,7 @@ function removeProperty() {
 
 </style>
 <div class="title1">
-	<img src="${pageContext.request.contextPath}/static/img/icon_property.png"/>&nbsp;
+	<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_property.png"/>&nbsp;
 	<spring:message code="application.text.property"/>
 	<spring:message code="application.text.management"/>
 </div>

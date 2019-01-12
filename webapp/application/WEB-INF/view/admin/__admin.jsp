@@ -111,6 +111,11 @@
 				link:'menu'
 			},
 			{
+				name:'<spring:message code="application.label.page"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_page.png',
+				link:'page'
+			},
+			{
 				name:'<spring:message code="application.label.board"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_board.png',
 				link:'board'
@@ -293,6 +298,10 @@
 			min-height: 90vh;
 			border: none;
 		}
+		img.icon {
+			height: 1.5em;
+			width: 1.5em;
+		}
 		.leftNav {
 			display: block;
 			align-self: stretch;
@@ -367,7 +376,7 @@
 		button{
 			position:relative;
 			border: solid 1px #ccc;
-			border-radius: 1px;
+			border-radius: 3px;
 			background-color: #fff;
 			padding:0 1rem;
 			cursor:pointer;
@@ -442,13 +451,13 @@
 			</span>
 			<nav class="topNav" style="padding-right:10px;">
 				<span>
-					<img src="${pageContext.request.contextPath}/static/img/icon_language.png"/>
+					<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_language.png"/>
 					<spring:message code="application.label.language"/>
 					<select data-juice="ComboBox" data-juice-bind="__user.language" data-juice-options="__languages" style="width:10rem;"></select>
 				</span>
 				&nbsp;&nbsp;|&nbsp;&nbsp;
 				<span>
-					<img src="${pageContext.request.contextPath}/static/img/icon_logout.png"/>
+					<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_logout.png"/>
 					<a href="${pageContext.request.contextPath}/admin/logout">
 						<spring:message code="application.label.logout"/>
 					</a>
@@ -466,7 +475,7 @@
 				<ul data-juice="TreeView" data-juice-bind="__menus" data-juice-item="menu">
 					<li>
 						<a href="{{$context.menu.get('link')}}" class="menuItem" style="display:block;">
-							<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="" style="vertical-align:middle;"/>
+							<img class="icon" data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="" alt="" style="vertical-align:middle;"/>
 							<label data-juice="Label" data-juice-bind="menu.name"></label>
 						</a>
 					</li>

@@ -236,7 +236,7 @@ function removeItem(index){
 
 </style>
 <div class="title1">
-		<img src="${pageContext.request.contextPath}/static/img/icon_code.png"/>&nbsp;
+	<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_code.png"/>&nbsp;
 	<spring:message code="application.text.code"/>
 	<spring:message code="application.text.management"/>
 </div>
