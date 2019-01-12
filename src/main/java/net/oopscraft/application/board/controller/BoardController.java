@@ -15,8 +15,6 @@ import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.BoardArticle;
 import net.oopscraft.application.board.BoardArticleService;
 import net.oopscraft.application.board.BoardService;
-import net.oopscraft.application.layout.Layout;
-import net.oopscraft.application.layout.LayoutService;
 
 
 @Controller
@@ -31,9 +29,6 @@ public class BoardController {
 	
 	@Autowired
 	BoardArticleService boardArticleService;
-	
-	@Autowired
-	LayoutService layoutService;
 
 	/**
 	 * list
@@ -44,9 +39,7 @@ public class BoardController {
 	@RequestMapping(value="{boardId}", method = RequestMethod.GET)
 	public ModelAndView list(@PathVariable("boardId")String boardId) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
 		ModelAndView modelAndView = new ModelAndView("board/__list.tiles");
-		modelAndView.addObject("layout", layout);
 		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
@@ -67,9 +60,7 @@ public class BoardController {
 		Board board = boardService.getBoard(boardId);
 		BoardArticle article = boardArticleService.getArticle(articleNo);
 		article.increaseReadCount();
-		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
 		ModelAndView modelAndView = new ModelAndView("board/__read.tiles");
-		modelAndView.addObject("layout", layout);
 		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
@@ -87,9 +78,7 @@ public class BoardController {
 		@RequestParam(value="articleNo", required=false)Integer articleNo
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		Layout layout = layoutService.getAvailableLayout(board.getLayoutId());
 		ModelAndView modelAndView = new ModelAndView("board/__write.tiles");
-		modelAndView.addObject("layout", layout);
 		modelAndView.addObject("board", board);
 		return modelAndView;
 	}

@@ -7,7 +7,7 @@
 	
 	<!-- Administrator Layout -->
     <definition name="admin/*.tiles" template="/WEB-INF/view/admin/__admin.jsp">
-        <put-attribute name="main" value="/WEB-INF/view/__admin/{1}.jsp" />
+        <put-attribute name="main" value="/WEB-INF/view/admin/{1}.jsp" />
     </definition>
     
 	<!-- Application Layout -->
