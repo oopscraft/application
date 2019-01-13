@@ -37,8 +37,9 @@
 // juice.ui.Confirm
 // juice.ui.Prompt
 // -------------------------
-// juice.util.validator
-// juice.util.formatter
+// juice.util.StringUtils
+// juice.util.FormatUtils
+// juice.util.RandomUtils
 // juice.util.WebSocketClient
 // =============================================================================
 "use strict";
@@ -51,17 +52,6 @@ var juice = {};
 //initialize juice component.
 //-----------------------------------------------------------------------------
 juice.initialize = function(container, $context) {
-	
-	// generateUUID
-	function generateUUID() {
-		var dt = new Date().getTime();
-		var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-			var r = (dt + Math.random()*16)%16 | 0;
-			dt = Math.floor(dt/16);
-			return (c=='x' ? r :(r&0x3|0x8)).toString(16);
-		});
-		return uuid;
-	};
 	
 	// getObject
 	function getObject($context, name) {
@@ -88,7 +78,7 @@ juice.initialize = function(container, $context) {
 			listView.bind(list);
 			listView.setItem(element.dataset.juiceItem);
 			listView.update();
-			var id = generateUUID();
+			var id = juice.util.RandomUtils.generateUUID();
 			element.dataset.juice += id;
 		}catch(e){
 			console.error(e,listViewElements[i]);
@@ -108,7 +98,7 @@ juice.initialize = function(container, $context) {
 			treeView.setItem(element.dataset.juiceItem);
 			element.dataset.juiceEditable && treeView.setEditable(eval(element.dataset.juiceEditable));
 			treeView.update();
-			var id = generateUUID();
+			var id = juice.util.RandomUtils.generateUUID();
 			element.dataset.juice += id;
 		}catch(e){
 			console.error(e,treeViewElements[i]);
@@ -129,7 +119,7 @@ juice.initialize = function(container, $context) {
 			element.dataset.juiceEditable && grid.setEditable(eval(element.dataset.juiceEditable));
 			element.dataset.juiceFilter && grid.setFilter(eval(element.dataset.juiceFilter));
 			grid.update();
-			var id = generateUUID();
+			var id = juice.util.RandomUtils.generateUUID();
 			element.dataset.juice += id;
 		}catch(e){
 			console.error(e,gridElements[i]);
@@ -154,7 +144,7 @@ juice.initialize = function(container, $context) {
 			workflow.setLinkTo(element.dataset.juiceLinkTo);
 			element.dataset.juiceLinkText && workflow.setLinkText(element.dataset.juiceLinkText);
 			workflow.update();
-			var id = generateUUID();
+			var id = juice.util.RandomUtils.generateUUID();
 			element.dataset.juice = +id;
 		}catch(e){
 			console.error(e,workflowElements[i]);
@@ -174,7 +164,7 @@ juice.initialize = function(container, $context) {
 			pagination.setTotalCount(element.dataset.juiceTotalCount);
 			pagination.setPageSize(element.dataset.juicePageSize);
 			pagination.update();
-			var id = generateUUID();
+			var id = juice.util.RandomUtils.generateUUID();
 			element.dataset.juice += id;
 		}catch(e){
 			console.error(e,paginationElements[i]);
@@ -203,7 +193,7 @@ juice.initialize = function(container, $context) {
 			var bind = element.dataset.juiceBind.split('.');
 			var name = bind.pop();
 			var map = getObject($context,bind.join('.'));
-			var id = generateUUID();
+			var id = juice.util.RandomUtils.generateUUID();
 			switch(type) {
 				case 'Label':
 					var label = new juice.ui.Label(element);
@@ -258,8 +248,10 @@ juice.initialize = function(container, $context) {
 					var thumbnail = new juice.ui.Thumbnail(element);
 					var width = element.dataset.juiceWidth;
 					var height = element.dataset.juiceHeight;
+					var editable = element.dataset.juiceEditable;
 					thumbnail.setWidth(width);
 					thumbnail.setHeight(height);
+					thumbnail.setEditable(editable);
 					thumbnail.bind(map, name);
 					thumbnail.update();
 				break;
@@ -1045,9 +1037,9 @@ juice.ui.Label.prototype.update = function() {
 	if(this.format){
 		var parsedFormat = this.parseFormat(this.format);
 		if(parsedFormat.type == 'date'){
-			value = juice.util.formatter.toDateFormat(value, parsedFormat.body);
+			value = juice.util.FormatUtils.toDateFormat(value, parsedFormat.body);
 		}else if(parsedFormat.type == 'number'){
-			value = juice.util.formatter.toNumberFormat(value, parsedFormat.body);
+			value = juice.util.FormatUtils.toNumberFormat(value, parsedFormat.body);
 		}
 	}
 	this.label.appendChild(this.createHtml(value));
@@ -1139,12 +1131,14 @@ juice.ui.ComboBox.prototype.update = function() {
 	// creates options
 	for(var i = 0; i < this.options.length; i++){
 		var option = document.createElement('option');
-		option.value = this.options[i]['value'] || '';
-		option.appendChild(document.createTextNode(this.options[i]['text']));
+		var value = this.options[i]['value'] || this.options[i] || '';
+		var text = this.options[i]['text'] || this.options[i] || '';
+		option.value = value;
+		option.appendChild(document.createTextNode(text));
 		if(this.options[i]['disabled']){
 			option.disabled = this.options[i]['disabled'];
 		}
-		if(this.options[i].style){
+		if(this.options[i]['style']){
 			for(var property in this.options[i].style){
 				option.style[property] = this.options[i].style[property];
 			}
@@ -1792,6 +1786,7 @@ juice.ui.Thumbnail = function(img) {
 	this.width = 100;
 	this.height = 100;
 	this.blank = img.src;
+	this.editable = false;
 }
 juice.ui.Thumbnail.prototype = Object.create(juice.ui.Thumbnail.prototype);
 juice.ui.Thumbnail.prototype.bind = function(map, name) {
@@ -1800,17 +1795,18 @@ juice.ui.Thumbnail.prototype.bind = function(map, name) {
 	this.name = name;
 	this.map.addObserver(this);
 	
-	// Adds click event
-	var $this = this;
-	this.img.addEventListener('click', function(){
-		$this.input.click();
-	});
-	
 	this.img.addEventListener('error', function() {
 		console.log('error');
 	});
 	
-	// on file change
+	// Adds click event
+	var $this = this;
+	this.img.addEventListener('click', function(){
+		if($this.editable){
+			$this.input.click();
+		}
+	});
+	
 	this.input.addEventListener('change', function(e){
 		var fileReader = new FileReader();
 		if (this.files && this.files[0]) {
@@ -1841,6 +1837,14 @@ juice.ui.Thumbnail.prototype.update = function() {
 		this.img.src = src; 
 	}else{
 		this.img.src = this.blank;
+	}
+	this.img.width = this.width;
+	this.img.height = this.height;
+}
+juice.ui.Thumbnail.prototype.setEditable = function(editable){
+	this.editable = editable;
+	if(editable) {
+		this.img.style.cursor = 'pointer';
 	}
 }
 juice.ui.Thumbnail.prototype.setWidth = function(width){
@@ -1982,6 +1986,10 @@ juice.ui.TreeView.prototype.createNode = function(index, node){
 	
 	// on click event
 	li.addEventListener('click', function(event){
+		var prevIndexLi = $this.ul.querySelector('li.juice-ui-treeView-index');
+		if(prevIndexLi){
+			prevIndexLi.classList.remove('juice-ui-treeView-index');
+		}
 		li.classList.add('juice-ui-treeView-index');
 		$this.tree.index = eval(this.dataset.juiceIndex);
 	});
@@ -3145,9 +3153,9 @@ juice.ui.Prompt.prototype.afterCancel = function(listener){
 juice.util = {};
 
 //-----------------------------------------------------------------------------
-// juice.util.validator
+// juice.util.stringUtils
 //-----------------------------------------------------------------------------
-juice.util.validator = {
+juice.util.StringUtils = {
 	isEmpty: function(value) {
 		if(value === null || value === undefined || value.trim().length < 1){
 			return true;
@@ -3218,9 +3226,9 @@ juice.util.validator = {
 }
 
 //-----------------------------------------------------------------------------
-//juice.util.formatter
+//juice.util.formatUtils
 //-----------------------------------------------------------------------------
-juice.util.formatter = {
+juice.util.FormatUtils = {
 	toDateFormat: function(date, format){
 		String.prototype.string = function(len){var s = '', i = 0; while (i++ < len) { s += this; } return s;};
 		String.prototype.zf = function(len){return "0".string(len - this.length) + this;};
@@ -3259,6 +3267,21 @@ juice.util.formatter = {
 	    	n = n.replace(reg, '$1' + ',' + '$2');
 	    }
 	    return n;
+	}
+}
+
+//-----------------------------------------------------------------------------
+//juice.util.formatUtils
+//-----------------------------------------------------------------------------
+juice.util.RandomUtils = {
+	generateUUID: function() {
+		var dt = new Date().getTime();
+		var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+			var r = (dt + Math.random()*16)%16 | 0;
+			dt = Math.floor(dt/16);
+			return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+		});
+		return uuid;
 	}
 }
 

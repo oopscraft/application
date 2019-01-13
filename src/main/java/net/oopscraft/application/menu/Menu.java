@@ -52,14 +52,14 @@ public class Menu extends SystemEntity {
 
 	@Column(name = "DISP_PLCY")
 	@Enumerated(EnumType.STRING)
-	DisplayPolicy accessPolicy = DisplayPolicy.ANONYMOUS;
-
-	@Transient
-	List<Menu> childMenus;
+	DisplayPolicy displayPolicy = DisplayPolicy.ANONYMOUS;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APP_MENU_AUTH_MAP", joinColumns = @JoinColumn(name = "MENU_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	List<Authority> authorities;
+	List<Authority> displayAuthorities;
+	
+	@Transient
+	List<Menu> childMenus;
 
 	public String getId() {
 		return id;
@@ -77,20 +77,20 @@ public class Menu extends SystemEntity {
 		this.upperId = upperId;
 	}
 
-	public String getIcon() {
-		return icon;
-	}
-
-	public void setIcon(String icon) {
-		this.icon = icon;
-	}
-
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 	public String getLink() {
@@ -117,6 +117,22 @@ public class Menu extends SystemEntity {
 		this.displaySeq = displaySeq;
 	}
 
+	public DisplayPolicy getDisplayPolicy() {
+		return displayPolicy;
+	}
+
+	public void setDisplayPolicy(DisplayPolicy displayPolicy) {
+		this.displayPolicy = displayPolicy;
+	}
+
+	public List<Authority> getDisplayAuthorities() {
+		return displayAuthorities;
+	}
+
+	public void setDisplayAuthorities(List<Authority> displayAuthorities) {
+		this.displayAuthorities = displayAuthorities;
+	}
+
 	public List<Menu> getChildMenus() {
 		return childMenus;
 	}
@@ -124,22 +140,5 @@ public class Menu extends SystemEntity {
 	public void setChildMenus(List<Menu> childMenus) {
 		this.childMenus = childMenus;
 	}
-
-	public List<Authority> getAuthorities() {
-		return authorities;
-	}
-
-	public void setAuthorities(List<Authority> authorities) {
-		this.authorities = authorities;
-	}
-
-	public DisplayPolicy getDisplayPolicy() {
-		return accessPolicy;
-	}
-
-	public void setDisplayPolicy(DisplayPolicy accessPolicy) {
-		this.accessPolicy = accessPolicy;
-	}
-	
 
 }

@@ -303,9 +303,10 @@
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
+/**
+ * juice.ui.ListView
+ */
 .juice-ui-thumbnail {
-	cursor: hand;
-	cursor: pointer;
 }
 
 /**
@@ -348,7 +349,8 @@
 .juice-ui-treeView ul li.juice-ui-treeView-unfold > ul {
 	display: block;
 }
-.juice-ui-treeView li.juice-ui-treeView-index {
+.juice-ui-treeView li.juice-ui-treeView-index > *:not(ul) {
+	background-color: #eee;
 }
 .juice-ui-treeView li.juice-ui-treeView-dragstart {
 	opacity: 0.2;

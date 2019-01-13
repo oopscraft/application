@@ -9,8 +9,8 @@ public class PageService {
 		Page page = new Page();
 		page.setId(id);
 		page.setName("page name");
-		page.setType(Page.Type.IFRAME);
-		page.setValue("http://www.google.co.kr");
+		page.setType(Page.Type.HTML);
+		page.setValue("test.html");
 		return page;
 	}
 

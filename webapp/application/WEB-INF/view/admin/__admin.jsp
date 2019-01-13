@@ -151,6 +151,13 @@
 				}
 			});
 		});
+		
+		/**
+		 * Generates random ID
+		 */ 
+		function __generateRandomId() {
+			return juice.util.RandomUtils.generateUUID().replace(/-/g,'');	
+		}
         
         /**
          * Parsed total count from Content-Range header
@@ -167,6 +174,13 @@
         }
          
         /**
+         * Checks value is empty
+         */
+		function __isEmpty(value){
+			return juice.util.StringUtils.isEmpty(value);
+		}
+         
+        /**
          * Validates ID value
          * @Param {String} id value
          */
@@ -174,22 +188,22 @@
         	// Checks ID	 
          	checkId: function(id) {
          		// Checks empty
-         		if(juice.util.validator.isEmpty(id)){
+         		if(juice.util.StringUtils.isEmpty(id)){
              		<spring:message code="application.text.id" var="item"/>
        				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
 				// Validates generic
-				if(juice.util.validator.isGenericId(id) == false){
+				if(juice.util.StringUtils.isGenericId(id) == false){
 					throw '<spring:message code="application.message.invalidIdFormat"/>';
 				}
 				// length
-				if(juice.util.validator.isLengthBetween(id,4,32) == false){
+				if(juice.util.StringUtils.isLengthBetween(id,4,32) == false){
 					<spring:message code="application.text.id" var="item"/>
 					throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
 				}
          	},
          	checkPassword: function(password, passwordConfirm){
-         		if(juice.util.validator.isEmpty(password)){
+         		if(juice.util.StringUtils.isEmpty(password)){
              		<spring:message code="application.text.password" var="item"/>
        				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
@@ -197,39 +211,39 @@
         			<spring:message code="application.text.password" var="item"/>
         			throw '<spring:message code="application.message.itemNotMatch" arguments="${item}"/>';
         		}
-        		if(juice.util.validator.isGenericPassword(password) == false){
+        		if(juice.util.StringUtils.isGenericPassword(password) == false){
         			throw '<spring:message code="application.message.invalidPassowrdFormat"/>';
         		}
          	},
          	// Checks name
          	checkName: function(name){
          		// Checks empty
-         		if(juice.util.validator.isEmpty(name)){
+         		if(juice.util.StringUtils.isEmpty(name)){
              		<spring:message code="application.text.name" var="item"/>
        				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
          		// check length
-         		if(juice.util.validator.isLengthBetween(name,1,256) == false){
+         		if(juice.util.StringUtils.isLengthBetween(name,1,256) == false){
 					<spring:message code="application.text.name" var="item"/>
 					throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
          		}
          	},
          	// Checks email address
          	checkEmailAddress: function(value){
-         		if(juice.util.validator.isEmailAddress(value) == false){
+         		if(juice.util.StringUtils.isEmailAddress(value) == false){
          			throw '<spring:message code="application.message.invalidEmailAddressFormat"/>';
          		}
          	},
          	// Checks locale 
          	checkLocale: function(value){
-         		if(juice.util.validator.isEmpty(value)){
+         		if(juice.util.StringUtils.isEmpty(value)){
 					<spring:message code="application.text.locale" var="item"/>
 					throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
          	},
          	// Checks phone number
          	checkPhoneNumber: function(value){
-         		if(juice.util.validator.isPhoneNumber(value) == false){
+         		if(juice.util.StringUtils.isPhoneNumber(value) == false){
          			throw '<spring:message code="application.message.invalidPhoneNumberFormat"/>';
          		}
          	}

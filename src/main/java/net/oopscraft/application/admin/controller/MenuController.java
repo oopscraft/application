@@ -47,6 +47,7 @@ public class MenuController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView menu() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/menu.tiles");
+		modelAndView.addObject("displayPolicies", Menu.DisplayPolicy.values());
 		return modelAndView;
 	}
 	
@@ -120,30 +121,10 @@ public class MenuController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "removeMenu", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
+	@RequestMapping(value = "deleteMenu", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@Transactional(rollbackFor = Exception.class)
-	public String removeMenu(@RequestParam(value = "id") String id) throws Exception {
-		Menu role = menuService.removeMenu(id);
-		return JsonUtils.toJson(role);
+	public void deleteMenu(@RequestParam(value = "id") String id) throws Exception {
+		menuService.deleteMenu(id);
 	}
-	
-	/**
-	 * getDisplayPolicies
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "getDisplayPolicies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public String getDisplayPolicies() throws Exception {
-		List<ValueMap> displayPolicies = new ArrayList<ValueMap>();
-		for(Menu.DisplayPolicy displayPolicy : Menu.DisplayPolicy.values()) {
-			ValueMap displayPolicyMap = new ValueMap();
-			displayPolicyMap.set("name", displayPolicy.name());
-			displayPolicies.add(displayPolicyMap);
-		}
-		return JsonUtils.toJson(displayPolicies);
-	}
-
 
 }

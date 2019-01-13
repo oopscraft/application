@@ -74,7 +74,7 @@
 		 */
 		function doLogin() {
 
-			if(juice.util.validator.isEmpty(user.get('id'))){
+			if(juice.util.StringUtils.isEmpty(user.get('id'))){
 				<spring:message code="application.text.id" var="item"/>
 				var message = '<i class="icon-attention"></i><spring:message code="application.message.enterItem" arguments="${item}"/>';
 				printMessage(message);
@@ -82,7 +82,7 @@
 				return false;
 			}
 			
-			if(juice.util.validator.isEmpty(user.get('password'))){
+			if(juice.util.StringUtils.isEmpty(user.get('password'))){
 				<spring:message code="application.text.password" var="item"/>
 				var message = '<i class="icon-attention"></i><spring:message code="application.message.enterItem" arguments="${item}"/>';
 				printMessage(message);

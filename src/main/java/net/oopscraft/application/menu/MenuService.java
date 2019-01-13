@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.core.RandomUtils;
+import net.oopscraft.application.core.StringUtils;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.menu.repository.MenuRepository;
 
@@ -95,31 +97,36 @@ public class MenuService {
 	 * @throws Exception
 	 */
 	public Menu saveMenu(Menu menu) throws Exception {
-		Menu one = menuRepository.findOne(menu.getId());
-		if (one == null) {
+		
+		Menu one = null;
+		if(StringUtils.isEmpty(menu.getId()) == true) {
+			one = new Menu();
+			one.setId(RandomUtils.generateID());
+		}else if(menuRepository.exists(menu.getId()) == false) {
 			one = new Menu();
 			one.setId(menu.getId());
-		}
-
-		// Checks id and upperId is same.
-		if (one.getId().equals(one.getUpperId()) == true) {
-			throw new Exception("Menu.id and Menu.upperId is same.(infinit loop)");
+		}else {
+			one = menuRepository.findOne(menu.getId());
 		}
 
 		// sets properties
-		one.setUpperId(menu.upperId);
+		one.setUpperId(menu.getUpperId());
 		one.setName(menu.getName());
 		one.setIcon(menu.getIcon());
 		one.setLink(menu.getLink());
 		one.setDescription(menu.getDescription());
 		one.setDisplaySeq(menu.getDisplaySeq());
 		one.setDisplayPolicy(menu.getDisplayPolicy());
+		
+		// Checks id and upperId is same.
+		if (one.getId().equals(one.getUpperId()) == true) {
+			throw new Exception("Menu.id and Menu.upperId is same.(infinit loop)");
+		}
 
 		// adds authorities
-		one.setAuthorities(menu.getAuthorities());
+		one.setDisplayAuthorities(menu.getDisplayAuthorities());
 
-		menuRepository.save(one);
-		return menuRepository.findOne(menu.getId());
+		return menuRepository.save(one);
 	}
 
 	/**
@@ -128,7 +135,7 @@ public class MenuService {
 	 * @param id
 	 * @throws Exception
 	 */
-	public Menu removeMenu(String id) throws Exception {
+	public void deleteMenu(String id) throws Exception {
 		Menu menu = menuRepository.getOne(id);
 
 		// checks child menus
@@ -139,7 +146,6 @@ public class MenuService {
 
 		// deletes menu
 		menuRepository.delete(menu);
-		return menu;
 	}
 
 }
