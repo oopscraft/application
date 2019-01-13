@@ -153,6 +153,8 @@ function getBoard(id) {
 			
 			// hide or show authorities table.
 			onPolicyChanged('access');
+			onPolicyChanged('read');
+			onPolicyChanged('write');
 			
 			// hide or show categories table
 			onCategoryUseYnChanged(board.get('categoryUseYn'));

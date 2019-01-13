@@ -3,39 +3,44 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="app" uri="/WEB-INF/tld/application.tld"%>
 <%@page import="java.util.*" %>
 <%@page import="java.text.*" %>
-<!-- global -->
 <script type="text/javascript">
 var menus = new juice.data.Tree();
 var menu = new juice.data.Map();
 menu.setReadonly('id',true);
 menu.setEnable(false);
-var authorities = new juice.data.List();
+var isNewMenu = false;
+var displayAuthorities = new juice.data.List();
 
 // displayPolicies
-var displayPolicies = new Array();
-$.ajax({
-	 url: 'menu/getDisplayPolicies'
-	,type: 'GET'
-	,data: {}
-	,success: function(data, textStatus, jqXHR) {
-		data.forEach(function(item){
-			displayPolicies.push({
-				value: item.name,
-				text: item.name
-			});
-		});
-	}
-});
+var displayPolicies = ${app:toJson(displayPolicies)};
 
 /**
  * On document loaded
  */
 $( document ).ready(function() {
 	getMenus();
+	
+	$('#displayPolicySelect').change(function(event){
+		onPolicyChanged('display');
+	});
 });
+
+/**
+ * on policy changed.
+ */
+function onPolicyChanged(type) {
+	var policy = menu.get(type + 'Policy');
+	var authoritiesTable = $('#' + type + 'AuthoritiesTable');
+	if(policy == 'AUTHORIZED') {
+		authoritiesTable.show();
+	}else{
+		authoritiesTable.hide();
+	}
+}
 
 /**
  * Gets menus
@@ -72,7 +77,9 @@ function getMenu(id) {
 		,success: function(data, textStatus, jqXHR) {
 			menu.setEnable(true);
 			menu.fromJson(data);
-			authorities.fromJson(data.authorities);
+			displayAuthorities.fromJson(data.displayAuthorities);
+			menu.setReadonly('id',true);
+			isNewMenu = false;
 			
 			// breadcrumbs
 			getBreadCrumbs(menu.get('upperId'),function(breadCrumbs){
@@ -85,6 +92,9 @@ function getMenu(id) {
 			
 			// animates menu.
 			$('#menuTable').hide().fadeIn();
+			
+			// hide or show authorities table.
+			onPolicyChanged('display');
   	 	}
 	});	
 }
@@ -94,7 +104,7 @@ function getMenu(id) {
  */
 function clearMenu(){
 	menu.fromJson({});
-	authorities.fromJson([]);
+	displayAuthorities.fromJson([]);
 }
 
 /**
@@ -156,14 +166,14 @@ function addAuthority(){
 	__authoritiesDialog
 	.setDisable(function(row){
 		var $row = row;
-		var contains = authorities.contains(function(row){
+		var contains = displayAuthorities.contains(function(row){
 			return row.get('id') == $row.get('id');
 		})
 		if(contains){
 			return true;
 		}
 	}).afterConfirm(function(rows){
-		authorities.addRows(rows);
+		displayAuthorities.addRows(rows);
 	}).open();
 }
 
@@ -171,7 +181,7 @@ function addAuthority(){
  * Removes authoritiy.
  */
 function removeAuthority(index){
-	authorities.removeRow(index);
+	displayAuthorities.removeRow(index);
 }
 
 /**
@@ -179,57 +189,24 @@ function removeAuthority(index){
  */
 function addMenu(upperId) {
 	
-	<spring:message code="application.text.id" var="item"/>
-	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
-		.beforeConfirm(function(event){
-			var id = event.value;
-			
-			// Validates id value
-			try {
-				__validator.checkId(id);
-			}catch(e){
-				new juice.ui.Alert(e).open();
-				return false;
-			}
-			
-			// checks duplicated id.
-			var isDuplicated = false;
-			$.ajax({
-				 url: 'menu/getMenu'
-				,type: 'GET'
-				,data: {id: id}
-				,async: false
-				,success: function(data, textStatus, jqXHR) {
-					if(data != null && data.id == id){
-						<spring:message code="application.text.id" var="item"/>
-						new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
-						isDuplicated = true;
-					}
-		 	 	}
-			});
-			if(isDuplicated == true){
-				return false;
-			}
-		})
-		.afterConfirm(function(event){
-			var id = event.value;
+	clearMenu();
+	isNewMenu = true;
 	
-			// add new data.
-			clearMenu();
-			menu.set('id', id);
-			menu.set('upperId', upperId);
-			menu.setEnable(true);
-	
-			// breadcrumbs
-			getBreadCrumbs(upperId,function(breadCrumbs){
-				var breadCrumbsNames = [];
-				breadCrumbs.forEach(function(item){
-					breadCrumbsNames.push(item.name);
-				});
-				menu.set('breadCrumbs', breadCrumbsNames.join('<i class="icon-right"></i>'));
-			});
-		})
-		.open();
+	// add new data.
+	menu.set('id', __generateRandomId());
+	menu.set('upperId', upperId);
+	menu.set('displayPolicy','ANONYMOUS');
+	menu.setEnable(true);
+	menu.setReadonly('id',false);
+
+	// breadcrumbs
+	getBreadCrumbs(upperId,function(breadCrumbs){
+		var breadCrumbsNames = [];
+		breadCrumbs.forEach(function(item){
+			breadCrumbsNames.push(item.name);
+		});
+		menu.set('breadCrumbs', breadCrumbsNames.join('<i class="icon-right"></i>'));
+	});
 }
 
 /**
@@ -237,8 +214,30 @@ function addMenu(upperId) {
  */
 function saveMenu(){
 	
+	// checks duplicated id. 
+	if(isNewMenu == true){
+		var id = menu.get('id');
+		var isDuplicated = false;
+		$.ajax({
+			 url: 'menu/getMenu'
+			,type: 'GET'
+			,data: {id: id}
+			,async: false
+			,success: function(data, textStatus, jqXHR) {
+				if(data != null && data.id == id){
+					isDuplicated = true;
+				}
+	 	 	}
+		});
+		if(isDuplicated == true){
+			<spring:message code="application.text.id" var="item"/>
+			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			return false;
+		}
+	}
+	
 	// Checks validation of authority
-	if(juice.util.validator.isEmpty(menu.get('name'))){
+	if(__isEmpty(menu.get('name'))){
 		<spring:message code="application.text.name" var="item"/>
 		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
@@ -250,20 +249,15 @@ function saveMenu(){
 	new juice.ui.Confirm(message)
 		.afterConfirm(function() {
 			var menuJson = menu.toJson();
-			menuJson.authorities = authorities.toJson();
+			menuJson.displayAuthorities = displayAuthorities.toJson();
 			$.ajax({
 				 url: 'menu/saveMenu'
 				,type: 'POST'
 				,data: JSON.stringify(menuJson)
 				,contentType: "application/json"
 				,success: function(data, textStatus, jqXHR) {
-					<spring:message code="application.text.menu" var="item"/>
-					var message = '<spring:message code="application.message.saveItem.complete" arguments="${item}"/>';
-					new juice.ui.Alert(message)
-					.afterConfirm(function(){
-						getMenu(menu.get('id'));
-						getMenus();
-					}).open();
+					getMenu(data.id);
+					getMenus();
 			 	}
 			});	
 		})
@@ -273,7 +267,7 @@ function saveMenu(){
 /**
  * Removes menu
  */
-function removeMenu() {
+function deleteMenu() {
 	
 	// Checks embedded data
 	if(menu.get('systemDataYn') == 'Y'){
@@ -298,7 +292,7 @@ function removeMenu() {
 	new juice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
-			 url: 'menu/removeMenu'
+			 url: 'menu/deleteMenu'
 			,type: 'GET'
 			,data: { id: menu.get('id') }
 			,success: function(data, textStatus, jqXHR) {
@@ -364,7 +358,7 @@ div.menuItem:hover {
 						</span>
 					</div>
 					<div style="display:inline-block;text-align:right;">
-						<button class="small" data-id="{{$context.menu.get('id')}}" onclick="javascript:addMenu(this.dataset.id);">
+						<button class="small" data-id="{{$context.menu.get('id')}}" onclick="javascript:addMenu(this.dataset.id); event.stopPropagation();">
 							<i class="icon-plus"></i>
 						</button>
 					</div>
@@ -389,24 +383,21 @@ div.menuItem:hover {
 					<i class="icon-disk"></i>
 					<spring:message code="application.text.save"/>
 				</button>
-				<button onclick="javascript:removeMenu();">
+				<button onclick="javascript:deleteMenu();">
 					<i class="icon-trash"></i>
 					<spring:message code="application.text.remove"/>
 				</button>
 			</div>
 		</div>
 		<table id="menuTable" class="detail">
-			<colmenu>
-				<col style="width:30%;"/>
-				<col style="width:70%;"/>
-			</colmenu>
 			<tr>
 				<th>
-					<i class="icon-attention"></i>
-					<spring:message code="application.text.id"/>
+					<span class="must">
+						<spring:message code="application.text.id"/>
+					</span>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="menu.id"/>
+					<input class="id" data-juice="TextField" data-juice-bind="menu.id" style="width:20em;"/>
 				</td>
 			</tr>
 			<tr>
@@ -445,7 +436,9 @@ div.menuItem:hover {
 					<spring:message code="application.text.icon"/>
 				</th>
 				<td>
-					<img data-juice="Thumbnail" style="width:32px; height:32px;"  data-juice-bind="menu.icon" data-juice-width="32" data-juice-height="32" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII="/>
+					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="32" data-juice-height="32" data-juice-editable="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII="/>
+					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII="/>
+					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="16" data-juice-height="16" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII="/>
 				</td>
 			</tr>
 			<tr>
@@ -482,17 +475,8 @@ div.menuItem:hover {
 					</span>
 				</th>
 				<td>
-					<select data-juice="ComboBox" data-juice-bind="menu.displayPolicy" data-juice-options="displayPolicies" style="width:15rem;"></select>
-				</td>
-			</tr>
-			<tr>
-				<th>
-					<i class="icon-key"></i>
-					<spring:message code="application.text.required"/>
-					<spring:message code="application.text.authorities"/>
-				</th>
-				<td>
-					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
+					<select id="displayPolicySelect" data-juice="ComboBox" data-juice-bind="menu.displayPolicy" data-juice-options="displayPolicies" style="width:15rem;"></select>
+					<table id="displayAuthoritiesTable" data-juice="Grid" data-juice-bind="displayAuthorities" data-juice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col style="width:50%;"/>

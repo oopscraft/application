@@ -1330,8 +1330,8 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                   <constraint>
                     <height>-1</height>
                     <width>-1</width>
-                    <x>970</x>
-                    <y>860</y>
+                    <x>990</x>
+                    <y>950</y>
                   </constraint>
                   <sourceConnections/>
                   <targetConnections>
@@ -1470,7 +1470,12 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>MENU_LINK</columnName>
                       <logicalName>Menu Link</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[7]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType">
+                        <name>MEDIUMTEXT</name>
+                        <logicalName>String</logicalName>
+                        <supportSize>false</supportSize>
+                        <type>12</type>
+                      </columnType>
                       <size>256</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1490,22 +1495,6 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                       <defaultValue></defaultValue>
                     </net.java.amateras.db.visual.model.ColumnModel>
                     <net.java.amateras.db.visual.model.ColumnModel>
-                      <columnName>DISP_SEQ</columnName>
-                      <logicalName>DisplaySeq</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>INT</name>
-                        <logicalName>Integer</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>4</type>
-                      </columnType>
-                      <size>10</size>
-                      <notNull>false</notNull>
-                      <primaryKey>false</primaryKey>
-                      <description></description>
-                      <autoIncrement>false</autoIncrement>
-                      <defaultValue></defaultValue>
-                    </net.java.amateras.db.visual.model.ColumnModel>
-                    <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>DISP_PLCY</columnName>
                       <logicalName>Display Policy</logicalName>
                       <columnType class="net.java.amateras.db.dialect.ColumnType">
@@ -1515,6 +1504,22 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                         <type>12</type>
                       </columnType>
                       <size>128</size>
+                      <notNull>false</notNull>
+                      <primaryKey>false</primaryKey>
+                      <description></description>
+                      <autoIncrement>false</autoIncrement>
+                      <defaultValue></defaultValue>
+                    </net.java.amateras.db.visual.model.ColumnModel>
+                    <net.java.amateras.db.visual.model.ColumnModel>
+                      <columnName>DISP_SEQ</columnName>
+                      <logicalName>DisplaySeq</logicalName>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType">
+                        <name>INT</name>
+                        <logicalName>Integer</logicalName>
+                        <supportSize>true</supportSize>
+                        <type>4</type>
+                      </columnType>
+                      <size>10</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
                       <description></description>
@@ -1600,8 +1605,8 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
             <constraint>
               <height>-1</height>
               <width>-1</width>
-              <x>590</x>
-              <y>1250</y>
+              <x>560</x>
+              <y>1200</y>
             </constraint>
             <sourceConnections>
               <net.java.amateras.db.visual.model.ForeignKeyModel>
@@ -3334,15 +3339,15 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
       <constraint>
         <height>-1</height>
         <width>-1</width>
-        <x>1510</x>
-        <y>990</y>
+        <x>1000</x>
+        <y>1280</y>
       </constraint>
       <sourceConnections/>
       <targetConnections/>
       <error></error>
       <linkedPath></linkedPath>
       <tableName>APP_PAGE_INFO</tableName>
-      <logicalName>Application Page Info</logicalName>
+      <logicalName>Applicaton Page Info</logicalName>
       <description></description>
       <columns>
         <net.java.amateras.db.visual.model.ColumnModel>
@@ -3362,8 +3367,8 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
           <defaultValue></defaultValue>
         </net.java.amateras.db.visual.model.ColumnModel>
         <net.java.amateras.db.visual.model.ColumnModel>
-          <columnName>PAGE_TITL</columnName>
-          <logicalName>Page Title</logicalName>
+          <columnName>PAGE_NAME</columnName>
+          <logicalName>Page Name</logicalName>
           <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>256</size>
           <notNull>false</notNull>
@@ -3373,15 +3378,10 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
           <defaultValue></defaultValue>
         </net.java.amateras.db.visual.model.ColumnModel>
         <net.java.amateras.db.visual.model.ColumnModel>
-          <columnName>PAGE_CNTS</columnName>
-          <logicalName>Page Contents</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>MEDIUMTEXT</name>
-            <logicalName>String</logicalName>
-            <supportSize>false</supportSize>
-            <type>12</type>
-          </columnType>
-          <size>10</size>
+          <columnName>PAGE_TYPE</columnName>
+          <logicalName>Page Type</logicalName>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+          <size>16</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
           <description></description>
@@ -3389,10 +3389,15 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
           <defaultValue></defaultValue>
         </net.java.amateras.db.visual.model.ColumnModel>
         <net.java.amateras.db.visual.model.ColumnModel>
-          <columnName>ACES_PLCY</columnName>
-          <logicalName>Column4</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
-          <size>128</size>
+          <columnName>PAGE_VAL</columnName>
+          <logicalName>Page Value</logicalName>
+          <columnType class="net.java.amateras.db.dialect.ColumnType">
+            <name>MEDIUMTEXT</name>
+            <logicalName>String</logicalName>
+            <supportSize>false</supportSize>
+            <type>12</type>
+          </columnType>
+          <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
           <description></description>

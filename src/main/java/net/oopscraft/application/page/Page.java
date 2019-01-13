@@ -16,13 +16,16 @@ public class Page {
 	@Column(name = "PAGE_NAME")
 	String name;
 	
-	public enum Type { STATIC, IFRAME, ARTICLE }
+	public enum Type { HTML, JSP, URL }
 	
 	@Column(name = "PAGE_TYPE")
 	Type type;
 	
 	@Column(name = "PAGE_VAL")
 	String value;
+	
+	@Column(name = "LAYT_ID")
+	String layoutId;
 
 	public String getId() {
 		return id;
@@ -54,6 +57,14 @@ public class Page {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public String getLayoutId() {
+		return layoutId;
+	}
+
+	public void setLayoutId(String layoutId) {
+		this.layoutId = layoutId;
 	}
 	
 }

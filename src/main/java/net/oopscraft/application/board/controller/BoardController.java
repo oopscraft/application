@@ -39,13 +39,13 @@ public class BoardController {
 	@RequestMapping(value="{boardId}", method = RequestMethod.GET)
 	public ModelAndView list(@PathVariable("boardId")String boardId) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		ModelAndView modelAndView = new ModelAndView("board/__list.tiles");
+		ModelAndView modelAndView = new ModelAndView("board/list.tiles");
 		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
 	
 	/**
-	 * view
+	 * read
 	 * @param boardId
 	 * @param articleNo
 	 * @return
@@ -53,14 +53,14 @@ public class BoardController {
 	 */
 	@RequestMapping(value="{boardId}/read", method = RequestMethod.GET)
 	@Transactional(rollbackFor = Exception.class)
-	public ModelAndView view(
+	public ModelAndView read(
 		@PathVariable("boardId")String boardId,
 		@RequestParam(value="articleNo", required=false)Integer articleNo
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
 		BoardArticle article = boardArticleService.getArticle(articleNo);
 		article.increaseReadCount();
-		ModelAndView modelAndView = new ModelAndView("board/__read.tiles");
+		ModelAndView modelAndView = new ModelAndView("board/read.tiles");
 		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
@@ -78,7 +78,7 @@ public class BoardController {
 		@RequestParam(value="articleNo", required=false)Integer articleNo
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		ModelAndView modelAndView = new ModelAndView("board/__write.tiles");
+		ModelAndView modelAndView = new ModelAndView("board/write.tiles");
 		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
