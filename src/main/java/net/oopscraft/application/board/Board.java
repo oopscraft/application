@@ -52,9 +52,9 @@ public class Board {
 	Policy accessPolicy = Policy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_BORD_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	@WhereJoinTable(clause = "AUTH_TYPE ='ACES_PLCY'")
-	@SQLInsert(sql = "INSERT INTO APP_BORD_AUTH_MAP (BORD_ID, AUTH_TYPE, AUTH_ID) VALUES (?, 'ACES_PLCY', ?)") 
+	@JoinTable(name = "APP_BORD_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@WhereJoinTable(clause = "PLCY_TYPE ='ACES_PLCY'")
+	@SQLInsert(sql = "INSERT INTO APP_BORD_PLCY_AUTH_MAP (BORD_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'ACES_PLCY', ?)") 
 	List<Authority> accessAuthorities = new ArrayList<Authority>();
 
 	@Column(name = "READ_PLCY")
@@ -62,9 +62,9 @@ public class Board {
 	Policy readPolicy = Policy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_BORD_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	@WhereJoinTable(clause = "AUTH_TYPE ='READ_PLCY'")
-	@SQLInsert(sql = "INSERT INTO APP_BORD_AUTH_MAP (BORD_ID, AUTH_TYPE, AUTH_ID) VALUES (?, 'READ_PLCY', ?)")
+	@JoinTable(name = "APP_BORD_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@WhereJoinTable(clause = "PLCY_TYPE ='READ_PLCY'")
+	@SQLInsert(sql = "INSERT INTO APP_BORD_PLCY_AUTH_MAP (BORD_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'READ_PLCY', ?)")
 	List<Authority> readAuthorities = new ArrayList<Authority>();
 	
 	@Column(name = "WRIT_PLCY")
@@ -72,9 +72,9 @@ public class Board {
 	Policy writePolicy = Policy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_BORD_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	@WhereJoinTable(clause = "AUTH_TYPE ='WRIT_PLCY'")
-	@SQLInsert(sql = "INSERT INTO APP_BORD_AUTH_MAP (BORD_ID, AUTH_TYPE, AUTH_ID) VALUES (?, 'WRIT_PLCY', ?)")
+	@JoinTable(name = "APP_BORD_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@WhereJoinTable(clause = "PLCY_TYPE ='WRIT_PLCY'")
+	@SQLInsert(sql = "INSERT INTO APP_BORD_PLCY_AUTH_MAP (BORD_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'WRIT_PLCY', ?)")
 	List<Authority> writeAuthorities = new ArrayList<Authority>();
 	
 	@Column(name = "ROWS_PER_PAGE")

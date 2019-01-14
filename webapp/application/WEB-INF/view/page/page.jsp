@@ -4,18 +4,12 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<script type="text/javascript">
-console.log('${page.value}');
-</script>
-<!--  
-<iframe src="${page.value}">
+<c:choose>
+	<c:when test="${page.type == 'JSP'}">
+		<jsp:include page="${page.value}" flush="true" />
+	</c:when>
+	<c:when test="${page.type == 'URL'}">
+		<iframe style="width:100%; height:100%;border:none;" src="${page.value}"></iframe>
+	</c:when>
+</c:choose>
 
-
-<iframe style="width:100%; height:100%;" src="https://docs.google.com/gview?url=https://github.com/oopscraft/application/blob/master/doc/Application%20Architecture%20Definition.docx?raw=true&embedded=true">
-
-</iframe>
--->
-
-<c:out value="${page.value}"/>
-
-<%@ include file="request.getParameter('page').getValue()" %>

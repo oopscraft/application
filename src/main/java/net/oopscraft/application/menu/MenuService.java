@@ -136,7 +136,7 @@ public class MenuService {
 	 * @throws Exception
 	 */
 	public void deleteMenu(String id) throws Exception {
-		Menu menu = menuRepository.getOne(id);
+		Menu menu = menuRepository.findOne(id);
 
 		// checks child menus
 		List<Menu> childMenus = menuRepository.findByUpperIdOrderByDisplaySeqAsc(id);

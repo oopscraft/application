@@ -1,5 +1,6 @@
 package net.oopscraft.application.menu;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -14,6 +15,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.SQLInsert;
+import org.hibernate.annotations.WhereJoinTable;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
@@ -46,16 +50,18 @@ public class Menu extends SystemEntity {
 	@Column(name = "DISP_SEQ")
 	Integer displaySeq;
 
-	public enum DisplayPolicy {
+	public enum Policy {
 		ANONYMOUS, AUTHENTICATED, AUTHORIZED
 	}
 
 	@Column(name = "DISP_PLCY")
 	@Enumerated(EnumType.STRING)
-	DisplayPolicy displayPolicy = DisplayPolicy.ANONYMOUS;
+	Policy displayPolicy = Policy.ANONYMOUS;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_MENU_AUTH_MAP", joinColumns = @JoinColumn(name = "MENU_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@JoinTable(name = "APP_MENU_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "MENU_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@WhereJoinTable(clause = "PLCY_TYPE ='DISP_PLCY'")
+	@SQLInsert(sql = "INSERT INTO APP_MENU_PLCY_AUTH_MAP (MENU_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'DISP_PLCY', ?)") 
 	List<Authority> displayAuthorities;
 	
 	@Transient
@@ -117,11 +123,11 @@ public class Menu extends SystemEntity {
 		this.displaySeq = displaySeq;
 	}
 
-	public DisplayPolicy getDisplayPolicy() {
+	public Policy getDisplayPolicy() {
 		return displayPolicy;
 	}
 
-	public void setDisplayPolicy(DisplayPolicy displayPolicy) {
+	public void setDisplayPolicy(Policy displayPolicy) {
 		this.displayPolicy = displayPolicy;
 	}
 

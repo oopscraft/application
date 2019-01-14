@@ -1,12 +1,9 @@
 package net.oopscraft.application.admin.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtils;
-import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.menu.Menu;
 import net.oopscraft.application.menu.MenuService;
 
@@ -29,8 +25,6 @@ import net.oopscraft.application.menu.MenuService;
 @Controller
 @RequestMapping("/admin/menu")
 public class MenuController {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
 	MenuService menuService;
@@ -47,7 +41,7 @@ public class MenuController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView menu() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/menu.tiles");
-		modelAndView.addObject("displayPolicies", Menu.DisplayPolicy.values());
+		modelAndView.addObject("policies", Menu.Policy.values());
 		return modelAndView;
 	}
 	
@@ -115,16 +109,18 @@ public class MenuController {
 	}
 	
 	/**
-	 * Removes menu.
+	 * Deletes menu.
 	 * 
 	 * @param payload
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "deleteMenu", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteMenu(@RequestParam(value = "id") String id) throws Exception {
+	public String deleteMenu(@RequestParam(value = "id") String id) throws Exception {
 		menuService.deleteMenu(id);
+		return JsonUtils.toJson(id);
 	}
 
 }
