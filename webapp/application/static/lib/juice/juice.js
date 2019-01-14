@@ -1958,6 +1958,19 @@ juice.ui.TreeView.prototype.update = function() {
 		var li = this.createNode(index, rootChildNode);
 		this.ul.appendChild(li);
 	}
+	
+	// sets index node to unfold
+	var treeIndex = JSON.stringify(this.tree.index);
+	treeIndex = treeIndex.substring(1, treeIndex.length-1);
+	var lis = this.ul.querySelectorAll('li');
+	for(var i = 0, size = lis.length; i < size; i++ ){
+		var liIndex = lis[i].dataset.juiceIndex;
+		liIndex = liIndex.substring(1, liIndex.length-1);
+		if(treeIndex.indexOf(liIndex) == 0 && treeIndex != liIndex){
+			lis[i].classList.remove('juice-ui-treeView-fold');
+			lis[i].classList.add('juice-ui-treeView-unfold');
+		} 
+	}
 }
 
 //creates node 

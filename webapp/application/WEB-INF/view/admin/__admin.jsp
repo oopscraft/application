@@ -122,6 +122,12 @@
 			}
 		], 'childMenus');
 		
+
+		if(sessionStorage.getItem('__menus.index')){
+			__menus.index = eval(sessionStorage.getItem('__menus.index'));
+		}
+
+		
 		/**
 		 * login user information
 		 */
@@ -156,7 +162,7 @@
 		 * Generates random ID
 		 */ 
 		function __generateRandomId() {
-			return juice.util.RandomUtils.generateUUID().replace(/-/g,'');	
+			return juice.util.RandomUtils.generateUUID().replace(/-/g,'').toUpperCase();	
 		}
         
         /**
@@ -488,7 +494,7 @@
 				</div>
 				<ul data-juice="TreeView" data-juice-bind="__menus" data-juice-item="menu">
 					<li>
-						<a href="{{$context.menu.get('link')}}" class="menuItem" style="display:block;">
+						<a data-index="{{$context.index}}" href="{{$context.menu.get('link')}}" class="menuItem" style="display:block;" onclick="javascript:sessionStorage.setItem('__menus.index',this.dataset.index)">
 							<img class="icon" data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="" alt="" style="vertical-align:middle;"/>
 							<label data-juice="Label" data-juice-bind="menu.name"></label>
 						</a>

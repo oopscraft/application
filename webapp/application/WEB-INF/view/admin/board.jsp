@@ -217,12 +217,12 @@ function addBoard() {
 function saveBoard() {
 	
 	// Checks validation of board
-	if(juice.util.validator.isEmpty(board.get('id'))){
+	if(__isEmpty(board.get('id'))){
 		<spring:message code="application.text.id" var="item"/>
 		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
 	}
-	if(juice.util.validator.isEmpty(board.get('name'))){
+	if(__isEmpty(board.get('name'))){
 		<spring:message code="application.text.name" var="item"/>
 		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
@@ -400,6 +400,14 @@ function makeCategoryDisplaySeq() {
 	});
 }
 
+/**
+ * Preview board
+ */
+function openBoard() {
+	var pageUrl = '${pageContext.request.contextPath}/board/' + board.get('id');
+	 window.open(pageUrl);
+}
+
 </script>
 <style type="text/css">
 
@@ -434,7 +442,8 @@ function makeCategoryDisplaySeq() {
 			<colgroup>
 				<col style="width:10%"/>
 				<col style="width:30%"/>
-				<col style="width:60%"/>
+				<col/>
+				<col style="width:3%"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -459,7 +468,9 @@ function makeCategoryDisplaySeq() {
 					<td class="{{$context.board.get('systemDataYn')=='Y'?'systemData':''}}">
 						<label data-juice="Label" data-juice-bind="board.id" class="id"></label>
 					</td>
-					<td><label data-juice="Label" data-juice-bind="board.name"></label></td>
+					<td>
+						<label data-juice="Label" data-juice-bind="board.name"></label>
+					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -481,6 +492,11 @@ function makeCategoryDisplaySeq() {
 				</div>
 			</div>
 			<div>
+				<button onclick="javascript:openBoard();">
+					<i class="icon-link"></i>
+					<spring:message code="application.text.board"/>
+					<spring:message code="application.text.open"/>
+				</button>
 				<button onclick="javascript:saveBoard();">
 					<i class="icon-disk"></i>
 					<spring:message code="application.text.save"/>

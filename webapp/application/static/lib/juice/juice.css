@@ -381,6 +381,7 @@
 }
 .juice-ui-grid thead th {
 	border: solid 1px #ddd;
+	font-weight: bold;
 	text-align: center;
 	text-overflow: ellipsis;
 }
@@ -397,7 +398,7 @@
 }
 .juice-ui-grid tbody td {
 	border: dotted 1px #ddd;
-	text-align: left;
+	text-align: center;
 	text-overflow: ellipsis;
 }
 .juice-ui-grid .juice-ui-grid-index {

@@ -15,8 +15,8 @@ menu.setEnable(false);
 var isNewMenu = false;
 var displayAuthorities = new juice.data.List();
 
-// displayPolicies
-var displayPolicies = ${app:toJson(displayPolicies)};
+// policies
+var policies = ${app:toJson(policies)};
 
 /**
  * On document loaded
@@ -189,6 +189,7 @@ function removeAuthority(index){
  */
 function addMenu(upperId) {
 	
+	// prepare
 	clearMenu();
 	isNewMenu = true;
 	
@@ -236,6 +237,13 @@ function saveMenu(){
 		}
 	}
 	
+	// Checks validation 
+	if(__isEmpty(menu.get('id'))){
+		<spring:message code="application.text.id" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		return false;
+	}
+	
 	// Checks validation of authority
 	if(__isEmpty(menu.get('name'))){
 		<spring:message code="application.text.name" var="item"/>
@@ -279,7 +287,7 @@ function deleteMenu() {
 	var index = menus.indexOf(function(node){
 		return node.get('id') == menu.get('id');
 	});
-	console.log(menus.getNode(index).getChildNodes());
+
 	if(menus.getNode(index).getChildNodes().length > 0){
 		<spring:message code="application.text.menu" var="item"/>
 		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.hasChildItem" arguments="${item}"/>').open();
@@ -296,14 +304,9 @@ function deleteMenu() {
 			,type: 'GET'
 			,data: { id: menu.get('id') }
 			,success: function(data, textStatus, jqXHR) {
-				<spring:message code="application.text.menu" var="item"/>
-				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
-				new juice.ui.Alert(message)
-				.afterConfirm(function(){
-					clearMenu();
-					menu.setEnable(false);
-					getMenus();
-				}).open();
+				clearMenu();
+				menu.setEnable(false);
+				getMenus();
 	  	 	}
 		});	
 	}).open();
@@ -475,7 +478,7 @@ div.menuItem:hover {
 					</span>
 				</th>
 				<td>
-					<select id="displayPolicySelect" data-juice="ComboBox" data-juice-bind="menu.displayPolicy" data-juice-options="displayPolicies" style="width:15rem;"></select>
+					<select id="displayPolicySelect" data-juice="ComboBox" data-juice-bind="menu.displayPolicy" data-juice-options="policies" style="width:15rem;"></select>
 					<table id="displayAuthoritiesTable" data-juice="Grid" data-juice-bind="displayAuthorities" data-juice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
