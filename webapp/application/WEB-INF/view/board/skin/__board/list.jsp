@@ -20,7 +20,7 @@
 		</c:if>
 	</div>
 	<div>
-		<table data-juice="Grid" data-juice-bind="articles" data-juice-item="article">
+		<table id="articlesTable" data-juice="Grid" data-juice-bind="articles" data-juice-item="article">
 			<colgroup>
 				<col style="width:10rem;"/>
 				<col/>

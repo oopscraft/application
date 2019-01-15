@@ -16,7 +16,7 @@ var files = new juice.data.List();
  * On document loaded
  */
 $( document ).ready(function() {
-	<c:if test="${param.articleNo != null}">
+	<c:if test="${param.articleId != null}">
 	getArticle();
 	</c:if>
 });
@@ -33,7 +33,7 @@ $(window).on('beforeunload', function(){
  */
 function getArticle() {
 	$.ajax({
-		 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}'
+		 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleId}'
 		,type: 'GET'
 		,success: function(data, textStatus, jqXHR) {
 			article.fromJson(data);
@@ -59,12 +59,8 @@ function saveArticle() {
 			,data: JSON.stringify(articleData)
 			,contentType: "application/json"
 			,success: function(data, textStatus, jqXHR) {
-				<spring:message code="application.text.article" var="item"/>
-				new juice.ui.Alert('<spring:message code="application.message.saveItem.complete" arguments="${item}"/>')
-				.afterConfirm(function(){
-					$(window).off('beforeunload');
-					history.back();
-				}).open();
+				$(window).off('beforeunload');
+				history.back();
 	 	 	}
 		});
 	}).open();
@@ -81,7 +77,7 @@ function uploadFile() {
 		var formData = new FormData();
 		formData.append('file', this.files[0]);
 		$.ajax({
-			 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}/file'
+			 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleId}/file'
 			,type: 'POST'
 			,data: formData
 			,enctype: 'multipart/form-data'
@@ -95,9 +91,6 @@ function uploadFile() {
 						var percentComplete = evt.loaded / evt.total;
 						percentComplete = parseInt(percentComplete * 100);
 						console.log(percentComplete);
-						if (percentComplete === 100) {
-							// TODO
-						}
 					}
 				}, false);
 			    return xhr;

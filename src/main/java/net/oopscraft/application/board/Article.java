@@ -1,4 +1,4 @@
-package net.oopscraft.application.article;
+package net.oopscraft.application.board;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,9 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -22,13 +19,13 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import net.oopscraft.application.article.repository.ArticleReplyRepository;
-import net.oopscraft.application.article.repository.ArticleRepository;
+import net.oopscraft.application.board.repository.ArticleReplyRepository;
+import net.oopscraft.application.board.repository.ArticleRepository;
+import net.oopscraft.application.core.RandomUtils;
 import net.oopscraft.application.core.StringUtils;
 
 @Entity
 @Table(name = "APP_ATCL_INFO")
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Article {
     
 	@Transient
@@ -41,6 +38,15 @@ public class Article {
 	@Id
 	@Column(name = "ATCL_ID")
 	String id;
+	
+	@Column(name = "BORD_ID")
+	String boardId;
+	
+	@Column(name = "CATE_ID")
+	String categoryId;
+	
+	@Formula("(SELECT A.CATE_NAME FROM APP_BORD_CATE_INFO A WHERE A.BORD_ID = BORD_ID AND A.CATE_ID = CATE_ID)")
+	String categoryName;
 
 	@Column(name = "ATCL_TITL")
 	String title;
@@ -103,8 +109,9 @@ public class Article {
 	 */
 	public ArticleReply saveReply(ArticleReply reply) throws Exception {
 		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
-		if(StringUtils.isEmpty(reply.getId()) == false) {
+		if(StringUtils.isEmpty(reply.getId())) {
 			reply.setArticleId(id);
+			reply.setId(RandomUtils.generateID());
 			
 			// In case of child reply(has upper no)
 			if(StringUtils.isNotEmpty(reply.getUpperId())) {
@@ -194,6 +201,30 @@ public class Article {
 		this.id = id;
 	}
 	
+	public String getBoardId() {
+		return boardId;
+	}
+
+	public void setBoardId(String boardId) {
+		this.boardId = boardId;
+	}
+
+	public String getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(String categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+
 	public String getTitle() {
 		return title;
 	}

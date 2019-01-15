@@ -93,12 +93,6 @@ public class Board {
 	@OrderBy("displaySeq")
 	List<BoardCategory> categories = new ArrayList<BoardCategory>();
 
-	public enum ArticleSearchType {
-		TITLE,
-		TITLE_CONTENTS,
-		USER
-	}
-	
 	public String getId() {
 		return id;
 	}

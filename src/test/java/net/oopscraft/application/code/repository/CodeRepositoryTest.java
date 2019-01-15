@@ -1,4 +1,4 @@
-package net.oopscraft.application.code.property;
+package net.oopscraft.application.code.repository;
 
 import java.util.List;
 

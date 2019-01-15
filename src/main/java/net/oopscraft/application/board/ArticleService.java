@@ -1,4 +1,4 @@
-package net.oopscraft.application.article;
+package net.oopscraft.application.board;
 
 import java.util.Date;
 import java.util.List;
@@ -15,10 +15,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.article.repository.ArticleFileRepository;
-import net.oopscraft.application.article.repository.ArticleReplyRepository;
-import net.oopscraft.application.article.repository.ArticleRepository;
+import net.oopscraft.application.board.repository.ArticleFileRepository;
+import net.oopscraft.application.board.repository.ArticleReplyRepository;
+import net.oopscraft.application.board.repository.ArticleRepository;
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.RandomUtils;
 import net.oopscraft.application.core.StringUtils;
 
 @Service
@@ -32,10 +33,6 @@ public class ArticleService {
 	@Autowired
 	ArticleRepository articleRepository;
 
-	public enum ArticleSearchType {
-		TITLE, TITLE_CONTENTS, USER
-	}
-
 	/**
 	 * Gets article list.
 	 * 
@@ -45,11 +42,55 @@ public class ArticleService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Article> getArticles(PageInfo pageInfo, ArticleSearchType searchType, String searchValue)
-			throws Exception {
+	public enum ArticleSearchType {
+		TITLE,
+		TITLE_CONTENTS,
+		USER
+	}
+	
+	/**
+	 * Gets articles
+	 * @param page
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Article> getArticles(PageInfo pageInfo, String boardId, String categoryId, ArticleSearchType searchType, String searchValue) throws Exception {
 		Pageable pageable = pageInfo.toPageable();
-		Page<Article> articlesPage = articleRepository.findAll(pageable);
-		if (pageInfo.isEnableTotalCount()) {
+		Page<Article> articlesPage = null;
+		if(categoryId == null || categoryId.trim().length() < 1) {
+			if(searchType == null) {
+				articlesPage = articleRepository.findByBoardIdOrderByRegistDateDesc(boardId, pageable);			
+			}else {
+				switch(searchType) {
+					case TITLE :
+						articlesPage = articleRepository.findByBoardIdAndTitleContainingOrderByRegistDateDesc(boardId, searchValue, pageable);
+					break;
+					case TITLE_CONTENTS :
+						articlesPage = articleRepository.findByBoardIdAndTitleContainingOrContentsContainingOrderByRegistDateDesc(boardId, searchValue, searchValue, pageable);	
+					break;
+					case USER :
+						articlesPage = articleRepository.findByBoardIdAndUserIdContainingOrUserNicknameContainingOrderByRegistDateDesc(boardId, searchValue, searchValue, pageable);	
+					break;
+				}
+			}
+		}else {
+			if(searchType == null) {
+				articlesPage = articleRepository.findByBoardIdAndCategoryIdOrderByRegistDateDesc(boardId, categoryId, pageable);			
+			}else {
+				switch(searchType) {
+					case TITLE :
+						articlesPage = articleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrderByRegistDateDesc(boardId, categoryId, searchValue, pageable);
+					break;
+					case TITLE_CONTENTS :
+						articlesPage = articleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrContentsContainingOrderByRegistDateDesc(boardId, categoryId, searchValue, searchValue, pageable);	
+					break;
+					case USER :
+						articlesPage = articleRepository.findByBoardIdAndCategoryIdAndUserIdContainingOrUserNicknameContainingOrderByRegistDateDesc(boardId, categoryId, searchValue, searchValue, pageable);	
+					break;
+				}
+			}
+		}
+		if(pageInfo.isEnableTotalCount()) {
 			pageInfo.setTotalCount(articlesPage.getTotalElements());
 		}
 		List<Article> articles = articlesPage.getContent();
@@ -59,12 +100,13 @@ public class ArticleService {
 	/**
 	 * Gets article
 	 * 
-	 * @param no
+	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
 	public Article getArticle(String id) throws Exception {
 		Article article = articleRepository.findOne(id);
+		article.setEntityManager(entityManager);
 		return article;
 	}
 
@@ -78,6 +120,8 @@ public class ArticleService {
 
 		// In case of new article(articleNo is empty)
 		if (StringUtils.isEmpty(article.getId())) {
+			article.setId(RandomUtils.generateID());
+			article.setRegistDate(new Date());
 			articleRepository.saveAndFlush(article);
 		}
 		// In case of existing article updates
@@ -123,17 +167,18 @@ public class ArticleService {
 	 * @throws Exception
 	 */
 	public void deleteArticle(Article article) throws Exception {
+		
+		// creates jpaRepositoryFactory
+		JpaRepositoryFactory jpaRepositoryFactory = new JpaRepositoryFactory(entityManager);
 
 		// deletes replies
-		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager)
-				.getRepository(ArticleReplyRepository.class);
+		ArticleReplyRepository articleReplyRepository = jpaRepositoryFactory.getRepository(ArticleReplyRepository.class);
 		for (ArticleReply reply : article.getReplies()) {
 			articleReplyRepository.delete(reply);
 		}
 
 		// deletes attached files.
-		ArticleFileRepository articleFileRepository = new JpaRepositoryFactory(entityManager)
-				.getRepository(ArticleFileRepository.class);
+		ArticleFileRepository articleFileRepository = jpaRepositoryFactory.getRepository(ArticleFileRepository.class);
 		for (ArticleFile file : article.getFiles()) {
 			articleFileRepository.delete(file);
 			FileUtils.deleteQuietly(file.getRealFile());
