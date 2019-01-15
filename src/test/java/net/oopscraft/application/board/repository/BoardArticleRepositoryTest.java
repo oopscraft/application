@@ -15,6 +15,7 @@ import net.oopscraft.application.article.Article;
 import net.oopscraft.application.article.repository.ArticleRepository;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.BoardArticle;
+import net.oopscraft.application.core.RandomUtils;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.User;
 
@@ -45,6 +46,7 @@ public class BoardArticleRepositoryTest extends ApplicationTestRunner {
 		
 		// Inserts article data.
 		BoardArticle boardArticle = new BoardArticle();
+		boardArticle.setId(RandomUtils.generateID());
 		boardArticle.setBoardId(TEST_BOARD_ID);
 		boardArticle.setTitle(TEST_ARTICLE_TITLE);
 		boardArticle = boardArticleRepository.saveAndFlush(boardArticle);
@@ -74,7 +76,7 @@ public class BoardArticleRepositoryTest extends ApplicationTestRunner {
 
 	@Test
 	public void testFindOne() throws Exception {
-		BoardArticle boardArticle = boardArticleRepository.findOne(Long.valueOf(1));
+		BoardArticle boardArticle = boardArticleRepository.findOne("1");
 		System.out.println(new TextTable(boardArticle));
 		assert(true);
 	}
@@ -89,7 +91,7 @@ public class BoardArticleRepositoryTest extends ApplicationTestRunner {
 	@Test
 	public void testFindByBoardIdOrderByNoDesc() throws Exception {
 		Pageable pageable = new PageRequest(0, 10);
-		Page<BoardArticle> page = boardArticleRepository.findByBoardIdOrderByNoDesc(TEST_BOARD_ID, pageable);
+		Page<BoardArticle> page = boardArticleRepository.findByBoardIdOrderByRegistDateDesc(TEST_BOARD_ID, pageable);
 		List<BoardArticle> boardArticles = page.getContent();
 		System.out.println(new TextTable(boardArticles));
 		assert(true);

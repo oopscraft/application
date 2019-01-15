@@ -47,7 +47,7 @@ public class BoardController {
 	/**
 	 * read
 	 * @param boardId
-	 * @param articleNo
+	 * @param articleId
 	 * @return
 	 * @throws Exception
 	 */
@@ -55,10 +55,10 @@ public class BoardController {
 	@Transactional(rollbackFor = Exception.class)
 	public ModelAndView read(
 		@PathVariable("boardId")String boardId,
-		@RequestParam(value="articleNo", required=false)Integer articleNo
+		@RequestParam(value="articleId", required=false)String articleId
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		BoardArticle article = boardArticleService.getArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleId);
 		article.increaseReadCount();
 		ModelAndView modelAndView = new ModelAndView("board/read.tiles");
 		modelAndView.addObject("board", board);
@@ -68,14 +68,14 @@ public class BoardController {
 	/**
 	 * write
 	 * @param boardId
-	 * @param articleNo
+	 * @param articleId
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value="{boardId}/write", method = RequestMethod.GET)
 	public ModelAndView write(
 		@PathVariable("boardId")String boardId,
-		@RequestParam(value="articleNo", required=false)Integer articleNo
+		@RequestParam(value="articleId", required=false)String articleId
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
 		ModelAndView modelAndView = new ModelAndView("board/write.tiles");
