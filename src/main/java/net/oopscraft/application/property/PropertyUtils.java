@@ -9,7 +9,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import net.oopscraft.application.Application;
 import net.oopscraft.application.ApplicationContainer;
-import net.oopscraft.application.core.PasswordBasedEncryptor;
 import net.oopscraft.application.property.repository.PropertyRepository;
 
 public class PropertyUtils {
