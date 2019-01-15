@@ -159,6 +159,9 @@ public class ArticleService {
 			// saves data
 			articleRepository.saveAndFlush(one);
 		}
+		
+		// TODO inverse index
+		// List<String> keywords = LuceneAnalyzer.parseTopKeywords(article.getContents());
 	}
 
 	/**
