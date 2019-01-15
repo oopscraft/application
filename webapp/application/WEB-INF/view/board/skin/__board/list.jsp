@@ -48,8 +48,9 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-no="{{$context.article.get('no')}}" onclick="javascript:readArticle(this.dataset.no);">
+				<tr data-id="{{$context.article.get('id')}}" onclick="javascript:readArticle(this.dataset.id);">
 					<td>
+						{{articleSearch.get('totalCount') - (articleSearch.get('rows')*(articleSearch.get('page')-1)) - $context.index}}
 						<label data-juice="Label" data-juice-bind="article.no"></label>
 					</td>
 					<td style="text-align:left;">

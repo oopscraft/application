@@ -11,16 +11,16 @@ import net.oopscraft.application.article.ArticleReply;
 
 public interface ArticleReplyRepository extends JpaRepository<ArticleReply, ArticleReply.Pk>{
 	
-	public List<ArticleReply> findByArticleNoOrderBySequenceAscLevelAsc(long articleNo) throws Exception;
+	public List<ArticleReply> findByArticleIdOrderBySequenceAscLevelAsc(String articleId) throws Exception;
 	
 	@Modifying
-	@Query("DELETE FROM ArticleReply WHERE articleNo = :articleNo")
-	public void deleteByArticleNo(@Param("articleNo")long articleNo) throws Exception;
+	@Query("DELETE FROM ArticleReply WHERE articleId = :articleId")
+	public void deleteByArticleId(@Param("articleId")String articleId) throws Exception;
 
-	@Query("SELECT MAX(sequence) FROM ArticleReply WHERE ATCL_NO = :articleNo")
-	public Integer getMaxSequence(@Param("articleNo")long articleNo) throws Exception;
+	@Query("SELECT MAX(sequence) FROM ArticleReply WHERE ATCL_ID = :articleId")
+	public Integer getMaxSequence(@Param("articleId")String articleId) throws Exception;
 	
-	@Query("SELECT MAX(level) FROM ArticleReply WHERE UPER_RPLY_NO = :upperNo")
-	public String getSiblingMaxLevel(@Param("upperNo")long upperNo) throws Exception;
+	@Query("SELECT MAX(level) FROM ArticleReply WHERE UPER_RPLY_ID = :upperId")
+	public String getSiblingMaxLevel(@Param("upperId")String upperId) throws Exception;
 	
 }

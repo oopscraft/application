@@ -9,11 +9,12 @@ import org.junit.Test;
 import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.article.Article;
 import net.oopscraft.application.article.repository.ArticleRepository;
+import net.oopscraft.application.core.RandomUtils;
 import net.oopscraft.application.core.TextTable;
 
 public class ArticleRepositoryTest extends ApplicationTestRunner {
 	
-	private static long TEST_ARTICLE_NO = System.currentTimeMillis();
+	private static String TEST_ARTICLE_NO = RandomUtils.generateID();
 	
 	BoardRepository boardRepository;
 	ArticleRepository articleRepository;
@@ -31,7 +32,7 @@ public class ArticleRepositoryTest extends ApplicationTestRunner {
 	@Test 
 	public void testSave() throws Exception {
 		Article article = new Article();
-		article.setNo(TEST_ARTICLE_NO);
+		article.setId(TEST_ARTICLE_NO);
 		article = articleRepository.saveAndFlush(article);
 		System.out.println(new TextTable(article));
 		assert(true);

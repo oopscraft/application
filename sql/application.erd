@@ -1779,15 +1779,15 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                           <description></description>
                                           <columns>
                                             <net.java.amateras.db.visual.model.ColumnModel>
-                                              <columnName>ATCL_NO</columnName>
-                                              <logicalName>Article No</logicalName>
+                                              <columnName>ATCL_ID</columnName>
+                                              <logicalName>Article ID</logicalName>
                                               <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                                <name>BIGINT</name>
-                                                <logicalName>Integer</logicalName>
+                                                <name>VARCHAR</name>
+                                                <logicalName>String</logicalName>
                                                 <supportSize>true</supportSize>
-                                                <type>-5</type>
+                                                <type>12</type>
                                               </columnType>
-                                              <size></size>
+                                              <size>32</size>
                                               <notNull>true</notNull>
                                               <primaryKey>true</primaryKey>
                                               <description></description>
@@ -1795,15 +1795,10 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                               <defaultValue></defaultValue>
                                             </net.java.amateras.db.visual.model.ColumnModel>
                                             <net.java.amateras.db.visual.model.ColumnModel>
-                                              <columnName>RPLY_NO</columnName>
-                                              <logicalName>Reply No</logicalName>
-                                              <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                                <name>BIGINT</name>
-                                                <logicalName>Integer</logicalName>
-                                                <supportSize>true</supportSize>
-                                                <type>-5</type>
-                                              </columnType>
-                                              <size></size>
+                                              <columnName>RPLY_ID</columnName>
+                                              <logicalName>Reply ID</logicalName>
+                                              <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                                              <size>32</size>
                                               <notNull>true</notNull>
                                               <primaryKey>true</primaryKey>
                                               <description></description>
@@ -1811,15 +1806,15 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                               <defaultValue></defaultValue>
                                             </net.java.amateras.db.visual.model.ColumnModel>
                                             <net.java.amateras.db.visual.model.ColumnModel>
-                                              <columnName>UPER_RPLY_NO</columnName>
-                                              <logicalName>Upper Reply No</logicalName>
+                                              <columnName>UPER_RPLY_ID</columnName>
+                                              <logicalName>Upper Reply ID</logicalName>
                                               <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                                <name>BIGINT</name>
-                                                <logicalName>Integer</logicalName>
+                                                <name>VARCHAR</name>
+                                                <logicalName>String</logicalName>
                                                 <supportSize>true</supportSize>
-                                                <type>-5</type>
+                                                <type>12</type>
                                               </columnType>
-                                              <size></size>
+                                              <size>32</size>
                                               <notNull>false</notNull>
                                               <primaryKey>false</primaryKey>
                                               <description></description>
@@ -1988,10 +1983,10 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                           <description></description>
                                           <columns>
                                             <net.java.amateras.db.visual.model.ColumnModel>
-                                              <columnName>ATCL_NO</columnName>
-                                              <logicalName>Article No</logicalName>
+                                              <columnName>ATCL_ID</columnName>
+                                              <logicalName>Article ID</logicalName>
                                               <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
-                                              <size></size>
+                                              <size>32</size>
                                               <notNull>true</notNull>
                                               <primaryKey>true</primaryKey>
                                               <description></description>
@@ -2044,7 +2039,12 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                             <net.java.amateras.db.visual.model.ColumnModel>
                                               <columnName>FILE_SIZE</columnName>
                                               <logicalName>File Size</logicalName>
-                                              <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                                              <columnType class="net.java.amateras.db.dialect.ColumnType">
+                                                <name>BIGINT</name>
+                                                <logicalName>Integer</logicalName>
+                                                <supportSize>true</supportSize>
+                                                <type>-5</type>
+                                              </columnType>
                                               <size></size>
                                               <notNull>false</notNull>
                                               <primaryKey>false</primaryKey>
@@ -2074,10 +2074,10 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                     <description></description>
                                     <columns>
                                       <net.java.amateras.db.visual.model.ColumnModel>
-                                        <columnName>ATCL_NO</columnName>
-                                        <logicalName>Article No</logicalName>
+                                        <columnName>ATCL_ID</columnName>
+                                        <logicalName>Article ID</logicalName>
                                         <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
-                                        <size></size>
+                                        <size>32</size>
                                         <notNull>true</notNull>
                                         <primaryKey>true</primaryKey>
                                         <description></description>
@@ -2192,7 +2192,18 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                         <defaultValue>0</defaultValue>
                                       </net.java.amateras.db.visual.model.ColumnModel>
                                     </columns>
-                                    <indices/>
+                                    <indices>
+                                      <net.java.amateras.db.visual.model.IndexModel>
+                                        <indexName>IDX_APP_ATCL_INFO_1</indexName>
+                                        <indexType class="net.java.amateras.db.dialect.IndexType">
+                                          <name>INDEX</name>
+                                        </indexType>
+                                        <columns>
+                                          <string>ATCL_RGST_DTTM</string>
+                                          <string>ATCL_ID</string>
+                                        </columns>
+                                      </net.java.amateras.db.visual.model.IndexModel>
+                                    </indices>
                                     <backgroundColor>
                                       <red>255</red>
                                       <green>255</green>
@@ -2222,7 +2233,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                               <targetConnections/>
                               <error></error>
                               <linkedPath></linkedPath>
-                              <tableName>APP_BORD_ATCL_MAP</tableName>
+                              <tableName>APP_BORD_POST_INFO</tableName>
                               <logicalName>Table27</logicalName>
                               <description></description>
                               <columns>
@@ -2243,8 +2254,8 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                   <defaultValue></defaultValue>
                                 </net.java.amateras.db.visual.model.ColumnModel>
                                 <net.java.amateras.db.visual.model.ColumnModel>
-                                  <columnName>ATCL_NO</columnName>
-                                  <logicalName>Article No</logicalName>
+                                  <columnName>POST_NO</columnName>
+                                  <logicalName>Post No</logicalName>
                                   <columnType class="net.java.amateras.db.dialect.ColumnType">
                                     <name>BIGINT</name>
                                     <logicalName>Integer</logicalName>
@@ -2261,6 +2272,22 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>CATE_ID</columnName>
                                   <logicalName>Cateogry ID</logicalName>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType">
+                                    <name>VARCHAR</name>
+                                    <logicalName>String</logicalName>
+                                    <supportSize>true</supportSize>
+                                    <type>12</type>
+                                  </columnType>
+                                  <size>32</size>
+                                  <notNull>false</notNull>
+                                  <primaryKey>false</primaryKey>
+                                  <description></description>
+                                  <autoIncrement>false</autoIncrement>
+                                  <defaultValue></defaultValue>
+                                </net.java.amateras.db.visual.model.ColumnModel>
+                                <net.java.amateras.db.visual.model.ColumnModel>
+                                  <columnName>ATCL_ID</columnName>
+                                  <logicalName>Article ID</logicalName>
                                   <columnType class="net.java.amateras.db.dialect.ColumnType">
                                     <name>VARCHAR</name>
                                     <logicalName>String</logicalName>
@@ -3511,7 +3538,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
       </constraint>
       <sourceConnections/>
       <targetConnections/>
-      <error></error>
+      <error>[WARN]Primary key is not defined.</error>
       <linkedPath></linkedPath>
       <tableName>hibernate_sequence</tableName>
       <logicalName>Hibernate Sequence</logicalName>

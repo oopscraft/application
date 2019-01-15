@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.RandomUtils;
-import net.oopscraft.application.core.StringUtils;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.menu.repository.MenuRepository;
 
@@ -97,16 +95,12 @@ public class MenuService {
 	 * @throws Exception
 	 */
 	public Menu saveMenu(Menu menu) throws Exception {
-		
-		Menu one = null;
-		if(StringUtils.isEmpty(menu.getId()) == true) {
-			one = new Menu();
-			one.setId(RandomUtils.generateID());
-		}else if(menuRepository.exists(menu.getId()) == false) {
+
+		// checks exists
+		Menu one = menuRepository.findOne(menu.getId());
+		if(one == null) {
 			one = new Menu();
 			one.setId(menu.getId());
-		}else {
-			one = menuRepository.findOne(menu.getId());
 		}
 
 		// sets properties

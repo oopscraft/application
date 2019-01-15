@@ -21,18 +21,18 @@ public class ArticleFile {
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
-		public Pk(long articleNo, String id) {
-			this.articleNo = articleNo;
+		public Pk(String articleId, String id) {
+			this.articleId = articleId;
 			this.id = id;
 		}
-		long articleNo;
+		String articleId;
 		String id;
 		
 		@Override
 		public boolean equals(Object obj) {
 			if(obj instanceof Pk) {
 				Pk pk = (Pk)obj;
-				if(this.getArticleNo() == pk.getArticleNo()
+				if(this.getArticleId().equals(pk.getArticleId())
 				&& this.getId().equals(pk.getId())
 				) {
 					return true;
@@ -46,14 +46,14 @@ public class ArticleFile {
 		
 		@Override
 		public int hashCode() {
-			return (Long.toString(articleNo) + id).hashCode();
+			return (articleId + id).hashCode();
 		}
 		
-		public long getArticleNo() {
-			return articleNo;
+		public String getArticleId() {
+			return articleId;
 		}
-		public void setArticleNo(long articleNo) {
-			this.articleNo = articleNo;
+		public void setArticleId(String articleId) {
+			this.articleId = articleId;
 		}
 		public String getId() {
 			return id;
@@ -64,8 +64,8 @@ public class ArticleFile {
 	}
 	
 	@Id
-	@Column(name = "ATCL_NO")
-	long articleNo;
+	@Column(name = "ATCL_ID")
+	String articleId;
 	
 	@Id
 	@Column(name = "FILE_ID")
@@ -96,12 +96,12 @@ public class ArticleFile {
 		return new File("data" + File.separator + "board" + File.separator + id);
 	}
 
-	public long getArticleNo() {
-		return articleNo;
+	public String getArticleId() {
+		return articleId;
 	}
 
-	public void setArticleNo(long articleNo) {
-		this.articleNo = articleNo;
+	public void setArticleId(String articleId) {
+		this.articleId = articleId;
 	}
 
 	public String getId() {

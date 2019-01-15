@@ -40,33 +40,33 @@ public class BoardArticleService extends ArticleService {
 		Page<BoardArticle> articlesPage = null;
 		if(categoryId == null || categoryId.trim().length() < 1) {
 			if(searchType == null) {
-				articlesPage = boardArticleRepository.findByBoardIdOrderByNoDesc(boardId, pageable);			
+				articlesPage = boardArticleRepository.findByBoardIdOrderByRegistDateDesc(boardId, pageable);			
 			}else {
 				switch(searchType) {
 					case TITLE :
-						articlesPage = boardArticleRepository.findByBoardIdAndTitleContainingOrderByNoDesc(boardId, searchValue, pageable);
+						articlesPage = boardArticleRepository.findByBoardIdAndTitleContainingOrderByRegistDateDesc(boardId, searchValue, pageable);
 					break;
 					case TITLE_CONTENTS :
-						articlesPage = boardArticleRepository.findByBoardIdAndTitleContainingOrContentsContainingOrderByNoDesc(boardId, searchValue, searchValue, pageable);	
+						articlesPage = boardArticleRepository.findByBoardIdAndTitleContainingOrContentsContainingOrderByRegistDateDesc(boardId, searchValue, searchValue, pageable);	
 					break;
 					case USER :
-						articlesPage = boardArticleRepository.findByBoardIdAndUserIdContainingOrUserNicknameContainingOrderByNoDesc(boardId, searchValue, searchValue, pageable);	
+						articlesPage = boardArticleRepository.findByBoardIdAndUserIdContainingOrUserNicknameContainingOrderByRegistDateDesc(boardId, searchValue, searchValue, pageable);	
 					break;
 				}
 			}
 		}else {
 			if(searchType == null) {
-				articlesPage = boardArticleRepository.findByBoardIdAndCategoryIdOrderByNoDesc(boardId, categoryId, pageable);			
+				articlesPage = boardArticleRepository.findByBoardIdAndCategoryIdOrderByRegistDateDesc(boardId, categoryId, pageable);			
 			}else {
 				switch(searchType) {
 					case TITLE :
-						articlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrderByNoDesc(boardId, categoryId, searchValue, pageable);
+						articlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrderByRegistDateDesc(boardId, categoryId, searchValue, pageable);
 					break;
 					case TITLE_CONTENTS :
-						articlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrContentsContainingOrderByNoDesc(boardId, categoryId, searchValue, searchValue, pageable);	
+						articlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndTitleContainingOrContentsContainingOrderByRegistDateDesc(boardId, categoryId, searchValue, searchValue, pageable);	
 					break;
 					case USER :
-						articlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndUserIdContainingOrUserNicknameContainingOrderByNoDesc(boardId, categoryId, searchValue, searchValue, pageable);	
+						articlesPage = boardArticleRepository.findByBoardIdAndCategoryIdAndUserIdContainingOrUserNicknameContainingOrderByRegistDateDesc(boardId, categoryId, searchValue, searchValue, pageable);	
 					break;
 				}
 			}
@@ -85,8 +85,8 @@ public class BoardArticleService extends ArticleService {
 	 * @return
 	 * @throws Exception
 	 */
-	public BoardArticle getArticle(long no) throws Exception {
-		BoardArticle boardArticle = boardArticleRepository.findOne(no);
+	public BoardArticle getArticle(String id) throws Exception {
+		BoardArticle boardArticle = boardArticleRepository.findOne(id);
 		boardArticle.setEntityManager(entityManager);
 		return boardArticle;
 	}
