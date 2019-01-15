@@ -45,7 +45,7 @@ var articles = new juice.data.List();
  * On document loaded
  */
 $( document ).ready(function() {
-	getArticles();
+	getArticles(window.location.hash.replace('#',''));
 });
 
 /**
@@ -54,7 +54,9 @@ $( document ).ready(function() {
 function getArticles(page) {
 	if(page){
 		articleSearch.set('page',page);
+		window.location.hash = '#' + page;
 	}
+	
 	$.ajax({
 		 url: '${pageContext.request.contextPath}/api/board/${boardId}/articles'
 		,type: 'GET'
@@ -70,8 +72,8 @@ function getArticles(page) {
 /**
  * Gets article
  */
-function readArticle(articleNo) {
-	location.href = '${pageContext.request.contextPath}/board/${boardId}/read?articleNo=' + articleNo;
+function readArticle(articleId) {
+	location.href = '${pageContext.request.contextPath}/board/${boardId}/read?articleId=' + articleId;
 }
 
 /**

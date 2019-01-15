@@ -27,7 +27,7 @@ $( document ).ready(function() {
  */
 function getArticle() {
 	$.ajax({
-		 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}'
+		 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleId}'
 		,type: 'GET'
 		,success: function(data, textStatus, jqXHR) {
 			article.fromJson(data);
@@ -40,7 +40,7 @@ function getArticle() {
  * Modifies article
  */
 function modifyArticle(){
-	location.href = '${pageContext.request.contextPath}/board/${boardId}/write?articleNo=${param.articleNo}';
+	location.href = '${pageContext.request.contextPath}/board/${boardId}/write?articleId=${param.articleId}';
 }
 
 /**
@@ -51,7 +51,7 @@ function deleteArticle(){
 	new juice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
 	.afterConfirm(function() {
 		$.ajax({
-			 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}'
+			 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleId}'
 			,type: 'DELETE'
 			,success: function(data, textStatus, jqXHR) {
 				history.back();
@@ -65,7 +65,7 @@ function deleteArticle(){
  */
 function getReplies() {
 	$.ajax({
-		 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}/replies'
+		 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleId}/replies'
 		,type: 'GET'
 		,success: function(data, textStatus, jqXHR) {
 			// defines indent depth
@@ -94,25 +94,25 @@ function addReply(){
 /**
  * Adds child reply
  */
-function addChildReply(no) {
+function addChildReply(id) {
 	cancelReply();
 	reply.fromJson({});
-	reply.set('upperNo', no);
-	$('#app-board-reply-container-child-'+no).append($('#app-board-reply-editor'));
+	reply.set('upperId', id);
+	$('#app-board-reply-container-child-'+id).append($('#app-board-reply-editor'));
 }
 
 /**
  * Modifies reply
  */
-function modifyReply(no){
+function modifyReply(id){
 	cancelReply();
 	replies.forEach(function(map){
-		if(map.get('no') == no){
+		if(map.get('id') == id){
 			reply.fromJson(map.toJson());
 			return false;
 		}
 	});
-	var modifyReplyContainer = $('#app-board-reply-container-modify-'+no);
+	var modifyReplyContainer = $('#app-board-reply-container-modify-'+id);
 	modifyReplyContainer.children().hide();
 	modifyReplyContainer.append($('#app-board-reply-editor'));
 }
@@ -132,7 +132,7 @@ function cancelReply(){
  */
 function saveReply() {
 	$.ajax({
-		 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}/reply'
+		 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleId}/reply'
 		,type: 'POST'
 		,data: JSON.stringify(reply.toJson())
 		,contentType: "application/json"
@@ -146,12 +146,12 @@ function saveReply() {
 /**
  * Deletes reply
  */
-function deleteReply(no) {
+function deleteReply(id) {
 	<spring:message code="application.text.article" var="item"/>
 	new juice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
 	.afterConfirm(function() {
 		$.ajax({
-			 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}/reply/' + no
+			 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleId}/reply/' + id
 			,type: 'DELETE'
 			,success: function(data, textStatus, jqXHR) {
 				getReplies();
@@ -165,7 +165,7 @@ function deleteReply(no) {
  */
 function downloadFile(id){
     var link = document.createElement('a');
-    link.href = '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleNo}/file/' + id;
+    link.href = '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleId}/file/' + id;
     link.click();
 }
 </script>

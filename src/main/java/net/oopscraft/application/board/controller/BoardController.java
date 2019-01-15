@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import net.oopscraft.application.board.Article;
+import net.oopscraft.application.board.ArticleService;
 import net.oopscraft.application.board.Board;
-import net.oopscraft.application.board.BoardArticle;
-import net.oopscraft.application.board.BoardArticleService;
 import net.oopscraft.application.board.BoardService;
 
 
@@ -28,7 +28,7 @@ public class BoardController {
 	BoardService boardService;
 	
 	@Autowired
-	BoardArticleService boardArticleService;
+	ArticleService articleService;
 
 	/**
 	 * list
@@ -58,7 +58,7 @@ public class BoardController {
 		@RequestParam(value="articleId", required=false)String articleId
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		BoardArticle article = boardArticleService.getArticle(articleId);
+		Article article = articleService.getArticle(articleId);
 		article.increaseReadCount();
 		ModelAndView modelAndView = new ModelAndView("board/read.tiles");
 		modelAndView.addObject("board", board);

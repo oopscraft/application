@@ -69,33 +69,33 @@
 						<div style="display:flex; justify-content:space-between;">
 							<div>
 								<i class="icon-level-down"></i>
-								no:<label data-juice="Label" data-juice-bind="reply.no"></label>
+								id:<label data-juice="Label" data-juice-bind="reply.id"></label>
 								|
 								upperNo:<label data-juice="Label" data-juice-bind="reply.upperNo"></label>
 								|
 								sequence:<label data-juice="Label" data-juice-bind="reply.sequence"></label>
 								|
 								level:<label data-juice="Label" data-juice-bind="reply.level"></label>
-								<button data-no="{{$context.reply.get('no')}}" onclick="javascript:addChildReply(this.dataset.no);" class="app-board-button">
+								<button data-id="{{$context.reply.get('id')}}" onclick="javascript:addChildReply(this.dataset.id);" class="app-board-button">
 									<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_reply.png"/>
 									<spring:message code="application.text.reply"/>
 								</button>
 							</div>
 							<div>
-								<button data-no="{{$context.reply.get('no')}}" onclick="javascript:modifyReply(this.dataset.no);" class="app-board-button">
+								<button data-id="{{$context.reply.get('id')}}" onclick="javascript:modifyReply(this.dataset.id);" class="app-board-button">
 									<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_edit.png"/>
 									<spring:message code="application.text.modify"/>
 								</button>
-								<button data-no="{{$context.reply.get('no')}}" onclick="javascript:deleteReply(this.dataset.no);" class="app-board-button">
+								<button data-id="{{$context.reply.get('id')}}" onclick="javascript:deleteReply(this.dataset.id);" class="app-board-button">
 									<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_delete.png"/>
 									<spring:message code="application.text.delete"/>
 								</button>
 							</div>
 						</div>
-						<div id="app-board-reply-container-modify-{{$context.reply.get('no')}}">
+						<div id="app-board-reply-container-modify-{{$context.reply.get('id')}}">
 							<pre data-juice="Text" data-juice-bind="reply.contents"></pre>
 						</div>
-						<div id="app-board-reply-container-child-{{$context.reply.get('no')}}">
+						<div id="app-board-reply-container-child-{{$context.reply.get('id')}}">
 						</div>
 					</div>
 				</li>

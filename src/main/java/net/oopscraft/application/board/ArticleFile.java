@@ -1,5 +1,6 @@
-package net.oopscraft.application.article;
+package net.oopscraft.application.board;
 
+import java.io.File;
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -9,10 +10,14 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_ATCL_RPLY_INFO")
-@IdClass(ArticleReply.Pk.class)
-public class ArticleReply {
-	
+@Table(name = "APP_ATCL_FILE_INFO")
+@IdClass(ArticleFile.Pk.class)
+public class ArticleFile {
+
+	/**
+	 * ID Class
+	 *
+	 */
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
@@ -43,6 +48,7 @@ public class ArticleReply {
 		public int hashCode() {
 			return (articleId + id).hashCode();
 		}
+		
 		public String getArticleId() {
 			return articleId;
 		}
@@ -62,20 +68,33 @@ public class ArticleReply {
 	String articleId;
 	
 	@Id
-	@Column(name = "RPLY_ID")
+	@Column(name = "FILE_ID")
 	String id;
 	
-	@Column(name = "UPER_RPLY_ID")
-	String upperId;
+	@Column(name = "FILE_NAME")
+	String name;
 	
-	@Column(name = "RPLY_SEQ")
-	int sequence;
+	@Column(name = "FILE_TYPE")
+	String type;
 	
-	@Column(name = "RPLY_LEVL")
-	String level;
+	@Column(name = "FILE_SIZE")
+	long size;
 	
-	@Column(name = "RPLY_CNTS")
-	String contents;
+	/**
+	 * Returns temporary file.
+	 * @return
+	 */
+	public File getTemporaryFile() {
+		return new File(".temp" + File.separator + "board" + File.separator + id);
+	}
+	
+	/**
+	 * Returns real file.
+	 * @return
+	 */
+	public File getRealFile() {
+		return new File("data" + File.separator + "board" + File.separator + id);
+	}
 
 	public String getArticleId() {
 		return articleId;
@@ -93,36 +112,28 @@ public class ArticleReply {
 		this.id = id;
 	}
 
-	public String getUpperId() {
-		return upperId;
+	public String getName() {
+		return name;
 	}
 
-	public void setUpperId(String upperId) {
-		this.upperId = upperId;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public int getSequence() {
-		return sequence;
+	public String getType() {
+		return type;
 	}
 
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
+	public void setType(String type) {
+		this.type = type;
 	}
 
-	public String getLevel() {
-		return level;
+	public long getSize() {
+		return size;
 	}
 
-	public void setLevel(String level) {
-		this.level = level;
+	public void setSize(long size) {
+		this.size = size;
 	}
 
-	public String getContents() {
-		return contents;
-	}
-
-	public void setContents(String contents) {
-		this.contents = contents;
-	}
-	
 }
