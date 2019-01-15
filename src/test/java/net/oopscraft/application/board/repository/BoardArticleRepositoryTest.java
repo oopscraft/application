@@ -67,7 +67,7 @@ public class BoardArticleRepositoryTest extends ApplicationTestRunner {
 		System.out.println(new TextTable(boardArticle));
 		
 		// delete
-		boardArticleRepository.delete(boardArticle.getNo());
+		boardArticleRepository.delete(boardArticle.getId());
 		boardArticleRepository.flush();
 		assert(true);
 	}
