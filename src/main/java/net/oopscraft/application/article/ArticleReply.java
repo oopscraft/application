@@ -4,12 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @Table(name = "APP_ATCL_RPLY_INFO")
@@ -19,19 +16,19 @@ public class ArticleReply {
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
-		public Pk(long articleNo, long no) {
-			this.articleNo = articleNo;
-			this.no = no;
+		public Pk(String articleId, String id) {
+			this.articleId = articleId;
+			this.id = id;
 		}
-		long articleNo;
-		long no;
+		String articleId;
+		String id;
 		
 		@Override
 		public boolean equals(Object obj) {
 			if(obj instanceof Pk) {
 				Pk pk = (Pk)obj;
-				if(this.getArticleNo() == pk.getArticleNo()
-				&& this.getNo() == pk.getNo()
+				if(this.getArticleId().equals(pk.getArticleId())
+				&& this.getId().equals(pk.getId())
 				) {
 					return true;
 				}else {
@@ -44,35 +41,32 @@ public class ArticleReply {
 		
 		@Override
 		public int hashCode() {
-			return (Long.toString(articleNo) + Long.toString(no)).hashCode();
+			return (articleId + id).hashCode();
 		}
-		
-		public long getArticleNo() {
-			return articleNo;
+		public String getArticleId() {
+			return articleId;
 		}
-		public void setArticleNo(long articleNo) {
-			this.articleNo = articleNo;
+		public void setArticleId(String articleId) {
+			this.articleId = articleId;
 		}
-		public long getNo() {
-			return no;
+		public String getId() {
+			return id;
 		}
-		public void setNo(long no) {
-			this.no = no;
+		public void setId(String id) {
+			this.id = id;
 		}
 	}
 	
 	@Id
-	@Column(name = "ATCL_NO")
-	long articleNo;
+	@Column(name = "ATCL_ID")
+	String articleId;
 	
 	@Id
-	@Column(name = "RPLY_NO")
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
-	@TableGenerator(name = "hibernate_sequence", allocationSize = 1)
-	long no;
+	@Column(name = "RPLY_ID")
+	String id;
 	
-	@Column(name = "UPER_RPLY_NO")
-	long upperNo;
+	@Column(name = "UPER_RPLY_ID")
+	String upperId;
 	
 	@Column(name = "RPLY_SEQ")
 	int sequence;
@@ -82,29 +76,29 @@ public class ArticleReply {
 	
 	@Column(name = "RPLY_CNTS")
 	String contents;
-	
-	public long getArticleNo() {
-		return articleNo;
+
+	public String getArticleId() {
+		return articleId;
 	}
 
-	public void setArticleNo(long articleNo) {
-		this.articleNo = articleNo;
+	public void setArticleId(String articleId) {
+		this.articleId = articleId;
 	}
 
-	public long getNo() {
-		return no;
+	public String getId() {
+		return id;
 	}
 
-	public void setNo(long no) {
-		this.no = no;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public long getUpperNo() {
-		return upperNo;
+	public String getUpperId() {
+		return upperId;
 	}
 
-	public void setUpperNo(long upperNo) {
-		this.upperNo = upperNo;
+	public void setUpperId(String upperId) {
+		this.upperId = upperId;
 	}
 
 	public int getSequence() {

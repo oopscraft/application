@@ -60,8 +60,8 @@ function getArticles(page) {
 		,type: 'GET'
 		,data: articleSearch.toJson()
 		,success: function(data, textStatus, jqXHR) {
-			articles.fromJson(data);
 			articleSearch.set('totalCount', __parseTotalCount(jqXHR));
+			articles.fromJson(data);
 			$('#articlesTable').hide().fadeIn();
    	 	}
 	});	

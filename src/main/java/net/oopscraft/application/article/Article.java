@@ -9,14 +9,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
@@ -26,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.oopscraft.application.article.repository.ArticleReplyRepository;
 import net.oopscraft.application.article.repository.ArticleRepository;
+import net.oopscraft.application.core.StringUtils;
 
 @Entity
 @Table(name = "APP_ATCL_INFO")
@@ -40,10 +39,8 @@ public class Article {
 	}
 	
 	@Id
-	@Column(name = "ATCL_NO")
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
-	@TableGenerator(name = "hibernate_sequence", allocationSize = 1)
-	long no;
+	@Column(name = "ATCL_ID")
+	String id;
 
 	@Column(name = "ATCL_TITL")
 	String title;
@@ -69,13 +66,13 @@ public class Article {
 	@Column(name = "READ_CNT")
 	int readCount;
 	
-	@Formula("(SELECT COUNT(*) FROM APP_ATCL_RPLY_INFO A WHERE A.ATCL_NO = ATCL_NO)")
+	@Formula("(SELECT COUNT(*) FROM APP_ATCL_RPLY_INFO A WHERE A.ATCL_ID = ATCL_ID)")
 	int replyCount;
 	
-	@Formula("(SELECT COUNT(*) FROM APP_ATCL_FILE_INFO A WHERE A.ATCL_NO = ATCL_NO)")
+	@Formula("(SELECT COUNT(*) FROM APP_ATCL_FILE_INFO A WHERE A.ATCL_ID = ATCL_ID)")
 	int fileCount;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleNo", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleId", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<ArticleFile> files = new ArrayList<ArticleFile>();
 
 	/**
@@ -84,7 +81,7 @@ public class Article {
 	 */
 	public void increaseReadCount() throws Exception {
 		ArticleRepository articleRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleRepository.class);
-		articleRepository.increaseReadCount(no);
+		articleRepository.increaseReadCount(id);
 	}
 
 	/**
@@ -95,7 +92,7 @@ public class Article {
 	@JsonIgnore
 	public List<ArticleReply> getReplies() throws Exception {
 		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
-		return articleReplyRepository.findByArticleNoOrderBySequenceAscLevelAsc(no);
+		return articleReplyRepository.findByArticleIdOrderBySequenceAscLevelAsc(id);
 	}
 	
 	/**
@@ -106,16 +103,16 @@ public class Article {
 	 */
 	public ArticleReply saveReply(ArticleReply reply) throws Exception {
 		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
-		if(reply.getNo() < 1) {
-			reply.setArticleNo(no);
+		if(StringUtils.isEmpty(reply.getId()) == false) {
+			reply.setArticleId(id);
 			
 			// In case of child reply(has upper no)
-			if(reply.getUpperNo() > 0) {
-				ArticleReply upperArticleReply = articleReplyRepository.findOne(new ArticleReply.Pk(no,reply.getUpperNo()));
+			if(StringUtils.isNotEmpty(reply.getUpperId())) {
+				ArticleReply upperArticleReply = articleReplyRepository.findOne(new ArticleReply.Pk(id,reply.getUpperId()));
 				reply.setSequence(upperArticleReply.getSequence());
 				StringBuffer level = new StringBuffer();
 				level.append(upperArticleReply.getLevel() == null ? "" : upperArticleReply.getLevel());
-				String siblingMaxLevel = articleReplyRepository.getSiblingMaxLevel(reply.getUpperNo());
+				String siblingMaxLevel = articleReplyRepository.getSiblingMaxLevel(reply.getUpperId());
 				if(siblingMaxLevel == null) {
 					level.append("A");
 				}else {
@@ -127,13 +124,13 @@ public class Article {
 			}
 			// just root reply	
 			else {
-				Integer maxSequence = articleReplyRepository.getMaxSequence(no);
+				Integer maxSequence = articleReplyRepository.getMaxSequence(id);
 				reply.setSequence((maxSequence == null ? 0 : maxSequence.intValue()) + 1);
 				reply.setLevel("");
 			}
 			return articleReplyRepository.saveAndFlush(reply);
 		}else {
-			ArticleReply one = articleReplyRepository.findOne(new ArticleReply.Pk(no,reply.getNo()));
+			ArticleReply one = articleReplyRepository.findOne(new ArticleReply.Pk(id,reply.getId()));
 			one.setContents(reply.getContents());
 			return articleReplyRepository.saveAndFlush(one);
 		}
@@ -144,9 +141,9 @@ public class Article {
 	 * @param replyNo
 	 * @throws Exception
 	 */
-	public void deleteReply(long replyNo) throws Exception {
+	public void deleteReply(String replyId) throws Exception {
 		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
-		articleReplyRepository.delete(new ArticleReply.Pk(no,replyNo));
+		articleReplyRepository.delete(new ArticleReply.Pk(id,replyId));
 	}
 	
 	/**
@@ -155,7 +152,7 @@ public class Article {
 	 */
 	public void deleteReplyAll() throws Exception {
 		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
-		articleReplyRepository.deleteByArticleNo(no);
+		articleReplyRepository.deleteByArticleId(id);
 	}
 	
 	/**
@@ -189,12 +186,12 @@ public class Article {
 	}
 
 	
-	public long getNo() {
-		return no;
+	public String getId() {
+		return id;
 	}
 
-	public void setNo(long no) {
-		this.no = no;
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 	public String getTitle() {

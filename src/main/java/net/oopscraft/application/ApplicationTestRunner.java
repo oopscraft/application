@@ -35,7 +35,8 @@ public class ApplicationTestRunner {
 	
 	@After
 	public final void afterSuper() {
-		entityManager.getTransaction().rollback();
+		//entityManager.getTransaction().rollback();
+		entityManager.getTransaction().commit();
 		entityManager.close();
 	}
 	

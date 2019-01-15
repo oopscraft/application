@@ -100,12 +100,12 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/{boardId}/article/{articleNo}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/{boardId}/article/{articleId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getArticle(
 		@PathVariable("boardId") String boardId,
-		@PathVariable("articleNo") long articleNo
+		@PathVariable("articleId") String articleId
 	) throws Exception {
-		BoardArticle article = boardArticleService.getArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleId);
 		return new ResponseEntity<>(JsonUtils.toJson(article), HttpStatus.OK);
 	}
 	
@@ -135,13 +135,13 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/{boardId}/article/{articleNo}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/{boardId}/article/{articleId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> deleteArticle(
 		@PathVariable("boardId") String boardId,
-		@PathVariable("articleNo") long articleNo
+		@PathVariable("articleId") String articleId
 	) throws Exception {
-		BoardArticle article = boardArticleService.getArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleId);
 		boardArticleService.deleteArticle(article);
 		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
 	}
@@ -155,9 +155,9 @@ public class BoardController {
 	@RequestMapping(value = "/{boardId}/article/{articleNo}/replies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getArticleReplies(
 		@PathVariable("boardId") String boardId,
-		@PathVariable("articleNo")long articleNo
+		@PathVariable("articleId")String articleId
 	) throws Exception {
-		BoardArticle article = boardArticleService.getArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleId);
 		List<ArticleReply> articleReplies = article.getReplies();
 		return new ResponseEntity<>(JsonUtils.toJson(articleReplies), HttpStatus.OK);
 	}
@@ -174,11 +174,11 @@ public class BoardController {
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> saveArticleReply(
 		@PathVariable("boardId")String boardId,
-		@PathVariable("articleNo")long articleNo,
+		@PathVariable("articleId")String articleId,
 		@RequestBody String payload
 	) throws Exception {
 		ArticleReply articleReply = JsonUtils.toObject(payload, ArticleReply.class);
-		BoardArticle article = boardArticleService.getArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleId);
 		articleReply = article.saveReply(articleReply);
 		return new ResponseEntity<>(JsonUtils.toJson(articleReply), HttpStatus.OK);
 	}
@@ -193,11 +193,11 @@ public class BoardController {
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> deleteArticleReply(
 		@PathVariable("boardId")String boardId,
-		@PathVariable("articleNo")long articleNo,
-		@PathVariable("replyNo")long replyNo
+		@PathVariable("articleId")String articleId,
+		@PathVariable("replyId")String replyId
 	) throws Exception {
-		BoardArticle article = boardArticleService.getArticle(articleNo);
-		article.deleteReply(replyNo);
+		BoardArticle article = boardArticleService.getArticle(articleId);
+		article.deleteReply(replyId);
 		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
 	}
 	
@@ -211,7 +211,7 @@ public class BoardController {
 	@RequestMapping(value = "/{boardId}/article/{articleNo}/file", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> uploadArticleFile(
 		@PathVariable("boardId")String boardId,
-		@PathVariable("articleNo")long articleNo,
+		@PathVariable("articleId")String articleId,
 		@RequestParam("file")MultipartFile multipartFile,
 		MultipartHttpServletRequest request
 	) throws Exception {
@@ -222,7 +222,7 @@ public class BoardController {
 		
 		// defines object
 		ArticleFile articleFile = new ArticleFile();
-		articleFile.setArticleNo(articleNo);
+		articleFile.setArticleId(articleId);
 		articleFile.setId(id);
 		articleFile.setName(multipartFile.getOriginalFilename());
 		articleFile.setType(multipartFile.getContentType());
@@ -247,11 +247,11 @@ public class BoardController {
 	@RequestMapping(value = "/{boardId}/article/{articleNo}/file/{fileId}", method = RequestMethod.GET)
 	public void downloadArticleFile(
 		@PathVariable("boardId")String boardId,
-		@PathVariable("articleNo")long articleNo,	
+		@PathVariable("articleId")String articleId,	
 		@PathVariable("fileId")String fileId
 	) throws Exception {
 		
-		BoardArticle article = boardArticleService.getArticle(articleNo);
+		BoardArticle article = boardArticleService.getArticle(articleId);
 		ArticleFile articleFile = article.getFile(fileId);
 		
 		// sends file

@@ -19,6 +19,7 @@ import net.oopscraft.application.article.repository.ArticleFileRepository;
 import net.oopscraft.application.article.repository.ArticleReplyRepository;
 import net.oopscraft.application.article.repository.ArticleRepository;
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.StringUtils;
 
 @Service
 public class ArticleService {
@@ -62,8 +63,8 @@ public class ArticleService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Article getArticle(long no) throws Exception {
-		Article article = articleRepository.findOne(no);
+	public Article getArticle(String id) throws Exception {
+		Article article = articleRepository.findOne(id);
 		return article;
 	}
 
@@ -76,12 +77,12 @@ public class ArticleService {
 	public void saveArticle(Article article) throws Exception {
 
 		// In case of new article(articleNo is empty)
-		if (article.getNo() < 1) {
+		if (StringUtils.isEmpty(article.getId())) {
 			articleRepository.saveAndFlush(article);
 		}
 		// In case of existing article updates
 		else {
-			Article one = articleRepository.findOne(article.getNo());
+			Article one = articleRepository.findOne(article.getId());
 			one.setEntityManager(entityManager);
 			one.setTitle(article.getTitle());
 			one.setContents(article.getContents());
@@ -90,7 +91,7 @@ public class ArticleService {
 			// add new file
 			for (ArticleFile file : article.getFiles()) {
 				if (one.getFile(file.getId()) == null) {
-					file.setArticleNo(article.getNo());
+					file.setArticleId(article.getId());
 					one.getFiles().add(file);
 
 					// move file from temporary directory
