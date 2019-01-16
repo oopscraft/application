@@ -28,13 +28,37 @@ var codeSearchKeys = [
 var codes = new juice.data.List();
 var code = new juice.data.Map();
 var items = new juice.data.List();
-code.setReadonly('id', true);
-code.setEnable(false);
+var isNew = false;
+
+/**
+ * clear edit
+ */
+function clearEdit(){
+	code.fromJson({});
+	items.fromJson([]);
+}
+
+/**
+ * enable edit
+ */
+function enableEdit(enable){
+	if(enable == true){
+		code.setEnable(true);
+		code.setReadonly('id', false);
+		$('#editDiv').find('button').attr('disabled',false);
+	}else{
+		code.setEnable(false);
+		code.setReadonly('id', true);
+		$('#editDiv').find('button').attr('disabled',true);
+	}
+}
 
 /**
  * On document loaded
  */
 $( document ).ready(function() {
+	clearEdit();
+	enableEdit();
 	getCodes();
 });
 
@@ -72,9 +96,12 @@ function getCode(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
-			code.setEnable(true);
+			clearEdit();
 			code.fromJson(data);
 			items.fromJson(data.items);
+			isNew = false;
+			enableEdit(true);
+			code.setReadonly('id', true);
 			$('#codeTable').hide().fadeIn();
   	 	}
 	});	
@@ -84,42 +111,10 @@ function getCode(id) {
  * Adds code
  */
 function addCode() {
-	
-	<spring:message code="application.text.id" var="item"/>
-	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
-		.beforeConfirm(function(event){
-			var id = event.value;
-	
-			// checks duplicated id.
-			var isDuplicated = false;
-			$.ajax({
-				 url: 'code/getCode'
-				,type: 'GET'
-				,data: {id: id}
-				,async: false
-				,success: function(data, textStatus, jqXHR) {
-					if(data != null && data.id == id){
-						if(data != null && data.id == event.value){
-							isDuplicated = true;
-						}
-					}
-		 	 	}
-			});
-			if(isDuplicated == true){
-				<spring:message code="application.text.id" var="item"/>
-				new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
-				return false;
-			}
-		})
-		.afterConfirm(function(event){
-			var id = event.value;
-			codes.clearIndex();
-			code.fromJson({});
-			code.set('id', id);
-			code.setEnable(true);
-			items.fromJson([]);
-		})
-		.open();
+	clearEdit();
+	enableEdit(true);
+	codes.clearIndex();
+	isNew = true;
 }
 
 /**
@@ -127,11 +122,40 @@ function addCode() {
  */
 function saveCode() {
 	
-	// Checks validation of code
-	if(juice.util.validator.isEmpty(code.get('name'))){
+	// checks id
+	if(__isEmpty(code.get('id'))){
+		<spring:message code="application.text.id" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		return false;
+	}
+
+	// checks  name
+	if(__isEmpty(code.get('name'))){
 		<spring:message code="application.text.name" var="item"/>
 		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
+	}
+	
+	// checks duplicated id. 
+	if(isNew == true){
+		var id = code.get('id');
+		var isDuplicated = false;
+		$.ajax({
+			 url: 'code/getCode'
+			,type: 'GET'
+			,data: {id: id}
+			,async: false
+			,success: function(data, textStatus, jqXHR) {
+				if(data != null && data.id == id){
+					isDuplicated = true;
+				}
+	 	 	}
+		});
+		if(isDuplicated == true){
+			<spring:message code="application.text.id" var="item"/>
+			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			return false;
+		}
 	}
 	
 	// Saves code
@@ -147,13 +171,8 @@ function saveCode() {
 				,data: JSON.stringify(codeJson)
 				,contentType: "application/json"
 				,success: function(data, textStatus, jqXHR) {
-					<spring:message code="application.text.code" var="item"/>
-					var message = '<spring:message code="application.message.saveItem.complete" arguments="${item}"/>';
-					new juice.ui.Alert(message)
-						.afterConfirm(function(){
-							getCode(code.get('id'));
-							getCodes();
-						}).open();
+					getCode(code.get('id'));
+					getCodes();
 			 	}
 			});	
 		}).open();
@@ -162,7 +181,7 @@ function saveCode() {
 /**
  * Removes code
  */
-function removeCode() {
+function deleteCode() {
 
 	// Checks system data
 	if(code.get('systemDataYn') == 'Y'){
@@ -172,22 +191,17 @@ function removeCode() {
 	
 	// Removes code
 	<spring:message code="application.text.code" var="item"/>
-	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
+	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
-			 url: 'code/removeCode'
+			 url: 'code/deleteCode'
 			,type: 'GET'
 			,data: { id: code.get('id') }
 			,success: function(data, textStatus, jqXHR) {
-				<spring:message code="application.text.code" var="item"/>
-				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
-				new juice.ui.Alert(message)
-				.afterConfirm(function(){
-					code.fromJson({});
-					code.setEnable(false);
-					getCodes();
-				}).open();
+				clearEdit();
+				enableEdit(false);
+				getCodes();
 	  	 	}
 		});	
 	}).open();
@@ -203,7 +217,6 @@ function addItem() {
 		name: null
 	});
 	items.addRow(item);
-	console.log(items);
 }
 
 /**
@@ -247,9 +260,6 @@ function removeItem(index){
 		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<div class="title2">
-					<i class="icon-search"></i>
-				</div>
 				<select data-juice="ComboBox" data-juice-bind="codeSearch.key" data-juice-options="codeSearchKeys" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="codeSearch.value" style="width:100px;"/>
 				<button onclick="javascript:getCodes();">
@@ -259,7 +269,7 @@ function removeItem(index){
 			</div>
 			<div>
 				<button onclick="javascript:addCode();">
-					<i class="icon-plus"></i>
+					<i class="icon-new"></i>
 					<spring:message code="application.text.new"/>
 				</button>
 			</div>
@@ -276,11 +286,9 @@ function removeItem(index){
 						<spring:message code="application.text.no"/>
 					</th>
 					<th>
-						<spring:message code="application.text.code"/>
 						<spring:message code="application.text.id"/>
 					</th>
 					<th>
-						<spring:message code="application.text.code"/>
 						<spring:message code="application.text.name"/>
 					</th>
 				</tr>
@@ -303,25 +311,24 @@ function removeItem(index){
 			</ul>
 		</div>
 	</div>
-	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Code Details										-->
-		<!-- ====================================================== -->
+	<!-- ====================================================== -->
+	<!-- Code Details										-->
+	<!-- ====================================================== -->
+	<div id="editDiv" class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
-					<i class="icon-key"></i>
 					<spring:message code="application.text.code"/>
 					<spring:message code="application.text.details"/>
 				</div>
 			</div>
 			<div>
 				<button onclick="javascript:saveCode();">
-					<i class="icon-disk"></i>
+					<i class="icon-save"></i>
 					<spring:message code="application.text.save"/>
 				</button>
-				<button onclick="javascript:removeCode();">
-					<i class="icon-trash"></i>
+				<button onclick="javascript:deleteCode();">
+					<i class="icon-delete"></i>
 					<spring:message code="application.text.remove"/>
 				</button>
 			</div>
@@ -333,8 +340,9 @@ function removeItem(index){
 			</colgroup>
 			<tr>
 				<th>
-					<i class="icon-attention"></i>
-					<spring:message code="application.text.id"/>
+					<span class="must">
+						<spring:message code="application.text.id"/>
+					</span>
 				</th>
 				<td>
 					
@@ -368,8 +376,8 @@ function removeItem(index){
 					<table data-juice="Grid" data-juice-bind="items" data-juice-item="item">
 						<colgroup>
 							<col style="width:40%;"/>
-							<col style="width:40%;"/>
-							<col style="width:20%;"/>
+							<col/>
+							<col style="width:5%;"/>
 						</colgroup>
 						<thead>
 							<tr>
@@ -381,7 +389,7 @@ function removeItem(index){
 								</th>
 								<th style="text-align:right;">
 									<button class="small" onclick="javascript:addItem();">
-										<i class="icon-plus"></i>
+										<i class="icon-add"></i>
 									</button>
 								</th>
 							</tr>
@@ -394,17 +402,18 @@ function removeItem(index){
 								<td>
 									<input data-juice="TextField" data-juice-bind="item.name"/>
 								</td>
-								<td style="text-align:right;">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:moveItemUp(this.dataset.index);">
-										<i class="icon-up"></i>
-									</button>
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:moveItemDown(this.dataset.index);">
-										<i class="icon-down"></i>
-									</button>
-								
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeItem(this.dataset.index);">
-										<i class="icon-minus"></i>
-									</button>
+								<td class="text-center">
+									<div style="display:flex;justify-content:center;">
+										<button class="small" data-index="{{$context.index}}" onclick="javascript:moveItemUp(this.dataset.index);">
+											<i class="icon-up"></i>
+										</button>
+										<button class="small" data-index="{{$context.index}}" onclick="javascript:moveItemDown(this.dataset.index);">
+											<i class="icon-down"></i>
+										</button>
+										<button class="small" data-index="{{$context.index}}" onclick="javascript:removeItem(this.dataset.index);">
+											<i class="icon-remove"></i>
+										</button>
+									</div>
 								</td>
 							</tr>
 						</tbody>

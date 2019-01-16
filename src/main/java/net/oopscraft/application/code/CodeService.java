@@ -90,7 +90,7 @@ public class CodeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Code saveCode(Code code) throws Exception {
+	public void saveCode(Code code) throws Exception {
 		Code one = codeRepository.findOne(code.getId());
 		if(one == null) {
 			one = new Code();
@@ -106,20 +106,17 @@ public class CodeService {
 			item.setDisplaySeq(displaySeq ++);
 			one.getItems().add(item);
 		}
-		
-		codeRepository.save(one);
-		return codeRepository.findOne(code.getId());
+		codeRepository.saveAndFlush(one);
 	}
 	
 	/**
-	 * Removes code
+	 * Deletes code
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
-	public Code removeCode(String id) throws Exception {
+	public void deleteCode(String id) throws Exception {
 		Code code = codeRepository.getOne(id);
 		codeRepository.delete(code);
-		return code;
 	}
 }

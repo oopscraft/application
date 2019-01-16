@@ -12,16 +12,42 @@ var menus = new juice.data.Tree();
 var menu = new juice.data.Map();
 menu.setReadonly('id',true);
 menu.setEnable(false);
-var isNewMenu = false;
 var displayAuthorities = new juice.data.List();
+var isNew = false;
 
 // policies
 var policies = ${app:toJson(policies)};
 
 /**
+ * clear edit
+ */
+function clearEdit(){
+	menu.fromJson({});
+	displayAuthorities.fromJson([]);
+	onPolicyChanged('display');
+}
+
+/**
+ * enable edit
+ */
+function enableEdit(enable){
+	if(enable == true){
+		menu.setEnable(true);
+		menu.setReadonly('id', false);
+		$('#editDiv').find('button').attr('disabled',false);
+	}else{
+		menu.setEnable(false);
+		menu.setReadonly('id', true);
+		$('#editDiv').find('button').attr('disabled',true);
+	}
+}
+
+/**
  * On document loaded
  */
 $( document ).ready(function() {
+	clearEdit();
+	enableEdit(false);
 	getMenus();
 	
 	$('#displayPolicySelect').change(function(event){
@@ -51,10 +77,7 @@ function getMenus() {
 		,type: 'GET'
 		,data: {}
 		,success: function(data, textStatus, jqXHR) {
-			console.log(data);
 			menus.fromJson(data,'childMenus');
-
-			// animates menus
 			$('#menusUl').hide().fadeIn();
 			
 			// find current node index
@@ -75,11 +98,12 @@ function getMenu(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
-			menu.setEnable(true);
+			clearEdit();
 			menu.fromJson(data);
 			displayAuthorities.fromJson(data.displayAuthorities);
+			isNew = false;
+			enableEdit(true);
 			menu.setReadonly('id',true);
-			isNewMenu = false;
 			
 			// breadcrumbs
 			getBreadCrumbs(menu.get('upperId'),function(breadCrumbs){
@@ -89,22 +113,14 @@ function getMenu(id) {
 				});
 				menu.set('breadCrumbs', breadCrumbsNames.join('<i class="icon-right"></i>'));
 			});
-			
-			// animates menu.
+
+			// show menuTable
 			$('#menuTable').hide().fadeIn();
 			
 			// hide or show authorities table.
 			onPolicyChanged('display');
   	 	}
 	});	
-}
-
-/**
- * Clears menu
- */
-function clearMenu(){
-	menu.fromJson({});
-	displayAuthorities.fromJson([]);
 }
 
 /**
@@ -127,13 +143,10 @@ function getBreadCrumbs(id, callback) {
 function changeUpperId(){
 	__menusDialog
 		.setDisable(function(node){
-			if(node.get('id') == menu.get('id')
-			|| node.get('id') == menu.get('upperId')
-			){
+			if(node.get('id') == menu.get('id')|| node.get('id') == menu.get('upperId')){
 				return true;
 			}
 		}).afterConfirm(function(node){
-			console.log(node.get('name'));
 			menu.set('upperId', node.get('id'));
 			
 			// find breadCrumbs
@@ -152,9 +165,9 @@ function changeUpperId(){
 }
 
 /**
- * Clears upperId
+ * removes upperId
  */
-function clearUpperId(){
+function removeUpperId(){
 	menu.set('upperId',null);
 	menu.set('breadCrumbs', '');
 }
@@ -188,17 +201,10 @@ function removeAuthority(index){
  * Adds child menu
  */
 function addMenu(upperId) {
-	
-	// prepare
-	clearMenu();
-	isNewMenu = true;
-	
-	// add new data.
+	clearEdit();	
 	menu.set('id', __generateRandomId());
 	menu.set('upperId', upperId);
 	menu.set('displayPolicy','ANONYMOUS');
-	menu.setEnable(true);
-	menu.setReadonly('id',false);
 
 	// breadcrumbs
 	getBreadCrumbs(upperId,function(breadCrumbs){
@@ -208,6 +214,10 @@ function addMenu(upperId) {
 		});
 		menu.set('breadCrumbs', breadCrumbsNames.join('<i class="icon-right"></i>'));
 	});
+	
+	menus.clearIndex();
+	enableEdit(true);
+	isNew = true;
 }
 
 /**
@@ -215,8 +225,22 @@ function addMenu(upperId) {
  */
 function saveMenu(){
 	
+	// Checks validation 
+	if(__isEmpty(menu.get('id'))){
+		<spring:message code="application.text.id" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		return false;
+	}
+	
+	// Checks validation of authority
+	if(__isEmpty(menu.get('name'))){
+		<spring:message code="application.text.name" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		return false;
+	}
+	
 	// checks duplicated id. 
-	if(isNewMenu == true){
+	if(isNew == true){
 		var id = menu.get('id');
 		var isDuplicated = false;
 		$.ajax({
@@ -237,20 +261,6 @@ function saveMenu(){
 		}
 	}
 	
-	// Checks validation 
-	if(__isEmpty(menu.get('id'))){
-		<spring:message code="application.text.id" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
-		return false;
-	}
-	
-	// Checks validation of authority
-	if(__isEmpty(menu.get('name'))){
-		<spring:message code="application.text.name" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
-		return false;
-	}
-	
 	// Saves menu
 	<spring:message code="application.text.menu" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
@@ -264,7 +274,7 @@ function saveMenu(){
 				,data: JSON.stringify(menuJson)
 				,contentType: "application/json"
 				,success: function(data, textStatus, jqXHR) {
-					getMenu(data.id);
+					getMenu(menu.get('id'));
 					getMenus();
 			 	}
 			});	
@@ -287,7 +297,6 @@ function deleteMenu() {
 	var index = menus.indexOf(function(node){
 		return node.get('id') == menu.get('id');
 	});
-
 	if(menus.getNode(index).getChildNodes().length > 0){
 		<spring:message code="application.text.menu" var="item"/>
 		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.hasChildItem" arguments="${item}"/>').open();
@@ -296,7 +305,7 @@ function deleteMenu() {
 	
 	// Removes menu
 	<spring:message code="application.text.menu" var="item"/>
-	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
+	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
@@ -304,8 +313,8 @@ function deleteMenu() {
 			,type: 'GET'
 			,data: { id: menu.get('id') }
 			,success: function(data, textStatus, jqXHR) {
-				clearMenu();
-				menu.setEnable(false);
+				clearEdit();
+				enableEdit(false);
 				getMenus();
 	  	 	}
 		});	
@@ -332,21 +341,20 @@ div.menuItem:hover {
 	<spring:message code="application.text.management"/>
 </div>
 <div class="container" style="min-height:70vh;">
+	<!-- ====================================================== -->
+	<!-- Menu Tree												-->
+	<!-- ====================================================== -->
 	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Menu Tree												-->
-		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;border-bottom:solid 1px #eee;">
 			<div>
 				<div class="title2">
-					<i class="icon-tree"></i>
 					<spring:message code="application.text.menu"/>
 					<spring:message code="application.text.list"/>
 				</div>
 			</div>
 			<div>
 				<button onclick="javascript:addMenu(null);">
-					<i class="icon-plus"></i>
+					<i class="icon-new"></i>
 					<spring:message code="application.text.new"/>
 				</button>
 			</div>
@@ -355,40 +363,39 @@ div.menuItem:hover {
 			<li data-id="{{$context.menu.get('id')}}" onclick="javascript:getMenu(this.dataset.id);">
 				<div class="menuItem" >
 					<div>
-						<img class="icon" data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII=" style="vertical-align:middle;"/>
+						<img class="icon" data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
 						<span class="{{$context.menu.get('systemDataYn')=='Y'?'systemData':''}}">
 							<label data-juice="Label" data-juice-bind="menu.name"></label>
 						</span>
 					</div>
 					<div style="display:inline-block;text-align:right;">
 						<button class="small" data-id="{{$context.menu.get('id')}}" onclick="javascript:addMenu(this.dataset.id); event.stopPropagation();">
-							<i class="icon-plus"></i>
+							<i class="icon-add"></i>
 						</button>
 					</div>
 				</div>
 			</li>
 		</ul>
 	</div>
-	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Menu Details											-->
-		<!-- ====================================================== -->
+	<!-- ====================================================== -->
+	<!-- Menu Details											-->
+	<!-- ====================================================== -->
+	<div id="editDiv" class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
-					<i class="icon-folder"></i>
 					<spring:message code="application.text.menu"/>
 					<spring:message code="application.text.details"/>
 				</div>
 			</div>
 			<div>
 				<button onclick="javascript:saveMenu();">
-					<i class="icon-disk"></i>
+					<i class="icon-save"></i>
 					<spring:message code="application.text.save"/>
 				</button>
 				<button onclick="javascript:deleteMenu();">
-					<i class="icon-trash"></i>
-					<spring:message code="application.text.remove"/>
+					<i class="icon-delete"></i>
+					<spring:message code="application.text.delete"/>
 				</button>
 			</div>
 		</div>
@@ -427,8 +434,8 @@ div.menuItem:hover {
 								<i class="icon-change"></i>
 								<spring:message code="application.text.change"/>
 							</button>
-							<button class="small" onclick="javascript:clearUpperId();">
-								<i class="icon-cancel"></i>
+							<button class="small" onclick="javascript:removeUpperId();">
+								<i class="icon-remove"></i>
 							</button>
 						</div>
 					</div>
@@ -439,9 +446,9 @@ div.menuItem:hover {
 					<spring:message code="application.text.icon"/>
 				</th>
 				<td>
-					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="32" data-juice-height="32" data-juice-editable="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII="/>
-					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII="/>
-					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="16" data-juice-height="16" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII="/>
+					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="32" data-juice-height="32" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
+					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
+					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="16" data-juice-height="16" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
 				</td>
 			</tr>
 			<tr>
@@ -495,7 +502,7 @@ div.menuItem:hover {
 								</th>
 								<th>
 									<button class="small" onclick="javascript:addAuthority();">
-										<i class="icon-plus"></i>
+										<i class="icon-add"></i>
 									</button>
 								</th>
 							</tr>
@@ -510,7 +517,7 @@ div.menuItem:hover {
 								</td>
 								<td class="text-center">
 									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
-										<i class="icon-minus"></i>
+										<i class="icon-remove"></i>
 									</button>
 								</td>
 							</tr>

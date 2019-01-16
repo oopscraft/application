@@ -381,7 +381,6 @@
 }
 .juice-ui-grid thead th {
 	border: solid 1px #ddd;
-	font-weight: bold;
 	text-align: center;
 	text-overflow: ellipsis;
 }

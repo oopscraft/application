@@ -5,8 +5,6 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="app" uri="/WEB-INF/tld/application.tld"%>
-<%@page import="java.util.*" %>
-<%@page import="java.text.*" %>
 <script type="text/javascript">
 var pageSearch = new juice.data.Map({
 	 key: null
@@ -27,10 +25,8 @@ var pageSearchKeys = [
 ];
 var pages = new juice.data.List();
 var page = new juice.data.Map();
-page.setReadonly('id', true);
-page.setEnable(false);
-var isNewPage = false;
 var accessAuthorities = new juice.data.List();
+var isNew = false;
 
 // types
 var types = ${app:toJson(types)};
@@ -39,9 +35,35 @@ var types = ${app:toJson(types)};
 var policies = ${app:toJson(policies)};
 
 /**
+ * clear edit
+ */
+function clearEdit(){
+	page.fromJson({});
+	accessAuthorities.fromJson([]);
+	onPolicyChanged('access');
+}
+
+/**
+ * enable edit
+ */
+function enableEdit(enable){
+	if(enable == true){
+		page.setEnable(true);
+		page.setReadonly('id', false);
+		$('#editDiv').find('button').attr('disabled',false);
+	}else{
+		page.setEnable(false);
+		page.setReadonly('id', true);
+		$('#editDiv').find('button').attr('disabled',true);
+	}
+}
+
+/**
  * On document loaded
  */
 $( document ).ready(function() {
+	clearEdit();
+	enableEdit(false);
 	getPages();
 	
 	$('#accessPolicySelect').change(function(event){
@@ -96,13 +118,12 @@ function getPage(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
-			page.setEnable(true);
+			clearEdit();
 			page.fromJson(data);
 			accessAuthorities.fromJson(data.accessAuthorities);
+			isNew = false;
+			enableEdit(true);
 			page.setReadonly('id', true);
-			isNewPage = false;
-			
-			// animates page
 			$('#pageTable').hide().fadeIn();
 			
 			// hide or show authorities table
@@ -112,27 +133,16 @@ function getPage(id) {
 }
 
 /**
- * Clears page
- */
-function clearPage(){
-	page.fromJson({});
-	accessAuthorities.fromJson([]);
-}
-
-/**
  * Adds page
  */
 function addPage() {
-	
-	// prepare
-	clearPage();
-	isNewPage = true;
-	
-	// add new data
+	clearEdit();
 	page.set('id', __generateRandomId());
 	page.set('accessPolicy', 'ANONYMOUS');
-	page.setEnable(true);
-	page.setReadonly('id', false);
+	page.set('type', 'JSP');
+	pages.clearIndex();
+	enableEdit(true);
+	isNew = true;
 }
 
 /**
@@ -140,8 +150,22 @@ function addPage() {
  */
 function savePage() {
 	
+	// checks id
+	if(__isEmpty(page.get('id'))){
+		<spring:message code="application.text.id" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		return false;
+	}
+
+	// checks  name
+	if(__isEmpty(page.get('name'))){
+		<spring:message code="application.text.name" var="item"/>
+		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		return false;
+	}
+	
 	// checks duplicated id. 
-	if(isNewPage == true){
+	if(isNew == true){
 		var id = page.get('id');
 		var isDuplicated = false;
 		$.ajax({
@@ -162,37 +186,23 @@ function savePage() {
 		}
 	}
 	
-	// checks id
-	if(__isEmpty(page.get('id'))){
-		<spring:message code="application.text.id" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
-		return false;
-	}
-
-	// checks  name
-	if(__isEmpty(page.get('name'))){
-		<spring:message code="application.text.name" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
-		return false;
-	}
-	
 	// Saves page
 	<spring:message code="application.text.message" var="item"/>
 	new juice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
-		.afterConfirm(function() {
-			var pageJson = page.toJson();
-			pageJson.accessAuthorities = accessAuthorities.toJson();
-			$.ajax({
-				 url: 'page/savePage'
-				,type: 'POST'
-				,data: JSON.stringify(pageJson)
-				,contentType: "application/json"
-				,success: function(data, textStatus, jqXHR) {
-					getPage(page.get('id'));
-					getPages();
-			 	}
-			});	
-		}).open();
+	.afterConfirm(function() {
+		var pageJson = page.toJson();
+		pageJson.accessAuthorities = accessAuthorities.toJson();
+		$.ajax({
+			 url: 'page/savePage'
+			,type: 'POST'
+			,data: JSON.stringify(pageJson)
+			,contentType: "application/json"
+			,success: function(data, textStatus, jqXHR) {
+				getPage(page.get('id'));
+				getPages();
+		 	}
+		});	
+	}).open();
 }
 
 /**
@@ -202,14 +212,14 @@ function deletePage(){
 
 	// Removes pages
 	<spring:message code="application.text.page" var="item"/>
-	new juice.ui.Confirm('<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>')
+	new juice.ui.Confirm('<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>')
 	.afterConfirm(function() {
 		$.ajax({
-			 url: 'page/removePage'
+			 url: 'page/deletePage'
 			,type: 'GET'
 			,data: { id: page.get('id') }
 			,success: function(data, textStatus, jqXHR) {
-				page.fromJson({});
+				clearEdit();
 				page.setEnable(false);
 				getPages();
 	  	 	}
@@ -274,7 +284,7 @@ function openPage() {
 			</div>
 			<div>
 				<button onclick="javascript:addPage();">
-					<i class="icon-plus"></i>
+					<i class="icon-new"></i>
 					<spring:message code="application.text.new"/>
 				</button>
 			</div>
@@ -293,15 +303,12 @@ function openPage() {
 						<spring:message code="application.text.no"/>
 					</th>
 					<th>
-						<spring:message code="application.text.page"/>
 						<spring:message code="application.text.id"/>
 					</th>
 					<th>
-						<spring:message code="application.text.page"/>
 						<spring:message code="application.text.name"/>
 					</th>
 					<th>
-						<spring:message code="application.text.page"/>
 						<spring:message code="application.text.type"/>
 					</th>
 				</tr>
@@ -329,10 +336,10 @@ function openPage() {
 			</ul>
 		</div>
 	</div>
-	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Page Details										-->
-		<!-- ====================================================== -->
+	<!-- ====================================================== -->
+	<!-- Page Details										-->
+	<!-- ====================================================== -->
+	<div id="editDiv" class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
@@ -342,16 +349,16 @@ function openPage() {
 			</div>
 			<div>
 				<button onclick="javascript:openPage();">
-					<i class="icon-link"></i>
+					<i class="icon-open"></i>
 					<spring:message code="application.text.page"/>
 					<spring:message code="application.text.open"/>
 				</button>
 				<button onclick="javascript:savePage();">
-					<i class="icon-disk"></i>
+					<i class="icon-save"></i>
 					<spring:message code="application.text.save"/>
 				</button>
 				<button onclick="javascript:deletePage();">
-					<i class="icon-trash"></i>
+					<i class="icon-delete"></i>
 					<spring:message code="application.text.remove"/>
 				</button>
 			</div>
@@ -438,7 +445,7 @@ function openPage() {
 								</th>
 								<th>
 									<button class="small" onclick="javascript:addAccessAuthority();">
-										<i class="icon-plus"></i>
+										<i class="icon-add"></i>
 									</button>
 								</th>
 							</tr>
@@ -453,7 +460,7 @@ function openPage() {
 								</td>
 								<td class="text-center">
 									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAccessAuthority(this.dataset.index);">
-										<i class="icon-minus"></i>
+										<i class="icon-remove"></i>
 									</button>
 								</td>
 							</tr>

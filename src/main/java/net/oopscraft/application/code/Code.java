@@ -31,7 +31,7 @@ public class Code extends SystemEntity {
 	@Column(name = "CD_DESC")
 	String description;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "codeId", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "codeId", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("displaySeq")
 	List<CodeItem> items = new ArrayList<CodeItem>();
 	
