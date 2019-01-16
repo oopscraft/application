@@ -4,9 +4,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@page import="java.util.*" %>
-<%@page import="java.text.*" %>
-<!-- global -->
+<%@taglib prefix="app" uri="/WEB-INF/tld/application.tld"%>
 <script type="text/javascript">
 var boardSearch = new juice.data.Map({
 	 key: null
@@ -27,46 +25,57 @@ var boardSearchKeys = [
 ];
 var boards = new juice.data.List();
 var board = new juice.data.Map();
-board.setReadonly('id', true);
-board.setEnable(false);
 var accessAuthorities = new juice.data.List();
 var readAuthorities = new juice.data.List();
 var writeAuthorities = new juice.data.List();
 var categories = new juice.data.List();
+var isNew = false;
 
 // skinIds
-var skinIds = new Array();
-skinIds.push({value:'__board', text:'__board'});
+var skinIds = ${app:toJson(skinIds)};
 
 //policies
-var policies = new Array();
-$.ajax({
-	 url: 'board/getPolicies'
-	,type: 'GET'
-	,data: {}
-	,success: function(data, textStatus, jqXHR) {
-		data.forEach(function(item){
-			policies.push({
-				value: item,
-				text: item
-			});
-		});
-	}
-});
+var policies = ${app:toJson(policies)};
 
 // rowsPerPage options
-var rowsPerPage = [
-	{text:'10',value:'10'},
-	{text:'20',value:'20'},
-	{text:'30',value:'30'},
-	{text:'40',value:'40'},
-	{text:'50',value:'50'}
-];
+var rowsPerPage = ${app:toJson(rowsPerPage)};;
+
+/**
+ * clear edit
+ */
+function clearEdit() {
+	board.fromJson({});
+	accessAuthorities.fromJson([]);
+	readAuthorities.fromJson([]);
+	writeAuthorities.fromJson([]);
+	categories.fromJson([]);
+	onPolicyChanged('access');
+	onPolicyChanged('read');
+	onPolicyChanged('write');
+	onCategoryUseYnChanged(board.get('categoryUseYn'));
+}
+
+/**
+ * enable edit
+ */
+function enableEdit(editable) {
+	if(editable == true){
+		board.setEnable(true);
+		board.setReadonly('id', false);
+		$('#editDiv').find('button').attr('disabled',false);
+	}else{
+		board.setEnable(false);
+		board.setReadonly('id', true);
+		$('#editDiv').find('button').attr('disabled',true);
+	}
+}
 
 /**
  * On document loaded
  */
 $( document ).ready(function() {
+	clearEdit();
+	enableEdit(false);
 	getBoards();
 
 	$('#accessPolicySelect').change(function(event){
@@ -143,12 +152,15 @@ function getBoard(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
-			board.setEnable(true);
+			clearEdit();
 			board.fromJson(data);
 			accessAuthorities.fromJson(data.accessAuthorities);
 			readAuthorities.fromJson(data.readAuthorities);
 			writeAuthorities.fromJson(data.writeAuthorities);
 			categories.fromJson(data.categories);
+			isNew = false;
+			enableEdit(true);
+			board.setReadonly('id',true);
 			$('#boardTable').hide().fadeIn();
 			
 			// hide or show authorities table.
@@ -166,49 +178,19 @@ function getBoard(id) {
  * Adds board
  */
 function addBoard() {
-	
-	<spring:message code="application.text.id" var="item"/>
-	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
-		.beforeConfirm(function(event){
-			var id = event.value;
-	
-			// checks duplicated id.
-			var isDuplicated = false;
-			$.ajax({
-				 url: 'board/getBoard'
-				,type: 'GET'
-				,data: {id: id}
-				,async: false
-				,success: function(data, textStatus, jqXHR) {
-					if(data != null && data.id == id){
-						if(data != null && data.id == event.value){
-							isDuplicated = true;
-						}
-					}
-		 	 	}
-			});
-			if(isDuplicated == true){
-				<spring:message code="application.text.id" var="item"/>
-				new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
-				return false;
-			}
-		})
-		.afterConfirm(function(event){
-			var id = event.value;
-			boards.clearIndex();
-			board.fromJson({});
-			board.set('id', id);
-			board.set('skinId', 'board');
-			board.set('accessPolicy', 'ANONYMOUS');
-			board.set('readPolicy', 'ANONYMOUS');
-			board.set('writePolicy', 'ANONYMOUS');
-			board.set('rowsPerPage', 20);
-			board.set('categoryUseYn', 'N');
-			board.set('replyUseYn', 'N');
-			board.set('fileUseYn', 'N');
-			board.setEnable(true);
-		})
-		.open();
+	clearEdit();
+	board.set('id', __generateRandomId());
+	board.set('skinId', '__board');
+	board.set('accessPolicy', 'ANONYMOUS');
+	board.set('readPolicy', 'ANONYMOUS');
+	board.set('writePolicy', 'ANONYMOUS');
+	board.set('rowsPerPage', 20);
+	board.set('categoryUseYn', 'N');
+	board.set('replyUseYn', 'N');
+	board.set('fileUseYn', 'N');
+	boards.clearIndex();
+	enableEdit(true);
+	isNew = true;
 }
 
 /**
@@ -228,6 +210,28 @@ function saveBoard() {
 		return false;
 	}
 	
+	// checks duplicated id. 
+	if(isNew == true){
+		var id = board.get('id');
+		var isDuplicated = false;
+		$.ajax({
+			 url: 'board/getBoard'
+			,type: 'GET'
+			,data: {id: id}
+			,async: false
+			,success: function(data, textStatus, jqXHR) {
+				if(data != null && data.id == id){
+					isDuplicated = true;
+				}
+	 	 	}
+		});
+		if(isDuplicated == true){
+			<spring:message code="application.text.id" var="item"/>
+			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			return false;
+		}
+	}
+	
 	// Saves board
 	<spring:message code="application.text.message" var="item"/>
 	new juice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
@@ -243,12 +247,8 @@ function saveBoard() {
 				,data: JSON.stringify(boardJson)
 				,contentType: "application/json"
 				,success: function(data, textStatus, jqXHR) {
-					<spring:message code="application.text.message" var="item"/>
-					new juice.ui.Alert('<spring:message code="application.message.saveItem.complete" arguments="${item}"/>')
-						.afterConfirm(function(){
-							getBoard(board.get('id'));
-							getBoards();
-						}).open();
+					getBoard(board.get('id'));
+					getBoards();
 			 	}
 			});	
 		}).open();
@@ -261,21 +261,16 @@ function deleteBoard(){
 
 	// Removes board
 	<spring:message code="application.text.message" var="item"/>
-	new juice.ui.Confirm('<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>')
+	new juice.ui.Confirm('<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>')
 	.afterConfirm(function() {
 		$.ajax({
-			 url: 'board/removeMessage'
+			 url: 'board/deleteBoard'
 			,type: 'GET'
 			,data: { id: board.get('id') }
 			,success: function(data, textStatus, jqXHR) {
-				<spring:message code="application.text.message" var="item"/>
-				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
-				new juice.ui.Alert(message)
-				.afterConfirm(function(){
-					board.fromJson({});
-					board.setEnable(false);
-					getBoards();
-				}).open();
+				clearEdit();
+				enableEdit(false);
+				getBoards();
 	  	 	}
 		});	
 	}).open();
@@ -433,7 +428,7 @@ function openBoard() {
 			</div>
 			<div>
 				<button onclick="javascript:addBoard();">
-					<i class="icon-plus"></i>
+					<i class="icon-new"></i>
 					<spring:message code="application.text.new"/>
 				</button>
 			</div>
@@ -451,11 +446,9 @@ function openBoard() {
 						<spring:message code="application.text.no"/>
 					</th>
 					<th>
-						<spring:message code="application.text.board"/>
 						<spring:message code="application.text.id"/>
 					</th>
 					<th>
-						<spring:message code="application.text.board"/>
 						<spring:message code="application.text.name"/>
 					</th>
 				</tr>
@@ -480,10 +473,11 @@ function openBoard() {
 			</ul>
 		</div>
 	</div>
-	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Board Details										-->
-		<!-- ====================================================== -->
+	<!-- ====================================================== -->
+	<!-- Board Details										-->
+	<!-- ====================================================== -->
+	<div id="editDiv" class="division" style="width:50%;">
+
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
@@ -493,16 +487,16 @@ function openBoard() {
 			</div>
 			<div>
 				<button onclick="javascript:openBoard();">
-					<i class="icon-link"></i>
+					<i class="icon-open"></i>
 					<spring:message code="application.text.board"/>
 					<spring:message code="application.text.open"/>
 				</button>
 				<button onclick="javascript:saveBoard();">
-					<i class="icon-disk"></i>
+					<i class="icon-save"></i>
 					<spring:message code="application.text.save"/>
 				</button>
 				<button onclick="javascript:deleteBoard();">
-					<i class="icon-trash"></i>
+					<i class="icon-delete"></i>
 					<spring:message code="application.text.remove"/>
 				</button>
 			</div>
@@ -591,7 +585,7 @@ function openBoard() {
 								</th>
 								<th>
 									<button class="small" onclick="javascript:addAccessAuthority();">
-										<i class="icon-plus"></i>
+										<i class="icon-add"></i>
 									</button>
 								</th>
 							</tr>
@@ -606,7 +600,7 @@ function openBoard() {
 								</td>
 								<td class="text-center">
 									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAccessAuthority(this.dataset.index);">
-										<i class="icon-minus"></i>
+										<i class="icon-remove"></i>
 									</button>
 								</td>
 							</tr>
@@ -639,7 +633,7 @@ function openBoard() {
 								</th>
 								<th>
 									<button class="small" onclick="javascript:addReadAuthority();">
-										<i class="icon-plus"></i>
+										<i class="icon-add"></i>
 									</button>
 								</th>
 							</tr>
@@ -654,7 +648,7 @@ function openBoard() {
 								</td>
 								<td class="text-center">
 									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeReadAuthority(this.dataset.index);">
-										<i class="icon-minus"></i>
+										<i class="icon-remove"></i>
 									</button>
 								</td>
 							</tr>
@@ -687,7 +681,7 @@ function openBoard() {
 								</th>
 								<th>
 									<button class="small" onclick="javascript:addWriteAuthority();">
-										<i class="icon-plus"></i>
+										<i class="icon-add"></i>
 									</button>
 								</th>
 							</tr>
@@ -702,7 +696,7 @@ function openBoard() {
 								</td>
 								<td class="text-center">
 									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeWriteAuthority(this.dataset.index);">
-										<i class="icon-minus"></i>
+										<i class="icon-remove"></i>
 									</button>
 								</td>
 							</tr>
@@ -752,7 +746,7 @@ function openBoard() {
 								<th>
 									<div style="display:flex;justify-content:center;">
 										<button class="small" onclick="javascript:addCategory();">
-											<i class="icon-plus"></i>
+											<i class="icon-add"></i>
 										</button>
 									</div>
 								</th>
@@ -778,7 +772,7 @@ function openBoard() {
 											<i class="icon-down"></i>
 										</button>
 										<button class="small" data-index="{{$context.index}}" onclick="javascript:removeCategory(this.dataset.index);">
-											<i class="icon-minus"></i>
+											<i class="icon-remove"></i>
 										</button>
 									</div>
 								</td>

@@ -248,10 +248,8 @@ juice.initialize = function(container, $context) {
 					var thumbnail = new juice.ui.Thumbnail(element);
 					var width = element.dataset.juiceWidth;
 					var height = element.dataset.juiceHeight;
-					var editable = element.dataset.juiceEditable;
 					thumbnail.setWidth(width);
 					thumbnail.setHeight(height);
-					thumbnail.setEditable(editable);
 					thumbnail.bind(map, name);
 					thumbnail.update();
 				break;
@@ -417,10 +415,16 @@ juice.data.Map.prototype.setEnable = function(enable){
 	this.enable = enable;
 	this.notifyObservers();
 }
+juice.data.Map.prototype.isEnable = function() {
+	return this.enable;
+}
 //sets readonly property
 juice.data.Map.prototype.setReadonly = function(name, readonly){
 	this.readonly[name] = readonly;
 	this.notifyObservers();
+}
+juice.data.Map.prototype.isReadonly = function(name){
+	return this.readonly[name] || false;
 }
 juice.data.Map.prototype.beforeChange = function(listener){
 	this.listener.beforeChange = listener;
@@ -1131,13 +1135,26 @@ juice.ui.ComboBox.prototype.update = function() {
 	// creates options
 	for(var i = 0; i < this.options.length; i++){
 		var option = document.createElement('option');
-		var value = this.options[i]['value'] || this.options[i] || '';
-		var text = this.options[i]['text'] || this.options[i] || '';
+
+		// sets value and text
+		var value = null;
+		var text = null;
+		if(typeof this.options[i] == 'object') {
+			value = this.options[i]['value'];
+			text = this.options[i]['text'];
+		}else{
+			value = this.options[i];
+			text = this.options[i];
+		}
 		option.value = value;
 		option.appendChild(document.createTextNode(text));
+		
+		// disabled
 		if(this.options[i]['disabled']){
 			option.disabled = this.options[i]['disabled'];
 		}
+		
+		// style
 		if(this.options[i]['style']){
 			for(var property in this.options[i].style){
 				option.style[property] = this.options[i].style[property];
@@ -1148,15 +1165,22 @@ juice.ui.ComboBox.prototype.update = function() {
 	
 	// sets value
 	this.select.value = this.map.get(this.name) || '';
+	
+	// set read only
+	if(this.map.enable == false){
+		this.setReadonly(true);
+	}else{
+		this.setReadonly(this.map.readonly[this.name]);	
+	}
 }
 juice.ui.ComboBox.prototype.setOptions = function(options){
 	this.options = options;
 }
 juice.ui.ComboBox.prototype.setReadonly = function(readonly){
 	if(readonly){
-		this.setAttribute('readonly',true);
+		this.select.setAttribute('disabled',true);
 	}else{
-		this.removeAttribute('readonly');
+		this.select.removeAttribute('disabled');
 	}
 }
 
@@ -1786,7 +1810,6 @@ juice.ui.Thumbnail = function(img) {
 	this.width = 100;
 	this.height = 100;
 	this.blank = img.src;
-	this.editable = false;
 }
 juice.ui.Thumbnail.prototype = Object.create(juice.ui.Thumbnail.prototype);
 juice.ui.Thumbnail.prototype.bind = function(map, name) {
@@ -1799,14 +1822,14 @@ juice.ui.Thumbnail.prototype.bind = function(map, name) {
 		console.log('error');
 	});
 	
-	// Adds click event
-	var $this = this;
-	this.img.addEventListener('click', function(){
-		if($this.editable){
+	// add click event
+	this.img.addEventListener('click', function() {
+		if($this.map.isEnable() && !$this.map.isReadonly(this.name)){
 			$this.input.click();
 		}
 	});
 	
+	// add change event listener
 	this.input.addEventListener('change', function(e){
 		var fileReader = new FileReader();
 		if (this.files && this.files[0]) {
@@ -1829,6 +1852,7 @@ juice.ui.Thumbnail.prototype.bind = function(map, name) {
 			fileReader.readAsDataURL(this.files[0]);
 		}
 	});
+	
 }
 juice.ui.Thumbnail.prototype.update = function() {
 	var $this = this;
@@ -1840,12 +1864,14 @@ juice.ui.Thumbnail.prototype.update = function() {
 	}
 	this.img.width = this.width;
 	this.img.height = this.height;
-}
-juice.ui.Thumbnail.prototype.setEditable = function(editable){
-	this.editable = editable;
-	if(editable) {
+	
+	// setting read only
+	if(!this.map.isEnable() || this.map.isReadonly(this.name)){
+		this.img.style.cursor = '';
+	}else{
 		this.img.style.cursor = 'pointer';
 	}
+
 }
 juice.ui.Thumbnail.prototype.setWidth = function(width){
 	if(width){
@@ -2012,7 +2038,7 @@ juice.ui.TreeView.prototype.createNode = function(index, node){
 	if(childNodes && childNodes.length > 0){
 		
 		// fold & unfold class
-		li.classList.add('juice-ui-treeView-fold');
+		li.classList.add('juice-ui-treeView-unfold');
 		li.addEventListener('click', function(event){
 			if(event.target == this){
 				this.classList.toggle('juice-ui-treeView-fold');

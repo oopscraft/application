@@ -75,7 +75,11 @@ public class BoardService {
 			one.setWriteAuthorities(board.getWriteAuthorities());
 			one.setRowsPerPage(board.getRowsPerPage());
 			one.setCategoryUseYn(board.getCategoryUseYn());
-			one.setCategories(board.getCategories());
+
+			// all replace categories
+			one.getCategories().clear();
+			one.getCategories().addAll(board.getCategories());
+			
 			one.setReplyUseYn(board.getReplyUseYn());
 			one.setFileUseYn(board.getFileUseYn());
 			boardRepository.saveAndFlush(one);

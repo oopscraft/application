@@ -89,7 +89,7 @@ public class Board {
 	@Column(name = "FILE_USE_YN")
 	String fileUseYn;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "boardId", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "boardId", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("displaySeq")
 	List<BoardCategory> categories = new ArrayList<BoardCategory>();
 

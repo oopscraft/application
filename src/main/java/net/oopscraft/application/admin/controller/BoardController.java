@@ -44,6 +44,9 @@ public class BoardController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/board.tiles");
+		modelAndView.addObject("skinIds", new String[] {"__board"});
+		modelAndView.addObject("policies", Board.Policy.values());
+		modelAndView.addObject("rowsPerPage", new long[] {10,20,30,40,50});
 		return modelAndView;
 	}
 
@@ -65,7 +68,7 @@ public class BoardController {
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
-		PageInfo pageInfo = new PageInfo(page, 20, true);
+		PageInfo pageInfo = new PageInfo(page, rows, true);
 		BoardSearchType boardSearchType = null;
 		if(StringUtils.isNotEmpty(searchType)) {
 			boardSearchType = BoardSearchType.valueOf(searchType);

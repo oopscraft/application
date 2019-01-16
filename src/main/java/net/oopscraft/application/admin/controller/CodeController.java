@@ -109,10 +109,9 @@ public class CodeController {
 	@RequestMapping(value = "saveCode", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public String saveCode(@RequestBody String payload) throws Exception {
+	public void saveCode(@RequestBody String payload) throws Exception {
 		Code code = JsonUtils.toObject(payload, Code.class);
-		code = codeService.saveCode(code);
-		return JsonUtils.toJson(code);
+		codeService.saveCode(code);
 	}
 
 	/**
@@ -122,12 +121,11 @@ public class CodeController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "removeCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public String removeCode(@RequestParam(value = "id") String id) throws Exception {
-		Code code = codeService.removeCode(id);
-		return JsonUtils.toJson(code);
+	public void deleteCode(@RequestParam(value = "id") String id) throws Exception {
+		codeService.deleteCode(id);
 	}
 
 }
