@@ -37,7 +37,7 @@ public class ApplicationBuilder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationBuilder.class);
 	private static final String PROPERTY_IDENTIFIER = "\\$\\{(.*?)\\}";
 	Class<?> clazz;
-	File xmlFile;
+	XPathReader xPathReader;
 	File propertiesFile;
 	
 	public ApplicationBuilder setClass(Class<?> clazz) {
@@ -50,16 +50,11 @@ public class ApplicationBuilder {
 		return this;
 	}
 	
-	public ApplicationBuilder setXmlFile(File xmlFile) {
-		this.xmlFile = xmlFile;
+	public ApplicationBuilder setXPathReader(XPathReader xPathReader) {
+		this.xPathReader = xPathReader;
 		return this;
 	}
-	
-	public ApplicationBuilder setXmlFile(String xmlFilePath) {
-		this.xmlFile = new File(xmlFilePath);
-		return this;
-	}
-	
+
 	public ApplicationBuilder setPropertiesFile(File propertiesFile) {
 		this.propertiesFile = propertiesFile;
 		return this;
@@ -77,9 +72,8 @@ public class ApplicationBuilder {
 	 */
 	public Application build() throws Exception {
 		Application application = (Application) clazz.newInstance();
-		application.setXmlFile(xmlFile);
+		application.setXPathReader(xPathReader);
 		application.setPropertiesFile(propertiesFile);
-		XPathReader xPathReader = new XPathReader(xmlFile);
 		Properties properties = new Properties();
 		properties.load(new FileInputStream(propertiesFile));
 		buildMonitorAgent(application);
@@ -314,9 +308,11 @@ public class ApplicationBuilder {
 			String id = xPathReader.getTextContent(messageSourceExpression + "/@id");
 			ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 			String basename = xPathReader.getTextContent(messageSourceExpression + "/basename");
-			messageSource.setBasename(basename);
+			messageSource.setBasename("classpath:conf/i18n/message");
+			messageSource.addBasenames(basename.split(","));
 			messageSource.setFallbackToSystemLocale(false);
 			messageSource.setDefaultEncoding("UTF-8");
+			messageSource.setUseCodeAsDefaultMessage(true);
 			String cacheSeconds = xPathReader.getTextContent(messageSourceExpression + "/cacheSeconds");
 			messageSource.setCacheSeconds(Integer.parseInt(cacheSeconds));
 			messageSources.put(id, messageSource);
