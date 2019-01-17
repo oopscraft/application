@@ -4,18 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.repository.GroupRepository;
 
 @Service
 public class GroupService {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(GroupService.class);
 
 	@Autowired
 	private GroupRepository groupRepository;
@@ -33,7 +28,6 @@ public class GroupService {
 		for (Group group : groups) {
 			fillChildGroupRecursively(group);
 		}
-		LOGGER.debug("groups {}", new TextTable(groups));
 		return groups;
 	}
 
@@ -93,7 +87,7 @@ public class GroupService {
 	 * @param group
 	 * @throws Exception
 	 */
-	public Group saveGroup(Group group) throws Exception {
+	public void saveGroup(Group group) throws Exception {
 		Group one = groupRepository.findOne(group.getId());
 		if (one == null) {
 			one = new Group();
@@ -118,16 +112,15 @@ public class GroupService {
 		one.setAuthorities(group.getAuthorities());
 
 		groupRepository.save(one);
-		return groupRepository.findOne(group.getId());
 	}
 
 	/**
-	 * Removes group details
+	 * Deletes group
 	 * 
 	 * @param id
 	 * @throws Exception
 	 */
-	public Group removeGroup(String id) throws Exception {
+	public void deleteGroup(String id) throws Exception {
 		Group group = groupRepository.getOne(id);
 
 		// checks child groups
@@ -138,7 +131,6 @@ public class GroupService {
 
 		// deletes group
 		groupRepository.delete(group);
-		return group;
 	}
 
 }
