@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-fragment id="WebFragment_ID" 
+	version="3.1" 
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-fragment_3_1.xsd">
+   
+	<display-name>web-fragment</display-name> 
+	<name>web_fragment</name> 
+    
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+
+    <distributable/>
+    
+    <!-- 
+    <error-page>
+    	<location>/error.jsp</location>
+	</error-page>
+    -->
+     
+	<!-- ====================================================== -->
+	<!-- Defines Log4j2 Descriptor								-->
+	<!-- ====================================================== -->
+    <context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>file:conf/log4j2.xml</param-value>
+	</context-param>
+    
+	<!-- ====================================================== -->
+	<!-- Defines Spring Application Context						-->
+	<!-- ====================================================== -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:conf/spring.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+    
+	<!-- ====================================================== -->
+	<!-- Defines Spring Dispatcher Servlet						-->
+	<!-- ====================================================== -->
+    <servlet>  
+        <servlet-name>dispatcherServlet</servlet-name>  
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class> 
+        <init-param>  
+            <param-name>contextConfigLocation</param-name>  
+            <param-value>classpath:conf/dispatcher-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>  
+    </servlet>
+    <servlet-mapping>  
+        <servlet-name>dispatcherServlet</servlet-name>  
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    
+	<!-- ====================================================== -->
+	<!-- Defines Encoding Filter								-->
+	<!-- ====================================================== -->
+    <filter>
+          <description>
+          </description>
+          <display-name>encodingFilter</display-name>
+              <filter-name>encodingFilter</filter-name>
+              <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+          <init-param>
+              <param-name>encoding</param-name>
+              <param-value>UTF-8</param-value>
+          </init-param>
+     </filter>
+     <filter-mapping>
+          <filter-name>encodingFilter</filter-name>
+          <url-pattern>/*</url-pattern>
+     </filter-mapping>
+     
+    <!-- ====================================================== -->
+	<!-- Defines Spring Data JPA session enable					-->
+	<!-- ====================================================== -->
+	<filter>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+    
+    <!-- ====================================================== -->
+	<!-- Defines Spring Security Filter							-->
+	<!-- ====================================================== -->
+    <filter>
+    	<filter-name>springSecurityFilterChain</filter-name>
+    	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+    	<filter-name>springSecurityFilterChain</filter-name>
+    	<url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+</web-fragment>
