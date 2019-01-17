@@ -413,10 +413,10 @@ function openBoard() {
 	<spring:message code="application.text.management"/>
 </div>
 <div class="container" style="min-height:70vh;">
+	<!-- ====================================================== -->
+	<!-- Boards													-->
+	<!-- ====================================================== -->
 	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Boards											-->
-		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
 				<select data-juice="ComboBox" data-juice-bind="boardSearch.key" data-juice-options="boardSearchKeys" style="width:100px;"></select>

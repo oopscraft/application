@@ -14,59 +14,37 @@ import org.springframework.util.StringUtils;
 
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.user.AuthorityService.AuthoritySearchType;
 import net.oopscraft.application.user.repository.RoleRepository;
 
 @Service
 public class RoleService {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(RoleService.class);
-
 	@Autowired
 	RoleRepository roleRepository;
 
-	/**
-	 * Search condition class
-	 *
-	 */
-	public class SearchCondition {
-		String id;
-		String name;
+	public enum RoleSearchType { ID,NAME	}
 
-		public String getId() {
-			return id;
+	public List<Role> getRoles(PageInfo pageInfo, RoleSearchType searchType, String searchValue) throws Exception {
+		Pageable pageable = pageInfo.toPageable();
+		Page<Role> rolesPage = null;
+		if(searchType == null) {
+			rolesPage = roleRepository.findAll(pageable);
+		}else {
+			switch(searchType) {
+				case ID :
+					rolesPage = roleRepository.findByIdStartingWith(searchValue, pageable);
+				break;
+				case NAME :
+					rolesPage = roleRepository.findByNameStartingWith(searchValue, pageable);
+				break;
+			}
 		}
-
-		public void setId(String id) {
-			this.id = id;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-	}
-
-	public List<Role> getRoles(SearchCondition searchCondition, PageInfo pageInfo) throws Exception {
-		List<Role> roles = null;
-		Page<Role> page = null;
-		Pageable pageable = new PageRequest(pageInfo.getPage() - 1, pageInfo.getRows());
-		if (!StringUtils.isEmpty(searchCondition.getId())) {
-			page = roleRepository.findByIdStartingWith(searchCondition.getId(), pageable);
-		} else if (!StringUtils.isEmpty(searchCondition.getId())) {
-			page = roleRepository.findByNameStartingWith(searchCondition.getName(), pageable);
-		} else {
-			page = roleRepository.findAllByOrderBySystemDataYnDescSystemInsertDateDesc(pageable);
-		}
-		roles = page.getContent();
 		if (pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(page.getTotalElements());
+			pageInfo.setTotalCount(rolesPage.getTotalElements());
 		}
-		LOGGER.info(new TextTable(roles).toString());
-		LOGGER.info("+ roles: {}", new TextTable(roles));
-		return page.getContent();
+		List<Role> roles = rolesPage.getContent();
+		return roles;
 	}
 
 	/**
@@ -88,7 +66,7 @@ public class RoleService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Role saveRole(Role role) throws Exception {
+	public void saveRole(Role role) throws Exception {
 		Role one = roleRepository.findOne(role.getId());
 		if (one == null) {
 			one = new Role();
@@ -105,19 +83,17 @@ public class RoleService {
 		}
 
 		roleRepository.save(one);
-		return roleRepository.findOne(role.getId());
 	}
 	
 	/**
-	 * Removes role
+	 * Deletes role
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
-	public Role removeRole(String id) throws Exception {
+	public void deleteRole(String id) throws Exception {
 		Role role = roleRepository.getOne(id);
 		roleRepository.delete(role);
-		return role;
 	}
 
 }

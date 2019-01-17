@@ -2,48 +2,21 @@ package net.oopscraft.application.user;
 
 import java.util.List;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.repository.AuthorityRepository;
 
 @Service
 public class AuthorityService {
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(AuthorityService.class);
-	
 	@Autowired
 	AuthorityRepository authorityRepository;
 	
-	/**
-	 * Search condition class 
-	 *
-	 */
-	public class AuthoritySearch {
-		String id;
-		String name;
-		public String getId() {
-			return id;
-		}
-		public void setId(String id) {
-			this.id = id;
-		}
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-	}
+	public enum AuthoritySearchType { ID,NAME	}
 	
 	/**
 	 * Gets authorities
@@ -53,24 +26,26 @@ public class AuthorityService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Authority> getAuthorities(AuthoritySearch authoritySearch, PageInfo pageInfo ) throws Exception {
-		List<Authority> authorities = null;
-		Page<Authority> page = null;
-		Pageable pageable = new PageRequest(pageInfo.getPage() - 1, pageInfo.getRows());
-		if(!StringUtils.isEmpty(authoritySearch.getId())) {
-			page = authorityRepository.findByIdStartingWith(authoritySearch.getId(), pageable);
-		}else if(!StringUtils.isEmpty(authoritySearch.getId())) {
-			page = authorityRepository.findByNameStartingWith(authoritySearch.getName(), pageable);
+	public List<Authority> getAuthorities(PageInfo pageInfo, AuthoritySearchType searchType, String searchValue) throws Exception {
+		Pageable pageable = pageInfo.toPageable();
+		Page<Authority> authoritiesPage = null;
+		if(searchType == null) {
+			authoritiesPage = authorityRepository.findAll(pageable);
 		}else {
-			page = authorityRepository.findAllByOrderBySystemDataYnDescSystemInsertDateDesc(pageable);
+			switch(searchType) {
+				case ID :
+					authoritiesPage = authorityRepository.findByIdStartingWith(searchValue, pageable);
+				break;
+				case NAME :
+					authoritiesPage = authorityRepository.findByNameStartingWith(searchValue, pageable);
+				break;
+			}
 		}
-		authorities = page.getContent();
 		if (pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(page.getTotalElements());
+			pageInfo.setTotalCount(authoritiesPage.getTotalElements());
 		}
-		LOGGER.info(new TextTable(authorities).toString());
-		LOGGER.info("+ authorities: {}", new TextTable(authorities));
-		return page.getContent();
+		List<Authority> authorities = authoritiesPage.getContent();
+		return authorities;
 	}
 	
 	/**
@@ -92,7 +67,7 @@ public class AuthorityService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Authority saveAuthority(Authority authority) throws Exception {
+	public void saveAuthority(Authority authority) throws Exception {
 		Authority one = authorityRepository.findOne(authority.getId());
 		if(one == null) {
 			one = new Authority();
@@ -101,19 +76,17 @@ public class AuthorityService {
 		one.setName(authority.getName());
 		one.setDescription(authority.getDescription());
 		authorityRepository.save(one);
-		return authorityRepository.findOne(authority.getId());
 	}
 	
 	/**
-	 * Removes authority
+	 * Deletes authority
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
-	public Authority removeAuthority(String id) throws Exception {
+	public void deleteAuthority(String id) throws Exception {
 		Authority authority = authorityRepository.getOne(id);
 		authorityRepository.delete(authority);
-		return authority;
 	}
 	
 }

@@ -19,25 +19,49 @@ var roleSearch = new juice.data.Map({
 /* defines roleSearch Map change event handler */
 roleSearch.afterChange(function(event){
 	/* reset value when key changed */
-	if(event.name == 'key'){
+	if(event.name == 'type'){
 		this.set('value','');
 	}
 });
-var roleSearchKeys = [
+var roleSearchTypes = [
 	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
 	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
 	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
 ];
 var roles = new juice.data.List();
 var role = new juice.data.Map();
-role.setReadonly('id', true);
-role.setEnable(false);
 var authorities = new juice.data.List();
+var isNew = false;
+
+/**
+ * clear edit
+ */
+function clearEdit(){
+	role.fromJson({});
+	authorities.fromJson([]);
+}
+
+/**
+ * enable edit
+ */
+function enableEdit(enable){
+	if(enable == true){
+		role.setEnable(true);
+		role.setReadonly('id', false);
+		$('#editDiv').find('button').attr('disabled',false);
+	}else{
+		role.setEnable(false);
+		role.setReadonly('id', true);
+		$('#editDiv').find('button').attr('disabled',true);
+	}
+}
 
 /**
  * On document loaded
  */
 $( document ).ready(function() {
+	clearEdit();
+	enableEdit(false);
 	getRoles();
 });
 
@@ -75,9 +99,12 @@ function getRole(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
-			role.setEnable(true);
+			clearEdit();
 			role.fromJson(data);
 			authorities.fromJson(data.authorities);
+			isNew = false;
+			enableEdit(true);
+			role.setReadonly('id', true);
 			$('#roleTable').hide().fadeIn();
   	 	}
 	});	
@@ -87,42 +114,10 @@ function getRole(id) {
  * Adds role
  */
 function addRole() {
-
-	<spring:message code="application.text.id" var="item"/>
-	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
-		.beforeConfirm(function(event){
-			var id = event.value;
-	
-			// checks duplicated id.
-			var isDuplicated = false;
-			$.ajax({
-				 url: 'role/getRole'
-				,type: 'GET'
-				,data: {id: id}
-				,async: false
-				,success: function(data, textStatus, jqXHR) {
-					if(data != null && data.id == id){
-						if(data != null && data.id == event.value){
-							isDuplicated = true;
-						}
-					}
-		 	 	}
-			});
-			if(isDuplicated == true){
-				<spring:message code="application.text.id" var="item"/>
-				new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
-				return false;
-			}
-		})
-		.afterConfirm(function(event){
-			var id = event.value;
-			roles.clearIndex();
-			role.fromJson({});
-			role.set('id', id);
-			role.setEnable(true);
-			authorities.fromJson([]);
-		})
-		.open();
+	clearEdit();
+	roles.clearIndex();
+	enableEdit(true);
+	isNew = true;
 }
 
 /**
@@ -156,11 +151,42 @@ function removeAuthority(index){
  */
 function saveRole(){
 	
-	// Checks validation of authority
-	if(juice.util.validator.isEmpty(role.get('name'))){
-		<spring:message code="application.text.name" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+	// Check id
+	try {
+		__validator.checkId(role.get('id'));
+	}catch(e){
+		new juice.ui.Alert(e).open();
 		return false;
+	}
+	
+	// check name
+	try {
+		__validator.checkName(role.get('name'));
+	}catch(e){
+		new juice.ui.Alert(e).open();
+		return false;
+	}
+	
+	// checks duplicated id. 
+	if(isNew == true){
+		var id = role.get('id');
+		var isDuplicated = false;
+		$.ajax({
+			 url: 'role/getRole'
+			,type: 'GET'
+			,data: {id: id}
+			,async: false
+			,success: function(data, textStatus, jqXHR) {
+				if(data != null && data.id == id){
+					isDuplicated = true;
+				}
+	 	 	}
+		});
+		if(isDuplicated == true){
+			<spring:message code="application.text.id" var="item"/>
+			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			return false;
+		}
 	}
 	
 	// Saves role
@@ -170,20 +196,14 @@ function saveRole(){
 		.afterConfirm(function() {
 			var roleJson = role.toJson();
 			roleJson.authorities = authorities.toJson();
-			console.log(roleJson);
 			$.ajax({
 				 url: 'role/saveRole'
 				,type: 'POST'
 				,data: JSON.stringify(roleJson)
 				,contentType: "application/json"
 				,success: function(data, textStatus, jqXHR) {
-					<spring:message code="application.text.role" var="item"/>
-					var message = '<spring:message code="application.message.saveItem.complete" arguments="${item}"/>';
-					new juice.ui.Alert(message)
-						.afterConfirm(function(){
-							getRole(role.get('id'));
-							getRoles();
-						}).open();
+					getRole(role.get('id'));
+					getRoles();
 			 	}
 			});	
 		}).open();
@@ -192,7 +212,7 @@ function saveRole(){
 /**
  * Removes role
  */
-function removeRole() {
+function deleteRole() {
 	
 	// Checks system data
 	if(role.get('systemDataYn') == 'Y'){
@@ -202,22 +222,17 @@ function removeRole() {
 	
 	// Removes role
 	<spring:message code="application.text.role" var="item"/>
-	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
+	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
-			 url: 'role/removeRole'
+			 url: 'role/deleteRole'
 			,type: 'GET'
 			,data: { id: role.get('id') }
 			,success: function(data, textStatus, jqXHR) {
-				<spring:message code="application.text.role" var="item"/>
-				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
-				new juice.ui.Alert(message)
-				.afterConfirm(function(){
-					role.fromJson({});
-					role.setEnable(false);
-					getRoles();
-				}).open();
+				clearEdit();
+				enableEdit(false);
+				getRoles();
 	  	 	}
 		});	
 	}).open();
@@ -233,16 +248,13 @@ function removeRole() {
 	<spring:message code="application.text.management"/>
 </div>
 <div class="container" style="min-height:70vh;">
+	<!-- ====================================================== -->
+	<!-- Roles													-->
+	<!-- ====================================================== -->
 	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Roles													-->
-		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<div class="title2">
-					<i class="icon-search"></i>
-				</div>
-				<select data-juice="ComboBox" data-juice-bind="roleSearch.key" data-juice-options="roleSearchKeys" style="width:100px;"></select>
+				<select data-juice="ComboBox" data-juice-bind="roleSearch.key" data-juice-options="roleSearchTypes" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="roleSearch.value" style="width:100px;"/>
 				<button onclick="javascript:getRoles();">
 					<i class="icon-search"></i>
@@ -251,7 +263,7 @@ function removeRole() {
 			</div>
 			<div>
 				<button onclick="javascript:addRole();">
-					<i class="icon-plus"></i>
+					<i class="icon-new"></i>
 					<spring:message code="application.text.new"/>
 				</button>
 			</div>
@@ -295,25 +307,24 @@ function removeRole() {
 			</ul>
 		</div>
 	</div>
-	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Role Details											-->
-		<!-- ====================================================== -->
+	<!-- ====================================================== -->
+	<!-- Role Details											-->
+	<!-- ====================================================== -->
+	<div id="editDiv" class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
-					<i class="icon-card"></i>
 					<spring:message code="application.text.role"/>
 					<spring:message code="application.text.details"/>
 				</div>
 			</div>
 			<div>
 				<button onclick="javascript:saveRole();">
-					<i class="icon-disk"></i>
+					<i class="icon-save"></i>
 					<spring:message code="application.text.save"/>
 				</button>
-				<button onclick="javascript:removeRole();">
-					<i class="icon-trash"></i>
+				<button onclick="javascript:deleteRole();">
+					<i class="icon-delete"></i>
 					<spring:message code="application.text.remove"/>
 				</button>
 			</div>
@@ -325,8 +336,9 @@ function removeRole() {
 			</colgroup>
 			<tr>
 				<th>
-					<i class="icon-attention"></i>
-					<spring:message code="application.text.id"/>
+					<span class="must">
+						<spring:message code="application.text.id"/>
+					</span>
 				</th>
 				<td>
 					<input class="id" data-juice="TextField" data-juice-bind="role.id"/>
@@ -350,7 +362,6 @@ function removeRole() {
 			</tr>
 			<tr>
 				<th>
-					<i class="icon-key"></i>
 					<spring:message code="application.text.own"/>
 					<spring:message code="application.text.authorities"/>
 				</th>
@@ -358,8 +369,8 @@ function removeRole() {
 					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
-							<col style="width:50%;"/>
-							<col style="width:10%;"/>
+							<col/>
+							<col style="width:5%;"/>
 						</colgroup>
 						<thead>
 							<tr>
@@ -370,8 +381,8 @@ function removeRole() {
 									<spring:message code="application.text.name"/>
 								</th>
 								<th>
-									<button onclick="javascript:addAuthority();">
-										<i class="icon-plus"></i>
+									<button class="small" onclick="javascript:addAuthority();">
+										<i class="icon-add"></i>
 									</button>
 								</th>
 							</tr>
@@ -381,8 +392,8 @@ function removeRole() {
 								<td><label data-juice="Label" data-juice-bind="authority.id" class="id"></label></td>
 								<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
 								<td class="text-center">
-									<button data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
-										<i class="icon-minus"></i>
+									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
+										<i class="icon-remove"></i>
 									</button>
 								</td>
 							</tr>

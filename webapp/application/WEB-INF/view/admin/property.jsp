@@ -27,13 +27,35 @@ var propertySearchKeys = [
 ];
 var properties = new juice.data.List();
 var property = new juice.data.Map();
-property.setReadonly('id', true);
-property.setEnable(false);
+
+/**
+ * clear edit
+ */
+function clearEdit() {
+	property.fromJson({});
+}
+
+/**
+ * enable edit
+ */
+function enableEdit(editable) {
+	if(editable == true){
+		property.setEnable(true);
+		property.setReadonly('id', false);
+		$('#editDiv').find('button').attr('disabled',false);
+	}else{
+		property.setEnable(false);
+		property.setReadonly('id', true);
+		$('#editDiv').find('button').attr('disabled',true);
+	}
+}
 
 /**
  * On document loaded
  */
 $( document ).ready(function() {
+	clearEdit();
+	enableEdit(false);
 	getProperties();
 });
 
@@ -71,8 +93,11 @@ function getProperty(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
-			property.setEnable(true);
+			clearEdit();
 			property.fromJson(data);
+			isNew = false;
+			enableEdit(true);
+			property.setReadonly('id',true);
 			$('#propertyTable').hide().fadeIn();
   	 	}
 	});	
@@ -82,41 +107,10 @@ function getProperty(id) {
  * Adds property
  */
 function addProperty() {
-	
-	<spring:message code="application.text.id" var="item"/>
-	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
-		.beforeConfirm(function(event){
-			var id = event.value;
-	
-			// checks duplicated id.
-			var isDuplicated = false;
-			$.ajax({
-				 url: 'property/getProperty'
-				,type: 'GET'
-				,data: {id: id}
-				,async: false
-				,success: function(data, textStatus, jqXHR) {
-					if(data != null && data.id == id){
-						if(data != null && data.id == event.value){
-							isDuplicated = true;
-						}
-					}
-		 	 	}
-			});
-			if(isDuplicated == true){
-				<spring:message code="application.text.id" var="item"/>
-				new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
-				return false;
-			}
-		})
-		.afterConfirm(function(event){
-			var id = event.value;
-			properties.clearIndex();
-			property.fromJson({});
-			property.set('id', id);
-			property.setEnable(true);
-		})
-		.open();
+	clearEdit();
+	properties.clearIndex();
+	enableEdit(true);
+	isNew = true;
 }
 
 /**
@@ -124,16 +118,42 @@ function addProperty() {
  */
 function saveProperty() {
 	
-	// Checks validation of property
-	if(juice.util.validator.isEmpty(property.get('name'))){
-		<spring:message code="application.text.name" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+	// Check id
+	try {
+		__validator.checkId(property.get('id'));
+	}catch(e){
+		new juice.ui.Alert(e).open();
 		return false;
 	}
-	if(juice.util.validator.isEmpty(property.get('value'))){
-		<spring:message code="application.text.value" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+	
+	// check name
+	try {
+		__validator.checkName(property.get('name'));
+	}catch(e){
+		new juice.ui.Alert(e).open();
 		return false;
+	}
+	
+	// checks duplicated id. 
+	if(isNew == true){
+		var id = property.get('id');
+		var isDuplicated = false;
+		$.ajax({
+			 url: 'property/getProperty'
+			,type: 'GET'
+			,data: {id: id}
+			,async: false
+			,success: function(data, textStatus, jqXHR) {
+				if(data != null && data.id == id){
+					isDuplicated = true;
+				}
+	 	 	}
+		});
+		if(isDuplicated == true){
+			<spring:message code="application.text.id" var="item"/>
+			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			return false;
+		}
 	}
 	
 	// Saves property
@@ -148,13 +168,8 @@ function saveProperty() {
 				,data: JSON.stringify(propertyJson)
 				,contentType: "application/json"
 				,success: function(data, textStatus, jqXHR) {
-					<spring:message code="application.text.property" var="item"/>
-					var message = '<spring:message code="application.message.saveItem.complete" arguments="${item}"/>';
-					new juice.ui.Alert(message)
-						.afterConfirm(function(){
-							getProperty(property.get('id'));
-							getProperties();
-						}).open();
+					getProperty(property.get('id'));
+					getProperties();
 			 	}
 			});	
 		}).open();
@@ -163,7 +178,7 @@ function saveProperty() {
 /**
  * Removes property
  */
-function removeProperty() {
+function deleteProperty() {
 
 	// Checks system data
 	if(property.get('systemDataYn') == 'Y'){
@@ -173,22 +188,17 @@ function removeProperty() {
 	
 	// Removes property
 	<spring:message code="application.text.property" var="item"/>
-	var message = '<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>';
+	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
-			 url: 'property/removeProperty'
+			 url: 'property/deleteProperty'
 			,type: 'GET'
 			,data: { id: property.get('id') }
 			,success: function(data, textStatus, jqXHR) {
-				<spring:message code="application.text.property" var="item"/>
-				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
-				new juice.ui.Alert(message)
-				.afterConfirm(function(){
-					property.fromJson({});
-					property.setEnable(false);
-					getProperties();
-				}).open();
+				clearEdit();
+				enableEdit(false);
+				getProperties();
 	  	 	}
 		});	
 	}).open();
@@ -204,15 +214,12 @@ function removeProperty() {
 	<spring:message code="application.text.management"/>
 </div>
 <div class="container" style="min-height:70vh;">
+	<!-- ====================================================== -->
+	<!-- Properties												-->
+	<!-- ====================================================== -->
 	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Properties											-->
-		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<div class="title2">
-					<i class="icon-search"></i>
-				</div>
 				<select data-juice="ComboBox" data-juice-bind="propertySearch.key" data-juice-options="propertySearchKeys" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="propertySearch.value" style="width:100px;"/>
 				<button onclick="javascript:getProperties();">
@@ -222,7 +229,7 @@ function removeProperty() {
 			</div>
 			<div>
 				<button onclick="javascript:addProperty();">
-					<i class="icon-plus"></i>
+					<i class="icon-new"></i>
 					<spring:message code="application.text.new"/>
 				</button>
 			</div>
@@ -239,11 +246,9 @@ function removeProperty() {
 						<spring:message code="application.text.no"/>
 					</th>
 					<th>
-						<spring:message code="application.text.property"/>
 						<spring:message code="application.text.id"/>
 					</th>
 					<th>
-						<spring:message code="application.text.property"/>
 						<spring:message code="application.text.name"/>
 					</th>
 				</tr>
@@ -266,26 +271,25 @@ function removeProperty() {
 			</ul>
 		</div>
 	</div>
-	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Property Details										-->
-		<!-- ====================================================== -->
+	<!-- ====================================================== -->
+	<!-- Property Details										-->
+	<!-- ====================================================== -->
+	<div id="editDiv" class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
-					<i class="icon-key"></i>
 					<spring:message code="application.text.property"/>
 					<spring:message code="application.text.details"/>
 				</div>
 			</div>
 			<div>
 				<button onclick="javascript:saveProperty();">
-					<i class="icon-disk"></i>
+					<i class="icon-save"></i>
 					<spring:message code="application.text.save"/>
 				</button>
-				<button onclick="javascript:removeProperty();">
-					<i class="icon-trash"></i>
-					<spring:message code="application.text.remove"/>
+				<button onclick="javascript:deleteProperty();">
+					<i class="icon-delete"></i>
+					<spring:message code="application.text.delete"/>
 				</button>
 			</div>
 		</div>
@@ -296,11 +300,11 @@ function removeProperty() {
 			</colgroup>
 			<tr>
 				<th>
-					<i class="icon-attention"></i>
-					<spring:message code="application.text.id"/>
+					<span class="must">
+						<spring:message code="application.text.id"/>
+					</span>
 				</th>
 				<td>
-					
 					<input class="id" data-juice="TextField" data-juice-bind="property.id"/>
 				</td>
 			</tr>
@@ -316,9 +320,7 @@ function removeProperty() {
 			</tr>
 			<tr>
 				<th>
-					<span class="must">
-						<spring:message code="application.text.value"/>
-					</span>
+					<spring:message code="application.text.value"/>
 				</th>
 				<td>
 					<textarea data-juice="TextArea" data-juice-bind="property.value"></textarea>

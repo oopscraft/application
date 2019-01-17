@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtils;
-import net.oopscraft.application.menu.Menu;
 import net.oopscraft.application.page.Page;
 import net.oopscraft.application.page.PageService;
 import net.oopscraft.application.page.PageService.PageSearchType;

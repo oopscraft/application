@@ -193,18 +193,18 @@ function deleteCode() {
 	<spring:message code="application.text.code" var="item"/>
 	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
 	new juice.ui.Confirm(message)
-	.afterConfirm(function() {
-		$.ajax({
-			 url: 'code/deleteCode'
-			,type: 'GET'
-			,data: { id: code.get('id') }
-			,success: function(data, textStatus, jqXHR) {
-				clearEdit();
-				enableEdit(false);
-				getCodes();
-	  	 	}
-		});	
-	}).open();
+		.afterConfirm(function() {
+			$.ajax({
+				 url: 'code/deleteCode'
+				,type: 'GET'
+				,data: { id: code.get('id') }
+				,success: function(data, textStatus, jqXHR) {
+					clearEdit();
+					enableEdit(false);
+					getCodes();
+		  	 	}
+			});	
+		}).open();
 }
 
 /**

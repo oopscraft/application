@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,15 +19,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.StringUtils;
 import net.oopscraft.application.message.Message;
 import net.oopscraft.application.message.MessageService;
+import net.oopscraft.application.message.MessageService.MessageSearchType;
 
 @PreAuthorize("hasAuthority('ADMIN_MESSAGE')")
 @Controller
 @RequestMapping("/admin/message")
 public class MessageController {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
 	MessageService messageService;
@@ -61,24 +59,20 @@ public class MessageController {
 	 */
 	@RequestMapping(value = "getMessages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional
-	public String getMessages(@RequestParam(value = "key", required = false) String key,
-			@RequestParam(value = "value", required = false) String value,
-			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
-		MessageService.SearchCondition searchCondition = messageService.new SearchCondition();
-		switch ((key == null ? "" : key)) {
-		case "id":
-			searchCondition.setId(value);
-			break;
-		case "name":
-			searchCondition.setName(value);
-			break;
+	public String getMessages(
+		@RequestParam(value = "page") Integer page,
+		@RequestParam(value = "rows")Integer rows,
+		@RequestParam(value = "searchType", required = false) String searchType,
+		@RequestParam(value = "searchValue", required = false) String searchValue
+	) throws Exception {
+		PageInfo pageInfo = new PageInfo(page, rows, true);
+		MessageSearchType messageSearchType= null;
+		if(StringUtils.isNotEmpty(searchType)) {
+			messageSearchType = MessageSearchType.valueOf(searchType);
 		}
-		PageInfo pageInfo = new PageInfo(page.intValue(), rows.intValue(), true);
-		List<Message> roles = messageService.getMessages(searchCondition, pageInfo);
+		List<Message> messages = messageService.getMessages(pageInfo, messageSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(roles);
+		return JsonUtils.toJson(messages);
 	}
 
 	/**
@@ -90,7 +84,6 @@ public class MessageController {
 	 */
 	@RequestMapping(value = "getMessage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional
 	public String getMessage(@RequestParam(value = "id") String id) throws Exception {
 		Message message = messageService.getMessage(id);
 		return JsonUtils.toJson(message);
@@ -106,25 +99,23 @@ public class MessageController {
 	@RequestMapping(value = "saveMessage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public String saveMessage(@RequestBody String payload) throws Exception {
+	public void saveMessage(@RequestBody String payload) throws Exception {
 		Message message = JsonUtils.toObject(payload, Message.class);
-		message = messageService.saveMessage(message);
-		return JsonUtils.toJson(message);
+		messageService.saveMessage(message);
 	}
 
 	/**
-	 * Removes message.
+	 * Deletes message.
 	 * 
 	 * @param payload
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "removeMessage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteMessage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public String removeMessage(@RequestParam(value = "id") String id) throws Exception {
-		Message message = messageService.removeMessage(id);
-		return JsonUtils.toJson(message);
+	public void deleteMessage(@RequestParam(value = "id") String id) throws Exception {
+		messageService.deleteMessage(id);
 	}
 
 }

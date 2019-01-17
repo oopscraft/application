@@ -3,37 +3,58 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@page import="java.util.*" %>
-<%@page import="java.text.*" %>
-<!-- global -->
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <script type="text/javascript">
 var messageSearch = new juice.data.Map({
-	 key: null
+	 type: null
 	,value: null
 	,page: 1
 	,rows: 30
 	,totalCount:-1
 });
 messageSearch.afterChange(function(event){
-	if(event.name == 'key'){
+	if(event.name == 'type'){
 		this.set('value','');
 	}
 });
-var messageSearchKeys = [
+var messageSearchTypes = [
 	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
 	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
 	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
 ];
 var messages = new juice.data.List();
 var message = new juice.data.Map();
-message.setReadonly('id', true);
-message.setEnable(false);
+var isNew = false;
+
+/**
+ * clear edit
+ */
+function clearEdit() {
+	message.fromJson({});
+}
+
+/**
+ * enable edit
+ */
+function enableEdit(editable) {
+	if(editable == true){
+		message.setEnable(true);
+		message.setReadonly('id', false);
+		$('#editDiv').find('button').attr('disabled',false);
+	}else{
+		message.setEnable(false);
+		message.setReadonly('id', true);
+		$('#editDiv').find('button').attr('disabled',true);
+	}
+}
+
 
 /**
  * On document loaded
  */
 $( document ).ready(function() {
+	clearEdit();
+	enableEdit(false);
 	getMessages();
 });
 
@@ -71,8 +92,11 @@ function getMessage(id) {
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
-			message.setEnable(true);
+			clearEdit();
 			message.fromJson(data);
+			isNew = false;
+			enableEdit(true);
+			message.setReadonly('id',true);
 			$('#messageTable').hide().fadeIn();
   	 	}
 	});	
@@ -82,41 +106,10 @@ function getMessage(id) {
  * Adds message
  */
 function addMessage() {
-	
-	<spring:message code="application.text.id" var="item"/>
-	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
-		.beforeConfirm(function(event){
-			var id = event.value;
-	
-			// checks duplicated id.
-			var isDuplicated = false;
-			$.ajax({
-				 url: 'message/getMessage'
-				,type: 'GET'
-				,data: {id: id}
-				,async: false
-				,success: function(data, textStatus, jqXHR) {
-					if(data != null && data.id == id){
-						if(data != null && data.id == event.value){
-							isDuplicated = true;
-						}
-					}
-		 	 	}
-			});
-			if(isDuplicated == true){
-				<spring:message code="application.text.id" var="item"/>
-				new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
-				return false;
-			}
-		})
-		.afterConfirm(function(event){
-			var id = event.value;
-			messages.clearIndex();
-			message.fromJson({});
-			message.set('id', id);
-			message.setEnable(true);
-		})
-		.open();
+	clearEdit();
+	messages.clearIndex();
+	enableEdit(true);
+	isNew = true;
 }
 
 /**
@@ -124,16 +117,42 @@ function addMessage() {
  */
 function saveMessage() {
 	
-	// Checks validation of message
-	if(juice.util.validator.isEmpty(message.get('name'))){
-		<spring:message code="application.text.name" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+	// Check id
+	try {
+		__validator.checkId(message.get('id'));
+	}catch(e){
+		new juice.ui.Alert(e).open();
 		return false;
 	}
-	if(juice.util.validator.isEmpty(message.get('value'))){
-		<spring:message code="application.text.value" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+	
+	// check name
+	try {
+		__validator.checkName(message.get('name'));
+	}catch(e){
+		new juice.ui.Alert(e).open();
 		return false;
+	}
+	
+	// checks duplicated id. 
+	if(isNew == true){
+		var id = message.get('id');
+		var isDuplicated = false;
+		$.ajax({
+			 url: 'message/getMessage'
+			,type: 'GET'
+			,data: {id: id}
+			,async: false
+			,success: function(data, textStatus, jqXHR) {
+				if(data != null && data.id == id){
+					isDuplicated = true;
+				}
+	 	 	}
+		});
+		if(isDuplicated == true){
+			<spring:message code="application.text.id" var="item"/>
+			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			return false;
+		}
 	}
 	
 	// Saves message
@@ -147,12 +166,8 @@ function saveMessage() {
 				,data: JSON.stringify(messageJson)
 				,contentType: "application/json"
 				,success: function(data, textStatus, jqXHR) {
-					<spring:message code="application.text.message" var="item"/>
-					new juice.ui.Alert('<spring:message code="application.message.saveItem.complete" arguments="${item}"/>')
-						.afterConfirm(function(){
-							getMessage(message.get('id'));
-							getMessages();
-						}).open();
+					getMessage(message.get('id'));
+					getMessages();
 			 	}
 			});	
 		}).open();
@@ -161,7 +176,7 @@ function saveMessage() {
 /**
  * Removes message
  */
-function removeMessage() {
+function deleteMessage() {
 
 	// Checks system data
 	if(message.get('systemDataYn') == 'Y'){
@@ -171,24 +186,19 @@ function removeMessage() {
 	
 	// Removes message
 	<spring:message code="application.text.message" var="item"/>
-	new juice.ui.Confirm('<spring:message code="application.message.removeItem.confirm" arguments="${item}"/>')
-	.afterConfirm(function() {
-		$.ajax({
-			 url: 'message/removeMessage'
-			,type: 'GET'
-			,data: { id: message.get('id') }
-			,success: function(data, textStatus, jqXHR) {
-				<spring:message code="application.text.message" var="item"/>
-				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
-				new juice.ui.Alert(message)
-				.afterConfirm(function(){
-					message.fromJson({});
-					message.setEnable(false);
+	new juice.ui.Confirm('<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>')
+		.afterConfirm(function() {
+			$.ajax({
+				 url: 'message/deleteMessage'
+				,type: 'GET'
+				,data: { id: message.get('id') }
+				,success: function(data, textStatus, jqXHR) {
+					clearEdit();
+					enableEdit(false);
 					getMessages();
-				}).open();
-	  	 	}
-		});	
-	}).open();
+		  	 	}
+			});	
+		}).open();
 }
 
 </script>
@@ -201,16 +211,13 @@ function removeMessage() {
 	<spring:message code="application.text.management"/>
 </div>
 <div class="container" style="min-height:70vh;">
+	<!-- ====================================================== -->
+	<!-- Messages												-->
+	<!-- ====================================================== -->
 	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Messages											-->
-		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<div class="title2">
-					<i class="icon-search"></i>
-				</div>
-				<select data-juice="ComboBox" data-juice-bind="messageSearch.key" data-juice-options="messageSearchKeys" style="width:100px;"></select>
+				<select data-juice="ComboBox" data-juice-bind="messageSearch.type" data-juice-options="messageSearchTypes" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="messageSearch.value" style="width:100px;"/>
 				<button onclick="javascript:getMessages();">
 					<i class="icon-search"></i>
@@ -219,7 +226,7 @@ function removeMessage() {
 			</div>
 			<div>
 				<button onclick="javascript:addMessage();">
-					<i class="icon-plus"></i>
+					<i class="icon-new"></i>
 					<spring:message code="application.text.new"/>
 				</button>
 			</div>
@@ -228,7 +235,7 @@ function removeMessage() {
 			<colgroup>
 				<col style="width:10%"/>
 				<col style="width:30%"/>
-				<col style="width:60%"/>
+				<col/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -236,11 +243,9 @@ function removeMessage() {
 						<spring:message code="application.text.no"/>
 					</th>
 					<th>
-						<spring:message code="application.text.message"/>
 						<spring:message code="application.text.id"/>
 					</th>
 					<th>
-						<spring:message code="application.text.message"/>
 						<spring:message code="application.text.name"/>
 					</th>
 				</tr>
@@ -263,26 +268,25 @@ function removeMessage() {
 			</ul>
 		</div>
 	</div>
-	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- Message Details										-->
-		<!-- ====================================================== -->
+	<!-- ====================================================== -->
+	<!-- Message Details										-->
+	<!-- ====================================================== -->
+	<div id="editDiv" class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
-					<i class="icon-key"></i>
 					<spring:message code="application.text.message"/>
 					<spring:message code="application.text.details"/>
 				</div>
 			</div>
 			<div>
 				<button onclick="javascript:saveMessage();">
-					<i class="icon-disk"></i>
+					<i class="icon-save"></i>
 					<spring:message code="application.text.save"/>
 				</button>
-				<button onclick="javascript:removeMessage();">
-					<i class="icon-trash"></i>
-					<spring:message code="application.text.remove"/>
+				<button onclick="javascript:deleteMessage();">
+					<i class="icon-delete"></i>
+					<spring:message code="application.text.delete"/>
 				</button>
 			</div>
 		</div>
@@ -293,11 +297,11 @@ function removeMessage() {
 			</colgroup>
 			<tr>
 				<th>
-					<i class="icon-attention"></i>
-					<spring:message code="application.text.id"/>
+					<span class="must">
+						<spring:message code="application.text.id"/>
+					</span>
 				</th>
 				<td>
-					
 					<input class="id" data-juice="TextField" data-juice-bind="message.id"/>
 				</td>
 			</tr>
@@ -313,9 +317,7 @@ function removeMessage() {
 			</tr>
 			<tr>
 				<th>
-					<span class="must">
-						<spring:message code="application.text.value"/>
-					</span>
+					<spring:message code="application.text.value"/>
 				</th>
 				<td>
 					<textarea data-juice="TextArea" data-juice-bind="message.value"></textarea>
