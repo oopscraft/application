@@ -127,11 +127,14 @@
 			}
 		], 'childMenus');
 		
-
-		if(sessionStorage.getItem('__menus.index')){
-			__menus.index = eval(window.location.hash.replace('#',''));
+		// defines menus index
+		if(window.location.hash){
+			try{
+				__menus.index = eval(window.location.hash.replace('#',''));
+			}catch(e){
+				__menus.index = [];
+			}
 		}
-
 		
 		/**
 		 * login user information

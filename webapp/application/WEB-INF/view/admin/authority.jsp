@@ -258,7 +258,7 @@ function deleteAuthority() {
 					<td class="text-center">
 						{{authoritySearch.get('rows')*(authoritySearch.get('page')-1)+$context.index+1}}
 					</td>
-					<td class="text-left {{$context.authority.get('systemDataYn')=='Y'?'systemData':''}}">
+					<td class="{{$context.authority.get('systemDataYn')=='Y'?'systemData':''}}">
 						<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
 					</td>
 					<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>

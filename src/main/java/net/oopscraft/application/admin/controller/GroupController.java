@@ -55,7 +55,6 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "getGroups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional
 	public String getGroups() throws Exception {
 		List<Group> groups = groupService.getGroups();
 		return JsonUtils.toJson(groups);
@@ -70,7 +69,6 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "getGroup", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional
 	public String getGroup(@RequestParam(value = "id") String id) throws Exception {
 		Group group = groupService.getGroup(id);
 		return JsonUtils.toJson(group);
@@ -84,7 +82,6 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "getBreadCrumbs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional
 	public String getBreadCrumbs(@RequestParam(value = "id") String id) throws Exception {
 		List<Group> breadCrumbs = groupService.getBreadCrumbs(id);
 		return JsonUtils.toJson(breadCrumbs);
@@ -100,10 +97,9 @@ public class GroupController {
 	@RequestMapping(value = "saveGroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public String saveGroup(@RequestBody String payload) throws Exception {
+	public void saveGroup(@RequestBody String payload) throws Exception {
 		Group role = JsonUtils.toObject(payload, Group.class);
-		role = groupService.saveGroup(role);
-		return JsonUtils.toJson(role);
+		groupService.saveGroup(role);
 	}
 	
 	/**
@@ -113,12 +109,11 @@ public class GroupController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "removeGroup", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteGroup", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public String removeGroup(@RequestParam(value = "id") String id) throws Exception {
-		Group role = groupService.removeGroup(id);
-		return JsonUtils.toJson(role);
+	public void deleteGroup(@RequestParam(value = "id") String id) throws Exception {
+		groupService.deleteGroup(id);
 	}
 
 }
