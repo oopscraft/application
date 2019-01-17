@@ -20,6 +20,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.LocaleUtils;
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.StringUtils;
 import net.oopscraft.application.menu.Menu;
 import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.user.Authority;
@@ -28,6 +29,8 @@ import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
 import net.oopscraft.application.user.Role;
 import net.oopscraft.application.user.RoleService;
+import net.oopscraft.application.user.AuthorityService.AuthoritySearchType;
+import net.oopscraft.application.user.RoleService.RoleSearchType;
 
 @Controller
 @RequestMapping("/admin")
@@ -90,25 +93,22 @@ public class AdminController {
 	@RequestMapping(value = "getRoles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional
-	public String getRoles(@RequestParam(value = "key", required = false) String key,
-			@RequestParam(value = "value", required = false) String value,
-			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
-		RoleService.SearchCondition searchCondition = roleService.new SearchCondition();
-		switch ((key == null ? "" : key)) {
-		case "id":
-			searchCondition.setId(value);
-			break;
-		case "name":
-			searchCondition.setName(value);
-			break;
+	public String getRoles(
+		@RequestParam(value = "page") Integer page,
+		@RequestParam(value = "rows")Integer rows,
+		@RequestParam(value = "searchType", required = false) String searchType,
+		@RequestParam(value = "searchValue", required = false) String searchValue
+	) throws Exception {
+		PageInfo pageInfo = new PageInfo(page, rows, true);
+		RoleSearchType roleSearchType= null;
+		if(StringUtils.isNotEmpty(searchType)) {
+			roleSearchType = RoleSearchType.valueOf(searchType);
 		}
-		PageInfo pageInfo = new PageInfo(page.intValue(), rows.intValue(), true);
-		List<Role> roles = roleService.getRoles(searchCondition, pageInfo);
+		List<Role> roles = roleService.getRoles(pageInfo, roleSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return JsonUtils.toJson(roles);
 	}
-	
+
 	/**
 	 * Gets authorities
 	 * 
@@ -123,25 +123,22 @@ public class AdminController {
 	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional
-	public String getAuthorities(@RequestParam(value = "key", required = false) String key,
-			@RequestParam(value = "value", required = false) String value,
-			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
-		AuthorityService.AuthoritySearch searchCondition = authorityService.new AuthoritySearch();
-		switch ((key == null ? "" : key)) {
-		case "id":
-			searchCondition.setId(value);
-			break;
-		case "name":
-			searchCondition.setName(value);
-			break;
+	public String getAuthorities(
+		@RequestParam(value = "page") Integer page,
+		@RequestParam(value = "rows")Integer rows,
+		@RequestParam(value = "searchType", required = false) String searchType,
+		@RequestParam(value = "searchValue", required = false) String searchValue
+	) throws Exception {
+		PageInfo pageInfo = new PageInfo(page, rows, true);
+		AuthoritySearchType authoritySearchType= null;
+		if(StringUtils.isNotEmpty(searchType)) {
+			authoritySearchType = AuthoritySearchType.valueOf(searchType);
 		}
-		PageInfo pageInfo = new PageInfo(page.intValue(), rows.intValue(), true);
-		List<Authority> roles = authorityService.getAuthorities(searchCondition, pageInfo);
+		List<Authority> properties = authorityService.getAuthorities(pageInfo, authoritySearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(roles);
+		return JsonUtils.toJson(properties);
 	}
-	
+
 	/**
 	 * Gets menus
 	 * @return

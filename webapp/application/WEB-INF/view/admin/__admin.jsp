@@ -19,9 +19,14 @@
  		<script src="${pageContext.request.contextPath}/static/lib/Chart.js/Chart.js"></script>
  		<link href="${pageContext.request.contextPath}/static/icon/css/icon.css" rel="stylesheet">
  		
- 		<!-- polyfill -->
+ 		<!-- polyfill 		
 		<script src="${pageContext.request.contextPath}/static/lib/polyfill/dataset.js"></script>
 		<script src="${pageContext.request.contextPath}/static/lib/polyfill/classList.js"></script>
+		-->
+		<!-- 
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.6.2/core.js"></script>
+ -->
+		<script src="https://polyfill.io/v3/polyfill.min.js"></script>
 
  		<!-- web font -->
  		<link href="${pageContext.request.contextPath}/static/font/code.css" rel="stylesheet" type="text/css" />
@@ -124,7 +129,7 @@
 		
 
 		if(sessionStorage.getItem('__menus.index')){
-			__menus.index = eval(sessionStorage.getItem('__menus.index'));
+			__menus.index = eval(window.location.hash.replace('#',''));
 		}
 
 		
@@ -448,14 +453,12 @@
 		}
 		.text-left {
 			text-align: left !important;
-			padding-left: 1rem !important;
 		}
 		.text-center {
 			text-align: center !important;
 		}
 		.text-right {
 			text-align: right !important;
-			padding-right: 1rem;
 		}
 		</style>
 	</head>
@@ -489,12 +492,9 @@
 			<!-- Navigation												-->
 			<!-- ====================================================== -->
 			<nav class="leftNav">
-				<div style="border-bottom:dotted 1px #ccc;">
-					<i class="icon-menu"></i>
-				</div>
 				<ul data-juice="TreeView" data-juice-bind="__menus" data-juice-item="menu">
 					<li>
-						<a data-index="{{$context.index}}" href="{{$context.menu.get('link')}}" class="menuItem" style="display:block;" onclick="javascript:sessionStorage.setItem('__menus.index',this.dataset.index)">
+						<a data-index="{{$context.index}}" href="{{$context.menu.get('link')}}\#{{$context.index}}" class="menuItem" style="display:block;">
 							<img class="icon" data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="" alt="" style="vertical-align:middle;"/>
 							<label data-juice="Label" data-juice-bind="menu.name"></label>
 						</a>
