@@ -987,7 +987,7 @@ juice.ui.__.prototype.load = function(element){
 	
 	// creates div
 	var div = document.createElement('div');
-	div.classList.add('juice-ui-progress');
+	div.classList.add('juice-ui-load');
 	div.style.position = 'fixed';
 	div.style.opacity = 0;
 	div.style.zIndex = this.getMaxZIndex() + 1;
