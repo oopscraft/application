@@ -81,7 +81,7 @@ public class WebServer {
 			File targetFile = new File("webapp/application/META-INF/web-fragment.xml");
 			FileUtils.copyInputStreamToFile(is, targetFile);
 			LOGGER.warn(targetFile.getAbsolutePath());
-			ctx.setAltDDName(targetFile.getAbsolutePath());
+			ctx.setDefaultWebXml(targetFile.getAbsolutePath());
 			
 			
 
