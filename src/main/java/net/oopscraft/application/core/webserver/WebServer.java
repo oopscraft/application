@@ -72,8 +72,9 @@ public class WebServer {
 
 				@Override
 				public boolean check(JarScanType jarScanType, String jarName) {
+					LOGGER.warn(jarName);
 					if(jarName.contains("oopscraft")) {
-						LOGGER.debug(jarName);
+
 						LOGGER.warn("############################### {}", jarName);
 					}
 					return true;
