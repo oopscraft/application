@@ -10,13 +10,12 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.context.MessageSource;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
-import net.oopscraft.application.core.XPathReader;
 import net.oopscraft.application.core.webserver.WebServer;
 import net.oopscraft.application.monitor.MonitorAgent;
 
 public class Application {
 	
-	XPathReader xPathReader;
+	File xmlFile;
 	File propertiesFile;
 	MonitorAgent monitorAgent;
 	Map<String,WebServer> webServers = new LinkedHashMap<String,WebServer>();
@@ -25,8 +24,8 @@ public class Application {
 	Map<String,SqlSessionFactoryBean> sqlSessionFactories = new LinkedHashMap<String,SqlSessionFactoryBean>();
 	Map<String,MessageSource> messageSources = new LinkedHashMap<String,MessageSource>();
 	
-	final void setXPathReader(XPathReader xPathReader) throws Exception {
-		this.xPathReader = xPathReader;
+	final void setXmlFile(File xmlFile) throws Exception {
+		this.xmlFile = xmlFile;
 	}
 	
 	final void setPropertiesFile(File propertiesFile) {
