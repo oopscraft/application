@@ -6,11 +6,14 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.DirResourceSet;
+import org.apache.catalina.webresources.StandardRoot;
 import org.apache.tomcat.JarScanFilter;
 import org.apache.tomcat.JarScanType;
 import org.apache.tomcat.util.scan.StandardJarScanner;
@@ -63,25 +66,33 @@ public class WebServer {
 			ctx.setDefaultWebXml(context.getDescriptor());
 			ctx.setReloadable(true);
 			ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
+			
+			
+			WebResourceRoot webResourceRoot = new StandardRoot(ctx);
+			String webAppMount = "/WEB-INF/lib/";
+			String base = new File("lib").getAbsolutePath();
+			String internalPath = "/";
+			webResourceRoot.addJarResources(new DirResourceSet(webResourceRoot, webAppMount, base, internalPath));
+			ctx.setResources(webResourceRoot);
+			
 			 
 			// sets jar scanner
 			ctx.setXmlBlockExternal(false);
 			StandardJarScanner jarScanner = new StandardJarScanner();
 			jarScanner.setScanClassPath(true);
 			jarScanner.setJarScanFilter(new JarScanFilter() {
-
 				@Override
 				public boolean check(JarScanType jarScanType, String jarName) {
 					LOGGER.warn(jarName);
 					if(jarName.contains("oopscraft")) {
-
 						LOGGER.warn("############################### {}", jarName);
 					}
 					return true;
 				}
-
 			});
 			ctx.setJarScanner(jarScanner);
+			
+			
 			 
 			//org.apache.tomcat.util.descriptor.web.FragmentJarScannerCallback
 
