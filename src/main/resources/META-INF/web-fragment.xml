@@ -5,8 +5,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-fragment_3_1.xsd">
    
-	<display-name>web-fragment</display-name> 
-	<name>web_fragment</name> 
+	<display-name>application</display-name> 
+	<name>application</name> 
     
     <session-config>
         <session-timeout>60</session-timeout>
