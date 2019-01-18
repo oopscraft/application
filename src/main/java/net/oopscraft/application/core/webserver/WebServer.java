@@ -62,6 +62,10 @@ public class WebServer {
 			 ctx.setXmlBlockExternal(false);
 			 StandardJarScanner jarScanner = new StandardJarScanner();
 			 jarScanner.setScanAllDirectories(true);
+			 jarScanner.setScanAllFiles(true); 
+			 jarScanner.setScanBootstrapClassPath(true); 
+			 jarScanner.setScanClassPath(true); 
+			 jarScanner.setScanManifest(false);
 //			 jarScanner.setJarScanFilter(new JarScanFilter() {
 //			             
 //			     public boolean check(JarScanType jarScanType, String jarName) {
