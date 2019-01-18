@@ -52,6 +52,8 @@ public class WebServer {
 			 ctx.setReloadable(true);
 			 ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
 			 
+			 ctx.setXmlBlockExternal(true);
+			 
 			 // add parameter 
 			 if(context.getParameter() != null) {
 				 for(String name : context.getParameter().keySet()){ 
