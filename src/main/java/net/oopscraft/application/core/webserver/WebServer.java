@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
+import org.apache.catalina.WebResourceRoot.ResourceSetType;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.StandardRoot;
 import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.JarScanFilter;
 import org.apache.tomcat.JarScanType;
@@ -58,7 +60,7 @@ public class WebServer {
 			File resourceBase = new File(context.getResourceBase());
 			StandardContext ctx = (StandardContext)tomcat.addWebapp(context.getContextPath(), resourceBase.getAbsolutePath());
 			ctx.addParameter("webAppRootKey", UUID.randomUUID().toString());
-			ctx.setDefaultWebXml(context.getDescriptor());
+			ctx.setAltDDName(context.getDescriptor());
 			ctx.setReloadable(true);
 			ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
 			
@@ -75,18 +77,12 @@ public class WebServer {
 			});
 			ctx.setJarScanner(jarScanner);
 			
-			
-			ClassLoader loadClass = Thread.currentThread().getContextClassLoader() ; 
-			InputStream is = loadClass.getResourceAsStream("META-INF/web-fragment.xml");
-			File targetFile = new File("webapp/application/WEB-INF/web.xml");
-			FileUtils.copyInputStreamToFile(is, targetFile);
-			LOGGER.warn(targetFile.getPath());
-			ctx.setDefaultWebXml(targetFile.getPath());
-			
-			
-
-			
-
+			// 
+	        File lib = new File("lib");
+	        ctx.setResources(new StandardRoot(ctx));
+	        ctx.getResources().createWebResourceSet(ResourceSetType.CLASSES_JAR, "/WEB-INF/lib", lib.getAbsolutePath(), null, "/");
+	        
+	        
 			// add parameter 
 			if(context.getParameter() != null) {
 				for(String name : context.getParameter().keySet()){ 
