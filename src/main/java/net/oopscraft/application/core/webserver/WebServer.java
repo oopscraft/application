@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
+import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.WebResourceRoot.ResourceSetType;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
 import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.JarScanFilter;
@@ -78,9 +80,10 @@ public class WebServer {
 			ctx.setJarScanner(jarScanner);
 			
 			// 
-	        File lib = new File("lib");
-	        ctx.setResources(new StandardRoot(ctx));
-	        ctx.getResources().createWebResourceSet(ResourceSetType.RESOURCE_JAR, "/WEB-INF/lib", lib.getAbsolutePath(), null, "/");
+	        File additionWebInfClasses = new File("lib");
+	        WebResourceRoot resources = new StandardRoot(ctx);
+	        resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/lib",additionWebInfClasses.getAbsolutePath(), "/"));
+	        ctx.setResources(resources);
 	        
 	        
 			// add parameter 
