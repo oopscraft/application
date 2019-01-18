@@ -80,8 +80,8 @@ public class WebServer {
 			InputStream is = loadClass.getResourceAsStream("META-INF/web-fragment.xml");
 			File targetFile = new File("webapp/application/META-INF/web-fragment.xml");
 			FileUtils.copyInputStreamToFile(is, targetFile);
-			LOGGER.warn(targetFile.getCanonicalPath());
-			ctx.setDefaultWebXml(targetFile.getCanonicalPath());
+			LOGGER.warn(targetFile.getPath());
+			ctx.setDefaultWebXml(targetFile.getPath());
 			
 			
 
