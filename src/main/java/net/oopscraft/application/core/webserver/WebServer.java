@@ -56,15 +56,11 @@ public class WebServer {
 			 ctx.addParameter("webAppRootKey", UUID.randomUUID().toString());
 			 ctx.setAltDDName(context.getDescriptor());
 			 ctx.setReloadable(true);
-			 ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
+			 //ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
 			 
 			 
 			 
 			 // scan test
-			 ctx.setLogEffectiveWebXml(true);
-			 
-			 
-			 
 			 ctx.setXmlBlockExternal(false);
 			 StandardJarScanner jarScanner = new StandardJarScanner();
 			 jarScanner.setScanAllDirectories(true);
