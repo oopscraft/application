@@ -30,43 +30,45 @@ public class WebServer {
 	Collection<WebServerContext> contexts = new ArrayList<WebServerContext>();
 
 	public void start() throws Exception {
+		
+		LOGGER.warn("############################### <WebServer.start()>");
 		 
-		 this.tomcat = new Tomcat();
-		 this.tomcat.setPort(this.port);
+		this.tomcat = new Tomcat();
+		this.tomcat.setPort(this.port);
 
 		 // setting base directory 
-		 File baseDir = new File(".tomcat" + File.separator + this.port);
-		 baseDir.mkdirs();
-		 this.tomcat.setBaseDir(baseDir.getAbsolutePath());
+		File baseDir = new File(".tomcat" + File.separator + this.port);
+		baseDir.mkdirs();
+		this.tomcat.setBaseDir(baseDir.getAbsolutePath());
 
-		 // setting connector 
-		 Connector connector = this.tomcat.getConnector();
-		 if(this.ssl) { 
-			 connector.setSecure(true);
-			 connector.setScheme("https");
-			 connector.setAttribute("SSLEnabled", true);
-			 connector.setAttribute("protocol", "HTTP/1.1");
-			 connector.setAttribute("sslProtocol", "TLS");
-			 connector.setAttribute("clientAuth", false);
-			 connector.setAttribute("keystoreFile", new File(this.keyStorePath).getAbsolutePath());
-			 connector.setAttribute("keystoreType", this.keyStoreType);
-			 connector.setAttribute("keystorePass", this.keyStorePass);
-		 }
+		// setting connector 
+		Connector connector = this.tomcat.getConnector();
+		if(this.ssl) { 
+			connector.setSecure(true);
+			connector.setScheme("https");
+			connector.setAttribute("SSLEnabled", true);
+			connector.setAttribute("protocol", "HTTP/1.1");
+			connector.setAttribute("sslProtocol", "TLS");
+			connector.setAttribute("clientAuth", false);
+			connector.setAttribute("keystoreFile", new File(this.keyStorePath).getAbsolutePath());
+			connector.setAttribute("keystoreType", this.keyStoreType);
+			connector.setAttribute("keystorePass", this.keyStorePass);
+		}
 		 
-		 // setting context 
-		 for(WebServerContext context : this.contexts){
-			 File resourceBase = new File(context.getResourceBase());
-			 StandardContext ctx = (StandardContext)tomcat.addWebapp(context.getContextPath(), resourceBase.getAbsolutePath());
-			 ctx.addParameter("webAppRootKey", UUID.randomUUID().toString());
-			 ctx.setDefaultWebXml(context.getDescriptor());
-			 ctx.setReloadable(true);
-			 ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
+		// setting context 
+		for(WebServerContext context : this.contexts){
+			File resourceBase = new File(context.getResourceBase());
+			StandardContext ctx = (StandardContext)tomcat.addWebapp(context.getContextPath(), resourceBase.getAbsolutePath());
+			ctx.addParameter("webAppRootKey", UUID.randomUUID().toString());
+			ctx.setDefaultWebXml(context.getDescriptor());
+			ctx.setReloadable(true);
+			ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
 			 
-			 // sets jar scanner
-			 ctx.setXmlBlockExternal(false);
-			 StandardJarScanner jarScanner = new StandardJarScanner();
-			 jarScanner.setScanClassPath(true);
-			 jarScanner.setJarScanFilter(new JarScanFilter() {
+			// sets jar scanner
+			ctx.setXmlBlockExternal(false);
+			StandardJarScanner jarScanner = new StandardJarScanner();
+			jarScanner.setScanClassPath(true);
+			jarScanner.setJarScanFilter(new JarScanFilter() {
 
 				@Override
 				public boolean check(JarScanType jarScanType, String jarName) {
@@ -76,23 +78,25 @@ public class WebServer {
 					}
 					return true;
 				}
-				 
-			 });
-			 ctx.setJarScanner(jarScanner);
-			 
-			 //org.apache.tomcat.util.descriptor.web.FragmentJarScannerCallback
 
-			 // add parameter 
-			 if(context.getParameter() != null) {
-				 for(String name : context.getParameter().keySet()){ 
-					 String value = context.getParameter(name);
-					 ctx.addParameter(name, value);
-				 }
-			 }
-		 } 
+			});
+			ctx.setJarScanner(jarScanner);
+			 
+			//org.apache.tomcat.util.descriptor.web.FragmentJarScannerCallback
+
+			// add parameter 
+			if(context.getParameter() != null) {
+				for(String name : context.getParameter().keySet()){ 
+					String value = context.getParameter(name);
+					ctx.addParameter(name, value);
+				}
+			}
+		} 
 		 
-		 // starts server instance. 
-		 this.tomcat.start();
+		LOGGER.warn("############################### </WebServer.start()>");
+		
+		// starts server instance. 
+		this.tomcat.start();
 	}
 	
 	public void stop() throws Exception {
