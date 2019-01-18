@@ -3,9 +3,14 @@ package net.oopscraft.application.core.webserver;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
+import java.util.Set;
 import java.util.UUID;
+
+import javax.servlet.ServletContext;
 
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.WebResourceRoot.ResourceSetType;
@@ -17,6 +22,7 @@ import org.apache.catalina.webresources.StandardRoot;
 import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.JarScanFilter;
 import org.apache.tomcat.JarScanType;
+import org.apache.tomcat.JarScannerCallback;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +74,12 @@ public class WebServer {
 			
 			// sets jar scanner
 			ctx.setXmlBlockExternal(false);
-			StandardJarScanner jarScanner = new StandardJarScanner();
+			StandardJarScanner jarScanner = new StandardJarScanner() {
+				@Override
+			    protected void processURLs(JarScanType scanType, JarScannerCallback callback, Set<URL> processedURLs, boolean isWebapp, Deque<URL> classPathUrlsToProcess) {
+					super.processURLs(scanType, callback, processedURLs, true, classPathUrlsToProcess);
+				}
+			};
 			jarScanner.setScanClassPath(true);
 			jarScanner.setJarScanFilter(new JarScanFilter() {
 				@Override
@@ -79,12 +90,10 @@ public class WebServer {
 			});
 			ctx.setJarScanner(jarScanner);
 			
-			// 
-	        File additionWebInfClasses = new File("lib");
-	        WebResourceRoot resources = new StandardRoot(ctx);
-	        resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/lib",additionWebInfClasses.getAbsolutePath(), "/"));
-	        ctx.setResources(resources);
-	        
+			
+			// test
+			//org.apache.tomcat.util.descriptor.web.FragmentJarScannerCallback.scan
+			
 	        
 			// add parameter 
 			if(context.getParameter() != null) {
