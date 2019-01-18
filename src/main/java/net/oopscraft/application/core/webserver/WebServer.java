@@ -80,7 +80,7 @@ public class WebServer {
 			// 
 	        File lib = new File("lib");
 	        ctx.setResources(new StandardRoot(ctx));
-	        ctx.getResources().createWebResourceSet(ResourceSetType.CLASSES_JAR, "/WEB-INF/lib", lib.getAbsolutePath(), null, "/");
+	        ctx.getResources().createWebResourceSet(ResourceSetType.RESOURCE_JAR, "/WEB-INF/lib", lib.getAbsolutePath(), null, "/");
 	        
 	        
 			// add parameter 
