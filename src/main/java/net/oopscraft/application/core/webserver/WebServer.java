@@ -5,14 +5,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
+import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.startup.Constants;
+import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.JarScanFilter;
 import org.apache.tomcat.JarScanType;
 import org.apache.tomcat.util.scan.StandardJarScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebServer {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(WebServer.class);
 
 	Tomcat tomcat = null;
 	int port = -1;
@@ -47,25 +54,33 @@ public class WebServer {
 		 }
 		 
 		 // setting context 
-		 for(WebServerContext context : this.contexts){ 
+		 for(WebServerContext context : this.contexts){
 			 File resourceBase = new File(context.getResourceBase());
 			 StandardContext ctx = (StandardContext)tomcat.addWebapp(context.getContextPath(), resourceBase.getAbsolutePath());
 			 ctx.addParameter("webAppRootKey", UUID.randomUUID().toString());
-			 ctx.setAltDDName(context.getDescriptor());
+			 ctx.setDefaultWebXml(context.getDescriptor());
 			 ctx.setReloadable(true);
 			 ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
 			 
-			 // scan test
-			 System.err.println("#############################" + Thread.currentThread().getContextClassLoader());
+			 // sets jar scanner
 			 ctx.setXmlBlockExternal(false);
 			 StandardJarScanner jarScanner = new StandardJarScanner();
-			 jarScanner.setScanAllDirectories(true);
-			 jarScanner.setScanAllFiles(true); 
-			 jarScanner.setScanBootstrapClassPath(true); 
-			 jarScanner.setScanClassPath(true); 
-			 jarScanner.setScanManifest(true);
+			 jarScanner.setScanClassPath(true);
+			 jarScanner.setJarScanFilter(new JarScanFilter() {
+
+				@Override
+				public boolean check(JarScanType jarScanType, String jarName) {
+					if(jarName.contains("oopscraft")) {
+						LOGGER.debug(jarName);
+						LOGGER.warn("############################### {}", jarName);
+					}
+					return true;
+				}
+				 
+			 });
 			 ctx.setJarScanner(jarScanner);
 			 
+			 //org.apache.tomcat.util.descriptor.web.FragmentJarScannerCallback
 
 			 // add parameter 
 			 if(context.getParameter() != null) {
