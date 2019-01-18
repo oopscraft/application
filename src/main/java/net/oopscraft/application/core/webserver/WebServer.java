@@ -8,6 +8,9 @@ import java.util.UUID;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.tomcat.JarScanFilter;
+import org.apache.tomcat.JarScanType;
+import org.apache.tomcat.util.scan.StandardJarScanner;
 
 public class WebServer {
 
@@ -43,6 +46,9 @@ public class WebServer {
 			 connector.setAttribute("keystorePass", this.keyStorePass);
 		 }
 		 
+
+		 
+		 
 		 // setting context 
 		 for(WebServerContext context : this.contexts){ 
 			 File resourceBase = new File(context.getResourceBase());
@@ -52,8 +58,18 @@ public class WebServer {
 			 ctx.setReloadable(true);
 			 ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
 			 
-			 ctx.setXmlBlockExternal(true);
+			 // scan test
+			 StandardJarScanner discardingJarScanner = new StandardJarScanner();
+			 discardingJarScanner.setJarScanFilter(new JarScanFilter() {
+			             
+			     public boolean check(JarScanType jarScanType, String jarName) {
+			          //return jarName.contains("jstl-");
+			    	 return true;
+			     }
+			 });
+			 ctx.setJarScanner(discardingJarScanner);
 			 
+
 			 // add parameter 
 			 if(context.getParameter() != null) {
 				 for(String name : context.getParameter().keySet()){ 
