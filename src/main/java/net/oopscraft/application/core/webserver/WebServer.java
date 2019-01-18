@@ -58,7 +58,13 @@ public class WebServer {
 			 ctx.setReloadable(true);
 			 ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
 			 
+			 
+			 
 			 // scan test
+			 ctx.setLogEffectiveWebXml(true);
+			 
+			 
+			 
 			 ctx.setXmlBlockExternal(false);
 			 StandardJarScanner jarScanner = new StandardJarScanner();
 			 jarScanner.setScanAllDirectories(true);
@@ -66,6 +72,7 @@ public class WebServer {
 			 jarScanner.setScanBootstrapClassPath(true); 
 			 jarScanner.setScanClassPath(true); 
 			 jarScanner.setScanManifest(false);
+
 //			 jarScanner.setJarScanFilter(new JarScanFilter() {
 //			             
 //			     public boolean check(JarScanType jarScanType, String jarName) {
