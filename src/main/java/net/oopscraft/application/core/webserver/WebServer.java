@@ -1,8 +1,6 @@
 package net.oopscraft.application.core.webserver;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,16 +8,9 @@ import java.util.Deque;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.servlet.ServletContext;
-
-import org.apache.catalina.WebResourceRoot;
-import org.apache.catalina.WebResourceRoot.ResourceSetType;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
-import org.apache.catalina.webresources.DirResourceSet;
-import org.apache.catalina.webresources.StandardRoot;
-import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.JarScanFilter;
 import org.apache.tomcat.JarScanType;
 import org.apache.tomcat.JarScannerCallback;
@@ -75,12 +66,16 @@ public class WebServer {
 			// sets jar scanner
 			ctx.setXmlBlockExternal(false);
 			StandardJarScanner jarScanner = new StandardJarScanner() {
+				/**
+				 * override to load web-fragment.xml in all class path jar(set isWebapp as true)
+				 */
 				@Override
 			    protected void processURLs(JarScanType scanType, JarScannerCallback callback, Set<URL> processedURLs, boolean isWebapp, Deque<URL> classPathUrlsToProcess) {
 					super.processURLs(scanType, callback, processedURLs, true, classPathUrlsToProcess);
 				}
 			};
 			jarScanner.setScanClassPath(true);
+			// for debugging library
 			jarScanner.setJarScanFilter(new JarScanFilter() {
 				@Override
 				public boolean check(JarScanType jarScanType, String jarName) {
@@ -89,11 +84,6 @@ public class WebServer {
 				}
 			});
 			ctx.setJarScanner(jarScanner);
-			
-			
-			// test
-			//org.apache.tomcat.util.descriptor.web.FragmentJarScannerCallback.scan
-			
 	        
 			// add parameter 
 			if(context.getParameter() != null) {
