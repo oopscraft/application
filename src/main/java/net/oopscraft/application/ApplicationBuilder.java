@@ -37,7 +37,7 @@ public class ApplicationBuilder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationBuilder.class);
 	private static final String PROPERTY_IDENTIFIER = "\\$\\{(.*?)\\}";
 	Class<?> clazz;
-	XPathReader xPathReader;
+	File xmlFile;
 	File propertiesFile;
 	
 	public ApplicationBuilder setClass(Class<?> clazz) {
@@ -50,8 +50,13 @@ public class ApplicationBuilder {
 		return this;
 	}
 	
-	public ApplicationBuilder setXPathReader(XPathReader xPathReader) {
-		this.xPathReader = xPathReader;
+	public ApplicationBuilder setXmlFile(File xmlFile) {
+		this.xmlFile = xmlFile;
+		return this;
+	}
+	
+	public ApplicationBuilder setXmlFile(String xmlFilePath) {
+		this.xmlFile = new File(xmlFilePath);
 		return this;
 	}
 
@@ -72,8 +77,9 @@ public class ApplicationBuilder {
 	 */
 	public Application build() throws Exception {
 		Application application = (Application) clazz.newInstance();
-		application.setXPathReader(xPathReader);
+		application.setXmlFile(xmlFile);
 		application.setPropertiesFile(propertiesFile);
+		XPathReader xPathReader = new XPathReader(xmlFile);
 		Properties properties = new Properties();
 		properties.load(new FileInputStream(propertiesFile));
 		buildMonitorAgent(application);

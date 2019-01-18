@@ -1,7 +1,6 @@
 package net.oopscraft.application;
 
 import java.io.File;
-import java.io.InputStream;
 
 import org.apache.logging.log4j.core.config.Configurator;
 import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64;
@@ -61,13 +60,12 @@ public class ApplicationContainer {
 		synchronized(ApplicationContainer.class) {
 			if(application == null) {
 				// initializes application
-				InputStream is = ApplicationContainer.class.getClassLoader().getResourceAsStream("conf/application.xml");
-				XPathReader applicationXmlReader = new XPathReader(is);
+				XPathReader applicationXmlReader = new XPathReader(APPLICATION_XML);
 				String applicationClassName = applicationXmlReader.getTextContent("/application/@class");
 				Class<?> applicationClass = Class.forName(applicationClassName);
 				application = new ApplicationBuilder()
 						.setClass(applicationClass)
-						.setXPathReader(applicationXmlReader)
+						.setXmlFile(APPLICATION_XML)
 						.setPropertiesFile(APPLICATION_PROPERTIES)
 						.build();
 				application.start();
