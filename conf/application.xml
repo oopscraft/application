@@ -35,8 +35,8 @@
 	<!-- ====================================================== -->
 	<entityManagerFactory id="entityManagerFactory">
 		<dataSource>dataSource</dataSource>
-		<databasePlatform>org.hibernate.dialect.MySQLDialect</databasePlatform>
-		<packagesToScan>net.oopscraft.application</packagesToScan>
+		<databasePlatform>${application.entityManagerFactory.databasePlatform}</databasePlatform>
+		<packagesToScan>${application.entityManagerFactory.packagesToScan}</packagesToScan>
 	</entityManagerFactory>
 	
 	<!-- ====================================================== -->

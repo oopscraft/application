@@ -2,8 +2,10 @@ package net.oopscraft.application;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
@@ -223,7 +225,7 @@ public class ApplicationBuilder {
 	        vendorAdapter.setShowSql(true);
 
 	        // sets databasePlatform property
-	        String databasePlatform = xPathReader.getTextContent(entityManagerFactoryExpression + "/databasePlatform");
+	        String databasePlatform = PasswordBasedEncryptor.decryptIdentifiedValue(xPathReader.getTextContent(entityManagerFactoryExpression + "/databasePlatform"));
 	        vendorAdapter.setDatabasePlatform(databasePlatform);
 	        entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
 	        
@@ -232,8 +234,13 @@ public class ApplicationBuilder {
 			entityManagerFactory.setDataSource(application.getDataSource(dataSource));
 
 	        // sets packagesToScan property.
-	        String[] packagesToScan = xPathReader.getTextContent(entityManagerFactoryExpression + "/packagesToScan").split(",");
-	        entityManagerFactory.setPackagesToScan(packagesToScan);
+			List<String> packagesToScans = new ArrayList<String>();
+			packagesToScans.add(this.getClass().getPackage().getName());
+			String packagesToScan = PasswordBasedEncryptor.decryptIdentifiedValue(xPathReader.getTextContent(entityManagerFactoryExpression + "/packagesToScan"));
+			for(String element : packagesToScan.split(",")) {
+				packagesToScans.add(element.trim());
+			}
+	        entityManagerFactory.setPackagesToScan(packagesToScans.toArray(new String[packagesToScans.size()-1]));
 	        
 	        // JPA properties
 	        Properties jpaProperties = new Properties();
