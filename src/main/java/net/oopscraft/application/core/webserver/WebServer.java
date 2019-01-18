@@ -59,15 +59,17 @@ public class WebServer {
 			 ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
 			 
 			 // scan test
-			 StandardJarScanner discardingJarScanner = new StandardJarScanner();
-			 discardingJarScanner.setJarScanFilter(new JarScanFilter() {
-			             
-			     public boolean check(JarScanType jarScanType, String jarName) {
-			          //return jarName.contains("jstl-");
-			    	 return true;
-			     }
-			 });
-			 ctx.setJarScanner(discardingJarScanner);
+			 ctx.setXmlBlockExternal(false);
+			 StandardJarScanner jarScanner = new StandardJarScanner();
+			 jarScanner.setScanAllDirectories(true);
+//			 jarScanner.setJarScanFilter(new JarScanFilter() {
+//			             
+//			     public boolean check(JarScanType jarScanType, String jarName) {
+//			          //return jarName.contains("jstl-");
+//			    	 return true;
+//			     }
+//			 });
+			 ctx.setJarScanner(jarScanner);
 			 
 
 			 // add parameter 
