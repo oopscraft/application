@@ -46,9 +46,6 @@ public class WebServer {
 			 connector.setAttribute("keystorePass", this.keyStorePass);
 		 }
 		 
-
-		 
-		 
 		 // setting context 
 		 for(WebServerContext context : this.contexts){ 
 			 File resourceBase = new File(context.getResourceBase());
@@ -66,15 +63,7 @@ public class WebServer {
 			 jarScanner.setScanAllFiles(true); 
 			 jarScanner.setScanBootstrapClassPath(true); 
 			 jarScanner.setScanClassPath(true); 
-			 jarScanner.setScanManifest(false);
-
-//			 jarScanner.setJarScanFilter(new JarScanFilter() {
-//			             
-//			     public boolean check(JarScanType jarScanType, String jarName) {
-//			          //return jarName.contains("jstl-");
-//			    	 return true;
-//			     }
-//			 });
+			 jarScanner.setScanManifest(true);
 			 ctx.setJarScanner(jarScanner);
 			 
 
