@@ -1,6 +1,8 @@
 package net.oopscraft.application.core.webserver;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -8,6 +10,7 @@ import java.util.UUID;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.JarScanFilter;
 import org.apache.tomcat.JarScanType;
 import org.apache.tomcat.util.scan.StandardJarScanner;
@@ -71,6 +74,14 @@ public class WebServer {
 				}
 			});
 			ctx.setJarScanner(jarScanner);
+			
+			
+			ClassLoader loadClass = Thread.currentThread().getContextClassLoader() ; 
+			InputStream is = loadClass.getResourceAsStream("META-INF/web-fragment.xml");
+			File targetFile = new File("webapp/application/META-INF/web-fragment.xml");
+			FileUtils.copyInputStreamToFile(is, targetFile);
+			System.out.println(targetFile.getAbsolutePath());
+			
 
 			// add parameter 
 			if(context.getParameter() != null) {

@@ -1,9 +1,6 @@
 package net.oopscraft.application;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.apache.logging.log4j.core.config.Configurator;
 import org.jasypt.contrib.org.apache.commons.codec_1_3.binary.Base64;
@@ -52,14 +49,6 @@ public class ApplicationContainer {
 		
 		// starts webServer
 		for(WebServer webServer : application.getWebServers().values()) {
-			Path target = Paths.get(".", "application-0.0.1-SNAPSHOT.jar");
-			Path link  = Paths.get("./webapp/application/WEB-INF/lib", "application-0.0.1-SNAPSHOT.jar__");
-			if(Files.exists(link)) {
-				Files.delete(link);
-			}
-			Files.createSymbolicLink(link, target);
-			
-			// start web server.
 			webServer.start();
 		}
 		
