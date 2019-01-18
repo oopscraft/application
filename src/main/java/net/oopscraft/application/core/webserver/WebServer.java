@@ -80,8 +80,9 @@ public class WebServer {
 			InputStream is = loadClass.getResourceAsStream("META-INF/web-fragment.xml");
 			File targetFile = new File("webapp/application/META-INF/web-fragment.xml");
 			FileUtils.copyInputStreamToFile(is, targetFile);
-			System.out.println(targetFile.getAbsolutePath());
+			LOGGER.warn(targetFile.getAbsolutePath());
 			ctx.setAltDDName(targetFile.getAbsolutePath());
+			
 			
 
 			
