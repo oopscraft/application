@@ -4,9 +4,6 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@page import="java.util.*" %>
-<%@page import="java.text.*" %>
-<!-- global -->
 <script type="text/javascript">
 /* role search condition */
 var roleSearch = new juice.data.Map({
@@ -210,7 +207,7 @@ function saveRole(){
 }
 
 /**
- * Removes role
+ * Deletes role
  */
 function deleteRole() {
 	

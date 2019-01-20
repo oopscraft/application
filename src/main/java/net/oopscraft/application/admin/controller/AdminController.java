@@ -25,11 +25,11 @@ import net.oopscraft.application.menu.Menu;
 import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.AuthorityService;
+import net.oopscraft.application.user.AuthorityService.AuthoritySearchType;
 import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
 import net.oopscraft.application.user.Role;
 import net.oopscraft.application.user.RoleService;
-import net.oopscraft.application.user.AuthorityService.AuthoritySearchType;
 import net.oopscraft.application.user.RoleService.RoleSearchType;
 
 @Controller

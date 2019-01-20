@@ -215,8 +215,12 @@ juice.initialize = function(container, $context) {
 				case 'ComboBox':
 					var comboBox = new juice.ui.ComboBox(element);
 					var options = element.dataset.juiceOptions;
+					var optionValue = element.dataset.juiceOptionValue;
+					var optionText = element.dataset.juiceOptionText;
 					comboBox.bind(map, name);
 					comboBox.setOptions(getObject($context,options));
+					optionValue && comboBox.setOptionValue(optionValue);
+					optionText && comboBox.setOptionText(optionText);
 					comboBox.update();
 				break;
 				case 'CheckBox':
@@ -1118,6 +1122,9 @@ juice.ui.ComboBox = function(select) {
 	this.select = select;
 	this.select.classList.add('juice-ui-comboBox');
 	this.options = [];
+	this.optionValue = 'value';
+	this.optionText = 'text';
+	this.optionDisabled = null;
 }
 juice.ui.ComboBox.prototype = Object.create(juice.ui.__.prototype);
 juice.ui.ComboBox.prototype.bind = function(map, name) {
@@ -1139,27 +1146,28 @@ juice.ui.ComboBox.prototype.update = function() {
 		// sets value and text
 		var value = null;
 		var text = null;
+		
+		// options array element is object
 		if(typeof this.options[i] == 'object') {
-			value = this.options[i]['value'];
-			text = this.options[i]['text'];
-		}else{
+			value = this.options[i][this.optionValue];
+			text = this.options[i][this.optionText];
+		}
+		// else else string,number ...
+		else{
 			value = this.options[i];
 			text = this.options[i];
 		}
+		
+		// sets value and text node.
 		option.value = value;
 		option.appendChild(document.createTextNode(text));
 		
-		// disabled
-		if(this.options[i]['disabled']){
-			option.disabled = this.options[i]['disabled'];
+		// sets disbaled option
+		if(this.optionDisabled){
+			option.disabled = this.options[i][this.optionDisabled];
 		}
 		
-		// style
-		if(this.options[i]['style']){
-			for(var property in this.options[i].style){
-				option.style[property] = this.options[i].style[property];
-			}
-		}
+		// appends
 		this.select.appendChild(option);
 	}
 	
@@ -1175,6 +1183,12 @@ juice.ui.ComboBox.prototype.update = function() {
 }
 juice.ui.ComboBox.prototype.setOptions = function(options){
 	this.options = options;
+}
+juice.ui.ComboBox.prototype.setOptionValue = function(optionValue){
+	this.optionValue = optionValue;
+}
+juice.ui.ComboBox.prototype.setOptionText = function(optionText){
+	this.optionText = optionText;
 }
 juice.ui.ComboBox.prototype.setReadonly = function(readonly){
 	if(readonly){
