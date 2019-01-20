@@ -4,9 +4,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@page import="java.util.*" %>
-<%@page import="java.text.*" %>
-<!-- global -->
+<%@taglib prefix="app" uri="/WEB-INF/tld/application.tld"%>
 <script type="text/javascript">
 var userSearch = new juice.data.Map({
 	 key: null
@@ -22,7 +20,7 @@ userSearch.afterChange(function(event){
 		this.set('value','');
 	}
 });
-var userSearchKeys = [
+var userSearchTypes = [
 	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
 	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
 	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
@@ -31,48 +29,48 @@ var userSearchKeys = [
 ];
 var users = new juice.data.List();
 var user = new juice.data.Map();
-user.setReadonly('id', true);
-user.setEnable(false);
 var groups = new juice.data.List();
 var roles = new juice.data.List();
 var authorities = new juice.data.List();
+var isNew = false;
 
 // locales
-var locales = new Array();
-$.ajax({
-	 url: 'user/getLocales'
-	,type: 'GET'
-	,data: {}
-	,success: function(data, textStatus, jqXHR) {
-		data.forEach(function(item){
-			locales.push({
-				value: item.locale,
-				text: item.displayName
-			});
-		});
-	}
-});
+var locales = ${app:toJson(locales)};
 
 // statuses
-var statuses = new Array();
-$.ajax({
-	 url: 'user/getStatuses'
-	,type: 'GET'
-	,data: {}
-	,success: function(data, textStatus, jqXHR) {
-		data.forEach(function(item){
-			statuses.push({
-				value: item.name,
-				text: item.name
-			});
-		});
+var statuses = ${app:toJson(statuses)}
+
+/**
+ * clear edit
+ */
+function clearEdit(){
+	user.fromJson({});
+	groups.fromJson([]);
+	roles.fromJson([]);
+	authorities.fromJson([]);
+}
+
+/**
+ * enable edit
+ */
+function enableEdit(enable){
+	if(enable == true){
+		user.setEnable(true);
+		user.setReadonly('id', false);
+		$('#editDiv').find('button').attr('disabled',false);
+	}else{
+		user.setEnable(false);
+		user.setReadonly('id', true);
+		$('#editDiv').find('button').attr('disabled',true);
 	}
-});
+}
 
 /**
  * On document loaded
  */
 $( document ).ready(function() {
+	clearEdit();
+	enableEdit(false);
 	getUsers();
 });
 
@@ -105,17 +103,19 @@ function getUsers(page) {
  * Gets user
  */
 function getUser(id) {
-	user.setEnable(true);
-	
 	$.ajax({
 		 url: 'user/getUser'
 		,type: 'GET'
 		,data: {id:id}
 		,success: function(data, textStatus, jqXHR) {
+			clearEdit();
 			user.fromJson(data);
 			groups.fromJson(data.groups);
 			roles.fromJson(data.roles);
 			authorities.fromJson(data.authorities);
+			isNew = false;
+			enableEdit(true);
+			user.setReadonly('id',true);
 			$('#passwordTr').hide();
 			$('#userTable').hide().fadeIn();
   	 	}
@@ -126,56 +126,13 @@ function getUser(id) {
  * Adds user.
  */
 function addUser() {
-	
-	<spring:message code="application.text.id" var="item"/>
-	new juice.ui.Prompt('<spring:message code="application.message.enterItem" arguments="${item}"/>')
-		.beforeConfirm(function(event){
-			var id = event.value;
-			
-			// Validates id value
-			try {
-				__validator.checkId(id);
-			}catch(e){
-				new juice.ui.Alert(e).open();
-				return false;
-			}
-	
-			// checks duplicated id.
-			var isDuplicated = false;
-			$.ajax({
-				 url: 'user/getUser'
-				,type: 'GET'
-				,data: {id: id}
-				,async: false
-				,success: function(data, textStatus, jqXHR) {
-					if(data != null && data.id == id){
-						if(data != null && data.id == event.value){
-							isDuplicated = true;
-						}
-					}
-		 	 	}
-			});
-			if(isDuplicated == true){
-				<spring:message code="application.text.id" var="item"/>
-				new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
-				return false;
-			}
-		})
-		.afterConfirm(function(event){
-			var id = event.value;
-			users.clearIndex();
-			user.fromJson({});
-			user.set('__new', true);
-			user.setEnable(true);
-			user.set('id', id);
-			user.set('status', statuses[0].value);
-			user.setReadonly('id',true);
-			groups.fromJson([]);
-			roles.fromJson([]);
-			authorities.fromJson([]);
-			$('#passwordTr').show();
-		})
-		.open();
+	clearEdit();
+	user.fromJson({});
+	user.set('status', statuses[0].value);
+	users.clearIndex();
+	enableEdit(true);
+	isNew = true;
+	$('#passwordTr').show();
 }
 
 /**
@@ -259,21 +216,46 @@ function removeAuthority(index){
  */
 function saveUser() {
 	
-	// Checks id
+	// Check id
 	try {
 		__validator.checkId(user.get('id'));
 	}catch(e){
-		new juice.ui.Alert(e)
-		.afterConfirm(function(){
-			$('input[data-juice-bind="user.id"]').select();
-		})
-		.open();
+		new juice.ui.Alert(e).open();
 		return false;
 	}
 	
+	// check name
+	try {
+		__validator.checkName(user.get('name'));
+	}catch(e){
+		new juice.ui.Alert(e).open();
+		return false;
+	}
+	
+	// checks duplicated id. 
+	if(isNew == true){
+		var id = user.get('id');
+		var isDuplicated = false;
+		$.ajax({
+			 url: 'user/getUser'
+			,type: 'GET'
+			,data: {id: id}
+			,async: false
+			,success: function(data, textStatus, jqXHR) {
+				if(data != null && data.id == id){
+					isDuplicated = true;
+				}
+	 	 	}
+		});
+		if(isDuplicated == true){
+			<spring:message code="application.text.id" var="item"/>
+			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			return false;
+		}
+	}
+	
 	// Checks password
-	if(user.get('__new') == true){
-		console.log(user.get('__new'));
+	if(isNew == true){
 		try {
 			__validator.checkPassword(user.get('password'), user.get('passwordConfirm'));
 		}catch(e){
@@ -335,7 +317,7 @@ function saveUser() {
 	}
 	
 	// Checks statusCode
-	if(juice.util.validator.isEmpty(user.get('status'))){
+	if(__isEmpty(user.get('status'))){
 		<spring:message code="application.text.status" var="item"/>
 		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>')
 		.afterConfirm(function(){
@@ -360,13 +342,8 @@ function saveUser() {
 				,data: JSON.stringify(userJson)
 				,contentType: "application/json"
 				,success: function(data, textStatus, jqXHR) {
-					<spring:message code="application.text.user" var="item"/>
-					var message = '<spring:message code="application.message.saveItem.complete" arguments="${item}"/>';
-					new juice.ui.Alert(message)
-						.afterConfirm(function(){
-							getUser(user.get('id'));
-							getUsers();
-						}).open();
+					getUser(user.get('id'));
+					getUsers();
 			 	}
 			});	
 		}).open();
@@ -375,7 +352,7 @@ function saveUser() {
 /**
  * Removes User
  */
-function removeUser(){
+function deleteUser(){
 	
 	// check system data
 	if(user.get('systemDataYn') == 'Y'){
@@ -388,16 +365,13 @@ function removeUser(){
 	new juice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
-			 url: 'user/removeUser'
+			 url: 'user/deleteUser'
 			,type: 'GET'
 			,data: { id: user.get('id') }
 			,success: function(data, textStatus, jqXHR) {
-				<spring:message code="application.text.user" var="item"/>
-				var message = '<spring:message code="application.message.removeItem.complete" arguments="${item}"/>';
-				new juice.ui.Alert(message)
-				.afterConfirm(function(){
-					getUsers();
-				}).open();
+				clearEdit();
+				enableEdit(false);
+				getUsers();
 	  	 	}
 		});	
 	}).open();
@@ -412,16 +386,13 @@ function removeUser(){
 	<spring:message code="application.text.management"/>
 </div>
 <div class="container">
+	<!-- ====================================================== -->
+	<!-- User List												-->
+	<!-- ====================================================== -->
 	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- User List												-->
-		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<span class="title2">
-					<i class="icon-search"></i>
-				</span>
-				<select data-juice="ComboBox" data-juice-bind="userSearch.key" data-juice-options="userSearchKeys" style="width:100px;"></select>
+				<select data-juice="ComboBox" data-juice-bind="userSearch.key" data-juice-options="userSearchTypes" style="width:100px;"></select>
 				<input data-juice="TextField" data-juice-bind="userSearch.value" style="width:100px;"/>
 				<button onclick="javascript:getUsers();">
 					<i class="icon-search"></i>
@@ -430,7 +401,7 @@ function removeUser(){
 			</div>
 			<div>
 				<button onclick="javascript:addUser();">
-					<i class="icon-plus"></i>
+					<i class="icon-new"></i>
 					<spring:message code="application.text.new"/>
 				</button>
 			</div>
@@ -489,10 +460,10 @@ function removeUser(){
 			</ul>
 		</div>
 	</div>
-	<div class="division" style="width:50%;">
-		<!-- ====================================================== -->
-		<!-- User Details											-->
-		<!-- ====================================================== -->
+	<!-- ====================================================== -->
+	<!-- User Details											-->
+	<!-- ====================================================== -->
+	<div id="editDiv" class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div>
 				<div class="title2">
@@ -503,16 +474,16 @@ function removeUser(){
 			</div>
 			<div>
 				<button>
-					<i class="icon-key"></i>
+					<i class="icon-change"></i>
 					<spring:message code="application.text.password"/>
 					<spring:message code="application.text.change"/>
 				</button>
 				<button onclick="javascript:saveUser();">
-					<i class="icon-disk"></i>
+					<i class="icon-save"></i>
 					<spring:message code="application.text.save"/>
 				</button>
-				<button onclick="javascript:removeUser();">
-					<i class="icon-trash"></i>
+				<button onclick="javascript:deleteUser();">
+					<i class="icon-delete"></i>
 					<spring:message code="application.text.remove"/>
 				</button>
 			</div>
@@ -524,8 +495,9 @@ function removeUser(){
 			</colgroup>
 			<tr>
 				<th>
-					<i class="icon-attention"></i>
-					<spring:message code="application.text.id"/>
+					<span class="must">
+						<spring:message code="application.text.id"/>
+					</span>
 				</th>
 				<td>
 					<input class="id" data-juice="TextField" data-juice-bind="user.id"/>
@@ -559,7 +531,13 @@ function removeUser(){
 					</span>
 				</th>
 				<td>
-					<select data-juice="ComboBox" data-juice-bind="user.locale" data-juice-options="locales" style="width:15rem;"></select>
+					<select data-juice="ComboBox" 
+						data-juice-bind="user.locale" 
+						data-juice-options="locales" 
+						data-juice-option-value="locale"
+						data-juice-option-text="displayName"
+						style="width:15rem;">
+					</select>
 				</td>
 			</tr>
 			<tr>
@@ -638,7 +616,7 @@ function removeUser(){
 			</tr>
 			<tr>
 				<th>
-					<i class="icon-folder"></i>
+					<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_group.png"/>
 					<spring:message code="application.text.own"/>
 					<spring:message code="application.text.groups"/>
 				</th>
@@ -684,7 +662,7 @@ function removeUser(){
 			</tr>
 			<tr>
 				<th>
-					<i class="icon-card"></i>
+					<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_role.png"/>
 					<spring:message code="application.text.own"/>
 					<spring:message code="application.text.roles"/>
 				</th>
@@ -730,7 +708,7 @@ function removeUser(){
 			</tr>
 			<tr>
 				<th>
-					<i class="icon-key"></i>
+					<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_authority.png"/>
 					<spring:message code="application.text.own"/>
 					<spring:message code="application.text.authorities"/>
 				</th>

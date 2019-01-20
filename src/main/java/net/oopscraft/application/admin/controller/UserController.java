@@ -8,14 +8,10 @@
  */
 package net.oopscraft.application.admin.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -32,17 +28,15 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.JsonUtils;
 import net.oopscraft.application.core.LocaleUtils;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.core.ValueMap;
+import net.oopscraft.application.core.StringUtils;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
+import net.oopscraft.application.user.UserService.UserSearchType;
 
 @PreAuthorize("hasAuthority('ADMIN_USER')")
 @Controller
 @RequestMapping("/admin/user")
 public class UserController {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
 	UserService userService;
@@ -60,6 +54,8 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView user() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/user.tiles");
+		modelAndView.addObject("locales", LocaleUtils.getLocales());
+		modelAndView.addObject("statuses", User.Status.values());
 		return modelAndView;
 	}
 
@@ -75,27 +71,18 @@ public class UserController {
 	 */
 	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getUsers(@RequestParam(value = "key", required = false) String key,
-			@RequestParam(value = "value", required = false) String value,
-			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
-		UserService.SearchCondition searchCondition = userService.new SearchCondition();
-		switch ((key == null ? "" : key)) {
-		case "id":
-			searchCondition.setId(value);
-			break;
-		case "name":
-			searchCondition.setName(value);
-			break;
-		case "email":
-			searchCondition.setEmail(value);
-			break;
-		case "phone":
-			searchCondition.setPhone(value);
-			break;
+	public String getUsers(
+		@RequestParam(value = "page") Integer page,
+		@RequestParam(value = "rows")Integer rows,
+		@RequestParam(value = "searchType", required = false) String searchType,
+		@RequestParam(value = "searchValue", required = false) String searchValue
+	) throws Exception {
+		PageInfo pageInfo = new PageInfo(page, rows, true);
+		UserSearchType userSearchType= null;
+		if(StringUtils.isNotEmpty(searchType)) {
+			userSearchType = UserSearchType.valueOf(searchType);
 		}
-		PageInfo pageInfo = new PageInfo(page.intValue(), rows.intValue(), true);
-		List<User> users = userService.getUsers(searchCondition, pageInfo);
+		List<User> users = userService.getUsers(pageInfo, userSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return JsonUtils.toJson(users);
 	}
@@ -111,7 +98,6 @@ public class UserController {
 	@ResponseBody
 	public String getUser(@RequestParam(value = "id") String id) throws Exception {
 		User user = userService.getUser(id);
-		LOGGER.debug("{}", new TextTable(user));
 		return JsonUtils.toJson(user);
 	}
 
@@ -141,38 +127,8 @@ public class UserController {
 	@RequestMapping(value = "removeUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public String removeRole(@RequestParam(value = "id") String id) throws Exception {
-		User user = userService.removeUser(id);
-		return JsonUtils.toJson(user);
-	}
-
-	
-	/**
-	 * getLocales
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "getLocales", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public String getLocales() throws Exception {
-		return JsonUtils.toJson(LocaleUtils.getLocales());
-	}
-	
-	/**
-	 * getStatuses
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "getStatuses", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public String getStatuses() throws Exception {
-		List<ValueMap> statuses = new ArrayList<ValueMap>();
-		for(User.Status status : User.Status.values()) {
-			ValueMap statusMap = new ValueMap();
-			statusMap.set("name", status.name());
-			statuses.add(statusMap);
-		}
-		return JsonUtils.toJson(statuses);
+	public void removeRole(@RequestParam(value = "id") String id) throws Exception {
+		userService.deleteUser(id);
 	}
 
 }

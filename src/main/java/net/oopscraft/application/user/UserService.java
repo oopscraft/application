@@ -12,25 +12,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.repository.UserRepository;
 
 @Service
 public class UserService {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+	
+	public enum UserSearchType { ID, NAME, EMAIL, PHONE	}
 
 	@Autowired
 	UserRepository userRepository;
@@ -38,78 +33,39 @@ public class UserService {
 	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
 	/**
-	 * Search condition class
-	 *
-	 */
-	public class SearchCondition {
-		String id;
-		String name;
-		String email;
-		String phone;
-
-		public String getId() {
-			return id;
-		}
-
-		public void setId(String id) {
-			this.id = id;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public String getEmail() {
-			return email;
-		}
-
-		public void setEmail(String email) {
-			this.email = email;
-		}
-
-		public String getPhone() {
-			return phone;
-		}
-
-		public void setPhone(String phone) {
-			this.phone = phone;
-		}
-	}
-
-
-	/**
 	 * Gets list of user by search condition and value
-	 * 
-	 * @param searchKey
+	 * @param pageInfo
+	 * @param searchType
 	 * @param searchValue
 	 * @return
 	 * @throws Exception
 	 */
-	public List<User> getUsers(SearchCondition searchCondition, PageInfo pageInfo) throws Exception {
-		List<User> users = null;
-		Page<User> page = null;
-		Pageable pageable = new PageRequest(pageInfo.getPage() - 1, pageInfo.getRows());
-		if (!StringUtils.isEmpty(searchCondition.getId())) {
-			page = userRepository.findByIdStartingWith(searchCondition.getId(), pageable);
-		} else if (!StringUtils.isEmpty(searchCondition.getId())) {
-			page = userRepository.findByNameStartingWith(searchCondition.getName(), pageable);
-		} else if (!StringUtils.isEmpty(searchCondition.getEmail())) {
-			page = userRepository.findByEmailStartingWith(searchCondition.getName(), pageable);
-		} else if (!StringUtils.isEmpty(searchCondition.getPhone())) {
-			page = userRepository.findByPhoneStartingWith(searchCondition.getName(), pageable);
-		} else {
-			page = userRepository.findAllByOrderBySystemDataYnDescJoinDateDesc(pageable);
+	public List<User> getUsers(PageInfo pageInfo, UserSearchType searchType, String searchValue) throws Exception {
+		Pageable pageable = pageInfo.toPageable();
+		Page<User> usersPage = null;
+		if(searchType == null) {
+			usersPage = userRepository.findAll(pageable);
+		}else {
+			switch(searchType) {
+				case ID :
+					usersPage = userRepository.findByIdStartingWith(searchValue, pageable);
+				break;
+				case NAME :
+					usersPage = userRepository.findByNameStartingWith(searchValue, pageable);
+				break;
+				case EMAIL: 
+					usersPage = userRepository.findByEmailStartingWith(searchValue, pageable);
+				break;
+				case PHONE:
+					usersPage = userRepository.findByPhoneStartingWith(searchValue, pageable);
+				break;
+			}
 		}
-		users = page.getContent();
 		if (pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(page.getTotalElements());
+			pageInfo.setTotalCount(usersPage.getTotalElements());
 		}
-		LOGGER.info("+ users: {}", new TextTable(users));
-		return page.getContent();
+		List<User> users = usersPage.getContent();
+		return users;
 	}
 
 	/**
@@ -187,8 +143,7 @@ public class UserService {
 			one.getRoles().add(role);
 		}
 		
-		userRepository.save(one);
-		return userRepository.findOne(user.getId());
+		return userRepository.save(one);
 	}
 	
 	/**
@@ -235,15 +190,14 @@ public class UserService {
 	}
 
 	/**
-	 * Removes group details
+	 * Removes user
 	 * 
 	 * @param id
 	 * @throws Exception
 	 */
-	public User removeUser(String id) throws Exception {
-		User persistUser = userRepository.findOne(id);
-		userRepository.delete(id);
-		return persistUser;
+	public void deleteUser(String id) throws Exception {
+		User user = userRepository.findOne(id);
+		userRepository.delete(user);
 	}
 
 }
