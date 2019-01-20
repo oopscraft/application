@@ -19,13 +19,7 @@
  		<script src="${pageContext.request.contextPath}/static/lib/Chart.js/Chart.js"></script>
  		<link href="${pageContext.request.contextPath}/static/icon/css/icon.css" rel="stylesheet">
  		
- 		<!-- polyfill 		
-		<script src="${pageContext.request.contextPath}/static/lib/polyfill/dataset.js"></script>
-		<script src="${pageContext.request.contextPath}/static/lib/polyfill/classList.js"></script>
-		-->
-		<!-- 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.6.2/core.js"></script>
- -->
+ 		<!-- polyfill -->	
 		<script src="https://polyfill.io/v3/polyfill.min.js"></script>
 
  		<!-- web font -->
@@ -126,6 +120,7 @@
 				link:'board'
 			}
 		], 'childMenus');
+		__menus.setEnable(false);
 		
 		// defines menus index
 		if(window.location.hash){
@@ -156,10 +151,7 @@
 				,success: function(data, textStatus, jqXHR) {
 					console.log(data);
 					data.forEach(function(item){
-						__languages.push({
-							value: item.language,
-							text: item.displayName
-						});
+						__languages.push(item);
 					});
 					__user.notifyObservers();
 				}
@@ -294,6 +286,10 @@
 			border: none;
 			vertical-align: middle;
 		}
+		img.icon {
+			height: 1.5em;
+			width: 1.5em;
+		}
 		th {
 			font-weight:normal;
 		}
@@ -325,10 +321,6 @@
 			justify-content: space-between;
 			min-height: 90vh;
 			border: none;
-		}
-		img.icon {
-			height: 1.5em;
-			width: 1.5em;
 		}
 		.leftNav {
 			display: block;
@@ -479,7 +471,7 @@
 				<span>
 					<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_language.png"/>
 					<spring:message code="application.label.language"/>
-					<select data-juice="ComboBox" data-juice-bind="__user.language" data-juice-options="__languages" style="width:10rem;"></select>
+					<select data-juice="ComboBox" data-juice-bind="__user.language" data-juice-options="__languages" data-juice-option-value="language" data-juice-option-text="displayName" style="width:10rem;"></select>
 				</span>
 				&nbsp;&nbsp;|&nbsp;&nbsp;
 				<span>
@@ -498,7 +490,7 @@
 				<ul data-juice="TreeView" data-juice-bind="__menus" data-juice-item="menu">
 					<li>
 						<a data-index="{{$context.index}}" href="{{$context.menu.get('link')}}\#{{$context.index}}" class="menuItem" style="display:block;">
-							<img class="icon" data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="" alt="" style="vertical-align:middle;"/>
+							<img class="icon" data-juice="Image" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="" alt="" style="vertical-align:middle;"/>
 							<label data-juice="Label" data-juice-bind="menu.name"></label>
 						</a>
 					</li>
@@ -1172,7 +1164,7 @@
 						<li>
 							<div data-id="{{$context.item.get('id')}}" data-enable="{{$context.item.enable}}" onclick="javascript:this.dataset.enable == 'false' || __menusDialog.select(this.dataset.id);" style="width:100%;cursor:hand;cursor:pointer;">
 								<input data-juice="CheckBox" data-juice-bind="item.__selected"/>
-								<img data-juice="Thumbnail" data-juice-bind="item.icon" data-juice-width="24" data-juice-height="24" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAABGdBTUEAALGOfPtRkwAAACBjSFJNAAB6JQAAgIMAAPn/AACA6QAAdTAAAOpgAAA6mAAAF2+SX8VGAAADe0lEQVR42mL8//8/w7J1Wxl+//4t+vf3r3RGJiZ+BgYGRgbiwf9fv36fY+PgWM7OxsYAMg8GooN9GAACiAXE+PfvHwMnO1u0jZ1FMxsbO0QR1ApGKIORkQHFXhD/H0gdEL9+85bh+u173p+/fi9iYWV9xYBkCUAAMYEtAArwcHOLc3JyMvz8/Yfh95+/DH/+/GP48xeG/zMAKSAG0kC1IO3/wJYwAR3HwKCipMDg6+EczcnOOvXnz58sjIwIhwAEEBPcn////fsLMgVqAJiEOBDCA4tDBMA+BHkShJmYGH7++s3AysLCYGagG8LJyrIAGNwCMEsAAghhAdTfjGAMCxpGBiYmiBgsuBjBfCaIPBNELdBxDEDXMQgLCTA42JhFs7EyZ4KCHQQAAghuASMstJEMR/Ip0GAGiOUwWagkCwszw/sPHxmu37zF8PDxE2DQ/mEQFuDL+frtmwhIHiCAWFDSAyMjwuWM0JiEIKiroQ6BijNBHcDDzcPAycEF9i0rKwsDCzOzyO9fv4SAUm8AAgjJgv9QOxgZkJINqquRDGdkRDiIBRj+rGwQB3BycDCwc3D8ZYQaCBBATCgegGOoIUwwQzENh1sM4QAj/D/coUxIYQsQQCwY2QZuCCOS4Qx4DEf4mhGJDQMAAcSCajaSITBf4HU5MB6QEwcjQhwGAAIILZIZ4N6Du5wJ1XUoFoKMZ0LkckZGzEIGIIBYsIXQ///oBiGlIkaEz5hQfIucGBAAIIBQgwgsxQTU+B/hcnhKYkAKFojLkcIGkUrQAEAAYcQBcrJkwBos0IhnRMqe4FSEHMEImwACCDOIkBgIy7C7HCHOAC820AFAAGFEMs6kiNXlqCmHEUsYAQQQC3oEMyEbiFQ2geME3eWMjEjFCarhsGwHEEAsGB5AKiIghjAhJVsCLscSRAABBNbNzMyMko5QS1XiDYflIVC9wQasPkEAIIDAFnz5/BlRxsPKFuS6ATlnMzKCDWJE8zojUi7jYOdguHLpIpgNEEDg2omHl5dh+pwF3UD2/99//oExsHoE43//SQfXbt39Z2JupQEyGyCAWKA+YFm/ZtVVHW2tD0xMTGyQepIR1YXIgcyIFIuMqBkVqJ9h7769269dufQeJAYQQIwgW4DeYwNiHikZOTFeXj5WEpstKA75C6zYnzx88Pr7929fgWZ/AQgwAKHLIxFKOBpdAAAAAElFTkSuQmCC" style="vertical-align:middle;"/>
+								<img data-juice="Image" data-juice-bind="item.icon" data-juice-width="24" data-juice-height="24" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAABGdBTUEAALGOfPtRkwAAACBjSFJNAAB6JQAAgIMAAPn/AACA6QAAdTAAAOpgAAA6mAAAF2+SX8VGAAADe0lEQVR42mL8//8/w7J1Wxl+//4t+vf3r3RGJiZ+BgYGRgbiwf9fv36fY+PgWM7OxsYAMg8GooN9GAACiAXE+PfvHwMnO1u0jZ1FMxsbO0QR1ApGKIORkQHFXhD/H0gdEL9+85bh+u173p+/fi9iYWV9xYBkCUAAMYEtAArwcHOLc3JyMvz8/Yfh95+/DH/+/GP48xeG/zMAKSAG0kC1IO3/wJYwAR3HwKCipMDg6+EczcnOOvXnz58sjIwIhwAEEBPcn////fsLMgVqAJiEOBDCA4tDBMA+BHkShJmYGH7++s3AysLCYGagG8LJyrIAGNwCMEsAAghhAdTfjGAMCxpGBiYmiBgsuBjBfCaIPBNELdBxDEDXMQgLCTA42JhFs7EyZ4KCHQQAAghuASMstJEMR/Ip0GAGiOUwWagkCwszw/sPHxmu37zF8PDxE2DQ/mEQFuDL+frtmwhIHiCAWFDSAyMjwuWM0JiEIKiroQ6BijNBHcDDzcPAycEF9i0rKwsDCzOzyO9fv4SAUm8AAgjJgv9QOxgZkJINqquRDGdkRDiIBRj+rGwQB3BycDCwc3D8ZYQaCBBATCgegGOoIUwwQzENh1sM4QAj/D/coUxIYQsQQCwY2QZuCCOS4Qx4DEf4mhGJDQMAAcSCajaSITBf4HU5MB6QEwcjQhwGAAIILZIZ4N6Du5wJ1XUoFoKMZ0LkckZGzEIGIIBYsIXQ///oBiGlIkaEz5hQfIucGBAAIIBQgwgsxQTU+B/hcnhKYkAKFojLkcIGkUrQAEAAYcQBcrJkwBos0IhnRMqe4FSEHMEImwACCDOIkBgIy7C7HCHOAC820AFAAGFEMs6kiNXlqCmHEUsYAQQQC3oEMyEbiFQ2geME3eWMjEjFCarhsGwHEEAsGB5AKiIghjAhJVsCLscSRAABBNbNzMyMko5QS1XiDYflIVC9wQasPkEAIIDAFnz5/BlRxsPKFuS6ATlnMzKCDWJE8zojUi7jYOdguHLpIpgNEEDg2omHl5dh+pwF3UD2/99//oExsHoE43//SQfXbt39Z2JupQEyGyCAWKA+YFm/ZtVVHW2tD0xMTGyQepIR1YXIgcyIFIuMqBkVqJ9h7769269dufQeJAYQQIwgW4DeYwNiHikZOTFeXj5WEpstKA75C6zYnzx88Pr7929fgWZ/AQgwAKHLIxFKOBpdAAAAAElFTkSuQmCC" style="vertical-align:middle;"/>
 								<label data-juice="Label" data-juice-bind="item.name"></label>
 							</div>
 						</li>

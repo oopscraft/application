@@ -359,6 +359,8 @@ function deleteRole() {
 			</tr>
 			<tr>
 				<th>
+					<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_authority.png"/>
+					<br/>
 					<spring:message code="application.text.own"/>
 					<spring:message code="application.text.authorities"/>
 				</th>

@@ -4,17 +4,19 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@page import="java.util.*" %>
-<%@page import="java.text.*" %>
+<%@taglib prefix="app" uri="/WEB-INF/tld/application.tld"%>
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/reset.css">
+		<link rel="SHORTCUT ICON" href="${pageContext.request.contextPath}/static/img/application.ico">
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/juice/juice.css">
 		<script src="${pageContext.request.contextPath}/static/lib/juice/juice.js"></script>
 		<script src="${pageContext.request.contextPath}/static/lib/jquery.js"></script>
 		<link href="${pageContext.request.contextPath}/static/icon/css/icon.css" rel="stylesheet">
+		
+ 		<!-- polyfill -->	
+		<script src="https://polyfill.io/v3/polyfill.min.js"></script>
 		
  		<!-- web font -->
  		<link href="${pageContext.request.contextPath}/static/font/font.css" rel="stylesheet" type="text/css" />
@@ -34,19 +36,16 @@
 			}
 		});
 		
-		// locales
+		// languages
 		var languages = new Array();
 		$( document ).ready(function() {
 			$.ajax({
-				url: '${pageContext.request.contextPath}/api/locale/languages'
+				 url: '${pageContext.request.contextPath}/api/locale/languages'
 				,type: 'GET'
 				,data: {}
 				,success: function(data, textStatus, jqXHR) {
 					data.forEach(function(item){
-						languages.push({
-							value: item.language,
-							text: item.displayName
-						});
+						languages.push(item);
 					});
 					user.notifyObservers();
 				}
@@ -76,7 +75,7 @@
 
 			if(juice.util.StringUtils.isEmpty(user.get('id'))){
 				<spring:message code="application.text.id" var="item"/>
-				var message = '<i class="icon-attention"></i><spring:message code="application.message.enterItem" arguments="${item}"/>';
+				var message = '<spring:message code="application.message.enterItem" arguments="${item}"/>';
 				printMessage(message);
 				$('#idInput').focus();
 				return false;
@@ -84,7 +83,7 @@
 			
 			if(juice.util.StringUtils.isEmpty(user.get('password'))){
 				<spring:message code="application.text.password" var="item"/>
-				var message = '<i class="icon-attention"></i><spring:message code="application.message.enterItem" arguments="${item}"/>';
+				var message = '<spring:message code="application.message.enterItem" arguments="${item}"/>';
 				printMessage(message);
 				$('#passwordInput').focus();
 				return false;
@@ -98,7 +97,7 @@
 					location.href='${pageContext.request.contextPath}/admin';
 		    	 }
 			 	,error: function(jqXHR, textStatus, errorThrown) {
-			 		var message = '<i class="icon-alert"></i>' + jqXHR.responseText;
+			 		var message = jqXHR.responseText;
 			 		printMessage(message);
 				 }
 			});
@@ -116,14 +115,18 @@
 		* {
 			margin: 0px;
 			padding: 0px;
-			margin:0px;
-			padding:0px;
+			font-size: inherit;
+			font-family: inherit;
+			line-height: inherit;
+		}
+		html {
+			font-size: 12px;
+			line-height: 2.5;
 			font-family: font, font-kr, font-ja, font-zh, sans-serif;
-			font-size:11px;
 			color: #555;
-			line-height: 20px;
 		}
 		body {
+			min-width: 1280px;
 			display: flex;
 			height: 100vh;
 			justify-content: center;
@@ -132,36 +135,36 @@
 		}
 		#loginDiv {
 			width: 300px;
-			background-color: white;
-			border: solid 1px #aaa;
-			border-radius: 2px;
-			padding: 3rem;
 			margin-bottom: 20vh;
+		}
+		#loginDiv > div {
+			margin:2px;
+		}
+		input {
+			border-bottom: solid 1px #ccc;
+			background-color: #fff;
 		}
 		button{
 			position:relative;
-			border: solid 1px #ddd;
-			border-radius: 1px;
-			background-color: #eee;
+			border: solid 1px #ccc !important;
+			border-radius: 3px;
+			background-color: #fff;
 			padding:0 1rem;
 			cursor:pointer;
 			transition:200ms ease all;
 			outline:none;
-			cursor: pointer;
-			cursor: hand;
 		}
 		button:hover{
-			border: solid 1px steelblue;
-			box-shadow: 0px 0px 1px 1px #ccc;
+			outline: none;
+			background-color: #eee;
+			border: solid 1px gray;
 		}
 		#loginButton {
 			width: 100%;
 			font-weight: bold;
-			margin-top: 1.0rem;
 		}
 		#messageDiv {
 			text-align: center;
-			padding: 10px;
 			font-weight: bold;
 			color: steelblue;
 		}
@@ -173,25 +176,16 @@
 				<img src="${pageContext.request.contextPath}/static/img/application.png"/>
 			</div>
 			<div>
-				<i class="icon-user"></i>
-				<span style="font-weight:bold;"><spring:message code="application.text.id"/></span>
-				<input id="idInput" data-juice="TextField" data-juice-bind="user.id"/>
+				<input id="idInput" data-juice="TextField" data-juice-bind="user.id" placeholder="<spring:message code="application.text.id"/>"/>
 			</div>
 			<div>
-				<i class="icon-key"></i>
-				<span style="font-weight:bold;"><spring:message code="application.text.password"/></span>
-				<input id="passwordInput" type="password" data-juice="TextField" data-juice-bind="user.password"/>
-			</div>
-			<div style="line-height:3rem;">
-				<i class="icon-globe"></i>
-				<span style="font-weight:bold;">
-					<spring:message code="application.label.language"/>
-				</span>
-				<select data-juice="ComboBox" data-juice-bind="user.language" data-juice-options="languages" style="width:10rem;"></select>
+				<input id="passwordInput" type="password" data-juice="TextField" data-juice-bind="user.password" placeholder="<spring:message code="application.text.password"/>"/>
 			</div>
 			<div>
-				<button id="loginButton" onclick="javascript:doLogin();">
-					<i class="icon-login"></i>
+				<select data-juice="ComboBox" data-juice-bind="user.language" data-juice-options="languages" data-juice-option-value="language" data-juice-option-text="displayName" style="background-color:white;"></select>
+			</div>
+			<div>
+				<button id="loginButton" onclick="javascript:doLogin();" style="border:#fff;">
 					<spring:message code="application.label.login"/>
 				</button>
 			</div>

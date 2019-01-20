@@ -5,13 +5,10 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="app" uri="/WEB-INF/tld/application.tld"%>
-<%@page import="java.util.*" %>
-<%@page import="java.text.*" %>
 <script type="text/javascript">
 var menus = new juice.data.Tree();
+menus.setEnable(false);
 var menu = new juice.data.Map();
-menu.setReadonly('id',true);
-menu.setEnable(false);
 var displayAuthorities = new juice.data.List();
 var isNew = false;
 
@@ -363,7 +360,7 @@ div.menuItem:hover {
 			<li data-id="{{$context.menu.get('id')}}" onclick="javascript:getMenu(this.dataset.id);">
 				<div class="menuItem" >
 					<div>
-						<img class="icon" data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
+						<img class="icon" data-juice="Image" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
 						<span class="{{$context.menu.get('systemDataYn')=='Y'?'systemData':''}}">
 							<label data-juice="Label" data-juice-bind="menu.name"></label>
 						</span>
@@ -446,9 +443,9 @@ div.menuItem:hover {
 					<spring:message code="application.text.icon"/>
 				</th>
 				<td>
-					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="32" data-juice-height="32" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
-					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
-					<img data-juice="Thumbnail" data-juice-bind="menu.icon" data-juice-width="16" data-juice-height="16" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
+					<img data-juice="Image" data-juice-bind="menu.icon" data-juice-width="32" data-juice-height="32" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
+					<img data-juice="Image" data-juice-bind="menu.icon" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png" style="width:24px; height:24px;"/>
+					<img data-juice="Image" data-juice-bind="menu.icon" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png" style="width:16px; height:16px;"/>
 				</td>
 			</tr>
 			<tr>

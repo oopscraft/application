@@ -314,6 +314,16 @@ public class ApplicationBuilder {
 	 * @throws Exception
 	 */
 	void buildMessageSource(Application application, XPathReader xPathReader, Properties properties) throws Exception {
+		
+		// defines system messageSource as parent object.
+		ReloadableResourceBundleMessageSource systemMessageSource = new ReloadableResourceBundleMessageSource();
+		systemMessageSource.setBasename("classpath:conf/i18n/message");
+		systemMessageSource.setFallbackToSystemLocale(false);
+		systemMessageSource.setDefaultEncoding("UTF-8");
+		systemMessageSource.setUseCodeAsDefaultMessage(true);
+		systemMessageSource.setCacheSeconds(10);
+		
+		// creates user defined message sources.
 		Map<String,MessageSource> messageSources = new LinkedHashMap<String,MessageSource>();
 		NodeList messageSourceNodeList = (NodeList) xPathReader.getElement("/application/messageSource");
 		for(int idx = 1; idx <= messageSourceNodeList.getLength(); idx ++ ) {
@@ -321,14 +331,14 @@ public class ApplicationBuilder {
 			String id = xPathReader.getTextContent(messageSourceExpression + "/@id");
 			ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 			String basename = xPathReader.getTextContent(messageSourceExpression + "/basename");
-			messageSource.setBasename("classpath:conf/i18n/message");
-			messageSource.addBasenames(basename.split(","));
+			messageSource.setBasename(basename);
 			messageSource.setFallbackToSystemLocale(false);
 			messageSource.setDefaultEncoding("UTF-8");
 			messageSource.setUseCodeAsDefaultMessage(true);
 			String cacheSeconds = xPathReader.getTextContent(messageSourceExpression + "/cacheSeconds");
 			messageSource.setCacheSeconds(Integer.parseInt(cacheSeconds));
 			messageSources.put(id, messageSource);
+			messageSource.setParentMessageSource(systemMessageSource);
 		}
 		application.setMessageSources(messageSources);
 	}
