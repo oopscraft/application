@@ -26,7 +26,7 @@
 // juice.ui.TextArea
 // juice.ui.HtmlEditor
 // juice.ui.CronExpression
-// juice.ui.Thumbnail
+// juice.ui.Image
 // juice.ui.ListView
 // juice.ui.TreeView
 // juice.ui.Grid
@@ -183,7 +183,7 @@ juice.initialize = function(container, $context) {
 		,'[data-juice="TextArea"]'
 		,'[data-juice="HtmlEditor"]'
 		,'[data-juice="CronExpression"]'
-		,'[data-juice="Thumbnail"]'
+		,'[data-juice="Image"]'
 	];
 	var elements = container.querySelectorAll(elementTags.join(','));
 	for(var i = 0; i < elements.length; i ++ ) {
@@ -248,13 +248,15 @@ juice.initialize = function(container, $context) {
 					cronExpression.bind(map, name);
 					cronExpression.update();				
 				break;
-				case 'Thumbnail':
-					var thumbnail = new juice.ui.Thumbnail(element);
+				case 'Image':
+					var thumbnail = new juice.ui.Image(element);
 					var width = element.dataset.juiceWidth;
 					var height = element.dataset.juiceHeight;
+					var readonly = element.dataset.juiceReadonly;
+					thumbnail.bind(map, name);
 					thumbnail.setWidth(width);
 					thumbnail.setHeight(height);
-					thumbnail.bind(map, name);
+					readonly && thumbnail.setReadonly(readonly);
 					thumbnail.update();
 				break;
 			}
@@ -449,6 +451,8 @@ juice.data.List = function(json) {
 	if(json) {
 		this.fromJson(json);
 	}
+	this.enable = true;
+	this.readonly = {};
 }
 juice.data.List.prototype = Object.create(juice.data.__.prototype);
 // load data from JSON
@@ -457,6 +461,8 @@ juice.data.List.prototype.fromJson = function(json){
 	for(var i = 0; i < json.length; i ++ ) {
 		var map = new juice.data.Map();
 		map.fromJson(json[i]);
+		map.enable = this.enable;
+		map.readonly = this.readonly;
 		map.addObserver(this);
 		this.mapList.push(map);
 	}
@@ -600,6 +606,16 @@ juice.data.List.prototype.findRows = function(handler) {
 	}
 	return rows;
 }
+juice.data.List.prototype.setEnable = function(enable){
+	this.enable = enable;
+	this.mapList.forEach(function(element){
+		element.setEnable(enable);
+	})
+	this.notifyObservers();
+}
+juice.data.List.prototype.isEnable = function(){
+	return this.enable;
+}
 /* beforeChange */
 juice.data.List.prototype.beforeChange = function(beforeChangeListener){
 	// TODO
@@ -619,15 +635,20 @@ juice.data.Tree = function(json,linkNodeName) {
 	if(json) {
 		this.fromJson(json,linkNodeName);
 	}
+	this.enable = true;
+	this.readonly = {};
 }
 juice.data.Tree.prototype = Object.create(juice.data.__.prototype);
 // load data from JSON Array  
 juice.data.Tree.prototype.fromJson = function(json,linkNodeName){
+	var $this = this;
 	this.rootNode = new juice.data.Map();
 	this.rootNode.addObserver(this);
 	for(var i = 0; i < json.length; i ++){
 		var node = new juice.data.Map();
 		node.fromJson(json[i]);
+		node.enable = this.enable;
+		node.readonly = this.readonly;
 		makeTree(node);
 		this.rootNode.addChildNode(node);
 	}
@@ -637,6 +658,8 @@ juice.data.Tree.prototype.fromJson = function(json,linkNodeName){
 			for(var i = 0; i < childNodes.length; i ++){
 				var childNode = new juice.data.Map();
 				childNode.fromJson(childNodes[i]);
+				childNode.enable = node.enable;
+				childNode.readonly = node.readonly;
 				makeTree(childNode);
 				node.addChildNode(childNode);
 			}
@@ -817,7 +840,45 @@ juice.data.Tree.prototype.findNodes = function(handler){
 	}
 	return nodes;
 }
-
+/**
+ * Sets enable flag
+ * @Param {boolean} enable - true or false
+ * @Return void
+ */
+juice.data.Tree.prototype.setEnable = function(enable){
+	this.enable = enable;
+	this.forEach(function(node){
+		node.setEnable(enable);
+	});
+	this.notifyObservers();
+}
+/**
+ * Gets enable flag
+ * @Return {boolean} enable or not
+ */
+juice.data.Tree.prototype.isEnable = function(){
+	return this.enable;
+}
+/**
+ * Sets read only in child node by name
+ * @Param {string} name - column name
+ * @Param {boolean} read only - read only or not flag
+ * @Return {void}
+ */
+juice.data.Tree.prototype.setReadonly = function(name, readonly){
+	this.readonly[name] = readonly;
+	this.forEach(function(node){
+		node.setReadonly(name, readonly);
+	});
+}
+/**
+ * Returns current name of column is read only or not.
+ * @Param {string] name - column name to checks
+ * @Return {boolean} read only or not
+ */
+juice.data.Tree.prototype.isReadonly = function(name){
+	return this.readonly[name] || false;
+}
 juice.data.Tree.prototype.beforeNodeChange = function(listener){
 	// TODO
 }
@@ -1812,21 +1873,22 @@ juice.ui.CronExpression.prototype.createSelectWeek = function() {
 }
 
 //-----------------------------------------------------------------------------
-// juice.ui.Thumbnail prototype
+// juice.ui.Image prototype
 //-----------------------------------------------------------------------------
-juice.ui.Thumbnail = function(img) {
+juice.ui.Image = function(img) {
 	juice.ui.__.call(this);
 	this.img = img;
 	this.img.classList.add('juice-ui-thumbnail');
 	this.input = document.createElement('input');
 	this.input.setAttribute("type", "file");
 	this.input.setAttribute("accept", "image/gif, image/jpeg, image/png");
-	this.width = 100;
-	this.height = 100;
 	this.blank = img.src;
+	this.width = 128;
+	this.height = 128;
+	this.readonly = false;
 }
-juice.ui.Thumbnail.prototype = Object.create(juice.ui.Thumbnail.prototype);
-juice.ui.Thumbnail.prototype.bind = function(map, name) {
+juice.ui.Image.prototype = Object.create(juice.ui.__.prototype);
+juice.ui.Image.prototype.bind = function(map, name) {
 	var $this = this;
 	this.map = map;
 	this.name = name;
@@ -1838,8 +1900,10 @@ juice.ui.Thumbnail.prototype.bind = function(map, name) {
 	
 	// add click event
 	this.img.addEventListener('click', function() {
-		if($this.map.isEnable() && !$this.map.isReadonly(this.name)){
-			$this.input.click();
+		if(!$this.readonly){
+			if($this.map.isEnable() && $this.map.isReadonly(this.name) != true){
+				$this.input.click();
+			}
 		}
 	});
 	
@@ -1868,7 +1932,7 @@ juice.ui.Thumbnail.prototype.bind = function(map, name) {
 	});
 	
 }
-juice.ui.Thumbnail.prototype.update = function() {
+juice.ui.Image.prototype.update = function() {
 	var $this = this;
 	if(this.map.get(this.name)) {
 		var src = this.map.get(this.name);
@@ -1876,26 +1940,29 @@ juice.ui.Thumbnail.prototype.update = function() {
 	}else{
 		this.img.src = this.blank;
 	}
-	this.img.width = this.width;
-	this.img.height = this.height;
 	
 	// setting read only
-	if(!this.map.isEnable() || this.map.isReadonly(this.name)){
-		this.img.style.cursor = '';
-	}else{
-		this.img.style.cursor = 'pointer';
+	if(!this.readonly){
+		if(!this.map.isEnable() || this.map.isReadonly(this.name)){
+			this.img.style.cursor = '';
+		}else{
+			this.img.style.cursor = 'pointer';
+		}
 	}
-
 }
-juice.ui.Thumbnail.prototype.setWidth = function(width){
+juice.ui.Image.prototype.setWidth = function(width){
 	if(width){
 		this.width = width;
 	}
 }
-juice.ui.Thumbnail.prototype.setHeight = function(height){
+juice.ui.Image.prototype.setHeight = function(height){
 	if(height){
 		this.height = height;
 	}
+}
+juice.ui.Image.prototype.setReadonly = function(readonly){
+	console.log('fdsafdsa', readonly);
+	this.readonly = readonly;
 }
 
 //-----------------------------------------------------------------------------

@@ -118,16 +118,16 @@ public class UserController {
 	}
 	
 	/**
-	 * Removes user.
+	 * Deletes user.
 	 * 
 	 * @param payload
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "removeUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void removeRole(@RequestParam(value = "id") String id) throws Exception {
+	public void deleteRole(@RequestParam(value = "id") String id) throws Exception {
 		userService.deleteUser(id);
 	}
 
