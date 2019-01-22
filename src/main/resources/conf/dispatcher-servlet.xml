@@ -67,5 +67,6 @@
 	<!-- ====================================================== -->
 	<mvc:resources location="/WEB-INF/view/" mapping="/resource/view/**"/>
 	<mvc:resources location="/WEB-INF/theme/" mapping="/resource/theme/**"/>
+	
 
 </beans>
