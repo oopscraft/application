@@ -3,8 +3,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="app" uri="/WEB-INF/tld/application.tld"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="app" uri="http://application.oopscraft.net"%>
 <script type="text/javascript">
 var pageSearch = new juice.data.Map({
 	 key: null
@@ -406,16 +406,6 @@ function openPage() {
 				</th>
 				<td>
 					<input data-juice="TextField" data-juice-bind="page.value"/>
-				</td>
-			</tr>
-			<tr>
-				<th>
-					<span>
-						<spring:message code="application.text.layout"/>
-					</span>
-				</th>
-				<td>
-					<input data-juice="TextField" data-juice-bind="page.layoutId"/>
 				</td>
 			</tr>
 			<tr>

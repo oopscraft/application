@@ -83,6 +83,34 @@ public class UserDetails implements org.springframework.security.core.userdetail
 		}
 	}
 	
+	/**
+	 * checks has authority
+	 * @param authority
+	 * @return
+	 */
+	public boolean hasAuthority(Authority authority) {
+		for(GrantedAuthority element : this.authorities) {
+			if(element.getAuthority().equals(authority.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * checks has authorities
+	 * @param authorities
+	 * @return
+	 */
+	public boolean hasAuthority(List<Authority> authorities) {
+		for(Authority authority : authorities) {
+			if(hasAuthority(authority)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public User getUser() {
 		return user;
 	}

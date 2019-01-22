@@ -1961,7 +1961,6 @@ juice.ui.Image.prototype.setHeight = function(height){
 	}
 }
 juice.ui.Image.prototype.setReadonly = function(readonly){
-	console.log('fdsafdsa', readonly);
 	this.readonly = readonly;
 }
 

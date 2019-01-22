@@ -4,10 +4,11 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<link href="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/style.css" rel="stylesheet" type="text/css" />
+<link href="${SKIN_URI}/style.css" rel="stylesheet" type="text/css" />
 <div class="app-board">
 	<div style="display:flex; justify-content:space-between;">
 		<div class="app-board-name">
+			<img data-juice="Image" data-juice-bind="board.icon" data-juice-width="24" data-juice-height="24" src="${SKIN_URI}/img/icon_board.png" style="vertical-align:middle; width:1.25em; height:1.25em;"/>&nbsp;
 			<c:out value="${board.name}"/>
 		</div>
 	</div>
@@ -18,11 +19,11 @@
 			</div>
 			<div style="width:30%; text-align:right;">
 				<button class="app-board-button" onclick="javascript:saveArticle();">
-					<i class="icon-disk"></i>
+					<img class="icon" src="${SKIN_URI}/img/icon_save.png"/>
 					<spring:message code="application.text.save"/>
 				</button>
 				<button class="app-board-button" onclick="javascript:history.back();">
-					<i class="icon-cancel"></i>
+					<img class="icon" src="${SKIN_URI}/img/icon_cancel.png"/>
 					<spring:message code="application.text.cancel"/>
 				</button>
 			</div>
@@ -46,7 +47,7 @@
 			</div>
 			<div>
 				<button class="app-board-button" onclick="javascript:uploadFile();">
-					<i class="icon-attach"></i>
+					<img class="icon" src="${SKIN_URI}/img/icon_file.png"/>
 					<spring:message code="application.text.file"/>
 					<spring:message code="application.text.attach"/>
 				</button>

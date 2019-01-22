@@ -2,7 +2,6 @@ package net.oopscraft.application.api.controller;
 
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,11 +53,42 @@ public class BoardController {
 	HttpServletResponse response;
 	
 	/**
+	 * checks access authority
+	 * @param boardId
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean hasAccessAuthority(String boardId) throws Exception {
+		return boardService.hasAccessAuthority(boardId);
+	}
+	
+	/**
+	 * checks read authority
+	 * @param boardId
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean hasReadAuthority(String boardId) throws Exception {
+		return boardService.hasReadAuthority(boardId);
+	}
+	
+	/**
+	 * checks write authority
+	 * @param boardId
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean hasWriteAuthority(String boardId) throws Exception {
+		return boardService.hasWriteAuthority(boardId);
+	}
+	
+	/**
 	 * Gets board info
 	 * @param boardId
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasAccessAuthority(#boardId)")
 	@RequestMapping(value = "/{boardId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getBoard(@PathVariable("boardId") String boardId) throws Exception {
 		Board board = boardService.getBoard(boardId);
@@ -73,6 +104,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasAccessAuthority(#boardId)")
 	@RequestMapping(value = "/{boardId}/articles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getArticles(
 		@PathVariable("boardId") String boardId,
@@ -101,6 +133,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasReadAuthority(#boardId)")
 	@RequestMapping(value = "/{boardId}/article/{articleId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getArticle(
 		@PathVariable("boardId") String boardId,
@@ -117,6 +150,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasWriteAuthority(#boardId)")
 	@RequestMapping(value = "/{boardId}/article", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> saveArticles(
@@ -136,6 +170,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasWriteAuthority(#boardId)")
 	@RequestMapping(value = "/{boardId}/article/{articleId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> deleteArticle(
@@ -153,6 +188,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasReadAuthority(#boardId)")
 	@RequestMapping(value = "/{boardId}/article/{articleId}/replies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getArticleReplies(
 		@PathVariable("boardId") String boardId,
@@ -171,6 +207,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasWriteAuthority(#boardId)")
 	@RequestMapping(value = "/{boardId}/article/{articleId}/reply", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> saveArticleReply(
@@ -190,6 +227,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasWriteAuthority(#boardId)")
 	@RequestMapping(value = "/{boardId}/article/{articleId}/reply/{replyId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> deleteArticleReply(
@@ -209,6 +247,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasWriteAuthority(#boardId)")
 	@RequestMapping(value = "/{boardId}/article/{articleId}/file", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> uploadArticleFile(
 		@PathVariable("boardId")String boardId,
@@ -241,6 +280,7 @@ public class BoardController {
 	 * @param fileId
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasReadAuthority(#boardId)")
 	@RequestMapping(value = "/{boardId}/article/{articleId}/file/{fileId}", method = RequestMethod.GET)
 	public void downloadArticleFile(
 		@PathVariable("boardId")String boardId,

@@ -3,17 +3,18 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<link href="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/style.css" rel="stylesheet" type="text/css" />
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<link href="${SKIN_URI}/style.css" rel="stylesheet" type="text/css" />
 <div class="app-board">
 	<div style="display:flex; justify-content:space-between; align-items: baseline;"">
 		<div class="app-board-name">
-			<img data-juice="Image" data-juice-bind="board.icon" data-juice-readonly="true" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_board.png" style="vertical-align:middle; width:1.25em; height:1.25em;"/>&nbsp;
+			<img data-juice="Image" data-juice-bind="board.icon" data-juice-readonly="true" src="${SKIN_URI}/img/icon_board.png" style="vertical-align:middle; width:1.25em; height:1.25em;"/>&nbsp;
 			<c:out value="${board.name}"/>
 		</div>
 		<c:if test="${board.categoryUseYn == 'Y'}">
 			<div style="text-align:right;">
-				<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_category.png"/>&nbsp;
+				<img class="icon" src="${SKIN_URI}/img/icon_category.png"/>&nbsp;
 				<spring:message code="application.text.category"/>&nbsp;
 				<select data-juice="ComboBox" data-juice-bind="articleSearch.categoryId" data-juice-options="categoryOptions" style="width:15em;"></select>
 			</div>
@@ -62,7 +63,7 @@
 						</c:if>
 						<c:if test="${board.fileUseYn == 'Y'}">
 							<span style="display:{{$context.article.get('fileCount') > 0 ? 'inline-block' : 'none'}}">
-								<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_file.png"/>
+								<img class="icon" src="${SKIN_URI}/img/icon_file.png"/>
 							</span>
 						</c:if>
 						<c:if test="${board.categoryUseYn == 'Y'}">
@@ -88,7 +89,7 @@
 			<select data-juice="ComboBox" data-juice-bind="articleSearch.searchType" data-juice-options="articleSearchTypes" style="width:10rem;"></select>
 			<input data-juice="TextField" data-juice-bind="articleSearch.searchValue" style="width:15rem;"/>
 			<button class="app-board-button" onclick="javascript:getArticles();">
-				<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_search.png"/>
+				<img class="icon" src="${SKIN_URI}/img/icon_search.png"/>
 				<spring:message code="application.text.search"/>
 			</button>
 		</div>
@@ -99,7 +100,7 @@
 		</div>
 		<div style="width:33%; text-align:right;">
 			<button class="app-board-button" onclick="javascript:writeArticle();">
-				<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_write.png"/>
+				<img class="icon" src="${SKIN_URI}/img/icon_write.png"/>
 				<spring:message code="application.text.article"/>
 				<spring:message code="application.text.write"/>
 			</button>

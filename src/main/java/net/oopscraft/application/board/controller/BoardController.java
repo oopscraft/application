@@ -1,8 +1,11 @@
 package net.oopscraft.application.board.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +19,12 @@ import net.oopscraft.application.board.ArticleService;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.BoardService;
 
-
 @Controller
 @RequestMapping("/board")
 public class BoardController {
+	
+	@Autowired
+	HttpServletRequest request;
 
 	@Autowired
 	HttpServletResponse response;
@@ -29,6 +34,39 @@ public class BoardController {
 	
 	@Autowired
 	ArticleService articleService;
+	
+    @Autowired
+    ApplicationContext applicationContext;
+    
+	/**
+	 * checks access authority
+	 * @param boardId
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean hasAccessAuthority(String boardId) throws Exception {
+		return boardService.hasAccessAuthority(boardId);
+	}
+	
+	/**
+	 * checks read authority
+	 * @param boardId
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean hasReadAuthority(String boardId) throws Exception {
+		return boardService.hasReadAuthority(boardId);
+	}
+	
+	/**
+	 * checks write authority
+	 * @param boardId
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean hasWriteAuthority(String boardId) throws Exception {
+		return boardService.hasWriteAuthority(boardId);
+	}
 
 	/**
 	 * list
@@ -36,10 +74,12 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasAccessAuthority(#boardId)")
 	@RequestMapping(value="{boardId}", method = RequestMethod.GET)
 	public ModelAndView list(@PathVariable("boardId")String boardId) throws Exception {
 		Board board = boardService.getBoard(boardId);
 		ModelAndView modelAndView = new ModelAndView("board/list.tiles");
+		modelAndView.addObject("boardController", this);
 		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
@@ -51,6 +91,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasReadAuthority(#boardId)")
 	@RequestMapping(value="{boardId}/read", method = RequestMethod.GET)
 	@Transactional(rollbackFor = Exception.class)
 	public ModelAndView read(
@@ -61,6 +102,7 @@ public class BoardController {
 		Article article = articleService.getArticle(articleId);
 		article.increaseReadCount();
 		ModelAndView modelAndView = new ModelAndView("board/read.tiles");
+		modelAndView.addObject("this", this);
 		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
@@ -72,6 +114,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("this.hasWriteAuthority(#boardId)")
 	@RequestMapping(value="{boardId}/write", method = RequestMethod.GET)
 	public ModelAndView write(
 		@PathVariable("boardId")String boardId,
@@ -79,6 +122,7 @@ public class BoardController {
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
 		ModelAndView modelAndView = new ModelAndView("board/write.tiles");
+		modelAndView.addObject("this", this);
 		modelAndView.addObject("board", board);
 		return modelAndView;
 	}

@@ -37,11 +37,8 @@ public class Board {
 	@Column(name = "BORD_ICON")
 	String icon;
 	
-	@Column(name = "LAYT_ID")
-	String layoutId;
-	
-	@Column(name = "SKIN_ID")
-	String skinId;
+	@Column(name = "BORD_SKIN")
+	String skin;
 	
 	public enum Policy {
 		ANONYMOUS, AUTHENTICATED, AUTHORIZED
@@ -117,20 +114,12 @@ public class Board {
 		this.icon = icon;
 	}
 
-	public String getLayoutId() {
-		return layoutId;
+	public String getSkin() {
+		return skin;
 	}
 
-	public void setLayoutId(String layoutId) {
-		this.layoutId = layoutId;
-	}
-
-	public String getSkinId() {
-		return skinId;
-	}
-
-	public void setSkinId(String skinId) {
-		this.skinId = skinId;
+	public void setSkin(String skin) {
+		this.skin = skin;
 	}
 
 	public Policy getAccessPolicy() {

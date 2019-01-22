@@ -2,8 +2,15 @@
 <taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemalocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
     version="2.0">
-    <tlib-version>2.1</tlib-version>
-    <uri>application</uri>
+    <tlib-version>4.3</tlib-version>
+    <uri>http://application.oopscraft.net</uri>
+    <function>
+        <name>getConfig</name>
+        <function-class>net.oopscraft.application.ApplicationContainer</function-class>
+        <function-signature>
+            String getApplicationConfig(java.lang.String)
+        </function-signature>
+    </function>
     <function>
         <name>toJson</name>
         <function-class>net.oopscraft.application.core.JsonUtils</function-class>

@@ -39,9 +39,6 @@ public class Page {
 	@Column(name = "PAGE_VAL")
 	String value;
 	
-	@Column(name = "LAYT_ID")
-	String layoutId;
-	
 	public enum Policy {
 		ANONYMOUS, AUTHENTICATED, AUTHORIZED
 	}
@@ -86,14 +83,6 @@ public class Page {
 
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	public String getLayoutId() {
-		return layoutId;
-	}
-
-	public void setLayoutId(String layoutId) {
-		this.layoutId = layoutId;
 	}
 
 	public Policy getAccessPolicy() {

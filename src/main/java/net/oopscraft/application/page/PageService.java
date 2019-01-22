@@ -60,7 +60,6 @@ public class PageService {
 			one.setName(page.getName());
 			one.setType(page.getType());
 			one.setValue(page.getValue());
-			one.setLayoutId(page.getLayoutId());
 			one.setAccessPolicy(page.getAccessPolicy());
 			one.setAccessAuthorities(page.getAccessAuthorities());
 			pageRepository.saveAndFlush(one);
