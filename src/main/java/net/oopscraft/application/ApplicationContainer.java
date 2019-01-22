@@ -73,5 +73,9 @@ public class ApplicationContainer {
 			return application;
 		}
 	}
+	
+	public static String getApplicationConfig(String name) {
+		return application.getConfig(name);
+	}
 
 }

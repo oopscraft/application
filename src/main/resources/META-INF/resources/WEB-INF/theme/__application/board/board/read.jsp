@@ -4,11 +4,12 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<link href="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/style.css" rel="stylesheet" type="text/css" />
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<link href="${SKIN_URI}/style.css" rel="stylesheet" type="text/css" />
 <div class="app-board">
 	<div style="display:flex; justify-content:space-between;">
 		<div class="app-board-name">
-			<img data-juice="Image" data-juice-bind="board.icon" data-juice-width="24" data-juice-height="24" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_board.png" style="vertical-align:middle; width:1.25em; height:1.25em;"/>&nbsp;
+			<img data-juice="Image" data-juice-bind="board.icon" data-juice-width="24" data-juice-height="24" src="${SKIN_URI}/img/icon_board.png" style="vertical-align:middle; width:1.25em; height:1.25em;"/>&nbsp;
 			<c:out value="${board.name}"/>
 		</div>
 	</div>
@@ -19,11 +20,11 @@
 			</div>
 			<div style="width:30%; text-align:right;">
 				<button class="app-board-button" onclick="javascript:modifyArticle();">
-					<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_edit.png"/>
+					<img class="icon" src="${SKIN_URI}/img/icon_edit.png"/>
 					<spring:message code="application.text.modify"/>
 				</button>
 				<button class="app-board-button" onclick="javascript:deleteArticle();">
-					<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_delete.png"/>
+					<img class="icon" src="${SKIN_URI}/img/icon_delete.png"/>
 					<spring:message code="application.text.delete"/>
 				</button>
 			</div>
@@ -45,12 +46,12 @@
 			<div style="text-align:right;">
 				<ul data-juice="ListView" data-juice-bind="files" data-juice-item="file">
 					<li>
-						<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_file.png"/>
+						<img class="icon" src="${SKIN_URI}/img/icon_file.png"/>
 						<Label data-juice="Label" data-juice-bind="file.name" style="font-weight:bold; border-bottom:dotted 1px #ccc;"></Label>
 						(<Label data-juice="Label" data-juice-bind="file.size" data-juice-format="number:0,0"></Label>)
 						bytes
 						<button class="app-board-button" data-id="{{$context.file.get('id')}}" onclick="javascript:downloadFile(this.dataset.id)">
-							<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_download.png"/>
+							<img class="icon" src="${SKIN_URI}/img/icon_download.png"/>
 							<spring:message code="application.text.download"/>
 						</button>
 					</li>
@@ -58,7 +59,7 @@
 			</div>
 		</div>
 		<div style="margin:0rem 1rem; border-bottom:dotted 1px #ccc; font-weight:bold;">
-			<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_reply.png" style="width:2em; height:2em;"/>&nbsp;
+			<img class="icon" src="${SKIN_URI}/img/icon_reply.png" style="width:2em; height:2em;"/>&nbsp;
 			<spring:message code="application.text.reply"/>:
 			<span id="app-board-reply-count"></span>
 		</div>
@@ -77,17 +78,17 @@
 								|
 								level:<label data-juice="Label" data-juice-bind="reply.level"></label>
 								<button data-id="{{$context.reply.get('id')}}" onclick="javascript:addChildReply(this.dataset.id);" class="app-board-button">
-									<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_reply.png"/>
+									<img class="icon" src="${SKIN_URI}/img/icon_reply.png"/>
 									<spring:message code="application.text.reply"/>
 								</button>
 							</div>
 							<div>
 								<button data-id="{{$context.reply.get('id')}}" onclick="javascript:modifyReply(this.dataset.id);" class="app-board-button">
-									<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_edit.png"/>
+									<img class="icon" src="${SKIN_URI}/img/icon_edit.png"/>
 									<spring:message code="application.text.modify"/>
 								</button>
 								<button data-id="{{$context.reply.get('id')}}" onclick="javascript:deleteReply(this.dataset.id);" class="app-board-button">
-									<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_delete.png"/>
+									<img class="icon" src="${SKIN_URI}/img/icon_delete.png"/>
 									<spring:message code="application.text.delete"/>
 								</button>
 							</div>
@@ -104,19 +105,24 @@
 		<div id="app-board-reply-container" style="padding:1rem;">
 			<div id="app-board-reply-editor">
 				<div>
-					<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_reply.png"/>
+					<img class="icon" src="${SKIN_URI}/img/icon_reply.png"/>
 					<spring:message code="application.text.reply"/>
 				</div>
+				<sec:authorize access="!isAuthenticated()">
+					<div>
+						<input type="text"/>
+					</div>
+				</sec:authorize>
 				<div>
 					<textarea data-juice="TextArea" data-juice-bind="reply.contents" style="height:20rem;"></textarea>
 				</div>
 				<div style="text-align:right;">
 					<button class="app-board-button" onclick="javascript:saveReply();">
-						<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_save.png"/>
+						<img class="icon" src="${SKIN_URI}/img/icon_save.png"/>
 						<spring:message code="application.text.save"/>
 					</button>
 					<button id="app-board-cancel-reply-button" class="app-board-button" onclick="javascript:cancelReply();">
-						<img class="icon" src="${pageContext.request.contextPath}/resource/board/skin/${board.skinId}/img/icon_cancel.png"/>
+						<img class="icon" src="${SKIN_URI}/img/icon_cancel.png"/>
 						<spring:message code="application.text.cancel"/>
 					</button>
 				</div>

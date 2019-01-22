@@ -1,4 +1,4 @@
-package net.oopscraft.application.admin.controller;
+package net.oopscraft.application.user.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/admin/login")
+@RequestMapping("/user/login")
 public class LoginController {
 	
 	@Autowired
@@ -22,7 +22,7 @@ public class LoginController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView login() throws Exception {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("admin/login.jsp");
+		modelAndView.setViewName("user/login.tiles");
 		return modelAndView;
 	}
 

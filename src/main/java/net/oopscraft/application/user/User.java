@@ -47,7 +47,7 @@ public class User extends SystemEntity {
 		ACTIVE, SUSPENDED, CLOSED
 	}
 	@Column(name = "USER_STAT")
-	Status status;
+	Status status = Status.ACTIVE;
 
 	@Column(name = "USER_NICK")
 	String nickname;

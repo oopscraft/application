@@ -2,6 +2,13 @@
 <application class="net.oopscraft.application.Application">
 
 	<!-- ====================================================== -->
+	<!-- Application Configuration								-->
+	<!-- ====================================================== -->
+	<config>
+		<theme>__application</theme>
+	</config>
+
+	<!-- ====================================================== -->
 	<!-- Embedded WebServer(Tomcat) Definition					-->
 	<!-- ====================================================== -->
 	<webServer id="webServer">

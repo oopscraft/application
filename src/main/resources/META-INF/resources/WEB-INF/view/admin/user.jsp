@@ -4,7 +4,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="app" uri="/WEB-INF/tld/application.tld"%>
+<%@taglib prefix="app" uri="http://application.oopscraft.net"%>
 <script type="text/javascript">
 var userSearch = new juice.data.Map({
 	 key: null

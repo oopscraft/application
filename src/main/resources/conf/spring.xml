@@ -193,18 +193,15 @@
 		<security:logout invalidate-session="true" logout-url="/admin/logout" logout-success-url="/admin" />
 	</security:http>
 	
-	<!-- RESTful API Security Realm 
+	<!-- RESTful API Security Realm -->
 	<security:http realm="api" pattern="/api/**/*" disable-url-rewriting="true" use-expressions="true">
-		<security:intercept-url pattern="/api/token" access="permitAll()"/>
-		<security:intercept-url pattern="/api/**/*" access="isAuthenticated()"/>
-		<security:access-denied-handler ref="net.oopscraft.application.security.AuthenticationHandler" />
-		<security:custom-filter ref="net.oopscraft.application.user.security.SecurityFilter" after="CHANNEL_FILTER"/>
+		<security:access-denied-handler ref="net.oopscraft.application.api.ApiSecurityHandler" />
+		<security:custom-filter ref="net.oopscraft.application.api.ApiSecurityFilter" after="CHANNEL_FILTER"/>
 		<security:http-basic/>
 	</security:http>
-	-->
 	
 	<!-- Base Security Realm -->
-	<security:http disable-url-rewriting="true" use-expressions="true">
+	<security:http disable-url-rewriting="true" use-expressions="true" create-session="stateless">
 	    <security:headers>
 	        <security:frame-options policy="SAMEORIGIN"/>
 	    </security:headers>
@@ -212,8 +209,15 @@
 		<security:intercept-url pattern="/admin/**/*" access="permitAll()"/>
 		<security:access-denied-handler ref="net.oopscraft.application.user.security.SecurityHandler" />
 		<security:custom-filter ref="net.oopscraft.application.user.security.SecurityFilter" after="CHANNEL_FILTER"/>
-		<security:http-basic/>
+		<security:form-login 
+			login-page="/user/login" 
+			login-processing-url="/user/login/processing" 
+			username-parameter="id" 
+			password-parameter="password" 
+			authentication-success-handler-ref="net.oopscraft.application.user.security.SecurityHandler"
+			authentication-failure-handler-ref="net.oopscraft.application.user.security.SecurityHandler"
+			/>
+		<security:logout invalidate-session="true" logout-url="/user/logout" logout-success-url="/" />
 	</security:http>
-
 
 </beans>

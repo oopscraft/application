@@ -65,8 +65,7 @@
 	<!-- ====================================================== -->
 	<!-- Resource Path											-->
 	<!-- ====================================================== -->
-	<mvc:resources location="/WEB-INF/view/layout/" mapping="/resource/layout/**"/>
-	<mvc:resources location="/WEB-INF/view/page/" mapping="/resource/page/**"/>
-	<mvc:resources location="/WEB-INF/view/board/" mapping="/resource/board/**"/>
+	<mvc:resources location="/WEB-INF/view/" mapping="/resource/view/**"/>
+	<mvc:resources location="/WEB-INF/theme/" mapping="/resource/theme/**"/>
 
 </beans>

@@ -4,7 +4,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="app" uri="/WEB-INF/tld/application.tld"%>
+<%@taglib prefix="app" uri="http://application.oopscraft.net"%>
 <script type="text/javascript">
 var boardSearch = new juice.data.Map({
 	 key: null
@@ -31,8 +31,8 @@ var writeAuthorities = new juice.data.List();
 var categories = new juice.data.List();
 var isNew = false;
 
-// skinIds
-var skinIds = ${app:toJson(skinIds)};
+// skins
+var skins = ${app:toJson(skins)};
 
 //policies
 var policies = ${app:toJson(policies)};
@@ -180,7 +180,7 @@ function getBoard(id) {
 function addBoard() {
 	clearEdit();
 	board.set('id', __generateRandomId());
-	board.set('skinId', '__board');
+	board.set('skin', skins[0]);
 	board.set('accessPolicy', 'ANONYMOUS');
 	board.set('readPolicy', 'ANONYMOUS');
 	board.set('writePolicy', 'ANONYMOUS');
@@ -545,17 +545,7 @@ function openBoard() {
 					</span>
 				</th>
 				<td>
-					<select data-juice="ComboBox" data-juice-bind="board.skinId" data-juice-options="skinIds" style="width:15rem;"></select>
-				</td>
-			</tr>
-			<tr>
-				<th>
-					<span>
-						<spring:message code="application.text.layout"/>
-					</span>
-				</th>
-				<td>
-					<input data-juice="TextField" data-juice-bind="board.layoutId"/>
+					<select data-juice="ComboBox" data-juice-bind="board.skin" data-juice-options="skins" style="width:15rem;"></select>
 				</td>
 			</tr>
 			<tr>

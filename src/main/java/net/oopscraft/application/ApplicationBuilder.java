@@ -85,6 +85,7 @@ public class ApplicationBuilder {
 		Properties properties = new Properties();
 		properties.load(new FileInputStream(propertiesFile));
 		buildMonitorAgent(application);
+		buildConfig(application, xPathReader, properties);
 		buildWebServers(application, xPathReader, properties);
 		buildDataSources(application, xPathReader, properties);
 		buildEntityManagerFactories(application, xPathReader, properties);
@@ -124,6 +125,21 @@ public class ApplicationBuilder {
 		MonitorAgent.intialize(3, 10);
 		MonitorAgent monitorAgent = MonitorAgent.getInstance();
 		application.setMonitorAgent(monitorAgent);
+	}
+	
+	/**
+	 * builds application config
+	 * @param application
+	 * @throws Exception
+	 */
+	void buildConfig(Application application, XPathReader xPathReader, Properties properties) throws Exception {
+		NodeList configNodeList = (NodeList) xPathReader.getElement("/application/config/*");
+		for(int i = 0, size = configNodeList.getLength(); i < size; i ++) {
+			Node configNode = configNodeList.item(i);
+			String name = configNode.getNodeName();
+			String value = configNode.getTextContent();
+			application.setConfig(name, value);
+		}
 	}
 	
 	/**
@@ -323,6 +339,8 @@ public class ApplicationBuilder {
 		systemMessageSource.setUseCodeAsDefaultMessage(true);
 		systemMessageSource.setCacheSeconds(10);
 		
+
+		
 		// creates user defined message sources.
 		Map<String,MessageSource> messageSources = new LinkedHashMap<String,MessageSource>();
 		NodeList messageSourceNodeList = (NodeList) xPathReader.getElement("/application/messageSource");
@@ -341,6 +359,11 @@ public class ApplicationBuilder {
 			messageSource.setParentMessageSource(systemMessageSource);
 		}
 		application.setMessageSources(messageSources);
+		
+		systemMessageSource.getBasenameSet();
+		
+		
+		
 	}
 	
 }

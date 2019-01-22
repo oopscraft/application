@@ -21,7 +21,7 @@
  		
  		<!-- polyfill -->	
 		<script src="https://polyfill.io/v3/polyfill.min.js"></script>
-
+		
  		<!-- web font -->
  		<link href="${pageContext.request.contextPath}/static/font/code.css" rel="stylesheet" type="text/css" />
  		<link href="${pageContext.request.contextPath}/static/font/font.css" rel="stylesheet" type="text/css" />
@@ -455,6 +455,40 @@
 		.text-right {
 			text-align: right !important;
 		}
+		
+		
+		
+		
+		
+		
+.pace {
+  -webkit-pointer-events: none;
+  pointer-events: none;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.pace-inactive {
+  display: none;
+}
+
+.pace .pace-progress {
+  background: #29d;
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  right: 100%;
+  width: 100%;
+  height: 2px;
+}
+
+		
+		
+		
+		
+		
 		</style>
 	</head>
 	<body>

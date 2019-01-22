@@ -44,7 +44,7 @@ public class BoardController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/board.tiles");
-		modelAndView.addObject("skinIds", new String[] {"__board"});
+		modelAndView.addObject("skins", new String[] {"board","blog"});
 		modelAndView.addObject("policies", Board.Policy.values());
 		modelAndView.addObject("rowsPerPage", new long[] {10,20,30,40,50});
 		return modelAndView;

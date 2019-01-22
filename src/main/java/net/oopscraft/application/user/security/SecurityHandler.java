@@ -45,6 +45,9 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
 	LocaleResolver localeResolver;
 	
 	@Autowired
+	AccessTokenEncoder accessTokenEncoder;
+	
+	@Autowired
 	UserLoginRepository userLoginRepository;
 	
 	/**
@@ -61,6 +64,17 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
 			out.write(referer.getBytes());
 		}else {
 			out.write("/admin".getBytes());
+		}
+		
+		// issue JWT access token.
+		try {
+			if(authentication.getPrincipal() instanceof UserDetails) {
+				UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+				response.setHeader("Authorization", "Bearer " + accessTokenEncoder.encode(userDetails.getUser()));
+			}
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new IOException(e);
 		}
 		
 		// Saves Login History
