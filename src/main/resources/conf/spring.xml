@@ -174,6 +174,7 @@
 	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
 	
 	<!-- Static Resource -->
+	<security:http pattern="/static/**/*" security="none"/>
 	<security:http pattern="/resource/**/*" security="none"/>
 
 	<!-- Administrator Channel -->
@@ -182,6 +183,8 @@
 		<security:intercept-url pattern="/admin/login" access="permitAll()"/>
 		<security:intercept-url pattern="/admin/login/*" access="permitAll()"/>
 		<security:intercept-url pattern="/admin/**/*" access="isAuthenticated() and hasAuthority('ADMIN')" />
+		<security:access-denied-handler ref="net.oopscraft.application.user.security.SecurityHandler" />
+		<security:custom-filter ref="net.oopscraft.application.user.security.SecurityFilter" after="CHANNEL_FILTER"/>
 		<security:form-login 
 			login-page="/admin/login" 
 			login-processing-url="/admin/login/processing" 
@@ -195,13 +198,13 @@
 	
 	<!-- RESTful API Security Realm -->
 	<security:http realm="api" pattern="/api/**/*" disable-url-rewriting="true" use-expressions="true">
-		<security:access-denied-handler ref="net.oopscraft.application.api.ApiSecurityHandler" />
-		<security:custom-filter ref="net.oopscraft.application.api.ApiSecurityFilter" after="CHANNEL_FILTER"/>
+		<security:access-denied-handler ref="net.oopscraft.application.user.security.SecurityHandler" />
+		<security:custom-filter ref="net.oopscraft.application.user.security.SecurityFilter" after="CHANNEL_FILTER"/>
 		<security:http-basic/>
 	</security:http>
 	
 	<!-- Base Security Realm -->
-	<security:http disable-url-rewriting="true" use-expressions="true" create-session="stateless">
+	<security:http disable-url-rewriting="true" use-expressions="true">
 	    <security:headers>
 	        <security:frame-options policy="SAMEORIGIN"/>
 	    </security:headers>
