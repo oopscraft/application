@@ -120,7 +120,7 @@ public class ArticleService {
 
 		// In case of new article(articleNo is empty)
 		if (StringUtils.isEmpty(article.getId())) {
-			article.setId(RandomUtils.generateID());
+			article.setId(RandomUtils.generate());
 			article.setRegistDate(new Date());
 			articleRepository.saveAndFlush(article);
 		}

@@ -118,18 +118,21 @@
 				name:'<spring:message code="application.label.board"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_board.png',
 				link:'board'
+			},
+			{
+				name:'<spring:message code="application.label.api"/>', 
+				icon:'${pageContext.request.contextPath}/static/img/icon_api.png',
+				link:'javascript:window.open(\'/swagger-ui.html\');'
 			}
 		], 'childMenus');
 		__menus.setEnable(false);
 		
 		// defines menus index
-		if(window.location.hash){
-			try{
-				__menus.index = eval(window.location.hash.replace('#',''));
-			}catch(e){
-				__menus.index = [];
-			}
-		}
+		__menus.setIndex(
+			__menus.indexOf(function(node){
+				return window.location.href.includes(node.get('link'));
+			})
+		);
 		
 		/**
 		 * login user information
@@ -455,40 +458,6 @@
 		.text-right {
 			text-align: right !important;
 		}
-		
-		
-		
-		
-		
-		
-.pace {
-  -webkit-pointer-events: none;
-  pointer-events: none;
-
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-}
-
-.pace-inactive {
-  display: none;
-}
-
-.pace .pace-progress {
-  background: #29d;
-  position: fixed;
-  z-index: 2000;
-  top: 0;
-  right: 100%;
-  width: 100%;
-  height: 2px;
-}
-
-		
-		
-		
-		
-		
 		</style>
 	</head>
 	<body>
@@ -523,7 +492,7 @@
 			<nav class="leftNav">
 				<ul data-juice="TreeView" data-juice-bind="__menus" data-juice-item="menu">
 					<li>
-						<a data-index="{{$context.index}}" href="{{$context.menu.get('link')}}\#{{$context.index}}" class="menuItem" style="display:block;">
+						<a data-index="{{$context.index}}" href="{{$context.menu.get('link')}}" class="menuItem" style="display:block;">
 							<img class="icon" data-juice="Image" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="" alt="" style="vertical-align:middle;"/>
 							<label data-juice="Label" data-juice-bind="menu.name"></label>
 						</a>

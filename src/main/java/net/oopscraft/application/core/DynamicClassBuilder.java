@@ -12,10 +12,6 @@ import javax.tools.ToolProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * DynamicClassBuilder
- * @author chomookun@gmail.com
- */
 public class DynamicClassBuilder {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DynamicClassBuilder.class);

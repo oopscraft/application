@@ -27,14 +27,14 @@
 	<!-- DataSource Definition									-->
 	<!-- ====================================================== -->
 	<dataSource id="dataSource">
-		<driver>${application.dataSource.oltp.driver}</driver>
-		<url>${application.dataSource.oltp.url}</url>
-		<username>${application.dataSource.oltp.username}</username>
-		<password>${application.dataSource.oltp.password}</password>
-		<defaultAutoCommit>${application.dataSource.oltp.defaultAutoCommit}</defaultAutoCommit>
-		<initialSize>${application.dataSource.oltp.initialSize}</initialSize>
-		<maxActive>${application.dataSource.oltp.maxActive}</maxActive>
-		<validationQuery>${application.dataSource.oltp.validationQuery}</validationQuery>
+		<driver>${application.dataSource.driver}</driver>
+		<url>${application.dataSource.url}</url>
+		<username>${application.dataSource.username}</username>
+		<password>${application.dataSource.password}</password>
+		<defaultAutoCommit>${application.dataSource.defaultAutoCommit}</defaultAutoCommit>
+		<initialSize>${application.dataSource.initialSize}</initialSize>
+		<maxActive>${application.dataSource.maxActive}</maxActive>
+		<validationQuery>${application.dataSource.validationQuery}</validationQuery>
 	</dataSource>
 	
 	<!-- ====================================================== -->

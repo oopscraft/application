@@ -262,6 +262,11 @@
 		
 		<!-- JDBC driver -->
 		<dependency>
+		    <groupId>org.hsqldb</groupId>
+		    <artifactId>hsqldb</artifactId>
+		    <version>2.4.1</version>
+		</dependency>
+		<dependency>
 		    <groupId>org.xerial</groupId>
 		    <artifactId>sqlite-jdbc</artifactId>
 		    <version>3.21.0.1</version>
@@ -469,6 +474,19 @@
 		    <groupId>com.googlecode.libphonenumber</groupId>
 		    <artifactId>libphonenumber</artifactId>
 		    <version>8.10.2</version>
+		</dependency>
+		
+		<!-- Swagger --> 			
+		<dependency>
+		    <groupId>io.springfox</groupId>
+		    <artifactId>springfox-swagger2</artifactId>
+		    <version>2.9.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>io.springfox</groupId>
+		    <artifactId>springfox-swagger-ui</artifactId>
+		    <version>2.9.2</version>
+		    <scope>compile</scope>
 		</dependency>
 
 		<!-- spring-batch -->
