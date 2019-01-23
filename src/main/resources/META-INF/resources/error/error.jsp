@@ -1,4 +1,4 @@
-<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false"  isErrorPage="true" %>
 <%@page isErrorPage="true" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% 
@@ -49,10 +49,10 @@
 	<body>
 		<div id="messageDiv">
 			<div class="statusCode">
-				<%=request.getAttribute("javax.servlet.error.status_code")%>
+				<c:out value="${requestScope['javax.servlet.error.status_code']}"/>
 			</div>
  			<div class="message">
- 				<%=request.getAttribute("javax.servlet.error.message")%>
+ 				<c:out value="${requestScope['javax.servlet.error.message']}"/>
  			</div>
 		</div>
 	</body>
