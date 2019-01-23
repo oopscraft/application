@@ -111,7 +111,7 @@ public class Article {
 		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
 		if(StringUtils.isEmpty(reply.getId())) {
 			reply.setArticleId(id);
-			reply.setId(RandomUtils.generateID());
+			reply.setId(RandomUtils.generate());
 			
 			// In case of child reply(has upper no)
 			if(StringUtils.isNotEmpty(reply.getUpperId())) {

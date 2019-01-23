@@ -15,11 +15,9 @@
 
     <distributable/>
     
-    <!-- 
     <error-page>
-    	<location>/error.jsp</location>
+    	<location>/error/error.jsp</location>
 	</error-page>
-    -->
      
 	<!-- ====================================================== -->
 	<!-- Defines Log4j2 Descriptor								-->

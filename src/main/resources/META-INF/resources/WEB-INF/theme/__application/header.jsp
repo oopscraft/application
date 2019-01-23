@@ -21,6 +21,10 @@ img {
 	border: none;
 	vertical-align: middle;
 }
+img.icon {
+	height: 1.5em;
+	width: 1.5em;
+}
 th {
 	font-weight:normal;
 }
@@ -64,8 +68,8 @@ body > main > section {
 	align-self: stretch;
     margin: 0.1rem;
     padding: 1rem;
-	width: 15%;
-	min-width: 150px;
+	width: 20%;
+	min-width: 200px;
 	border: none;
     border-right: solid 1px #eee;
 }
@@ -111,9 +115,6 @@ body > main > section {
 	<!-- Navigation												-->
 	<!-- ====================================================== -->
 	<nav class="leftNav">
-		<div style="border-bottom:dotted 1px #ccc;">
-			<i class="icon-menu"></i>
-		</div>
 		<ul data-juice="TreeView" data-juice-bind="__menus" data-juice-item="menu">
 			<li>
 				<a href="{{$context.menu.get('link')}}" class="menuItem" style="display:block;">

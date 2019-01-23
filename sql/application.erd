@@ -196,7 +196,7 @@
                                         <columnName>GROP_ID</columnName>
                                         <logicalName>Group Id</logicalName>
                                         <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>VARCHAR</name>
+                                          <name>VARCHAR2</name>
                                           <logicalName>String</logicalName>
                                           <supportSize>true</supportSize>
                                           <type>12</type>
@@ -495,8 +495,8 @@
                                               <columnName>SYS_INST_DTTM</columnName>
                                               <logicalName>System Insert Datetime</logicalName>
                                               <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                                <name>DATETIME</name>
-                                                <logicalName>Datetime</logicalName>
+                                                <name>DATE</name>
+                                                <logicalName>Date</logicalName>
                                                 <supportSize>false</supportSize>
                                                 <type>91</type>
                                               </columnType>
@@ -510,12 +510,7 @@
                                             <net.java.amateras.db.visual.model.ColumnModel>
                                               <columnName>SYS_INST_USER_ID</columnName>
                                               <logicalName>System Insert User ID</logicalName>
-                                              <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                                <name>VARCHAR</name>
-                                                <logicalName>String</logicalName>
-                                                <supportSize>true</supportSize>
-                                                <type>12</type>
-                                              </columnType>
+                                              <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                               <size>32</size>
                                               <notNull>false</notNull>
                                               <primaryKey>false</primaryKey>
@@ -537,7 +532,7 @@
                                             <net.java.amateras.db.visual.model.ColumnModel>
                                               <columnName>SYS_UPDT_USER_ID</columnName>
                                               <logicalName>System Update User ID</logicalName>
-                                              <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
+                                              <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                               <size>32</size>
                                               <notNull>false</notNull>
                                               <primaryKey>false</primaryKey>
@@ -559,13 +554,8 @@
                                             <net.java.amateras.db.visual.model.ColumnModel>
                                               <columnName>ROLE_DESC</columnName>
                                               <logicalName>Role Description</logicalName>
-                                              <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                                <name>MEDIUMTEXT</name>
-                                                <logicalName>String</logicalName>
-                                                <supportSize>false</supportSize>
-                                                <type>12</type>
-                                              </columnType>
-                                              <size>65535</size>
+                                              <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                                              <size>4000</size>
                                               <notNull>false</notNull>
                                               <primaryKey>false</primaryKey>
                                               <description></description>
@@ -660,12 +650,7 @@
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>SYS_INST_DTTM</columnName>
                                   <logicalName>System Insert Datetime</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                    <name>DATETIME</name>
-                                    <logicalName>Datetime</logicalName>
-                                    <supportSize>false</supportSize>
-                                    <type>91</type>
-                                  </columnType>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                                   <size>10</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -676,12 +661,7 @@
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>SYS_INST_USER_ID</columnName>
                                   <logicalName>System Insert User ID</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                    <name>VARCHAR</name>
-                                    <logicalName>String</logicalName>
-                                    <supportSize>true</supportSize>
-                                    <type>12</type>
-                                  </columnType>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                   <size>32</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -692,7 +672,7 @@
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>SYS_UPDT_DTTM</columnName>
                                   <logicalName>System Update Datetime</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                                   <size>10</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -703,7 +683,7 @@
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>SYS_UPDT_USER_ID</columnName>
                                   <logicalName>System Update User ID</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                   <size>32</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -736,13 +716,8 @@
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>GROP_DESC</columnName>
                                   <logicalName>Group Description</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                    <name>MEDIUMTEXT</name>
-                                    <logicalName>String</logicalName>
-                                    <supportSize>false</supportSize>
-                                    <type>12</type>
-                                  </columnType>
-                                  <size>65535</size>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                                  <size>4000</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
                                   <description></description>
@@ -753,7 +728,7 @@
                                   <columnName>DISP_SEQ</columnName>
                                   <logicalName>Display Sequence</logicalName>
                                   <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                    <name>INT</name>
+                                    <name>INTEGER</name>
                                     <logicalName>Integer</logicalName>
                                     <supportSize>true</supportSize>
                                     <type>4</type>
@@ -845,8 +820,8 @@
                         <constraint>
                           <height>-1</height>
                           <width>-1</width>
-                          <x>140</x>
-                          <y>270</y>
+                          <x>100</x>
+                          <y>230</y>
                         </constraint>
                         <sourceConnections>
                           <net.java.amateras.db.visual.model.ForeignKeyModel reference="../../.."/>
@@ -861,12 +836,7 @@
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>USER_ID</columnName>
                             <logicalName>User Id</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType">
-                              <name>VARCHAR</name>
-                              <logicalName>String</logicalName>
-                              <supportSize>true</supportSize>
-                              <type>12</type>
-                            </columnType>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                             <size>32</size>
                             <notNull>true</notNull>
                             <primaryKey>true</primaryKey>
@@ -877,12 +847,7 @@
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>LOGN_DTTM</columnName>
                             <logicalName>Login Datetime</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType">
-                              <name>DATETIME</name>
-                              <logicalName>Datetime</logicalName>
-                              <supportSize>false</supportSize>
-                              <type>91</type>
-                            </columnType>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                             <size>10</size>
                             <notNull>true</notNull>
                             <primaryKey>true</primaryKey>
@@ -893,7 +858,7 @@
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>LOGN_SUCS_YN</columnName>
                             <logicalName>Login Success YN</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                             <size>1</size>
                             <notNull>false</notNull>
                             <primaryKey>false</primaryKey>
@@ -904,7 +869,7 @@
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>LOGN_FAIL_RESN</columnName>
                             <logicalName>Login Fail Reason</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                             <size>1024</size>
                             <notNull>false</notNull>
                             <primaryKey>false</primaryKey>
@@ -915,7 +880,7 @@
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>LOGN_IP</columnName>
                             <logicalName>Login IP</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                             <size>128</size>
                             <notNull>false</notNull>
                             <primaryKey>false</primaryKey>
@@ -926,12 +891,7 @@
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>LOGN_AGNT</columnName>
                             <logicalName>Login Agent</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType">
-                              <name>VARCHAR</name>
-                              <logicalName>String</logicalName>
-                              <supportSize>true</supportSize>
-                              <type>12</type>
-                            </columnType>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                             <size>1024</size>
                             <notNull>false</notNull>
                             <primaryKey>false</primaryKey>
@@ -942,7 +902,7 @@
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>LOGN_REFR</columnName>
                             <logicalName>Login Referer</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                             <size>256</size>
                             <notNull>false</notNull>
                             <primaryKey>false</primaryKey>
@@ -995,12 +955,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>SYS_INST_DTTM</columnName>
                       <logicalName>System Insert Datetime</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>DATETIME</name>
-                        <logicalName>Datetime</logicalName>
-                        <supportSize>false</supportSize>
-                        <type>91</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                       <size>10</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1011,12 +966,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>SYS_INST_USER_ID</columnName>
                       <logicalName>System Insert User id</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>32</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1027,7 +977,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>SYS_UPDT_DTTM</columnName>
                       <logicalName>System Update Datetime</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                       <size>10</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1038,7 +988,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>SYS_UPDT_USER_ID</columnName>
                       <logicalName>System Update User Id</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>32</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1049,12 +999,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>USER_PWD</columnName>
                       <logicalName>User Password</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>256</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1065,12 +1010,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>USER_EMIL</columnName>
                       <logicalName>User Email</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>256</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1081,7 +1021,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>USER_LC</columnName>
                       <logicalName>User Locale</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[8]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>8</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1092,7 +1032,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>USER_PHON</columnName>
                       <logicalName>User Phone</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[8]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>16</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1103,7 +1043,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>USER_NAME</columnName>
                       <logicalName>User Name</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[7]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>256</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1114,7 +1054,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>USER_STAT</columnName>
                       <logicalName>User Status</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[8]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>16</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1125,7 +1065,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>USER_NICK</columnName>
                       <logicalName>User Nickname</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[7]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>256</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1137,12 +1077,12 @@
                       <columnName>USER_AVAT</columnName>
                       <logicalName>User Avatar</logicalName>
                       <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>MEDIUMTEXT</name>
-                        <logicalName>String</logicalName>
+                        <name>BLOB</name>
+                        <logicalName>Binary</logicalName>
                         <supportSize>false</supportSize>
-                        <type>12</type>
+                        <type>2004</type>
                       </columnType>
-                      <size>10</size>
+                      <size></size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
                       <description></description>
@@ -1152,13 +1092,8 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>USER_SIGN</columnName>
                       <logicalName>User Signature</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
-                      <size>2048</size>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                      <size>4000</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
                       <description></description>
@@ -1168,12 +1103,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>USER_JOIN_DTTM</columnName>
                       <logicalName>User Join Datetime</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>DATETIME</name>
-                        <logicalName>Datetime</logicalName>
-                        <supportSize>false</supportSize>
-                        <type>91</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                       <size>19</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1184,12 +1114,7 @@
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>USER_CLOS_DTTM</columnName>
                       <logicalName>User Close Datetime</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>DATETIME</name>
-                        <logicalName>Datetime</logicalName>
-                        <supportSize>false</supportSize>
-                        <type>91</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                       <size>10</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1198,25 +1123,7 @@
                       <defaultValue></defaultValue>
                     </net.java.amateras.db.visual.model.ColumnModel>
                   </columns>
-                  <indices>
-                    <net.java.amateras.db.visual.model.IndexModel>
-                      <indexName>APP_USER_INFO_IX_1</indexName>
-                      <indexType class="net.java.amateras.db.dialect.IndexType">
-                        <name>INDEX</name>
-                      </indexType>
-                      <columns>
-                        <string>SYS_EMBD_YN</string>
-                        <string>USER_JOIN_DTTM</string>
-                      </columns>
-                    </net.java.amateras.db.visual.model.IndexModel>
-                    <net.java.amateras.db.visual.model.IndexModel>
-                      <indexName>APP_USER_INFO_IX_2</indexName>
-                      <indexType class="net.java.amateras.db.dialect.IndexType" reference="../../net.java.amateras.db.visual.model.IndexModel/indexType"/>
-                      <columns>
-                        <string>USER_NAME</string>
-                      </columns>
-                    </net.java.amateras.db.visual.model.IndexModel>
-                  </indices>
+                  <indices/>
                   <backgroundColor>
                     <red>255</red>
                     <green>255</green>
@@ -1266,11 +1173,15 @@
               <blue>206</blue>
             </backgroundColor>
             <sql>INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN&apos;);&#xd;
-INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_AUTHORITY&apos;);&#xd;
-INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_GROUP&apos;);&#xd;
 INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_MONITOR&apos;);&#xd;
-INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_ROLE&apos;);&#xd;
 INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_USER&apos;);&#xd;
+INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_GROUP&apos;);&#xd;
+INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_ROLE&apos;);&#xd;
+INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_AUTHORITY&apos;);&#xd;
+INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_PROPERTY&apos;);&#xd;
+INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_MESSAGE&apos;);&#xd;
+INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_CODE&apos;);&#xd;
+INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_MENU&apos;);&#xd;
 INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_PAGE&apos;);&#xd;
 INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apos;ADMIN_BOARD&apos;);</sql>
           </source>
@@ -1369,12 +1280,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>SYS_INST_DTTM</columnName>
                       <logicalName>System Insert Datetime</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>DATETIME</name>
-                        <logicalName>Datetime</logicalName>
-                        <supportSize>false</supportSize>
-                        <type>91</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                       <size>10</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1385,12 +1291,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>SYS_INST_USER_ID</columnName>
                       <logicalName>System Insert User ID</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>32</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1401,7 +1302,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>SYS_UPDT_DTTM</columnName>
                       <logicalName>System Updte Datetime</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                       <size>10</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1412,7 +1313,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>SYS_UPDT_USER_ID</columnName>
                       <logicalName>System Update User ID</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>32</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1423,12 +1324,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>UPER_MENU_ID</columnName>
                       <logicalName>Upper Menu Id</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>32</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1439,12 +1335,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>MENU_NAME</columnName>
                       <logicalName>Menu Name</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>256</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1456,12 +1347,12 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                       <columnName>MENU_ICON</columnName>
                       <logicalName>Menu Icon</logicalName>
                       <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>MEDIUMTEXT</name>
-                        <logicalName>String</logicalName>
+                        <name>BLOB</name>
+                        <logicalName>Binary</logicalName>
                         <supportSize>false</supportSize>
-                        <type>12</type>
+                        <type>2004</type>
                       </columnType>
-                      <size>10</size>
+                      <size></size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
                       <description></description>
@@ -1471,12 +1362,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>MENU_LINK</columnName>
                       <logicalName>Menu Link</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>MEDIUMTEXT</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>false</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>256</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1487,8 +1373,8 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>MENU_DESC</columnName>
                       <logicalName>Menu Description</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[9]/columnType"/>
-                      <size>65535</size>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                      <size>4000</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
                       <description></description>
@@ -1498,12 +1384,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>DISP_PLCY</columnName>
                       <logicalName>Display Policy</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>128</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -1514,13 +1395,8 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>DISP_SEQ</columnName>
                       <logicalName>DisplaySeq</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>INT</name>
-                        <logicalName>Integer</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>4</type>
-                      </columnType>
-                      <size>10</size>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[10]/columnType"/>
+                      <size></size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
                       <description></description>
@@ -1551,12 +1427,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
               <net.java.amateras.db.visual.model.ColumnModel>
                 <columnName>MENU_ID</columnName>
                 <logicalName>Menu Id</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType">
-                  <name>VARCHAR</name>
-                  <logicalName>String</logicalName>
-                  <supportSize>true</supportSize>
-                  <type>12</type>
-                </columnType>
+                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                 <size>32</size>
                 <notNull>true</notNull>
                 <primaryKey>true</primaryKey>
@@ -1567,7 +1438,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
               <net.java.amateras.db.visual.model.ColumnModel>
                 <columnName>PLCY_TYPE</columnName>
                 <logicalName>Policy Type</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                 <size>128</size>
                 <notNull>true</notNull>
                 <primaryKey>true</primaryKey>
@@ -1578,7 +1449,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
               <net.java.amateras.db.visual.model.ColumnModel>
                 <columnName>AUTH_ID</columnName>
                 <logicalName>Authority ID</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[8]/columnType"/>
+                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                 <size>32</size>
                 <notNull>true</notNull>
                 <primaryKey>true</primaryKey>
@@ -1650,7 +1521,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                   <constraint>
                     <height>-1</height>
                     <width>-1</width>
-                    <x>270</x>
+                    <x>170</x>
                     <y>1230</y>
                   </constraint>
                   <sourceConnections/>
@@ -1769,12 +1640,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>ATCL_ID</columnName>
                                         <logicalName>Article ID</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>VARCHAR</name>
-                                          <logicalName>String</logicalName>
-                                          <supportSize>true</supportSize>
-                                          <type>12</type>
-                                        </columnType>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                         <size>32</size>
                                         <notNull>true</notNull>
                                         <primaryKey>true</primaryKey>
@@ -1785,7 +1651,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>RPLY_ID</columnName>
                                         <logicalName>Reply ID</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                         <size>32</size>
                                         <notNull>true</notNull>
                                         <primaryKey>true</primaryKey>
@@ -1796,12 +1662,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>UPER_RPLY_ID</columnName>
                                         <logicalName>Upper Reply ID</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>VARCHAR</name>
-                                          <logicalName>String</logicalName>
-                                          <supportSize>true</supportSize>
-                                          <type>12</type>
-                                        </columnType>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                         <size>32</size>
                                         <notNull>false</notNull>
                                         <primaryKey>false</primaryKey>
@@ -1812,12 +1673,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>RPLY_SEQ</columnName>
                                         <logicalName>Reply Sequence</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>INT</name>
-                                          <logicalName>Integer</logicalName>
-                                          <supportSize>true</supportSize>
-                                          <type>4</type>
-                                        </columnType>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[10]/columnType"/>
                                         <size></size>
                                         <notNull>false</notNull>
                                         <primaryKey>false</primaryKey>
@@ -1828,12 +1684,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>RPLY_LEVL</columnName>
                                         <logicalName>Reply Level</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>VARCHAR</name>
-                                          <logicalName>String</logicalName>
-                                          <supportSize>true</supportSize>
-                                          <type>12</type>
-                                        </columnType>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                         <size>8</size>
                                         <notNull>false</notNull>
                                         <primaryKey>false</primaryKey>
@@ -1845,12 +1696,12 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                         <columnName>RPLY_CNTS</columnName>
                                         <logicalName>Reply Contents</logicalName>
                                         <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>MEDIUMTEXT</name>
+                                          <name>CLOB</name>
                                           <logicalName>String</logicalName>
-                                          <supportSize>false</supportSize>
-                                          <type>12</type>
+                                          <supportSize>true</supportSize>
+                                          <type>2005</type>
                                         </columnType>
-                                        <size>10</size>
+                                        <size></size>
                                         <notNull>false</notNull>
                                         <primaryKey>false</primaryKey>
                                         <description></description>
@@ -1860,12 +1711,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>RPLY_USER_ID</columnName>
                                         <logicalName>Reply User ID</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>VARBINARY</name>
-                                          <logicalName>Binary</logicalName>
-                                          <supportSize>true</supportSize>
-                                          <type>-3</type>
-                                        </columnType>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[10]/columnType"/>
                                         <size>32</size>
                                         <notNull>false</notNull>
                                         <primaryKey>false</primaryKey>
@@ -1876,12 +1722,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>RPLY_USER_NICK</columnName>
                                         <logicalName>Reply User Nickname</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>VARCHAR</name>
-                                          <logicalName>String</logicalName>
-                                          <supportSize>true</supportSize>
-                                          <type>12</type>
-                                        </columnType>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                         <size>256</size>
                                         <notNull>false</notNull>
                                         <primaryKey>false</primaryKey>
@@ -1892,12 +1733,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>RPLY_RGST_DTTM</columnName>
                                         <logicalName>Reply Registration Datetime</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>DATETIME</name>
-                                          <logicalName>Datetime</logicalName>
-                                          <supportSize>false</supportSize>
-                                          <type>91</type>
-                                        </columnType>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                                         <size>10</size>
                                         <notNull>false</notNull>
                                         <primaryKey>false</primaryKey>
@@ -1908,12 +1744,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>RPLY_MDFY_DTTM</columnName>
                                         <logicalName>Reply Modify Datetime</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>DATETIME</name>
-                                          <logicalName>Datetime</logicalName>
-                                          <supportSize>false</supportSize>
-                                          <type>91</type>
-                                        </columnType>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                                         <size>10</size>
                                         <notNull>false</notNull>
                                         <primaryKey>false</primaryKey>
@@ -1957,8 +1788,8 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                     <constraint>
                                       <height>-1</height>
                                       <width>-1</width>
-                                      <x>600</x>
-                                      <y>1800</y>
+                                      <x>620</x>
+                                      <y>1790</y>
                                     </constraint>
                                     <sourceConnections>
                                       <net.java.amateras.db.visual.model.ForeignKeyModel reference="../../.."/>
@@ -1973,7 +1804,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>ATCL_ID</columnName>
                                         <logicalName>Article ID</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                         <size>32</size>
                                         <notNull>true</notNull>
                                         <primaryKey>true</primaryKey>
@@ -1984,12 +1815,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>FILE_ID</columnName>
                                         <logicalName>File ID</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>VARCHAR</name>
-                                          <logicalName>String</logicalName>
-                                          <supportSize>true</supportSize>
-                                          <type>12</type>
-                                        </columnType>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                         <size>32</size>
                                         <notNull>true</notNull>
                                         <primaryKey>true</primaryKey>
@@ -2000,7 +1826,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>FILE_NAME</columnName>
                                         <logicalName>File Name</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                         <size>256</size>
                                         <notNull>false</notNull>
                                         <primaryKey>false</primaryKey>
@@ -2011,12 +1837,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>FILE_TYPE</columnName>
                                         <logicalName>File Type</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>VARCHAR</name>
-                                          <logicalName>String</logicalName>
-                                          <supportSize>true</supportSize>
-                                          <type>12</type>
-                                        </columnType>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                         <size>128</size>
                                         <notNull>false</notNull>
                                         <primaryKey>false</primaryKey>
@@ -2027,12 +1848,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                       <net.java.amateras.db.visual.model.ColumnModel>
                                         <columnName>FILE_SIZE</columnName>
                                         <logicalName>File Size</logicalName>
-                                        <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                          <name>BIGINT</name>
-                                          <logicalName>Integer</logicalName>
-                                          <supportSize>true</supportSize>
-                                          <type>-5</type>
-                                        </columnType>
+                                        <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[10]/columnType"/>
                                         <size></size>
                                         <notNull>false</notNull>
                                         <primaryKey>false</primaryKey>
@@ -2063,7 +1879,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>ATCL_ID</columnName>
                                   <logicalName>Article ID</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                   <size>32</size>
                                   <notNull>true</notNull>
                                   <primaryKey>true</primaryKey>
@@ -2074,12 +1890,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>BORD_ID</columnName>
                                   <logicalName>Board ID</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                    <name>VARCHAR</name>
-                                    <logicalName>String</logicalName>
-                                    <supportSize>true</supportSize>
-                                    <type>12</type>
-                                  </columnType>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                   <size>32</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -2090,7 +1901,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>CATE_ID</columnName>
                                   <logicalName>Cateogry ID</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                   <size>32</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -2101,12 +1912,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>ATCL_TITL</columnName>
                                   <logicalName>Article Title</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                    <name>VARCHAR</name>
-                                    <logicalName>String</logicalName>
-                                    <supportSize>true</supportSize>
-                                    <type>12</type>
-                                  </columnType>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                   <size>256</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -2117,13 +1923,8 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>ATCL_CNTS</columnName>
                                   <logicalName>Article Contents</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                    <name>MEDIUMTEXT</name>
-                                    <logicalName>String</logicalName>
-                                    <supportSize>false</supportSize>
-                                    <type>12</type>
-                                  </columnType>
-                                  <size>10</size>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel[6]/columnType"/>
+                                  <size></size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
                                   <description></description>
@@ -2133,12 +1934,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>ATCL_USER_ID</columnName>
                                   <logicalName>Article User ID</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                    <name>VARCHAR</name>
-                                    <logicalName>String</logicalName>
-                                    <supportSize>true</supportSize>
-                                    <type>12</type>
-                                  </columnType>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                   <size>32</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -2149,12 +1945,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>ATCL_USER_NICK</columnName>
                                   <logicalName>Article User Nickname</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                    <name>VARCHAR</name>
-                                    <logicalName>String</logicalName>
-                                    <supportSize>true</supportSize>
-                                    <type>12</type>
-                                  </columnType>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                                   <size>256</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -2165,12 +1956,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>ATCL_RGST_DTTM</columnName>
                                   <logicalName>Article Registration Datetime</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                    <name>DATETIME</name>
-                                    <logicalName>Datetime</logicalName>
-                                    <supportSize>false</supportSize>
-                                    <type>91</type>
-                                  </columnType>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                                   <size>10</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -2181,7 +1967,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>ATCL_MDFY_DTTM</columnName>
                                   <logicalName>Article Modify Datetime</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[8]/columnType"/>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
                                   <size>10</size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -2192,12 +1978,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                                 <net.java.amateras.db.visual.model.ColumnModel>
                                   <columnName>READ_CNT</columnName>
                                   <logicalName>Read Count</logicalName>
-                                  <columnType class="net.java.amateras.db.dialect.ColumnType">
-                                    <name>INT</name>
-                                    <logicalName>Integer</logicalName>
-                                    <supportSize>true</supportSize>
-                                    <type>4</type>
-                                  </columnType>
+                                  <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[10]/columnType"/>
                                   <size></size>
                                   <notNull>false</notNull>
                                   <primaryKey>false</primaryKey>
@@ -2240,7 +2021,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>BORD_ID</columnName>
                             <logicalName>Board ID</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                             <size>32</size>
                             <notNull>true</notNull>
                             <primaryKey>true</primaryKey>
@@ -2251,7 +2032,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>CATE_ID</columnName>
                             <logicalName>Cateogry ID</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                             <size>32</size>
                             <notNull>true</notNull>
                             <primaryKey>true</primaryKey>
@@ -2262,7 +2043,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>CATE_NAME</columnName>
                             <logicalName>Category Name</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                             <size>256</size>
                             <notNull>false</notNull>
                             <primaryKey>false</primaryKey>
@@ -2273,12 +2054,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                           <net.java.amateras.db.visual.model.ColumnModel>
                             <columnName>DISP_SEQ</columnName>
                             <logicalName>Display Sequence</logicalName>
-                            <columnType class="net.java.amateras.db.dialect.ColumnType">
-                              <name>INT</name>
-                              <logicalName>Integer</logicalName>
-                              <supportSize>true</supportSize>
-                              <type>4</type>
-                            </columnType>
+                            <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[10]/columnType"/>
                             <size></size>
                             <notNull>false</notNull>
                             <primaryKey>false</primaryKey>
@@ -2311,7 +2087,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>BORD_ID</columnName>
                       <logicalName>Board ID</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>32</size>
                       <notNull>true</notNull>
                       <primaryKey>true</primaryKey>
@@ -2322,7 +2098,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>BORD_NAME</columnName>
                       <logicalName>Board Name</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>256</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2333,13 +2109,8 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>BORD_ICON</columnName>
                       <logicalName>Board Icon</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>MEDIUMTEXT</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>false</supportSize>
-                        <type>12</type>
-                      </columnType>
-                      <size>10</size>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel[4]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[9]/columnType"/>
+                      <size></size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
                       <description></description>
@@ -2349,12 +2120,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>BORD_SKIN</columnName>
                       <logicalName>Board Skin</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>128</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2365,12 +2131,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>ACES_PLCY</columnName>
                       <logicalName>Access Policy</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>128</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2381,7 +2142,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>READ_PLCY</columnName>
                       <logicalName>Read Policy</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[5]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>128</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2392,7 +2153,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>WRIT_PLCY</columnName>
                       <logicalName>Write Policy</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[5]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>128</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2403,12 +2164,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>ROWS_PER_PAGE</columnName>
                       <logicalName>Rows Per Page</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>INT</name>
-                        <logicalName>Integer</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>4</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[10]/columnType"/>
                       <size></size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2419,12 +2175,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>CATE_USE_YN</columnName>
                       <logicalName>Category Use Yn</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>1</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2435,7 +2186,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>RPLY_USE_YN</columnName>
                       <logicalName>Reply Use</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel[6]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>1</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2446,7 +2197,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>FILE_USE_YN</columnName>
                       <logicalName>File Use</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel[6]/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>1</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2478,12 +2229,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
               <net.java.amateras.db.visual.model.ColumnModel>
                 <columnName>BORD_ID</columnName>
                 <logicalName>Board ID</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType">
-                  <name>VARCHAR</name>
-                  <logicalName>String</logicalName>
-                  <supportSize>true</supportSize>
-                  <type>12</type>
-                </columnType>
+                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                 <size>32</size>
                 <notNull>true</notNull>
                 <primaryKey>true</primaryKey>
@@ -2494,12 +2240,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
               <net.java.amateras.db.visual.model.ColumnModel>
                 <columnName>PLCY_TYPE</columnName>
                 <logicalName>Policy Type</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType">
-                  <name>VARCHAR</name>
-                  <logicalName>String</logicalName>
-                  <supportSize>true</supportSize>
-                  <type>12</type>
-                </columnType>
+                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                 <size>128</size>
                 <notNull>true</notNull>
                 <primaryKey>true</primaryKey>
@@ -2510,7 +2251,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
               <net.java.amateras.db.visual.model.ColumnModel>
                 <columnName>AUTH_ID</columnName>
                 <logicalName>Authority Id</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                 <size>32</size>
                 <notNull>true</notNull>
                 <primaryKey>true</primaryKey>
@@ -2598,12 +2339,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>PAGE_ID</columnName>
                       <logicalName>Page ID</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>32</size>
                       <notNull>true</notNull>
                       <primaryKey>true</primaryKey>
@@ -2614,7 +2350,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>PAGE_NAME</columnName>
                       <logicalName>Page Name</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>256</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2625,7 +2361,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>PAGE_TYPE</columnName>
                       <logicalName>Page Type</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>16</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2636,13 +2372,8 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>PAGE_VAL</columnName>
                       <logicalName>Page Value</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>MEDIUMTEXT</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>false</supportSize>
-                        <type>12</type>
-                      </columnType>
-                      <size>10</size>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+                      <size>4000</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
                       <description></description>
@@ -2652,12 +2383,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
                     <net.java.amateras.db.visual.model.ColumnModel>
                       <columnName>ACES_PLCY</columnName>
                       <logicalName>Access Policy</logicalName>
-                      <columnType class="net.java.amateras.db.dialect.ColumnType">
-                        <name>VARCHAR</name>
-                        <logicalName>String</logicalName>
-                        <supportSize>true</supportSize>
-                        <type>12</type>
-                      </columnType>
+                      <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                       <size>128</size>
                       <notNull>false</notNull>
                       <primaryKey>false</primaryKey>
@@ -2689,7 +2415,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
               <net.java.amateras.db.visual.model.ColumnModel>
                 <columnName>PAGE_ID</columnName>
                 <logicalName>Page ID</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel[5]/source/columns/net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                 <size>32</size>
                 <notNull>true</notNull>
                 <primaryKey>true</primaryKey>
@@ -2700,7 +2426,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
               <net.java.amateras.db.visual.model.ColumnModel>
                 <columnName>PLCY_TYPE</columnName>
                 <logicalName>Policy Type</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel[5]/source/columns/net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                 <size>128</size>
                 <notNull>true</notNull>
                 <primaryKey>true</primaryKey>
@@ -2711,7 +2437,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
               <net.java.amateras.db.visual.model.ColumnModel>
                 <columnName>AUTH_ID</columnName>
                 <logicalName>Authority Id</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel[5]/source/columns/net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                 <size>32</size>
                 <notNull>true</notNull>
                 <primaryKey>true</primaryKey>
@@ -2764,12 +2490,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_INST_DTTM</columnName>
           <logicalName>System Insert Datetime</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>DATETIME</name>
-            <logicalName>Datetime</logicalName>
-            <supportSize>false</supportSize>
-            <type>91</type>
-          </columnType>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
           <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -2780,12 +2501,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_INST_USER_ID</columnName>
           <logicalName>System Insert User ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>VARCHAR</name>
-            <logicalName>String</logicalName>
-            <supportSize>true</supportSize>
-            <type>12</type>
-          </columnType>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>32</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -2796,7 +2512,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_UPDT_DTTM</columnName>
           <logicalName>System Update Datetime</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
           <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -2807,7 +2523,7 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_UPDT_USER_ID</columnName>
           <logicalName>System Update User ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>32</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -2829,8 +2545,8 @@ INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES (&apos;admin&apos;, &apo
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>AUTH_DESC</columnName>
           <logicalName>Authority Description</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[8]/columnType"/>
-          <size>65535</size>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+          <size>4000</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
           <description></description>
@@ -2854,8 +2570,9 @@ INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_ME
 INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_PROPERTY&apos;,&apos;Y&apos;,&apos;Administrator Property Manage&apos;);&#xd;
 INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_CODE&apos;,&apos;Y&apos;,&apos;Administrator Code Manage&apos;);&#xd;
 INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_MESSAGE&apos;,&apos;Y&apos;,&apos;Administrator Message Manage&apos;);&#xd;
+INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_PAGE&apos;,&apos;Y&apos;,&apos;Administrator Page Manage&apos;);&#xd;
 INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_BOARD&apos;,&apos;Y&apos;,&apos;Administrator Board Manage&apos;);&#xd;
-INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_PAGE&apos;,&apos;Y&apos;,&apos;Administrator Page Manage&apos;);</sql>
+</sql>
     </net.java.amateras.db.visual.model.TableModel>
     <net.java.amateras.db.visual.model.TableModel>
       <listeners serialization="custom">
@@ -2936,12 +2653,7 @@ INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_PA
               <net.java.amateras.db.visual.model.ColumnModel>
                 <columnName>CD_ITEM_NAME</columnName>
                 <logicalName>Code Item Value</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType">
-                  <name>VARCHAR</name>
-                  <logicalName>String</logicalName>
-                  <supportSize>true</supportSize>
-                  <type>12</type>
-                </columnType>
+                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
                 <size>256</size>
                 <notNull>false</notNull>
                 <primaryKey>false</primaryKey>
@@ -2952,12 +2664,7 @@ INSERT INTO APP_AUTH_INFO (AUTH_ID,SYS_DATA_YN,AUTH_NAME) VALUES (&apos;ADMIN_PA
               <net.java.amateras.db.visual.model.ColumnModel>
                 <columnName>DISP_SEQ</columnName>
                 <logicalName>Display Sequence</logicalName>
-                <columnType class="net.java.amateras.db.dialect.ColumnType">
-                  <name>INT</name>
-                  <logicalName>Integer</logicalName>
-                  <supportSize>true</supportSize>
-                  <type>4</type>
-                </columnType>
+                <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[10]/columnType"/>
                 <size>10</size>
                 <notNull>false</notNull>
                 <primaryKey>false</primaryKey>
@@ -3003,12 +2710,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_DATA_YN</columnName>
           <logicalName>System Data Yn</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>VARCHAR</name>
-            <logicalName>String</logicalName>
-            <supportSize>true</supportSize>
-            <type>12</type>
-          </columnType>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>1</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3019,12 +2721,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_INST_DTTM</columnName>
           <logicalName>System Insert Datetime</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>DATETIME</name>
-            <logicalName>Datetime</logicalName>
-            <supportSize>false</supportSize>
-            <type>91</type>
-          </columnType>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
           <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3035,7 +2732,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_INST_USER_ID</columnName>
           <logicalName>System Insert User ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>32</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3046,7 +2743,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_UPDT_DTTM</columnName>
           <logicalName>System Update Datetime</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
           <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3057,7 +2754,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_UPDT_USER_ID</columnName>
           <logicalName>System Update User ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel[2]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>32</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3079,13 +2776,8 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>CD_DESC</columnName>
           <logicalName>Code Description</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>TEXT</name>
-            <logicalName>String</logicalName>
-            <supportSize>false</supportSize>
-            <type>12</type>
-          </columnType>
-          <size>65535</size>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+          <size>4000</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
           <description></description>
@@ -3126,7 +2818,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
       <constraint>
         <height>-1</height>
         <width>-1</width>
-        <x>180</x>
+        <x>140</x>
         <y>950</y>
       </constraint>
       <sourceConnections/>
@@ -3140,12 +2832,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>PROP_ID</columnName>
           <logicalName>Property ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>VARCHAR</name>
-            <logicalName>String</logicalName>
-            <supportSize>true</supportSize>
-            <type>12</type>
-          </columnType>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>32</size>
           <notNull>true</notNull>
           <primaryKey>true</primaryKey>
@@ -3167,7 +2854,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_INST_DTTM</columnName>
           <logicalName>System Insert Datetime</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[4]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
           <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3178,7 +2865,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_INST_USER_ID</columnName>
           <logicalName>System Insert User ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[4]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>32</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3189,7 +2876,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_UPDT_DTTM</columnName>
           <logicalName>System Updte Datetime</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[4]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
           <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3200,7 +2887,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_UPDT_USER_ID</columnName>
           <logicalName>System Update User ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[4]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>32</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3211,12 +2898,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>PROP_NAME</columnName>
           <logicalName>Property Name</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>VARCHAR</name>
-            <logicalName>String</logicalName>
-            <supportSize>true</supportSize>
-            <type>12</type>
-          </columnType>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>256</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3227,12 +2909,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>PROP_VAL</columnName>
           <logicalName>Property Value</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>MEDIUMTEXT</name>
-            <logicalName>String</logicalName>
-            <supportSize>false</supportSize>
-            <type>12</type>
-          </columnType>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>256</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3243,13 +2920,8 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>PROP_DESC</columnName>
           <logicalName>Property Description</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>MEDIUMTEXT</name>
-            <logicalName>String</logicalName>
-            <supportSize>false</supportSize>
-            <type>12</type>
-          </columnType>
-          <size>10</size>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+          <size>4000</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
           <description></description>
@@ -3288,12 +2960,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>MSG_ID</columnName>
           <logicalName>Message ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>VARCHAR</name>
-            <logicalName>String</logicalName>
-            <supportSize>true</supportSize>
-            <type>12</type>
-          </columnType>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>32</size>
           <notNull>true</notNull>
           <primaryKey>true</primaryKey>
@@ -3315,7 +2982,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_INST_DTTM</columnName>
           <logicalName>System Insert Datetime</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[4]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
           <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3326,7 +2993,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_INST_USER_ID</columnName>
           <logicalName>System Insert User ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[4]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>32</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3337,7 +3004,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_UPDT_DTTM</columnName>
           <logicalName>System Updte Datetime</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[4]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[3]/columnType"/>
           <size>10</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3348,7 +3015,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>SYS_UPDT_USER_ID</columnName>
           <logicalName>System Update User ID</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[4]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/columns/net.java.amateras.db.visual.model.ColumnModel[4]/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>32</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3359,7 +3026,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>MSG_NAME</columnName>
           <logicalName>Message Name</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
           <size>256</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
@@ -3370,13 +3037,8 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>MSG_VAL</columnName>
           <logicalName>Message Value</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>MEDIUMTEXT</name>
-            <logicalName>String</logicalName>
-            <supportSize>false</supportSize>
-            <type>12</type>
-          </columnType>
-          <size>256</size>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/columns/net.java.amateras.db.visual.model.ColumnModel[10]/columnType"/>
+          <size></size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
           <description></description>
@@ -3386,13 +3048,8 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
         <net.java.amateras.db.visual.model.ColumnModel>
           <columnName>MSG_DESC</columnName>
           <logicalName>Message Description</logicalName>
-          <columnType class="net.java.amateras.db.dialect.ColumnType">
-            <name>MEDIUMTEXT</name>
-            <logicalName>String</logicalName>
-            <supportSize>false</supportSize>
-            <type>12</type>
-          </columnType>
-          <size>10</size>
+          <columnType class="net.java.amateras.db.dialect.ColumnType" reference="../../../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel[2]/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source/columns/net.java.amateras.db.visual.model.ColumnModel/columnType"/>
+          <size>4000</size>
           <notNull>false</notNull>
           <primaryKey>false</primaryKey>
           <description></description>
@@ -3402,7 +3059,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
       </columns>
       <indices/>
       <backgroundColor reference="../../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[4]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/backgroundColor"/>
-      <sql>INSERT INTO APP_MSG_INFO (MSG_ID,MSG_NAME,MSG_VAL,MSG_DESC) VALUES (&apos;TEST&apos;,&apos;Test Message&apos;,&apos;Test Message&apos;,&apos;Test Message&apos;);</sql>
+      <sql></sql>
     </net.java.amateras.db.visual.model.TableModel>
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[5]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target"/>
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[5]/source/sourceConnections/net.java.amateras.db.visual.model.ForeignKeyModel/target/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel/source"/>
@@ -3415,7 +3072,7 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
     <net.java.amateras.db.visual.model.TableModel reference="../net.java.amateras.db.visual.model.TableModel/targetConnections/net.java.amateras.db.visual.model.ForeignKeyModel[6]/source"/>
   </children>
   <dommains/>
-  <dialectName>MySQL</dialectName>
+  <dialectName>Oracle</dialectName>
   <logicalMode>false</logicalMode>
   <jarFile>C:\Users\chomo\git\application\lib\mariadb-java-client-2.2.4.jar</jarFile>
   <jdbcDriver>org.mariadb.jdbc.Driver</jdbcDriver>

@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import net.oopscraft.application.core.JsonUtils;
-import net.oopscraft.application.core.LocaleUtils;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtils;
 import net.oopscraft.application.menu.Menu;
@@ -56,13 +55,6 @@ public class AdminController {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setView(new RedirectView("/admin/monitor"));
 		return modelAndView;
-	}
-	
-	@PreAuthorize("hasAuthority('ADMIN')")
-	@RequestMapping(value="getLanguages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public String getLanguages() throws Exception {
-		return JsonUtils.toJson(LocaleUtils.getLanguages());
 	}
 
 	/**
