@@ -41,10 +41,10 @@ body > header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	height: 50px;
+	height: 70px;
 	background-color: #eee;
 	border: none;
-	border-bottom: solid 1px #ddd;
+	border-bottom: groove 2px #ccc;
 	padding: 0rem 0.5rem;
 }
 .topNav {
@@ -68,6 +68,7 @@ body > main > section {
 	align-self: stretch;
     margin: 0.1rem;
     padding: 1rem;
+    padding-left: 0.1rem;
 	width: 20%;
 	min-width: 200px;
 	border: none;
@@ -97,13 +98,13 @@ body > main > section {
 	</span>
 	<nav class="topNav" style="padding-right:10px;">
 		<span>
-			<i class="icon-globe"></i>
+			<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_language.png"/>
 			<spring:message code="application.label.language"/>
 			<select data-juice="ComboBox" data-juice-bind="__user.language" data-juice-options="__languages" style="width:10rem;"></select>
 		</span>
-		&nbsp;
+		&nbsp;&nbsp;|&nbsp;&nbsp;
 		<span>
-			<i class="icon-logout"></i>
+			<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_logout.png"/>
 			<a href="${pageContext.request.contextPath}/admin/logout">
 				<spring:message code="application.label.logout"/>
 			</a>

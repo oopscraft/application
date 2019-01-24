@@ -5,13 +5,6 @@
     <tlib-version>4.3</tlib-version>
     <uri>http://application.oopscraft.net</uri>
     <function>
-        <name>getConfig</name>
-        <function-class>net.oopscraft.application.ApplicationContainer</function-class>
-        <function-signature>
-            String getApplicationConfig(java.lang.String)
-        </function-signature>
-    </function>
-    <function>
         <name>toJson</name>
         <function-class>net.oopscraft.application.core.JsonUtils</function-class>
         <function-signature>

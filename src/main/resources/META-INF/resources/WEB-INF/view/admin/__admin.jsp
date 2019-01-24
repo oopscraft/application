@@ -309,10 +309,10 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			height: 50px;
+			height: 70px;
 			background-color: #eee;
 			border: none;
-			border-bottom: solid 1px #ddd;
+			border-bottom: groove 2px #ccc;
 			padding: 0rem 0.5rem;
 		}
 		body > header nav.topNav {
@@ -330,6 +330,7 @@
 			align-self: stretch;
 		    margin: 0.1rem;
 		    padding: 1rem;
+		    padding-left: 0.1rem;
 			width: 15%;
 			min-width: 150px;
 			border: none;

@@ -190,5 +190,35 @@ public class ArticleService {
 		// deletes entity
 		articleRepository.delete(article);
 	}
+	
+	/**
+	 * Gets latest articles
+	 * @param pageInfo
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Article> getLatestArticles(PageInfo pageInfo) throws Exception {
+		Pageable pageable = pageInfo.toPageable();
+		Page<Article> latestArticlesPage = articleRepository.findByOrderByRegistDateDesc(pageable);
+		if(pageInfo.isEnableTotalCount() == true) {
+			pageInfo.setTotalCount(latestArticlesPage.getTotalElements());
+		}
+		return latestArticlesPage.getContent();
+	}
+
+	/**
+	 * Gets best articles has max read count
+	 * @param pageInfo
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Article> getBestArticles(PageInfo pageInfo) throws Exception {
+		Pageable pageable = pageInfo.toPageable();
+		Page<Article> bestArticlesPage = articleRepository.findByOrderByReadCountDesc(pageable);
+		if(pageInfo.isEnableTotalCount() == true) {
+			pageInfo.setTotalCount(bestArticlesPage.getTotalElements());
+		}
+		return bestArticlesPage.getContent();
+	}
 
 }
