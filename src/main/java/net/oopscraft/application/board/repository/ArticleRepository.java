@@ -28,6 +28,10 @@ public interface ArticleRepository extends JpaRepository<Article, String>{
 	public Page<Article> findByBoardIdAndUserIdContainingOrUserNicknameContainingOrderByRegistDateDesc(String boardId, String userId, String userNickname, Pageable pageable) throws Exception;
 
 	public Page<Article> findByBoardIdAndCategoryIdAndUserIdContainingOrUserNicknameContainingOrderByRegistDateDesc(String boardId, String categoryId, String userId, String userNickname, Pageable pageable) throws Exception;
+	
+	public Page<Article> findByOrderByRegistDateDesc(Pageable pageable) throws Exception;
+	
+	public Page<Article> findByOrderByReadCountDesc(Pageable pageable) throws Exception;
 
 	@Modifying
 	@Query("UPDATE Article SET readCount = READ_CNT+1 WHERE ATCL_ID = :id")

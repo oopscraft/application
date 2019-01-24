@@ -205,7 +205,7 @@
 		<!-- ====================================================== -->
 		<!-- Header													-->
 		<!-- ====================================================== -->
-		<jsp:include page="/WEB-INF/theme/__application/header.jsp" flush="true"/>
+		<jsp:include page="/WEB-INF/theme/${__config.theme}/header.jsp" flush="true"/>
 		
 		<!-- ====================================================== -->
 		<!-- Main													-->
@@ -215,6 +215,6 @@
 		<!-- ====================================================== -->
 		<!-- Footer													-->
 		<!-- ====================================================== -->
-		<jsp:include page="/WEB-INF/theme/__application/footer.jsp" flush="true"/>
+		<jsp:include page="/WEB-INF/theme/${__config.theme}/footer.jsp" flush="true"/>
 	</body>
 </html>

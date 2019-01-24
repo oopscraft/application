@@ -11,6 +11,9 @@
     </definition>
     
 	<!-- Application Layout -->
+    <definition name="*.tiles" template="/WEB-INF/view/__application.jsp">
+        <put-attribute name="main" value="/WEB-INF/view/{1}.jsp" />
+    </definition>
     <definition name="*/*.tiles" template="/WEB-INF/view/__application.jsp">
         <put-attribute name="main" value="/WEB-INF/view/{1}/{2}.jsp" />
     </definition>

@@ -6,7 +6,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@page import="java.util.*" %>
 <%@page import="java.text.*" %>
-
 <script type="text/javascript">
 var systemLoadAverageChart;
 var memoryUsageChart;

@@ -41,6 +41,14 @@ public class Application {
 		return config.get(name);
 	}
 	
+	final void setConfig(Map<String,String> config) {
+		this.config = config;
+	}
+	
+	final Map<String,String> getConfig() {
+		return this.config;
+	}
+	
 	final void setMonitorAgent(MonitorAgent monitorAgent) {
 		this.monitorAgent = monitorAgent;
 	}

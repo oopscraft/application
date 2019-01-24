@@ -83,6 +83,42 @@ public class BoardController {
 	}
 	
 	/**
+	 * Gets latest articles
+	 * @param page
+	 * @param rows
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/articles/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> getLatestArticles(
+		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows
+	) throws Exception {
+		PageInfo pageInfo = new PageInfo(page, rows, true);
+		List<Article> latestArticles = articleService.getLatestArticles(pageInfo);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+		return new ResponseEntity<>(JsonUtils.toJson(latestArticles), HttpStatus.OK);
+	}
+	
+	/**
+	 * Gets best articles
+	 * @param page
+	 * @param rows
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/articles/best", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<?> getBestArticles(
+		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows
+	) throws Exception {
+		PageInfo pageInfo = new PageInfo(page, rows, true);
+		List<Article> bestArticles = articleService.getBestArticles(pageInfo);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+		return new ResponseEntity<>(JsonUtils.toJson(bestArticles), HttpStatus.OK);
+	}
+	
+	/**
 	 * Gets board info
 	 * @param boardId
 	 * @return

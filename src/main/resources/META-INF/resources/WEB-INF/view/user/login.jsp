@@ -70,4 +70,4 @@ function printMessage(message) {
 }
 </script>
 
-<jsp:include page="/WEB-INF/theme/${app:getConfig('theme')}/user/login.jsp" flush="true"/>
+<jsp:include page="/WEB-INF/theme/${__config.theme}/user/login.jsp" flush="true"/>

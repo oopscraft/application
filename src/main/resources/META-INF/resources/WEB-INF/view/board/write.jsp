@@ -5,8 +5,8 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="app" uri="http://application.oopscraft.net"%>
-<c:set var="SKIN_DIR" value="/WEB-INF/theme/${app:getConfig('theme')}/board/${board.skin}" scope="request"/>
-<c:set var="SKIN_URI" value="${pageContext.request.contextPath}/resource/theme/${app:getConfig('theme')}/board/${board.skin}" scope="request"/>
+<c:set var="SKIN_DIR" value="/WEB-INF/theme/${__config.theme}/board/${board.skin}" scope="request"/>
+<c:set var="SKIN_URI" value="${pageContext.request.contextPath}/resource/theme/${__config.theme}/board/${board.skin}" scope="request"/>
 <script type="text/javascript">
 var board = new juice.data.Map(${app:toJson(board)});
 var article = new juice.data.Map();
