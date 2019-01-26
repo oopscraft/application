@@ -313,6 +313,7 @@ public class ApplicationBuilder {
 			Vector<Resource> mapperLocationResources = new Vector<Resource>();
 			PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 			for(String mapperLocation : mapperLocations) {
+				LOGGER.info("# mapperLocation:{}", mapperLocation);
 				for(Resource mapperLocationResource : resourceResolver.getResources(mapperLocation)) {
 					mapperLocationResources.add(mapperLocationResource);
 				}

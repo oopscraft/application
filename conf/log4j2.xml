@@ -21,7 +21,7 @@
 			<AppenderRef ref="consoleAppender"/>
 			<AppenderRef ref="fileAppender"/>
 		</Root>
-	    <Logger name="net.oopscraft.application" level="DEBUG" additivity="false">
+	    <Logger name="net.oopscraft.application" level="INFO" additivity="false">
 			<AppenderRef ref="consoleAppender"/>
 			<AppenderRef ref="fileAppender"/>
     	</Logger>
