@@ -86,12 +86,12 @@ public class AdminController {
 	@ResponseBody
 	@Transactional
 	public String getRoles(
-		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "rows")Integer rows,
+		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
-		PageInfo pageInfo = new PageInfo(page, rows, true);
+		PageInfo pageInfo = new PageInfo(rows, page, true);
 		RoleSearchType roleSearchType= null;
 		if(StringUtils.isNotEmpty(searchType)) {
 			roleSearchType = RoleSearchType.valueOf(searchType);
@@ -116,12 +116,12 @@ public class AdminController {
 	@ResponseBody
 	@Transactional
 	public String getAuthorities(
-		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "rows")Integer rows,
+		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
-		PageInfo pageInfo = new PageInfo(page, rows, true);
+		PageInfo pageInfo = new PageInfo(rows, page, true);
 		AuthoritySearchType authoritySearchType= null;
 		if(StringUtils.isNotEmpty(searchType)) {
 			authoritySearchType = AuthoritySearchType.valueOf(searchType);

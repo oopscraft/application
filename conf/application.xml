@@ -51,12 +51,9 @@
 	<!-- ====================================================== -->
 	<sqlSessionFactory id="sqlSessionFactory">
 		<dataSource>dataSource</dataSource>
+		<databaseId>${application.sqlSessionFactory.databaseId}</databaseId>
+		<databaseDialect>${application.sqlSessionFactory.databaseDialect}</databaseDialect>
 		<mapperLocations>classpath*:net/oopscraft/application/**/*Mapper.xml</mapperLocations>
-		<configuration>
-			<cacheEnabled>false</cacheEnabled>
-			<callSettersOnNulls>true</callSettersOnNulls>
-			<mapUnderscoreToCamelCase>true</mapUnderscoreToCamelCase>
-		</configuration>
 	</sqlSessionFactory>
 	
 	<!-- ====================================================== -->

@@ -42,6 +42,9 @@ public class Article {
 	@Column(name = "BORD_ID")
 	String boardId;
 	
+	@Formula("(SELECT A.BORD_NAME FROM APP_BORD_INFO A WHERE A.BORD_ID = BORD_ID)")
+	String boardName;
+	
 	@Column(name = "CATE_ID")
 	String categoryId;
 	
@@ -207,6 +210,14 @@ public class Article {
 
 	public void setBoardId(String boardId) {
 		this.boardId = boardId;
+	}
+
+	public String getBoardName() {
+		return boardName;
+	}
+
+	public void setBoardName(String boardName) {
+		this.boardName = boardName;
 	}
 
 	public String getCategoryId() {

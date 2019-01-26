@@ -72,12 +72,12 @@ public class UserController {
 	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public String getUsers(
-		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "rows")Integer rows,
+		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
-		PageInfo pageInfo = new PageInfo(page, rows, true);
+		PageInfo pageInfo = new PageInfo(rows, page, true);
 		UserSearchType userSearchType= null;
 		if(StringUtils.isNotEmpty(searchType)) {
 			userSearchType = UserSearchType.valueOf(searchType);

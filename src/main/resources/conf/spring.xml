@@ -108,7 +108,7 @@
 		</property>
 		<property name="configuration">
 			<bean class="org.apache.ibatis.session.Configuration">
-				<property name="cacheEnabled" value="false"/>
+				<property name="cacheEnabled" value="true"/>
 				<property name="callSettersOnNulls" value="true"/>
 				<property name="mapUnderscoreToCamelCase" value="true"/>
 			</bean>

@@ -64,10 +64,12 @@ public class CodeController {
 	@RequestMapping(value = "getCodes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional
-	public String getCodes(@RequestParam(value = "key", required = false) String key,
-			@RequestParam(value = "value", required = false) String value,
-			@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-			@RequestParam(value = "rows", required = false, defaultValue = "10") Integer rows) throws Exception {
+	public String getCodes(
+		@RequestParam(value = "rows", required = false, defaultValue = "20") Integer rows,
+		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+		@RequestParam(value = "key", required = false) String key,
+		@RequestParam(value = "value", required = false) String value
+	) throws Exception {
 		CodeService.CodeSearch searchCondition = codeService.new CodeSearch();
 		switch ((key == null ? "" : key)) {
 		case "id":
@@ -77,7 +79,7 @@ public class CodeController {
 			searchCondition.setName(value);
 			break;
 		}
-		PageInfo pageInfo = new PageInfo(page.intValue(), rows.intValue(), true);
+		PageInfo pageInfo = new PageInfo(rows, page, true);
 		List<Code> roles = codeService.getCodes(searchCondition, pageInfo);
 		LOGGER.debug("{}", new TextTable(roles));
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());

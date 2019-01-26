@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:conf/spring.xml","file:conf/dispatcher-servlet.xml"})
+@ContextConfiguration(locations = {"classpath:conf/spring.xml","classpath:conf/dispatcher-servlet.xml"})
 @WebAppConfiguration(value="file:conf")
 @Transactional(transactionManager = "jpaTransactionManager")
 @Rollback

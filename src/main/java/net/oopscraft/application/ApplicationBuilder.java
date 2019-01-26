@@ -16,6 +16,9 @@ import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;
+import org.apache.ibatis.logging.slf4j.Slf4jImpl;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.session.Configuration;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +33,7 @@ import org.w3c.dom.NodeList;
 
 import net.oopscraft.application.core.PasswordBasedEncryptor;
 import net.oopscraft.application.core.XPathReader;
+import net.oopscraft.application.core.mybatis.PageableInterceptor;
 import net.oopscraft.application.core.webserver.WebServer;
 import net.oopscraft.application.core.webserver.WebServerContext;
 import net.oopscraft.application.monitor.MonitorAgent;
@@ -238,7 +242,7 @@ public class ApplicationBuilder {
 			LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
 	        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 	        vendorAdapter.setGenerateDdl(false);
-	        vendorAdapter.setShowSql(true);
+	        vendorAdapter.setShowSql(false);
 
 	        // sets databasePlatform property
 	        String databasePlatform = PasswordBasedEncryptor.decryptIdentifiedValue(xPathReader.getTextContent(entityManagerFactoryExpression + "/databasePlatform"));
@@ -290,6 +294,20 @@ public class ApplicationBuilder {
 			String dataSource = xPathReader.getTextContent(sqlSessionFactoryExpression + "/dataSource");
 			sqlSessionFactoryBean.setDataSource(application.getDataSource(dataSource));
 			
+			// sets configurations
+			Configuration configuration = new Configuration();
+			configuration.setCacheEnabled(true);
+			configuration.setCallSettersOnNulls(true);
+			configuration.setMapUnderscoreToCamelCase(true);
+			configuration.setDatabaseId("MYSQL");
+			configuration.setLogImpl(Slf4jImpl.class);
+			sqlSessionFactoryBean.setConfiguration(configuration);
+			
+			// sets intercepter instance
+			sqlSessionFactoryBean.setPlugins(new Interceptor[] {
+				new PageableInterceptor()
+			});
+			
 			// sets mapLocations
 			String[] mapperLocations = xPathReader.getTextContent(sqlSessionFactoryExpression + "/mapperLocations").split(",");
 			Vector<Resource> mapperLocationResources = new Vector<Resource>();
@@ -300,16 +318,6 @@ public class ApplicationBuilder {
 				}
 			}
 			sqlSessionFactoryBean.setMapperLocations(mapperLocationResources.toArray(new Resource[mapperLocationResources.size()]));
-			
-			// setting configuration properties
-			Properties configurationProperties = new Properties();
-			NodeList propertiesNodeList = (NodeList) xPathReader.getElement(sqlSessionFactoryExpression + "/configuration/*");
-			for(int i = 0; i < propertiesNodeList.getLength(); i ++) {
-				Node propertyNode = propertiesNodeList.item(i);
-				String name = propertyNode.getNodeName();
-				String value = propertyNode.getTextContent();
-				configurationProperties.setProperty(name, parseValue(StringUtils.defaultString(value), properties));
-			}
 			
 			// invokes afterPropertiesSet method
 			sqlSessionFactoryBean.afterPropertiesSet();
