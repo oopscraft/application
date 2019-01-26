@@ -1,8 +1,9 @@
 package net.oopscraft.application.core;
 
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import net.oopscraft.application.core.mybatis.PageableRowBounds;
 
 public class PageInfo {
 
@@ -11,13 +12,13 @@ public class PageInfo {
 	boolean enableTotalCount = false;
 	long totalCount = -1;
 
-	public PageInfo(int page, int rows) {
-		this.page = page;
+	public PageInfo(int rows, int page) {
 		this.rows = rows;
+		this.page = page;
 	}
 
-	public PageInfo(int page, int rows, boolean enableTotalCount) {
-		this(page, rows);
+	public PageInfo(int rows, int page, boolean enableTotalCount) {
+		this(rows, page);
 		this.enableTotalCount = enableTotalCount;
 	}
 
@@ -58,11 +59,11 @@ public class PageInfo {
 	}
 
 	/**
-	 * Returns MYBATIS RowBounds instance.
+	 * Returns MYBATIS RowBounds.
 	 * @return
 	 */
-	public RowBounds toRowBounds() {
-		return new RowBounds(getOffset(), getLimit());
+	public PageableRowBounds toPageableRowBounds() {
+		return new PageableRowBounds(getOffset(), getLimit(), enableTotalCount);
 	}
 
 	/**

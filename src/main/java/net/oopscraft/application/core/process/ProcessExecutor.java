@@ -94,7 +94,7 @@ public class ProcessExecutor {
 					br = new BufferedReader(isr);
 					String line;
 					while((line = br.readLine()) != null) {
-						LOGGER.debug(line);
+						LOGGER.trace(line);
 						processStreamHandler.readLine(line);
 					}
 				}catch(Exception e) {

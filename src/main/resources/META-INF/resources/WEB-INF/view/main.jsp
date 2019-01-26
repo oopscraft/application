@@ -28,7 +28,7 @@ var latestArticleSearch = new juice.data.Map({
  */
 function getLatestArticles(page) {
 	if(page){
-		latestArticleSearch.set('page',page);
+		latestArticleSearch.set('page', page);
 	}
 	$.ajax({
 		 url: '${pageContext.request.contextPath}/api/board/articles/latest'

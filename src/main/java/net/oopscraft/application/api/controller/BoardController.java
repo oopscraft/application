@@ -91,11 +91,12 @@ public class BoardController {
 	 */
 	@RequestMapping(value = "/articles/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getLatestArticles(
+		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows,
 		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows
+		@RequestParam(value = "boardId", required = false)String boardId
 	) throws Exception {
-		PageInfo pageInfo = new PageInfo(page, rows, true);
-		List<Article> latestArticles = articleService.getLatestArticles(pageInfo);
+		PageInfo pageInfo = new PageInfo(rows, page, true);
+		List<Article> latestArticles = articleService.getLatestArticles(pageInfo, boardId);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return new ResponseEntity<>(JsonUtils.toJson(latestArticles), HttpStatus.OK);
 	}
@@ -110,10 +111,11 @@ public class BoardController {
 	@RequestMapping(value = "/articles/best", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getBestArticles(
 		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows
+		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows,
+		@RequestParam(value = "boardId", required = false)String boardId
 	) throws Exception {
-		PageInfo pageInfo = new PageInfo(page, rows, true);
-		List<Article> bestArticles = articleService.getBestArticles(pageInfo);
+		PageInfo pageInfo = new PageInfo(rows, page, true);
+		List<Article> bestArticles = articleService.getBestArticles(pageInfo, boardId);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return new ResponseEntity<>(JsonUtils.toJson(bestArticles), HttpStatus.OK);
 	}
@@ -150,7 +152,7 @@ public class BoardController {
 		@RequestParam(value = "searchValue", required = false)String searchValue
 	) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		PageInfo pageInfo = new PageInfo(page, board.getRowsPerPage(),true);
+		PageInfo pageInfo = new PageInfo(board.getRowsPerPage(), page, true);
 		ArticleSearchType articleSearchType;
 		if(StringUtils.isNotEmpty(searchType)) {
 			articleSearchType = ArticleSearchType.valueOf(searchType);

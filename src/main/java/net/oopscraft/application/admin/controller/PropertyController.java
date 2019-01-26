@@ -61,12 +61,12 @@ public class PropertyController {
 	@RequestMapping(value = "getProperties", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public String getProperties(
-		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "rows")Integer rows,
+		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
-		PageInfo pageInfo = new PageInfo(page, rows, true);
+		PageInfo pageInfo = new PageInfo(rows, page, true);
 		PropertySearchType propertySearchType= null;
 		if(StringUtils.isNotEmpty(searchType)) {
 			propertySearchType = PropertySearchType.valueOf(searchType);

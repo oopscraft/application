@@ -62,12 +62,12 @@ public class PageController {
 	@RequestMapping(value = "getPages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public String getBoards(
-		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "rows")Integer rows,
+		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
-		PageInfo pageInfo = new PageInfo(page, 20, true);
+		PageInfo pageInfo = new PageInfo(rows, page, true);
 		PageSearchType pageSearchType = null;
 		if(StringUtils.isNotEmpty(searchType)) {
 			pageSearchType = PageSearchType.valueOf(searchType);

@@ -28,6 +28,7 @@
 			<span style="font-weight:bold;">
 				최근 게시글
 			</span>
+			(<label data-juice="Label" data-juice-bind="latestArticleSearch.totalCount"></label>)
 		</div>
 		<ul id="latestArticles" data-juice="ListView" data-juice-bind="latestArticles" data-juice-item="article">
 			<li>
@@ -43,6 +44,7 @@
 			<span style="font-weight:bold;">
 				베스트 게시글
 			</span>
+			(<label data-juice="Label" data-juice-bind="bestArticleSearch.totalCount"></label>)
 		</div>
 		<ul id="besttArticles" data-juice="ListView" data-juice-bind="bestArticles" data-juice-item="article">
 			<li>

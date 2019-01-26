@@ -15,12 +15,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.board.mapper.ArticleMapper;
 import net.oopscraft.application.board.repository.ArticleFileRepository;
 import net.oopscraft.application.board.repository.ArticleReplyRepository;
 import net.oopscraft.application.board.repository.ArticleRepository;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.RandomUtils;
 import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.mybatis.PageableRowBounds;
 
 @Service
 public class ArticleService {
@@ -32,6 +34,9 @@ public class ArticleService {
 
 	@Autowired
 	ArticleRepository articleRepository;
+	
+	@Autowired
+	ArticleMapper articleMapper;
 
 	/**
 	 * Gets article list.
@@ -197,13 +202,13 @@ public class ArticleService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Article> getLatestArticles(PageInfo pageInfo) throws Exception {
-		Pageable pageable = pageInfo.toPageable();
-		Page<Article> latestArticlesPage = articleRepository.findByOrderByRegistDateDesc(pageable);
-		if(pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(latestArticlesPage.getTotalElements());
+	public List<Article> getLatestArticles(PageInfo pageInfo, String boardId) throws Exception {
+		PageableRowBounds rowBounds = pageInfo.toPageableRowBounds();
+		List<Article> latestArticles = articleMapper.selectLatestArticles(boardId, rowBounds);
+		if(pageInfo.isEnableTotalCount()) {
+			pageInfo.setTotalCount(rowBounds.getTotalCount());
 		}
-		return latestArticlesPage.getContent();
+		return latestArticles;
 	}
 
 	/**
@@ -212,13 +217,13 @@ public class ArticleService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Article> getBestArticles(PageInfo pageInfo) throws Exception {
-		Pageable pageable = pageInfo.toPageable();
-		Page<Article> bestArticlesPage = articleRepository.findByOrderByReadCountDesc(pageable);
-		if(pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(bestArticlesPage.getTotalElements());
+	public List<Article> getBestArticles(PageInfo pageInfo, String boardId) throws Exception {
+		PageableRowBounds rowBounds = pageInfo.toPageableRowBounds();
+		List<Article> bestArticles = articleMapper.selectBestArticles(boardId, rowBounds);
+		if(pageInfo.isEnableTotalCount()) {
+			pageInfo.setTotalCount(rowBounds.getTotalCount());
 		}
-		return bestArticlesPage.getContent();
+		return bestArticles;
 	}
 
 }
