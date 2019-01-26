@@ -1,0 +1,1030 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         name="pmd-eclipse"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <description>PMD Plugin preferences rule set</description>
+
+    <rule name="AvoidThrowingNullPointerException" language="java" message="RULE#1:Avoid throwing a NullPointerException" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Avoid throwing a NullPointerException - it's confusing because most people will assume that the
+ virtual machine threw it.  Consider using an IllegalArgumentException instead; this will be
+ clearly seen as a programmer initiated exception.
+      </description>
+        <example><![CDATA[
+        
+public class Foo {
+ void bar() {
+  throw new NullPointerException();
+ }
+}
+  
+      ]]></example>
+        <priority>2</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+              
+//AllocationExpression/ClassOrInterfaceType[@Image='NullPointerException']
+   
+          ]]></value>
+            </property>
+        </properties>
+    </rule>
+	
+    <rule name="AvoidThrowingRawExceptionTypes" language="java" message="RULE#2:Avoid throwing certain exception types" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Avoid throwing certain exception types.  Rather than throw a raw RuntimeException, Throwable,
+ Exception, or Error, use a subclassed exception or error instead.
+    </description>
+        <example><![CDATA[
+      
+public class Foo {
+public void bar() throws Exception {
+  throw new Exception();
+ }
+}
+
+    ]]></example>
+        <priority>2</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+            
+//AllocationExpression
+ /ClassOrInterfaceType[
+ @Image='Throwable' or
+ @Image='Exception' or
+ @Image='Error' or
+ @Image='RuntimeException']
+ 
+        ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="EqualsNull" language="java" message="RULE#3:Use equals() to compare to null" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Newbie programmers sometimes get the comparison concepts confused
+and use equals() to compare to null.
+        </description>
+        <example><![CDATA[
+       
+class Bar {
+   void foo() {
+       String x = "foo";
+       if (x.equals(null)) { // bad!
+        doSomething();
+       }
+   }
+}
+    
+        ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+    
+//PrimaryExpression
+ [
+PrimaryPrefix/Name[ends-with(@Image, 'equals')]
+or
+PrimarySuffix[ends-with(@Image, 'equals')]
+]
+[PrimarySuffix/Arguments/ArgumentList[count(Expression)=1]
+  /Expression/PrimaryExpression/PrimaryPrefix
+   /Literal/NullLiteral]
+    
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+
+    <rule name="VariableNamingConventions" language="java" message="RULE#4:A variable naming conventions rule" class="net.sourceforge.pmd.lang.java.rule.naming.VariableNamingConventionsRule">
+        <description>
+A variable naming conventions rule - customize this to your liking.  Currently, it
+ checks that final variables should be all caps and non-final variables
+ should not include underscores.
+        </description>
+        <example><![CDATA[
+
+public class Foo {
+ public static final int MY_NUM = 0;
+ public String myTest = "";
+ DataModule dmTest = new DataModule();
+}
+
+        ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="staticPrefix" value=""/>
+            <property name="staticSuffix" value=""/>
+            <property name="memberPrefix" value=""/>
+            <property name="memberSuffix" value=""/>
+        </properties>
+    </rule>
+
+    <rule name="AvoidReassigningParameters" language="java" message="RULE#5:Reassigning values to parameters is a questionable practice" class="net.sourceforge.pmd.lang.java.rule.design.AvoidReassigningParametersRule">
+        <description>
+Reassigning values to parameters is a questionable practice.  Use a temporary local variable instead.
+    </description>
+        <example><![CDATA[
+
+public class Foo {
+ private void foo(String bar) {
+  bar = "something else";
+ }
+}
+
+    ]]></example>
+        <priority>2</priority>
+        <properties/>
+    </rule>
+
+
+    <rule name="StringInstantiation" language="java" message="RULE#6:Avoid instantiating String objects" class="net.sourceforge.pmd.lang.java.rule.strings.StringInstantiationRule">
+        <description>
+Avoid instantiating String objects; this is usually unnecessary.
+    </description>
+        <example><![CDATA[
+
+public class Foo {
+ private String bar = new String("bar"); // just do a String bar = "bar";
+}
+
+    ]]></example>
+        <priority>1</priority>
+        <properties/>
+    </rule>
+
+    <rule name="AbstractClassWithoutAbstractMethod" language="java" message="RULE#7:The abstract class does not contain any abstract methods" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+The abstract class does not contain any abstract methods. An abstract class suggests
+an incomplete implementation, which is to be completed by subclasses implementing the
+abstract methods. If the class is intended to be used as a base class only (not to be instantiated
+direcly) a protected constructor can be provided prevent direct instantiation.
+      </description>
+        <example><![CDATA[
+
+public abstract class Foo {
+ void int method1() { ... }
+ void int method2() { ... }
+ // consider using abstract methods or removing
+ // the abstract modifier and adding protected constructors
+}
+
+      ]]></example>
+        <priority>2</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+//ClassOrInterfaceDeclaration
+ [@Abstract='true'
+  and count( .//MethodDeclaration[@Abstract='true'] )=0 ]
+  [count(ImplementsList)=0]
+              
+              ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="AssignmentInOperand" language="java" message="RULE#8:Avoid assignments in operands" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Avoid assignments in operands; this can make code more complicated and harder to read.
+  </description>
+        <example><![CDATA[
+  
+public class Foo {
+ public void bar() {
+  int x = 2;
+  if ((x = getX()) == 3) {
+   System.out.println("3!");
+  }
+ }
+ private int getX() {
+  return 3;
+ }
+}
+  
+  ]]></example>
+        <priority>2</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+                    
+//*[name()='WhileStatement' or name()='IfStatement']
+ [Expression//AssignmentOperator]
+                    
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="AssignmentToNonFinalStatic" language="java" message="RULE#9:Identifies a possible unsafe usage of a static field" class="net.sourceforge.pmd.lang.java.rule.design.AssignmentToNonFinalStaticRule">
+        <description>
+Identifies a possible unsafe usage of a static field.
+       </description>
+        <example><![CDATA[
+   
+public class StaticField {
+   static int x;
+   public FinalFields(int y) {
+    x = y; // unsafe
+   }
+}
+   
+       ]]></example>
+        <priority>1</priority>
+        <properties/>
+    </rule>
+
+    <rule name="AvoidArrayLoops" language="java" message="RULE#10:Instead of copying data between two arrays, use System.arrayCopy method" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+    Instead of copying data between two arrays, use
+    System.arrayCopy method
+      </description>
+        <example><![CDATA[
+    
+public class Test {
+ public void bar() {
+  int[] a = new int[10];
+  int[] b = new int[10];
+  for (int i=0;i<10;i++) {
+   b[i]=a[i];
+  }
+ }
+}
+            // this will trigger the rule
+            for (int i=0;i<10;i++) {
+             b[i]=a[c[i]];
+            }
+
+        }
+    }
+    
+      ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+    
+//Statement[(ForStatement or WhileStatement) and
+count(*//AssignmentOperator[@Image = '='])=1
+and
+*/Statement
+[
+./Block/BlockStatement/Statement/StatementExpression/PrimaryExpression
+/PrimaryPrefix/Name/../../PrimarySuffix/Expression
+[(PrimaryExpression or AdditiveExpression) and count
+(.//PrimaryPrefix/Name)=1]//PrimaryPrefix/Name/@Image
+and
+./Block/BlockStatement/Statement/StatementExpression/Expression/PrimaryExpression
+/PrimaryPrefix/Name/../../PrimarySuffix[count
+(..//PrimarySuffix)=1]/Expression[(PrimaryExpression
+or AdditiveExpression) and count(.//PrimaryPrefix/Name)=1]
+//PrimaryPrefix/Name/@Image
+]]
+    
+        ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="AvoidConstantsInterface" language="java" message="RULE#11:An interface should be used only to model a behaviour of a class" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+     An interface should be used only to model a behaviour of a
+    class: using an interface as a container of constants is a poor usage pattern.
+      </description>
+        <example><![CDATA[
+    
+    public interface ConstantsInterface {
+     public static final int CONSTANT1=0;
+     public static final String CONSTANT2="1";
+    }
+    
+      ]]></example>
+        <priority>2</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+    
+    //ClassOrInterfaceDeclaration[@Interface="true"]
+    [
+     count(//MethodDeclaration)=0
+     and
+     count(//FieldDeclaration)>0
+    ]
+    
+        ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+	<rule ref="rulesets/java/basic.xml/EmptyCatchBlock" language="java" message="RULE#13:Empty Catch Block finds instances where an exception is caught">
+        <description>
+Empty Catch Block finds instances where an exception is caught,
+but nothing is done.  In most circumstances, this swallows an exception
+which should either be acted on or reported.
+      </description>
+        <example><![CDATA[
+  
+public void doSomething() {
+  try {
+    FileInputStream fis = new FileInputStream("/tmp/bugger");
+  } catch (IOException ioe) {
+      // not good
+  }
+}
+ 
+      ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+    
+//CatchStatement
+ [count(Block/BlockStatement) = 0 and ($allowCommentedBlocks != 'true' or Block/@containsComment = 'false')]
+ [FormalParameter/Type/ReferenceType
+   /ClassOrInterfaceType[@Image != 'InterruptedException' and @Image != 'CloneNotSupportedException']
+ ]
+ 
+             ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="EmptyFinallyBlock" language="java" message="RULE#14:Avoid empty finally blocks" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Avoid empty finally blocks - these can be deleted.
+      </description>
+        <example><![CDATA[
+  
+public class Foo {
+ public void bar() {
+  try {
+    int x=2;
+   } finally {
+    // empty!
+   }
+ }
+}
+ 
+      ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+
+//FinallyStatement[count(Block/BlockStatement) = 0]
+ 
+              ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="EmptyIfStmt" language="java" message="RULE#15:Avoid empty if statement" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Empty If Statement finds instances where a condition is checked but nothing is done about it.
+    </description>
+        <example><![CDATA[
+    
+public class Foo {
+ void bar(int x) {
+  if (x == 0) {
+   // empty!
+  }
+ }
+}
+ 
+       ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+
+//IfStatement/Statement
+ [EmptyStatement or Block[count(*) = 0]]
+ 
+              ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="EmptyStatementNotInLoop" language="java" message="RULE#16:Unnecessary ; statement" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+An empty statement (aka a semicolon by itself) that is not used
+as the sole body of a for loop or while loop is probably a bug.  It
+could also be a double semicolon, which is useless and should be
+removed.
+       </description>
+        <example><![CDATA[
+
+public class MyClass {
+   public void doit() {
+      // this is probably not what you meant to do
+      ;
+      // the extra semicolon here this is not necessary
+      System.out.println("look at the extra semicolon");;
+   }
+}
+
+       ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+
+//Statement/EmptyStatement
+ [not(
+       ../../../ForStatement
+       or ../../../WhileStatement
+       or ../../../BlockStatement/ClassOrInterfaceDeclaration
+       or ../../../../../../ForStatement/Statement[1]
+        /Block[1]/BlockStatement[1]/Statement/EmptyStatement
+       or ../../../../../../WhileStatement/Statement[1]
+        /Block[1]/BlockStatement[1]/Statement/EmptyStatement)
+ ]
+
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="EmptyTryBlock" language="java" message="RULE#17:Non empty try block" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Avoid empty try blocks - what's the point?
+      </description>
+        <example><![CDATA[
+  
+public class Foo {
+ public void bar() {
+  try {
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
+ }
+}
+
+      ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+
+//TryStatement/Block[1][count(*) = 0]
+
+              ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="EmptyWhileStmt" language="java" message="RULE#18:Non empty while statement" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Empty While Statement finds all instances where a while statement
+does nothing.  If it is a timing loop, then you should use Thread.sleep() for it; if
+it's a while loop that does a lot in the exit expression, rewrite it to make it clearer.
+       </description>
+        <example><![CDATA[
+  
+public class Foo {
+ void bar(int a, int b) {
+  while (a == b) {
+   // empty!
+  }
+ }
+}
+ 
+       ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+
+//WhileStatement/Statement[./Block[count(*) = 0]  or ./EmptyStatement]
+
+              ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="FinalFieldCouldBeStatic" language="java" message="RULE#19: change to static final field" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+If a final field is assigned to a compile-time constant, it could be
+made static, thus saving overhead in each object
+      </description>
+        <example><![CDATA[
+  
+public class Foo {
+ public final int BAR = 42; // this could be static and save some space
+}
+  
+      ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+                    
+//FieldDeclaration
+ [@Final='true' and @Static='false']
+ [not (../../../../ClassOrInterfaceDeclaration[@Interface='true'])]
+   /VariableDeclarator/VariableInitializer/Expression
+    /PrimaryExpression/PrimaryPrefix/Literal
+                    
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="ImmutableField" language="java" message="RULE#20:Do not use final attribute in the constructor" class="net.sourceforge.pmd.lang.java.rule.design.ImmutableFieldRule">
+        <description>
+Identifies private fields whose values never change once they are initialized either in the declaration of the field or by
+a constructor.  This aids in converting existing classes to immutable classes.
+      </description>
+        <example><![CDATA[
+  
+public class Foo {
+  private int x; // could be final
+  public Foo() {
+      x = 7;
+  }
+  public void foo() {
+     int a = x + 2;
+  }
+}
+  
+      ]]></example>
+        <priority>1</priority>
+        <properties/>
+    </rule>
+
+    <rule name="ImportFromSamePackage" language="java" message="RULE#21:Do not need to use import in the same package" class="net.sourceforge.pmd.lang.java.rule.imports.ImportFromSamePackageRule">
+        <description>
+ No need to import a type that's in the same package.
+     </description>
+        <example><![CDATA[
+ 
+ package foo;
+ import foo.Buz; // no need for this
+ import foo.*; // or this
+ public class Bar{}
+ 
+     ]]></example>
+        <priority>1</priority>
+        <properties/>
+    </rule>
+
+    <rule name="InefficientEmptyStringCheck" language="java" message="RULE#22: Avoid using String.trim().length() in processing Empty String" class="net.sourceforge.pmd.lang.java.rule.strings.InefficientEmptyStringCheckRule">
+        <description>
+	   String.trim().length() is an inefficient way to check if a String is really empty, as it 
+	   creates a new String object just to check its size. Looping through a string, checking Character.isWhitespace()
+	   on each character and returning false if a non-whitespace character is found is preferable
+    </description>
+        <example><![CDATA[
+
+public class Foo {
+    void bar(String string) {
+        if (string != null && string.trim().size() > 0) { 
+		    doSomething();
+        } 
+    }
+}
+
+    ]]></example>
+        <priority>1</priority>
+        <properties/>
+    </rule>
+
+    <rule name="InefficientStringBuffering" language="java" message="RULE#23:Don't directly concatenate nonliteral in the StringBuffer function" class="net.sourceforge.pmd.lang.java.rule.strings.InefficientStringBufferingRule">
+        <description>
+Avoid concatenating non literals in a StringBuffer constructor or append().
+    </description>
+        <example><![CDATA[
+
+public class Foo {
+ void bar() {
+  // Avoid this
+  StringBuffer sb=new StringBuffer("tmp = "+System.getProperty("java.io.tmpdir"));
+  // use instead something like this
+  StringBuffer sb = new StringBuffer("tmp = ");
+  sb.append(System.getProperty("java.io.tmpdir"));
+ }
+}
+
+    ]]></example>
+        <priority>2</priority>
+        <properties/>
+    </rule>
+
+
+    <rule name="MisleadingVariableName" language="java" message="RULE#24:Don't use m_ initial name in the non-field" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Detects when a non-field has a name starting with 'm_'.  This usually
+indicates a field and thus is confusing.
+      </description>
+        <example><![CDATA[
+  
+  public class Foo {
+    private int m_foo; // OK
+    public void bar(String m_baz) {  // Bad
+      int m_boz = 42; // Bad
+    }
+  }
+  
+      ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+                    
+//VariableDeclaratorId
+[starts-with(@Image, 'm_')]
+[not (../../../FieldDeclaration)]
+                    
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+
+   <rule name="SimpleDateFormatNeedsLocale" language="java" message="RULE#25: Use Locale in creating SimpleDateFormat instance" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Be sure to specify a Locale when creating a new instance of SimpleDateFormat.
+        </description>
+        <example><![CDATA[
+        
+public class Foo {
+ // Should specify Locale.US (or whatever)
+ private SimpleDateFormat sdf = new SimpleDateFormat("pattern");
+}
+        
+        ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+
+//AllocationExpression
+ [ClassOrInterfaceType[@Image='SimpleDateFormat']]
+ [Arguments[@ArgumentCount=1]]
+
+                    ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="SimplifyBooleanExpressions" language="java" message="RULE#26: Avoid boolean operator in unnessary compare statement" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Avoid unnecessary comparisons in boolean expressions - this makes simple code seem complicated.
+      </description>
+        <example><![CDATA[
+  
+public class Bar {
+ // can be simplified to
+ // bar = isFoo();
+ private boolean bar = (isFoo() == true);
+
+ public isFoo() { return false;}
+}
+  
+      ]]></example>
+        <priority>2</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+
+//EqualityExpression/PrimaryExpression
+ /PrimaryPrefix/Literal/BooleanLiteral
+
+              ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+ <rule name="StringToString" language="java" message="RULE#27: Unnessary toString() function in operating String Object" class="net.sourceforge.pmd.lang.java.rule.strings.StringToStringRule">
+        <description>
+    Avoid calling toString() on String objects; this is unnecessary
+    </description>
+        <example><![CDATA[
+
+public class Foo {
+ private String baz() {
+  String bar = "howdy";
+  return bar.toString();
+ }
+}
+
+    ]]></example>
+        <priority>1</priority>
+        <properties/>
+    </rule>
+
+    <rule name="SwitchStmtsShouldHaveDefault" language="java" message="RULE#28: Switch statements should have a default label." class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Switch statements should have a default label.
+    </description>
+        <example><![CDATA[
+
+public class Foo {
+ public void bar() {
+  int x = 2;
+  switch (x) {
+   case 2: int j = 8;
+  }
+ }
+}
+
+    ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+                  
+//SwitchStatement[not(SwitchLabel[@Default='true'])]
+                  
+              ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="UncommentedEmptyMethod" language="java" message="RULE#29: Uncommented Empty Method finds instances" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Uncommented Empty Method finds instances where a method does not contain
+statements, but there is no comment. By explicitly commenting empty methods
+it is easier to distinguish between intentional (commented) and unintentional
+empty methods.
+      </description>
+        <example><![CDATA[
+  
+public void doSomething() {
+}
+ 
+      ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+    
+//MethodDeclaration/Block[count(BlockStatement) = 0 and @containsComment = 'false']
+ 
+             ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    
+    <rule name="UnnecessaryConversionTemporary" language="java" message="RULE#30:Avoid unnecessary temporaries when converting primitives to Strings" class="net.sourceforge.pmd.lang.java.rule.unnecessary.UnnecessaryConversionTemporaryRule">
+        <description>
+Avoid unnecessary temporaries when converting primitives to Strings
+      </description>
+        <example><![CDATA[
+  
+public String convert(int x) {
+  // this wastes an object
+  String foo = new Integer(x).toString();
+  // this is better
+  return Integer.toString(x);
+}
+ 
+      ]]></example>
+        <priority>1</priority>
+        <properties/>
+    </rule>
+
+
+    <rule name="UnnecessaryParentheses" language="java" message="RULE#31:Sometimes expressions are wrapped in unnecessary parentheses" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Sometimes expressions are wrapped in unnecessary parentheses,
+making them look like a function call.
+      </description>
+        <example><![CDATA[
+  public class Foo {
+      boolean bar() {
+          return (true);
+      }
+  }
+      ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+                
+//ReturnStatement
+          /Expression
+           /PrimaryExpression
+            /PrimaryPrefix
+             /Expression[count(*)=1]
+              /PrimaryExpression
+              /PrimaryPrefix
+            ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="UnnecessaryWrapperObjectCreation" language="java" message="RULE#32:Parsing method should be called directy instead." class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Parsing method should be called directy instead.
+      </description>
+        <example><![CDATA[
+
+public int convert(String s) {
+  int i, i2;
+
+  i = Integer.valueOf(s).intValue(); // this wastes an object
+  i = Integer.parseInt(s); // this is better
+
+  i2 = Integer.valueOf(i).intValue(); // this wastes an object
+  i2 = i; // this is better
+
+  return i2;
+}
+
+          ]]></example>
+        <priority>2</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+
+//PrimaryExpression[
+PrimaryPrefix/Name[
+@Image='Byte.valueOf' or
+@Image='Short.valueOf' or
+@Image='Integer.valueOf' or
+@Image='Long.valueOf' or
+@Image='Float.valueOf' or
+@Image='Double.valueOf' or
+@Image='Boolean.valueOf' or
+@Image='Character.valueOf'
+]
+and
+PrimarySuffix[
+@Image='byteValue' or
+@Image='shortValue' or
+@Image='intValue' or
+@Image='longValue' or
+@Image='floatValue' or
+@Image='doubleValue' or
+@Image='booleanValue' or
+@Image='charValue'
+]]
+
+              ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="UnusedFormalParameter" language="java" message="RULE#33:Avoid passing parameters to methods or constructors and then not using those parameters." class="net.sourceforge.pmd.lang.java.rule.unusedcode.UnusedFormalParameterRule">
+        <description>
+Avoid passing parameters to methods or constructors and then not using those parameters.
+    </description>
+        <example><![CDATA[
+
+public class Foo {
+ private void bar(String howdy) {
+  // howdy is not used
+ }
+
+    ]]></example>
+        <priority>2</priority>
+        <properties/>
+    </rule>
+
+
+    <rule name="UnusedPrivateField" language="java" message="RULE#34:Detects when a private field is declared and/or assigned a value, but not used." class="net.sourceforge.pmd.lang.java.rule.unusedcode.UnusedPrivateFieldRule">
+        <description>
+Detects when a private field is declared and/or assigned a value, but not used.
+    </description>
+        <example><![CDATA[
+
+public class Something {
+  private static int FOO = 2; // Unused
+  private int i = 5; // Unused
+  private int j = 6;
+  public int addOne() {
+    return j++;
+  }
+}
+
+    ]]></example>
+        <priority>2</priority>
+        <properties/>
+    </rule>
+
+    <rule name="UnusedPrivateMethod" language="java" message="RULE#35:Unused Private Method detects when a private method is declared but is unused." class="net.sourceforge.pmd.lang.java.rule.unusedcode.UnusedPrivateMethodRule">
+        <description>
+Unused Private Method detects when a private method is declared but is unused.
+    </description>
+        <example><![CDATA[
+
+public class Something {
+ private void foo() {} // unused
+}
+
+    ]]></example>
+        <priority>2</priority>
+        <properties/>
+    </rule>
+
+    <rule name="UselessStringValueOf" language="java" message="RULE#36:Use valueOf() argument directly." class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Use valueOf() argument directly.
+      </description>
+        <example><![CDATA[
+
+public String convert(int i) {
+  String s;
+  s = "a" + String.valueOf(i); // Bad
+  s = "a" + i; // Better
+  return s;
+}
+
+          ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+
+//AdditiveExpression[@Image='+']
+[PrimaryExpression/PrimaryPrefix/Name[@Image='String.valueOf']]
+
+              ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="WhileLoopsMustUseBraces" language="java" message="RULE#37:Avoid using while statements without using curly braces" class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+Avoid using 'while' statements without using curly braces
+      </description>
+        <example><![CDATA[
+
+public void doSomething() {
+  while (true)
+      x++;
+}
+
+      ]]></example>
+        <priority>1</priority>
+        <properties>
+            <property name="xpath">
+                <value><![CDATA[
+
+//WhileStatement[not(Statement/Block)]
+
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule name="DuplicateImports" language="java" message="RULE#38:Avoid duplicate import statements" class="net.sourceforge.pmd.lang.java.rule.imports.DuplicateImportsRule">
+        <description>
+    Avoid duplicate import statements.
+    </description>
+        <example><![CDATA[
+
+import java.lang.String;
+import java.lang.*;
+public class Foo {}
+
+    ]]></example>
+        <priority>1</priority>
+        <properties/>
+    </rule>
+
+ <rule name="SystemPrintln"
+    		since="2.1"
+         language="java" message="RULE#39:Consider using a logger rather than System.out.print() statement"
+         class="net.sourceforge.pmd.lang.rule.XPathRule"
+          externalInfoUrl="http://pmd.sourceforge.net/rules/logging-java.html#SystemPrintln">
+     <description>
+System.(out|err).print is used, consider using a logger.
+     </description>
+     <priority>1</priority>
+     <properties>
+         <property name="xpath">
+             <value>
+                 <![CDATA[
+//Name[
+    starts-with(@Image, 'System.out.print')
+    or
+    starts-with(@Image, 'System.err.print')
+    ]
+                ]]>
+             </value>
+         </property>
+     </properties>
+     <example>
+ <![CDATA[
+class Foo{
+    Logger log = Logger.getLogger(Foo.class.getName());
+    public void testA () {
+        System.out.println("Entering test");
+        // Better use this
+        log.fine("Entering test");
+    }
+}
+]]>
+     </example>
+     </rule>
+	
+</ruleset>

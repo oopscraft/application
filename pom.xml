@@ -138,7 +138,7 @@
                 <configuration>
                     <linkXref>true</linkXref>
                     <rulesets>
-                        <ruleset>rulesets/java/basic.xml</ruleset>
+                        <ruleset>pmd.xml</ruleset>
                     </rulesets>
                     <sourceEncoding>utf-8</sourceEncoding>
                 </configuration>
