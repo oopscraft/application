@@ -33,7 +33,7 @@ import org.w3c.dom.NodeList;
 
 import net.oopscraft.application.core.PasswordBasedEncryptor;
 import net.oopscraft.application.core.XPathReader;
-import net.oopscraft.application.core.mybatis.PageableInterceptor;
+import net.oopscraft.application.core.mybatis.PageInterceptor;
 import net.oopscraft.application.core.webserver.WebServer;
 import net.oopscraft.application.core.webserver.WebServerContext;
 import net.oopscraft.application.monitor.MonitorAgent;
@@ -102,7 +102,7 @@ public class ApplicationBuilder {
 	 * parseValue
 	 * @param value
 	 * @param properties
-	 * @return
+	 * @return 
 	 * @throws Exception
 	 */
 	private static String parseValue(String value, Properties properties) throws Exception {
@@ -299,17 +299,17 @@ public class ApplicationBuilder {
 			configuration.setCacheEnabled(true);
 			configuration.setCallSettersOnNulls(true);
 			configuration.setMapUnderscoreToCamelCase(true);
-			configuration.setDatabaseId("MYSQL");
+			configuration.setDatabaseId(parseValue(xPathReader.getTextContent(sqlSessionFactoryExpression + "/databaseId"), properties));
 			configuration.setLogImpl(Slf4jImpl.class);
 			sqlSessionFactoryBean.setConfiguration(configuration);
 			
 			// sets intercepter instance
 			sqlSessionFactoryBean.setPlugins(new Interceptor[] {
-				new PageableInterceptor()
+				new PageInterceptor()
 			});
 			
 			// sets mapLocations
-			String[] mapperLocations = xPathReader.getTextContent(sqlSessionFactoryExpression + "/mapperLocations").split(",");
+			String[] mapperLocations = parseValue(xPathReader.getTextContent(sqlSessionFactoryExpression + "/mapperLocations"), properties).split(",");
 			Vector<Resource> mapperLocationResources = new Vector<Resource>();
 			PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 			for(String mapperLocation : mapperLocations) {

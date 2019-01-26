@@ -11,7 +11,7 @@ import net.oopscraft.application.board.mapper.ArticleMapper;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
 
-public class PageableInterceptorTest extends ApplicationTestRunnerWithSpring {
+public class PageInterceptorTest extends ApplicationTestRunnerWithSpring {
 
 	@Autowired
 	ArticleMapper articleMapper;
@@ -19,7 +19,7 @@ public class PageableInterceptorTest extends ApplicationTestRunnerWithSpring {
 	@Test
 	public void test() throws Exception {
 		PageInfo pageInfo = new PageInfo(2,1);
-		List<Article> articles = articleMapper.selectLatestArticles(null, pageInfo.toPageableRowBounds());
+		List<Article> articles = articleMapper.selectLatestArticles(null, pageInfo.toPageRowBounds());
 		System.out.println(new TextTable(articles));
 	}
 	

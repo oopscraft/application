@@ -63,9 +63,9 @@ public class PageableInterceptor2 implements Interceptor {
 		
 
 		
-		PageableRowBounds pageableRowBounds = null;
+		PageRowBounds pageableRowBounds = null;
 		try {
-			pageableRowBounds = (PageableRowBounds)metaObject.getValue("delegate.rowBounds");
+			pageableRowBounds = (PageRowBounds)metaObject.getValue("delegate.rowBounds");
 		}catch(Exception e) {
 			LOGGER.debug("RowBounds not found. skip.");
 			return invocation.proceed();
@@ -96,14 +96,14 @@ public class PageableInterceptor2 implements Interceptor {
 	 * @param originalSql
 	 * @return
 	 */
-	private static void convertPageable(MetaObject metaObject, final PageableRowBounds pageableRowBounds, Configuration configuration, DatabaseId databaseId) {
+	private static void convertPageable(MetaObject metaObject, final PageRowBounds pageableRowBounds, Configuration configuration, DatabaseId databaseId) {
 
 		String originalSql = (String) metaObject.getValue("delegate.boundSql.sql");
 		
 		@SuppressWarnings("unchecked")
-		ParamMap<PageableRowBounds> parameterObject = (ParamMap<PageableRowBounds>) metaObject.getValue("delegate.boundSql.parameterObject");
+		ParamMap<PageRowBounds> parameterObject = (ParamMap<PageRowBounds>) metaObject.getValue("delegate.boundSql.parameterObject");
 		if(parameterObject == null) {
-			parameterObject = new ParamMap<PageableRowBounds>();
+			parameterObject = new ParamMap<PageRowBounds>();
 		}
 		parameterObject.put("pageableRowBounds", pageableRowBounds);
 		
@@ -161,7 +161,7 @@ public class PageableInterceptor2 implements Interceptor {
 	 * @param pageableRowBounds
 	 * @throws SQLException
 	 */
-	private void setTotalCount(final MetaObject metaObject, final PageableRowBounds pageableRowBounds, Configuration configuration, DatabaseId databaseId) throws SQLException {
+	private void setTotalCount(final MetaObject metaObject, final PageRowBounds pageableRowBounds, Configuration configuration, DatabaseId databaseId) throws SQLException {
 		
 		String originalSql = (String) metaObject.getValue("delegate.boundSql.sql");
 		
@@ -171,7 +171,7 @@ public class PageableInterceptor2 implements Interceptor {
 		@SuppressWarnings("unchecked")
 		List<ParameterMapping> parameterMappings = (List<ParameterMapping>) metaObject.getValue("delegate.boundSql.parameterMappings");
 		@SuppressWarnings("unchecked")
-		ParamMap<PageableRowBounds> paramMap = (ParamMap<PageableRowBounds>)metaObject.getValue("delegate.boundSql.parameterObject");
+		ParamMap<PageRowBounds> paramMap = (ParamMap<PageRowBounds>)metaObject.getValue("delegate.boundSql.parameterObject");
 		MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
 		final BoundSql totalCountBoundSql = new BoundSql(configuration, totalCountSql.toString(), parameterMappings, paramMap);
 		@SuppressWarnings("unchecked")
