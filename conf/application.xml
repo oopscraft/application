@@ -52,8 +52,7 @@
 	<sqlSessionFactory id="sqlSessionFactory">
 		<dataSource>dataSource</dataSource>
 		<databaseId>${application.sqlSessionFactory.databaseId}</databaseId>
-		<databaseDialect>${application.sqlSessionFactory.databaseDialect}</databaseDialect>
-		<mapperLocations>classpath*:net/oopscraft/application/**/*Mapper.xml</mapperLocations>
+		<mapperLocations>${application.sqlSessionFactory.mapperLocations}</mapperLocations>
 	</sqlSessionFactory>
 	
 	<!-- ====================================================== -->

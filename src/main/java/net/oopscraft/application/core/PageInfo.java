@@ -3,7 +3,7 @@ package net.oopscraft.application.core;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import net.oopscraft.application.core.mybatis.PageableRowBounds;
+import net.oopscraft.application.core.mybatis.PageRowBounds;
 
 public class PageInfo {
 
@@ -62,8 +62,8 @@ public class PageInfo {
 	 * Returns MYBATIS RowBounds.
 	 * @return
 	 */
-	public PageableRowBounds toPageableRowBounds() {
-		return new PageableRowBounds(getOffset(), getLimit(), enableTotalCount);
+	public PageRowBounds toPageRowBounds() {
+		return new PageRowBounds(getOffset(), getLimit(), enableTotalCount);
 	}
 
 	/**

@@ -5,13 +5,11 @@
   
 <mapper namespace="net.oopscraft.application.board.mapper.ArticleMapper">
 
-	<!-- 
 	<cache
 		eviction="FIFO"
 		flushInterval="10000"
 		size="128"
 		readOnly="true"/>
-	 -->
 
     <resultMap id="article" type="net.oopscraft.application.board.Article">
     	<result column="ATCL_ID" property="id"/>

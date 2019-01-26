@@ -22,7 +22,7 @@ import net.oopscraft.application.board.repository.ArticleRepository;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.RandomUtils;
 import net.oopscraft.application.core.StringUtils;
-import net.oopscraft.application.core.mybatis.PageableRowBounds;
+import net.oopscraft.application.core.mybatis.PageRowBounds;
 
 @Service
 public class ArticleService {
@@ -203,7 +203,7 @@ public class ArticleService {
 	 * @throws Exception
 	 */
 	public List<Article> getLatestArticles(PageInfo pageInfo, String boardId) throws Exception {
-		PageableRowBounds rowBounds = pageInfo.toPageableRowBounds();
+		PageRowBounds rowBounds = pageInfo.toPageRowBounds();
 		List<Article> latestArticles = articleMapper.selectLatestArticles(boardId, rowBounds);
 		if(pageInfo.isEnableTotalCount()) {
 			pageInfo.setTotalCount(rowBounds.getTotalCount());
@@ -218,7 +218,7 @@ public class ArticleService {
 	 * @throws Exception
 	 */
 	public List<Article> getBestArticles(PageInfo pageInfo, String boardId) throws Exception {
-		PageableRowBounds rowBounds = pageInfo.toPageableRowBounds();
+		PageRowBounds rowBounds = pageInfo.toPageRowBounds();
 		List<Article> bestArticles = articleMapper.selectBestArticles(boardId, rowBounds);
 		if(pageInfo.isEnableTotalCount()) {
 			pageInfo.setTotalCount(rowBounds.getTotalCount());

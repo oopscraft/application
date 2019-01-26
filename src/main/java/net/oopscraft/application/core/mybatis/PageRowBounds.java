@@ -2,7 +2,7 @@ package net.oopscraft.application.core.mybatis;
 
 import org.apache.ibatis.session.RowBounds;
 
-public class PageableRowBounds extends RowBounds {
+public class PageRowBounds extends RowBounds {
 	
 	int offset = 0;
 	int limit = Integer.MAX_VALUE;
@@ -11,7 +11,7 @@ public class PageableRowBounds extends RowBounds {
 	boolean enableTotalCount = false;
 	int totalCount = -1;
 	
-	public PageableRowBounds(int offset, int limit, boolean enableTotalCount) {
+	public PageRowBounds(int offset, int limit, boolean enableTotalCount) {
 		this.offset = offset;
 		this.limit = limit;
 		this.enableTotalCount = enableTotalCount;
