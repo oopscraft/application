@@ -348,8 +348,6 @@ public class ApplicationBuilder {
 		systemMessageSource.setUseCodeAsDefaultMessage(true);
 		systemMessageSource.setCacheSeconds(10);
 		
-
-		
 		// creates user defined message sources.
 		Map<String,MessageSource> messageSources = new LinkedHashMap<String,MessageSource>();
 		NodeList messageSourceNodeList = (NodeList) xPathReader.getElement("/application/messageSource");
