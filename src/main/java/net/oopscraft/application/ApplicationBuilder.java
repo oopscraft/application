@@ -309,13 +309,17 @@ public class ApplicationBuilder {
 			});
 			
 			// sets mapLocations
-			String[] mapperLocations = parseValue(xPathReader.getTextContent(sqlSessionFactoryExpression + "/mapperLocations"), properties).split(",");
 			Vector<Resource> mapperLocationResources = new Vector<Resource>();
 			PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+			for(Resource mapperLocationResource : resourceResolver.getResources("classpath*:net/oopscraft/application/**/*Mapper.xml")) {
+				mapperLocationResources.add(mapperLocationResource);
+			}
+			String[] mapperLocations = parseValue(xPathReader.getTextContent(sqlSessionFactoryExpression + "/mapperLocations"), properties).split(",");
 			for(String mapperLocation : mapperLocations) {
-				LOGGER.info("# mapperLocation:{}", mapperLocation);
-				for(Resource mapperLocationResource : resourceResolver.getResources(mapperLocation)) {
-					mapperLocationResources.add(mapperLocationResource);
+				if(mapperLocation.trim().length() > 0) {
+					for(Resource mapperLocationResource : resourceResolver.getResources(mapperLocation)) {
+						mapperLocationResources.add(mapperLocationResource);
+					}
 				}
 			}
 			sqlSessionFactoryBean.setMapperLocations(mapperLocationResources.toArray(new Resource[mapperLocationResources.size()]));
