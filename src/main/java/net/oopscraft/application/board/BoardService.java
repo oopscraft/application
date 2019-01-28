@@ -42,6 +42,15 @@ public class BoardService {
 		Page<Board> boardsPage = null;
 		if(searchType == null) {
 			boardsPage = boardRepository.findAll(pageable);
+		}else {
+			switch(searchType) {
+				case ID :
+					boardsPage = boardRepository.findByIdContaining(searchValue, pageable);
+				break;
+				case NAME :
+					boardsPage = boardRepository.findByNameContaining(searchValue, pageable);
+				break;
+			}
 		}
 		pageInfo.setTotalCount(boardsPage.getTotalElements());
 		return boardsPage.getContent();

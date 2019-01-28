@@ -10,8 +10,8 @@ public interface MessageRepository extends JpaRepository<Message,String>{
 
 	public Page<Message> findAllByOrderBySystemDataYn(Pageable pageable) throws Exception;
 
-	public Page<Message> findByIdStartingWith(String id, Pageable pageable) throws Exception;
+	public Page<Message> findByIdContaining(String id, Pageable pageable) throws Exception;
 	
-	public Page<Message> findByNameStartingWith(String name, Pageable pageable) throws Exception;
+	public Page<Message> findByNameContaining(String name, Pageable pageable) throws Exception;
 	
 }

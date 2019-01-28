@@ -1,5 +1,6 @@
 
 .icon-change:before { content: '\e85d'; } /* '' */
+.icon-confirm:before { content: '\e86d'; } /* '' */
 .icon-cancel:before { content: '\e870'; } /* '' */
 .icon-file:before { content: '\e888'; } /* '' */
 .icon-upload:before { content: '\e88f'; } /* '' */
@@ -20,5 +21,6 @@
 .icon-edit:before { content: '\ebfc'; } /* '' */
 .icon-delete:before { content: '\ec0a'; } /* '' */
 .icon-folder:before { content: '\ec12'; } /* '' */
+.icon-check:before { content: '\ecd3'; } /* '' */
 .icon-unlink:before { content: '\f127'; } /* '' */
 .icon-attention:before { content: '\f12a'; } /* '' */

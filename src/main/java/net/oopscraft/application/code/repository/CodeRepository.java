@@ -12,8 +12,8 @@ public interface CodeRepository extends JpaRepository<Code,String> {
 	
 	public Page<Code> findAllByOrderBySystemDataYn(Pageable pageable) throws Exception;
 
-	public Page<Code> findByIdStartingWith(String id, Pageable pageable) throws Exception;
+	public Page<Code> findByIdContaining(String id, Pageable pageable) throws Exception;
 	
-	public Page<Code> findByNameStartingWith(String name, Pageable pageable) throws Exception;
+	public Page<Code> findByNameContaining(String name, Pageable pageable) throws Exception;
 	
 }

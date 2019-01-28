@@ -34,10 +34,10 @@ public class PropertyService {
 		}else {
 			switch(searchType) {
 				case ID :
-					propertiesPage = propertyRepository.findByIdStartingWith(searchValue, pageable);
+					propertiesPage = propertyRepository.findByIdContaining(searchValue, pageable);
 				break;
 				case NAME :
-					propertiesPage = propertyRepository.findByNameStartingWith(searchValue, pageable);
+					propertiesPage = propertyRepository.findByNameContaining(searchValue, pageable);
 				break;
 			}
 		}

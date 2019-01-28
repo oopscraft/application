@@ -7,25 +7,18 @@
 <%@taglib prefix="app" uri="http://application.oopscraft.net"%>
 <script type="text/javascript">
 var userSearch = new juice.data.Map({
-	 key: null
-	,value: null
+	 rows: 30
 	,page: 1
-	,rows: 30
-	,totalCount: -1
-});
-/* defines roleSearch Map change event handler */
-userSearch.afterChange(function(event){
-	/* reset value when key changed */
-	if(event.name == 'key'){
-		this.set('value','');
-	}
+	,searchType: null
+	,searchValue: null
+	,totalCount:-1
 });
 var userSearchTypes = [
 	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
-	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
-	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
-	,{ value:'email', text:'<spring:message code="application.text.email"/>' }
-	,{ value:'phone', text:'<spring:message code="application.text.phone"/>' }
+	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
+	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
+	,{ value:'EMAIL', text:'<spring:message code="application.text.email"/>' }
+	,{ value:'PHONE', text:'<spring:message code="application.text.phone"/>' }
 ];
 var users = new juice.data.List();
 var user = new juice.data.Map();
@@ -392,8 +385,8 @@ function deleteUser(){
 	<div class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="userSearch.key" data-juice-options="userSearchTypes" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="userSearch.value" style="width:100px;"/>
+				<select data-juice="ComboBox" data-juice-bind="userSearch.searchType" data-juice-options="userSearchTypes" style="width:100px;"></select>
+				<input data-juice="TextField" data-juice-bind="userSearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getUsers();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>

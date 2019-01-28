@@ -34,10 +34,10 @@ public class MessageService {
 		}else {
 			switch(searchType) {
 				case ID :
-					messagesPage = messageRepository.findByIdStartingWith(searchValue, pageable);
+					messagesPage = messageRepository.findByIdContaining(searchValue, pageable);
 				break;
 				case NAME :
-					messagesPage = messageRepository.findByNameStartingWith(searchValue, pageable);
+					messagesPage = messageRepository.findByNameContaining(searchValue, pageable);
 				break;
 			}
 		}

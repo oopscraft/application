@@ -1,5 +1,6 @@
 
 .icon-change { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe85d;&nbsp;'); }
+.icon-confirm { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe86d;&nbsp;'); }
 .icon-cancel { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe870;&nbsp;'); }
 .icon-file { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe888;&nbsp;'); }
 .icon-upload { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe88f;&nbsp;'); }
@@ -20,5 +21,6 @@
 .icon-edit { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xebfc;&nbsp;'); }
 .icon-delete { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xec0a;&nbsp;'); }
 .icon-folder { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xec12;&nbsp;'); }
+.icon-check { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xecd3;&nbsp;'); }
 .icon-unlink { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf127;&nbsp;'); }
 .icon-attention { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf12a;&nbsp;'); }
