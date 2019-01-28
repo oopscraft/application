@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.board.Board;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.page.repository.PageRepository;
 
@@ -31,6 +30,15 @@ public class PageService {
 		org.springframework.data.domain.Page<Page> pagesPage = null;
 		if(searchType == null) {
 			pagesPage = pageRepository.findAll(pageable);
+		}else {
+			switch(searchType) {
+				case ID :
+					pagesPage = pageRepository.findByIdContaining(searchValue, pageable);
+				break;
+				case NAME :
+					pagesPage = pageRepository.findByNameContaining(searchValue, pageable);
+				break;
+			}
 		}
 		pageInfo.setTotalCount(pagesPage.getTotalElements());
 		return pagesPage.getContent();

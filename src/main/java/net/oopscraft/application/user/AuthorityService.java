@@ -34,10 +34,10 @@ public class AuthorityService {
 		}else {
 			switch(searchType) {
 				case ID :
-					authoritiesPage = authorityRepository.findByIdStartingWith(searchValue, pageable);
+					authoritiesPage = authorityRepository.findByIdContaining(searchValue, pageable);
 				break;
 				case NAME :
-					authoritiesPage = authorityRepository.findByNameStartingWith(searchValue, pageable);
+					authoritiesPage = authorityRepository.findByNameContaining(searchValue, pageable);
 				break;
 			}
 		}

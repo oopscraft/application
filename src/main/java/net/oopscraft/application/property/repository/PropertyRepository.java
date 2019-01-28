@@ -10,8 +10,8 @@ public interface PropertyRepository extends JpaRepository<Property,String>{
 
 	public Page<Property> findAllByOrderBySystemDataYn(Pageable pageable) throws Exception;
 
-	public Page<Property> findByIdStartingWith(String id, Pageable pageable) throws Exception;
+	public Page<Property> findByIdContaining(String id, Pageable pageable) throws Exception;
 	
-	public Page<Property> findByNameStartingWith(String name, Pageable pageable) throws Exception;
+	public Page<Property> findByNameContaining(String name, Pageable pageable) throws Exception;
 	
 }

@@ -6,21 +6,16 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <script type="text/javascript">
 var codeSearch = new juice.data.Map({
-	 key: null
-	,value: null
+	 rows: 30
 	,page: 1
-	,rows: 30
+	,searchType: null
+	,searchValue: null
 	,totalCount:-1
 });
-codeSearch.afterChange(function(event){
-	if(event.name == 'key'){
-		this.set('value','');
-	}
-});
-var codeSearchKeys = [
+var codeSearchTypes = [
 	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
-	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
-	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
+	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
+	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 ];
 var codes = new juice.data.List();
 var code = new juice.data.Map();
@@ -257,8 +252,8 @@ function removeItem(index){
 		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="codeSearch.key" data-juice-options="codeSearchKeys" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="codeSearch.value" style="width:100px;"/>
+				<select data-juice="ComboBox" data-juice-bind="codeSearch.searchType" data-juice-options="codeSearchTypes" style="width:100px;"></select>
+				<input data-juice="TextField" data-juice-bind="codeSearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getCodes();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>

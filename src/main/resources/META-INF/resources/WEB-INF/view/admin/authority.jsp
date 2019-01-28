@@ -9,21 +9,16 @@
 <!-- global -->
 <script type="text/javascript">
 var authoritySearch = new juice.data.Map({
-	 type: null
-	,value: null
+	 rows: 30
 	,page: 1
-	,rows: 30
+	,searchType: null
+	,searchValue: null
 	,totalCount:-1
-});
-authoritySearch.afterChange(function(event){
-	if(event.name == 'type'){
-		this.set('value','');
-	}
 });
 var authoritySearchTypes = [
 	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
-	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
-	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
+	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
+	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 ];
 var authorities = new juice.data.List();
 var authority = new juice.data.Map();
@@ -220,8 +215,8 @@ function deleteAuthority() {
 	<div class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="authoritySearch.type" data-juice-options="authoritySearchTypes" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="authoritySearch.value" style="width:100px;"/>
+				<select data-juice="ComboBox" data-juice-bind="authoritySearch.searchType" data-juice-options="authoritySearchTypes" style="width:100px;"></select>
+				<input data-juice="TextField" data-juice-bind="authoritySearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getAuthorities();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>

@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.SQLInsert;
 import org.hibernate.annotations.WhereJoinTable;
 
-import net.oopscraft.application.menu.Menu.Policy;
 import net.oopscraft.application.user.Authority;
 
 @Entity

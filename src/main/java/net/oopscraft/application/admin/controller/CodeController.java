@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,19 +17,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtils;
-import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.code.Code;
 import net.oopscraft.application.code.CodeService;
+import net.oopscraft.application.code.CodeService.CodeSearchType;
+import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.StringUtils;
 
 
 @PreAuthorize("hasAuthority('ADMIN_CODE')")
 @Controller
 @RequestMapping("/admin/code")
 public class CodeController {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
 	CodeService codeService;
@@ -65,25 +62,19 @@ public class CodeController {
 	@ResponseBody
 	@Transactional
 	public String getCodes(
-		@RequestParam(value = "rows", required = false, defaultValue = "20") Integer rows,
-		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-		@RequestParam(value = "key", required = false) String key,
-		@RequestParam(value = "value", required = false) String value
+		@RequestParam(value = "rows")Integer rows,
+		@RequestParam(value = "page") Integer page,
+		@RequestParam(value = "searchType", required = false) String searchType,
+		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
-		CodeService.CodeSearch searchCondition = codeService.new CodeSearch();
-		switch ((key == null ? "" : key)) {
-		case "id":
-			searchCondition.setId(value);
-			break;
-		case "name":
-			searchCondition.setName(value);
-			break;
-		}
 		PageInfo pageInfo = new PageInfo(rows, page, true);
-		List<Code> roles = codeService.getCodes(searchCondition, pageInfo);
-		LOGGER.debug("{}", new TextTable(roles));
+		CodeSearchType codeSearchType = null;
+		if(StringUtils.isNotEmpty(searchType)) {
+			codeSearchType = CodeSearchType.valueOf(searchType); 
+		}
+		List<Code> codes = codeService.getCodes(pageInfo, codeSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(roles);
+		return JsonUtils.toJson(codes);
 	}
 
 	/**

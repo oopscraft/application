@@ -541,7 +541,8 @@
 				var $this = this;
 		 		this.items.fromJson([],'childGroups');
 				this.dialog = new juice.ui.Dialog($('#__groupsDialog')[0]);
-				this.dialog.setTitle('<i class="icon-folder"> </i><spring:message code="application.text.group"/> <spring:message code="application.text.list"/>');
+				var title = '<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_group.png"/>&nbsp;&nbsp;<spring:message code="application.text.group"/> <spring:message code="application.text.list"/>';
+				this.dialog.setTitle(title);
 				this.search();
 			},
 	 		search: function(){
@@ -646,7 +647,7 @@
 				<br/>
 				<div style="text-align:right;">
 					<button onclick="javascript:__groupsDialog.confirm();">
-						<i class="icon-check"></i>
+						<i class="icon-confirm"></i>
 						<spring:message code="application.text.confirm"/>
 					</button>
 				</div>
@@ -664,8 +665,8 @@
            	searchCondition: new juice.data.Map(),
            	searchConditionKeys: [
 				 { value:'', text:'- <spring:message code="application.text.all"/> -' }
-				,{ value:'id', text:'<spring:message code="application.text.id"/>' }
-				,{ value:'name', text:'<spring:message code="application.text.name"/>' }
+				,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
+				,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 	 		],
 	 		searchItems: new juice.data.List(),
 	 		selectItems: new juice.data.List(),
@@ -682,16 +683,17 @@
 			open: function(){
 				var $this = this;
 	 			this.searchCondition.fromJson({
-		   			 key: null
-		 			,value: null
-		 			,page: 1
-		 			,rows: 10
+		 			 rows: 10
+			 		,page: 1
+		 			,searchType: null
+		 			,searchValue: null
 		 			,totalCount:-1
 	 			});
 		 		this.searchItems.fromJson([]);
 		 		this.selectItems.fromJson([]);
 				this.dialog = new juice.ui.Dialog($('#__rolesDialog')[0]);
-				this.dialog.setTitle('<i class="icon-card"> </i><spring:message code="application.text.role"/> <spring:message code="application.text.list"/>');
+				var title = '<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_role.png"/>&nbsp;&nbsp;<spring:message code="application.text.role"/> <spring:message code="application.text.list"/>';
+				this.dialog.setTitle(title);
 				this.dialog.open();
 				this.search(1);
 			},
@@ -787,11 +789,8 @@
 			<div id="__rolesDialog">
 				<div style="display:flex; justify-content: space-between;">
 					<div style="flex:auto;">
-						<div class="title2">
-							<i class="icon-search"></i>
-						</div>
-						<select data-juice="ComboBox" data-juice-bind="__rolesDialog.searchCondition.key" data-juice-options="__rolesDialog.searchConditionKeys" style="width:100px;"></select>
-						<input data-juice="TextField" data-juice-bind="__rolesDialog.searchCondition.value" style="width:100px;"/>
+						<select data-juice="ComboBox" data-juice-bind="__rolesDialog.searchCondition.searchType" data-juice-options="__rolesDialog.searchConditionKeys" style="width:100px;"></select>
+						<input data-juice="TextField" data-juice-bind="__rolesDialog.searchCondition.searchValue" style="width:100px;"/>
 					</div>
 					<div>
 						<button onclick="javascript:__rolesDialog.search();">
@@ -801,6 +800,12 @@
 					</div>
 				</div>
 				<table id="__rolesTable" data-juice="Grid" data-juice-bind="__rolesDialog.searchItems" data-juice-item="item">
+					<colgroup>
+						<col style="width:5%;"/>
+						<col style="width:15%;"/>
+						<col/>
+						<col/>
+					</colgroup>
 					<thead>
 						<tr>
 							<th>
@@ -835,6 +840,11 @@
 				</div>
 				<br/>
 				<table data-juice="Grid" data-juice-bind="__rolesDialog.selectItems" data-juice-item="item">
+					<colgroup>
+						<col/>
+						<col/>
+						<col style="width:5%;"/>
+					</colgroup>
 					<thead>
 						<tr>
 							<th><spring:message code="application.text.id"/></th>
@@ -847,8 +857,8 @@
 							<td><label data-juice="Label" data-juice-bind="item.id" class="id"></label></td>
 							<td><label data-juice="Label" data-juice-bind="item.name"></label></td>
 							<td class="text-center">
-								<button data-id="{{$context.item.get('id')}}" onclick="javascript:__rolesDialog.unselect(this.dataset.id);">
-									<i class="icon-minus"></i>
+								<button class="small" data-id="{{$context.item.get('id')}}" onclick="javascript:__rolesDialog.unselect(this.dataset.id);">
+									<i class="icon-remove"></i>
 								</button>
 							</td>
 						</tr>
@@ -857,7 +867,7 @@
 				<br/>
 				<div style="text-align:right;">
 					<button onclick="javascript:__rolesDialog.confirm();">
-						<i class="icon-check"></i>
+						<i class="icon-confirm"></i>
 						<spring:message code="application.text.confirm"/>
 					</button>
 				</div>
@@ -872,8 +882,8 @@
 			searchCondition: new juice.data.Map(),
 			searchConditionKeys: [
    				 { value:'', text:'- <spring:message code="application.text.all"/> -' }
-   				,{ value:'id', text:'<spring:message code="application.text.id"/>' }
-   				,{ value:'name', text:'<spring:message code="application.text.name"/>' }
+   				,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
+   				,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
    	 		],
    	 		searchItems: new juice.data.List(),
    	 		selectItems: new juice.data.List(),
@@ -890,16 +900,17 @@
    			open: function(){
    				var $this = this;
    	 			this.searchCondition.fromJson({
-   		   			 key: null
-   		 			,value: null
-   		 			,page: 1
+   		 			 page: 1
    		 			,rows: 10
+   		 			,searchType: null
+   		 			,searchValue: null
    		 			,totalCount:-1
    	 			});
    		 		this.searchItems.fromJson([]);
    		 		this.selectItems.fromJson([]);
    				this.dialog = new juice.ui.Dialog($('#__authoritiesDialog')[0]);
-   				this.dialog.setTitle('<i class="icon-key"> </i><spring:message code="application.text.authority"/> <spring:message code="application.text.list"/>');
+   				var title = '<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_authority.png"/>&nbsp;&nbsp;<spring:message code="application.text.authority"/> <spring:message code="application.text.list"/>';
+   				this.dialog.setTitle(title);
    				this.dialog.open();
    				this.search(1);
    			},
@@ -995,11 +1006,8 @@
 			<div id="__authoritiesDialog">
 				<div style="display:flex; justify-content: space-between;">
 					<div style="flex:auto;">
-						<div class="title2">
-							<i class="icon-search"></i>
-						</div>
-						<select data-juice="ComboBox" data-juice-bind="__authoritiesDialog.searchCondition.key" data-juice-options="__authoritiesDialog.searchConditionKeys" style="width:100px;"></select>
-						<input data-juice="TextField" data-juice-bind="__authoritiesDialog.searchCondition.value" style="width:100px;"/>
+						<select data-juice="ComboBox" data-juice-bind="__authoritiesDialog.searchCondition.searchType" data-juice-options="__authoritiesDialog.searchConditionKeys" style="width:100px;"></select>
+						<input data-juice="TextField" data-juice-bind="__authoritiesDialog.searchCondition.searchValue" style="width:100px;"/>
 					</div>
 					<div>
 						<button onclick="javascript:__authoritiesDialog.search();">
@@ -1009,6 +1017,12 @@
 					</div>
 				</div>
 				<table id="__authoritiesTable" data-juice="Grid" data-juice-bind="__authoritiesDialog.searchItems" data-juice-item="item">
+					<colgroup>
+						<col style="width:5%;"/>
+						<col style="width:15%;"/>
+						<col/>
+						<col/>
+					</colgroup>
 					<thead>
 						<tr>
 							<th>
@@ -1045,6 +1059,11 @@
 				</div>
 				<br/>
 				<table data-juice="Grid" data-juice-bind="__authoritiesDialog.selectItems" data-juice-item="item">
+					<colgroup>
+						<col/>
+						<col/>
+						<col style="width:5%;"/>
+					</colgroup>
 					<thead>
 						<tr>
 							<th><spring:message code="application.text.id"/></th>
@@ -1057,8 +1076,8 @@
 							<td><label data-juice="Label" data-juice-bind="item.id" class="id"></label></td>
 							<td><label data-juice="Label" data-juice-bind="item.name"></label></td>
 							<td class="text-center">
-								<button data-id="{{$context.item.get('id')}}" onclick="javascript:__authoritiesDialog.unselect(this.dataset.id);">
-									<i class="icon-minus"></i>
+								<button class="small" data-id="{{$context.item.get('id')}}" onclick="javascript:__authoritiesDialog.unselect(this.dataset.id);">
+									<i class="icon-remove"></i>
 								</button>
 							</td>
 						</tr>
@@ -1067,7 +1086,7 @@
 				<br/>
 				<div style="text-align:right;">
 					<button onclick="javascript:__authoritiesDialog.confirm();">
-						<i class="icon-check"></i>
+						<i class="icon-confirm"></i>
 						<spring:message code="application.text.confirm"/>
 					</button>
 				</div>
@@ -1096,7 +1115,8 @@
 				var $this = this;
 		 		this.items.fromJson([],'childGroups');
 				this.dialog = new juice.ui.Dialog($('#__menusDialog')[0]);
-				this.dialog.setTitle('<i class="icon-folder"> </i><spring:message code="application.text.group"/> <spring:message code="application.text.list"/>');
+   				var title = '<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_menu.png"/>&nbsp;&nbsp;<spring:message code="application.text.menu"/> <spring:message code="application.text.list"/>';
+				this.dialog.setTitle(title);
 				this.search();
 			},
 	 		search: function(){
@@ -1168,7 +1188,7 @@
 						<li>
 							<div data-id="{{$context.item.get('id')}}" data-enable="{{$context.item.enable}}" onclick="javascript:this.dataset.enable == 'false' || __menusDialog.select(this.dataset.id);" style="width:100%;cursor:hand;cursor:pointer;">
 								<input data-juice="CheckBox" data-juice-bind="item.__selected"/>
-								<img data-juice="Image" data-juice-bind="item.icon" data-juice-width="24" data-juice-height="24" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAABGdBTUEAALGOfPtRkwAAACBjSFJNAAB6JQAAgIMAAPn/AACA6QAAdTAAAOpgAAA6mAAAF2+SX8VGAAADe0lEQVR42mL8//8/w7J1Wxl+//4t+vf3r3RGJiZ+BgYGRgbiwf9fv36fY+PgWM7OxsYAMg8GooN9GAACiAXE+PfvHwMnO1u0jZ1FMxsbO0QR1ApGKIORkQHFXhD/H0gdEL9+85bh+u173p+/fi9iYWV9xYBkCUAAMYEtAArwcHOLc3JyMvz8/Yfh95+/DH/+/GP48xeG/zMAKSAG0kC1IO3/wJYwAR3HwKCipMDg6+EczcnOOvXnz58sjIwIhwAEEBPcn////fsLMgVqAJiEOBDCA4tDBMA+BHkShJmYGH7++s3AysLCYGagG8LJyrIAGNwCMEsAAghhAdTfjGAMCxpGBiYmiBgsuBjBfCaIPBNELdBxDEDXMQgLCTA42JhFs7EyZ4KCHQQAAghuASMstJEMR/Ip0GAGiOUwWagkCwszw/sPHxmu37zF8PDxE2DQ/mEQFuDL+frtmwhIHiCAWFDSAyMjwuWM0JiEIKiroQ6BijNBHcDDzcPAycEF9i0rKwsDCzOzyO9fv4SAUm8AAgjJgv9QOxgZkJINqquRDGdkRDiIBRj+rGwQB3BycDCwc3D8ZYQaCBBATCgegGOoIUwwQzENh1sM4QAj/D/coUxIYQsQQCwY2QZuCCOS4Qx4DEf4mhGJDQMAAcSCajaSITBf4HU5MB6QEwcjQhwGAAIILZIZ4N6Du5wJ1XUoFoKMZ0LkckZGzEIGIIBYsIXQ///oBiGlIkaEz5hQfIucGBAAIIBQgwgsxQTU+B/hcnhKYkAKFojLkcIGkUrQAEAAYcQBcrJkwBos0IhnRMqe4FSEHMEImwACCDOIkBgIy7C7HCHOAC820AFAAGFEMs6kiNXlqCmHEUsYAQQQC3oEMyEbiFQ2geME3eWMjEjFCarhsGwHEEAsGB5AKiIghjAhJVsCLscSRAABBNbNzMyMko5QS1XiDYflIVC9wQasPkEAIIDAFnz5/BlRxsPKFuS6ATlnMzKCDWJE8zojUi7jYOdguHLpIpgNEEDg2omHl5dh+pwF3UD2/99//oExsHoE43//SQfXbt39Z2JupQEyGyCAWKA+YFm/ZtVVHW2tD0xMTGyQepIR1YXIgcyIFIuMqBkVqJ9h7769269dufQeJAYQQIwgW4DeYwNiHikZOTFeXj5WEpstKA75C6zYnzx88Pr7929fgWZ/AQgwAKHLIxFKOBpdAAAAAElFTkSuQmCC" style="vertical-align:middle;"/>
+								<img class="icon" data-juice="Image" data-juice-bind="item.icon" data-juice-width="24" data-juice-height="24" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
 								<label data-juice="Label" data-juice-bind="item.name"></label>
 							</div>
 						</li>
@@ -1177,7 +1197,7 @@
 				<br/>
 				<div style="text-align:right;">
 					<button onclick="javascript:__menusDialog.confirm();">
-						<i class="icon-check"></i>
+						<i class="icon-confirm"></i>
 						<spring:message code="application.text.confirm"/>
 					</button>
 				</div>

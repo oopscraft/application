@@ -27,10 +27,10 @@ public class RoleService {
 		}else {
 			switch(searchType) {
 				case ID :
-					rolesPage = roleRepository.findByIdStartingWith(searchValue, pageable);
+					rolesPage = roleRepository.findByIdContaining(searchValue, pageable);
 				break;
 				case NAME :
-					rolesPage = roleRepository.findByNameStartingWith(searchValue, pageable);
+					rolesPage = roleRepository.findByNameContaining(searchValue, pageable);
 				break;
 			}
 		}

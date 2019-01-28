@@ -6,21 +6,16 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <script type="text/javascript">
 var messageSearch = new juice.data.Map({
-	 type: null
-	,value: null
+	 rows: 30
 	,page: 1
-	,rows: 30
+	,searchType: null
+	,searchValue: null
 	,totalCount:-1
-});
-messageSearch.afterChange(function(event){
-	if(event.name == 'type'){
-		this.set('value','');
-	}
 });
 var messageSearchTypes = [
 	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
-	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
-	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
+	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
+	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 ];
 var messages = new juice.data.List();
 var message = new juice.data.Map();
@@ -217,8 +212,8 @@ function deleteMessage() {
 	<div class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="messageSearch.type" data-juice-options="messageSearchTypes" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="messageSearch.value" style="width:100px;"/>
+				<select data-juice="ComboBox" data-juice-bind="messageSearch.searchType" data-juice-options="messageSearchTypes" style="width:100px;"></select>
+				<input data-juice="TextField" data-juice-bind="messageSearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getMessages();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>

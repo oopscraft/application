@@ -2,47 +2,21 @@ package net.oopscraft.application.code;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import net.oopscraft.application.code.repository.CodeRepository;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.TextTable;
 
 @Service
 public class CodeService {
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(CodeService.class);
-	
 	@Autowired
 	CodeRepository codeRepository;
 	
-
-	/**
-	 * Search condition class 
-	 *
-	 */
-	public class CodeSearch {
-		String id;
-		String name;
-		public String getId() {
-			return id;
-		}
-		public void setId(String id) {
-			this.id = id;
-		}
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-	}
+	public enum CodeSearchType { ID,NAME	}
 	
 	/**
 	 * Gets codes
@@ -52,23 +26,23 @@ public class CodeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Code> getCodes(CodeSearch codeSearch, PageInfo pageInfo ) throws Exception {
-		List<Code> codes = null;
-		Page<Code> page = null;
+	public List<Code> getCodes(PageInfo pageInfo, CodeSearchType searchType, String searchValue) throws Exception {
 		Pageable pageable = pageInfo.toPageable();
-		if(!StringUtils.isEmpty(codeSearch.getId())) {
-			page = codeRepository.findByIdStartingWith(codeSearch.getId(), pageable);
-		}else if(!StringUtils.isEmpty(codeSearch.getId())) {
-			page = codeRepository.findByNameStartingWith(codeSearch.getName(), pageable);
+		Page<Code> codesPage = null;
+		if(searchType == null) {
+			codesPage = codeRepository.findAll(pageable);
 		}else {
-			page = codeRepository.findAllByOrderBySystemDataYn(pageable);
+			switch(searchType) {
+				case ID :
+					codesPage = codeRepository.findByIdContaining(searchValue, pageable);
+				break;
+				case NAME :
+					codesPage = codeRepository.findByNameContaining(searchValue, pageable);
+				break;
+			}
 		}
-		codes = page.getContent();
-		if (pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(page.getTotalElements());
-		}
-		LOGGER.debug("{}", new TextTable(codes));
-		return codes;
+		pageInfo.setTotalCount(codesPage.getTotalElements());
+		return codesPage.getContent();
 	}
 	
 	/**

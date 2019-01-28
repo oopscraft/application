@@ -12,8 +12,8 @@ public interface AuthorityRepository extends JpaRepository<Authority,String> {
 	
 	public Page<Authority> findAllByOrderBySystemDataYnDescSystemInsertDateDesc(Pageable pageable) throws Exception;
 
-	public Page<Authority> findByIdStartingWith(String id, Pageable pageable) throws Exception;
+	public Page<Authority> findByIdContaining(String id, Pageable pageable) throws Exception;
 	
-	public Page<Authority> findByNameStartingWith(String name, Pageable pageable) throws Exception;
+	public Page<Authority> findByNameContaining(String name, Pageable pageable) throws Exception;
 
 }

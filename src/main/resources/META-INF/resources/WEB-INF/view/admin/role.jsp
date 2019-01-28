@@ -7,23 +7,16 @@
 <script type="text/javascript">
 /* role search condition */
 var roleSearch = new juice.data.Map({
-	 key: null
-	,value: null
+	 rows: 30
 	,page: 1
-	,rows: 30
+	,searchType: null
+	,searchValue: null
 	,totalCount:-1
-});
-/* defines roleSearch Map change event handler */
-roleSearch.afterChange(function(event){
-	/* reset value when key changed */
-	if(event.name == 'type'){
-		this.set('value','');
-	}
 });
 var roleSearchTypes = [
 	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
-	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
-	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
+	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
+	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 ];
 var roles = new juice.data.List();
 var role = new juice.data.Map();
@@ -251,8 +244,8 @@ function deleteRole() {
 	<div class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="roleSearch.key" data-juice-options="roleSearchTypes" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="roleSearch.value" style="width:100px;"/>
+				<select data-juice="ComboBox" data-juice-bind="roleSearch.searchType" data-juice-options="roleSearchTypes" style="width:100px;"></select>
+				<input data-juice="TextField" data-juice-bind="roleSearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getRoles();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>

@@ -12,8 +12,8 @@ public interface RoleRepository extends JpaRepository<Role,String> {
 	
 	public Page<Role> findAllByOrderBySystemDataYnDescSystemInsertDateDesc(Pageable pageable) throws Exception;
 
-	public Page<Role> findByIdStartingWith(String id, Pageable pageable) throws Exception;
+	public Page<Role> findByIdContaining(String id, Pageable pageable) throws Exception;
 	
-	public Page<Role> findByNameStartingWith(String name, Pageable pageable) throws Exception;
+	public Page<Role> findByNameContaining(String name, Pageable pageable) throws Exception;
 	
 }

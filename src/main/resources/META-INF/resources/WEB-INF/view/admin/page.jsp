@@ -7,21 +7,16 @@
 <%@taglib prefix="app" uri="http://application.oopscraft.net"%>
 <script type="text/javascript">
 var pageSearch = new juice.data.Map({
-	 key: null
-	,value: null
+	 rows: 30
 	,page: 1
-	,rows: 30
+	,searchType: null
+	,searchValue: null
 	,totalCount:-1
 });
-pageSearch.afterChange(function(event){
-	if(event.name == 'key'){
-		this.set('value','');
-	}
-});
-var pageSearchKeys = [
+var pageSearchTypes = [
 	 { value:'', text:'- <spring:message code="application.text.all"/> -' }
-	,{ value:'id', text:'<spring:message code="application.text.id"/>' }
-	,{ value:'name', text:'<spring:message code="application.text.name"/>' }
+	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
+	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 ];
 var pages = new juice.data.List();
 var page = new juice.data.Map();
@@ -275,9 +270,9 @@ function openPage() {
 		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="pageSearch.key" data-juice-options="pageSearchKeys" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="pageSearch.value" style="width:100px;"/>
-				<button onclick="javascript:getBoards();">
+				<select data-juice="ComboBox" data-juice-bind="pageSearch.searchType" data-juice-options="pageSearchTypes" style="width:100px;"></select>
+				<input data-juice="TextField" data-juice-bind="pageSearch.searchValue" style="width:100px;"/>
+				<button onclick="javascript:getPages();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
 				</button>
