@@ -103,7 +103,7 @@ body > main > section {
 				<img data-juice="Image" data-juice-bind="__user.avatar" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:32px; height:32px; border-radius:50%;"/>
 				<label data-juice="Label" data-juice-bind="__user.nickname"></label>
 			</span>
-			&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;
 			<span>
 				<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_logout.png"/>
 				<a href="${pageContext.request.contextPath}/user/logout">
@@ -118,7 +118,7 @@ body > main > section {
 					<spring:message code="application.label.login"/>
 				</a>
 			</span>
-			&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;
 			<span>
 				<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_join.png"/>
 				<a href="${pageContext.request.contextPath}/user/join">
