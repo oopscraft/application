@@ -26,6 +26,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 
+import net.oopscraft.application.core.StringUtils;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserLogin;
 import net.oopscraft.application.user.repository.UserLoginRepository;
@@ -57,14 +58,6 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
 	 */
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-		response.setStatus(HttpServletResponse.SC_OK);
-		OutputStream out = response.getOutputStream();
-		String referer = request.getHeader("referer");
-		if(referer != null && referer.isEmpty() == true) {
-			out.write(referer.getBytes());
-		}else {
-			out.write("/admin".getBytes());
-		}
 		
 		// issue JWT access token.
 		try {
@@ -89,6 +82,9 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
 		userLogin.setAgent(request.getHeader("User-Agent"));
 		userLogin.setReferer(request.getHeader("referer"));
 		userLoginRepository.saveAndFlush(userLogin);
+
+		// sets response header
+		response.setStatus(HttpServletResponse.SC_OK);
 	}
 	
 	/**

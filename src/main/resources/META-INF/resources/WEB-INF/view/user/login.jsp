@@ -48,11 +48,11 @@ function doLogin() {
 	}
 	
 	$.ajax({
-		 url: '/admin/login/processing'
+		 url: '/user/login/processing'
 		,type: 'POST'
 		,data: user.toJson()
 		,success: function(data, textStatus, jqXHR) {
-			location.href='${pageContext.request.contextPath}/admin';
+			location.href='${pageContext.request.contextPath}/';
     	 }
 	 	,error: function(jqXHR, textStatus, errorThrown) {
 	 		var message = jqXHR.responseText;

@@ -3,9 +3,9 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@page import="java.util.*" %>
-<%@page import="java.text.*" %>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="app" uri="http://application.oopscraft.net"%>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -71,9 +71,8 @@
 		/**
 		 * login user information
 		 */
-		var __user = new juice.data.Map({
-			language: '${pageContext.response.locale}'
-		});
+		var __user = new juice.data.Map(${app:toJson(__user)});
+		__user.set('language', '${pageContext.response.locale}');
 		__user.afterChange(function(event){
 			if(event.name == 'language'){
 				window.location = '?language=' + event.value;

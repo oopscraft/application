@@ -4,6 +4,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <style type="text/css">
 * {
 	margin: 0px;
@@ -92,22 +93,44 @@ body > main > section {
 </style>
 <header>
 	<span>
-		<a href="monitor">
+		<a href="${pageContext.request.contextPath}/">
 			<img src="${pageContext.request.contextPath}/static/img/application.png"/>
 		</a>
 	</span>
 	<nav class="topNav" style="padding-right:10px;">
+		<sec:authorize access="isAuthenticated()">
+			<span>
+				<img data-juice="Image" data-juice-bind="__user.avatar" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:32px; height:32px; border-radius:50%;"/>
+				<label data-juice="Label" data-juice-bind="__user.nickname"></label>
+			</span>
+			&nbsp;&nbsp;&nbsp;
+			<span>
+				<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_logout.png"/>
+				<a href="${pageContext.request.contextPath}/user/logout">
+					<spring:message code="application.label.logout"/>
+				</a>
+			</span>
+		</sec:authorize>
+		<sec:authorize access="!isAuthenticated()">
+			<span>
+				<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_login.png"/>
+				<a href="${pageContext.request.contextPath}/user/login">
+					<spring:message code="application.label.login"/>
+				</a>
+			</span>
+			&nbsp;&nbsp;&nbsp;
+			<span>
+				<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_join.png"/>
+				<a href="${pageContext.request.contextPath}/user/join">
+					<spring:message code="application.label.join"/>
+				</a>
+			</span>
+		</sec:authorize>
+		&nbsp;&nbsp;|&nbsp;&nbsp;
 		<span>
 			<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_language.png"/>
 			<spring:message code="application.label.language"/>
 			<select data-juice="ComboBox" data-juice-bind="__user.language" data-juice-options="__languages" style="width:10rem;"></select>
-		</span>
-		&nbsp;&nbsp;|&nbsp;&nbsp;
-		<span>
-			<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_logout.png"/>
-			<a href="${pageContext.request.contextPath}/admin/logout">
-				<spring:message code="application.label.logout"/>
-			</a>
 		</span>
 	</nav>
 </header>

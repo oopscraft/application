@@ -3,9 +3,9 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@page import="java.util.*" %>
-<%@page import="java.text.*" %>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="app" uri="http://application.oopscraft.net"%>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -19,8 +19,9 @@
  		<script src="${pageContext.request.contextPath}/static/lib/Chart.js/Chart.js"></script>
  		<link href="${pageContext.request.contextPath}/static/icon/css/icon.css" rel="stylesheet">
  		
- 		<!-- polyfill -->	
-		<script src="https://polyfill.io/v3/polyfill.min.js"></script>
+ 		<!-- polyfill -->
+		<script src="${pageContext.request.contextPath}/static/lib/polyfill/dataset.js"></script>
+		<script src="${pageContext.request.contextPath}/static/lib/polyfill/classList.js"></script>
 		
  		<!-- web font -->
  		<link href="${pageContext.request.contextPath}/static/font/code.css" rel="stylesheet" type="text/css" />
@@ -137,14 +138,17 @@
 		/**
 		 * login user information
 		 */
-		var __user = new juice.data.Map({
-			language: '${pageContext.response.locale}'
-		});
+		var __user = new juice.data.Map(${app:toJson(__user)});
+		__user.set('language', '${pageContext.response.locale}');
 		__user.afterChange(function(event){
 			if(event.name == 'language'){
 				window.location = '?language=' + event.value;
 			}
-		});	 
+		});	
+		
+		/**
+		 * Gets languages
+		 */
 		var __languages = new Array();
 		$( document ).ready(function() {
 			$.ajax({
@@ -472,17 +476,24 @@
 				</a>
 			</span>
 			<nav class="topNav" style="padding-right:10px;">
+				<sec:authorize access="isAuthenticated()">
+					<span>
+						<img data-juice="Image" data-juice-bind="__user.avatar" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:32px; height:32px; border-radius:50%;"/>
+						<label data-juice="Label" data-juice-bind="__user.nickname"></label>
+					</span>
+					&nbsp;&nbsp;&nbsp;
+					<span>
+						<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_logout.png"/>
+						<a href="${pageContext.request.contextPath}/admin/logout">
+							<spring:message code="application.label.logout"/>
+						</a>
+					</span>
+				</sec:authorize>
+				&nbsp;&nbsp;|&nbsp;&nbsp;
 				<span>
 					<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_language.png"/>
 					<spring:message code="application.label.language"/>
 					<select data-juice="ComboBox" data-juice-bind="__user.language" data-juice-options="__languages" data-juice-option-value="language" data-juice-option-text="displayName" style="width:10rem;"></select>
-				</span>
-				&nbsp;&nbsp;|&nbsp;&nbsp;
-				<span>
-					<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_logout.png"/>
-					<a href="${pageContext.request.contextPath}/admin/logout">
-						<spring:message code="application.label.logout"/>
-					</a>
 				</span>
 			</nav>
 		</header>
