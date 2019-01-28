@@ -18,3 +18,19 @@ VALUES
 ;
 
 flush privileges;
+
+
+################################################################################
+# Oracle Installation
+################################################################################
+# create user
+CREATE USER ${username} 
+IDENTIFIED BY ${password};
+
+# grant privileges
+GRANT CONNECT,RESOURCE TO ${username};
+
+
+
+
+
