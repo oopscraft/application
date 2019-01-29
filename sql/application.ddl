@@ -55,7 +55,7 @@ CREATE TABLE APP_CD_ITEM_INFO(
 		CD_ID                         		VARCHAR2(32)		 NOT NULL,
 		CD_ITEM_ID                    		VARCHAR2(32)		 NOT NULL,
 		CD_ITEM_NAME                  		VARCHAR2(256)		 NULL ,
-		DISP_SEQ                      		INTEGER(10)		 NULL 
+		DISP_SEQ                      		INTEGER		 NULL 
 );
 
 COMMENT ON TABLE APP_CD_ITEM_INFO is 'Application Code Item Info';
@@ -225,7 +225,7 @@ CREATE TABLE APP_USER_INFO(
 		USER_NAME                     		VARCHAR2(256)		 NULL ,
 		USER_STAT                     		VARCHAR2(16)		 NULL ,
 		USER_NICK                     		VARCHAR2(256)		 NULL ,
-		USER_AVAT                     		BLOB		 NULL ,
+		USER_AVAT                     		CLOB		 NULL ,
 		USER_SIGN                     		VARCHAR2(4000)		 NULL ,
 		USER_JOIN_DTTM                		DATE		 NULL ,
 		USER_CLOS_DTTM                		DATE		 NULL 
@@ -301,7 +301,7 @@ CREATE TABLE APP_PROP_INFO(
 		SYS_UPDT_DTTM                 		DATE		 NULL ,
 		SYS_UPDT_USER_ID              		VARCHAR2(32)		 NULL ,
 		PROP_NAME                     		VARCHAR2(256)		 NULL ,
-		PROP_VAL                      		VARCHAR2(256)		 NULL ,
+		PROP_VAL                      		VARCHAR2(4000)		 NULL ,
 		PROP_DESC                     		VARCHAR2(4000)		 NULL 
 );
 
@@ -328,7 +328,7 @@ CREATE TABLE APP_MSG_INFO(
 		SYS_UPDT_DTTM                 		DATE		 NULL ,
 		SYS_UPDT_USER_ID              		VARCHAR2(32)		 NULL ,
 		MSG_NAME                      		VARCHAR2(256)		 NULL ,
-		MSG_VAL                       		INTEGER		 NULL ,
+		MSG_VAL                       		VARCHAR2(4000)		 NULL ,
 		MSG_DESC                      		VARCHAR2(4000)		 NULL 
 );
 
@@ -431,7 +431,7 @@ CREATE TABLE APP_ATCL_RPLY_INFO(
 		RPLY_SEQ                      		INTEGER		 NULL ,
 		RPLY_LEVL                     		VARCHAR2(8)		 NULL ,
 		RPLY_CNTS                     		CLOB		 NULL ,
-		RPLY_USER_ID                  		INTEGER(32)		 NULL ,
+		RPLY_USER_ID                  		VARCHAR2(32)		 NULL ,
 		RPLY_USER_NICK                		VARCHAR2(256)		 NULL ,
 		RPLY_RGST_DTTM                		DATE		 NULL ,
 		RPLY_MDFY_DTTM                		DATE		 NULL 
