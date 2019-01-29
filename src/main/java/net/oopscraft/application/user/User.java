@@ -6,10 +6,13 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -47,6 +50,7 @@ public class User extends SystemEntity {
 		ACTIVE, SUSPENDED, CLOSED
 	}
 	@Column(name = "USER_STAT")
+	@Enumerated(EnumType.STRING)
 	Status status = Status.ACTIVE;
 
 	@Column(name = "USER_NICK")

@@ -31,7 +31,6 @@
 		<url>${application.dataSource.url}</url>
 		<username>${application.dataSource.username}</username>
 		<password>${application.dataSource.password}</password>
-		<defaultAutoCommit>${application.dataSource.defaultAutoCommit}</defaultAutoCommit>
 		<initialSize>${application.dataSource.initialSize}</initialSize>
 		<maxActive>${application.dataSource.maxActive}</maxActive>
 		<validationQuery>${application.dataSource.validationQuery}</validationQuery>
