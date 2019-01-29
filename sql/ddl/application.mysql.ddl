@@ -384,7 +384,7 @@ CREATE TABLE APP_PROP_INFO(
 		SYS_UPDT_DTTM                 		DATETIME		 NULL COMMENT 'System Updte Datetime' ,
 		SYS_UPDT_USER_ID              		VARCHAR(32)		 NULL COMMENT 'System Update User ID' ,
 		PROP_NAME                     		VARCHAR(256)		 NULL COMMENT 'Property Name' ,
-		PROP_VAL                      		VARCHAR(256)		 NULL COMMENT 'Property Value' ,
+		PROP_VAL                      		VARCHAR(4000)		 NULL COMMENT 'Property Value' ,
 		PROP_DESC                     		VARCHAR(4000)		 NULL COMMENT 'Property Description' 
 );
 
@@ -420,7 +420,7 @@ CREATE TABLE APP_MSG_INFO(
 		SYS_UPDT_DTTM                 		DATETIME		 NULL COMMENT 'System Updte Datetime' ,
 		SYS_UPDT_USER_ID              		VARCHAR(32)		 NULL COMMENT 'System Update User ID' ,
 		MSG_NAME                      		VARCHAR(256)		 NULL COMMENT 'Message Name' ,
-		MSG_VAL                       		INTEGER		 NULL COMMENT 'Message Value' ,
+		MSG_VAL                       		VARCHAR(4000)		 NULL COMMENT 'Message Value' ,
 		MSG_DESC                      		VARCHAR(4000)		 NULL COMMENT 'Message Description' 
 );
 

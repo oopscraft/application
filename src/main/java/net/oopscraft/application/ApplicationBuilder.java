@@ -209,6 +209,7 @@ public class ApplicationBuilder {
 			
 			// parses dataSource properties
 			Properties datasourceProperties = new Properties();
+			datasourceProperties.put("defaultAutoCommit", false);
 			NodeList propertiesNodeList = (NodeList) xPathReader.getElement(dataSourceExpression + "/*");
 			for(int i = 0; i < propertiesNodeList.getLength(); i ++) {
 				Node propertyNode = propertiesNodeList.item(i);
