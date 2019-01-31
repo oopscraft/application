@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.oopscraft</groupId>
 	<artifactId>application</artifactId>
-	<version>1.0.SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	
 	<properties>
@@ -103,6 +103,7 @@
 					<skipTests>true</skipTests>
 					<outputDirectory>./lib</outputDirectory>
 					<overWriteIfNewer>true</overWriteIfNewer>
+					<includeScope>system</includeScope>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -110,6 +111,16 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3.1</version>
 				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>./lib/</classpathPrefix>
+							<mainClass>net.oopscraft.application.ApplicationContainer</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>lib/ojdbc6-4.0.jar</Class-Path>
+						</manifestEntries>
+					</archive>
 					<outputDirectory>./</outputDirectory>
 				</configuration>
 			</plugin>
