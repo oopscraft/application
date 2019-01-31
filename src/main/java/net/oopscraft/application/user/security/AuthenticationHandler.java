@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,15 +27,14 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 
-import net.oopscraft.application.core.StringUtils;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserLogin;
 import net.oopscraft.application.user.repository.UserLoginRepository;
 
 @Component
-public class SecurityHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler {
+public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationHandler.class);
 
 	@Autowired
 	HttpServletRequest request;
@@ -58,6 +58,12 @@ public class SecurityHandler implements AuthenticationSuccessHandler, Authentica
 	 */
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+		
+		// Remember me
+		Cookie cookie = new Cookie("cookie_value", "cookie_value");
+	    cookie.setPath("/");
+		cookie.setMaxAge(60*3);
+		response.addCookie(cookie);
 		
 		// issue JWT access token.
 		try {

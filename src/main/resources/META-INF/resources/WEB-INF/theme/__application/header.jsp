@@ -138,6 +138,12 @@ body > main > section {
 	<!-- ====================================================== -->
 	<!-- Navigation												-->
 	<!-- ====================================================== -->
+	<c:set var="requestUri" value="${requestScope['javax.servlet.forward.request_uri']}"/>
+	<c:if test="${
+	fn:contains(requestUri,'/user/login') == false
+	&& fn:contains(requestUri,'/user/join') == false
+	&& fn:contains(requestUri,'/user/profile') == false
+	}">
 	<nav class="leftNav">
 		<ul data-juice="TreeView" data-juice-bind="__menus" data-juice-item="menu">
 			<li>
@@ -148,6 +154,7 @@ body > main > section {
 			</li>
 		</ul>
 	</nav>
+	</c:if>
 	<!-- ====================================================== -->
 	<!-- Section												-->
 	<!-- ====================================================== -->

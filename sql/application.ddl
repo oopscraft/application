@@ -55,7 +55,7 @@ CREATE TABLE APP_CD_ITEM_INFO(
 		CD_ID                         		VARCHAR2(32)		 NOT NULL,
 		CD_ITEM_ID                    		VARCHAR2(32)		 NOT NULL,
 		CD_ITEM_NAME                  		VARCHAR2(256)		 NULL ,
-		DISP_SEQ                      		INTEGER		 NULL 
+		DISP_SEQ                      		NUMBER		 NULL 
 );
 
 COMMENT ON TABLE APP_CD_ITEM_INFO is 'Application Code Item Info';
@@ -78,7 +78,7 @@ CREATE TABLE APP_GROP_INFO(
 		UPER_GROP_ID                  		VARCHAR2(32)		 NULL ,
 		GROP_NAME                     		VARCHAR2(256)		 NULL ,
 		GROP_DESC                     		VARCHAR2(4000)		 NULL ,
-		DISP_SEQ                      		INTEGER		 NULL 
+		DISP_SEQ                      		NUMBER		 NULL 
 );
 
 COMMENT ON TABLE APP_GROP_INFO is 'Application Group Info';
@@ -157,11 +157,11 @@ CREATE TABLE APP_MENU_INFO(
 		SYS_UPDT_USER_ID              		VARCHAR2(32)		 NULL ,
 		UPER_MENU_ID                  		VARCHAR2(32)		 NULL ,
 		MENU_NAME                     		VARCHAR2(256)		 NULL ,
-		MENU_ICON                     		BLOB		 NULL ,
+		MENU_ICON                     		CLOB		 NULL ,
 		MENU_LINK                     		VARCHAR2(256)		 NULL ,
 		MENU_DESC                     		VARCHAR2(4000)		 NULL ,
 		DISP_PLCY                     		VARCHAR2(128)		 NULL ,
-		DISP_SEQ                      		INTEGER		 NULL 
+		DISP_SEQ                      		NUMBER		 NULL 
 );
 
 COMMENT ON TABLE APP_MENU_INFO is 'Application Menu Information';
@@ -301,7 +301,7 @@ CREATE TABLE APP_PROP_INFO(
 		SYS_UPDT_DTTM                 		DATE		 NULL ,
 		SYS_UPDT_USER_ID              		VARCHAR2(32)		 NULL ,
 		PROP_NAME                     		VARCHAR2(256)		 NULL ,
-		PROP_VAL                      		VARCHAR2(4000)		 NULL ,
+		PROP_VAL                      		CLOB		 NULL ,
 		PROP_DESC                     		VARCHAR2(4000)		 NULL 
 );
 
@@ -328,7 +328,7 @@ CREATE TABLE APP_MSG_INFO(
 		SYS_UPDT_DTTM                 		DATE		 NULL ,
 		SYS_UPDT_USER_ID              		VARCHAR2(32)		 NULL ,
 		MSG_NAME                      		VARCHAR2(256)		 NULL ,
-		MSG_VAL                       		VARCHAR2(4000)		 NULL ,
+		MSG_VAL                       		CLOB		 NULL ,
 		MSG_DESC                      		VARCHAR2(4000)		 NULL 
 );
 
@@ -350,12 +350,12 @@ COMMENT ON COLUMN APP_MSG_INFO.MSG_DESC is 'Message Description';
 CREATE TABLE APP_BORD_INFO(
 		BORD_ID                       		VARCHAR2(32)		 NOT NULL,
 		BORD_NAME                     		VARCHAR2(256)		 NULL ,
-		BORD_ICON                     		BLOB		 NULL ,
+		BORD_ICON                     		CLOB		 NULL ,
 		BORD_SKIN                     		VARCHAR2(128)		 NULL ,
 		ACES_PLCY                     		VARCHAR2(128)		 NULL ,
 		READ_PLCY                     		VARCHAR2(128)		 NULL ,
 		WRIT_PLCY                     		VARCHAR2(128)		 NULL ,
-		ROWS_PER_PAGE                 		INTEGER		 NULL ,
+		ROWS_PER_PAGE                 		NUMBER		 NULL ,
 		CATE_USE_YN                   		VARCHAR2(1)		 NULL ,
 		RPLY_USE_YN                   		VARCHAR2(1)		 NULL ,
 		FILE_USE_YN                   		VARCHAR2(1)		 NULL 
@@ -382,7 +382,7 @@ CREATE TABLE APP_BORD_CATE_INFO(
 		BORD_ID                       		VARCHAR2(32)		 NOT NULL,
 		CATE_ID                       		VARCHAR2(32)		 NOT NULL,
 		CATE_NAME                     		VARCHAR2(256)		 NULL ,
-		DISP_SEQ                      		INTEGER		 NULL 
+		DISP_SEQ                      		NUMBER		 NULL 
 );
 
 COMMENT ON TABLE APP_BORD_CATE_INFO is 'Application Board Category';
@@ -405,7 +405,7 @@ CREATE TABLE APP_ATCL_INFO(
 		ATCL_USER_NICK                		VARCHAR2(256)		 NULL ,
 		ATCL_RGST_DTTM                		DATE		 NULL ,
 		ATCL_MDFY_DTTM                		DATE		 NULL ,
-		READ_CNT                      		INTEGER		 DEFAULT 0		 NULL 
+		READ_CNT                      		NUMBER		 DEFAULT 0		 NULL 
 );
 
 COMMENT ON TABLE APP_ATCL_INFO is 'Application Board Article';
@@ -428,7 +428,7 @@ CREATE TABLE APP_ATCL_RPLY_INFO(
 		ATCL_ID                       		VARCHAR2(32)		 NOT NULL,
 		RPLY_ID                       		VARCHAR2(32)		 NOT NULL,
 		UPER_RPLY_ID                  		VARCHAR2(32)		 NULL ,
-		RPLY_SEQ                      		INTEGER		 NULL ,
+		RPLY_SEQ                      		NUMBER		 NULL ,
 		RPLY_LEVL                     		VARCHAR2(8)		 NULL ,
 		RPLY_CNTS                     		CLOB		 NULL ,
 		RPLY_USER_ID                  		VARCHAR2(32)		 NULL ,
@@ -458,7 +458,7 @@ CREATE TABLE APP_ATCL_FILE_INFO(
 		FILE_ID                       		VARCHAR2(32)		 NOT NULL,
 		FILE_NAME                     		VARCHAR2(256)		 NULL ,
 		FILE_TYPE                     		VARCHAR2(128)		 NULL ,
-		FILE_SIZE                     		INTEGER		 NULL 
+		FILE_SIZE                     		NUMBER		 NULL 
 );
 
 COMMENT ON TABLE APP_ATCL_FILE_INFO is 'Application Article File Info';
@@ -479,7 +479,7 @@ CREATE TABLE APP_USER_LOGN_HIST(
 		LOGN_FAIL_RESN                		VARCHAR2(1024)		 NULL ,
 		LOGN_IP                       		VARCHAR2(128)		 NULL ,
 		LOGN_AGNT                     		VARCHAR2(1024)		 NULL ,
-		LOGN_REFR                     		VARCHAR2(256)		 NULL 
+		LOGN_REFR                     		VARCHAR2(1024)		 NULL 
 );
 
 COMMENT ON TABLE APP_USER_LOGN_HIST is 'Application User Login History';
@@ -641,7 +641,8 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
 INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES ('SAMPLE_CD', 'ITEM_4','Sample Code Item Name', 4);
 INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES ('SAMPLE_CD', 'ITEM_5','Sample Code Item Name', 5);
 
-INSERT INTO APP_USER_INFO (USER_ID,SYS_DATA_YN,USER_NAME,USER_PWD) VALUES ('admin','Y','Administrator','$2a$10$ELs7fvpZii3P.KFYaQEJfOeN3iFjQefnY.SXPnLh6mtENV1Rvxc/C');
+INSERT INTO APP_USER_INFO (USER_ID,SYS_DATA_YN,USER_NAME,USER_PWD,USER_EMIL,USER_PHON,USER_LC,USER_STAT,USER_NICK) VALUES ('admin','Y','Administrator','$2a$10$ELs7fvpZii3P.KFYaQEJfOeN3iFjQefnY.SXPnLh6mtENV1Rvxc/C','admin@oopscraft.net','010-1234-1234', 'en_US','ACTIVE','Admin');
+
 
 INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES ('admin', 'ADMIN');
 INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES ('admin', 'ADMIN_MONITOR');

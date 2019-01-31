@@ -8,7 +8,8 @@
 <script type="text/javascript">
 var user = new juice.data.Map({
 	id: null,
-	pasword: null
+	password: null,
+	'_spring_security_remember_me': false
 });
 
 /**
