@@ -6,6 +6,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -21,12 +22,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.User;
 
 @Component
-public class SecurityFilter extends GenericFilterBean   {
+public class AuthenticationFilter extends GenericFilterBean   {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(SecurityFilter.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(AuthenticationFilter.class);
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 	
 	@Autowired
@@ -38,6 +40,15 @@ public class SecurityFilter extends GenericFilterBean   {
         String method = request.getMethod();
         LOGGER.info(String.format("[%s][%s]",  method, uri));
         
+        
+        // print remember cookie for test
+        if(request.getCookies() != null) {
+	        for(Cookie cookie : request.getCookies()) {
+	        	LOGGER.info("Cookie:{}", new TextTable(cookie));
+	        }
+        }
+        
+        // JWT Token
         String authorization = request.getHeader(AUTHORIZATION_HEADER);
         if(StringUtils.isNotEmpty(authorization)) {
         	

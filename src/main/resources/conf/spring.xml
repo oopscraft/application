@@ -184,15 +184,15 @@
 		<security:intercept-url pattern="/admin/login" access="permitAll()"/>
 		<security:intercept-url pattern="/admin/login/*" access="permitAll()"/>
 		<security:intercept-url pattern="/admin/**/*" access="isAuthenticated() and hasAuthority('ADMIN')" />
-		<security:access-denied-handler ref="net.oopscraft.application.user.security.SecurityHandler" />
-		<security:custom-filter ref="net.oopscraft.application.user.security.SecurityFilter" after="CHANNEL_FILTER"/>
+		<security:access-denied-handler ref="net.oopscraft.application.user.security.AuthenticationHandler" />
+		<security:custom-filter ref="net.oopscraft.application.user.security.AuthenticationFilter" after="CHANNEL_FILTER"/>
 		<security:form-login 
 			login-page="/admin/login" 
 			login-processing-url="/admin/login/processing" 
 			username-parameter="id" 
 			password-parameter="password" 
-			authentication-success-handler-ref="net.oopscraft.application.user.security.SecurityHandler"
-			authentication-failure-handler-ref="net.oopscraft.application.user.security.SecurityHandler"
+			authentication-success-handler-ref="net.oopscraft.application.user.security.AuthenticationHandler"
+			authentication-failure-handler-ref="net.oopscraft.application.user.security.AuthenticationHandler"
 			/>
 		<security:logout invalidate-session="true" logout-url="/admin/logout" logout-success-url="/admin" />
 	</security:http>
@@ -200,8 +200,8 @@
 	<!-- API Security Realm -->
 	<security:http realm="api" pattern="/api/**/*" disable-url-rewriting="true" use-expressions="true">
 		<security:csrf disabled="true" />
-		<security:access-denied-handler ref="net.oopscraft.application.user.security.SecurityHandler" />
-		<security:custom-filter ref="net.oopscraft.application.user.security.SecurityFilter" after="CHANNEL_FILTER"/>
+		<security:access-denied-handler ref="net.oopscraft.application.user.security.AuthenticationHandler" />
+		<security:custom-filter ref="net.oopscraft.application.user.security.AuthenticationFilter" after="CHANNEL_FILTER"/>
 		<security:http-basic/>
 	</security:http>
 	
@@ -212,17 +212,25 @@
 	    </security:headers>
 		<security:csrf disabled="true" />
 		<security:intercept-url pattern="/admin/**/*" access="permitAll()"/>
-		<security:access-denied-handler ref="net.oopscraft.application.user.security.SecurityHandler" />
-		<security:custom-filter ref="net.oopscraft.application.user.security.SecurityFilter" after="CHANNEL_FILTER"/>
+		<security:access-denied-handler ref="net.oopscraft.application.user.security.AuthenticationHandler" />
+		<security:custom-filter ref="net.oopscraft.application.user.security.AuthenticationFilter" after="CHANNEL_FILTER"/>
 		<security:form-login 
 			login-page="/user/login" 
 			login-processing-url="/user/login/processing" 
 			username-parameter="id" 
 			password-parameter="password" 
-			authentication-success-handler-ref="net.oopscraft.application.user.security.SecurityHandler"
-			authentication-failure-handler-ref="net.oopscraft.application.user.security.SecurityHandler"
+			authentication-success-handler-ref="net.oopscraft.application.user.security.AuthenticationHandler"
+			authentication-failure-handler-ref="net.oopscraft.application.user.security.AuthenticationHandler"
 			/>
-		<security:logout invalidate-session="true" logout-url="/user/logout" logout-success-url="/" />
+		<security:logout 
+			invalidate-session="true" 
+			delete-cookies="JSESSIONID,SPRING_SECURITY_REMEMBER_ME_COOKIE"
+			logout-url="/user/logout" 
+			logout-success-url="/" 
+			/>
+		<!-- 
+		<security:remember-me key="wmoskey" token-validity-seconds="2419200"/>
+		 --> 
 	</security:http>
 
 </beans>

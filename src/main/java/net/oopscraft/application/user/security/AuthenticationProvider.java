@@ -15,13 +15,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
 
 @Component
@@ -31,6 +29,9 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	UserDetailsService userDetailsService;
 	
 	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -45,15 +46,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		String password = (String) authentication.getCredentials();
 		
 		// loading user information
-		User user;
-		try {
-			user = userService.getUser(id);
-		} catch (Exception e) {
-			throw new UsernameNotFoundException(e.getMessage(), e);
-		}
-		if(user == null) {
-			throw new UsernameNotFoundException(String.format("user[%s] not found.", id));	
-		}
+		UserDetails userDetails = userDetailsService.loadUserByUsername(id);
 		
 		// checking password
 		if(userService.isValidPassword(id, password) == false) {
@@ -61,8 +54,6 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		}
 
 		// return authentication token.
-		UserDetails userDetails = new UserDetails(user);
-		userDetails.loadAuthorities();
 		LOGGER.info("{}", new TextTable(userDetails.getAuthorities()));
 		authentication = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 		return authentication;

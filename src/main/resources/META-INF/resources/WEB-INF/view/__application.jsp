@@ -6,6 +6,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="app" uri="http://application.oopscraft.net"%>
+<c:set var="THEME_URI" value="${pageContext.request.contextPath}/resource/theme/${__config.theme}" scope="request"/>
 <!DOCTYPE html>
 <html>
 	<head>

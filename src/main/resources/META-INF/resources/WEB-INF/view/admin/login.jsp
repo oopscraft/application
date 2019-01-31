@@ -27,7 +27,7 @@
 		<script type="text/javascript">
 		var user = new juice.data.Map({
 			id: null,
-			pasword: null,
+			password: null,
 			language: '${pageContext.response.locale}'
 		});
 		user.afterChange(function(event){
@@ -133,13 +133,6 @@
 			align-items: center;
 			background-color: #eee;
 		}
-		#loginDiv {
-			width: 300px;
-			margin-bottom: 20vh;
-		}
-		#loginDiv > div {
-			margin:2px;
-		}
 		input {
 			border-bottom: solid 1px #ccc;
 			background-color: #fff;
@@ -158,6 +151,13 @@
 			outline: none;
 			background-color: #eee;
 			border: solid 1px gray;
+		}
+		#loginDiv {
+			width: 300px;
+			margin-bottom: 20vh;
+		}
+		#loginDiv > div {
+			margin:2px;
 		}
 		#loginButton {
 			width: 100%;

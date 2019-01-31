@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 
-import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.Role;
@@ -17,7 +14,6 @@ import net.oopscraft.application.user.User;
 public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
 
 	private static final long serialVersionUID = 4282816224569702221L;
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserDetails.class);
 	
 	User user;
 	List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();

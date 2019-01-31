@@ -5,7 +5,6 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@taglib prefix="app" uri="http://application.oopscraft.net"%>
-<c:set var="THEME_URI" value="${pageContext.request.contextPath}/resource/theme/${__config.theme}" scope="request"/>
 <script type="text/javascript">
 /**
  * On document loaded
