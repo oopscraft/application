@@ -181,11 +181,9 @@ public class ApplicationBuilder {
 				String contextExpression = String.format(webServerExpression + "/context[%d]", i);
 				String path = xPathReader.getTextContent(contextExpression + "/@path");
 				String resourceBase = xPathReader.getTextContent(contextExpression + "/resourceBase");
-				String descriptor = xPathReader.getTextContent(contextExpression + "/descriptor");
 				WebServerContext webServerContext = new WebServerContext();
 				webServerContext.setContextPath(path);
 				webServerContext.setResourceBase(resourceBase);
-				webServerContext.setDescriptor(descriptor);
 				webServer.addContext(webServerContext);
 			}
 			

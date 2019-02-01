@@ -38,7 +38,7 @@ public class AuthenticationFilter extends GenericFilterBean   {
     	HttpServletRequest request = (HttpServletRequest) req;
         String uri = request.getRequestURI();
         String method = request.getMethod();
-        LOGGER.info(String.format("[%s][%s]",  method, uri));
+        LOGGER.debug(String.format("[%s][%s]",  method, uri));
         
         
         // print remember cookie for test

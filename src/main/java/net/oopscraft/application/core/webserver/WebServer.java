@@ -59,7 +59,9 @@ public class WebServer {
 			File resourceBase = new File(context.getResourceBase());
 			StandardContext ctx = (StandardContext)tomcat.addWebapp(context.getContextPath(), resourceBase.getAbsolutePath());
 			ctx.addParameter("webAppRootKey", UUID.randomUUID().toString());
-			ctx.setAltDDName(context.getDescriptor());
+			if(context.getDescriptor() != null && context.getDescriptor().trim().length() > 0) {
+				ctx.setAltDDName(context.getDescriptor());
+			}
 			ctx.setReloadable(true);
 			ctx.setParentClassLoader(Thread.currentThread().getContextClassLoader());
 			

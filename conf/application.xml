@@ -19,7 +19,6 @@
 		<keyStorePass>${application.webSerer.keyStorePass}</keyStorePass>
 		<context path="">
 			<resourceBase>webapp</resourceBase>
-			<descriptor>conf/web.xml</descriptor>
 		</context>
 	</webServer>
 
