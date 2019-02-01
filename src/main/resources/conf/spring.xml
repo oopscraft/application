@@ -172,11 +172,6 @@
 		<security:authentication-provider ref="net.oopscraft.application.user.security.AuthenticationProvider"/>
 	</security:authentication-manager>
 	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
-	
-	<!-- Static Resource -->
-	<security:http pattern="/error/**/*" security="none"/>
-	<security:http pattern="/static/**/*" security="none"/>
-	<security:http pattern="/resource/**/*" security="none"/>
 
 	<!-- Administrator Channel -->
 	<security:http realm="admin" pattern="/admin/**/*" disable-url-rewriting="true" use-expressions="true">
@@ -228,9 +223,6 @@
 			logout-url="/user/logout" 
 			logout-success-url="/" 
 			/>
-		<!-- 
-		<security:remember-me key="wmoskey" token-validity-seconds="2419200"/>
-		 --> 
 	</security:http>
 
 </beans>

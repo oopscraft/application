@@ -6,7 +6,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="app" uri="http://application.oopscraft.net"%>
-<c:set var="THEME_URI" value="${pageContext.request.contextPath}/resource/theme/${__config.theme}" scope="request"/>
+<c:set var="THEME_URI" value="${pageContext.request.contextPath}/resources/theme/${__configuration.theme}" scope="request"/>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -205,7 +205,7 @@
 		<!-- ====================================================== -->
 		<!-- Header													-->
 		<!-- ====================================================== -->
-		<jsp:include page="/WEB-INF/theme/${__config.theme}/header.jsp" flush="true"/>
+		<jsp:include page="/WEB-INF/theme/${__configuration.theme}/header.jsp" flush="false"/>
 		
 		<!-- ====================================================== -->
 		<!-- Main													-->
@@ -215,6 +215,6 @@
 		<!-- ====================================================== -->
 		<!-- Footer													-->
 		<!-- ====================================================== -->
-		<jsp:include page="/WEB-INF/theme/${__config.theme}/footer.jsp" flush="true"/>
+		<jsp:include page="/WEB-INF/theme/${__configuration.theme}/footer.jsp" flush="false"/>
 	</body>
 </html>
