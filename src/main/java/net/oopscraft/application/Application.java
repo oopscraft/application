@@ -18,7 +18,7 @@ public class Application {
 	File xmlFile;
 	File propertiesFile;
 	MonitorAgent monitorAgent;
-	Map<String,String>config =new LinkedHashMap<String,String>();
+	Map<String,String>configuration =new LinkedHashMap<String,String>();
 	Map<String,WebServer> webServers = new LinkedHashMap<String,WebServer>();
 	Map<String,DataSource> dataSources = new LinkedHashMap<String,DataSource>();
 	Map<String,LocalContainerEntityManagerFactoryBean> entityManagerFactories = new LinkedHashMap<String,LocalContainerEntityManagerFactoryBean >();
@@ -33,20 +33,20 @@ public class Application {
 		this.propertiesFile = propertiesFile;
 	}
 
-	final void setConfig(String name, String value) {
-		config.put(name, value);
+	final void setConfiguration(String name, String value) {
+		configuration.put(name, value);
 	}
 	
-	final String getConfig(String name) {
-		return config.get(name);
+	final String getConfiguration(String name) {
+		return configuration.get(name);
 	}
 	
-	final void setConfig(Map<String,String> config) {
-		this.config = config;
+	final void setConfiguration(Map<String,String> config) {
+		this.configuration = config;
 	}
 	
-	final Map<String,String> getConfig() {
-		return this.config;
+	final Map<String,String> getConfiguration() {
+		return this.configuration;
 	}
 	
 	final void setMonitorAgent(MonitorAgent monitorAgent) {

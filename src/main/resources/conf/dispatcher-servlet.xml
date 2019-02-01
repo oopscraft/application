@@ -32,8 +32,9 @@
 
 	<!-- ====================================================== -->
 	<!-- Default Servlet Handler								-->
-	<!-- ====================================================== -->
-    <mvc:default-servlet-handler default-servlet-name="default"/>
+	<!-- ====================================================== --> 
+	<mvc:annotation-driven />
+    <mvc:default-servlet-handler/>
     
 	<!-- ====================================================== -->
 	<!-- View Resolver											-->
@@ -65,8 +66,8 @@
 	<!-- ====================================================== -->
 	<!-- Resource Path											-->
 	<!-- ====================================================== -->
-	<mvc:resources location="/WEB-INF/view/" mapping="/resource/view/**"/>
-	<mvc:resources location="/WEB-INF/theme/" mapping="/resource/theme/**"/>
+	<mvc:resources mapping="/resources/view/**" location="/WEB-INF/view/"/>
+	<mvc:resources mapping="/resources/theme/**" location="/WEB-INF/theme/"/>
 	
 
 </beans>

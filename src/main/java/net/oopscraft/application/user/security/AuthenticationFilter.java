@@ -44,7 +44,7 @@ public class AuthenticationFilter extends GenericFilterBean   {
         // print remember cookie for test
         if(request.getCookies() != null) {
 	        for(Cookie cookie : request.getCookies()) {
-	        	LOGGER.info("Cookie:{}", new TextTable(cookie));
+	        	LOGGER.debug("Cookie:{}", new TextTable(cookie));
 	        }
         }
         

@@ -6,7 +6,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <c:choose>
 	<c:when test="${page.type == 'JSP'}">
-		<jsp:include page="${page.value}" flush="true" />
+		<jsp:include page="${page.value}" flush="false"/>
 	</c:when>
 	<c:when test="${page.type == 'URL'}">
 		<iframe style="width:100%; height:100%;border:none;" src="${page.value}"></iframe>

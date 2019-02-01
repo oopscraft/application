@@ -4,9 +4,9 @@
 	<!-- ====================================================== -->
 	<!-- Application Configuration								-->
 	<!-- ====================================================== -->
-	<config>
-		<theme>__application</theme>
-	</config>
+	<configuration>
+		<theme>${application.configuration.theme}</theme>
+	</configuration>
 
 	<!-- ====================================================== -->
 	<!-- Embedded WebServer(Tomcat) Definition					-->
@@ -18,7 +18,7 @@
 		<keyStoreType>${application.webSerer.keyStoreType}</keyStoreType>
 		<keyStorePass>${application.webSerer.keyStorePass}</keyStorePass>
 		<context path="">
-			<resourceBase>webapp/application</resourceBase>
+			<resourceBase>webapp</resourceBase>
 			<descriptor>conf/web.xml</descriptor>
 		</context>
 	</webServer>

@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSession;
@@ -16,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import net.oopscraft.application.core.TextTable;
@@ -25,7 +23,6 @@ import net.oopscraft.application.core.webserver.WebServer;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.mapper.UserMapper;
 import net.oopscraft.application.user.repository.UserRepository;
-import net.oopscraft.bak.user.dao.UserDao;
 
 public class ApplicationBuilderTest {
 	

@@ -27,6 +27,11 @@ public class ApplicationControllerAdvice {
 		return modelAndView;
 	}
 	
+    @ModelAttribute("__configuration")
+    public Map<String,String> getConfiguration() throws Exception {
+    	return ApplicationContainer.getApplication().getConfiguration();
+    }
+	
 	@ModelAttribute("__user")
 	public User getUser() throws Exception {
 		SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -37,10 +42,5 @@ public class ApplicationControllerAdvice {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		return userDetails.getUser();
 	}
-	
-    @ModelAttribute("__config")
-    public Map<String,String> getConfig() throws Exception {
-    	return ApplicationContainer.getApplication().getConfig();
-    }
 
 }

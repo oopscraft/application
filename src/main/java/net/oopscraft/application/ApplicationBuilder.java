@@ -89,7 +89,7 @@ public class ApplicationBuilder {
 		Properties properties = new Properties();
 		properties.load(new FileInputStream(propertiesFile));
 		buildMonitorAgent(application);
-		buildConfig(application, xPathReader, properties);
+		buildConfiguration(application, xPathReader, properties);
 		buildWebServers(application, xPathReader, properties);
 		buildDataSources(application, xPathReader, properties);
 		buildEntityManagerFactories(application, xPathReader, properties);
@@ -132,17 +132,17 @@ public class ApplicationBuilder {
 	}
 	
 	/**
-	 * builds application config
+	 * builds application configure
 	 * @param application
 	 * @throws Exception
 	 */
-	void buildConfig(Application application, XPathReader xPathReader, Properties properties) throws Exception {
-		NodeList configNodeList = (NodeList) xPathReader.getElement("/application/config/*");
-		for(int i = 0, size = configNodeList.getLength(); i < size; i ++) {
-			Node configNode = configNodeList.item(i);
-			String name = configNode.getNodeName();
-			String value = configNode.getTextContent();
-			application.setConfig(name, value);
+	void buildConfiguration(Application application, XPathReader xPathReader, Properties properties) throws Exception {
+		NodeList configurationNodeList = (NodeList) xPathReader.getElement("/application/configuration/*");
+		for(int i = 0, size = configurationNodeList.getLength(); i < size; i ++) {
+			Node configurationNode = configurationNodeList.item(i);
+			String name = configurationNode.getNodeName();
+			String value = configurationNode.getTextContent();
+			application.setConfiguration(name, parseValue(value, properties));
 		}
 	}
 	
