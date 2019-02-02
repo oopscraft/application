@@ -10,7 +10,11 @@ var menus = new juice.data.Tree();
 menus.setEnable(false);
 var menu = new juice.data.Map();
 var displayAuthorities = new juice.data.List();
+var accessAuthorities = new juice.data.List();
 var isNew = false;
+
+//types
+var types = ${app:toJson(types)};
 
 // policies
 var policies = ${app:toJson(policies)};
@@ -21,6 +25,7 @@ var policies = ${app:toJson(policies)};
 function clearEdit(){
 	menu.fromJson({});
 	displayAuthorities.fromJson([]);
+	accessAuthorities.fromJson([]);
 	onPolicyChanged('display');
 }
 
@@ -49,6 +54,10 @@ $( document ).ready(function() {
 	
 	$('#displayPolicySelect').change(function(event){
 		onPolicyChanged('display');
+	});
+	
+	$('#accessPolicySelect').change(function(event){
+		onPolicyChanged('access');
 	});
 });
 
@@ -98,6 +107,7 @@ function getMenu(id) {
 			clearEdit();
 			menu.fromJson(data);
 			displayAuthorities.fromJson(data.displayAuthorities);
+			accessAuthorities.fromJson(data.accessAuthorities);
 			isNew = false;
 			enableEdit(true);
 			menu.setReadonly('id',true);
@@ -116,6 +126,7 @@ function getMenu(id) {
 			
 			// hide or show authorities table.
 			onPolicyChanged('display');
+			onPolicyChanged('access');
   	 	}
 	});	
 }
@@ -170,9 +181,9 @@ function removeUpperId(){
 }
 
 /**
- * Adds Authority
+ * Adds display authority
  */
-function addAuthority(){
+function addDisplayAuthority(){
 	__authoritiesDialog
 	.setDisable(function(row){
 		var $row = row;
@@ -188,11 +199,37 @@ function addAuthority(){
 }
 
 /**
- * Removes authoritiy.
+ * Removes display authoritiy.
  */
-function removeAuthority(index){
+function removeDisplayAuthority(index){
 	displayAuthorities.removeRow(index);
 }
+
+/**
+ * Adds access authority
+ */
+function addAccessAuthority(){
+	__authoritiesDialog
+	.setDisable(function(row){
+		var $row = row;
+		var contains = accessAuthorities.contains(function(row){
+			return row.get('id') == $row.get('id');
+		})
+		if(contains){
+			return true;
+		}
+	}).afterConfirm(function(rows){
+		accessAuthorities.addRows(rows);
+	}).open();
+}
+
+/**
+ * Removes access authoritiy.
+ */
+function removeAccessAuthority(index){
+	accessAuthorities.removeRow(index);
+}
+
 
 /**
  * Adds child menu
@@ -201,7 +238,10 @@ function addMenu(upperId) {
 	clearEdit();	
 	menu.set('id', __generateRandomId());
 	menu.set('upperId', upperId);
+	menu.set('type', 'NONE');
+	menu.set('accessPolicy', 'ANONYMOUS');
 	menu.set('displayPolicy','ANONYMOUS');
+
 
 	// breadcrumbs
 	getBreadCrumbs(upperId,function(breadCrumbs){
@@ -317,6 +357,14 @@ function deleteMenu() {
 		});	
 	}).open();
 }
+
+/**
+ * Opens menu
+ */
+function openMenu() {
+	var pageUrl = '${pageContext.request.contextPath}/menu/' + menu.get('id');
+	 window.open(pageUrl);
+}
 </script>
 <style type="text/css">
 div.menuItem {
@@ -386,6 +434,11 @@ div.menuItem:hover {
 				</div>
 			</div>
 			<div>
+				<button onclick="javascript:openMenu();">
+					<i class="icon-open"></i>
+					<spring:message code="application.text.menu"/>
+					<spring:message code="application.text.open"/>
+				</button>
 				<button onclick="javascript:saveMenu();">
 					<i class="icon-save"></i>
 					<spring:message code="application.text.save"/>
@@ -451,11 +504,21 @@ div.menuItem:hover {
 			<tr>
 				<th>
 					<span>
+						<spring:message code="application.text.type"/>
+					</span>
+				</th>
+				<td>
+					<select data-juice="ComboBox" data-juice-bind="menu.type" data-juice-options="types" style="width:15rem;"></select>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>
 						<spring:message code="application.text.link"/>
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="menu.link"/>
+					<input data-juice="TextField" data-juice-bind="menu.value"/>
 				</td>
 			</tr>
 			<tr>
@@ -486,8 +549,8 @@ div.menuItem:hover {
 					<table id="displayAuthoritiesTable" data-juice="Grid" data-juice-bind="displayAuthorities" data-juice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
-							<col style="width:50%;"/>
-							<col style="width:10%;"/>
+							<col/>
+							<col style="width:5%;"/>
 						</colgroup>
 						<thead>
 							<tr>
@@ -498,7 +561,7 @@ div.menuItem:hover {
 									<spring:message code="application.text.name"/>
 								</th>
 								<th>
-									<button class="small" onclick="javascript:addAuthority();">
+									<button class="small" onclick="javascript:addDisplayAuthority();">
 										<i class="icon-add"></i>
 									</button>
 								</th>
@@ -513,7 +576,57 @@ div.menuItem:hover {
 									<label data-juice="Label" data-juice-bind="authority.name"></label>
 								</td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
+									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeDisplayAuthority(this.dataset.index);">
+										<i class="icon-remove"></i>
+									</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span class="must">
+						<spring:message code="application.text.access"/>
+						<spring:message code="application.text.policy"/>
+					</span>
+				</th>
+				<td>
+					<select id="accessPolicySelect" data-juice="ComboBox" data-juice-bind="menu.accessPolicy" data-juice-options="policies" style="width:15rem;"></select>
+					<table id="accessAuthoritiesTable" data-juice="Grid" data-juice-bind="accessAuthorities" data-juice-item="authority">
+						<colgroup>
+							<col style="width:40%;"/>
+							<col/>
+							<col style="width:5%;"/>
+						</colgroup>
+						<thead>
+							<tr>
+								<th>
+									<spring:message code="application.text.authority"/>
+									<spring:message code="application.text.id"/>
+								</th>
+								<th>
+									<spring:message code="application.text.authority"/>
+									<spring:message code="application.text.name"/>
+								</th>
+								<th>
+									<button class="small" onclick="javascript:addAccessAuthority();">
+										<i class="icon-add"></i>
+									</button>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr data-id="{{$context.authority.get('id')}}">
+								<td>
+									<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+								</td>
+								<td>
+									<label data-juice="Label" data-juice-bind="authority.name"></label>
+								</td>
+								<td class="text-center">
+									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAccessAuthority(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>

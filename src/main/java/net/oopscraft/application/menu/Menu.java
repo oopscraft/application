@@ -40,18 +40,33 @@ public class Menu extends SystemEntity {
 	@Column(name = "MENU_ICON")
 	String icon;
 	
-	@Column(name = "MENU_LINK")
-	String link;
+	public enum Type {
+		NONE, LINK, INCLUDE_JSP, INCLUDE_URL
+	}
+	
+	@Column(name = "MENU_TYPE")
+	@Enumerated(EnumType.STRING)
+	Type type = Type.NONE;
+	
+	@Column(name = "MENU_VAL")
+	String value;
 
 	@Column(name = "MENU_DESC")
 	String description;
 
-	@Column(name = "DISP_SEQ")
-	Integer displaySeq;
-
 	public enum Policy {
 		ANONYMOUS, AUTHENTICATED, AUTHORIZED
 	}
+	
+	@Column(name = "ACES_PLCY")
+	@Enumerated(EnumType.STRING)
+	Policy accessPolicy = Policy.ANONYMOUS;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "APP_MENU_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "MENU_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@WhereJoinTable(clause = "PLCY_TYPE ='ACES_PLCY'")
+	@SQLInsert(sql = "INSERT INTO APP_MENU_PLCY_AUTH_MAP (MENU_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'ACES_PLCY', ?)") 
+	List<Authority> accessAuthorities;
 
 	@Column(name = "DISP_PLCY")
 	@Enumerated(EnumType.STRING)
@@ -62,6 +77,9 @@ public class Menu extends SystemEntity {
 	@WhereJoinTable(clause = "PLCY_TYPE ='DISP_PLCY'")
 	@SQLInsert(sql = "INSERT INTO APP_MENU_PLCY_AUTH_MAP (MENU_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'DISP_PLCY', ?)") 
 	List<Authority> displayAuthorities;
+	
+	@Column(name = "DISP_SEQ")
+	Integer displaySeq;
 	
 	@Transient
 	List<Menu> childMenus;
@@ -98,12 +116,20 @@ public class Menu extends SystemEntity {
 		this.icon = icon;
 	}
 
-	public String getLink() {
-		return link;
+	public Type getType() {
+		return type;
 	}
 
-	public void setLink(String link) {
-		this.link = link;
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	public String getDescription() {
@@ -116,6 +142,22 @@ public class Menu extends SystemEntity {
 
 	public Integer getDisplaySeq() {
 		return displaySeq;
+	}
+
+	public Policy getAccessPolicy() {
+		return accessPolicy;
+	}
+
+	public void setAccessPolicy(Policy accessPolicy) {
+		this.accessPolicy = accessPolicy;
+	}
+
+	public List<Authority> getAccessAuthorities() {
+		return accessAuthorities;
+	}
+
+	public void setAccessAuthorities(List<Authority> accessAuthorities) {
+		this.accessAuthorities = accessAuthorities;
 	}
 
 	public void setDisplaySeq(Integer displaySeq) {

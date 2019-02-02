@@ -107,10 +107,12 @@ public class MenuService {
 		one.setUpperId(menu.getUpperId());
 		one.setName(menu.getName());
 		one.setIcon(menu.getIcon());
-		one.setLink(menu.getLink());
+		one.setType(menu.getType());
+		one.setValue(menu.getValue());
 		one.setDescription(menu.getDescription());
 		one.setDisplaySeq(menu.getDisplaySeq());
 		one.setDisplayPolicy(menu.getDisplayPolicy());
+		one.setAccessPolicy(menu.getAccessPolicy());
 		
 		// Checks id and upperId is same.
 		if (one.getId().equals(one.getUpperId()) == true) {
@@ -119,6 +121,7 @@ public class MenuService {
 
 		// adds authorities
 		one.setDisplayAuthorities(menu.getDisplayAuthorities());
+		one.setAccessAuthorities(menu.getDisplayAuthorities());
 
 		return menuRepository.save(one);
 	}

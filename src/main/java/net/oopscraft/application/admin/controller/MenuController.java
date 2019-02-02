@@ -41,6 +41,7 @@ public class MenuController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView menu() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/menu.tiles");
+		modelAndView.addObject("types", Menu.Type.values());
 		modelAndView.addObject("policies", Menu.Policy.values());
 		return modelAndView;
 	}
