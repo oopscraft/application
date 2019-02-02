@@ -5,11 +5,11 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <c:choose>
-	<c:when test="${page.type == 'JSP'}">
-		<jsp:include page="${page.value}" flush="false"/>
+	<c:when test="${menu.type == 'INCLUDE_JSP'}">
+		<jsp:include page="${menu.value}" flush="false"/>
 	</c:when>
-	<c:when test="${page.type == 'URL'}">
-		<iframe style="width:100%; height:100%;border:none;" src="${page.value}"></iframe>
+	<c:when test="${menu.type == 'INCLUDE_URL'}">
+		<iframe style="width:100%; height:100%;border:none;" src="${menu.value}"></iframe>
 	</c:when>
 </c:choose>
 

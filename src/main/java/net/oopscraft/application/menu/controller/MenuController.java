@@ -1,4 +1,4 @@
-package net.oopscraft.application.page.controller;
+package net.oopscraft.application.menu.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,25 +8,33 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
-import net.oopscraft.application.page.Page;
-import net.oopscraft.application.page.PageService;
+import net.oopscraft.application.menu.Menu;
+import net.oopscraft.application.menu.MenuService;
 
 @Controller
-@RequestMapping("/page")
-public class PageController {
+@RequestMapping("/menu")
+public class MenuController {
 	
 	@Autowired
-	PageService pageService;
+	MenuService menuService;
 	
 	@Autowired
 	HttpServletRequest request;
 	
 	@RequestMapping(value="{id}", method = RequestMethod.GET)
 	public ModelAndView list(@PathVariable("id")String id) throws Exception {
-		Page page = pageService.getPage(id);
-		ModelAndView modelAndView = new ModelAndView("page/page.tiles");
-		modelAndView.addObject("page", page);
+		Menu menu = menuService.getMenu(id);
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("menu", menu);
+		switch(menu.getType()) {
+			case LINK :
+				modelAndView.setView(new RedirectView(menu.getValue()));
+			break;
+			default:
+				modelAndView.setViewName("menu/menu.tiles");
+		}
 		return modelAndView;
 	}
 	
