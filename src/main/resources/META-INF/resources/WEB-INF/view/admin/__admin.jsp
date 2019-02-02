@@ -67,63 +67,58 @@
 			{
 				name:'<spring:message code="application.label.monitor"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_monitor.png',
-				link:'monitor' 
+				value:'monitor' 
 			},
 			{
 				name:'<spring:message code="application.label.user"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_user.png',
-				link:'user' 
+				value:'user' 
 			},
 			{
 				name:'<spring:message code="application.label.group"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_group.png',
-				link:'group'
+				value:'group'
 				 
 			},
 			{
 				name:'<spring:message code="application.label.role"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_role.png',
-				link:'role' 
+				value:'role' 
 			},
 			{
 				name:'<spring:message code="application.label.authority"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_authority.png',
-				link:'authority' 
+				value:'authority' 
 			},
 			{
 				name:'<spring:message code="application.label.property"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_property.png',
-				link:'property'
+				value:'property'
 			},
 			{
 				name:'<spring:message code="application.label.message"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_message.png',
-				link:'message'
+				value:'message'
 			},
 			{
 				name:'<spring:message code="application.label.code"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_code.png',
-				link:'code' 
+				value:'code' 
 			},
 			{
 				name:'<spring:message code="application.label.menu"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_menu.png',
-				link:'menu'
-			},
-			{
-				name:'<spring:message code="application.label.page"/>', 
-				icon:'${pageContext.request.contextPath}/static/img/icon_page.png',
-				link:'page'
+				value:'menu'
 			},
 			{
 				name:'<spring:message code="application.label.board"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_board.png',
-				link:'board'
+				value:'board'
 			},
 			{
 				name:'<spring:message code="application.label.api"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_api.png',
-				link:'javascript:window.open(\'/swagger-ui.html\');'
+				value:'javascript:window.open(\'/swagger-ui.html\');'
 			}
 		], 'childMenus');
 		__menus.setEnable(false);
@@ -131,7 +126,7 @@
 		// defines menus index
 		__menus.setIndex(
 			__menus.indexOf(function(node){
-				return window.location.href.includes(node.get('link'));
+				return window.location.href.includes(node.get('value'));
 			})
 		);
 		
@@ -504,7 +499,7 @@
 			<nav class="leftNav">
 				<ul data-juice="TreeView" data-juice-bind="__menus" data-juice-item="menu">
 					<li>
-						<a data-index="{{$context.index}}" href="{{$context.menu.get('link')}}" class="menuItem" style="display:block;">
+						<a data-index="{{$context.index}}" href="{{$context.menu.get('value')}}" class="menuItem" style="display:block;">
 							<img class="icon" data-juice="Image" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="" alt="" style="vertical-align:middle;"/>
 							<label data-juice="Label" data-juice-bind="menu.name"></label>
 						</a>

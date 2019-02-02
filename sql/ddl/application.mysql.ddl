@@ -71,7 +71,7 @@ CREATE TABLE APP_CD_ITEM_INFO(
 		CD_ID                         		VARCHAR(32)		 NOT NULL COMMENT 'Code Id',
 		CD_ITEM_ID                    		VARCHAR(32)		 NOT NULL COMMENT 'Code Item Id',
 		CD_ITEM_NAME                  		VARCHAR(256)		 NULL COMMENT 'Code Item Value' ,
-		DISP_SEQ                      		INTEGER(10)		 NULL COMMENT 'Display Sequence' 
+		DISP_SEQ                      		DOUBLE		 NULL COMMENT 'Display Sequence' 
 );
 
 ALTER TABLE APP_CD_ITEM_INFO comment 'Application Code Item Info';
@@ -98,7 +98,7 @@ CREATE TABLE APP_GROP_INFO(
 		UPER_GROP_ID                  		VARCHAR(32)		 NULL COMMENT 'Upper Group ID' ,
 		GROP_NAME                     		VARCHAR(256)		 NULL COMMENT 'Group Name' ,
 		GROP_DESC                     		VARCHAR(4000)		 NULL COMMENT 'Group Description' ,
-		DISP_SEQ                      		INTEGER		 NULL COMMENT 'Display Sequence' 
+		DISP_SEQ                      		DOUBLE		 NULL COMMENT 'Display Sequence' 
 );
 
 ALTER TABLE APP_GROP_INFO comment 'Application Group Info';
@@ -199,11 +199,11 @@ CREATE TABLE APP_MENU_INFO(
 		SYS_UPDT_USER_ID              		VARCHAR(32)		 NULL COMMENT 'System Update User ID' ,
 		UPER_MENU_ID                  		VARCHAR(32)		 NULL COMMENT 'Upper Menu Id' ,
 		MENU_NAME                     		VARCHAR(256)		 NULL COMMENT 'Menu Name' ,
-		MENU_ICON                     		LONGBLOB		 NULL COMMENT 'Menu Icon' ,
+		MENU_ICON                     		LONGTEXT		 NULL COMMENT 'Menu Icon' ,
 		MENU_LINK                     		VARCHAR(256)		 NULL COMMENT 'Menu Link' ,
 		MENU_DESC                     		VARCHAR(4000)		 NULL COMMENT 'Menu Description' ,
 		DISP_PLCY                     		VARCHAR(128)		 NULL COMMENT 'Display Policy' ,
-		DISP_SEQ                      		INTEGER		 NULL COMMENT 'DisplaySeq' 
+		DISP_SEQ                      		DOUBLE		 NULL COMMENT 'DisplaySeq' 
 );
 
 ALTER TABLE APP_MENU_INFO comment 'Application Menu Information';
@@ -285,7 +285,7 @@ CREATE TABLE APP_USER_INFO(
 		USER_NAME                     		VARCHAR(256)		 NULL COMMENT 'User Name' ,
 		USER_STAT                     		VARCHAR(16)		 NULL COMMENT 'User Status' ,
 		USER_NICK                     		VARCHAR(256)		 NULL COMMENT 'User Nickname' ,
-		USER_AVAT                     		LONGBLOB		 NULL COMMENT 'User Avatar' ,
+		USER_AVAT                     		LONGTEXT		 NULL COMMENT 'User Avatar' ,
 		USER_SIGN                     		VARCHAR(4000)		 NULL COMMENT 'User Signature' ,
 		USER_JOIN_DTTM                		DATETIME		 NULL COMMENT 'User Join Datetime' ,
 		USER_CLOS_DTTM                		DATETIME		 NULL COMMENT 'User Close Datetime' 
@@ -384,7 +384,7 @@ CREATE TABLE APP_PROP_INFO(
 		SYS_UPDT_DTTM                 		DATETIME		 NULL COMMENT 'System Updte Datetime' ,
 		SYS_UPDT_USER_ID              		VARCHAR(32)		 NULL COMMENT 'System Update User ID' ,
 		PROP_NAME                     		VARCHAR(256)		 NULL COMMENT 'Property Name' ,
-		PROP_VAL                      		VARCHAR(4000)		 NULL COMMENT 'Property Value' ,
+		PROP_VAL                      		LONGTEXT		 NULL COMMENT 'Property Value' ,
 		PROP_DESC                     		VARCHAR(4000)		 NULL COMMENT 'Property Description' 
 );
 
@@ -420,7 +420,7 @@ CREATE TABLE APP_MSG_INFO(
 		SYS_UPDT_DTTM                 		DATETIME		 NULL COMMENT 'System Updte Datetime' ,
 		SYS_UPDT_USER_ID              		VARCHAR(32)		 NULL COMMENT 'System Update User ID' ,
 		MSG_NAME                      		VARCHAR(256)		 NULL COMMENT 'Message Name' ,
-		MSG_VAL                       		VARCHAR(4000)		 NULL COMMENT 'Message Value' ,
+		MSG_VAL                       		LONGTEXT		 NULL COMMENT 'Message Value' ,
 		MSG_DESC                      		VARCHAR(4000)		 NULL COMMENT 'Message Description' 
 );
 
@@ -451,12 +451,12 @@ COMMENT ON COLUMN APP_MSG_INFO.MSG_DESC is 'Message Description'; */
 CREATE TABLE APP_BORD_INFO(
 		BORD_ID                       		VARCHAR(32)		 NOT NULL COMMENT 'Board ID',
 		BORD_NAME                     		VARCHAR(256)		 NULL COMMENT 'Board Name' ,
-		BORD_ICON                     		LONGBLOB		 NULL COMMENT 'Board Icon' ,
+		BORD_ICON                     		LONGTEXT		 NULL COMMENT 'Board Icon' ,
 		BORD_SKIN                     		VARCHAR(128)		 NULL COMMENT 'Board Skin' ,
 		ACES_PLCY                     		VARCHAR(128)		 NULL COMMENT 'Access Policy' ,
 		READ_PLCY                     		VARCHAR(128)		 NULL COMMENT 'Read Policy' ,
 		WRIT_PLCY                     		VARCHAR(128)		 NULL COMMENT 'Write Policy' ,
-		ROWS_PER_PAGE                 		INTEGER		 NULL COMMENT 'Rows Per Page' ,
+		ROWS_PER_PAGE                 		DOUBLE		 NULL COMMENT 'Rows Per Page' ,
 		CATE_USE_YN                   		VARCHAR(1)		 NULL COMMENT 'Category Use Yn' ,
 		RPLY_USE_YN                   		VARCHAR(1)		 NULL COMMENT 'Reply Use' ,
 		FILE_USE_YN                   		VARCHAR(1)		 NULL COMMENT 'File Use' 
@@ -494,7 +494,7 @@ CREATE TABLE APP_BORD_CATE_INFO(
 		BORD_ID                       		VARCHAR(32)		 NOT NULL COMMENT 'Board ID',
 		CATE_ID                       		VARCHAR(32)		 NOT NULL COMMENT 'Cateogry ID',
 		CATE_NAME                     		VARCHAR(256)		 NULL COMMENT 'Category Name' ,
-		DISP_SEQ                      		INTEGER		 NULL COMMENT 'Display Sequence' 
+		DISP_SEQ                      		DOUBLE		 NULL COMMENT 'Display Sequence' 
 );
 
 ALTER TABLE APP_BORD_CATE_INFO comment 'Application Board Category';
@@ -521,7 +521,7 @@ CREATE TABLE APP_ATCL_INFO(
 		ATCL_USER_NICK                		VARCHAR(256)		 NULL COMMENT 'Article User Nickname' ,
 		ATCL_RGST_DTTM                		DATETIME		 NULL COMMENT 'Article Registration Datetime' ,
 		ATCL_MDFY_DTTM                		DATETIME		 NULL COMMENT 'Article Modify Datetime' ,
-		READ_CNT                      		INTEGER		 DEFAULT 0		 NULL COMMENT 'Read Count' 
+		READ_CNT                      		DOUBLE		 DEFAULT 0		 NULL COMMENT 'Read Count' 
 );
 
 ALTER TABLE APP_ATCL_INFO comment 'Application Board Article';
@@ -554,10 +554,10 @@ CREATE TABLE APP_ATCL_RPLY_INFO(
 		ATCL_ID                       		VARCHAR(32)		 NOT NULL COMMENT 'Article ID',
 		RPLY_ID                       		VARCHAR(32)		 NOT NULL COMMENT 'Reply ID',
 		UPER_RPLY_ID                  		VARCHAR(32)		 NULL COMMENT 'Upper Reply ID' ,
-		RPLY_SEQ                      		INTEGER		 NULL COMMENT 'Reply Sequence' ,
+		RPLY_SEQ                      		DOUBLE		 NULL COMMENT 'Reply Sequence' ,
 		RPLY_LEVL                     		VARCHAR(8)		 NULL COMMENT 'Reply Level' ,
 		RPLY_CNTS                     		LONGTEXT		 NULL COMMENT 'Reply Contents' ,
-		RPLY_USER_ID                  		INTEGER(32)		 NULL COMMENT 'Reply User ID' ,
+		RPLY_USER_ID                  		VARCHAR(32)		 NULL COMMENT 'Reply User ID' ,
 		RPLY_USER_NICK                		VARCHAR(256)		 NULL COMMENT 'Reply User Nickname' ,
 		RPLY_RGST_DTTM                		DATETIME		 NULL COMMENT 'Reply Registration Datetime' ,
 		RPLY_MDFY_DTTM                		DATETIME		 NULL COMMENT 'Reply Modify Datetime' 
@@ -594,7 +594,7 @@ CREATE TABLE APP_ATCL_FILE_INFO(
 		FILE_ID                       		VARCHAR(32)		 NOT NULL COMMENT 'File ID',
 		FILE_NAME                     		VARCHAR(256)		 NULL COMMENT 'File Name' ,
 		FILE_TYPE                     		VARCHAR(128)		 NULL COMMENT 'File Type' ,
-		FILE_SIZE                     		INTEGER		 NULL COMMENT 'File Size' 
+		FILE_SIZE                     		DOUBLE		 NULL COMMENT 'File Size' 
 );
 
 ALTER TABLE APP_ATCL_FILE_INFO comment 'Application Article File Info';
@@ -620,7 +620,7 @@ CREATE TABLE APP_USER_LOGN_HIST(
 		LOGN_FAIL_RESN                		VARCHAR(1024)		 NULL COMMENT 'Login Fail Reason' ,
 		LOGN_IP                       		VARCHAR(128)		 NULL COMMENT 'Login IP' ,
 		LOGN_AGNT                     		VARCHAR(1024)		 NULL COMMENT 'Login Agent' ,
-		LOGN_REFR                     		VARCHAR(256)		 NULL COMMENT 'Login Referer' 
+		LOGN_REFR                     		VARCHAR(1024)		 NULL COMMENT 'Login Referer' 
 );
 
 ALTER TABLE APP_USER_LOGN_HIST comment 'Application User Login History';
@@ -800,7 +800,8 @@ INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES 
 INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES ('SAMPLE_CD', 'ITEM_4','Sample Code Item Name', 4);
 INSERT INTO APP_CD_ITEM_INFO (CD_ID, CD_ITEM_ID, CD_ITEM_NAME, DISP_SEQ) VALUES ('SAMPLE_CD', 'ITEM_5','Sample Code Item Name', 5);
 
-INSERT INTO APP_USER_INFO (USER_ID,SYS_DATA_YN,USER_NAME,USER_PWD) VALUES ('admin','Y','Administrator','$2a$10$ELs7fvpZii3P.KFYaQEJfOeN3iFjQefnY.SXPnLh6mtENV1Rvxc/C');
+INSERT INTO APP_USER_INFO (USER_ID,SYS_DATA_YN,USER_NAME,USER_PWD,USER_EMIL,USER_PHON,USER_LC,USER_STAT,USER_NICK) VALUES ('admin','Y','Administrator','$2a$10$ELs7fvpZii3P.KFYaQEJfOeN3iFjQefnY.SXPnLh6mtENV1Rvxc/C','admin@oopscraft.net','010-1234-1234', 'en_US','ACTIVE','Admin');
+
 
 INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES ('admin', 'ADMIN');
 INSERT INTO APP_USER_AUTH_MAP (USER_ID, AUTH_ID) VALUES ('admin', 'ADMIN_MONITOR');
