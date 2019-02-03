@@ -103,7 +103,6 @@
 					<skipTests>true</skipTests>
 					<outputDirectory>./lib</outputDirectory>
 					<overWriteIfNewer>true</overWriteIfNewer>
-					<includeScope>system</includeScope>
 				</configuration>
 			</plugin>
 			<plugin>
