@@ -10,6 +10,7 @@ import java.util.Properties;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,11 +18,12 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
+import net.oopscraft.application.board.Article;
+import net.oopscraft.application.board.mapper.ArticleMapper;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.XPathReader;
 import net.oopscraft.application.core.webserver.WebServer;
 import net.oopscraft.application.user.User;
-import net.oopscraft.application.user.mapper.UserMapper;
 import net.oopscraft.application.user.repository.UserRepository;
 
 public class ApplicationBuilderTest {
@@ -143,10 +145,9 @@ public class ApplicationBuilderTest {
 				SqlSession sqlSession = null;
 				try {
 					sqlSession = sqlSessionFactory.getObject().openSession();
-					UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-					User user = new User();
-					List<User> userList = userMapper.selectUserList(user);
-					System.out.println(new TextTable(userList));
+					ArticleMapper articleMapper = sqlSession.getMapper(ArticleMapper.class);
+					List<Article> articleList = articleMapper.selectLatestArticles(null, new RowBounds(0,10));
+					System.out.println(new TextTable(articleList));
 				}catch(Exception e) {
 					e.printStackTrace(System.err);
 					throw e;
