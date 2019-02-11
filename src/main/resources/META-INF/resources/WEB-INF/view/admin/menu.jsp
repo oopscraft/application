@@ -6,11 +6,11 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="app" uri="http://application.oopscraft.net"%>
 <script type="text/javascript">
-var menus = new juice.data.Tree();
+var menus = new duice.data.Tree();
 menus.setEnable(false);
-var menu = new juice.data.Map();
-var displayAuthorities = new juice.data.List();
-var accessAuthorities = new juice.data.List();
+var menu = new duice.data.Map();
+var displayAuthorities = new duice.data.List();
+var accessAuthorities = new duice.data.List();
 var isNew = false;
 
 //types
@@ -265,14 +265,14 @@ function saveMenu(){
 	// Checks validation 
 	if(__isEmpty(menu.get('id'))){
 		<spring:message code="application.text.id" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
 	}
 	
 	// Checks validation of authority
 	if(__isEmpty(menu.get('name'))){
 		<spring:message code="application.text.name" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
 	}
 	
@@ -293,7 +293,7 @@ function saveMenu(){
 		});
 		if(isDuplicated == true){
 			<spring:message code="application.text.id" var="item"/>
-			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			new duice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
 			return false;
 		}
 	}
@@ -301,7 +301,7 @@ function saveMenu(){
 	// Saves menu
 	<spring:message code="application.text.menu" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 		.afterConfirm(function() {
 			var menuJson = menu.toJson();
 			menuJson.displayAuthorities = displayAuthorities.toJson();
@@ -326,7 +326,7 @@ function deleteMenu() {
 	
 	// Checks embedded data
 	if(menu.get('systemDataYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
@@ -336,14 +336,14 @@ function deleteMenu() {
 	});
 	if(menus.getNode(index).getChildNodes().length > 0){
 		<spring:message code="application.text.menu" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.hasChildItem" arguments="${item}"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.notAllowRemove.hasChildItem" arguments="${item}"/>').open();
 		return false;
 	}
 	
 	// Removes menu
 	<spring:message code="application.text.menu" var="item"/>
 	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
 			 url: 'menu/deleteMenu'
@@ -404,17 +404,17 @@ div.menuItem:hover {
 				</button>
 			</div>
 		</div>
-		<ul id="menusUl" data-juice="TreeView" data-juice-bind="menus" data-juice-item="menu">
-			<li data-id="{{$context.menu.get('id')}}" onclick="javascript:getMenu(this.dataset.id);">
+		<ul id="menusUl" data-duice="TreeView" data-duice-bind="menus" data-duice-item="menu">
+			<li data-id="[[$context.menu.get('id')]]" onclick="javascript:getMenu(this.dataset.id);">
 				<div class="menuItem" >
 					<div>
-						<img class="icon" data-juice="Image" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
-						<span class="{{$context.menu.get('systemDataYn')=='Y'?'systemData':''}}">
-							<label data-juice="Label" data-juice-bind="menu.name"></label>
+						<img class="icon" data-duice="Image" data-duice-bind="menu.icon" data-duice-width="24" data-duice-height="24" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
+						<span class="[[$context.menu.get('systemDataYn')=='Y'?'systemData':'']]">
+							<span data-duice="Text" data-duice-bind="menu.name"></span>
 						</span>
 					</div>
 					<div style="display:inline-block;text-align:right;">
-						<button class="small" data-id="{{$context.menu.get('id')}}" onclick="javascript:addMenu(this.dataset.id); event.stopPropagation();">
+						<button class="small" data-id="[[$context.menu.get('id')]]" onclick="javascript:addMenu(this.dataset.id); event.stopPropagation();">
 							<i class="icon-add"></i>
 						</button>
 					</div>
@@ -457,7 +457,7 @@ div.menuItem:hover {
 					</span>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="menu.id" style="width:20em;"/>
+					<input class="id" data-duice="TextField" data-duice-bind="menu.id" style="width:20em;"/>
 				</td>
 			</tr>
 			<tr>
@@ -467,7 +467,7 @@ div.menuItem:hover {
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="menu.name"/>
+					<input data-duice="TextField" data-duice-bind="menu.name"/>
 				</td>
 			</tr>
 			<tr>
@@ -477,8 +477,8 @@ div.menuItem:hover {
 				</th>
 				<td>
 					<div style="display:flex; justify-content:space-between;">
-						<label data-juice="Label" data-juice-bind="menu.breadCrumbs"></label>
-						<input type="hidden" data-juice="TextField" data-juice-bind="menu.upperId"/>
+						<span data-duice="Text" data-duice-bind="menu.breadCrumbs"></span>
+						<input type="hidden" data-duice="TextField" data-duice-bind="menu.upperId"/>
 						<div>
 							<button class="small" onclick="javascript:changeUpperId();">
 								<i class="icon-change"></i>
@@ -496,9 +496,9 @@ div.menuItem:hover {
 					<spring:message code="application.text.icon"/>
 				</th>
 				<td>
-					<img data-juice="Image" data-juice-bind="menu.icon" data-juice-width="32" data-juice-height="32" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
-					<img data-juice="Image" data-juice-bind="menu.icon" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png" style="width:24px; height:24px;"/>
-					<img data-juice="Image" data-juice-bind="menu.icon" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png" style="width:16px; height:16px;"/>
+					<img data-duice="Image" data-duice-bind="menu.icon" data-duice-width="32" data-duice-height="32" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
+					<img data-duice="Image" data-duice-bind="menu.icon" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png" style="width:24px; height:24px;"/>
+					<img data-duice="Image" data-duice-bind="menu.icon" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png" style="width:16px; height:16px;"/>
 				</td>
 			</tr>
 			<tr>
@@ -508,7 +508,7 @@ div.menuItem:hover {
 					</span>
 				</th>
 				<td>
-					<select data-juice="ComboBox" data-juice-bind="menu.type" data-juice-options="types" style="width:15rem;"></select>
+					<select data-duice="ComboBox" data-duice-bind="menu.type" data-duice-options="types" style="width:15rem;"></select>
 				</td>
 			</tr>
 			<tr>
@@ -518,7 +518,7 @@ div.menuItem:hover {
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="menu.value"/>
+					<input data-duice="TextField" data-duice-bind="menu.value"/>
 				</td>
 			</tr>
 			<tr>
@@ -526,7 +526,7 @@ div.menuItem:hover {
 					<spring:message code="application.text.description"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="menu.description"></textarea>
+					<textarea data-duice="TextArea" data-duice-bind="menu.description"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -534,7 +534,7 @@ div.menuItem:hover {
 					<spring:message code="application.text.displaySeq"/>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="menu.displaySeq" style="width:5rem; text-align:right;"/>
+					<input data-duice="TextField" data-duice-bind="menu.displaySeq" style="width:5rem; text-align:right;"/>
 				</td>
 			</tr>
 			<tr>
@@ -545,8 +545,8 @@ div.menuItem:hover {
 					</span>
 				</th>
 				<td>
-					<select id="displayPolicySelect" data-juice="ComboBox" data-juice-bind="menu.displayPolicy" data-juice-options="policies" style="width:15rem;"></select>
-					<table id="displayAuthoritiesTable" data-juice="Grid" data-juice-bind="displayAuthorities" data-juice-item="authority">
+					<select id="displayPolicySelect" data-duice="ComboBox" data-duice-bind="menu.displayPolicy" data-duice-options="policies" style="width:15rem;"></select>
+					<table id="displayAuthoritiesTable" data-duice="Grid" data-duice-bind="displayAuthorities" data-duice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -568,15 +568,15 @@ div.menuItem:hover {
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.authority.get('id')}}">
+							<tr data-id="[[$context.authority.get('id')]]">
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+									<span data-duice="Text" data-duice-bind="authority.id" class="id"></span>
 								</td>
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.name"></label>
+									<span data-duice="Text" data-duice-bind="authority.name"></span>
 								</td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeDisplayAuthority(this.dataset.index);">
+									<button class="small" data-index="[[$context.index]]" onclick="javascript:removeDisplayAuthority(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>
@@ -593,8 +593,8 @@ div.menuItem:hover {
 					</span>
 				</th>
 				<td>
-					<select id="accessPolicySelect" data-juice="ComboBox" data-juice-bind="menu.accessPolicy" data-juice-options="policies" style="width:15rem;"></select>
-					<table id="accessAuthoritiesTable" data-juice="Grid" data-juice-bind="accessAuthorities" data-juice-item="authority">
+					<select id="accessPolicySelect" data-duice="ComboBox" data-duice-bind="menu.accessPolicy" data-duice-options="policies" style="width:15rem;"></select>
+					<table id="accessAuthoritiesTable" data-duice="Grid" data-duice-bind="accessAuthorities" data-duice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -618,15 +618,15 @@ div.menuItem:hover {
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.authority.get('id')}}">
+							<tr data-id="[[$context.authority.get('id')]]">
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+									<span data-duice="Text" data-duice-bind="authority.id" class="id"></span>
 								</td>
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.name"></label>
+									<span data-duice="Text" data-duice-bind="authority.name"></span>
 								</td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAccessAuthority(this.dataset.index);">
+									<button class="small" data-index="[[$context.index]]" onclick="javascript:removeAccessAuthority(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>

@@ -8,14 +8,14 @@
 <div class="app-board">
 	<div style="display:flex; justify-content:space-between;">
 		<div class="app-board-name">
-			<img data-juice="Image" data-juice-bind="board.icon" data-juice-width="24" data-juice-height="24" src="${SKIN_URI}/img/icon_board.png" style="vertical-align:middle; width:1.25em; height:1.25em;"/>&nbsp;
+			<img data-duice="Image" data-duice-bind="board.icon" data-duice-width="24" data-duice-height="24" src="${SKIN_URI}/img/icon_board.png" style="vertical-align:middle; width:1.25em; height:1.25em;"/>&nbsp;
 			<c:out value="${board.name}"/>
 		</div>
 	</div>
 	<div style="border:solid 1px #ccc; border-radius:1px; padding:1rem;">
 		<div style="display:flex; justify-content:space-between; padding-bottom: 0.2rem;">
 			<div style="width:70%; font-size:1.3rem; font-weight:bold;">
-				<input data-juice="TextField" data-juice-bind="article.title" style="font-size:inherit; font-weight:inherit; border:none; border-bottom:dotted 1px #ccc;"/>
+				<input data-duice="TextField" data-duice-bind="article.title" style="font-size:inherit; font-weight:inherit; border:none; border-bottom:dotted 1px #ccc;"/>
 			</div>
 			<div style="width:30%; text-align:right;">
 				<button class="app-board-button" onclick="javascript:saveArticle();">
@@ -29,17 +29,17 @@
 			</div>
 		</div>
 		<div style="height:50rem;">
-			<div data-juice="HtmlEditor" data-juice-bind="article.contents"></div>
+			<div data-duice="HtmlEditor" data-duice-bind="article.contents"></div>
 		</div>
 		<div style="text-align:right; padding:1rem;">
 			<div>
-				<ul data-juice="ListView" data-juice-bind="files" data-juice-item="file">
+				<ul data-duice="ListView" data-duice-bind="files" data-duice-item="file">
 					<li>
 						<i class="icon-attach"></i>
-						<Label data-juice="Label" data-juice-bind="file.name" style="font-weight:bold; border-bottom:dotted 1px #ccc;"></Label>
-						(<Label data-juice="Label" data-juice-bind="file.size" data-juice-format="number:0,0"></Label>)
+						<Label data-duice="Text" data-duice-bind="file.name" style="font-weight:bold; border-bottom:dotted 1px #ccc;"></Label>
+						(<Label data-duice="Text" data-duice-bind="file.size" data-duice-format="number:0,0"></Label>)
 						bytes
-						<button class="app-board-button" data-index="{{$context.index}}" onclick="javascript:removeFile(this.dataset.index);">
+						<button class="app-board-button" data-index="[[$context.index]]" onclick="javascript:removeFile(this.dataset.index);">
 							<i class="icon-cancel"></i>
 						</button>
 					</li>

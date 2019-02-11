@@ -8,9 +8,9 @@
 <c:set var="SKIN_DIR" value="/WEB-INF/theme/${__configuration.theme}/board/${board.skin}" scope="request"/>
 <c:set var="SKIN_URI" value="${pageContext.request.contextPath}/resources/theme/${__configuration.theme}/board/${board.skin}" scope="request"/>
 <script type="text/javascript">
-var board = new juice.data.Map(${app:toJson(board)});
-var article = new juice.data.Map();
-var files = new juice.data.List();
+var board = new duice.data.Map(${app:toJson(board)});
+var article = new duice.data.Map();
+var files = new duice.data.List();
 
 /**
  * On document loaded
@@ -47,7 +47,7 @@ function getArticle() {
  */
 function saveArticle() {
 	<spring:message code="application.text.article" var="item"/>
-	new juice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
+	new duice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
 	.afterConfirm(function() {
 		
 		var articleData = article.toJson();
@@ -96,7 +96,7 @@ function uploadFile() {
 			    return xhr;
 			}
 			,success: function(data, textStatus, jqXHR) {
-				files.addRow(new juice.data.Map(data));
+				files.addRow(new duice.data.Map(data));
 	 	 	}
 		});
 	});

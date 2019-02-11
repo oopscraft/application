@@ -13,8 +13,8 @@
 		<meta name="viewport" content="width=1024, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta http-equiv="refresh" content="${pageContext.session.maxInactiveInterval+10}">
 		<link rel="SHORTCUT ICON" href="${pageContext.request.contextPath}/static/img/application.ico">
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/juice/juice.css">
-		<script src="${pageContext.request.contextPath}/static/lib/juice/juice.js"></script>
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/duice/duice.css">
+		<script src="${pageContext.request.contextPath}/static/lib/duice/duice.js"></script>
 		<script src="${pageContext.request.contextPath}/static/lib/jquery.js"></script>
  		<script src="${pageContext.request.contextPath}/static/lib/moment-with-locales.min.js"></script>
  		<script src="${pageContext.request.contextPath}/static/lib/Chart.js/Chart.js"></script>
@@ -40,7 +40,7 @@
 		
 		var __loader; 
         $(document).ajaxStart(function(event) {
-       		__loader = new juice.ui.__().load(document.body);
+       		__loader = new duice.ui.__().load(document.body);
         });
 
         // If not configure, "Provisional headers are shown" error occured in chrome.
@@ -72,7 +72,7 @@
 		/**
 		 * login user information
 		 */
-		var __user = new juice.data.Map(${app:toJson(__user)});
+		var __user = new duice.data.Map(${app:toJson(__user)});
 		__user.set('language', '${pageContext.response.locale}');
 		__user.afterChange(function(event){
 			if(event.name == 'language'){
@@ -105,7 +105,7 @@
 		/**
 		 * Gets menus
 		 */
-		var __menus = new juice.data.Tree();
+		var __menus = new duice.data.Tree();
 		function __getMenus() {
 			$.ajax({
 				 url: '${pageContext.request.contextPath}/api/menus'
@@ -139,22 +139,22 @@
         	// Checks ID	 
          	checkId: function(id) {
          		// Checks empty
-         		if(juice.util.validator.isEmpty(id)){
+         		if(duice.util.validator.isEmpty(id)){
              		<spring:message code="application.text.id" var="item"/>
        				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
 				// Validates generic
-				if(juice.util.validator.isGenericId(id) == false){
+				if(duice.util.validator.isGenericId(id) == false){
 					throw '<spring:message code="application.message.invalidIdFormat"/>';
 				}
 				// length
-				if(juice.util.validator.isLengthBetween(id,4,32) == false){
+				if(duice.util.validator.isLengthBetween(id,4,32) == false){
 					<spring:message code="application.text.id" var="item"/>
 					throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
 				}
          	},
          	checkPassword: function(password, passwordConfirm){
-         		if(juice.util.validator.isEmpty(password)){
+         		if(duice.util.validator.isEmpty(password)){
              		<spring:message code="application.text.password" var="item"/>
        				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
@@ -162,39 +162,39 @@
         			<spring:message code="application.text.password" var="item"/>
         			throw '<spring:message code="application.message.itemNotMatch" arguments="${item}"/>';
         		}
-        		if(juice.util.validator.isGenericPassword(password) == false){
+        		if(duice.util.validator.isGenericPassword(password) == false){
         			throw '<spring:message code="application.message.invalidPassowrdFormat"/>';
         		}
          	},
          	// Checks name
          	checkName: function(name){
          		// Checks empty
-         		if(juice.util.validator.isEmpty(name)){
+         		if(duice.util.validator.isEmpty(name)){
              		<spring:message code="application.text.name" var="item"/>
        				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
          		// check length
-         		if(juice.util.validator.isLengthBetween(name,1,256) == false){
+         		if(duice.util.validator.isLengthBetween(name,1,256) == false){
 					<spring:message code="application.text.name" var="item"/>
 					throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
          		}
          	},
          	// Checks email address
          	checkEmailAddress: function(value){
-         		if(juice.util.validator.isEmailAddress(value) == false){
+         		if(duice.util.validator.isEmailAddress(value) == false){
          			throw '<spring:message code="application.message.invalidEmailAddressFormat"/>';
          		}
          	},
          	// Checks locale 
          	checkLocale: function(value){
-         		if(juice.util.validator.isEmpty(value)){
+         		if(duice.util.validator.isEmpty(value)){
 					<spring:message code="application.text.locale" var="item"/>
 					throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
          	},
          	// Checks phone number
          	checkPhoneNumber: function(value){
-         		if(juice.util.validator.isPhoneNumber(value) == false){
+         		if(duice.util.validator.isPhoneNumber(value) == false){
          			throw '<spring:message code="application.message.invalidPhoneNumberFormat"/>';
          		}
          	}

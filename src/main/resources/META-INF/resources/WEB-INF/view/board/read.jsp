@@ -8,11 +8,11 @@
 <c:set var="SKIN_DIR" value="/WEB-INF/theme/${__configuration.theme}/board/${board.skin}" scope="request"/>
 <c:set var="SKIN_URI" value="${pageContext.request.contextPath}/resources/theme/${__configuration.theme}/board/${board.skin}" scope="request"/>
 <script type="text/javascript">
-var board = new juice.data.Map(${app:toJson(board)});
-var article = new juice.data.Map();
-var files = new juice.data.List();
-var replies = new juice.data.List();
-var reply = new juice.data.Map();
+var board = new duice.data.Map(${app:toJson(board)});
+var article = new duice.data.Map();
+var files = new duice.data.List();
+var replies = new duice.data.List();
+var reply = new duice.data.Map();
 
 /**
  * On document loaded
@@ -48,7 +48,7 @@ function modifyArticle(){
  */
 function deleteArticle(){
 	<spring:message code="application.text.article" var="item"/>
-	new juice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
+	new duice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
 	.afterConfirm(function() {
 		$.ajax({
 			 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleId}'
@@ -148,7 +148,7 @@ function saveReply() {
  */
 function deleteReply(id) {
 	<spring:message code="application.text.article" var="item"/>
-	new juice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
+	new duice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
 	.afterConfirm(function() {
 		$.ajax({
 			 url: '${pageContext.request.contextPath}/api/board/${boardId}/article/${param.articleId}/reply/' + id

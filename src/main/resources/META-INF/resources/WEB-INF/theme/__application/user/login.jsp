@@ -61,10 +61,10 @@
 			<img src="${THEME_URI}/img/img_login.png"/>
 		</div>
 		<div>
-			<input id="idInput" data-juice="TextField" data-juice-bind="user.id" placeholder="<spring:message code="application.text.id"/>"/>
+			<input id="idInput" data-duice="TextField" data-duice-bind="user.id" placeholder="<spring:message code="application.text.id"/>"/>
 		</div>
 		<div>
-			<input id="passwordInput" type="password" data-juice="TextField" data-juice-bind="user.password" placeholder="<spring:message code="application.text.password"/>"/>
+			<input id="passwordInput" type="password" data-duice="TextField" data-duice-bind="user.password" placeholder="<spring:message code="application.text.password"/>"/>
 		</div>
 		<div>
 			<button id="loginButton" onclick="javascript:doLogin();" style="border:#fff;">
@@ -72,7 +72,7 @@
 			</button>
 		</div>
 		<div>
-			<input type="checkbox" data-jucie="CheckBox" data-juice-bind="user._spring_security_remember_me"/> Remember em.
+			<input type="checkbox" data-jucie="CheckBox" data-duice-bind="user._spring_security_remember_me"/> Remember em.
 		</div>
 		<div id="messageDiv">
 		</div>

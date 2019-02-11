@@ -9,8 +9,8 @@
 <c:set var="SKIN_DIR" value="/WEB-INF/theme/${__configuration.theme}/board/${board.skin}" scope="request"/>
 <c:set var="SKIN_URI" value="${pageContext.request.contextPath}/resources/theme/${__configuration.theme}/board/${board.skin}" scope="request"/>
 <script type="text/javascript">
-var board = new juice.data.Map(${app:toJson(board)});
-var categories = new juice.data.List(${app:toJson(board.categories)});
+var board = new duice.data.Map(${app:toJson(board)});
+var categories = new duice.data.List(${app:toJson(board.categories)});
 var categoryOptions = [{ value:'', text:'- <spring:message code="application.text.all"/> -' }];
 categories.forEach(function(item){
 	categoryOptions.push({
@@ -18,7 +18,7 @@ categories.forEach(function(item){
 		text: item.get('name')
 	});
 });
-var articleSearch = new juice.data.Map({
+var articleSearch = new duice.data.Map({
 	 rows:${board.rowsPerPage}
 	,page: 1
 	,categoryId: null
@@ -40,7 +40,7 @@ var articleSearchTypes = [
 	,{ value:'TITLE_CONTENTS', text:'<spring:message code="application.text.title"/> + <spring:message code="application.text.contents"/>' }
 	,{ value:'USER', text:'<spring:message code="application.text.writer"/>' }
 ];
-var articles = new juice.data.List();
+var articles = new duice.data.List();
 
 /**
  * On document loaded

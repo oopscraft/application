@@ -6,7 +6,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <script type="text/javascript">
 /* role search condition */
-var roleSearch = new juice.data.Map({
+var roleSearch = new duice.data.Map({
 	 rows: 30
 	,page: 1
 	,searchType: null
@@ -18,9 +18,9 @@ var roleSearchTypes = [
 	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
 	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 ];
-var roles = new juice.data.List();
-var role = new juice.data.Map();
-var authorities = new juice.data.List();
+var roles = new duice.data.List();
+var role = new duice.data.Map();
+var authorities = new duice.data.List();
 var isNew = false;
 
 /**
@@ -145,7 +145,7 @@ function saveRole(){
 	try {
 		__validator.checkId(role.get('id'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -153,7 +153,7 @@ function saveRole(){
 	try {
 		__validator.checkName(role.get('name'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -174,7 +174,7 @@ function saveRole(){
 		});
 		if(isDuplicated == true){
 			<spring:message code="application.text.id" var="item"/>
-			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			new duice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
 			return false;
 		}
 	}
@@ -182,7 +182,7 @@ function saveRole(){
 	// Saves role
 	<spring:message code="application.text.role" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 		.afterConfirm(function() {
 			var roleJson = role.toJson();
 			roleJson.authorities = authorities.toJson();
@@ -206,14 +206,14 @@ function deleteRole() {
 	
 	// Checks system data
 	if(role.get('systemDataYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
 	// Removes role
 	<spring:message code="application.text.role" var="item"/>
 	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
 			 url: 'role/deleteRole'
@@ -244,8 +244,8 @@ function deleteRole() {
 	<div class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="roleSearch.searchType" data-juice-options="roleSearchTypes" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="roleSearch.searchValue" style="width:100px;"/>
+				<select data-duice="ComboBox" data-duice-bind="roleSearch.searchType" data-duice-options="roleSearchTypes" style="width:100px;"></select>
+				<input data-duice="TextField" data-duice-bind="roleSearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getRoles();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
@@ -258,7 +258,7 @@ function deleteRole() {
 				</button>
 			</div>
 		</div>
-		<table id="rolesTable" data-juice="Grid" data-juice-bind="roles" data-juice-item="role">
+		<table id="rolesTable" data-duice="Grid" data-duice-bind="roles" data-duice-item="role">
 			<colgroup>
 				<col style="width:10%;"/>
 				<col/>
@@ -278,22 +278,22 @@ function deleteRole() {
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-id="{{$context.role.get('id')}}" onclick="javascript:getRole(this.dataset.id);">
+				<tr data-id="[[$context.role.get('id')]]" onclick="javascript:getRole(this.dataset.id);">
 					<td class="text-center">
-						{{roleSearch.get('rows')*(roleSearch.get('page')-1)+$context.index+1}}
+						[[roleSearch.get('rows')*(roleSearch.get('page')-1)+$context.index+1]]
 					</td>
-					<td class="{{$context.role.get('systemDataYn')=='Y'?'systemData':''}}">
-						<label data-juice="Label" data-juice-bind="role.id" class="id"></label>
+					<td class="[[$context.role.get('systemDataYn')=='Y'?'systemData':'']]">
+						<span data-duice="Text" data-duice-bind="role.id" class="id"></span>
 					</td>
 					<td>
-						<label data-juice="Label" data-juice-bind="role.name"></label>
+						<span data-duice="Text" data-duice-bind="role.name"></span>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 		<div>
-			<ul data-juice="Pagination" data-juice-bind="roleSearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
-				<li data-page="{{$context.page}}" onclick="javascript:getRoles(this.dataset.page);">{{$context.page}}</li>
+			<ul data-duice="Pagination" data-duice-bind="roleSearch" data-duice-rows="rows" data-duice-page="page" data-duice-total-count="totalCount" data-duice-page-size="5">
+				<li data-page="[[$context.page]]" onclick="javascript:getRoles(this.dataset.page);">[[$context.page]]</li>
 			</ul>
 		</div>
 	</div>
@@ -331,7 +331,7 @@ function deleteRole() {
 					</span>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="role.id"/>
+					<input class="id" data-duice="TextField" data-duice-bind="role.id"/>
 				</td>
 			</tr>
 			<tr>
@@ -340,14 +340,14 @@ function deleteRole() {
 						<spring:message code="application.text.name"/>
 					</span>
 				</th>
-				<td><input data-juice="TextField" data-juice-bind="role.name"/></td>
+				<td><input data-duice="TextField" data-duice-bind="role.name"/></td>
 			</tr>
 			<tr>
 				<th>
 					<spring:message code="application.text.description"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="role.description"></textarea>
+					<textarea data-duice="TextArea" data-duice-bind="role.description"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -358,7 +358,7 @@ function deleteRole() {
 					<spring:message code="application.text.authorities"/>
 				</th>
 				<td>
-					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
+					<table data-duice="Grid" data-duice-bind="authorities" data-duice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -380,11 +380,11 @@ function deleteRole() {
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.authority.get('id')}}">
-								<td><label data-juice="Label" data-juice-bind="authority.id" class="id"></label></td>
-								<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
+							<tr data-id="[[$context.authority.get('id')]]">
+								<td><span data-duice="Text" data-duice-bind="authority.id" class="id"></span></td>
+								<td><span data-duice="Text" data-duice-bind="authority.name"></span></td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
+									<button class="small" data-index="[[$context.index]]" onclick="javascript:removeAuthority(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>

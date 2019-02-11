@@ -6,7 +6,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="app" uri="http://application.oopscraft.net"%>
 <script type="text/javascript">
-var userSearch = new juice.data.Map({
+var userSearch = new duice.data.Map({
 	 rows: 30
 	,page: 1
 	,searchType: null
@@ -20,11 +20,11 @@ var userSearchTypes = [
 	,{ value:'EMAIL', text:'<spring:message code="application.text.email"/>' }
 	,{ value:'PHONE', text:'<spring:message code="application.text.phone"/>' }
 ];
-var users = new juice.data.List();
-var user = new juice.data.Map();
-var groups = new juice.data.List();
-var roles = new juice.data.List();
-var authorities = new juice.data.List();
+var users = new duice.data.List();
+var user = new duice.data.Map();
+var groups = new duice.data.List();
+var roles = new duice.data.List();
+var authorities = new duice.data.List();
 var isNew = false;
 
 // locales
@@ -213,7 +213,7 @@ function saveUser() {
 	try {
 		__validator.checkId(user.get('id'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -221,7 +221,7 @@ function saveUser() {
 	try {
 		__validator.checkName(user.get('name'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -242,7 +242,7 @@ function saveUser() {
 		});
 		if(isDuplicated == true){
 			<spring:message code="application.text.id" var="item"/>
-			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			new duice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
 			return false;
 		}
 	}
@@ -252,9 +252,9 @@ function saveUser() {
 		try {
 			__validator.checkPassword(user.get('password'), user.get('passwordConfirm'));
 		}catch(e){
-			new juice.ui.Alert(e)
+			new duice.ui.Alert(e)
 			.afterConfirm(function(){
-				$('input[data-juice-bind="user.password"]').select();
+				$('input[data-duice-bind="user.password"]').select();
 			})
 			.open();
 			return false;
@@ -265,9 +265,9 @@ function saveUser() {
 	try {
 		__validator.checkEmailAddress(user.get('email'));
 	}catch(e){
-		new juice.ui.Alert(e)
+		new duice.ui.Alert(e)
 		.afterConfirm(function(){
-			$('input[data-juice-bind="user.email"]').select();
+			$('input[data-duice-bind="user.email"]').select();
 		})
 		.open();
 		return false;
@@ -277,9 +277,9 @@ function saveUser() {
 	try {
 		__validator.checkLocale(user.get('locale'));
 	}catch(e){
-		new juice.ui.Alert(e)
+		new duice.ui.Alert(e)
 		.afterConfirm(function(){
-			$('select[data-juice-bind="user.locale"]').select();
+			$('select[data-duice-bind="user.locale"]').select();
 		})
 		.open();
 		return false;
@@ -289,9 +289,9 @@ function saveUser() {
 	try {
 		__validator.checkPhoneNumber(user.get('phone'));
 	}catch(e){
-		new juice.ui.Alert(e)
+		new duice.ui.Alert(e)
 		.afterConfirm(function(){
-			$('input[data-juice-bind="user.phone"]').select();
+			$('input[data-duice-bind="user.phone"]').select();
 		})
 		.open();
 		return false;
@@ -301,9 +301,9 @@ function saveUser() {
 	try {
 		__validator.checkName(user.get('name'));
 	}catch(e){
-		new juice.ui.Alert(e)
+		new duice.ui.Alert(e)
 		.afterConfirm(function(){
-			$('input[data-juice-bind="user.name"]').select();
+			$('input[data-duice-bind="user.name"]').select();
 		})
 		.open();
 		return false;
@@ -312,9 +312,9 @@ function saveUser() {
 	// Checks statusCode
 	if(__isEmpty(user.get('status'))){
 		<spring:message code="application.text.status" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>')
+		new duice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>')
 		.afterConfirm(function(){
-			$('select[data-juice-bind="user.status"]').select();
+			$('select[data-duice-bind="user.status"]').select();
 		})
 		.open();
 		return false;
@@ -323,7 +323,7 @@ function saveUser() {
 	// Saves user info
 	<spring:message code="application.text.user" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 		.afterConfirm(function() {
 			var userJson = user.toJson();
 			userJson.groups = groups.toJson();
@@ -349,13 +349,13 @@ function deleteUser(){
 	
 	// check system data
 	if(user.get('systemDataYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
 	<spring:message code="application.text.user" var="item"/>
 	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
 			 url: 'user/deleteUser'
@@ -385,8 +385,8 @@ function deleteUser(){
 	<div class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="userSearch.searchType" data-juice-options="userSearchTypes" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="userSearch.searchValue" style="width:100px;"/>
+				<select data-duice="ComboBox" data-duice-bind="userSearch.searchType" data-duice-options="userSearchTypes" style="width:100px;"></select>
+				<input data-duice="TextField" data-duice-bind="userSearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getUsers();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
@@ -399,7 +399,7 @@ function deleteUser(){
 				</button>
 			</div>
 		</div>
-		<table id="usersTable" data-juice="Grid" data-juice-bind="users" data-juice-item="user">
+		<table id="usersTable" data-duice="Grid" data-duice-bind="users" data-duice-item="user">
 			<colgroup>
 				<col style="width:10%;"/>
 				<col/>
@@ -431,25 +431,25 @@ function deleteUser(){
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-id="{{$context.user.get('id')}}" onclick="javascript:getUser(this.dataset.id);">
+				<tr data-id="[[$context.user.get('id')]]" onclick="javascript:getUser(this.dataset.id);">
 					<td class="text-center">
-						{{userSearch.get('rows')*(userSearch.get('page')-1)+$context.index+1}}
+						[[userSearch.get('rows')*(userSearch.get('page')-1)+$context.index+1]]
 					</td>
-					<td class="{{$context.user.get('systemDataYn')=='Y'?'systemData':''}}">
-						<label data-juice="Label" data-juice-bind="user.id" class="id"></label>
+					<td class="[[$context.user.get('systemDataYn')=='Y'?'systemData':'']]">
+						<span data-duice="Text" data-duice-bind="user.id" class="id"></span>
 					</td>
-					<td><label data-juice="Label" data-juice-bind="user.name"></label></td>
-					<td><label data-juice="Label" data-juice-bind="user.email"></label></td>
-					<td><label data-juice="Label" data-juice-bind="user.phone"></label></td>
+					<td><span data-duice="Text" data-duice-bind="user.name"></span></td>
+					<td><span data-duice="Text" data-duice-bind="user.email"></span></td>
+					<td><span data-duice="Text" data-duice-bind="user.phone"></span></td>
 					<td class="text-center">
-						<label data-juice="Label" data-juice-bind="user.status"></label>
+						<span data-duice="Text" data-duice-bind="user.status"></span>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 		<div>
-			<ul data-juice="Pagination" data-juice-bind="userSearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
-				<li data-page="{{$context.page}}" onclick="javascript:getUsers(this.dataset.page);">{{$context.page}}</li>
+			<ul data-duice="Pagination" data-duice-bind="userSearch" data-duice-rows="rows" data-duice-page="page" data-duice-total-count="totalCount" data-duice-page-size="5">
+				<li data-page="[[$context.page]]" onclick="javascript:getUsers(this.dataset.page);">[[$context.page]]</li>
 			</ul>
 		</div>
 	</div>
@@ -493,7 +493,7 @@ function deleteUser(){
 					</span>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="user.id"/>
+					<input class="id" data-duice="TextField" data-duice-bind="user.id"/>
 				</td>
 			</tr>
 			<tr id="passwordTr">
@@ -503,8 +503,8 @@ function deleteUser(){
 					</span>
 				</th>
 				<td>
-					<input type="password" class="id" data-juice="TextField" data-juice-bind="user.password" style="width:15rem;"/>
-					<input type="password" class="id" data-juice="TextField" data-juice-bind="user.passwordConfirm" style="width:15rem;"/>
+					<input type="password" class="id" data-duice="TextField" data-duice-bind="user.password" style="width:15rem;"/>
+					<input type="password" class="id" data-duice="TextField" data-duice-bind="user.passwordConfirm" style="width:15rem;"/>
 				</td>
 			</tr>
 			<tr>
@@ -514,7 +514,7 @@ function deleteUser(){
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="user.email" placeholder="_____@__________"/>
+					<input data-duice="TextField" data-duice-bind="user.email" placeholder="_____@__________"/>
 				</td>
 			</tr>
 			<tr>
@@ -524,11 +524,11 @@ function deleteUser(){
 					</span>
 				</th>
 				<td>
-					<select data-juice="ComboBox" 
-						data-juice-bind="user.locale" 
-						data-juice-options="locales" 
-						data-juice-option-value="locale"
-						data-juice-option-text="displayName"
+					<select data-duice="ComboBox" 
+						data-duice-bind="user.locale" 
+						data-duice-options="locales" 
+						data-duice-option-value="locale"
+						data-duice-option-text="displayName"
 						style="width:15rem;">
 					</select>
 				</td>
@@ -540,7 +540,7 @@ function deleteUser(){
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="user.phone" placeholder="___-____-____"/>
+					<input data-duice="TextField" data-duice-bind="user.phone" placeholder="___-____-____"/>
 				</td>
 			</tr>
 			<tr>
@@ -550,7 +550,7 @@ function deleteUser(){
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="user.name"/>
+					<input data-duice="TextField" data-duice-bind="user.name"/>
 				</td>
 			</tr>
 			<tr>
@@ -560,7 +560,7 @@ function deleteUser(){
 					</span>
 				</th>
 				<td>
-					<select data-juice="ComboBox" data-juice-bind="user.status" data-juice-options="statuses" style="width:15rem;"></select>
+					<select data-duice="ComboBox" data-duice-bind="user.status" data-duice-options="statuses" style="width:15rem;"></select>
 				</td>
 			</tr>
 			<tr>
@@ -568,7 +568,7 @@ function deleteUser(){
 					<spring:message code="application.text.nickname"/>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="user.nickname"/>
+					<input data-duice="TextField" data-duice-bind="user.nickname"/>
 				</td>
 			</tr>
 			<tr>
@@ -576,11 +576,11 @@ function deleteUser(){
 					<spring:message code="application.text.avatar"/>
 				</th>
 				<td>
-					<img data-juice="Image" data-juice-bind="user.avatar" data-juice-width="64" data-juice-height="64" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:64px; height:64px;"/>
-					<img data-juice="Image" data-juice-bind="user.avatar" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:48px; height:48px;"/>
-					<img data-juice="Image" data-juice-bind="user.avatar" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:32px; height:32px;"/>
-					<img data-juice="Image" data-juice-bind="user.avatar" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:24px; height:24px;"/>
-					<img data-juice="Image" data-juice-bind="user.avatar" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:16px; height:16px;"/>
+					<img data-duice="Image" data-duice-bind="user.avatar" data-duice-width="64" data-duice-height="64" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:64px; height:64px;"/>
+					<img data-duice="Image" data-duice-bind="user.avatar" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:48px; height:48px;"/>
+					<img data-duice="Image" data-duice-bind="user.avatar" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:32px; height:32px;"/>
+					<img data-duice="Image" data-duice-bind="user.avatar" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:24px; height:24px;"/>
+					<img data-duice="Image" data-duice-bind="user.avatar" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:16px; height:16px;"/>
 				</td>
 			</tr>
 			<tr>
@@ -588,7 +588,7 @@ function deleteUser(){
 					<spring:message code="application.text.signature"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="user.signature" style="height:100px;"></textarea>
+					<textarea data-duice="TextArea" data-duice-bind="user.signature" style="height:100px;"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -598,7 +598,7 @@ function deleteUser(){
 					</span>
 				</th>
 				<td>
-					<label data-juice="Label" data-juice-bind="user.joinDate" data-juice-format="date:yyyy-MM-dd hh:mm:ss"></label>
+					<span data-duice="Text" data-duice-bind="user.joinDate" data-duice-format="date:yyyy-MM-dd hh:mm:ss"></span>
 				</td>
 			</tr>
 			<tr>
@@ -608,7 +608,7 @@ function deleteUser(){
 					</span>
 				</th>
 				<td>
-					<label data-juice="Label" data-juice-bind="user.closeDate"></label>
+					<span data-duice="Text" data-duice-bind="user.closeDate"></span>
 				</td>
 			</tr>
 			<tr>
@@ -619,7 +619,7 @@ function deleteUser(){
 					<spring:message code="application.text.groups"/>
 				</th>
 				<td>
-					<table data-juice="Grid" data-juice-bind="groups" data-juice-item="group">
+					<table data-duice="Grid" data-duice-bind="groups" data-duice-item="group">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -641,15 +641,15 @@ function deleteUser(){
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.group.get('id')}}">
+							<tr data-id="[[$context.group.get('id')]]">
 								<td>
-									<label data-juice="Label" data-juice-bind="group.id" class="id"></label>
+									<span data-duice="Text" data-duice-bind="group.id" class="id"></span>
 								</td>
 								<td>
-									<label data-juice="Label" data-juice-bind="group.name"></label>
+									<span data-duice="Text" data-duice-bind="group.name"></span>
 								</td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeGroup(this.dataset.index);">
+									<button class="small" data-index="[[$context.index]]" onclick="javascript:removeGroup(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>
@@ -666,7 +666,7 @@ function deleteUser(){
 					<spring:message code="application.text.roles"/>
 				</th>
 				<td>
-					<table data-juice="Grid" data-juice-bind="roles" data-juice-item="role">
+					<table data-duice="Grid" data-duice-bind="roles" data-duice-item="role">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -688,15 +688,15 @@ function deleteUser(){
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.role.get('id')}}">
+							<tr data-id="[[$context.role.get('id')]]">
 								<td>
-									<label data-juice="Label" data-juice-bind="role.id" class="id"></label>
+									<span data-duice="Text" data-duice-bind="role.id" class="id"></span>
 								</td>
 								<td>
-									<label data-juice="Label" data-juice-bind="role.name"></label>
+									<span data-duice="Text" data-duice-bind="role.name"></span>
 								</td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeRole(this.dataset.index);">
+									<button class="small" data-index="[[$context.index]]" onclick="javascript:removeRole(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>
@@ -713,7 +713,7 @@ function deleteUser(){
 					<spring:message code="application.text.authorities"/>
 				</th>
 				<td colspan="3">
-					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
+					<table data-duice="Grid" data-duice-bind="authorities" data-duice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -735,15 +735,15 @@ function deleteUser(){
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.authority.get('id')}}">
+							<tr data-id="[[$context.authority.get('id')]]">
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+									<span data-duice="Text" data-duice-bind="authority.id" class="id"></span>
 								</td>
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.name"></label>
+									<span data-duice="Text" data-duice-bind="authority.name"></span>
 								</td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
+									<button class="small" data-index="[[$context.index]]" onclick="javascript:removeAuthority(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>

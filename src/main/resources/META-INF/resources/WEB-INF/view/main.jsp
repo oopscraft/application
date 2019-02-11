@@ -15,8 +15,8 @@ $( document ).ready(function() {
 });
 
 // latest articles
-var latestArticles = new juice.data.List([]);
-var latestArticleSearch = new juice.data.Map({
+var latestArticles = new duice.data.List([]);
+var latestArticleSearch = new duice.data.Map({
 	 page: 1
 	,rows: 30
 	,totalCount:-1
@@ -42,8 +42,8 @@ function getLatestArticles(page) {
 }
 
 // best articles
-var bestArticles = new juice.data.List([]);
-var bestArticleSearch = new juice.data.Map({
+var bestArticles = new duice.data.List([]);
+var bestArticleSearch = new duice.data.Map({
 	 page: 1
 	,rows: 30
 	,totalCount:-1

@@ -10,11 +10,11 @@
 var systemLoadAverageChart;
 var memoryUsageChart;
 var classCountChart;
-var osInfo = new juice.data.Map();
-var heapMemoryUsage = new juice.data.Map();
-var nonHeapMemoryUsage = new juice.data.Map();
-var classInfo = new juice.data.Map();
-var threadInfos = new juice.data.List();
+var osInfo = new duice.data.Map();
+var heapMemoryUsage = new duice.data.Map();
+var nonHeapMemoryUsage = new duice.data.Map();
+var classInfo = new duice.data.Map();
+var threadInfos = new duice.data.List();
 
 /**
  * On document loaded
@@ -102,9 +102,9 @@ function drawSystemLoadAverageChart(monitorInfos){
 		document.getElementById('systemLoadAverageChart').getContext('2d'),{
 		    type: 'line',
 		    data:  {
-				labels: [],
+				spans: [],
 				datasets: [{
-					label: 'System Load Average',
+					span: 'System Load Average',
 					data: [],
 					fill: false,
 					borderWidth: 1,
@@ -125,10 +125,10 @@ function drawSystemLoadAverageChart(monitorInfos){
 		}
 	);
 	
-	systemLoadAverageChart.data.labels = [];
+	systemLoadAverageChart.data.spans = [];
 	systemLoadAverageChart.data.datasets[0].data = [];
 	monitorInfos.forEach(function(monitorInfo){
-		systemLoadAverageChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
+		systemLoadAverageChart.data.spans.push(moment(monitorInfo.date).format('mm:ss'));
 		systemLoadAverageChart.data.datasets[0].data.push(monitorInfo.osInfo.systemLoadAverage);
 	});
 	systemLoadAverageChart.update();
@@ -138,9 +138,9 @@ function drawSystemLoadAverageChart(monitorInfos){
  * Updates systemLoadAverageChart
  */
 function updateSystemLoadAverageChart(monitorInfo){
-	systemLoadAverageChart.data.labels.shift();
+	systemLoadAverageChart.data.spans.shift();
 	systemLoadAverageChart.data.datasets[0].data.shift();
-	systemLoadAverageChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
+	systemLoadAverageChart.data.spans.push(moment(monitorInfo.date).format('mm:ss'));
 	systemLoadAverageChart.data.datasets[0].data.push(monitorInfo.osInfo.systemLoadAverage);
 	systemLoadAverageChart.update();
 }
@@ -153,23 +153,23 @@ function drawMemoryUsageChart(monitorInfos){
 		document.getElementById('memoryUsageChart').getContext('2d'),{
 		    type: 'line',
 		    data:  {
-				labels: [],
+				spans: [],
 				datasets: [{
-					label: 'Heap Size',
+					span: 'Heap Size',
 					data: [],
 					fill: false,
 					borderWidth: 1,
 					borderColor: 'red',
 					pointStyle: 'crossRot',
 				},{
-					label: 'Heap Usage',
+					span: 'Heap Usage',
 					data: [],
 					fill: false,
 					borderWidth: 1,
 					borderColor: 'steelblue',
 					pointStyle: 'crossRot',
 				},{
-					label: 'None Heap Usage',
+					span: 'None Heap Usage',
 					data: [],
 					fill: false,
 					borderWidth: 1,
@@ -191,10 +191,10 @@ function drawMemoryUsageChart(monitorInfos){
 	);
 	
 	// updates chart data
-	memoryUsageChart.data.labels = [];
+	memoryUsageChart.data.spans = [];
 	memoryUsageChart.data.datasets[0].data = [];
 	monitorInfos.forEach(function(monitorInfo){
-		memoryUsageChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
+		memoryUsageChart.data.spans.push(moment(monitorInfo.date).format('mm:ss'));
 		memoryUsageChart.data.datasets[0].data.push(monitorInfo.memInfo.heapMemoryUsage.max/1024);
 		memoryUsageChart.data.datasets[1].data.push(monitorInfo.memInfo.heapMemoryUsage.used/1024);
 		memoryUsageChart.data.datasets[2].data.push(monitorInfo.memInfo.nonHeapMemoryUsage.used/1024);
@@ -206,11 +206,11 @@ function drawMemoryUsageChart(monitorInfos){
  * Updates systemLoadAverageChart
  */
 function updateMemoryUsageChart(monitorInfo){
-	memoryUsageChart.data.labels.shift();
+	memoryUsageChart.data.spans.shift();
 	memoryUsageChart.data.datasets[0].data.shift();
 	memoryUsageChart.data.datasets[1].data.shift();
 	memoryUsageChart.data.datasets[2].data.shift();
-	memoryUsageChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
+	memoryUsageChart.data.spans.push(moment(monitorInfo.date).format('mm:ss'));
 	memoryUsageChart.data.datasets[0].data.push(monitorInfo.memInfo.heapMemoryUsage.max/1024);
 	memoryUsageChart.data.datasets[1].data.push(monitorInfo.memInfo.heapMemoryUsage.used/1024);
 	memoryUsageChart.data.datasets[2].data.push(monitorInfo.memInfo.nonHeapMemoryUsage.used/1024);
@@ -225,16 +225,16 @@ function drawClassCountChart(monitorInfos){
 		document.getElementById('classCountChart').getContext('2d'),{
 		    type: 'line',
 		    data:  {
-				labels: [],
+				spans: [],
 				datasets: [{
-					label: 'Loaded Class',
+					span: 'Loaded Class',
 					data: [],
 					fill: false,
 					borderWidth: 1,
 					borderColor: 'red',
 					pointStyle: 'crossRot',
 				},{
-					label: 'Unload Class',
+					span: 'Unload Class',
 					data: [],
 					fill: false,
 					borderWidth: 1,
@@ -256,11 +256,11 @@ function drawClassCountChart(monitorInfos){
 	);
 	
 	// updates chart data
-	classCountChart.data.labels = [];
+	classCountChart.data.spans = [];
 	classCountChart.data.datasets[0].data = [];
 	classCountChart.data.datasets[1].data = [];
 	monitorInfos.forEach(function(monitorInfo){
-		classCountChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
+		classCountChart.data.spans.push(moment(monitorInfo.date).format('mm:ss'));
 		classCountChart.data.datasets[0].data.push(monitorInfo.classInfo.loadedClassCount);
 		classCountChart.data.datasets[1].data.push(monitorInfo.classInfo.unloadedClassCount);
 	});
@@ -271,10 +271,10 @@ function drawClassCountChart(monitorInfos){
  * Updates classCountChart
  */
 function updateClassCountChart(monitorInfo){
-	classCountChart.data.labels.shift();
+	classCountChart.data.spans.shift();
 	classCountChart.data.datasets[0].data.shift();
 	classCountChart.data.datasets[1].data.shift();
-	classCountChart.data.labels.push(moment(monitorInfo.date).format('mm:ss'));
+	classCountChart.data.spans.push(moment(monitorInfo.date).format('mm:ss'));
 	classCountChart.data.datasets[0].data.push(monitorInfo.classInfo.loadedClassCount);
 	classCountChart.data.datasets[1].data.push(monitorInfo.classInfo.unloadedClassCount);
 	classCountChart.update();
@@ -327,23 +327,23 @@ function updateClassCountChart(monitorInfo){
 			</colgroup>
 			<tr>
 				<th>name</th>
-				<td><label data-juice="Label" data-juice-bind="osInfo.name"></label></td>
+				<td><span data-duice="Text" data-duice-bind="osInfo.name"></span></td>
 			</tr>
 			<tr>
 				<th>version</th>
-				<td><label data-juice="Label" data-juice-bind="osInfo.version"></label></td>
+				<td><span data-duice="Text" data-duice-bind="osInfo.version"></span></td>
 			</tr>
 			<tr>
 				<th>arch</th>
-				<td><label data-juice="Label" data-juice-bind="osInfo.arch"></label></td>
+				<td><span data-duice="Text" data-duice-bind="osInfo.arch"></span></td>
 			</tr>
 			<tr>
 				<th>availableProcessors</th>
-				<td><label data-juice="Label" data-juice-bind="osInfo.availableProcessors"></label></td>
+				<td><span data-duice="Text" data-duice-bind="osInfo.availableProcessors"></span></td>
 			</tr>
 			<tr>
 				<th>systemLoadAverage</th>
-				<td><label data-juice="Label" data-juice-bind="osInfo.systemLoadAverage"></label></td>
+				<td><span data-duice="Text" data-duice-bind="osInfo.systemLoadAverage"></span></td>
 			</tr>
 		</table>
 	</div>
@@ -367,23 +367,23 @@ function updateClassCountChart(monitorInfo){
 			</tr>
 			<tr>
 				<th>init</th>
-				<td class="text-right"><label data-juice="Label" data-juice-bind="heapMemoryUsage.init" data-juice-format="number:0,0"></label>bytes</td>
-				<td class="text-right"><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.init" data-juice-format="number:0,0"></label>bytes</td>
+				<td class="text-right"><span data-duice="Text" data-duice-bind="heapMemoryUsage.init" data-duice-format="number:0"></span>bytes</td>
+				<td class="text-right"><span data-duice="Text" data-duice-bind="nonHeapMemoryUsage.init" data-duice-format="number:0"></span>bytes</td>
 			</tr>
 			<tr>
 				<th>used</th>
-				<td class="text-right"><label data-juice="Label" data-juice-bind="heapMemoryUsage.used" data-juice-format="number:0,0"></label>bytes</td>
-				<td class="text-right"><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.used" data-juice-format="number:0,0"></label>bytes</td>
+				<td class="text-right"><span data-duice="Text" data-duice-bind="heapMemoryUsage.used" data-duice-format="number:0"></span>bytes</td>
+				<td class="text-right"><span data-duice="Text" data-duice-bind="nonHeapMemoryUsage.used" data-duice-format="number:0"></span>bytes</td>
 			</tr>
 			<tr>
 				<th>committed</th>
-				<td class="text-right"><label data-juice="Label" data-juice-bind="heapMemoryUsage.committed" data-juice-format="number:0,0"></label>bytes</td>
-				<td class="text-right"><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.committed" data-juice-format="number:0,0"></label>bytes</td>
+				<td class="text-right"><span data-duice="Text" data-duice-bind="heapMemoryUsage.committed" data-duice-format="number:0"></span>bytes</td>
+				<td class="text-right"><span data-duice="Text" data-duice-bind="nonHeapMemoryUsage.committed" data-duice-format="number:0"></span>bytes</td>
 			</tr>
 			<tr>
 				<th>max</th>
-				<td class="text-right"><label data-juice="Label" data-juice-bind="heapMemoryUsage.max" data-juice-format="number:0,0"></label>bytes</td>
-				<td class="text-right"><label data-juice="Label" data-juice-bind="nonHeapMemoryUsage.max" data-juice-format="number:0,0"></label>bytes</td>
+				<td class="text-right"><span data-duice="Text" data-duice-bind="heapMemoryUsage.max" data-duice-format="number:0"></span>bytes</td>
+				<td class="text-right"><span data-duice="Text" data-duice-bind="nonHeapMemoryUsage.max" data-duice-format="number:0"></span>bytes</td>
 			</tr>
 		</table>
 	</div>
@@ -400,15 +400,15 @@ function updateClassCountChart(monitorInfo){
 			</colgroup>
 			<tr>
 				<th>totalLoadedClassCount</th>
-				<td class="text-right"><label data-juice="Label" data-juice-bind="classInfo.totalLoadedClassCount" data-juice-format="number:0,0"></label></td>
+				<td class="text-right"><span data-duice="Text" data-duice-bind="classInfo.totalLoadedClassCount" data-duice-format="number:0"></span></td>
 			</tr>
 			<tr>
 				<th>loadedClassCount</th>
-				<td class="text-right"><label data-juice="Label" data-juice-bind="classInfo.loadedClassCount" data-juice-format="number:0,0"></label></td>
+				<td class="text-right"><span data-duice="Text" data-duice-bind="classInfo.loadedClassCount" data-duice-format="number:0"></span></td>
 			</tr>
 			<tr>
 				<th>unloadedClassCount</th>
-				<td class="text-right"><label data-juice="Label" data-juice-bind="classInfo.unloadedClassCount" data-juice-format="number:0,0"></label></td>
+				<td class="text-right"><span data-duice="Text" data-duice-bind="classInfo.unloadedClassCount" data-duice-format="number:0"></span></td>
 			</tr>
 		</table>
 	</div>
@@ -419,7 +419,7 @@ function updateClassCountChart(monitorInfo){
 			<i class="icon-file"></i>
 			Thread List
 		</div>
-		<table id="threadInfosTable" data-juice="Grid" data-juice-bind="threadInfos" data-juice-item="threadInfo">
+		<table id="threadInfosTable" data-duice="Grid" data-duice-bind="threadInfos" data-duice-item="threadInfo">
 			<thead>
 				<tr>
 					<th>threadId</th>
@@ -433,13 +433,13 @@ function updateClassCountChart(monitorInfo){
 			</thead>
 			<tbody>
 				<tr>
-					<td class="text-center"><label data-juice="Label" data-juice-bind="threadInfo.threadId"></label></td>
-					<td><label data-juice="Label" data-juice-bind="threadInfo.threadName"></label></td>
-					<td><label data-juice="Label" data-juice-bind="threadInfo.threadState"></label></td>
-					<td class="text-right"><label data-juice="Label" data-juice-bind="threadInfo.waitedCount" data-juice-format="number:0,0"></label></td>
-					<td class="text-right"><label data-juice="Label" data-juice-bind="threadInfo.waitedTime" data-juice-format="number:0,0"></label>m</td>
-					<td class="text-right"><label data-juice="Label" data-juice-bind="threadInfo.blockCount" data-juice-format="number:0,0"></label></td>
-					<td class="text-right"><label data-juice="Label" data-juice-bind="threadInfo.blockTime" data-juice-format="number:0,0"></label>m</td>
+					<td class="text-center"><span data-duice="Text" data-duice-bind="threadInfo.threadId"></span></td>
+					<td><span data-duice="Text" data-duice-bind="threadInfo.threadName"></span></td>
+					<td><span data-duice="Text" data-duice-bind="threadInfo.threadState"></span></td>
+					<td class="text-right"><span data-duice="Text" data-duice-bind="threadInfo.waitedCount" data-duice-format="number:0"></span></td>
+					<td class="text-right"><span data-duice="Text" data-duice-bind="threadInfo.waitedTime" data-duice-format="number:0"></span>m</td>
+					<td class="text-right"><span data-duice="Text" data-duice-bind="threadInfo.blockCount" data-duice-format="number:0"></span></td>
+					<td class="text-right"><span data-duice="Text" data-duice-bind="threadInfo.blockTime" data-duice-format="number:0"></span>m</td>
 				</tr>
 			</tbody>
 		</table>

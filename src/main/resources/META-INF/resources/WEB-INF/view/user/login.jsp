@@ -6,7 +6,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="app" uri="http://application.oopscraft.net"%>
 <script type="text/javascript">
-var user = new juice.data.Map({
+var user = new duice.data.Map({
 	id: null,
 	password: null,
 	'_spring_security_remember_me': false
@@ -32,7 +32,7 @@ $( document ).ready(function() {
  */
 function doLogin() {
 
-	if(juice.util.StringUtils.isEmpty(user.get('id'))){
+	if(duice.util.StringUtils.isEmpty(user.get('id'))){
 		<spring:message code="application.text.id" var="item"/>
 		var message = '<spring:message code="application.message.enterItem" arguments="${item}"/>';
 		printMessage(message);
@@ -40,7 +40,7 @@ function doLogin() {
 		return false;
 	}
 	
-	if(juice.util.StringUtils.isEmpty(user.get('password'))){
+	if(duice.util.StringUtils.isEmpty(user.get('password'))){
 		<spring:message code="application.text.password" var="item"/>
 		var message = '<spring:message code="application.message.enterItem" arguments="${item}"/>';
 		printMessage(message);

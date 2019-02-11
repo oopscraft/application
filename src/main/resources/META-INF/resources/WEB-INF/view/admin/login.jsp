@@ -10,8 +10,14 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<link rel="SHORTCUT ICON" href="${pageContext.request.contextPath}/static/img/application.ico">
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/juice/juice.css">
-		<script src="${pageContext.request.contextPath}/static/lib/juice/juice.js"></script>
+		
+		<!-- 
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/duice/duice.css">
+		<script src="${pageContext.request.contextPath}/static/lib/duice/duice.js"></script>
+		 -->
+		<link rel="stylesheet" href="//duice.oopscraft.net/src/duice.css">
+		<script src="//duice.oopscraft.net/src/duice.js"></script>		
+		
 		<script src="${pageContext.request.contextPath}/static/lib/jquery.js"></script>
 		<link href="${pageContext.request.contextPath}/static/icon/css/icon.css" rel="stylesheet">
 		
@@ -25,7 +31,7 @@
  		<link href="${pageContext.request.contextPath}/static/font/font-zh.css" rel="stylesheet" type="text/css" />
  		
 		<script type="text/javascript">
-		var user = new juice.data.Map({
+		var user = new duice.data.Map({
 			id: null,
 			password: null,
 			language: '${pageContext.response.locale}'
@@ -73,7 +79,7 @@
 		 */
 		function doLogin() {
 
-			if(juice.util.StringUtils.isEmpty(user.get('id'))){
+			if(duice.util.StringUtils.isEmpty(user.get('id'))){
 				<spring:message code="application.text.id" var="item"/>
 				var message = '<spring:message code="application.message.enterItem" arguments="${item}"/>';
 				printMessage(message);
@@ -81,7 +87,7 @@
 				return false;
 			}
 			
-			if(juice.util.StringUtils.isEmpty(user.get('password'))){
+			if(duice.util.StringUtils.isEmpty(user.get('password'))){
 				<spring:message code="application.text.password" var="item"/>
 				var message = '<spring:message code="application.message.enterItem" arguments="${item}"/>';
 				printMessage(message);
@@ -176,13 +182,13 @@
 				<img src="${pageContext.request.contextPath}/static/img/application.png"/>
 			</div>
 			<div>
-				<input id="idInput" data-juice="TextField" data-juice-bind="user.id" placeholder="<spring:message code="application.text.id"/>"/>
+				<input id="idInput" data-duice="TextField" data-duice-bind="user.id" placeholder="<spring:message code="application.text.id"/>"/>
 			</div>
 			<div>
-				<input id="passwordInput" type="password" data-juice="TextField" data-juice-bind="user.password" placeholder="<spring:message code="application.text.password"/>"/>
+				<input id="passwordInput" type="password" data-duice="TextField" data-duice-bind="user.password" placeholder="<spring:message code="application.text.password"/>"/>
 			</div>
 			<div>
-				<select data-juice="ComboBox" data-juice-bind="user.language" data-juice-options="languages" data-juice-option-value="language" data-juice-option-text="displayName" style="background-color:white;"></select>
+				<select data-duice="ComboBox" data-duice-bind="user.language" data-duice-options="languages" data-duice-option-value="language" data-duice-option-text="displayName" style="background-color:white;"></select>
 			</div>
 			<div>
 				<button id="loginButton" onclick="javascript:doLogin();" style="border:#fff;">

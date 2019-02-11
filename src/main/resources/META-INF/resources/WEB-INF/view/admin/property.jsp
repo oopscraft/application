@@ -8,7 +8,7 @@
 <%@page import="java.text.*" %>
 <!-- global -->
 <script type="text/javascript">
-var propertySearch = new juice.data.Map({
+var propertySearch = new duice.data.Map({
 	 rows: 30
 	,page: 1
 	,searchType: null
@@ -20,8 +20,8 @@ var propertySearchKeys = [
 	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
 	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 ];
-var properties = new juice.data.List();
-var property = new juice.data.Map();
+var properties = new duice.data.List();
+var property = new duice.data.Map();
 
 /**
  * clear edit
@@ -117,7 +117,7 @@ function saveProperty() {
 	try {
 		__validator.checkId(property.get('id'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -125,7 +125,7 @@ function saveProperty() {
 	try {
 		__validator.checkName(property.get('name'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -146,7 +146,7 @@ function saveProperty() {
 		});
 		if(isDuplicated == true){
 			<spring:message code="application.text.id" var="item"/>
-			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			new duice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
 			return false;
 		}
 	}
@@ -154,7 +154,7 @@ function saveProperty() {
 	// Saves property
 	<spring:message code="application.text.property" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 		.afterConfirm(function() {
 			var propertyJson = property.toJson();
 			$.ajax({
@@ -177,14 +177,14 @@ function deleteProperty() {
 
 	// Checks system data
 	if(property.get('systemDataYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
 	// Removes property
 	<spring:message code="application.text.property" var="item"/>
 	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
 			 url: 'property/deleteProperty'
@@ -215,8 +215,8 @@ function deleteProperty() {
 	<div class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="propertySearch.searchType" data-juice-options="propertySearchKeys" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="propertySearch.searchValue" style="width:100px;"/>
+				<select data-duice="ComboBox" data-duice-bind="propertySearch.searchType" data-duice-options="propertySearchKeys" style="width:100px;"></select>
+				<input data-duice="TextField" data-duice-bind="propertySearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getProperties();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
@@ -229,7 +229,7 @@ function deleteProperty() {
 				</button>
 			</div>
 		</div>
-		<table id="propertiesTable" data-juice="Grid" data-juice-bind="properties" data-juice-item="property">
+		<table id="propertiesTable" data-duice="Grid" data-duice-bind="properties" data-duice-item="property">
 			<colgroup>
 				<col style="width:10%"/>
 				<col style="width:30%"/>
@@ -249,20 +249,20 @@ function deleteProperty() {
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-id="{{$context.property.get('id')}}" onclick="javascript:getProperty(this.dataset.id);">
+				<tr data-id="[[$context.property.get('id')]]" onclick="javascript:getProperty(this.dataset.id);">
 					<td class="text-center">
-						{{propertySearch.get('rows')*(propertySearch.get('page')-1)+$context.index+1}}
+						[[propertySearch.get('rows')*(propertySearch.get('page')-1)+$context.index+1]]
 					</td>
-					<td class="{{$context.property.get('systemDataYn')=='Y'?'systemData':''}}">
-						<label data-juice="Label" data-juice-bind="property.id" class="id"></label>
+					<td class="[[$context.property.get('systemDataYn')=='Y'?'systemData':'']]">
+						<span data-duice="Text" data-duice-bind="property.id" class="id"></span>
 					</td>
-					<td><label data-juice="Label" data-juice-bind="property.name"></label></td>
+					<td><span data-duice="Text" data-duice-bind="property.name"></span></td>
 				</tr>
 			</tbody>
 		</table>
 		<div>
-			<ul data-juice="Pagination" data-juice-bind="propertySearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
-				<li data-page="{{$context.page}}" onclick="javascript:getProperties(this.dataset.page);">{{$context.page}}</li>
+			<ul data-duice="Pagination" data-duice-bind="propertySearch" data-duice-rows="rows" data-duice-page="page" data-duice-total-count="totalCount" data-duice-page-size="5">
+				<li data-page="[[$context.page]]" onclick="javascript:getProperties(this.dataset.page);">[[$context.page]]</li>
 			</ul>
 		</div>
 	</div>
@@ -300,7 +300,7 @@ function deleteProperty() {
 					</span>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="property.id"/>
+					<input class="id" data-duice="TextField" data-duice-bind="property.id"/>
 				</td>
 			</tr>
 			<tr>
@@ -310,7 +310,7 @@ function deleteProperty() {
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="property.name"/>
+					<input data-duice="TextField" data-duice-bind="property.name"/>
 				</td>
 			</tr>
 			<tr>
@@ -318,7 +318,7 @@ function deleteProperty() {
 					<spring:message code="application.text.value"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="property.value"></textarea>
+					<textarea data-duice="TextArea" data-duice-bind="property.value"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -326,7 +326,7 @@ function deleteProperty() {
 					<spring:message code="application.text.description"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="property.description"></textarea>
+					<textarea data-duice="TextArea" data-duice-bind="property.description"></textarea>
 				</td>
 			</tr>
 		</table>

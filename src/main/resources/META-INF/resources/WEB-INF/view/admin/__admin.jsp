@@ -12,8 +12,14 @@
 		<meta name="viewport" content="width=1024, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta http-equiv="refresh" content="${pageContext.session.maxInactiveInterval+10}">
 		<link rel="SHORTCUT ICON" href="${pageContext.request.contextPath}/static/img/application.ico">
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/juice/juice.css">
-		<script src="${pageContext.request.contextPath}/static/lib/juice/juice.js"></script>
+		
+		<!-- 
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/duice/duice.css">
+		<script src="${pageContext.request.contextPath}/static/lib/duice/duice.js"></script>
+		 -->
+		<link rel="stylesheet" href="//duice.oopscraft.net/src/duice.css">
+		<script src="//duice.oopscraft.net/src/duice.js"></script>
+		 
 		<script src="${pageContext.request.contextPath}/static/lib/jquery.js"></script>
  		<script src="${pageContext.request.contextPath}/static/lib/moment-with-locales.min.js"></script>
  		<script src="${pageContext.request.contextPath}/static/lib/Chart.js/Chart.js"></script>
@@ -34,7 +40,7 @@
 		<script type="text/javascript">
 		var __loader; 
         $(document).ajaxStart(function(event) {
-       		__loader = new juice.ui.__().load(document.body);
+       		__loader = new duice.ui.__().load(document.body);
         });
 
         // If not configure, "Provisional headers are shown" error occured in chrome.
@@ -63,7 +69,7 @@
         	}
         });
 		
-		var __menus = new juice.data.Tree([
+		var __menus = new duice.data.Tree([
 			{
 				name:'<spring:message code="application.label.monitor"/>', 
 				icon:'${pageContext.request.contextPath}/static/img/icon_monitor.png',
@@ -133,7 +139,7 @@
 		/**
 		 * login user information
 		 */
-		var __user = new juice.data.Map(${app:toJson(__user)});
+		var __user = new duice.data.Map(${app:toJson(__user)});
 		__user.set('language', '${pageContext.response.locale}');
 		__user.afterChange(function(event){
 			if(event.name == 'language'){
@@ -164,7 +170,7 @@
 		 * Generates random ID
 		 */ 
 		function __generateRandomId() {
-			return juice.util.RandomUtils.generateUUID().replace(/-/g,'').toUpperCase();	
+			return duice.util.RandomUtils.generateUUID().replace(/-/g,'').toUpperCase();	
 		}
         
         /**
@@ -185,7 +191,7 @@
          * Checks value is empty
          */
 		function __isEmpty(value){
-			return juice.util.StringUtils.isEmpty(value);
+			return duice.util.StringUtils.isEmpty(value);
 		}
          
         /**
@@ -196,22 +202,22 @@
         	// Checks ID	 
          	checkId: function(id) {
          		// Checks empty
-         		if(juice.util.StringUtils.isEmpty(id)){
+         		if(duice.util.StringUtils.isEmpty(id)){
              		<spring:message code="application.text.id" var="item"/>
        				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
 				// Validates generic
-				if(juice.util.StringUtils.isGenericId(id) == false){
+				if(duice.util.StringUtils.isGenericId(id) == false){
 					throw '<spring:message code="application.message.invalidIdFormat"/>';
 				}
 				// length
-				if(juice.util.StringUtils.isLengthBetween(id,4,32) == false){
+				if(duice.util.StringUtils.isLengthBetween(id,4,32) == false){
 					<spring:message code="application.text.id" var="item"/>
 					throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
 				}
          	},
          	checkPassword: function(password, passwordConfirm){
-         		if(juice.util.StringUtils.isEmpty(password)){
+         		if(duice.util.StringUtils.isEmpty(password)){
              		<spring:message code="application.text.password" var="item"/>
        				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
@@ -219,39 +225,39 @@
         			<spring:message code="application.text.password" var="item"/>
         			throw '<spring:message code="application.message.itemNotMatch" arguments="${item}"/>';
         		}
-        		if(juice.util.StringUtils.isGenericPassword(password) == false){
+        		if(duice.util.StringUtils.isGenericPassword(password) == false){
         			throw '<spring:message code="application.message.invalidPassowrdFormat"/>';
         		}
          	},
          	// Checks name
          	checkName: function(name){
          		// Checks empty
-         		if(juice.util.StringUtils.isEmpty(name)){
+         		if(duice.util.StringUtils.isEmpty(name)){
              		<spring:message code="application.text.name" var="item"/>
        				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
          		// check length
-         		if(juice.util.StringUtils.isLengthBetween(name,1,256) == false){
+         		if(duice.util.StringUtils.isLengthBetween(name,1,256) == false){
 					<spring:message code="application.text.name" var="item"/>
 					throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
          		}
          	},
          	// Checks email address
          	checkEmailAddress: function(value){
-         		if(juice.util.StringUtils.isEmailAddress(value) == false){
+         		if(duice.util.StringUtils.isEmailAddress(value) == false){
          			throw '<spring:message code="application.message.invalidEmailAddressFormat"/>';
          		}
          	},
          	// Checks locale 
          	checkLocale: function(value){
-         		if(juice.util.StringUtils.isEmpty(value)){
+         		if(duice.util.StringUtils.isEmpty(value)){
 					<spring:message code="application.text.locale" var="item"/>
 					throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
          		}
          	},
          	// Checks phone number
          	checkPhoneNumber: function(value){
-         		if(juice.util.StringUtils.isPhoneNumber(value) == false){
+         		if(duice.util.StringUtils.isPhoneNumber(value) == false){
          			throw '<spring:message code="application.message.invalidPhoneNumberFormat"/>';
          		}
          	}
@@ -265,7 +271,7 @@
         			+ (window.location.port ? ':'+window.location.port: '') + '/'
         			+ '${pageContext.request.contextPath}'
         			+ 'admin/admin.ws';
-        var __webSocketClient = new juice.util.WebSocketClient(__wsUrl);
+        var __webSocketClient = new duice.util.WebSocketClient(__wsUrl);
         __webSocketClient.onMessage(function(event){
         	//console.log(event.data);
         });
@@ -473,8 +479,8 @@
 			<nav class="topNav" style="padding-right:10px;">
 				<sec:authorize access="isAuthenticated()">
 					<span>
-						<img data-juice="Image" data-juice-bind="__user.avatar" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:32px; height:32px; border-radius:50%;"/>
-						<label data-juice="Label" data-juice-bind="__user.nickname"></label>
+						<img data-duice="Image" data-duice-bind="__user.avatar" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:32px; height:32px; border-radius:50%;"/>
+						<span data-duice="Text" data-duice-bind="__user.nickname"></span>
 					</span>
 					&nbsp;&nbsp;
 					<span>
@@ -488,7 +494,7 @@
 				<span>
 					<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_language.png"/>
 					<spring:message code="application.label.language"/>
-					<select data-juice="ComboBox" data-juice-bind="__user.language" data-juice-options="__languages" data-juice-option-value="language" data-juice-option-text="displayName" style="width:10rem;"></select>
+					<select data-duice="ComboBox" data-duice-bind="__user.language" data-duice-options="__languages" data-duice-option-value="language" data-duice-option-text="displayName" style="width:10rem;"></select>
 				</span>
 			</nav>
 		</header>
@@ -497,11 +503,11 @@
 			<!-- Navigation												-->
 			<!-- ====================================================== -->
 			<nav class="leftNav">
-				<ul data-juice="TreeView" data-juice-bind="__menus" data-juice-item="menu">
+				<ul data-duice="TreeView" data-duice-bind="__menus" data-duice-item="menu">
 					<li>
-						<a data-index="{{$context.index}}" href="{{$context.menu.get('value')}}" class="menuItem" style="display:block;">
-							<img class="icon" data-juice="Image" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="" alt="" style="vertical-align:middle;"/>
-							<label data-juice="Label" data-juice-bind="menu.name"></label>
+						<a data-index="[[$context.index]]" href="[[$context.menu.get('value')]]" class="menuItem" style="display:block;">
+							<img class="icon" data-duice="Image" data-duice-bind="menu.icon" data-duice-width="24" data-duice-height="24" src="" alt="" style="vertical-align:middle;"/>
+							<span data-duice="Text" data-duice-bind="menu.name"></span>
 						</a>
 					</li>
 				</ul>
@@ -528,7 +534,7 @@
          * Gets roles and open dialog
          */
         var __groupsDialog = {
-	 		items: new juice.data.Tree(),
+	 		items: new duice.data.Tree(),
 	 		unique: false,
 	 		handler: {},
 	 		setUnique: function(unique){
@@ -546,9 +552,8 @@
 			open: function(callback){
 				var $this = this;
 		 		this.items.fromJson([],'childGroups');
-				this.dialog = new juice.ui.Dialog($('#__groupsDialog')[0]);
-				var title = '<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_group.png"/>&nbsp;&nbsp;<spring:message code="application.text.group"/> <spring:message code="application.text.list"/>';
-				this.dialog.setTitle(title);
+				var title = '<spring:message code="application.text.group"/> <spring:message code="application.text.list"/>';
+		 		this.dialog = new duice.ui.Dialog(title, $('#__groupsDialog')[0]);
 				this.search();
 			},
 	 		search: function(){
@@ -608,7 +613,7 @@
 	 				});
 		 			this.handler.afterConfirm.call(this, node);
 	 			}else{
-	 				var nodes = new juice.data.List();
+	 				var nodes = new duice.data.List();
 	 				this.items.findNodes(function(node){
 	 					if(node.enable == true && node.get('__selected') == true){
 	 						return true;
@@ -641,11 +646,11 @@
 		<dialog>
 			<div id="__groupsDialog">
 				<div>
-					<ul id="__groupsUl" data-juice="TreeView" data-juice-bind="__groupsDialog.items" data-juice-item="item">
+					<ul id="__groupsUl" data-duice="TreeView" data-duice-bind="__groupsDialog.items" data-duice-item="item">
 						<li>
-							<div data-id="{{$context.item.get('id')}}" data-enable="{{$context.item.enable}}" onclick="javascript:this.dataset.enable == 'false' || __groupsDialog.select(this.dataset.id);" style="width:100%;cursor:hand;cursor:pointer;">
-								<input data-juice="CheckBox" data-juice-bind="item.__selected"/>
-								<label data-juice="Label" data-juice-bind="item.name"></label>
+							<div data-id="[[$context.item.get('id')]]" data-enable="[[$context.item.enable]]" onclick="javascript:this.dataset.enable == 'false' || __groupsDialog.select(this.dataset.id);" style="width:100%;cursor:hand;cursor:pointer;">
+								<input data-duice="CheckBox" data-duice-bind="item.__selected"/>
+								<span data-duice="Text" data-duice-bind="item.name"></span>
 							</div>
 						</li>
 					</ul>
@@ -668,16 +673,16 @@
          * Gets roles and open dialog
          */        
         var __rolesDialog = {
-           	searchCondition: new juice.data.Map(),
+           	searchCondition: new duice.data.Map(),
            	searchConditionKeys: [
 				 { value:'', text:'- <spring:message code="application.text.all"/> -' }
 				,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
 				,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 	 		],
-	 		searchItems: new juice.data.List(),
-	 		selectItems: new juice.data.List(),
+	 		searchItems: new duice.data.List(),
+	 		selectItems: new duice.data.List(),
 	 		handler: {},
-	 		option: new juice.data.Map(),
+	 		option: new duice.data.Map(),
 	 		setDisable: function(handler){
 	 			this.handler.disable = handler;
 	 			return this;
@@ -697,9 +702,8 @@
 	 			});
 		 		this.searchItems.fromJson([]);
 		 		this.selectItems.fromJson([]);
-				this.dialog = new juice.ui.Dialog($('#__rolesDialog')[0]);
-				var title = '<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_role.png"/>&nbsp;&nbsp;<spring:message code="application.text.role"/> <spring:message code="application.text.list"/>';
-				this.dialog.setTitle(title);
+				var title = '<spring:message code="application.text.role"/> <spring:message code="application.text.list"/>';
+		 		this.dialog = new duice.ui.Dialog(title, $('#__rolesDialog')[0]);
 				this.dialog.open();
 				this.search(1);
 			},
@@ -795,8 +799,8 @@
 			<div id="__rolesDialog">
 				<div style="display:flex; justify-content: space-between;">
 					<div style="flex:auto;">
-						<select data-juice="ComboBox" data-juice-bind="__rolesDialog.searchCondition.searchType" data-juice-options="__rolesDialog.searchConditionKeys" style="width:100px;"></select>
-						<input data-juice="TextField" data-juice-bind="__rolesDialog.searchCondition.searchValue" style="width:100px;"/>
+						<select data-duice="ComboBox" data-duice-bind="__rolesDialog.searchCondition.searchType" data-duice-options="__rolesDialog.searchConditionKeys" style="width:100px;"></select>
+						<input data-duice="TextField" data-duice-bind="__rolesDialog.searchCondition.searchValue" style="width:100px;"/>
 					</div>
 					<div>
 						<button onclick="javascript:__rolesDialog.search();">
@@ -805,7 +809,7 @@
 						</button>
 					</div>
 				</div>
-				<table id="__rolesTable" data-juice="Grid" data-juice-bind="__rolesDialog.searchItems" data-juice-item="item">
+				<table id="__rolesTable" data-duice="Grid" data-duice-bind="__rolesDialog.searchItems" data-duice-item="item">
 					<colgroup>
 						<col style="width:5%;"/>
 						<col style="width:15%;"/>
@@ -829,23 +833,23 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr data-id="{{$context.item.get('id')}}" data-enable="{{$context.item.enable}}" onclick="javascript:this.dataset.enable == 'false' ||  __rolesDialog.select(this.dataset.id);">
-							<td class="text-center"><input data-juice="CheckBox" data-juice-bind="item.__selected"/></td>
+						<tr data-id="[[$context.item.get('id')]]" data-enable="[[$context.item.enable]]" onclick="javascript:this.dataset.enable == 'false' ||  __rolesDialog.select(this.dataset.id);">
+							<td class="text-center"><input data-duice="CheckBox" data-duice-bind="item.__selected"/></td>
 							<td class="text-center">
-								{{__rolesDialog.searchCondition.get('rows')*(__rolesDialog.searchCondition.get('page')-1)+$context.index+1}}
+								[[__rolesDialog.searchCondition.get('rows')*(__rolesDialog.searchCondition.get('page')-1)+$context.index+1]]
 							</td>
-							<td><label data-juice="Label" data-juice-bind="item.id" class="id"></label></td>
-							<td><label data-juice="Label" data-juice-bind="item.name"></label></td>
+							<td><span data-duice="Text" data-duice-bind="item.id" class="id"></span></td>
+							<td><span data-duice="Text" data-duice-bind="item.name"></span></td>
 						</tr>
 					</tbody>
 				</table>
 				<div>
-					<ul data-juice="Pagination" data-juice-bind="__rolesDialog.searchCondition" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
-						<li data-page="{{$context.page}}" onclick="javascript:__rolesDialog.doSearch(this.dataset.page);">{{$context.page}}</li>
+					<ul data-duice="Pagination" data-duice-bind="__rolesDialog.searchCondition" data-duice-rows="rows" data-duice-page="page" data-duice-total-count="totalCount" data-duice-page-size="5">
+						<li data-page="[[$context.page]]" onclick="javascript:__rolesDialog.doSearch(this.dataset.page);">[[$context.page]]</li>
 					</ul>
 				</div>
 				<br/>
-				<table data-juice="Grid" data-juice-bind="__rolesDialog.selectItems" data-juice-item="item">
+				<table data-duice="Grid" data-duice-bind="__rolesDialog.selectItems" data-duice-item="item">
 					<colgroup>
 						<col/>
 						<col/>
@@ -859,11 +863,11 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr data-index="{{$context.index}}" data-enable="{{$context.item.enable}}">
-							<td><label data-juice="Label" data-juice-bind="item.id" class="id"></label></td>
-							<td><label data-juice="Label" data-juice-bind="item.name"></label></td>
+						<tr data-index="[[$context.index]]" data-enable="[[$context.item.enable]]">
+							<td><span data-duice="Text" data-duice-bind="item.id" class="id"></span></td>
+							<td><span data-duice="Text" data-duice-bind="item.name"></span></td>
 							<td class="text-center">
-								<button class="small" data-id="{{$context.item.get('id')}}" onclick="javascript:__rolesDialog.unselect(this.dataset.id);">
+								<button class="small" data-id="[[$context.item.get('id')]]" onclick="javascript:__rolesDialog.unselect(this.dataset.id);">
 									<i class="icon-remove"></i>
 								</button>
 							</td>
@@ -885,16 +889,16 @@
 		<!-- ====================================================== -->
 		<script type="text/javascript">
         var __authoritiesDialog = {
-			searchCondition: new juice.data.Map(),
+			searchCondition: new duice.data.Map(),
 			searchConditionKeys: [
    				 { value:'', text:'- <spring:message code="application.text.all"/> -' }
    				,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
    				,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
    	 		],
-   	 		searchItems: new juice.data.List(),
-   	 		selectItems: new juice.data.List(),
+   	 		searchItems: new duice.data.List(),
+   	 		selectItems: new duice.data.List(),
    	 		handler: {},
-   	 		option: new juice.data.Map(),
+   	 		option: new duice.data.Map(),
    	 		setDisable: function(handler){
    	 			this.handler.disable = handler;
    	 			return this;
@@ -914,9 +918,8 @@
    	 			});
    		 		this.searchItems.fromJson([]);
    		 		this.selectItems.fromJson([]);
-   				this.dialog = new juice.ui.Dialog($('#__authoritiesDialog')[0]);
-   				var title = '<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_authority.png"/>&nbsp;&nbsp;<spring:message code="application.text.authority"/> <spring:message code="application.text.list"/>';
-   				this.dialog.setTitle(title);
+   		 		this.dialog = new duice.ui.Dialog($('#__authoritiesDialog')[0]);
+   		 		this.dialog.setTitle('<spring:message code="application.text.authority"/> <spring:message code="application.text.list"/>');
    				this.dialog.open();
    				this.search(1);
    			},
@@ -956,7 +959,7 @@
                			
                			$this.searchCondition.set('totalCount', __parseTotalCount(jqXHR));
                			$('#__rolesTable > tbody').hide().fadeIn();
-                  	 	}
+                  	 }
                	});	
    	 		},
    			select: function(id){
@@ -1012,8 +1015,8 @@
 			<div id="__authoritiesDialog">
 				<div style="display:flex; justify-content: space-between;">
 					<div style="flex:auto;">
-						<select data-juice="ComboBox" data-juice-bind="__authoritiesDialog.searchCondition.searchType" data-juice-options="__authoritiesDialog.searchConditionKeys" style="width:100px;"></select>
-						<input data-juice="TextField" data-juice-bind="__authoritiesDialog.searchCondition.searchValue" style="width:100px;"/>
+						<select data-duice="ComboBox" data-duice-bind="__authoritiesDialog.searchCondition.searchType" data-duice-options="__authoritiesDialog.searchConditionKeys" style="width:100px;"></select>
+						<input data-duice="TextField" data-duice-bind="__authoritiesDialog.searchCondition.searchValue" style="width:100px;"/>
 					</div>
 					<div>
 						<button onclick="javascript:__authoritiesDialog.search();">
@@ -1022,7 +1025,7 @@
 						</button>
 					</div>
 				</div>
-				<table id="__authoritiesTable" data-juice="Grid" data-juice-bind="__authoritiesDialog.searchItems" data-juice-item="item">
+				<table id="__authoritiesTable" data-duice="Grid" data-duice-bind="__authoritiesDialog.searchItems" data-duice-item="item">
 					<colgroup>
 						<col style="width:5%;"/>
 						<col style="width:15%;"/>
@@ -1046,25 +1049,25 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr data-id="{{$context.item.get('id')}}" data-enable="{{$context.item.enable}}" onclick="javascript:this.dataset.enable == 'false' ||  __authoritiesDialog.select(this.dataset.id);">
+						<tr data-id="[[$context.item.get('id')]]" data-enable="[[$context.item.enable]]" onclick="javascript:this.dataset.enable == 'false' ||  __authoritiesDialog.select(this.dataset.id);">
 							<td class="text-center">
-								<input data-juice="CheckBox" data-juice-bind="item.__selected"/>
+								<input data-duice="CheckBox" data-duice-bind="item.__selected"/>
 							</td>
 							<td class="text-center">
-								{{__authoritiesDialog.searchCondition.get('rows')*(__authoritiesDialog.searchCondition.get('page')-1)+$context.index+1}}
+								[[__authoritiesDialog.searchCondition.get('rows')*(__authoritiesDialog.searchCondition.get('page')-1)+$context.index+1]]
 							</td>
-							<td><label data-juice="Label" data-juice-bind="item.id" class="id"></label></td>
-							<td><label data-juice="Label" data-juice-bind="item.name"></label></td>
+							<td><span data-duice="Text" data-duice-bind="item.id" class="id"></span></td>
+							<td><span data-duice="Text" data-duice-bind="item.name"></span></td>
 						</tr>
 					</tbody>
 				</table>
 				<div>
-					<ul data-juice="Pagination" data-juice-bind="__authoritiesDialog.searchCondition" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
-						<li data-page="{{$context.page}}" onclick="javascript:__authoritiesDialog.search(this.dataset.page);">{{$context.page}}</li>
+					<ul data-duice="Pagination" data-duice-bind="__authoritiesDialog.searchCondition" data-duice-rows="rows" data-duice-page="page" data-duice-total-count="totalCount" data-duice-page-size="5">
+						<li data-page="[[$context.page]]" onclick="javascript:__authoritiesDialog.search(this.dataset.page);">[[$context.page]]</li>
 					</ul>
 				</div>
 				<br/>
-				<table data-juice="Grid" data-juice-bind="__authoritiesDialog.selectItems" data-juice-item="item">
+				<table data-duice="Grid" data-duice-bind="__authoritiesDialog.selectItems" data-duice-item="item">
 					<colgroup>
 						<col/>
 						<col/>
@@ -1078,11 +1081,11 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr data-index="{{$context.index}}" data-enable="{{$context.item.enable}}">
-							<td><label data-juice="Label" data-juice-bind="item.id" class="id"></label></td>
-							<td><label data-juice="Label" data-juice-bind="item.name"></label></td>
+						<tr data-index="[[$context.index]]" data-enable="[[$context.item.enable]]">
+							<td><span data-duice="Text" data-duice-bind="item.id" class="id"></span></td>
+							<td><span data-duice="Text" data-duice-bind="item.name"></span></td>
 							<td class="text-center">
-								<button class="small" data-id="{{$context.item.get('id')}}" onclick="javascript:__authoritiesDialog.unselect(this.dataset.id);">
+								<button class="small" data-id="[[$context.item.get('id')]]" onclick="javascript:__authoritiesDialog.unselect(this.dataset.id);">
 									<i class="icon-remove"></i>
 								</button>
 							</td>
@@ -1107,7 +1110,7 @@
          * Gets menus dialog
          */
         var __menusDialog = {
-	 		items: new juice.data.Tree(),
+	 		items: new duice.data.Tree(),
 	 		handler: {},
 	 		setDisable: function(handler){
 	 			this.handler.disable = handler;
@@ -1120,9 +1123,8 @@
 			open: function(callback){
 				var $this = this;
 		 		this.items.fromJson([],'childGroups');
-				this.dialog = new juice.ui.Dialog($('#__menusDialog')[0]);
    				var title = '<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_menu.png"/>&nbsp;&nbsp;<spring:message code="application.text.menu"/> <spring:message code="application.text.list"/>';
-				this.dialog.setTitle(title);
+		 		this.dialog = new duice.ui.Dialog(title, $('#__menusDialog')[0]);
 				this.search();
 			},
 	 		search: function(){
@@ -1190,12 +1192,12 @@
 		<dialog>
 			<div id="__menusDialog">
 				<div>
-					<ul id="__menusUl" data-juice="TreeView" data-juice-bind="__menusDialog.items" data-juice-item="item">
+					<ul id="__menusUl" data-duice="TreeView" data-duice-bind="__menusDialog.items" data-duice-item="item">
 						<li>
-							<div data-id="{{$context.item.get('id')}}" data-enable="{{$context.item.enable}}" onclick="javascript:this.dataset.enable == 'false' || __menusDialog.select(this.dataset.id);" style="width:100%;cursor:hand;cursor:pointer;">
-								<input data-juice="CheckBox" data-juice-bind="item.__selected"/>
-								<img class="icon" data-juice="Image" data-juice-bind="item.icon" data-juice-width="24" data-juice-height="24" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
-								<label data-juice="Label" data-juice-bind="item.name"></label>
+							<div data-id="[[$context.item.get('id')]]" data-enable="[[$context.item.enable]]" onclick="javascript:this.dataset.enable == 'false' || __menusDialog.select(this.dataset.id);" style="width:100%;cursor:hand;cursor:pointer;">
+								<input data-duice="CheckBox" data-duice-bind="item.__selected"/>
+								<img class="icon" data-duice="Image" data-duice-bind="item.icon" data-duice-width="24" data-duice-height="24" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
+								<span data-duice="Text" data-duice-bind="item.name"></span>
 							</div>
 						</li>
 					</ul>
