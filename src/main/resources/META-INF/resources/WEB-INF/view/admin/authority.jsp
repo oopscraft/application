@@ -8,7 +8,7 @@
 <%@page import="java.text.*" %>
 <!-- global -->
 <script type="text/javascript">
-var authoritySearch = new juice.data.Map({
+var authoritySearch = new duice.data.Map({
 	 rows: 30
 	,page: 1
 	,searchType: null
@@ -20,8 +20,8 @@ var authoritySearchTypes = [
 	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
 	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 ];
-var authorities = new juice.data.List();
-var authority = new juice.data.Map();
+var authorities = new duice.data.List();
+var authority = new duice.data.Map();
 var isNew = false;
 
 /**
@@ -118,7 +118,7 @@ function saveAuthority() {
 	try {
 		__validator.checkId(authority.get('id'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -126,7 +126,7 @@ function saveAuthority() {
 	try {
 		__validator.checkName(authority.get('name'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -147,7 +147,7 @@ function saveAuthority() {
 		});
 		if(isDuplicated == true){
 			<spring:message code="application.text.id" var="item"/>
-			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			new duice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
 			return false;
 		}
 	}
@@ -155,7 +155,7 @@ function saveAuthority() {
 	// Saves authority
 	<spring:message code="application.text.authority" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 		.afterConfirm(function() {
 			var authorityJson = authority.toJson();
 			$.ajax({
@@ -178,14 +178,14 @@ function deleteAuthority() {
 
 	// Checks system data
 	if(authority.get('systemDataYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
 	// Removes authority
 	<spring:message code="application.text.authority" var="item"/>
 	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
 			 url: 'authority/deleteAuthority'
@@ -215,8 +215,8 @@ function deleteAuthority() {
 	<div class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="authoritySearch.searchType" data-juice-options="authoritySearchTypes" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="authoritySearch.searchValue" style="width:100px;"/>
+				<select data-duice="ComboBox" data-duice-bind="authoritySearch.searchType" data-duice-options="authoritySearchTypes" style="width:100px;"></select>
+				<input data-duice="TextField" data-duice-bind="authoritySearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getAuthorities();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
@@ -229,7 +229,7 @@ function deleteAuthority() {
 				</button>
 			</div>
 		</div>
-		<table id="authoritiesTable" data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
+		<table id="authoritiesTable" data-duice="Grid" data-duice-bind="authorities" data-duice-item="authority">
 			<colgroup>
 				<col style="width:10%"/>
 				<col style="width:30%"/>
@@ -249,20 +249,20 @@ function deleteAuthority() {
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-id="{{$context.authority.get('id')}}" onclick="javascript:getAuthority(this.dataset.id);">
+				<tr data-id="[[$context.authority.get('id')]]" onclick="javascript:getAuthority(this.dataset.id);">
 					<td class="text-center">
-						{{authoritySearch.get('rows')*(authoritySearch.get('page')-1)+$context.index+1}}
+						[[authoritySearch.get('rows')*(authoritySearch.get('page')-1)+$context.index+1]]
 					</td>
-					<td class="{{$context.authority.get('systemDataYn')=='Y'?'systemData':''}}">
-						<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+					<td class="[[$context.authority.get('systemDataYn')=='Y'?'systemData':'']]">
+						<span data-duice="Text" data-duice-bind="authority.id" class="id"></span>
 					</td>
-					<td><label data-juice="Label" data-juice-bind="authority.name"></label></td>
+					<td><span data-duice="Text" data-duice-bind="authority.name"></span></td>
 				</tr>
 			</tbody>
 		</table>
 		<div>
-			<ul data-juice="Pagination" data-juice-bind="authoritySearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
-				<li data-page="{{$context.page}}" onclick="javascript:getAuthorities(this.dataset.page);">{{$context.page}}</li>
+			<ul data-duice="Pagination" data-duice-bind="authoritySearch" data-duice-rows="rows" data-duice-page="page" data-duice-total-count="totalCount" data-duice-page-size="5">
+				<li data-page="[[$context.page]]" onclick="javascript:getAuthorities(this.dataset.page);">[[$context.page]]</li>
 			</ul>
 		</div>
 	</div>
@@ -300,7 +300,7 @@ function deleteAuthority() {
 					</span>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="authority.id"/>
+					<input class="id" data-duice="TextField" data-duice-bind="authority.id"/>
 				</td>
 			</tr>
 			<tr>
@@ -310,7 +310,7 @@ function deleteAuthority() {
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="authority.name"/>
+					<input data-duice="TextField" data-duice-bind="authority.name"/>
 				</td>
 			</tr>
 			<tr>
@@ -318,7 +318,7 @@ function deleteAuthority() {
 					<spring:message code="application.text.description"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="authority.description"></textarea>
+					<textarea data-duice="TextArea" data-duice-bind="authority.description"></textarea>
 				</td>
 			</tr>
 		</table>

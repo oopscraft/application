@@ -6,7 +6,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="app" uri="http://application.oopscraft.net"%>
 <script type="text/javascript">
-var boardSearch = new juice.data.Map({
+var boardSearch = new duice.data.Map({
 	 rows: 30
 	,page: 1
 	,searchType: null
@@ -18,12 +18,12 @@ var boardSearchTypes = [
 	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
 	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 ];
-var boards = new juice.data.List();
-var board = new juice.data.Map();
-var accessAuthorities = new juice.data.List();
-var readAuthorities = new juice.data.List();
-var writeAuthorities = new juice.data.List();
-var categories = new juice.data.List();
+var boards = new duice.data.List();
+var board = new duice.data.Map();
+var accessAuthorities = new duice.data.List();
+var readAuthorities = new duice.data.List();
+var writeAuthorities = new duice.data.List();
+var categories = new duice.data.List();
 var isNew = false;
 
 // skins
@@ -196,12 +196,12 @@ function saveBoard() {
 	// Checks validation of board
 	if(__isEmpty(board.get('id'))){
 		<spring:message code="application.text.id" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
 	}
 	if(__isEmpty(board.get('name'))){
 		<spring:message code="application.text.name" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
 	}
 	
@@ -222,14 +222,14 @@ function saveBoard() {
 		});
 		if(isDuplicated == true){
 			<spring:message code="application.text.id" var="item"/>
-			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			new duice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
 			return false;
 		}
 	}
 	
 	// Saves board
 	<spring:message code="application.text.message" var="item"/>
-	new juice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
+	new duice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
 		.afterConfirm(function() {
 			var boardJson = board.toJson();
 			boardJson.accessAuthorities = accessAuthorities.toJson();
@@ -256,7 +256,7 @@ function deleteBoard(){
 
 	// Removes board
 	<spring:message code="application.text.message" var="item"/>
-	new juice.ui.Confirm('<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>')
+	new duice.ui.Confirm('<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>')
 	.afterConfirm(function() {
 		$.ajax({
 			 url: 'board/deleteBoard'
@@ -350,7 +350,7 @@ function removeWriteAuthority(index){
  * Adds category.
  */
 function addCategory(){
-	categories.addRow(new juice.data.Map({
+	categories.addRow(new duice.data.Map({
 		boardId: board.get('id'),
 		id: null,
 		name: null
@@ -414,8 +414,8 @@ function openBoard() {
 	<div class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="boardSearch.searchType" data-juice-options="boardSearchTypes" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="boardSearch.searchValue" style="width:100px;"/>
+				<select data-duice="ComboBox" data-duice-bind="boardSearch.searchType" data-duice-options="boardSearchTypes" style="width:100px;"></select>
+				<input data-duice="TextField" data-duice-bind="boardSearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getBoards();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
@@ -428,7 +428,7 @@ function openBoard() {
 				</button>
 			</div>
 		</div>
-		<table id="boardsTable" data-juice="Grid" data-juice-bind="boards" data-juice-item="board">
+		<table id="boardsTable" data-duice="Grid" data-duice-bind="boards" data-duice-item="board">
 			<colgroup>
 				<col style="width:10%"/>
 				<col style="width:30%"/>
@@ -449,22 +449,22 @@ function openBoard() {
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-id="{{$context.board.get('id')}}" onclick="javascript:getBoard(this.dataset.id);">
+				<tr data-id="[[$context.board.get('id')]]" onclick="javascript:getBoard(this.dataset.id);">
 					<td class="text-center">
-						{{boardSearch.get('rows')*(boardSearch.get('page')-1)+$context.index+1}}
+						[[boardSearch.get('rows')*(boardSearch.get('page')-1)+$context.index+1]]
 					</td>
-					<td class="{{$context.board.get('systemDataYn')=='Y'?'systemData':''}}">
-						<label data-juice="Label" data-juice-bind="board.id" class="id"></label>
+					<td class="[[$context.board.get('systemDataYn')=='Y'?'systemData':'']]">
+						<span data-duice="Text" data-duice-bind="board.id" class="id"></span>
 					</td>
 					<td>
-						<label data-juice="Label" data-juice-bind="board.name"></label>
+						<span data-duice="Text" data-duice-bind="board.name"></span>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 		<div>
-			<ul data-juice="Pagination" data-juice-bind="boardSearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
-				<li data-page="{{$context.page}}" onclick="javascript:getBoards(this.dataset.page);">{{$context.page}}</li>
+			<ul data-duice="Pagination" data-duice-bind="boardSearch" data-duice-rows="rows" data-duice-page="page" data-duice-total-count="totalCount" data-duice-page-size="5">
+				<li data-page="[[$context.page]]" onclick="javascript:getBoards(this.dataset.page);">[[$context.page]]</li>
 			</ul>
 		</div>
 	</div>
@@ -508,7 +508,7 @@ function openBoard() {
 					</span>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="board.id"/>
+					<input class="id" data-duice="TextField" data-duice-bind="board.id"/>
 				</td>
 			</tr>
 			<tr>
@@ -518,7 +518,7 @@ function openBoard() {
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="board.name"/>
+					<input data-duice="TextField" data-duice-bind="board.name"/>
 				</td>
 			</tr>
 			<tr>
@@ -528,9 +528,9 @@ function openBoard() {
 					</span>
 				</th>
 				<td>
-					<img data-juice="Image" data-juice-bind="board.icon" data-juice-width="32" data-juice-height="32" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
-					<img data-juice="Image" data-juice-bind="board.icon" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png" style="width:24px; height:24px;" />
-					<img data-juice="Image" data-juice-bind="board.icon" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png" style="width:16px; height:16px;" />
+					<img data-duice="Image" data-duice-bind="board.icon" data-duice-width="32" data-duice-height="32" src="${pageContext.request.contextPath}/static/img/icon_empty.png"/>
+					<img data-duice="Image" data-duice-bind="board.icon" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png" style="width:24px; height:24px;" />
+					<img data-duice="Image" data-duice-bind="board.icon" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_empty.png" style="width:16px; height:16px;" />
 				</td>
 			</tr>
 			<tr>
@@ -540,7 +540,7 @@ function openBoard() {
 					</span>
 				</th>
 				<td>
-					<select data-juice="ComboBox" data-juice-bind="board.skin" data-juice-options="skins" style="width:15rem;"></select>
+					<select data-duice="ComboBox" data-duice-bind="board.skin" data-duice-options="skins" style="width:15rem;"></select>
 				</td>
 			</tr>
 			<tr>
@@ -551,8 +551,8 @@ function openBoard() {
 					</span>
 				</th>
 				<td>
-					<select id="accessPolicySelect" data-juice="ComboBox" data-juice-bind="board.accessPolicy" data-juice-options="policies" style="width:15rem;"></select>
-					<table id="accessAuthoritiesTable" data-juice="Grid" data-juice-bind="accessAuthorities" data-juice-item="authority">
+					<select id="accessPolicySelect" data-duice="ComboBox" data-duice-bind="board.accessPolicy" data-duice-options="policies" style="width:15rem;"></select>
+					<table id="accessAuthoritiesTable" data-duice="Grid" data-duice-bind="accessAuthorities" data-duice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -576,15 +576,15 @@ function openBoard() {
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.authority.get('id')}}">
+							<tr data-id="[[$context.authority.get('id')]]">
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+									<span data-duice="Text" data-duice-bind="authority.id" class="id"></span>
 								</td>
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.name"></label>
+									<span data-duice="Text" data-duice-bind="authority.name"></span>
 								</td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAccessAuthority(this.dataset.index);">
+									<button class="small" data-index="[[$context.index]]" onclick="javascript:removeAccessAuthority(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>
@@ -599,8 +599,8 @@ function openBoard() {
 					<spring:message code="application.text.policy"/>
 				</th>
 				<td>
-					<select id="readPolicySelect" data-juice="ComboBox" data-juice-bind="board.readPolicy" data-juice-options="policies" style="width:15rem;"></select>
-					<table id="readAuthoritiesTable" data-juice="Grid" data-juice-bind="readAuthorities" data-juice-item="authority">
+					<select id="readPolicySelect" data-duice="ComboBox" data-duice-bind="board.readPolicy" data-duice-options="policies" style="width:15rem;"></select>
+					<table id="readAuthoritiesTable" data-duice="Grid" data-duice-bind="readAuthorities" data-duice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -624,15 +624,15 @@ function openBoard() {
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.authority.get('id')}}">
+							<tr data-id="[[$context.authority.get('id')]]">
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+									<span data-duice="Text" data-duice-bind="authority.id" class="id"></span>
 								</td>
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.name"></label>
+									<span data-duice="Text" data-duice-bind="authority.name"></span>
 								</td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeReadAuthority(this.dataset.index);">
+									<button class="small" data-index="[[$context.index]]" onclick="javascript:removeReadAuthority(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>
@@ -647,8 +647,8 @@ function openBoard() {
 					<spring:message code="application.text.policy"/>
 				</th>
 				<td>
-					<select id="writePolicySelect" data-juice="ComboBox" data-juice-bind="board.writePolicy" data-juice-options="policies" style="width:15rem;"></select>
-					<table id="writeAuthoritiesTable" data-juice="Grid" data-juice-bind="writeAuthorities" data-juice-item="authority">
+					<select id="writePolicySelect" data-duice="ComboBox" data-duice-bind="board.writePolicy" data-duice-options="policies" style="width:15rem;"></select>
+					<table id="writeAuthoritiesTable" data-duice="Grid" data-duice-bind="writeAuthorities" data-duice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -672,15 +672,15 @@ function openBoard() {
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.authority.get('id')}}">
+							<tr data-id="[[$context.authority.get('id')]]">
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+									<span data-duice="Text" data-duice-bind="authority.id" class="id"></span>
 								</td>
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.name"></label>
+									<span data-duice="Text" data-duice-bind="authority.name"></span>
 								</td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeWriteAuthority(this.dataset.index);">
+									<button class="small" data-index="[[$context.index]]" onclick="javascript:removeWriteAuthority(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>
@@ -694,7 +694,7 @@ function openBoard() {
 					<spring:message code="application.text.rowsPerPage"/>
 				</th>
 				<td>
-					<select data-juice="ComboBox" data-juice-bind="board.rowsPerPage" data-juice-options="rowsPerPage" style="width:10rem;"></select>
+					<select data-duice="ComboBox" data-duice-bind="board.rowsPerPage" data-duice-options="rowsPerPage" style="width:10rem;"></select>
 					
 				</td>
 			</tr>
@@ -705,12 +705,12 @@ function openBoard() {
 				</th>
 				<td>
 					<div style="padding-left:0.5rem;">
-						<input name="categoryUseYn" type="radio" data-juice="Radio" data-juice-bind="board.categoryUseYn" value="Y"/>
+						<input name="categoryUseYn" type="radio" data-duice="Radio" data-duice-bind="board.categoryUseYn" value="Y"/>
 						<spring:message code="application.text.use.yes"/>
-						<input name="categoryUseYn" type="radio" data-juice="Radio" data-juice-bind="board.categoryUseYn" value="N"/>
+						<input name="categoryUseYn" type="radio" data-duice="Radio" data-duice-bind="board.categoryUseYn" value="N"/>
 						<spring:message code="application.text.use.no"/>
 					</div>
-					<table id="categoriesTable" data-juice="Grid" data-juice-bind="categories" data-juice-item="category">
+					<table id="categoriesTable" data-duice="Grid" data-duice-bind="categories" data-duice-item="category">
 						<colgroup>
 							<col style="width:10%;"/>
 							<col style="width:30%;"/>
@@ -740,23 +740,23 @@ function openBoard() {
 						<tbody>
 							<tr>
 								<td class="text-center">
-									<label data-juice="Label" data-juice-bind="category.displaySeq"></label>
+									<span data-duice="Text" data-duice-bind="category.displaySeq"></span>
 								</td>
 								<td class="text-center">
-									<input data-juice="TextField" data-juice-bind="category.id" class="id"/>
+									<input data-duice="TextField" data-duice-bind="category.id" class="id"/>
 								</td>
 								<td>
-									<input data-juice="TextField" data-juice-bind="category.name" class="id"/>
+									<input data-duice="TextField" data-duice-bind="category.name" class="id"/>
 								</td>
 								<td class="text-center">
 									<div style="display:flex;justify-content:center;">
-										<button class="small" data-index="{{$context.index}}" onclick="javascript:moveUpCategory(this.dataset.index);">
+										<button class="small" data-index="[[$context.index]]" onclick="javascript:moveUpCategory(this.dataset.index);">
 											<i class="icon-up"></i>
 										</button>
-										<button class="small" data-index="{{$context.index}}" onclick="javascript:moveDownCategory(this.dataset.index);">
+										<button class="small" data-index="[[$context.index]]" onclick="javascript:moveDownCategory(this.dataset.index);">
 											<i class="icon-down"></i>
 										</button>
-										<button class="small" data-index="{{$context.index}}" onclick="javascript:removeCategory(this.dataset.index);">
+										<button class="small" data-index="[[$context.index]]" onclick="javascript:removeCategory(this.dataset.index);">
 											<i class="icon-remove"></i>
 										</button>
 									</div>
@@ -773,9 +773,9 @@ function openBoard() {
 				</th>
 				<td>
 					<div style="padding-left:0.5rem;">
-						<input type="radio" data-juice="Radio" data-juice-bind="board.replyUseYn" value="Y"/>
+						<input type="radio" data-duice="Radio" data-duice-bind="board.replyUseYn" value="Y"/>
 						<spring:message code="application.text.use.yes"/>
-						<input type="radio" data-juice="Radio" data-juice-bind="board.replyUseYn" value="N"/>
+						<input type="radio" data-duice="Radio" data-duice-bind="board.replyUseYn" value="N"/>
 						<spring:message code="application.text.use.no"/>
 					</div>
 				</td>
@@ -788,9 +788,9 @@ function openBoard() {
 				</th>
 				<td>
 					<div style="padding-left:0.5rem;">
-						<input type="radio" data-juice="Radio" data-juice-bind="board.fileUseYn" value="Y"/>
+						<input type="radio" data-duice="Radio" data-duice-bind="board.fileUseYn" value="Y"/>
 						<spring:message code="application.text.use.yes"/>
-						<input type="radio" data-juice="Radio" data-juice-bind="board.fileUseYn" value="N"/>
+						<input type="radio" data-duice="Radio" data-duice-bind="board.fileUseYn" value="N"/>
 						<spring:message code="application.text.use.no"/>
 					</div>
 				</td>

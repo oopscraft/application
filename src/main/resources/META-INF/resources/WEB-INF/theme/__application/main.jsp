@@ -28,12 +28,12 @@
 			<span style="font-weight:bold;">
 				최근 게시글
 			</span>
-			(<label data-juice="Label" data-juice-bind="latestArticleSearch.totalCount"></label>)
+			(<span data-duice="Text" data-duice-bind="latestArticleSearch.totalCount"></span>)
 		</div>
-		<ul id="latestArticles" data-juice="ListView" data-juice-bind="latestArticles" data-juice-item="article">
+		<ul id="latestArticles" data-duice="ListView" data-duice-bind="latestArticles" data-duice-item="article">
 			<li>
 				<div>
-					<label data-juice="Label" data-juice-bind="article.title"></label>
+					<span data-duice="Text" data-duice-bind="article.title"></span>
 				</div>
 			</li>
 		</ul>
@@ -44,12 +44,12 @@
 			<span style="font-weight:bold;">
 				베스트 게시글
 			</span>
-			(<label data-juice="Label" data-juice-bind="bestArticleSearch.totalCount"></label>)
+			(<span data-duice="Text" data-duice-bind="bestArticleSearch.totalCount"></span>)
 		</div>
-		<ul id="besttArticles" data-juice="ListView" data-juice-bind="bestArticles" data-juice-item="article">
+		<ul id="besttArticles" data-duice="ListView" data-duice-bind="bestArticles" data-duice-item="article">
 			<li>
 				<div>
-					<label data-juice="Label" data-juice-bind="article.title"></label>
+					<span data-duice="Text" data-duice-bind="article.title"></span>
 				</div>
 			</li>
 		</ul>

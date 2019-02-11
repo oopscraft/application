@@ -5,7 +5,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <script type="text/javascript">
-var codeSearch = new juice.data.Map({
+var codeSearch = new duice.data.Map({
 	 rows: 30
 	,page: 1
 	,searchType: null
@@ -17,9 +17,9 @@ var codeSearchTypes = [
 	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
 	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 ];
-var codes = new juice.data.List();
-var code = new juice.data.Map();
-var items = new juice.data.List();
+var codes = new duice.data.List();
+var code = new duice.data.Map();
+var items = new duice.data.List();
 var isNew = false;
 
 /**
@@ -117,14 +117,14 @@ function saveCode() {
 	// checks id
 	if(__isEmpty(code.get('id'))){
 		<spring:message code="application.text.id" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
 	}
 
 	// checks  name
 	if(__isEmpty(code.get('name'))){
 		<spring:message code="application.text.name" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>').open();
 		return false;
 	}
 	
@@ -145,7 +145,7 @@ function saveCode() {
 		});
 		if(isDuplicated == true){
 			<spring:message code="application.text.id" var="item"/>
-			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			new duice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
 			return false;
 		}
 	}
@@ -153,7 +153,7 @@ function saveCode() {
 	// Saves code
 	<spring:message code="application.text.code" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 		.afterConfirm(function() {
 			var codeJson = code.toJson();
 			codeJson.items = items.toJson();
@@ -177,14 +177,14 @@ function deleteCode() {
 
 	// Checks system data
 	if(code.get('systemDataYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
 	// Removes code
 	<spring:message code="application.text.code" var="item"/>
 	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 		.afterConfirm(function() {
 			$.ajax({
 				 url: 'code/deleteCode'
@@ -203,7 +203,7 @@ function deleteCode() {
  * Adds item
  */
 function addItem() {
-	var item = new juice.data.Map({
+	var item = new duice.data.Map({
 		codeId: code.get('id'),
 		id: null,
 		name: null
@@ -252,8 +252,8 @@ function removeItem(index){
 		<!-- ====================================================== -->
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="codeSearch.searchType" data-juice-options="codeSearchTypes" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="codeSearch.searchValue" style="width:100px;"/>
+				<select data-duice="ComboBox" data-duice-bind="codeSearch.searchType" data-duice-options="codeSearchTypes" style="width:100px;"></select>
+				<input data-duice="TextField" data-duice-bind="codeSearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getCodes();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
@@ -266,7 +266,7 @@ function removeItem(index){
 				</button>
 			</div>
 		</div>
-		<table id="codesTable" data-juice="Grid" data-juice-bind="codes" data-juice-item="code">
+		<table id="codesTable" data-duice="Grid" data-duice-bind="codes" data-duice-item="code">
 			<colgroup>
 				<col style="width:10%"/>
 				<col style="width:30%"/>
@@ -286,20 +286,20 @@ function removeItem(index){
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-id="{{$context.code.get('id')}}" onclick="javascript:getCode(this.dataset.id);">
+				<tr data-id="[[$context.code.get('id')]]" onclick="javascript:getCode(this.dataset.id);">
 					<td class="text-center">
-						{{codeSearch.get('rows')*(codeSearch.get('page')-1)+$context.index+1}}
+						[[codeSearch.get('rows')*(codeSearch.get('page')-1)+$context.index+1]]
 					</td>
-					<td class="{{$context.code.get('systemDataYn')=='Y'?'systemData':''}}">
-						<label data-juice="Label" data-juice-bind="code.id" class="id"></label>
+					<td class="[[$context.code.get('systemDataYn')=='Y'?'systemData':'']]">
+						<span data-duice="Text" data-duice-bind="code.id" class="id"></span>
 					</td>
-					<td><label data-juice="Label" data-juice-bind="code.name"></label></td>
+					<td><span data-duice="Text" data-duice-bind="code.name"></span></td>
 				</tr>
 			</tbody>
 		</table>
 		<div>
-			<ul data-juice="Pagination" data-juice-bind="codeSearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
-				<li data-page="{{$context.page}}" onclick="javascript:getCodes(this.dataset.page);">{{$context.page}}</li>
+			<ul data-duice="Pagination" data-duice-bind="codeSearch" data-duice-rows="rows" data-duice-page="page" data-duice-total-count="totalCount" data-duice-page-size="5">
+				<li data-page="[[$context.page]]" onclick="javascript:getCodes(this.dataset.page);">[[$context.page]]</li>
 			</ul>
 		</div>
 	</div>
@@ -338,7 +338,7 @@ function removeItem(index){
 				</th>
 				<td>
 					
-					<input class="id" data-juice="TextField" data-juice-bind="code.id"/>
+					<input class="id" data-duice="TextField" data-duice-bind="code.id"/>
 				</td>
 			</tr>
 			<tr>
@@ -348,7 +348,7 @@ function removeItem(index){
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="code.name"/>
+					<input data-duice="TextField" data-duice-bind="code.name"/>
 				</td>
 			</tr>
 			<tr>
@@ -356,7 +356,7 @@ function removeItem(index){
 					<spring:message code="application.text.description"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="code.description"></textarea>
+					<textarea data-duice="TextArea" data-duice-bind="code.description"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -365,7 +365,7 @@ function removeItem(index){
 					<spring:message code="application.text.items"/>
 				</th>
 				<td>
-					<table data-juice="Grid" data-juice-bind="items" data-juice-item="item">
+					<table data-duice="Grid" data-duice-bind="items" data-duice-item="item">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -387,22 +387,22 @@ function removeItem(index){
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.item.get('id')}}">
+							<tr data-id="[[$context.item.get('id')]]">
 								<td>
-									<input data-juice="TextField" data-juice-bind="item.id"/>
+									<input data-duice="TextField" data-duice-bind="item.id"/>
 								</td>
 								<td>
-									<input data-juice="TextField" data-juice-bind="item.name"/>
+									<input data-duice="TextField" data-duice-bind="item.name"/>
 								</td>
 								<td class="text-center">
 									<div style="display:flex;justify-content:center;">
-										<button class="small" data-index="{{$context.index}}" onclick="javascript:moveItemUp(this.dataset.index);">
+										<button class="small" data-index="[[$context.index]]" onclick="javascript:moveItemUp(this.dataset.index);">
 											<i class="icon-up"></i>
 										</button>
-										<button class="small" data-index="{{$context.index}}" onclick="javascript:moveItemDown(this.dataset.index);">
+										<button class="small" data-index="[[$context.index]]" onclick="javascript:moveItemDown(this.dataset.index);">
 											<i class="icon-down"></i>
 										</button>
-										<button class="small" data-index="{{$context.index}}" onclick="javascript:removeItem(this.dataset.index);">
+										<button class="small" data-index="[[$context.index]]" onclick="javascript:removeItem(this.dataset.index);">
 											<i class="icon-remove"></i>
 										</button>
 									</div>

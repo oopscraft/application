@@ -5,7 +5,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <script type="text/javascript">
-var messageSearch = new juice.data.Map({
+var messageSearch = new duice.data.Map({
 	 rows: 30
 	,page: 1
 	,searchType: null
@@ -17,8 +17,8 @@ var messageSearchTypes = [
 	,{ value:'ID', text:'<spring:message code="application.text.id"/>' }
 	,{ value:'NAME', text:'<spring:message code="application.text.name"/>' }
 ];
-var messages = new juice.data.List();
-var message = new juice.data.Map();
+var messages = new duice.data.List();
+var message = new duice.data.Map();
 var isNew = false;
 
 /**
@@ -116,7 +116,7 @@ function saveMessage() {
 	try {
 		__validator.checkId(message.get('id'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -124,7 +124,7 @@ function saveMessage() {
 	try {
 		__validator.checkName(message.get('name'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -145,14 +145,14 @@ function saveMessage() {
 		});
 		if(isDuplicated == true){
 			<spring:message code="application.text.id" var="item"/>
-			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			new duice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
 			return false;
 		}
 	}
 	
 	// Saves message
 	<spring:message code="application.text.message" var="item"/>
-	new juice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
+	new duice.ui.Confirm('<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>')
 		.afterConfirm(function() {
 			var messageJson = message.toJson();
 			$.ajax({
@@ -175,13 +175,13 @@ function deleteMessage() {
 
 	// Checks system data
 	if(message.get('systemDataYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
 	// Removes message
 	<spring:message code="application.text.message" var="item"/>
-	new juice.ui.Confirm('<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>')
+	new duice.ui.Confirm('<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>')
 		.afterConfirm(function() {
 			$.ajax({
 				 url: 'message/deleteMessage'
@@ -212,8 +212,8 @@ function deleteMessage() {
 	<div class="division" style="width:50%;">
 		<div style="display:flex; justify-content: space-between;">
 			<div style="flex:auto;">
-				<select data-juice="ComboBox" data-juice-bind="messageSearch.searchType" data-juice-options="messageSearchTypes" style="width:100px;"></select>
-				<input data-juice="TextField" data-juice-bind="messageSearch.searchValue" style="width:100px;"/>
+				<select data-duice="ComboBox" data-duice-bind="messageSearch.searchType" data-duice-options="messageSearchTypes" style="width:100px;"></select>
+				<input data-duice="TextField" data-duice-bind="messageSearch.searchValue" style="width:100px;"/>
 				<button onclick="javascript:getMessages();">
 					<i class="icon-search"></i>
 					<spring:message code="application.text.search"/>
@@ -226,7 +226,7 @@ function deleteMessage() {
 				</button>
 			</div>
 		</div>
-		<table id="messagesTable" data-juice="Grid" data-juice-bind="messages" data-juice-item="message">
+		<table id="messagesTable" data-duice="Grid" data-duice-bind="messages" data-duice-item="message">
 			<colgroup>
 				<col style="width:10%"/>
 				<col style="width:30%"/>
@@ -246,20 +246,20 @@ function deleteMessage() {
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-id="{{$context.message.get('id')}}" onclick="javascript:getMessage(this.dataset.id);">
+				<tr data-id="[[$context.message.get('id')]]" onclick="javascript:getMessage(this.dataset.id);">
 					<td class="text-center">
-						{{messageSearch.get('rows')*(messageSearch.get('page')-1)+$context.index+1}}
+						[[messageSearch.get('rows')*(messageSearch.get('page')-1)+$context.index+1]]
 					</td>
-					<td class="{{$context.message.get('systemDataYn')=='Y'?'systemData':''}}">
-						<label data-juice="Label" data-juice-bind="message.id" class="id"></label>
+					<td class="[[$context.message.get('systemDataYn')=='Y'?'systemData':'']]">
+						<span data-duice="Text" data-duice-bind="message.id" class="id"></span>
 					</td>
-					<td><label data-juice="Label" data-juice-bind="message.name"></label></td>
+					<td><span data-duice="Text" data-duice-bind="message.name"></span></td>
 				</tr>
 			</tbody>
 		</table>
 		<div>
-			<ul data-juice="Pagination" data-juice-bind="messageSearch" data-juice-rows="rows" data-juice-page="page" data-juice-total-count="totalCount" data-juice-page-size="5">
-				<li data-page="{{$context.page}}" onclick="javascript:getMessages(this.dataset.page);">{{$context.page}}</li>
+			<ul data-duice="Pagination" data-duice-bind="messageSearch" data-duice-rows="rows" data-duice-page="page" data-duice-total-count="totalCount" data-duice-page-size="5">
+				<li data-page="[[$context.page]]" onclick="javascript:getMessages(this.dataset.page);">[[$context.page]]</li>
 			</ul>
 		</div>
 	</div>
@@ -297,7 +297,7 @@ function deleteMessage() {
 					</span>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="message.id"/>
+					<input class="id" data-duice="TextField" data-duice-bind="message.id"/>
 				</td>
 			</tr>
 			<tr>
@@ -307,7 +307,7 @@ function deleteMessage() {
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="message.name"/>
+					<input data-duice="TextField" data-duice-bind="message.name"/>
 				</td>
 			</tr>
 			<tr>
@@ -315,7 +315,7 @@ function deleteMessage() {
 					<spring:message code="application.text.value"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="message.value"></textarea>
+					<textarea data-duice="TextArea" data-duice-bind="message.value"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -323,7 +323,7 @@ function deleteMessage() {
 					<spring:message code="application.text.description"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="message.description"></textarea>
+					<textarea data-duice="TextArea" data-duice-bind="message.description"></textarea>
 				</td>
 			</tr>
 		</table>

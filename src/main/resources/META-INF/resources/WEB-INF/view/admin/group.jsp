@@ -8,10 +8,10 @@
 <%@page import="java.text.*" %>
 <!-- global -->
 <script type="text/javascript">
-var groups = new juice.data.Tree();
-var group = new juice.data.Map();
-var roles = new juice.data.List();
-var authorities = new juice.data.List();
+var groups = new duice.data.Tree();
+var group = new duice.data.Map();
+var roles = new duice.data.List();
+var authorities = new duice.data.List();
 var isNew = false;
 
 /**
@@ -239,7 +239,7 @@ function saveGroup(){
 	try {
 		__validator.checkId(group.get('id'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -247,7 +247,7 @@ function saveGroup(){
 	try {
 		__validator.checkName(group.get('name'));
 	}catch(e){
-		new juice.ui.Alert(e).open();
+		new duice.ui.Alert(e).open();
 		return false;
 	}
 	
@@ -268,7 +268,7 @@ function saveGroup(){
 		});
 		if(isDuplicated == true){
 			<spring:message code="application.text.id" var="item"/>
-			new juice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
+			new duice.ui.Alert('<spring:message code="application.message.duplicatedItem" arguments="${item}"/>').open();
 			return false;
 		}
 	}
@@ -276,7 +276,7 @@ function saveGroup(){
 	// Saves group
 	<spring:message code="application.text.group" var="item"/>
 	var message = '<spring:message code="application.message.saveItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 		.afterConfirm(function() {
 			var groupJson = group.toJson();
 			groupJson.roles = roles.toJson();
@@ -302,7 +302,7 @@ function deleteGroup() {
 	
 	// Checks embedded data
 	if(group.get('systemDataYn') == 'Y'){
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.notAllowRemove.systemData"/>').open();
 		return false;
 	}
 	
@@ -312,14 +312,14 @@ function deleteGroup() {
 	});
 	if(groups.getNode(index).getChildNodes().length > 0){
 		<spring:message code="application.text.group" var="item"/>
-		new juice.ui.Alert('<spring:message code="application.message.notAllowRemove.hasChildItem" arguments="${item}"/>').open();
+		new duice.ui.Alert('<spring:message code="application.message.notAllowRemove.hasChildItem" arguments="${item}"/>').open();
 		return false;
 	}
 	
 	// Removes group
 	<spring:message code="application.text.group" var="item"/>
 	var message = '<spring:message code="application.message.deleteItem.confirm" arguments="${item}"/>';
-	new juice.ui.Confirm(message)
+	new duice.ui.Confirm(message)
 	.afterConfirm(function() {
 		$.ajax({
 			 url: 'group/deleteGroup'
@@ -370,16 +370,16 @@ div.groupItem:hover {
 				</button>
 			</div>
 		</div>
-		<ul id="groupsUl" data-juice="TreeView" data-juice-bind="groups" data-juice-item="group">
+		<ul id="groupsUl" data-duice="TreeView" data-duice-bind="groups" data-duice-item="group">
 			<li>
-				<div class="groupItem" data-id="{{$context.group.get('id')}}" onclick="javascript:getGroup(this.dataset.id);">
+				<div class="groupItem" data-id="[[$context.group.get('id')]]" onclick="javascript:getGroup(this.dataset.id);">
 					<div>
-						<span class="{{$context.group.get('systemDataYn')=='Y'?'systemData':''}}">
-							<label data-juice="Label" data-juice-bind="group.name"></label>
+						<span class="[[$context.group.get('systemDataYn')=='Y'?'systemData':'']]">
+							<span data-duice="Text" data-duice-bind="group.name"></span>
 						</span>
 					</div>
 					<div style="display:inline-block;text-align:right;">
-						<button class="small" data-id="{{$context.group.get('id')}}" onclick="javascript:addGroup(this.dataset.id); event.stopPropagation();">
+						<button class="small" data-id="[[$context.group.get('id')]]" onclick="javascript:addGroup(this.dataset.id); event.stopPropagation();">
 							<i class="icon-add"></i>
 						</button>
 					</div>
@@ -421,7 +421,7 @@ div.groupItem:hover {
 					</span>
 				</th>
 				<td>
-					<input class="id" data-juice="TextField" data-juice-bind="group.id"/>
+					<input class="id" data-duice="TextField" data-duice-bind="group.id"/>
 				</td>
 			</tr>
 			<tr>
@@ -431,7 +431,7 @@ div.groupItem:hover {
 					</span>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="group.name"/>
+					<input data-duice="TextField" data-duice-bind="group.name"/>
 				</td>
 			</tr>
 			<tr>
@@ -441,8 +441,8 @@ div.groupItem:hover {
 				</th>
 				<td>
 					<div style="display:flex; justify-content:space-between;">
-						<label data-juice="Label" data-juice-bind="group.breadCrumbs"></label>
-						<input type="hidden" data-juice="TextField" data-juice-bind="group.upperId"/>
+						<span data-duice="Text" data-duice-bind="group.breadCrumbs"></span>
+						<input type="hidden" data-duice="TextField" data-duice-bind="group.upperId"/>
 						<div>
 							<button class="small" onclick="javascript:changeUpperId();">
 								<i class="icon-change"></i>
@@ -460,7 +460,7 @@ div.groupItem:hover {
 					<spring:message code="application.text.description"/>
 				</th>
 				<td>
-					<textarea data-juice="TextArea" data-juice-bind="group.description"></textarea>
+					<textarea data-duice="TextArea" data-duice-bind="group.description"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -468,7 +468,7 @@ div.groupItem:hover {
 					<spring:message code="application.text.displaySeq"/>
 				</th>
 				<td>
-					<input data-juice="TextField" data-juice-bind="group.displaySeq" style="width:5rem; text-align:right;"/>
+					<input data-duice="TextField" data-duice-bind="group.displaySeq" style="width:5rem; text-align:right;"/>
 				</td>
 			</tr>
 			<tr>
@@ -479,7 +479,7 @@ div.groupItem:hover {
 					<spring:message code="application.text.roles"/>
 				</th>
 				<td>
-					<table data-juice="Grid" data-juice-bind="roles" data-juice-item="role">
+					<table data-duice="Grid" data-duice-bind="roles" data-duice-item="role">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -501,15 +501,15 @@ div.groupItem:hover {
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.role.get('id')}}">
+							<tr data-id="[[$context.role.get('id')]]">
 								<td>
-									<label data-juice="Label" data-juice-bind="role.id" class="id"></label>
+									<span data-duice="Text" data-duice-bind="role.id" class="id"></span>
 								</td>
 								<td>
-									<label data-juice="Label" data-juice-bind="role.name"></label>
+									<span data-duice="Text" data-duice-bind="role.name"></span>
 								</td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeRole(this.dataset.index);">
+									<button class="small" data-index="[[$context.index]]" onclick="javascript:removeRole(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>
@@ -526,7 +526,7 @@ div.groupItem:hover {
 					<spring:message code="application.text.authorities"/>
 				</th>
 				<td>
-					<table data-juice="Grid" data-juice-bind="authorities" data-juice-item="authority">
+					<table data-duice="Grid" data-duice-bind="authorities" data-duice-item="authority">
 						<colgroup>
 							<col style="width:40%;"/>
 							<col/>
@@ -548,15 +548,15 @@ div.groupItem:hover {
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-id="{{$context.authority.get('id')}}">
+							<tr data-id="[[$context.authority.get('id')]]">
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.id" class="id"></label>
+									<span data-duice="Text" data-duice-bind="authority.id" class="id"></span>
 								</td>
 								<td>
-									<label data-juice="Label" data-juice-bind="authority.name"></label>
+									<span data-duice="Text" data-duice-bind="authority.name"></span>
 								</td>
 								<td class="text-center">
-									<button class="small" data-index="{{$context.index}}" onclick="javascript:removeAuthority(this.dataset.index);">
+									<button class="small" data-index="[[$context.index]]" onclick="javascript:removeAuthority(this.dataset.index);">
 										<i class="icon-remove"></i>
 									</button>
 								</td>

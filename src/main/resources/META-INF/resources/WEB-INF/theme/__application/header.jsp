@@ -100,8 +100,8 @@ body > main > section {
 	<nav class="topNav" style="padding-right:10px;">
 		<sec:authorize access="isAuthenticated()">
 			<span>
-				<img data-juice="Image" data-juice-bind="__user.avatar" data-juice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:32px; height:32px; border-radius:50%;"/>
-				<label data-juice="Label" data-juice-bind="__user.nickname"></label>
+				<img data-duice="Image" data-duice-bind="__user.avatar" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:32px; height:32px; border-radius:50%;"/>
+				<span data-duice="Text" data-duice-bind="__user.nickname"></span>
 			</span>
 			&nbsp;&nbsp;
 			<span>
@@ -130,7 +130,7 @@ body > main > section {
 		<span>
 			<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_language.png"/>
 			<spring:message code="application.label.language"/>
-			<select data-juice="ComboBox" data-juice-bind="__user.language" data-juice-options="__languages" style="width:10rem;"></select>
+			<select data-duice="ComboBox" data-duice-bind="__user.language" data-duice-options="__languages" style="width:10rem;"></select>
 		</span>
 	</nav>
 </header>
@@ -145,11 +145,11 @@ body > main > section {
 	&& fn:contains(requestUri,'/user/profile') == false
 	}">
 	<nav class="leftNav">
-		<ul data-juice="TreeView" data-juice-bind="__menus" data-juice-item="menu">
+		<ul data-duice="TreeView" data-duice-bind="__menus" data-duice-item="menu">
 			<li>
-				<a href="{{$context.menu.get('link')}}" class="menuItem" style="display:block;">
-					<img class="icon" data-juice="Image" data-juice-bind="menu.icon" data-juice-width="24" data-juice-height="24" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII=" style="vertical-align:middle;"/>
-					<label data-juice="Label" data-juice-bind="menu.name"></label>
+				<a href="[[$context.menu.get('link')]]" class="menuItem" style="display:block;">
+					<img class="icon" data-duice="Image" data-duice-bind="menu.icon" data-duice-width="24" data-duice-height="24" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACKklEQVR42rWU709SYRTH/Sd70XqfW9JqZo10NTOSUMDN2Rq9qSxC+ol6hxCByS+Byw38RWiI2nrTCrhALRHz2z0nuK68CLV5tu+e58W5n+d7nnOe29V1UmEYug77oweYdr3As6cOVc6pJ4rsjb0dA1cvoyPgPdsddBKOxw9x5vSp9tDxMTPKcqkt0OOeRdDnxvme7uOhE+NWVKuVtsAppWyK6pfP0PWcxfEOy3Jb4JhlBLdu3oDt7gQG9H3QnetGLrcBTWClUsa/Rji0gL5LF44CrRaTChSEaQQCPtZrrxvC7CvMuJ7D9dIJp2OSNXnfxrnfv1UxNHhNGyh30JS/Y2c7j36tUSJg8w5rtV0cHPxUtb9fR72+h9ruDxa5kkuFBnAL/XoNoHnEqJYcCs5DkkRFCYiJGOKxCCsceovQgh9+3xzcgotzP33c0XZoum1QgQRaz2aQyaxibXUZS2mJlXonIplYREQBz/u9hyXrWwDlUrEBFHkUCErA5aUU0qkkAxPxKOKL4T+A+iu9R4HDhkH1pVCZTXcrK2l2JyXjLDERZYdUNgO3NlsDi8XfFx2NBBlEarqTxBiL3BEw8MbDudv5XGtgofCVk7wegaEk+jjCzQhwmeTMOzfDM9l0qDnYNJxNYEYplU7Ob35g5TayrPX3a6ysch0ppXEUtNcE0tj8T1TkonaXey/qYDWb+NFbRo0sGnZezYfrqGkYdLjJaAC9f1rpB3Fif/5fRO6q8pQoJI0AAAAASUVORK5CYII=" style="vertical-align:middle;"/>
+					<span data-duice="Text" data-duice-bind="menu.name"></span>
 				</a>
 			</li>
 		</ul>
