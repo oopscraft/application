@@ -1,0 +1,15 @@
+# privat key
+sudo openssl genrsa -out server.key 2048
+
+# public key
+sudo openssl req -new -key server.key -out server.csr
+
+# creates certificate
+sudo openssl x509 -req -days 36500 -in server.csr -signkey server.key -out server.crt
+
+# verify
+cat server.key | head -3
+cat server.crt | head -3
+
+# create pem
+sudo cat /etc/ssl/cert.crt /etc/ssl/cert.key > /etc/ssl/cert.pem
