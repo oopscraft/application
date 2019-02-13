@@ -1,7 +1,10 @@
 package net.oopscraft.application;
 
+import java.io.File;
+import java.net.URL;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,10 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.security.UserDetails;
 
-@ControllerAdvice
 @Controller
+@ControllerAdvice
 @RequestMapping("/")
-public class ApplicationControllerAdvice {
+public class ApplicationController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {

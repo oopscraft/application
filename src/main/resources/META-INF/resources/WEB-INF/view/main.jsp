@@ -68,7 +68,7 @@ function getBestArticles(page) {
 	});	
 }
 
-
-
 </script>
 <jsp:include page="/WEB-INF/theme/${__configuration.theme}/main.jsp" flush="true"/>
+
+
