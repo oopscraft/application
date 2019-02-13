@@ -4,7 +4,29 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"  prefix="fn"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="app" uri="http://application.oopscraft.net"%>
+<%@page import="java.io.*" %>
+<%@page import="java.net.*" %>
+<%@page import="org.apache.commons.io.*" %>
+<script type="text/javascript">
+<%
+//--------------------------------------------------
+//Prints README.md jar resource or system path
+//--------------------------------------------------
+File readmeFile = null;
+URL url = this.getClass().getResource("/README.md");
+if(url != null) {
+	readmeFile = new File(url.toURI());
+}else {
+	readmeFile = new File(new File("").getAbsolutePath() + File.separator + "README.md");
+}
+String readme = FileUtils.readFileToString(readmeFile, "utf8");
+request.setAttribute("readme",readme);
+%>
+var readme = duice.util.FormatUtils.parseMarkdown('@{app:toJson(readme)}');
+
+</script>
 <style type="text/css">
 .container {
 	display: flex;
@@ -17,8 +39,7 @@
 }
 </style>
 <div class="container">
-	<div class="division" style="width:100%; height:300px;">
-
+	<div id="readme" class="division" style="width:100%; white-space:pre;">
 	</div>
 </div>
 <div class="container">
