@@ -1,4 +1,5 @@
-# oopscraft-application platform
+# Oopscraft Application Platform
+==============================================================================================================
 웹어플리케션의 화면 위주의 서비스가 메인 요소가 아닌 백엔드 Standalne 어플리케이션 개발 시 사용하기 위한 반가공 형태의 개발플랫폼이다.
 (예를 들면 배치스케줄 시스템, 모니터링 시스템, 백엔드 API 어플리케이션 등..)
 
@@ -7,13 +8,44 @@
 spring-boot와의 가장 큰 차이점이라면
 
 1. spring-boot의 경우 모든 부분이 spring-framework 기반으로 돌아감으로 디테일한 설정이 필요한 백엔드 어플리케이션에서는 핸들링에 제약이 있으나 해당 플랫폼은 POJO 기반에 웹채널등 spring-framework가 담당하는 부분만 위하는 형태로 구성된다.
-
 2. spring-boot가 자동자의 단위부품을 제공해주는 것이라면 해당 플랫폼에서는 항상 비슷한 형태로 개발되는 모듈은 이미 설정, 개발된 상태로 제공되어진다.
 
 주요 특징은 아래와 같다.
 
+| Library        			| NAME          | TITLE |
+|-------------------------------------- |----------------|--------|
+| **Daemon Instance**					| Pure Java      | Cool1  |
+| **Embedded Tomcat**					| Embedded Web Server      | Cool1  |
+| **spring-framework**				| IOC Container and Core Framework      			 | Are2           |
+| **spring-security**      			| Security Library           | Cool1  |
+| **JPA(spring-data + Hibernate)**	| Data Access Object(ORM)           | Cool1  |
+| **Mybatis**   						| Data Access Obect(MAPPER)           | Cool1  |
+| **JWT(JSON Web Token)**				| Security Token           | Cool1  |
+
+## Controls Application Instance
+
+`
+// build
+user@host> build.sh
+
+// starts application
+user@host> application.sh start
+
+// tails log 
+user@host> application.sh log
+
+// show status application
+user@host> application.sh status
+
+// shutdown application
+user@host> application.sh stop
+`
+
 ## Platform for standalone application development.
 Standalone 백엔드 어플리케이션 개발을 위한 플랫폼이다.
+<code>
+user@host> build.sh 
+</code>
 
 ## No need web server (including embedded tomcat webserer)
 Embedded Tocmat을 내장하고 있음으로 웹서버가 필요없는 독립서버이다.

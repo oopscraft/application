@@ -24,8 +24,17 @@ if(url != null) {
 String readme = FileUtils.readFileToString(readmeFile, "utf8");
 request.setAttribute("readme",readme);
 %>
-var readme = duice.util.FormatUtils.parseMarkdown('@{app:toJson(readme)}');
+var readme = new duice.data.Map({
+	content:${app:toJson(readme)}
+});
+//var readme = duice.util.FormatUtils.parseMarkdown(${app:toJson(readme)});
 
+/**
+ * on document ready
+ */
+$(document).ready(function(){
+	//$('#readme').html(readme);
+});
 </script>
 <style type="text/css">
 .container {
@@ -39,8 +48,7 @@ var readme = duice.util.FormatUtils.parseMarkdown('@{app:toJson(readme)}');
 }
 </style>
 <div class="container">
-	<div id="readme" class="division" style="width:100%; white-space:pre;">
-	</div>
+	<div id="textViewDiv" data-duice="TextView" data-duice-bind="readme.content" data-duice-format="markdown"></div>
 </div>
 <div class="container">
 	<div class="division" style="width:50%;">
