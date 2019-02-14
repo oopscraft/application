@@ -13,10 +13,7 @@
 		<meta http-equiv="refresh" content="${pageContext.session.maxInactiveInterval+10}">
 		<link rel="SHORTCUT ICON" href="${pageContext.request.contextPath}/static/img/application.ico">
 		
-		<!-- 
-		<link rel="stylesheet" href="${pageContext.request.contextPath}/static/lib/duice/duice.css">
-		<script src="${pageContext.request.contextPath}/static/lib/duice/duice.js"></script>
-		 -->
+		<!-- duice -->
 		<link rel="stylesheet" href="//duice.oopscraft.net/src/duice.css">
 		<script src="//duice.oopscraft.net/src/duice.js"></script>
 		 
