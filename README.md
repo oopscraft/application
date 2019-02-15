@@ -10,6 +10,17 @@ spring-boot와의 가장 큰 차이점이라면
 1. spring-boot의 경우 모든 부분이 spring-framework 기반으로 돌아감으로 디테일한 설정이 필요한 백엔드 어플리케이션에서는 핸들링에 제약이 있으나 해당 플랫폼은 POJO 기반에 웹채널등 spring-framework가 담당하는 부분만 위하는 형태로 구성된다.
 2. spring-boot가 자동자의 단위부품을 제공해주는 것이라면 해당 플랫폼에서는 항상 비슷한 형태로 개발되는 모듈은 이미 설정, 개발된 상태로 제공되어진다.
 
+![PlantUML model](http://www.plantuml.com/plantuml/png/SoWkIImgAStDuNBAJrBGjLDmpCbCJbMmKiX8pSd9JqzBAGPXBeVKl1IW8W00)
+
+     ┌───┐          ┌─────┐
+     │Bob│          │Alice│
+     └─┬─┘          └──┬──┘
+       │hellogfdsgfds  │   
+       │──────────────>│   
+     ┌─┴─┐          ┌──┴──┐
+     │Bob│          │Alice│
+     └───┘          └─────┘
+
 주요 특징은 아래와 같다.
 
 | Library        			| NAME          | TITLE |
@@ -22,12 +33,56 @@ spring-boot와의 가장 큰 차이점이라면
 | **Mybatis**   						| Data Access Obect(MAPPER)           | Cool1  |
 | **JWT(JSON Web Token)**				| Security Token           | Cool1  |
 
-## Controls Application Instance
-
+## Download and Build Application
 `
-// build
-user@host> build.sh
+// clones source from github
+user@host> git clone https://github.com/oopscraft/application.git
 
+// maven build
+user@host> ./build.sh
+`
+
+## Configuration
+`
+user@host> vim conf/application.properties
+`
+`
+	################################################################################
+	# Application Configuration
+	################################################################################
+	# application theme configuration
+	application.configuration.theme=__application
+	
+	# webServer
+	application.webServer.port=10001
+	application.webSerer.ssl=false
+	application.webSerer.keyStorePath=conf/ssl/keystore
+	application.webSerer.keyStoreType=pkcs12
+	application.webSerer.keyStorePass=abcd1234
+	
+	###########################################
+	# MYSQL
+	########################################### 
+	# dataSource default connection pool
+	application.dataSource.driver=org.mariadb.jdbc.Driver
+	application.dataSource.url= jdbc:mariadb://oopscraft.iptime.org:3306/app
+	application.dataSource.username=app
+	application.dataSource.password=djvmfflzpdltus!
+	application.dataSource.initialSize=5
+	application.dataSource.maxActive=10
+	application.dataSource.validationQuery=select 1
+	
+	# entityManagerFactory properties
+	application.entityManagerFactory.databasePlatform=org.hibernate.dialect.MySQLDialect
+	application.entityManagerFactory.packagesToScan=
+	
+	# sqlSessionFactory properties
+	application.sqlSessionFactory.databaseId=MYSQL
+	application.sqlSessionFactory.mapperLocations=
+`
+
+## Start and Stop Application
+`
 // starts application
 user@host> application.sh start
 
