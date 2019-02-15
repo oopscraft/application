@@ -1,41 +1,77 @@
-# Oopscraft Application Platform
+# Platform for Standalone Application Development
 
-웹어플리케션의 화면 위주의 서비스가 메인 요소가 아닌 백엔드 Standalne 어플리케이션 개발 시 사용하기 위한 반가공 형태의 개발플랫폼이다.
-(예를 들면 배치스케줄 시스템, 모니터링 시스템, 백엔드 API 어플리케이션 등..)
+=====================================================================
 
-비슷한 아마도 현재 가장 많이 사용되는 프레임워크로 spring-boot를 들수 잇다.
+## Concept
+This is platform for Java-based standalone application development 
+such as daemon proces kind of RESTful API Server, Scheduling Server, TCP/IP Server, APM Monitoring Server and so on.
+Features are as follows.
+![PlantUML model](http://www.plantuml.com/plantuml/png/RP31ReCm44Jl_efLZfNuWHogH4NgfMqaKgc7gWSN3AngxqPuELNzzthb19c82tXcti308OgTP0xU28ftSCPmIRVJ92CFJDR34uSBHvIKYKtNL-wSDvyFNr1LZ_3cqDTe0rDdekQb0-RgxTI4ctkYv0vk1pQkw5y3aFdQKeiqBFgSn4e7z5bVITrIKFcKtONDf-mkR_Wpjzarz_tcN2Ie9nUZLXlceBipNYn-7v5-4d7yvbcEmKtOsYNyiDAcV7ZspXdOP7NK7RUIccyMzGlAdrWrE8oIuBnmdvxYjMEohbvShsbPsJSpaIBcuAYRW_y7)
 
-spring-boot와의 가장 큰 차이점이라면
 
-1. spring-boot의 경우 모든 부분이 spring-framework 기반으로 돌아감으로 디테일한 설정이 필요한 백엔드 어플리케이션에서는 핸들링에 제약이 있으나 해당 플랫폼은 POJO 기반에 웹채널등 spring-framework가 담당하는 부분만 위하는 형태로 구성된다.
-2. spring-boot가 자동자의 단위부품을 제공해주는 것이라면 해당 플랫폼에서는 항상 비슷한 형태로 개발되는 모듈은 이미 설정, 개발된 상태로 제공되어진다.
 
-![PlantUML model](http://www.plantuml.com/plantuml/png/SoWkIImgAStDuNBAJrBGjLDmpCbCJbMmKiX8pSd9JqzBAGPXBeVKl1IW8W00)
+### Java-based Main Application 
+JAVA Main Application
 
-| Library        			| NAME          | TITLE |
-|-------------------------------------- |----------------|--------|
-| **Daemon Instance**					| Pure Java      | Cool1  |
-| **Embedded Tomcat**					| Embedded Web Server      | Cool1  |
-| **spring-framework**				| IOC Container and Core Framework      			 | Are2           |
-| **spring-security**      			| Security Library           | Cool1  |
-| **JPA(spring-data + Hibernate)**	| Data Access Object(ORM)           | Cool1  |
-| **Mybatis**   						| Data Access Obect(MAPPER)           | Cool1  |
-| **JWT(JSON Web Token)**				| Security Token           | Cool1  |
+### Including Embedded WebServer
+Embedded Tocmat을 내장하고 있음으로 웹서버가 필요없는 독립서버이다.
 
-## Download and Build Application
+### Supporting Enterprise Level Web Application via spring-framework
+웹채널의 경우 이미 기업환경에서 검증이 된 spring-framework 기반으로 구성한다.
+
+### Authentication and Authorization with spring-security
+비지니스 환경에서의 복잡한 인증,권한 구조를 수요하기 위하여 spring-security 라이브러리를 데이터베이스와 연동하여 구현된 User-Group-Role-Authority 으로 구현된 기본 모듈을 제공한다.
+
+### Integration with JPA (spring-data and Hibernate) and  Mybatis together
+Multiple Database 환경을 제공하기 위하여 JPA 와 복잡한 업무 비지니스를 구현하기 위한 Mybatis를 모두 사용하여 개발하는 방법을 제공한다.
+
+### Administrator Web Console
+Application을 관리하기 위한 관리 Web Console을 제공한다.
+
+### Include RESTful API Structure
+JWT(JSON Web Token) 인증 기반의 RESTful API 기능을 기본적으로 포함하고 있으며 해당 기본구조를 기초로 비지니스에 맞는 API를 확장 구현할수 있도록 구성한다.
+Swagger 문서화 도구를 이용한 API 문서화 기능을 포함한다.
+
+### CMS(Contents Management System) with Theme and Skin Functionality
+웹채널을 구성할 경우 해당 웹사이트의 디자인 테마 및 게시판,블로그 등의 스킨을 적용할수 있는 다중 컨텐츠 관리 기능을 제공한다. 
+
+### Built in Common Application Component (based on web-fragment technology)
+대부분의 시스템에서 사용되는 공통 모듈이 구현된 형태로 제공되며 해당 구현된 모듈은 web-framgment 표준으로 해당 어플리케이션 구동 시 자동으로 로드되도록 한다.
+
+
+## Including Open Sources
+| Open Sources     						| Description      							|
+|-------------------------------------- |------------------------------------------ |
+| **Daemon Instance**					| Pure Java      							|
+| **Embedded Tomcat**					| Embedded Web Server      					|
+| **Srping Framework**				| IOC Container and Core Framework    	 	|
+| **Spring Security**      			| Web Channel Security Library           	|
+| **JPA(spring-data + Hibernate)**	| Data Access Object(ORM)           		|
+| **Mybatis**   						| Data Access Obect(MAPPER)           		|
+| **JWT(JSON Web Token)**				| Web Channel Security Token           		|
+
+
+## Download and Build Binary
+------------------------------------------
+First, download the source code from the git hub repository.
+And then, executes build shell script. **__(build.sh)__**
 ```bash
 // clones source from github
 user@host> git clone https://github.com/oopscraft/application.git
 
 // maven build
-user@host> ./build.sh
+user@host> build.sh
 ```
 
+
 ## Configuration
+------------------------------------------
+
+Open the **${APP_HOME}/conf/application.properties__** file below.
+This file contains application configuration information that can be modified.
 ```bash
 user@host> vim conf/application.properties
-```
-```bash
+...
 ################################################################################
 # Application Configuration
 ################################################################################
@@ -70,7 +106,9 @@ application.sqlSessionFactory.databaseId=MYSQL
 application.sqlSessionFactory.mapperLocations=
 ```
 
-## Start and Stop Application
+
+## Controls Application
+------------------------------------------
 ```bash
 // starts application
 user@host> application.sh start
@@ -85,26 +123,37 @@ user@host> application.sh status
 user@host> application.sh stop
 ```
 
-## Platform for standalone application development.
-Standalone 백엔드 어플리케이션 개발을 위한 플랫폼이다.
-```bash
-user@host> build.sh 
+
+## Application Development from Platform
+------------------------------------------
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+    <version>${org.springframework-version}</version>
+    <scope>provided</scope>
+</dependency>
 ```
 
-## No need web server (including embedded tomcat webserer)
-Embedded Tocmat을 내장하고 있음으로 웹서버가 필요없는 독립서버이다.
 
-## supporting Enterprise Level Web Apllication via spring-framework
-웹채널의 경우 이미 기업환경에서 검증이 된 spring-framework 기반으로 구성한다.
-
-## Athentication and Authorization with spring-security
-비지니스 환경에서의 복잡한 인증,권한 구조를 수요하기 위하여 spring-security 라이브러리를 데이터베이스와 연동하여 구현된 User-Group-Role-Authority 으로 구현된 기본 모듈을 제공한다.
-
-## Integration with JPA (spring-data-jpa and Hibernate) and  Mybatis together
-Multiple Database 환경을 제공하기 위하여 JPA 와 복잡한 업무 비지니스를 구현하기 위한 Mybatis를 모두 사용하여 개발하는 방법을 제공한다.
-
-## Built in Common application component (based on web-fragment)
-대부분의 시스템에서 사용되는 공통 모듈이 구현된 형태로 제공되며 해당 구현된 모듈은 web-framgment 표준으로 해당 어플리케이션 구동 시 자동으로 로드되도록 한다.
+## References
+------------------------------------------
+http://batman.oopscraft.net
+http://soma.oopscraft.net
 
 
+## More Information
+------------------------------------------
+### Official Website
+http://duice.oopscraft.net
 
+### Source Repository
+https://github.com/oopscraft/duice
+
+### Distribution Download
+http://duice.oopscraft.net/dist/duice.zip
+
+### Licence
+Anyone can use it freely. Modify the source or allow re-creation. However, you must state that you have the original creator. However, we can not grant patents or licenses for reproductives. (Modifications or reproductions must be shared with the public.)
+
+Licence: LGPL(GNU Lesser General Public License version 3) Copyright (C) 2017 duice.oopscraft.net Contact chomookun@gmail.com
