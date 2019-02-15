@@ -1,12 +1,10 @@
 # Platform for Standalone Application Development
-
-=====================================================================
+<hr/>
 
 ## Concept
-This is platform for Java-based standalone application development 
-such as daemon proces kind of RESTful API Server, Scheduling Server, TCP/IP Server, APM Monitoring Server and so on.
-Features are as follows.
-![PlantUML model](http://www.plantuml.com/plantuml/png/RP31ReCm44Jl_efLZfNuWHogH4NgfMqaKgc7gWSN3AngxqPuELNzzthb19c82tXcti308OgTP0xU28ftSCPmIRVJ92CFJDR34uSBHvIKYKtNL-wSDvyFNr1LZ_3cqDTe0rDdekQb0-RgxTI4ctkYv0vk1pQkw5y3aFdQKeiqBFgSn4e7z5bVITrIKFcKtONDf-mkR_Wpjzarz_tcN2Ie9nUZLXlceBipNYn-7v5-4d7yvbcEmKtOsYNyiDAcV7ZspXdOP7NK7RUIccyMzGlAdrWrE8oIuBnmdvxYjMEohbvShsbPsJSpaIBcuAYRW_y7)
+This is platform for Java-based standalone application development such as daemon proces kind of RESTful API Server, Scheduling Server, TCP/IP Server, APM Monitoring Server and so on.
+
+![PlantUML model](http://www.plantuml.com/plantuml/png/XLAnZXGn3Etz5QwHHlGfLYT1GmKI9Q884-yHQP8CjdC88VwTTIQUPMckSlBUi_qSvqaqilQo0MZMZN0dlZOkkJxZXxSV0Rwy-OhBSi5tMwQgS8I0dxYj98ATC-RgxAJnflzC_4ACmHHBYXf1D2ev_XiGH-aBbbQpDWRqKt3Hy2OEtomzQBJjWb6HQi9szPmjNmd-_ElaVTJuBGe5Tta7qZnXsucZvbO5fa_kTMsbn9g6Ly-nWXCF9mZecD7NRDoFJlpB2GF4VBfC6yhm2_UHB5TeerN398zt0nmbSJbvG1VEYFjSXxP3kxDDv3rSZelRcw_rK7iu3cUEtwckBP4SLpJpGZx1epBHeMIIlgdZzwPEs7eCGFjMdSMskLgS0picsfW4Krlbn9YKCxsGOAMV1pKvj3Qaw_TWS2-swN4V1fv9IsE26LyVovN_Z-KuBcS_ix9uJm7mjXVxuV14DVMo_GK0)
 
 
 
@@ -52,7 +50,6 @@ Swagger 문서화 도구를 이용한 API 문서화 기능을 포함한다.
 
 
 ## Download and Build Binary
-------------------------------------------
 First, download the source code from the git hub repository.
 And then, executes build shell script. **__(build.sh)__**
 ```bash
@@ -65,8 +62,6 @@ user@host> build.sh
 
 
 ## Configuration
-------------------------------------------
-
 Open the **${APP_HOME}/conf/application.properties__** file below.
 This file contains application configuration information that can be modified.
 ```bash
@@ -108,7 +103,6 @@ application.sqlSessionFactory.mapperLocations=
 
 
 ## Controls Application
-------------------------------------------
 ```bash
 // starts application
 user@host> application.sh start
@@ -125,7 +119,6 @@ user@host> application.sh stop
 
 
 ## Application Development from Platform
-------------------------------------------
 ```xml
 <dependency>
     <groupId>org.springframework</groupId>
@@ -137,13 +130,11 @@ user@host> application.sh stop
 
 
 ## References
-------------------------------------------
 http://batman.oopscraft.net
 http://soma.oopscraft.net
 
 
 ## More Information
-------------------------------------------
 ### Official Website
 http://duice.oopscraft.net
 
