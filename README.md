@@ -34,7 +34,7 @@ spring-boot와의 가장 큰 차이점이라면
 | **JWT(JSON Web Token)**				| Security Token           | Cool1  |
 
 ## Download and Build Application
-```Shell
+```bash
 // clones source from github
 user@host> git clone https://github.com/oopscraft/application.git
 
@@ -43,12 +43,12 @@ user@host> ./build.sh
 ```
 
 ## Configuration
-```
+```bash
 user@host> vim conf/application.properties
 ```
 
 ## Start and Stop Application
-```
+```bash
 // starts application
 user@host> application.sh start
 
@@ -64,9 +64,9 @@ user@host> application.sh stop
 
 ## Platform for standalone application development.
 Standalone 백엔드 어플리케이션 개발을 위한 플랫폼이다.
-<code>
+```bash
 user@host> build.sh 
-</code>
+```
 
 ## No need web server (including embedded tomcat webserer)
 Embedded Tocmat을 내장하고 있음으로 웹서버가 필요없는 독립서버이다.
