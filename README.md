@@ -34,55 +34,21 @@ spring-boot와의 가장 큰 차이점이라면
 | **JWT(JSON Web Token)**				| Security Token           | Cool1  |
 
 ## Download and Build Application
-`
+```
 // clones source from github
 user@host> git clone https://github.com/oopscraft/application.git
 
 // maven build
 user@host> ./build.sh
-`
+```
 
 ## Configuration
-`
+```
 user@host> vim conf/application.properties
-`
-`
-	################################################################################
-	# Application Configuration
-	################################################################################
-	# application theme configuration
-	application.configuration.theme=__application
-	
-	# webServer
-	application.webServer.port=10001
-	application.webSerer.ssl=false
-	application.webSerer.keyStorePath=conf/ssl/keystore
-	application.webSerer.keyStoreType=pkcs12
-	application.webSerer.keyStorePass=abcd1234
-	
-	###########################################
-	# MYSQL
-	########################################### 
-	# dataSource default connection pool
-	application.dataSource.driver=org.mariadb.jdbc.Driver
-	application.dataSource.url= jdbc:mariadb://oopscraft.iptime.org:3306/app
-	application.dataSource.username=app
-	application.dataSource.password=djvmfflzpdltus!
-	application.dataSource.initialSize=5
-	application.dataSource.maxActive=10
-	application.dataSource.validationQuery=select 1
-	
-	# entityManagerFactory properties
-	application.entityManagerFactory.databasePlatform=org.hibernate.dialect.MySQLDialect
-	application.entityManagerFactory.packagesToScan=
-	
-	# sqlSessionFactory properties
-	application.sqlSessionFactory.databaseId=MYSQL
-	application.sqlSessionFactory.mapperLocations=
-`
+```
 
 ## Start and Stop Application
-`
+```
 // starts application
 user@host> application.sh start
 
@@ -94,7 +60,7 @@ user@host> application.sh status
 
 // shutdown application
 user@host> application.sh stop
-`
+```
 
 ## Platform for standalone application development.
 Standalone 백엔드 어플리케이션 개발을 위한 플랫폼이다.
