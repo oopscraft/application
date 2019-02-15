@@ -34,7 +34,7 @@ spring-boot와의 가장 큰 차이점이라면
 | **JWT(JSON Web Token)**				| Security Token           | Cool1  |
 
 ## Download and Build Application
-```shellscript
+```shell
 // clones source from github
 user@host> git clone https://github.com/oopscraft/application.git
 
