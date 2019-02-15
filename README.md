@@ -1,5 +1,4 @@
 # Platform for Standalone Application Development
-<hr/>
 
 ## Concept
 This is platform for Java-based standalone application development such as daemon proces kind of RESTful API Server, Scheduling Server, TCP/IP Server, APM Monitoring Server and so on.
