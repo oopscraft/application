@@ -12,17 +12,6 @@ spring-boot와의 가장 큰 차이점이라면
 
 ![PlantUML model](http://www.plantuml.com/plantuml/png/SoWkIImgAStDuNBAJrBGjLDmpCbCJbMmKiX8pSd9JqzBAGPXBeVKl1IW8W00)
 
-     ┌───┐          ┌─────┐
-     │Bob│          │Alice│
-     └─┬─┘          └──┬──┘
-       │hellogfdsgfds  │   
-       │──────────────>│   
-     ┌─┴─┐          ┌──┴──┐
-     │Bob│          │Alice│
-     └───┘          └─────┘
-
-주요 특징은 아래와 같다.
-
 | Library        			| NAME          | TITLE |
 |-------------------------------------- |----------------|--------|
 | **Daemon Instance**					| Pure Java      | Cool1  |
@@ -45,6 +34,40 @@ user@host> ./build.sh
 ## Configuration
 ```bash
 user@host> vim conf/application.properties
+```
+```bash
+################################################################################
+# Application Configuration
+################################################################################
+# application theme configuration
+application.configuration.theme=__application
+
+# webServer
+application.webServer.port=10001
+application.webSerer.ssl=false
+application.webSerer.keyStorePath=conf/ssl/keystore
+application.webSerer.keyStoreType=pkcs12
+application.webSerer.keyStorePass=abcd1234
+
+###########################################
+# MYSQL
+########################################### 
+# dataSource default connection pool
+application.dataSource.driver=org.mariadb.jdbc.Driver
+application.dataSource.url= jdbc:mariadb://oopscraft.iptime.org:3306/app
+application.dataSource.username=app
+application.dataSource.password=djvmfflzpdltus!
+application.dataSource.initialSize=5
+application.dataSource.maxActive=10
+application.dataSource.validationQuery=select 1
+
+# entityManagerFactory properties
+application.entityManagerFactory.databasePlatform=org.hibernate.dialect.MySQLDialect
+application.entityManagerFactory.packagesToScan=
+
+# sqlSessionFactory properties
+application.sqlSessionFactory.databaseId=MYSQL
+application.sqlSessionFactory.mapperLocations=
 ```
 
 ## Start and Stop Application
