@@ -9,7 +9,6 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta name="viewport" content="width=1024, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta http-equiv="refresh" content="${pageContext.session.maxInactiveInterval+10}">
 		<link rel="SHORTCUT ICON" href="${pageContext.request.contextPath}/static/img/application.ico">
 		
