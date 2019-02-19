@@ -29,6 +29,7 @@ case ${1} in
 		;;
 	doc)
 		doc
+		;;
 	*)
 		update
 		build
