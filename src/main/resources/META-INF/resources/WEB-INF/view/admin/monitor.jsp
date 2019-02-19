@@ -91,7 +91,7 @@ function startWebSocketReceive() {
  * Prints TOP contents.
  */
 function printTop(top) {
-	$('#topDiv').html(top);
+	$('#top').val(top);
 }
 
 /**
@@ -285,18 +285,18 @@ function updateClassCountChart(monitorInfo){
 .container {
 	display: flex;
 	justify-content: space-between;
+	max-width:100%;
 }
 
-#topDiv {
+#top {
 	width: 100%;
 	height: 20em;
-	font-size:1em;
-    padding: 0rem 1rem;
-    overflow: scroll;
+	border: none;
+	outline: none;
+	text-overflow:scroll;
 	background-color: black;
 	color: white;
 	font-family: Consolas, Courier New;
-	white-space: pre-line;
 }
 </style>
 <div class="title1">
@@ -310,8 +310,8 @@ function updateClassCountChart(monitorInfo){
 			Table of Processes
 		</div>
 		<br/>
-		<div id="topDiv">
-		</div>
+		<textarea id="top" readonly>
+		</textarea>
 	</div>
 </div>
 <div class="container">
