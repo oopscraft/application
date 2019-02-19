@@ -289,13 +289,14 @@ function updateClassCountChart(monitorInfo){
 
 #topDiv {
 	width: 100%;
-	height: 20rem;
+	height: 20em;
+	font-size:1em;
     padding: 0rem 1rem;
     overflow: scroll;
 	background-color: black;
 	color: white;
 	font-family: Consolas, Courier New;
-	white-space: pre-wrap;
+	white-space: pre-line;
 }
 </style>
 <div class="title1">
