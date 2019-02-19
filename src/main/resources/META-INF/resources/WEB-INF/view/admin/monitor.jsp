@@ -294,6 +294,8 @@ function updateClassCountChart(monitorInfo){
 	border: none;
 	outline: none;
 	text-overflow:scroll;
+	font-size: 1em;
+	white-space: pre;
 	background-color: black;
 	color: white;
 	font-family: Consolas, Courier New;
