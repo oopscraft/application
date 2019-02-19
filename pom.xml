@@ -156,6 +156,7 @@
 						<artifactId>markdown-doclet</artifactId>
 						<version>1.4</version>
 					</docletArtifact>
+					<reportOutputDirectory>./doc</reportOutputDirectory>
 					<useStandardDocletOptions>true</useStandardDocletOptions>
 				</configuration>
 		    </plugin>
