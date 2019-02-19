@@ -7,11 +7,16 @@ function update() {
 	git stash pop
 }
 
-# gradle build
+# build
 function build() {
 	#gradle clean
 	#gradle jar
 	mvn clean package
+}
+
+# doc
+function doc() {
+	mvn javadoc:javadoc
 }
 
 # main
@@ -22,9 +27,12 @@ case ${1} in
 	build)
 		build
 		;;
+	doc)
+		doc
 	*)
 		update
 		build
+		doc
 		;;
 esac
 
