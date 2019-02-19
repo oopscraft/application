@@ -335,7 +335,7 @@
 			width: 15%;
 			min-width: 150px;
 			border: none;
-		    border-right: solid 1px #eee;
+		    border-right: dotted 1px #ccc;
 		}
 		.leftNav .menuItem {
 			padding: 0.25rem 0rem;
@@ -358,9 +358,8 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			background-color: #eee;
 			border: none;
-			border-top: solid 1px #ddd;
+			border-top: dotted 1px #ccc;
 			padding: 0rem 0.5rem;
 		}
 		dialog {
