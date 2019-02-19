@@ -293,7 +293,6 @@ function updateClassCountChart(monitorInfo){
 	height: 20em;
 	border: none;
 	outline: none;
-	text-overflow:scroll;
 	font-size: 1em;
 	white-space: pre;
 	background-color: black;
