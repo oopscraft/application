@@ -323,7 +323,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			min-height: 90vh;
+			min-height: calc(100vh - 70px - 50px);
 			border: none;
 		}
 		.leftNav {
