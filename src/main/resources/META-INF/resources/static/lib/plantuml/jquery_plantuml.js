@@ -53,16 +53,17 @@ if (b == 1) {
 return '?';
 }
 
-var deflater = window.SharedWorker && new SharedWorker('rawdeflate.js');
+var deflater = window.SharedWorker && new SharedWorker('/static/lib/plantuml/rawdeflate.js');
 if (deflater) {
   deflater.port.addEventListener('message', done_deflating, false);
   deflater.port.start();
 } else if (window.Worker) {
-  deflater = new Worker('rawdeflate.js');
+  deflater = new Worker('/static/lib/plantuml/rawdeflate.js');
   deflater.onmessage = done_deflating;
 }
 
 function done_deflating(e) {
+	console.log("done_deflating",e);
 var done = 0;
 $("img").each(function () {
   if (done==1) return;
@@ -79,6 +80,7 @@ plantuml_runonce();
 
 function plantuml_runonce() {
 var done = 0;
+
 $("img").each(function () {
   if (done==1) return;
   var u1 = $(this).attr("src");

@@ -21,6 +21,8 @@
 		<script src="${pageContext.request.contextPath}/static/lib/jquery.js"></script>
  		<script src="${pageContext.request.contextPath}/static/lib/moment-with-locales.min.js"></script>
  		<script src="${pageContext.request.contextPath}/static/lib/Chart.js/Chart.js"></script>
+ 		<script src="${pageContext.request.contextPath}/static/lib/plantuml/jquery_plantuml.js"></script>
+ 		<script src="${pageContext.request.contextPath}/static/lib/plantuml/rawdeflate.js"></script>
  		<link href="${pageContext.request.contextPath}/static/icon/css/icon.css" rel="stylesheet">
  		
  		<!-- polyfill -->

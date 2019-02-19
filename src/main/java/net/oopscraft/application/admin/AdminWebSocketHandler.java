@@ -46,8 +46,8 @@ public class AdminWebSocketHandler extends net.oopscraft.application.core.spring
 	
 	/**
 	 * Creates message
-	 * @param messageId
-	 * @param message
+	 * @param messageId message id
+	 * @param message message value
 	 * @return
 	 * @throws Exception
 	 */

@@ -3,6 +3,50 @@
 ## Concept
 This is platform for Java-based standalone application development such as daemon proces kind of RESTful API Server, Scheduling Server, TCP/IP Server, APM Monitoring Server and so on.
 
+@startuml
+   skinparam ParticipantPadding 30
+   skinparam classFontSize 8
+   skinparam sequenceArrowThickness 1
+   skinparam sequenceMessageAlign center
+   skinparam roundcorner 3
+   skinparam maxmessagesize 100
+   hide footbox
+   
+   title 
+    DUICE(Data-orientied javascript UI Component Engine)
+   end title
+   
+   actor "User" as user
+   participant "<b>HTML + Javascript</b>\n(data-duice-* Attributes)" as ui
+   box #eee
+    participant "**DUICE**(duice.*)\nduice.js" as duice  #LightBlue 
+    participant "**Virtual UI Component**(duice.ui.*)\nText,TextField,...,Grid,TreeView..." as duice.ui #LightBlue 
+    participant "**Data Structure**(duice.data.*)\nMap,List,Data..." as duice.data #LightBlue 
+   end box
+   
+   == on document loading ==
+   ui --> duice.data : create data object
+   activate duice.data
+   ui --> duice : fires OnLoadCompelte event
+   activate duice
+   duice --> ui: reads data-duice* attributes
+   duice --> duice.ui : creates UI component
+   activate duice.ui
+   duice.ui --> ui : apply to HTML element
+   
+   == on user change html page ==
+   user -> ui: changes html element
+   ui--> duice.ui : fires event
+   duice.ui --> duice.data : changes data
+   
+   == on data is changed by script ==
+   duice--> duice.data : change data
+   duice.data --> duice.ui : update
+   duice.ui --> ui: change html element
+@enduml
+
+
+
 ![PlantUML model](http://www.plantuml.com/plantuml/png/XLAnZXGn3Etz5QwHHlGfLYT1GmKI9Q884-yHQP8CjdC88VwTTIQUPMckSlBUi_qSvqaqilQo0MZMZN0dlZOkkJxZXxSV0Rwy-OhBSi5tMwQgS8I0dxYj98ATC-RgxAJnflzC_4ACmHHBYXf1D2ev_XiGH-aBbbQpDWRqKt3Hy2OEtomzQBJjWb6HQi9szPmjNmd-_ElaVTJuBGe5Tta7qZnXsucZvbO5fa_kTMsbn9g6Ly-nWXCF9mZecD7NRDoFJlpB2GF4VBfC6yhm2_UHB5TeerN398zt0nmbSJbvG1VEYFjSXxP3kxDDv3rSZelRcw_rK7iu3cUEtwckBP4SLpJpGZx1epBHeMIIlgdZzwPEs7eCGFjMdSMskLgS0picsfW4Krlbn9YKCxsGOAMV1pKvj3Qaw_TWS2-swN4V1fv9IsE26LyVovN_Z-KuBcS_ix9uJm7mjXVxuV14DVMo_GK0)
 
 
