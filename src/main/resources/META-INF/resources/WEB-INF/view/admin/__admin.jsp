@@ -304,7 +304,7 @@
 			color: #555;
 		}
 		body {
-			min-width: 1280px;
+			min-width: 1366px;
 		}
 		body > header {
 			display: flex;
