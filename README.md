@@ -6,10 +6,10 @@ This is platform for Java-based standalone application development such as daemo
 
 @startuml 
 scale 1000 width
-skinparam handwritten false
-skinparam monochrome false
+skinparam handwritten true
+skinparam monochrome true
 skinparam ParticipantPadding 2
-skinparam BoxPadding 2
+skinparam BoxPadding 0
 skinparam classFontSize 8
 skinparam sequenceArrowThickness 1
 skinparam sequenceMessageAlign center
