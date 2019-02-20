@@ -16,11 +16,9 @@ skinparam sequenceMessageAlign center
 skinparam roundcorner 3
 skinparam maxmessagesize 100
 hide footbox
-
 title 
 	Platform for Standalone Application Development
 end title
-
 actor "User" as user
 box "Application Container" #eee
 	participant "Application" as application
@@ -43,7 +41,6 @@ box "Data Access Object Layer" #eee
 	participant "DataSource\nDBCP(ConnectionPool)" as dataSource
 	database "Database" as database
 end box
-
 == on application start ==
 user --> application : starts application
 activate application
@@ -66,7 +63,6 @@ activate apiController
 springFramework --> service : loads service components
 activate service
 ... waits request ...
-
 == on user request ==
 user --> springSecurity : access to administrator console
 springSecurity --> springSecurity : checks authentication and authorization
