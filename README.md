@@ -4,8 +4,9 @@
 ## Concept
 This is platform for Java-based standalone application development such as daemon proces kind of RESTful API Server, Scheduling Server, TCP/IP Server, APM Monitoring Server and so on.
 
-<!--
-<![CDATA[@startuml 
+<script>
+<![CDATA[
+@startuml 
 scale 1000 width
 skinparam handwritten true
 skinparam monochrome true
@@ -91,7 +92,9 @@ else complex data handling
 	 mybatis <-- dataSource : gets connection from pool
 	 mybatis --> database : complex SELECT query
 end
-@enduml]]>-->
+@enduml
+]]>
+<script>
 
 ### Java-based Main Application 
 JAVA Main Application
