@@ -547,8 +547,8 @@
 			open: function(callback){
 				var $this = this;
 		 		this.items.fromJson([],'childGroups');
-				var title = '<spring:message code="application.text.group"/> <spring:message code="application.text.list"/>';
-		 		this.dialog = new duice.ui.Dialog(title, $('#__groupsDialog')[0]);
+		 		this.dialog = new duice.ui.Dialog($('#__groupsDialog')[0]);
+		 		this.dialog.setTitle('<spring:message code="application.text.group"/> <spring:message code="application.text.list"/>');
 				this.search();
 			},
 	 		search: function(){
@@ -697,8 +697,8 @@
 	 			});
 		 		this.searchItems.fromJson([]);
 		 		this.selectItems.fromJson([]);
-				var title = '<spring:message code="application.text.role"/> <spring:message code="application.text.list"/>';
-		 		this.dialog = new duice.ui.Dialog(title, $('#__rolesDialog')[0]);
+		 		this.dialog = new duice.ui.Dialog($('#__rolesDialog')[0]);
+		 		this.dialog.setTitle('<spring:message code="application.text.role"/> <spring:message code="application.text.list"/>');
 				this.dialog.open();
 				this.search(1);
 			},
@@ -1118,8 +1118,8 @@
 			open: function(callback){
 				var $this = this;
 		 		this.items.fromJson([],'childGroups');
-   				var title = '<img class="icon" src="${pageContext.request.contextPath}/static/img/icon_menu.png"/>&nbsp;&nbsp;<spring:message code="application.text.menu"/> <spring:message code="application.text.list"/>';
-		 		this.dialog = new duice.ui.Dialog(title, $('#__menusDialog')[0]);
+   				this.dialog = new duice.ui.Dialog($('#__menusDialog')[0]);
+		 		this.dialog.setTitle('<spring:message code="application.text.menu"/> <spring:message code="application.text.list"/>');
 				this.search();
 			},
 	 		search: function(){

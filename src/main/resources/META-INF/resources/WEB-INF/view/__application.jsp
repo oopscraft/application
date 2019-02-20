@@ -122,6 +122,18 @@
 			});	
 		}
 		
+		/**
+		 * __openMenu
+		 */
+		function __openMenu(index) {
+			var menu = __menus.getNode(JSON.parse(index));
+			console.log(menu);
+			if(menu.get('type') === 'NONE'){
+				return false;
+			}
+			window.location.href = '${pageContext.request.contextPath}/menu/' + menu.get('id');
+		}
+		
         /**
          * Parsed total count from Content-Range header
          * @Param {Object} jqXHR
