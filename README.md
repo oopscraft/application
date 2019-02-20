@@ -1,55 +1,100 @@
 # Platform for Standalone Application Development
+----------------------------------------------------------------------------------------------------
 
 ## Concept
 This is platform for Java-based standalone application development such as daemon proces kind of RESTful API Server, Scheduling Server, TCP/IP Server, APM Monitoring Server and so on.
 
-@startuml
-   skinparam ParticipantPadding 30
-   skinparam classFontSize 8
-   skinparam sequenceArrowThickness 1
-   skinparam sequenceMessageAlign center
-   skinparam roundcorner 3
-   skinparam maxmessagesize 100
-   hide footbox
-   
-   title 
-    DUICE(Data-orientied javascript UI Component Engine)
-   end title
-   
-   actor "User" as user
-   participant "<b>HTML + Javascript</b>\n(data-duice-* Attributes)" as ui
-   box #eee
-    participant "**DUICE**(duice.*)\nduice.js" as duice  #LightBlue 
-    participant "**Virtual UI Component**(duice.ui.*)\nText,TextField,...,Grid,TreeView..." as duice.ui #LightBlue 
-    participant "**Data Structure**(duice.data.*)\nMap,List,Data..." as duice.data #LightBlue 
-   end box
-   
-   == on document loading ==
-   ui --> duice.data : create data object
-   activate duice.data
-   ui --> duice : fires OnLoadCompelte event
-   activate duice
-   duice --> ui: reads data-duice* attributes
-   duice --> duice.ui : creates UI component
-   activate duice.ui
-   duice.ui --> ui : apply to HTML element
-   
-   == on user change html page ==
-   user -> ui: changes html element
-   ui--> duice.ui : fires event
-   duice.ui --> duice.data : changes data
-   
-   == on data is changed by script ==
-   duice--> duice.data : change data
-   duice.data --> duice.ui : update
-   duice.ui --> ui: change html element
+@startuml 
+scale 1000 width
+skinparam handwritten false
+skinparam monochrome false
+skinparam ParticipantPadding 2
+skinparam BoxPadding 2
+skinparam classFontSize 8
+skinparam sequenceArrowThickness 1
+skinparam sequenceMessageAlign center
+skinparam roundcorner 3
+skinparam maxmessagesize 100
+hide footbox
+
+title 
+	Platform for Standalone Application Development
+end title
+
+actor "User" as user
+box "Application Container" #eee
+	participant "Application" as application
+end box
+box "Web Channel" #f7f7f7
+	participant "Embedded Tomcat" as webServer
+	participant "spring-security" as springSecurity
+	participant "spring-framework" as springFramework
+end box
+box "Contoller" #eee
+	participant "Administrator Console" as adminController
+	participant "RESTful API" as apiController
+end box
+box "Service Component" #f7f7f7
+	participant "Service Component" as service
+end box
+box "Data Access Object Layer" #eee
+	participant "JPA(spring-data + Hibernate)" as jpa
+	participant "Mybatis" as mybatis
+	participant "DataSource\nDBCP(ConnectionPool)" as dataSource
+	database "Database" as database
+end box
+
+== on application start ==
+user --> application : starts application
+activate application
+application --> dataSource: initialize dataSource
+activate dataSource
+application --> jpa : initialize JPA resource
+activate jpa
+application --> mybatis : initialize Mybatis resource
+activate mybatis
+application --> webServer : starts web server
+activate webServer
+webServer --> springSecurity : activates security filter
+activate springSecurity
+webServer --> springFramework : activates spring context
+activate springFramework
+springFramework --> adminController : loads administrator console controller
+activate adminController
+springFramework --> apiController : loads RESTful API controller
+activate apiController
+springFramework --> service : loads service components
+activate service
+... waits request ...
+
+== on user request ==
+user --> springSecurity : access to administrator console
+springSecurity --> springSecurity : checks authentication and authorization
+opt authentication failed
+	springSecurity --> user : response 401 UNAUTHORIZED
+else authorization failed
+	springSecurity --> user : response 403 FORBIDDEN
+end
+springSecurity --> springFramework : accesses controller
+alt Administrator Console(admin.*)
+	springFramework --> adminController : calls administrator controller
+	adminController --> service : calls service component
+else RESTful API(api.*)
+	springFramework --> apiController : calls RESTful API controller
+	apiController --> service : calls service component
+else 
+end
+adminController --> service : calls service instance
+alt general data handling
+	 service --> jpa : gets *JPARepository
+	 jpa <-- dataSource : gets connection from pool
+	 jpa --> database : general SELECT,INSERT,UPDATE,DELETE query
+else complex data handling
+	 service --> mybatis : gets *Mapper
+	 mybatis <-- dataSource : gets connection from pool
+	 mybatis --> database : complex SELECT query
+end
 @enduml
-
-
-
-![PlantUML model](http://www.plantuml.com/plantuml/png/XLAnZXGn3Etz5QwHHlGfLYT1GmKI9Q884-yHQP8CjdC88VwTTIQUPMckSlBUi_qSvqaqilQo0MZMZN0dlZOkkJxZXxSV0Rwy-OhBSi5tMwQgS8I0dxYj98ATC-RgxAJnflzC_4ACmHHBYXf1D2ev_XiGH-aBbbQpDWRqKt3Hy2OEtomzQBJjWb6HQi9szPmjNmd-_ElaVTJuBGe5Tta7qZnXsucZvbO5fa_kTMsbn9g6Ly-nWXCF9mZecD7NRDoFJlpB2GF4VBfC6yhm2_UHB5TeerN398zt0nmbSJbvG1VEYFjSXxP3kxDDv3rSZelRcw_rK7iu3cUEtwckBP4SLpJpGZx1epBHeMIIlgdZzwPEs7eCGFjMdSMskLgS0picsfW4Krlbn9YKCxsGOAMV1pKvj3Qaw_TWS2-swN4V1fv9IsE26LyVovN_Z-KuBcS_ix9uJm7mjXVxuV14DVMo_GK0)
-
-
 
 ### Java-based Main Application 
 JAVA Main Application
@@ -79,7 +124,6 @@ Swagger 문서화 도구를 이용한 API 문서화 기능을 포함한다.
 ### Built in Common Application Component (based on web-fragment technology)
 대부분의 시스템에서 사용되는 공통 모듈이 구현된 형태로 제공되며 해당 구현된 모듈은 web-framgment 표준으로 해당 어플리케이션 구동 시 자동으로 로드되도록 한다.
 
-
 ## Including Open Sources
 | Open Sources     						| Description      							|
 |-------------------------------------- |------------------------------------------ |
@@ -102,7 +146,6 @@ user@host> git clone https://github.com/oopscraft/application.git
 // maven build
 user@host> build.sh
 ```
-
 
 ## Configuration
 Open the **${APP_HOME}/conf/application.properties__** file below.
@@ -144,7 +187,6 @@ application.sqlSessionFactory.databaseId=MYSQL
 application.sqlSessionFactory.mapperLocations=
 ```
 
-
 ## Controls Application
 ```bash
 // starts application
@@ -160,7 +202,6 @@ user@host> application.sh status
 user@host> application.sh stop
 ```
 
-
 ## Application Development from Platform
 ```xml
 <dependency>
@@ -171,11 +212,9 @@ user@host> application.sh stop
 </dependency>
 ```
 
-
 ## References
 http://batman.oopscraft.net
 http://soma.oopscraft.net
-
 
 ## More Information
 ### Official Website
