@@ -29,12 +29,14 @@
 		<url>https://github.com/oopscraft/application</url>
 	</scm>
 
+<!-- 
 	<distributionManagement>
 		<repository>
 			<id>application</id>
 			<url>https://api.bintray.com/maven/oopscraft/application/application/;publish=1</url>
 		</repository>
 	</distributionManagement>
+-->
 	
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
