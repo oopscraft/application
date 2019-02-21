@@ -32,7 +32,7 @@
 	<distributionManagement>
 		<repository>
 			<id>application</id>
-			<url>https://api.bintray.com/maven/oopscraft/application/application</url>
+			<url>https://api.bintray.com/maven/oopscraft/application/application/;publish=1</url>
 		</repository>
 	</distributionManagement>
 	
