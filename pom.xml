@@ -6,6 +6,36 @@
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	
+	<name>Platform for Standalone Application</name>
+    <description>Platform for Standalone Application</description>
+    <url>http://application.oopscraft.net</url>
+    
+	<licenses>
+		<license>
+			<name>LGPL(GNU Lesser General Public License version 3)</name>
+			<url>https://opensource.org/licenses/lgpl-3.0.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
+	<developers>
+		<developer>
+			<name>chomookun</name>
+			<email>chomookun@gmail.com</email>
+		</developer>
+	</developers>	
+	
+	<scm>
+		<url>https://github.com/oopscraft/application</url>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>application</id>
+			<url>https://api.bintray.com/maven/oopscraft/application/application/;publish=1</url>
+		</repository>
+	</distributionManagement>
+	
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
@@ -160,6 +190,22 @@
 					<useStandardDocletOptions>true</useStandardDocletOptions>
 				</configuration>
 		    </plugin>
+		    
+            <!-- GPG sign -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
 		</plugins>
 	</build>
