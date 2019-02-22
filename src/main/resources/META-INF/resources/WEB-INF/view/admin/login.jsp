@@ -170,8 +170,7 @@
 		}
 		#messageDiv {
 			text-align: center;
-			font-weight: bold;
-			color: steelblue;
+			color: red;
 		}
 		</style>
 	</head>

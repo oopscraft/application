@@ -70,7 +70,8 @@
 	        	console.log(jqXHR);
 	        	console.log(ajaxSettings);
 	        	console.log(thrownError);
-	        	alert(jqXHR.responseText);
+	        	new duice.ui.Alert(jqXHR.responseText).open();
+	        	//alert(jqXHR.responseText);
         	}
         });
 

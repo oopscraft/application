@@ -9,7 +9,7 @@
 #loginContainerDiv {
 	width: 100%;
 	display: flex;
-	height: 100vh;
+	height: 80vh;
 	justify-content: center;
 	align-items: center;
 }
@@ -18,7 +18,7 @@
 	margin-bottom: 20vh;
 }
 #loginDiv > div {
-	margin:2px;
+	margin:3px;
 }
 #idInput {
 	line-height: 2.5;
@@ -49,16 +49,23 @@
 	border: solid 1px gray;
 }
 #messageDiv {
-	line-height: 2.5;
 	text-align: center;
-	font-weight: bold;
-	color: steelblue;
+	color: red;
+}
+#loginMenu {
+    display: flex;
+    justify-content: space-around;
+}
+#socialDiv {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0px;
 }
 </style>
 <div id="loginContainerDiv">
 	<div id="loginDiv">
-		<div style="text-align:center;">
-			<img src="${THEME_URI}/img/img_login.png"/>
+		<div style="text-align:center; font-size:1.2em; font-weight:bold;">
+			<spring:message code="application.label.login"/>
 		</div>
 		<div>
 			<input id="idInput" data-duice="TextField" data-duice-bind="user.id" placeholder="<spring:message code="application.text.id"/>"/>
@@ -75,6 +82,31 @@
 			<input type="checkbox" data-jucie="CheckBox" data-duice-bind="user._spring_security_remember_me"/> Remember em.
 		</div>
 		<div id="messageDiv">
+		</div>
+		<div id="loginMenu">
+			<span>
+				<spring:message code="application.label.findId"/>
+			</span>
+			|
+			<span>
+				<spring:message code="application.label.findPassword"/>
+			</span>
+			| 
+			<span>
+				<spring:message code="application.label.join"/>
+			</span>
+		</div>
+		<hr style="margin:2em 0em; border:0px; border-top:solid 1px #eee;"/>
+		<div style="text-align:center; font-size:1.2em; font-weight:bold;">
+			<spring:message code="application.label.social"/>
+			<spring:message code="application.label.login"/>
+		</div>
+		<div id="socialDiv">
+			<img src="${pageContext.request.contextPath}/static/img/icon_ci_google.png"/>
+			<img src="${pageContext.request.contextPath}/static/img/icon_ci_facebook.png"/>
+			<img src="${pageContext.request.contextPath}/static/img/icon_ci_github.png"/>
+			<img src="${pageContext.request.contextPath}/static/img/icon_ci_kakao.png"/>
+			<img src="${pageContext.request.contextPath}/static/img/icon_ci_naver.png"/>
 		</div>
 	</div>
 </div>

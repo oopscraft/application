@@ -366,10 +366,10 @@
 			display: none;
 		}
 		.title1 {
-		    padding: 0rem 0.5rem;
+		    margin: 0.5rem;
+		    border-bottom: dotted 1px #ccc;
             font-size: 1.2rem;
             font-weight: bold;
-            width: 100%;
 		}
 		.title2 {
 			display: inline-block;
@@ -424,10 +424,7 @@
 			justify-content: space-between;
 		}
 		.division {
-			border: dotted 1px #ccc;
-			border-radius: 3px;
-			margin: 5px;
-			padding: 1rem;
+			padding: 0.5rem;
 		}
 		.systemData:after {
 			content:"*";
