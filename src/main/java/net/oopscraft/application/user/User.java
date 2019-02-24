@@ -1,5 +1,6 @@
 package net.oopscraft.application.user;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +13,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -70,15 +70,15 @@ public class User extends SystemEntity {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APP_USER_GROP_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROP_ID"))
-	List<Group> groups;
+	List<Group> groups = new ArrayList<Group>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APP_USER_ROLE_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
-	List<Role> roles;
+	List<Role> roles = new ArrayList<Role>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APP_USER_AUTH_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	List<Authority> authorities;
+	List<Authority> authorities = new ArrayList<Authority>();
 
 	public String getId() {
 		return id;
