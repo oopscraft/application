@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.StringUtils;
 import net.oopscraft.application.user.repository.UserRepository;
 
 @Service
@@ -87,9 +88,23 @@ public class UserService {
 	 * @throws Exception
 	 */
 	public User saveUser(User user) throws Exception {
-		User one = userRepository.findOne(user.getId());
+		
+		// checks validation
+		if(StringUtils.isEmpty(user.getId())) {
+			throw new IllegalArgumentException("invalid id");
+		}
+		if(StringUtils.isEmpty(user.getName())) {
+			throw new IllegalArgumentException("invalid name");
+		}
+		if(StringUtils.isEmpty(user.getNickname())) {
+			throw new IllegalArgumentException("invalid nickname");
+		}
+		if(StringUtils.isEmpty(user.getEmail())) {
+			throw new IllegalArgumentException("invalid email");
+		}
 		
 		// In case of new user
+		User one = userRepository.findOne(user.getId());
 		if(one == null) {
 			one = new User();
 			one.setId(user.getId());
@@ -105,14 +120,14 @@ public class UserService {
 		one.setName(user.getName());
 		one.setNickname(user.getNickname());
 		one.setEmail(user.getEmail());
+		one.setStatus(user.getStatus());
 		one.setLocale(user.getLocale());
 		one.setPhone(user.getPhone());
-		one.setStatus(user.getStatus());
 		
 		// AVATAR property
 		if(user.getAvatar() != null) {
 			if(user.getAvatar().length() > 1024*1024) {
-				throw new Exception("Avatar image size exceeds the limit.");
+				throw new IllegalArgumentException("Avatar image size exceeds the limit.");
 			}
 		}
 		one.setAvatar(user.getAvatar());
@@ -120,7 +135,7 @@ public class UserService {
 		// Signature property
 		if(user.getSignature() != null) {
 			if(user.getSignature().length() > 1024*1024) {
-				throw new Exception("Signature size exceeds the limit.");
+				throw new IllegalArgumentException("Signature size exceeds the limit.");
 			}
 		}
 		one.setSignature(user.getSignature());

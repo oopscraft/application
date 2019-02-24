@@ -14,31 +14,19 @@
 	align-items: center;
 }
 #loginDiv {
-	width: 300px;
+	width: 320px;
 	margin-bottom: 20vh;
 }
-#loginDiv > div {
+#loginDiv div {
 	margin:3px;
 }
-#idInput {
-	line-height: 2.5;
-	border-bottom: solid 1px #ccc;
-	background-color: #fff;
-}
-#passwordInput {
-	line-height: 2.5;
-	border-bottom: solid 1px #ccc;
-	background-color: #fff;
-}
-#loginButton {
-	line-height: 2.5;
+#loginDiv button {
 	width: 100%;
 	font-weight: bold;
 	position:relative;
 	border: solid 1px #ccc !important;
 	border-radius: 3px;
-	background-color: #fff;
-	padding:0 1rem;
+	background-color: #f5f5f5;
 	cursor:pointer;
 	transition:200ms ease all;
 	outline:none;

@@ -211,15 +211,20 @@ function saveUser() {
 	
 	// Check id
 	try {
-		__validator.checkId(user.get('id'));
-	}catch(e){
-		new duice.ui.Alert(e).open();
-		return false;
-	}
-	
-	// check name
-	try {
-		__validator.checkName(user.get('name'));
+ 		// Checks empty
+ 		if(duice.util.StringUtils.isEmpty(user.get('id'))){
+     		<spring:message code="application.text.id" var="item"/>
+			throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
+ 		}
+		// Validates generic
+		if(duice.util.StringUtils.isGenericId(user.get('id')) == false){
+			throw '<spring:message code="application.message.invalidIdFormat"/>';
+		}
+		// length
+		if(duice.util.StringUtils.isLengthBetween(user.get('id'),4,32) == false){
+			<spring:message code="application.text.id" var="item"/>
+			throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
+		}
 	}catch(e){
 		new duice.ui.Alert(e).open();
 		return false;
@@ -261,9 +266,49 @@ function saveUser() {
 		}
 	}
 	
+	// check name
+	try {
+ 		// Checks empty
+ 		if(duice.util.StringUtils.isEmpty(user.get('name'))){
+     		<spring:message code="application.text.name" var="item"/>
+				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
+ 		}
+ 		// check length
+ 		if(duice.util.StringUtils.isLengthBetween(user.get('name'),1,256) == false){
+			<spring:message code="application.text.name" var="item"/>
+			throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
+ 		}
+	}catch(e){
+		new duice.ui.Alert(e).open();
+		return false;
+	}
+	
+	// Checks nickname
+	try {
+ 		// Checks empty
+ 		if(duice.util.StringUtils.isEmpty(user.get('nickname'))){
+     		<spring:message code="application.text.name" var="item"/>
+				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
+ 		}
+ 		// check length
+ 		if(duice.util.StringUtils.isLengthBetween(user.get('nickname'),1,256) == false){
+			<spring:message code="application.text.name" var="item"/>
+			throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
+ 		}
+	}catch(e){
+		new duice.ui.Alert(e)
+		.afterConfirm(function(){
+			$('input[data-duice-bind="user.nickname"]').select();
+		})
+		.open();
+		return false;
+	}
+	
 	// Checks email
 	try {
-		__validator.checkEmailAddress(user.get('email'));
+		if(duice.util.StringUtils.isEmailAddress(user.get('email')) == false){
+ 			throw '<spring:message code="application.message.invalidEmailAddressFormat"/>';
+ 		}
 	}catch(e){
 		new duice.ui.Alert(e)
 		.afterConfirm(function(){
@@ -272,45 +317,9 @@ function saveUser() {
 		.open();
 		return false;
 	}
-	
-	// Checks locale
-	try {
-		__validator.checkLocale(user.get('locale'));
-	}catch(e){
-		new duice.ui.Alert(e)
-		.afterConfirm(function(){
-			$('select[data-duice-bind="user.locale"]').select();
-		})
-		.open();
-		return false;
-	}
-	
-	// Check phone number
-	try {
-		__validator.checkPhoneNumber(user.get('phone'));
-	}catch(e){
-		new duice.ui.Alert(e)
-		.afterConfirm(function(){
-			$('input[data-duice-bind="user.phone"]').select();
-		})
-		.open();
-		return false;
-	}
 
-	// Checks name
-	try {
-		__validator.checkName(user.get('name'));
-	}catch(e){
-		new duice.ui.Alert(e)
-		.afterConfirm(function(){
-			$('input[data-duice-bind="user.name"]').select();
-		})
-		.open();
-		return false;
-	}
-	
 	// Checks statusCode
-	if(__isEmpty(user.get('status'))){
+	if(duice.util.StringUtils.isEmpty(user.get('status'))){
 		<spring:message code="application.text.status" var="item"/>
 		new duice.ui.Alert('<spring:message code="application.message.enterItem" arguments="${item}"/>')
 		.afterConfirm(function(){
@@ -420,10 +429,10 @@ function deleteUser(){
 						<spring:message code="application.text.name"/>
 					</th>
 					<th>
-						<spring:message code="application.text.email"/>
+						<spring:message code="application.text.nickname"/>
 					</th>
 					<th>
-						<spring:message code="application.text.phone"/>
+						<spring:message code="application.text.email"/>
 					</th>
 					<th>
 						<spring:message code="application.text.status"/>
@@ -439,8 +448,8 @@ function deleteUser(){
 						<span data-duice="Text" data-duice-bind="user.id" class="id"></span>
 					</td>
 					<td><span data-duice="Text" data-duice-bind="user.name"></span></td>
+					<td><span data-duice="Text" data-duice-bind="user.nickname"></span></td>
 					<td><span data-duice="Text" data-duice-bind="user.email"></span></td>
-					<td><span data-duice="Text" data-duice-bind="user.phone"></span></td>
 					<td class="text-center">
 						<span data-duice="Text" data-duice-bind="user.status"></span>
 					</td>
@@ -510,6 +519,24 @@ function deleteUser(){
 			<tr>
 				<th>
 					<span class="must">
+						<spring:message code="application.text.name"/>
+					</span>
+				</th>
+				<td>
+					<input data-duice="TextField" data-duice-bind="user.name"/>
+				</td>
+			</tr>
+			<tr>
+				<th class="must">
+					<spring:message code="application.text.nickname"/>
+				</th>
+				<td>
+					<input data-duice="TextField" data-duice-bind="user.nickname"/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span class="must">
 						<spring:message code="application.text.email"/>
 					</span>
 				</th>
@@ -520,6 +547,16 @@ function deleteUser(){
 			<tr>
 				<th>
 					<span class="must">
+						<spring:message code="application.text.status"/>
+					</span>
+				</th>
+				<td>
+					<select data-duice="ComboBox" data-duice-bind="user.status" data-duice-options="statuses" style="width:15rem;"></select>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>
 						<spring:message code="application.text.locale"/>
 					</span>
 				</th>
@@ -535,40 +572,12 @@ function deleteUser(){
 			</tr>
 			<tr>
 				<th>
-					<span class="must">
+					<span>
 						<spring:message code="application.text.phone"/>
 					</span>
 				</th>
 				<td>
 					<input data-duice="TextField" data-duice-bind="user.phone" placeholder="___-____-____"/>
-				</td>
-			</tr>
-			<tr>
-				<th>
-					<span class="must">
-						<spring:message code="application.text.name"/>
-					</span>
-				</th>
-				<td>
-					<input data-duice="TextField" data-duice-bind="user.name"/>
-				</td>
-			</tr>
-			<tr>
-				<th>
-					<span class="must">
-						<spring:message code="application.text.status"/>
-					</span>
-				</th>
-				<td>
-					<select data-duice="ComboBox" data-duice-bind="user.status" data-duice-options="statuses" style="width:15rem;"></select>
-				</td>
-			</tr>
-			<tr>
-				<th>
-					<spring:message code="application.text.nickname"/>
-				</th>
-				<td>
-					<input data-duice="TextField" data-duice-bind="user.nickname"/>
 				</td>
 			</tr>
 			<tr>

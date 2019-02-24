@@ -136,12 +136,13 @@
 		 * login user information
 		 */
 		var __user = new duice.data.Map(${app:toJson(__user)});
+		__user.setReadonly('avatar',true);
 		__user.set('language', '${pageContext.response.locale}');
 		__user.afterChange(function(event){
 			if(event.name == 'language'){
 				window.location = '?language=' + event.value;
 			}
-		});	
+		});
 		
 		/**
 		 * Gets languages
@@ -181,82 +182,6 @@
         	}catch(e){
         		return -1;
         	}
-        }
-         
-        /**
-         * Checks value is empty
-         */
-		function __isEmpty(value){
-			return duice.util.StringUtils.isEmpty(value);
-		}
-         
-        /**
-         * Validates ID value
-         * @Param {String} id value
-         */
-        var __validator = {
-        	// Checks ID	 
-         	checkId: function(id) {
-         		// Checks empty
-         		if(duice.util.StringUtils.isEmpty(id)){
-             		<spring:message code="application.text.id" var="item"/>
-       				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
-         		}
-				// Validates generic
-				if(duice.util.StringUtils.isGenericId(id) == false){
-					throw '<spring:message code="application.message.invalidIdFormat"/>';
-				}
-				// length
-				if(duice.util.StringUtils.isLengthBetween(id,4,32) == false){
-					<spring:message code="application.text.id" var="item"/>
-					throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
-				}
-         	},
-         	checkPassword: function(password, passwordConfirm){
-         		if(duice.util.StringUtils.isEmpty(password)){
-             		<spring:message code="application.text.password" var="item"/>
-       				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
-         		}
-        		if(password != passwordConfirm){
-        			<spring:message code="application.text.password" var="item"/>
-        			throw '<spring:message code="application.message.itemNotMatch" arguments="${item}"/>';
-        		}
-        		if(duice.util.StringUtils.isGenericPassword(password) == false){
-        			throw '<spring:message code="application.message.invalidPassowrdFormat"/>';
-        		}
-         	},
-         	// Checks name
-         	checkName: function(name){
-         		// Checks empty
-         		if(duice.util.StringUtils.isEmpty(name)){
-             		<spring:message code="application.text.name" var="item"/>
-       				throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
-         		}
-         		// check length
-         		if(duice.util.StringUtils.isLengthBetween(name,1,256) == false){
-					<spring:message code="application.text.name" var="item"/>
-					throw '<spring:message code="application.message.itemMustLengthBetween" arguments="${item},4,32"/>';
-         		}
-         	},
-         	// Checks email address
-         	checkEmailAddress: function(value){
-         		if(duice.util.StringUtils.isEmailAddress(value) == false){
-         			throw '<spring:message code="application.message.invalidEmailAddressFormat"/>';
-         		}
-         	},
-         	// Checks locale 
-         	checkLocale: function(value){
-         		if(duice.util.StringUtils.isEmpty(value)){
-					<spring:message code="application.text.locale" var="item"/>
-					throw '<spring:message code="application.message.enterItem" arguments="${item}"/>';
-         		}
-         	},
-         	// Checks phone number
-         	checkPhoneNumber: function(value){
-         		if(duice.util.StringUtils.isPhoneNumber(value) == false){
-         			throw '<spring:message code="application.message.invalidPhoneNumberFormat"/>';
-         		}
-         	}
         }
 
         /**
@@ -313,7 +238,7 @@
 			height: 70px;
 			background-color: #eee;
 			border: none;
-			border-bottom: groove 2px #ccc;
+			border-bottom: dotted 1px #ccc;
 			padding: 0rem 0.5rem;
 		}
 		body > header nav.topNav {
@@ -360,6 +285,7 @@
 			justify-content: center;
 			border: none;
 			border-top: dotted 1px #ccc;
+			background-color: #eee;
 			padding: 0rem 0.5rem;
 		}
 		dialog {
@@ -471,7 +397,7 @@
 			<nav class="topNav" style="padding-right:10px;">
 				<sec:authorize access="isAuthenticated()">
 					<span>
-						<img data-duice="Image" data-duice-bind="__user.avatar" data-duice-readonly="true" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:32px; height:32px; border-radius:50%;"/>
+						<img data-duice="Image" data-duice-bind="__user.avatar" src="${pageContext.request.contextPath}/static/img/icon_avatar.png" style="width:32px; height:32px; border-radius:50%;"/>
 						<span data-duice="Text" data-duice-bind="__user.nickname"></span>
 					</span>
 					&nbsp;&nbsp;
