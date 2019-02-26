@@ -88,7 +88,7 @@ public class ApplicationBuilder {
 		XPathReader xPathReader = new XPathReader(xmlFile);
 		Properties properties = new Properties();
 		properties.load(new FileInputStream(propertiesFile));
-		//buildMonitorAgent(application);
+		buildMonitorAgent(application);
 		buildConfiguration(application, xPathReader, properties);
 		buildWebServers(application, xPathReader, properties);
 		buildDataSources(application, xPathReader, properties);
