@@ -88,7 +88,7 @@ public class ApplicationBuilder {
 		XPathReader xPathReader = new XPathReader(xmlFile);
 		Properties properties = new Properties();
 		properties.load(new FileInputStream(propertiesFile));
-		buildMonitorAgent(application);
+		//buildMonitorAgent(application);
 		buildConfiguration(application, xPathReader, properties);
 		buildWebServers(application, xPathReader, properties);
 		buildDataSources(application, xPathReader, properties);
@@ -255,9 +255,11 @@ public class ApplicationBuilder {
 	        // sets packagesToScan property.
 			List<String> packagesToScans = new ArrayList<String>();
 			packagesToScans.add(this.getClass().getPackage().getName());
-			String packagesToScan = PasswordBasedEncryptor.decryptIdentifiedValue(xPathReader.getTextContent(entityManagerFactoryExpression + "/packagesToScan"));
+			String packagesToScan = parseValue(xPathReader.getTextContent(entityManagerFactoryExpression + "/packagesToScan"), properties);
 			for(String element : packagesToScan.split(",")) {
-				packagesToScans.add(element.trim());
+				if(element.trim().length() > 0) {
+					packagesToScans.add(element.trim());
+				}
 			}
 	        entityManagerFactory.setPackagesToScan(packagesToScans.toArray(new String[packagesToScans.size()-1]));
 	        
