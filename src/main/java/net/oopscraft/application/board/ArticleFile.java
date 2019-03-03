@@ -9,15 +9,14 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
+
 @Entity
 @Table(name = "APP_ATCL_FILE_INFO")
 @IdClass(ArticleFile.Pk.class)
 public class ArticleFile {
 
-	/**
-	 * ID Class
-	 *
-	 */
+	@EqualsAndHashCode
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
@@ -27,28 +26,6 @@ public class ArticleFile {
 		}
 		String articleId;
 		String id;
-		
-		@Override
-		public boolean equals(Object obj) {
-			if(obj instanceof Pk) {
-				Pk pk = (Pk)obj;
-				if(this.getArticleId().equals(pk.getArticleId())
-				&& this.getId().equals(pk.getId())
-				) {
-					return true;
-				}else {
-					return false;
-				}
-			}else {
-				return false;
-			}
-		}	
-		
-		@Override
-		public int hashCode() {
-			return (articleId + id).hashCode();
-		}
-		
 		public String getArticleId() {
 			return articleId;
 		}

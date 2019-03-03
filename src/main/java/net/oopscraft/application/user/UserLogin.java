@@ -9,11 +9,14 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
+
 @Entity
 @Table(name = "APP_USER_LOGN_HIST")
 @IdClass(UserLogin.Pk.class)
 public class UserLogin {
 	
+	@EqualsAndHashCode
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
@@ -23,27 +26,6 @@ public class UserLogin {
 		}
 		String userId;
 		Date date;
-		
-		@Override
-		public boolean equals(Object obj) {
-			if(obj instanceof Pk) {
-				Pk pk = (Pk)obj;
-				if(this.getUserId().equals(pk.getUserId())
-				&& this.getDate().equals(pk.getDate())
-				) {
-					return true;
-				}else {
-					return false;
-				}
-			}else {
-				return false;
-			}
-		}	
-		
-		@Override
-		public int hashCode() {
-			return (userId + Long.toString(date.getTime())).hashCode();
-		}
 		public String getUserId() {
 			return userId;
 		}

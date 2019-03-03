@@ -502,6 +502,13 @@
 		    <version>1.0.2.Final</version>
 		</dependency>
 		
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.6</version>
+		</dependency>
+		
 		<!-- org.springframework.security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>

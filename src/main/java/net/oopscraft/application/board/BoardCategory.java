@@ -8,11 +8,14 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
+
 @Entity
 @Table(name = "APP_BORD_CATE_INFO")
 @IdClass(BoardCategory.Pk.class)
 public class BoardCategory {
 	
+	@EqualsAndHashCode
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
@@ -22,28 +25,6 @@ public class BoardCategory {
 		}
 		String boardId;
 		String id;
-		
-		@Override
-		public boolean equals(Object obj) {
-			if(obj instanceof Pk) {
-				Pk pk = (Pk)obj;
-				if(this.getBoardId().equals(pk.getBoardId())
-				&& this.getId().equals(pk.getId())
-				) {
-					return true;
-				}else {
-					return false;
-				}
-			}else {
-				return false;
-			}
-		}	
-		
-		@Override
-		public int hashCode() {
-			return (boardId + id).hashCode();
-		}
-		
 		public String getBoardId() {
 			return boardId;
 		}

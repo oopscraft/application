@@ -5,11 +5,11 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.oopscraft.application.ApplicationTestRunnerWithSpring;
 import net.oopscraft.application.board.Article;
 import net.oopscraft.application.board.mapper.ArticleMapper;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.test.ApplicationTestRunnerWithSpring;
 
 public class PageInterceptorTest extends ApplicationTestRunnerWithSpring {
 

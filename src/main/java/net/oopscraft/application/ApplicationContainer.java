@@ -18,7 +18,7 @@ public class ApplicationContainer {
 	private static final File APPLICATION_PROPERTIES = new File("conf/application.properties");
 	
 	private static Application application;
-	
+
 	/**
 	 * main
 	 * @param args

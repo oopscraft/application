@@ -72,8 +72,8 @@ public class UserController {
 	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public String getUsers(
-		@RequestParam(value = "rows")Integer rows,
-		@RequestParam(value = "page") Integer page,
+		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows,
+		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
@@ -127,7 +127,7 @@ public class UserController {
 	@RequestMapping(value = "deleteUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteRole(@RequestParam(value = "id") String id) throws Exception {
+	public void deleteUser(@RequestParam(value = "id") String id) throws Exception {
 		userService.deleteUser(id);
 	}
 
