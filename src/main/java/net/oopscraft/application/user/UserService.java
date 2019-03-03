@@ -212,7 +212,9 @@ public class UserService {
 	 */
 	public void deleteUser(String id) throws Exception {
 		User user = userRepository.findOne(id);
-		userRepository.delete(user);
+		if(user != null) {
+			userRepository.delete(user);
+		}
 	}
 
 }

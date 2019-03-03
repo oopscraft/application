@@ -7,12 +7,12 @@ import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.board.Article;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.RandomUtils;
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class ArticleRepositoryTest extends ApplicationTestRunner {
 	

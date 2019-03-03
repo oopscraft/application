@@ -8,11 +8,14 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
+
 @Entity
 @Table(name = "APP_CD_ITEM_INFO")
 @IdClass(CodeItem.Pk.class)
 public class CodeItem {
 	
+	@EqualsAndHashCode
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
@@ -22,28 +25,6 @@ public class CodeItem {
 		}
 		String codeId;
 		String id;
-		
-		@Override
-		public boolean equals(Object obj) {
-			if(obj instanceof Pk) {
-				Pk codeItemPk = (Pk)obj;
-				if(this.getCodeId().equals(codeItemPk.getCodeId())
-				&& this.getId().equals(codeItemPk.getId())
-				) {
-					return true;
-				}else {
-					return false;
-				}
-			}else {
-				return false;
-			}
-		}
-		
-		@Override
-		public int hashCode() {
-			return (codeId + id).hashCode();
-		}
-		
 		public String getCodeId() {
 			return codeId;
 		}
