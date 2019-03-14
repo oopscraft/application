@@ -297,7 +297,7 @@ public class BoardController {
 		// defines object
 		ArticleFile articleFile = new ArticleFile();
 		articleFile.setArticleId(articleId);
-		articleFile.setId(RandomUtils.generate());
+		articleFile.setId(RandomUtils.generateUUID());
 		articleFile.setName(multipartFile.getOriginalFilename());
 		articleFile.setType(multipartFile.getContentType());
 		articleFile.setSize(multipartFile.getSize());
