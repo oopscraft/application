@@ -143,8 +143,7 @@ public class ApplicationBuilder {
         while(m.find()) {
             String propertyName = m.group(1);
             String propertyValue = StringUtils.defaultString(properties.getProperty(propertyName),propertyName);
-            String decryptedValue = PBEncryptionUtils.decryptIdentifiedValue(propertyValue);
-            m.appendReplacement(sb, Matcher.quoteReplacement(decryptedValue));
+            m.appendReplacement(sb, Matcher.quoteReplacement(propertyValue));
         }
         m.appendTail(sb);
        return sb.toString();
