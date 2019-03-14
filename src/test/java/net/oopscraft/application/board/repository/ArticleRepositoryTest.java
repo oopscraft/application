@@ -17,7 +17,7 @@ import net.oopscraft.application.test.ApplicationTestRunner;
 public class ArticleRepositoryTest extends ApplicationTestRunner {
 	
 	private static String TEST_BOARD_ID = "JUnit";
-	private static String TEST_ARTICLE_ID = RandomUtils.generate();
+	private static String TEST_ARTICLE_ID = RandomUtils.generateUUID();
 	private static String TEST_ARTICLE_TITLE = "JUnit test case";
 	
 	BoardRepository boardRepository;
@@ -94,7 +94,7 @@ public class ArticleRepositoryTest extends ApplicationTestRunner {
 		
 		for(int i = 0; i < 100; i ++) {
 			Article article = new Article();
-			article.setId(RandomUtils.generate());
+			article.setId(RandomUtils.generateUUID());
 			article.setBoardId(TEST_BOARD_ID);
 			article.setTitle(TEST_ARTICLE_TITLE);
 			articleRepository.saveAndFlush(article);

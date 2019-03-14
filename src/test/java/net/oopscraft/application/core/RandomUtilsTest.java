@@ -6,7 +6,7 @@ public class RandomUtilsTest {
 	
 	@Test
 	public void testGenerateUUID() throws Exception {
-		String id = RandomUtils.generate();
+		String id = RandomUtils.generateUUID();
 		System.out.println(id);
 	}
 
