@@ -79,22 +79,22 @@
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
-            <executions>
-                <execution>
-                    <id>default-compile</id>
-                    <phase>compile</phase>
-                    <goals>
-                        <goal>compile</goal>
-                    </goals>
-                </execution>
-                <execution>
-                    <id>default-testCompile</id>
-                    <phase>test-compile</phase>
-                    <goals>
-                        <goal>testCompile</goal>
-                    </goals>
-                </execution>
-            </executions>
+	            <executions>
+	                <execution>
+	                    <id>default-compile</id>
+	                    <phase>compile</phase>
+	                    <goals>
+	                        <goal>compile</goal>
+	                    </goals>
+	                </execution>
+	                <execution>
+	                    <id>default-testCompile</id>
+	                    <phase>test-compile</phase>
+	                    <goals>
+	                        <goal>testCompile</goal>
+	                    </goals>
+	                </execution>
+	            </executions>
 			</plugin>
  			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

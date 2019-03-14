@@ -18,7 +18,7 @@ public class Application {
 	File xmlFile;
 	File propertiesFile;
 	MonitorAgent monitorAgent;
-	Map<String,String>configuration =new LinkedHashMap<String,String>();
+	Map<String,String> configuration =new LinkedHashMap<String,String>();
 	Map<String,WebServer> webServers = new LinkedHashMap<String,WebServer>();
 	Map<String,DataSource> dataSources = new LinkedHashMap<String,DataSource>();
 	Map<String,LocalContainerEntityManagerFactoryBean> entityManagerFactories = new LinkedHashMap<String,LocalContainerEntityManagerFactoryBean >();
