@@ -2,12 +2,14 @@ package net.oopscraft.application;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,7 +33,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import net.oopscraft.application.core.PasswordBasedEncryptor;
+import net.oopscraft.application.core.PBEncryptionUtils;
 import net.oopscraft.application.core.XPathReader;
 import net.oopscraft.application.core.mybatis.PageInterceptor;
 import net.oopscraft.application.core.webserver.WebServer;
@@ -86,8 +88,7 @@ public class ApplicationBuilder {
 		application.setXmlFile(xmlFile);
 		application.setPropertiesFile(propertiesFile);
 		XPathReader xPathReader = new XPathReader(xmlFile);
-		Properties properties = new Properties();
-		properties.load(new FileInputStream(propertiesFile));
+		Properties properties = this.loadProperties(propertiesFile);
 		buildMonitorAgent(application);
 		buildConfiguration(application, xPathReader, properties);
 		buildWebServers(application, xPathReader, properties);
@@ -96,6 +97,36 @@ public class ApplicationBuilder {
 		buildSqlSessionFactories(application, xPathReader, properties);
 		buildMessageSource(application, xPathReader, properties);
 		return application;
+	}
+	
+	/**
+	 * loads Properties
+	 * @param propertiesFile
+	 * @return
+	 * @throws Exception
+	 */
+	private Properties loadProperties(File propertiesFile) throws Exception {
+		Properties properties = new Properties();
+		InputStream is = null;
+		try {
+			is = new FileInputStream(propertiesFile);
+			properties.load(is);
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			throw e;
+		}finally {
+			if(is != null) {
+				try {
+					is.close();
+				}catch(Exception ignore) {}
+			}
+		}
+		Set<String> keys = properties.stringPropertyNames();
+		for(String key : keys) {
+			String value = properties.getProperty(key);
+			properties.setProperty(key, PBEncryptionUtils.decryptIdentifiedValue(value));
+		}
+		return properties;
 	}
 	
 	/**
@@ -112,7 +143,7 @@ public class ApplicationBuilder {
         while(m.find()) {
             String propertyName = m.group(1);
             String propertyValue = StringUtils.defaultString(properties.getProperty(propertyName),propertyName);
-            String decryptedValue = PasswordBasedEncryptor.decryptIdentifiedValue(propertyValue);
+            String decryptedValue = PBEncryptionUtils.decryptIdentifiedValue(propertyValue);
             m.appendReplacement(sb, Matcher.quoteReplacement(decryptedValue));
         }
         m.appendTail(sb);
@@ -244,7 +275,7 @@ public class ApplicationBuilder {
 	        vendorAdapter.setShowSql(false);
 
 	        // sets databasePlatform property
-	        String databasePlatform = PasswordBasedEncryptor.decryptIdentifiedValue(xPathReader.getTextContent(entityManagerFactoryExpression + "/databasePlatform"));
+	        String databasePlatform = PBEncryptionUtils.decryptIdentifiedValue(xPathReader.getTextContent(entityManagerFactoryExpression + "/databasePlatform"));
 	        vendorAdapter.setDatabasePlatform(databasePlatform);
 	        entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
 	        
