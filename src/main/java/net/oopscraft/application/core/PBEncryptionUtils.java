@@ -1,23 +1,29 @@
 package net.oopscraft.application.core;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig;
 
-public class PasswordBasedEncryptor {
-    private static final String ALGORITHM = "PBEWithMD5AndDES";
-    private static final String PASSWORD_ENV_NAME = "APP_ENCRYPTION_PASSWORD";
-    private static final String DEFAULT_PASSWORD = "jasyptPass";
-    private static final String ENCRYPT_IDENTIFIER = "(ENC\\()([^)]{1,})(\\))"; 
+public class PBEncryptionUtils {
+
+	private static final String ALGORITHM = "PBEWithMD5AndDES";
+    private static final String ENCRYPT_IDENTIFIER = "(ENC\\()([^)]{1,})(\\))";
+    private static String password = new String(Base64.getDecoder().decode("MjZDNUNCRDYzNDNBNDVCQTgyNDIwQkM4NUYwMEMxMkQ="),StandardCharsets.UTF_8);
     private static EnvironmentStringPBEConfig config = new EnvironmentStringPBEConfig();
     private static StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
     static {
         config.setAlgorithm(ALGORITHM);
-        config.setPasswordEnvName(PASSWORD_ENV_NAME);
         encryptor.setConfig(config);
-        encryptor.setPassword(DEFAULT_PASSWORD);
+        String propertyPassword = System.getProperty(String.format("%s.password",PBEncryptionUtils.class.getName()));
+        if(propertyPassword != null && propertyPassword.trim().length() > 0) {
+        	password = propertyPassword;
+        }
+        encryptor.setPassword(password);
     }
     
     /**
@@ -77,11 +83,12 @@ public class PasswordBasedEncryptor {
         m.appendTail(sb);
         return sb.toString();
     }
-      /** 
-       * Main method
-       * @param args
-       * @throws Exception
-       */
+  
+    /**
+     * main
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         System.out.print("Please enter 1.Encryption or 2.Decryption:");	// NOPMD
         @SuppressWarnings("resource")
