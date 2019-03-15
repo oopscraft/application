@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig;
 
-public class PBEncryptionUtils {
+public class PasswordBasedEncryptor {
 
 	private static final String ALGORITHM = "PBEWithMD5AndDES";
     private static final String ENCRYPT_IDENTIFIER = "(ENC\\()([^)]{1,})(\\))";
@@ -19,7 +19,7 @@ public class PBEncryptionUtils {
     static {
         config.setAlgorithm(ALGORITHM);
         encryptor.setConfig(config);
-        String propertyPassword = System.getProperty(String.format("%s.password",PBEncryptionUtils.class.getName()));
+        String propertyPassword = System.getProperty(String.format("%s.password",PasswordBasedEncryptor.class.getName()));
         if(propertyPassword != null && propertyPassword.trim().length() > 0) {
         	password = propertyPassword;
         }

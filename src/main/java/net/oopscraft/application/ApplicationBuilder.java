@@ -33,7 +33,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import net.oopscraft.application.core.PBEncryptionUtils;
+import net.oopscraft.application.core.PasswordBasedEncryptor;
 import net.oopscraft.application.core.XPathReader;
 import net.oopscraft.application.core.mybatis.PageInterceptor;
 import net.oopscraft.application.core.webserver.WebServer;
@@ -124,7 +124,7 @@ public class ApplicationBuilder {
 		Set<String> keys = properties.stringPropertyNames();
 		for(String key : keys) {
 			String value = properties.getProperty(key);
-			properties.setProperty(key, PBEncryptionUtils.decryptIdentifiedValue(value));
+			properties.setProperty(key, PasswordBasedEncryptor.decryptIdentifiedValue(value));
 		}
 		return properties;
 	}
@@ -274,7 +274,7 @@ public class ApplicationBuilder {
 	        vendorAdapter.setShowSql(false);
 
 	        // sets databasePlatform property
-	        String databasePlatform = PBEncryptionUtils.decryptIdentifiedValue(xPathReader.getTextContent(entityManagerFactoryExpression + "/databasePlatform"));
+	        String databasePlatform = PasswordBasedEncryptor.decryptIdentifiedValue(xPathReader.getTextContent(entityManagerFactoryExpression + "/databasePlatform"));
 	        vendorAdapter.setDatabasePlatform(databasePlatform);
 	        entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
 	        
