@@ -27,7 +27,7 @@ public class PasswordBasedEncryptor {
     }
     
     /**
-     * encrypt
+     * Encrypts string
      * @param decryptedString
      * @return
      * @throws Exception
@@ -37,7 +37,7 @@ public class PasswordBasedEncryptor {
     }
     
     /**
-     * decrypt
+     * Decrypts string 
      * @param encryptedString
      * @return
      * @throws Exception
