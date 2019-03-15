@@ -14,10 +14,18 @@ public class TextTable {
 	Object obj;
 	Collection<?> collection;
 	
+	/**
+	 * Constructor
+	 * @param obj
+	 */
 	public TextTable(Object obj) {
 		this.obj = obj;
 	}
 	
+	/**
+	 * Constructor
+	 * @param collection
+	 */
 	public TextTable(Collection<?> collection) {
 		this.collection = collection;
 	}
@@ -34,7 +42,7 @@ public class TextTable {
     }
 
 	/**
-	 * build
+	 * Builds text table string.
 	 * @param columnNames
 	 * @param columnValues
 	 * @return
