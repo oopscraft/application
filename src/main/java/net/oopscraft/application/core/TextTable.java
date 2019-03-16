@@ -172,7 +172,7 @@ public class TextTable {
 		}else {
 			Class<?> objClass = obj.getClass();
 			Vector<String> columnNamesVector = new Vector<String>();
-			Field[] fields = ObjectUtils.getAllFields(objClass);
+			Field[] fields = ObjectUtils.getFields(objClass);
 			for(Field field : fields) {
 				String fieldName = field.getName();
 				columnNamesVector.add(fieldName);

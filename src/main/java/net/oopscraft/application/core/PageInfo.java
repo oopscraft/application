@@ -51,7 +51,7 @@ public class PageInfo {
 	}
 
 	/**
-	 * Returns spring-data Pageable instance.
+	 * Returns spring-data PageRequest object.
 	 * @return
 	 */
 	public Pageable toPageable() {
@@ -59,7 +59,7 @@ public class PageInfo {
 	}
 
 	/**
-	 * Returns MYBATIS RowBounds.
+	 * Returns MYBATIS RowBounds object.
 	 * @return
 	 */
 	public PageRowBounds toPageRowBounds() {

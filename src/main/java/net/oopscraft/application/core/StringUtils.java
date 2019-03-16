@@ -33,10 +33,7 @@ public class StringUtils {
 	 * @return
 	 */
 	private static boolean isDelimeterChar(char c) {
-		if(c == ' ' 
-		|| c == '-'
-		|| c == '_'
-		){
+		if(c == ' '	|| c == '-' || c == '_'){
 			return true;
 		}else {
 			return false;
@@ -113,8 +110,7 @@ public class StringUtils {
 			}
 	
 			// Checks already CamelCase.
-			if(Character.isLowerCase(previousChar)
-			&& Character.isUpperCase(currentChar)){
+			if(Character.isLowerCase(previousChar) && Character.isUpperCase(currentChar)){
 				isPascalCase = true;
 			}
 			
