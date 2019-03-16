@@ -20,6 +20,11 @@ public class ProcessExecutor {
 	private Thread stdThread;
 	private Thread errThread;
 	
+	/**
+	 * Sets command string
+	 * @param command
+	 * @throws Exception
+	 */
 	public void setCommand(String command) throws Exception {
         if (command.length() == 0) {
         	throw new IllegalArgumentException("Empty command");
@@ -32,18 +37,35 @@ public class ProcessExecutor {
         processBuilder.command(cmdarray);
 	}
 	
+	/**
+	 * Sets command and arguments as string array
+	 * @param commands
+	 */
 	public void setCommand(String... commands) {
 		processBuilder.command(commands);
 	}
 
+	/**
+	 * Sets command and arguments as list elements. 
+	 * @param commands
+	 */
 	public void setCommand(List<String> commands) {
 		processBuilder.command(commands);
 	}
 	
+	/**
+	 * Sets process stream handler
+	 * @param processStreamHandler
+	 */
 	public void setProcessStreamHandler(ProcessStreamHandler processStreamHandler) {
 		this.processStreamHandler = processStreamHandler;
 	}
 
+	/**
+	 * Executes command process
+	 * @return
+	 * @throws Exception
+	 */
 	public int execute() throws Exception {
 		int exitValue = -1;
 		try {

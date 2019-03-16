@@ -13,7 +13,7 @@ public class ObjectUtils {
 	 * @param type
 	 * @return
 	 */
-	public static Field[] getAllFields(Class<?> type) {
+	public static Field[] getFields(Class<?> type) {
         List<Field> fields = new ArrayList<Field>();
         for (Class<?> c = type; c != null; c = c.getSuperclass()) {
             fields.addAll(Arrays.asList(c.getDeclaredFields()));
