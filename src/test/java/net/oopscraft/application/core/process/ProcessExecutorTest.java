@@ -13,7 +13,6 @@ public class ProcessExecutorTest {
 		    if(osName.contains("win")) {
 			    processExecutor.setCommand("cmd /C tasklist /FI \"STATUS eq running\" /V | sort /r /+65");
 		    }else{
-		    	//processExecutor.setCommand("top -b -n1 -c");
 		    	processExecutor.setCommand(new String[] {
 		    		"/bin/sh"
 		    		,"-c"
