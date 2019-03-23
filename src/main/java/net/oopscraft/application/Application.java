@@ -1,165 +1,66 @@
 package net.oopscraft.application;
 
-import java.io.File;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
-import javax.sql.DataSource;
+import org.apache.ibatis.session.RowBounds;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.springframework.context.MessageSource;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-
+import net.oopscraft.application.board.Article;
+import net.oopscraft.application.board.mapper.ArticleMapper;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.webserver.WebServer;
-import net.oopscraft.application.monitor.MonitorAgent;
+import net.oopscraft.application.core.webserver.WebServerContext;
+import net.oopscraft.application.message.Message;
+import net.oopscraft.application.message.MessageService;
 
 public class Application {
 	
-	File xmlFile;
-	File propertiesFile;
-	MonitorAgent monitorAgent;
-	Map<String,String> configuration =new LinkedHashMap<String,String>();
-	Map<String,WebServer> webServers = new LinkedHashMap<String,WebServer>();
-	Map<String,DataSource> dataSources = new LinkedHashMap<String,DataSource>();
-	Map<String,LocalContainerEntityManagerFactoryBean> entityManagerFactories = new LinkedHashMap<String,LocalContainerEntityManagerFactoryBean >();
-	Map<String,SqlSessionFactoryBean> sqlSessionFactories = new LinkedHashMap<String,SqlSessionFactoryBean>();
-	Map<String,MessageSource> messageSources = new LinkedHashMap<String,MessageSource>();
+	public static AnnotationConfigApplicationContext context = null;
+	public static WebServer webServer = null;
 	
-	final void setXmlFile(File xmlFile) throws Exception {
-		this.xmlFile = xmlFile;
+	public static void main(String[] args) throws Exception {
+		
+		context = new AnnotationConfigApplicationContext(ApplicationContext.class);
+		
+		for(String name : context.getBeanDefinitionNames()) {
+			System.out.println(name);
+		}
+		
+		// hooking kill signal
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
+			public void run() {
+				try {
+					context.close();
+				}catch(Exception e){
+					e.printStackTrace(System.err);
+				}
+				try {
+					webServer.stop();
+				}catch(Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}));
+		
+		MessageService messageService = context.getBean(MessageService.class);
+		Message message = messageService.getMessage("fdafdsa");
+		System.out.println(message);
+		
+		ArticleMapper articleMapper = context.getBean(ArticleMapper.class);
+		List<Article> articles = articleMapper.selectLatestArticles("D6C484E2F9304E94A9454AF5C8879022", new RowBounds(0,10));
+		System.out.println(new TextTable(articles));
+		
+		// creates web server
+		WebServer webServer = new WebServer();
+		webServer.setPort(10001);
+		WebServerContext webServerContext = new WebServerContext();
+		webServerContext.setContextPath("");
+		webServerContext.setResourceBase("webapp");
+		webServer.addContext(webServerContext);
+		webServer.start();
+		
+		// wait
+		Thread.currentThread().join();
 	}
-	
-	final void setPropertiesFile(File propertiesFile) {
-		this.propertiesFile = propertiesFile;
-	}
-
-	final void setConfiguration(String name, String value) {
-		configuration.put(name, value);
-	}
-	
-	final String getConfiguration(String name) {
-		return configuration.get(name);
-	}
-	
-	final void setConfiguration(Map<String,String> config) {
-		this.configuration = config;
-	}
-	
-	final Map<String,String> getConfiguration() {
-		return this.configuration;
-	}
-	
-	final void setMonitorAgent(MonitorAgent monitorAgent) {
-		this.monitorAgent = monitorAgent;
-	}
-	
-	public final MonitorAgent getMonitorAgent() {
-		return this.monitorAgent;
-	}
-	
-	final void setWebServers(Map<String,WebServer> webServers) {
-		this.webServers = webServers;
-	}
-	
-	final void setWebServer(String id, WebServer webServer) {
-		webServers.put(id, webServer);
-	}
-
-	public final Map<String,WebServer> getWebServers() {
-		return webServers;
-	}
-	
-	public final WebServer getWebServer(String id) {
-		return webServers.get(id);
-	}
-
-	final void setDataSource(String id, DataSource dataSource) {
-		dataSources.put(id, dataSource);
-	}
-	
-	public final void setDataSources(Map<String,DataSource> dataSources) {
-		this.dataSources = dataSources;
-	}
-	
-	public final Map<String,DataSource> getDataSources() {
-		return dataSources;
-	}
-	
-	public final DataSource getDataSource(String id) {
-		return dataSources.get(id);
-	}
-
-	final void setEntityManagerFactories(Map<String,LocalContainerEntityManagerFactoryBean > entityManagerFactories) {
-		this.entityManagerFactories = entityManagerFactories;
-	}
-	
-	final void setEntityManagerFactory(String id, LocalContainerEntityManagerFactoryBean  entityManagerFactory) {
-		entityManagerFactories.put(id, entityManagerFactory);
-	}
-	
-	public final LocalContainerEntityManagerFactoryBean getEntityManagerFactory(String id) {
-		return entityManagerFactories.get(id);
-	}
-	
-	public final Map<String,LocalContainerEntityManagerFactoryBean > getEntityManagerFactories() {
-		return entityManagerFactories;
-	}
-	
-	final void setSqlSessionFactories(Map<String,SqlSessionFactoryBean> sqlSessionFactories) {
-		this.sqlSessionFactories = sqlSessionFactories;
-	}
-	
-	final void setSqlSessionFactory(String id, SqlSessionFactoryBean sqlSessionFactory) {
-		this.sqlSessionFactories.put(id, sqlSessionFactory);
-	}
-	
-	public final SqlSessionFactoryBean getSqlSessionFactory(String id) {
-		return sqlSessionFactories.get(id);
-	}
-	
-	public final Map<String,SqlSessionFactoryBean> getSqlSessionFactories(){
-		return sqlSessionFactories;
-	}
-	
-	final void setMessageSources(Map<String,MessageSource> messageSources) {
-		this.messageSources = messageSources;
-	}
-	
-	final void setMessageSource(String id, MessageSource messageSource) {
-		this.messageSources.put(id, messageSource);
-	}
-	
-	public final MessageSource getMessageSource(String id) {
-		return messageSources.get(id);
-	}
-	
-	public final Map<String,MessageSource> getMessageSources(){
-		return messageSources;
-	}
-	
-	public final void start() throws Exception {
-		onStart();
-	}
-	
-	public final void stop() throws Exception {
-		onStop();
-	}
-	
-	/**
-	 * process on application start
-	 * @throws Exception
-	 */
-	public void onStart() throws Exception {
-		// void
-	};
-	
-	/**
-	 * process on application stop
-	 * @throws Exception
-	 */
-	public void onStop() throws Exception {
-		// void
-	};
-
 
 }
