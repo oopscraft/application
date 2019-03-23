@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import net.oopscraft.application.user.security.AuthenticationProvider;
 
 @EnableWebSecurity
-public class ApplicationWebSecurity extends WebSecurityConfigurerAdapter {
+public class ApplicationSecurityContext extends WebSecurityConfigurerAdapter {
  
     @Autowired
     private AuthenticationProvider authenticationProvider;
