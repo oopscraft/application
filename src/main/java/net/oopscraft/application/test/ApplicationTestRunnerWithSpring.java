@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -19,11 +20,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import net.oopscraft.application.ApplicationContext;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:conf/spring.xml","classpath:conf/dispatcher-servlet.xml"})
-@WebAppConfiguration(value="file:conf")
-@Transactional(transactionManager = "jpaTransactionManager")
-@Rollback
+@ContextConfiguration(
+	classes=ApplicationContext.class, 
+	loader=AnnotationConfigContextLoader.class
+)
+//@ContextConfiguration(locations = {"classpath:conf/spring.xml","classpath:conf/dispatcher-servlet.xml"})
+//@WebAppConfiguration(value="file:conf")
+//@Transactional
+//@Rollback
 public class ApplicationTestRunnerWithSpring {
 	
 	@Autowired
@@ -41,20 +48,22 @@ public class ApplicationTestRunnerWithSpring {
 	 * @return
 	 */
 	public final MockMvc getMockMvc() {
-		return this.mockMvc;
+		return MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 	
 	public final void performGet(String uri) throws Exception {
-		this.mockMvc.perform(get(uri))
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		mockMvc.perform(get(uri))
 			.andDo(print())
 			.andExpect(status().isOk());
 	}
 	
 	public final void performPostJson(String uri, String payload) throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		RequestBuilder requestBuilder = post(uri)
 				.contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
 				.content(payload);
-		this.getMockMvc().perform(requestBuilder)
+		getMockMvc().perform(requestBuilder)
 			.andDo(print())
 			.andExpect(status().isOk());
 	}
