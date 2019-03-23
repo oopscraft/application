@@ -12,18 +12,12 @@ import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.plugin.Interceptor;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig;
-import org.jasypt.spring3.properties.EncryptablePropertyPlaceholderConfigurer;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -35,16 +29,18 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import net.oopscraft.application.core.mybatis.PageInterceptor;
 
+/**
+ * Application Context Configuration
+ * @author chomookun@gmail.com
+ * @version 0.0.1
+ * @see    None
+ */
 @EnableJpaRepositories(
 	basePackages = "net.oopscraft.application",
 	entityManagerFactoryRef = "entityManagerFactory"
@@ -59,13 +55,16 @@ import net.oopscraft.application.core.mybatis.PageInterceptor;
 	basePackages = "net.oopscraft.application",
 	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
 	lazyInit = true,
-	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,ControllerAdvice.class,EnableWebSecurity.class})
+	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,ControllerAdvice.class})
 )
 public class ApplicationContext {
 	
 	static String propertiesPath = "conf/application.properties";
 	static Properties properties;
 	
+	/*
+	 * Creates static resources 
+	 */
 	static {
 		try {
 			properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(new File(propertiesPath)));
@@ -74,6 +73,11 @@ public class ApplicationContext {
 		}
 	}
 
+	/**
+	 * Creates PropertyPlaceHolderConfigurer bean.
+	 * @return
+	 * @throws Exception
+	 */
 	@Bean
 	public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() throws Exception {
 		PropertyPlaceholderConfigurer propertyPlaceholderConfigurer = new PropertyPlaceholderConfigurer();
@@ -81,6 +85,11 @@ public class ApplicationContext {
 		return propertyPlaceholderConfigurer;
 	}
 	
+	/**
+	 * Creates dataSource for database connection pool(DBCP)
+	 * @return
+	 * @throws Exception
+	 */
 	@Bean(destroyMethod="close")
 	public DataSource dataSource() throws Exception {
 
@@ -100,6 +109,11 @@ public class ApplicationContext {
 		return dataSource;
 	}
 	
+	/**
+	 * Creates JPA entity manager factory bean.
+	 * @return
+	 * @throws Exception
+	 */
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
 		
@@ -134,6 +148,11 @@ public class ApplicationContext {
         return entityManagerFactory;
 	}
 	
+	/**
+	 * Creates MYBIATIS SqlSessionFactory bean.
+	 * @return
+	 * @throws Exception
+	 */
 	@Bean
 	public SqlSessionFactoryBean sqlSessionFactory() throws Exception {
 		SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
@@ -174,6 +193,11 @@ public class ApplicationContext {
 		return sqlSessionFactoryBean;
 	}
 	
+	/**
+	 * Creates chained transaction manager bean.
+	 * @return
+	 * @throws Exception
+	 */
 	@Bean
 	public PlatformTransactionManager transactionManager() throws Exception {
 		
@@ -181,7 +205,7 @@ public class ApplicationContext {
 		JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
 		jpaTransactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
 		
-		// Mybatis transactionManager
+		// MYBATIS transactionManager
 		DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
 		dataSourceTransactionManager.setDataSource(dataSource());
 		

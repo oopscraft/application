@@ -8,48 +8,55 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
-import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-@EnableWebMvc
+/**
+ * Implementation of javax.servlet.ServletContainerInitializer
+ * @author chomookun@gmail.com
+ * @version 0.0.1
+ * @see    None
+ */
 public class ApplicationWebXml implements ServletContainerInitializer {
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(ApplicationWebXml.class);
 
 	@Override
 	public void onStartup(Set<Class<?>> c, ServletContext servletContext) throws ServletException {
-		System.err.println("###################");
+		LOGGER.info("ApplicationWebXml start...");
 		
-		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-		context.setParent(Application.context);
-		//context.register(ApplicationContext.class);
-        servletContext.addListener(new ContextLoaderListener(context));
+		// adds application context
+		AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
+		if(Application.context != null) {
+			applicationContext.setParent(Application.context);
+		}else {
+			applicationContext.register(ApplicationContext.class);
+		}
+        servletContext.addListener(new ContextLoaderListener(applicationContext));
 		
-		
-		
-        AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
-        ctx.setParent(context);
-        ctx.register(ApplicationWebContext.class);
-        ctx.setServletContext(servletContext);
-        ServletRegistration.Dynamic servlet = servletContext.addServlet("dispatcherServlet", new DispatcherServlet(ctx));
+		// adds web application context
+        AnnotationConfigWebApplicationContext applicationWebContext = new AnnotationConfigWebApplicationContext();
+        applicationWebContext.setParent(applicationContext);
+        applicationWebContext.register(ApplicationWebContext.class);
+        applicationWebContext.setServletContext(servletContext);
+        ServletRegistration.Dynamic servlet = servletContext.addServlet("dispatcherServlet", new DispatcherServlet(applicationWebContext));
         servlet.setLoadOnStartup(1);
         servlet.addMapping("/");
         
-        
+        // add JPA transaction filter
         OpenEntityManagerInViewFilter filter = new OpenEntityManagerInViewFilter();
         FilterRegistration.Dynamic openEntityManagerInViewFilter = servletContext.addFilter("openEntityManagerInViewFilter", filter);
         openEntityManagerInViewFilter.addMappingForUrlPatterns(null, true, "/*");
         
-//        FilterRegistration.Dynamic springSecurityFilterChain = servletContext.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
-//        springSecurityFilterChain.addMappingForUrlPatterns(null, true, "/*");
-
-        
+        // adds spring security filter chain
+        DelegatingFilterProxy delegatingFilterProxy = new DelegatingFilterProxy();
+        FilterRegistration.Dynamic springSecurityFilterChain = servletContext.addFilter("springSecurityFilterChain", delegatingFilterProxy);
+        springSecurityFilterChain.addMappingForUrlPatterns(null, true, "/*");
 
 	}
 
