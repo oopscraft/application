@@ -29,10 +29,10 @@ public class ApplicationController {
 		return modelAndView;
 	}
 	
-    @ModelAttribute("__configuration")
-    public Map<String,String> getConfiguration() throws Exception {
-    	return ApplicationContainer.getApplication().getConfiguration();
-    }
+//    @ModelAttribute("__configuration")
+//    public Map<String,String> getConfiguration() throws Exception {
+//    	return ApplicationContainer.getApplication().getConfiguration();
+//    }
 	
 	@ModelAttribute("__user")
 	public User getUser() throws Exception {
