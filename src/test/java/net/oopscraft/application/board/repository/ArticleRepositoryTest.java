@@ -1,18 +1,16 @@
 package net.oopscraft.application.board.repository;
 
-import java.util.List;
-
-import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
+import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.board.Article;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.RandomUtils;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class ArticleRepositoryTest extends ApplicationTestRunner {
 	
@@ -20,18 +18,11 @@ public class ArticleRepositoryTest extends ApplicationTestRunner {
 	private static String TEST_ARTICLE_ID = RandomUtils.generateUUID();
 	private static String TEST_ARTICLE_TITLE = "JUnit test case";
 	
+	@Autowired
 	BoardRepository boardRepository;
+	
+	@Autowired
 	ArticleRepository articleRepository;
-	
-	public ArticleRepositoryTest() throws Exception {
-		super();
-	}
-	
-	@Before
-	public void before() throws Exception {
-		boardRepository = this.getJpaRepository(BoardRepository.class);
-		articleRepository = this.getJpaRepository(ArticleRepository.class);
-	}
 	
 	@Test 
 	public void testSave() throws Exception {

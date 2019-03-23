@@ -2,13 +2,12 @@ package net.oopscraft.application.code.repository;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.code.Code;
-import net.oopscraft.application.code.repository.CodeRepository;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class CodeRepositoryTest extends ApplicationTestRunner {
 	
@@ -16,16 +15,8 @@ public class CodeRepositoryTest extends ApplicationTestRunner {
 	private static String TEST_NAME = "Test Name";
 	private static String TEST_DESCRIPTION = "Test Description";
 	
+	@Autowired
 	CodeRepository codeRepository;
-	
-	public CodeRepositoryTest() throws Exception {
-		super();
-	}
-	
-	@Before
-	public void before() throws Exception {
-		codeRepository = this.getJpaRepository(CodeRepository.class);
-	}
 	
 	@Test 
 	public void testSave() throws Exception {
