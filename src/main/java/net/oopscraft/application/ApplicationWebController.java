@@ -21,7 +21,7 @@ import net.oopscraft.application.user.security.UserDetails;
 @Controller
 @ControllerAdvice
 @RequestMapping("/")
-public class ApplicationController {
+public class ApplicationWebController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
