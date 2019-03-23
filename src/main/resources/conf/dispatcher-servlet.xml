@@ -65,9 +65,10 @@
 	
 	<!-- ====================================================== -->
 	<!-- Resource Path											-->
-	<!-- ====================================================== -->
+	<!-- ====================================================== 
 	<mvc:resources mapping="/resources/view/**" location="/WEB-INF/view/"/>
 	<mvc:resources mapping="/resources/theme/**" location="/WEB-INF/theme/"/>
+	-->
 	
 
 </beans>
