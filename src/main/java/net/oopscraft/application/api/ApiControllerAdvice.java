@@ -24,6 +24,12 @@ public class ApiControllerAdvice {
 	@Autowired
 	MessageService messageService;
 	
+	/**
+	 * Handles exception
+	 * @param exception
+	 * @return
+	 * @throws Exception
+	 */
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<?> error(Exception exception) throws Exception {
 		LOGGER.error(exception.getMessage(), exception);

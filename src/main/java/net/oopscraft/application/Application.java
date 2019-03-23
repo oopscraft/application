@@ -1,18 +1,16 @@
 package net.oopscraft.application;
 
-import java.util.List;
-
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import net.oopscraft.application.board.Article;
-import net.oopscraft.application.board.mapper.ArticleMapper;
-import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.webserver.WebServer;
 import net.oopscraft.application.core.webserver.WebServerContext;
-import net.oopscraft.application.message.Message;
-import net.oopscraft.application.message.MessageService;
 
+/**
+ * Application Context Configuration
+ * @author chomookun@gmail.com
+ * @version 0.0.1
+ * @see    None
+ */
 public class Application {
 	
 	public static AnnotationConfigApplicationContext context = null;
@@ -41,14 +39,6 @@ public class Application {
 				}
 			}
 		}));
-		
-		MessageService messageService = context.getBean(MessageService.class);
-		Message message = messageService.getMessage("fdafdsa");
-		System.out.println(message);
-		
-		ArticleMapper articleMapper = context.getBean(ArticleMapper.class);
-		List<Article> articles = articleMapper.selectLatestArticles("D6C484E2F9304E94A9454AF5C8879022", new RowBounds(0,10));
-		System.out.println(new TextTable(articles));
 		
 		// creates web server
 		WebServer webServer = new WebServer();
