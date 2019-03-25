@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -32,6 +33,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.RestController;
 
 import net.oopscraft.application.core.mybatis.PageInterceptor;
 
@@ -55,7 +57,7 @@ import net.oopscraft.application.core.mybatis.PageInterceptor;
 	basePackages = "net.oopscraft.application",
 	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
 	lazyInit = true,
-	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,ControllerAdvice.class})
+	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,RestController.class,ControllerAdvice.class})
 )
 public class ApplicationContext {
 	
@@ -212,6 +214,22 @@ public class ApplicationContext {
 		// creates chained transaction manager
 		ChainedTransactionManager transactionManager = new ChainedTransactionManager(jpaTransactionManager, dataSourceTransactionManager);
 		return transactionManager;
+	}
+	
+	/**
+	 * Creates message source bean.
+	 * @return
+	 * @throws Exception
+	 */
+	@Bean
+	public ReloadableResourceBundleMessageSource messageSource() throws Exception {
+		ReloadableResourceBundleMessageSource applicationMessageSource = new ReloadableResourceBundleMessageSource();
+		applicationMessageSource.setBasename("classpath:conf/i18n/message");
+		applicationMessageSource.setFallbackToSystemLocale(false);
+		applicationMessageSource.setDefaultEncoding("UTF-8");
+		applicationMessageSource.setUseCodeAsDefaultMessage(true);
+		applicationMessageSource.setCacheSeconds(10);
+		return applicationMessageSource;
 	}
 
 }

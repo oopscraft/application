@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 import net.oopscraft.application.user.security.AuthenticationProvider;
 
-@EnableWebSecurity
+//@EnableWebSecurity
 public class ApplicationSecurityContext extends WebSecurityConfigurerAdapter {
  
     @Autowired
@@ -16,25 +16,26 @@ public class ApplicationSecurityContext extends WebSecurityConfigurerAdapter {
  
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/css/**", "/js/**", "/img/**").permitAll()
-                .antMatchers("/auth/admin/**").hasRole("ADMIN")
-                .antMatchers("/auth/**").hasAnyRole("ADMIN", "USER")
-                .anyRequest().authenticated();
- 
-        http.formLogin()
-                .loginPage("/login") // default
-                .loginProcessingUrl("/authenticate")
-                .failureUrl("/login?error") // default
-                .defaultSuccessUrl("/home")
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .permitAll();
- 
-        http.logout()
-                .logoutUrl("/logout") // default
-                .logoutSuccessUrl("/login")
-                .permitAll();
+
+//        http.authorizeRequests()
+//                .antMatchers("/css/**", "/js/**", "/img/**").permitAll()
+//                .antMatchers("/auth/admin/**").hasRole("ADMIN")
+//                .antMatchers("/auth/**").hasAnyRole("ADMIN", "USER")
+//                .anyRequest().authenticated();
+// 
+//        http.formLogin()
+//                .loginPage("/login") // default
+//                .loginProcessingUrl("/authenticate")
+//                .failureUrl("/login?error") // default
+//                .defaultSuccessUrl("/home")
+//                .usernameParameter("email")
+//                .passwordParameter("password")
+//                .permitAll();
+// 
+//        http.logout()
+//                .logoutUrl("/logout") // default
+//                .logoutSuccessUrl("/login")
+//                .permitAll();
     }
  
     @Override
