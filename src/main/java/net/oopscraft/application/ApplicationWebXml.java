@@ -18,7 +18,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 /**
  * Implementation of javax.servlet.ServletContainerInitializer
- * @author chomookun@gmail.com
  * @version 0.0.1
  * @see    None
  */
@@ -32,8 +31,8 @@ public class ApplicationWebXml implements ServletContainerInitializer {
 		
 		// adds application context
 		AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
-		if(Application.context != null) {
-			applicationContext.setParent(Application.context);
+		if(Application.applicationContext != null) {
+			applicationContext.setParent(Application.applicationContext);
 		}else {
 			applicationContext.register(ApplicationContext.class);
 		}
@@ -53,11 +52,10 @@ public class ApplicationWebXml implements ServletContainerInitializer {
         FilterRegistration.Dynamic openEntityManagerInViewFilter = servletContext.addFilter("openEntityManagerInViewFilter", filter);
         openEntityManagerInViewFilter.addMappingForUrlPatterns(null, true, "/*");
         
-        // adds spring security filter chain
-        DelegatingFilterProxy delegatingFilterProxy = new DelegatingFilterProxy();
-        FilterRegistration.Dynamic springSecurityFilterChain = servletContext.addFilter("springSecurityFilterChain", delegatingFilterProxy);
-        springSecurityFilterChain.addMappingForUrlPatterns(null, true, "/*");
-
+//        // adds spring security filter chain
+//        DelegatingFilterProxy delegatingFilterProxy = new DelegatingFilterProxy();
+//        FilterRegistration.Dynamic springSecurityFilterChain = servletContext.addFilter("springSecurityFilterChain", delegatingFilterProxy);
+//        springSecurityFilterChain.addMappingForUrlPatterns(null, true, "/*");
 	}
 
 }

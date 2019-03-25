@@ -7,20 +7,19 @@ import net.oopscraft.application.core.webserver.WebServerContext;
 
 /**
  * Application Context Configuration
- * @author chomookun@gmail.com
  * @version 0.0.1
  * @see    None
  */
 public class Application {
 	
-	public static AnnotationConfigApplicationContext context = null;
+	public static AnnotationConfigApplicationContext applicationContext = null;
 	public static WebServer webServer = null;
 	
 	public static void main(String[] args) throws Exception {
 		
-		context = new AnnotationConfigApplicationContext(ApplicationContext.class);
+		applicationContext = new AnnotationConfigApplicationContext(ApplicationContext.class);
 		
-		for(String name : context.getBeanDefinitionNames()) {
+		for(String name : applicationContext.getBeanDefinitionNames()) {
 			System.out.println(name);
 		}
 		
@@ -28,7 +27,7 @@ public class Application {
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
 			public void run() {
 				try {
-					context.close();
+					applicationContext.close();
 				}catch(Exception e){
 					e.printStackTrace(System.err);
 				}
@@ -49,7 +48,7 @@ public class Application {
 		webServer.addContext(webServerContext);
 		webServer.start();
 		
-		// wait
+		// join main thread
 		Thread.currentThread().join();
 	}
 
