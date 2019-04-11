@@ -30,6 +30,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -57,7 +58,7 @@ import net.oopscraft.application.core.mybatis.PageInterceptor;
 	basePackages = "net.oopscraft.application",
 	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
 	lazyInit = true,
-	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,RestController.class,ControllerAdvice.class})
+	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,RestController.class,ControllerAdvice.class,EnableWebSecurity.class})
 )
 public class ApplicationContext {
 	
