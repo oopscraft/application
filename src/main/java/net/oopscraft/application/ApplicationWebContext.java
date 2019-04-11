@@ -5,6 +5,8 @@ import java.util.Locale;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -104,6 +106,34 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSecurityConfi
 	public void init(WebSecurity builder) throws Exception {
 		// TODO Auto-generated method stub
 		System.err.println("#################### init");
+		
+		ObjectPostProcessor<Object> objectPostProcessor = new ObjectPostProcessor<Object>() {
+			public <T> T postProcess(T object) {
+				throw new IllegalStateException(
+						ObjectPostProcessor.class.getName()
+								+ " is a required bean. Ensure you have used @EnableWebSecurity and @Configuration");
+			}
+		};
+		
+		
+		
+		DefaultAuthenticationEventPublisher eventPublisher = objectPostProcessor.postProcess(new DefaultAuthenticationEventPublisher());
+		localConfigureAuthenticationBldr.authenticationEventPublisher(eventPublisher);
+
+		AuthenticationManager authenticationManager = authenticationManager();
+		authenticationBuilder.parentAuthenticationManager(authenticationManager);
+		Map<Class<? extends Object>, Object> sharedObjects = createSharedObjects();
+
+		HttpSecurity http = new HttpSecurity(objectPostProcessor, authenticationBuilder, sharedObjects);
+		
+		
+		web.addSecurityFilterChainBuilder(http).postBuildAction(new Runnable() {
+			public void run() {
+				FilterSecurityInterceptor securityInterceptor = http
+						.getSharedObject(FilterSecurityInterceptor.class);
+				web.securityInterceptor(securityInterceptor);
+			}
+		});
 	}
 
 	@Override
