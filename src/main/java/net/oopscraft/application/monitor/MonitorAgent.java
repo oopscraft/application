@@ -27,38 +27,20 @@ public class MonitorAgent extends Observable implements Runnable {
 	
 	private static final Log LOG = LogFactory.getLog(MonitorAgent.class);
 	private static MonitorAgent instance = null;
-	private int intervalSeconds = 3;
-	private int historySize = 10;
+	private static int intervalSeconds = 3;
+	private static int historySize = 10;
 
 	private Thread thread = null;
 	private List<MonitorInfo> monitorInfos = new CopyOnWriteArrayList<MonitorInfo>();
 	
 	/**
-	 * Initialize MonitorAgent
-	 * @param intervalSeconds
-	 * @param historySize
-	 * @return
-	 * @throws Exception
-	 */
-	public synchronized static MonitorAgent intialize(int intervalSeconds, int historySize) throws Exception {
-		synchronized(MonitorAgent.class) {
-			if(instance == null) {
-				instance = new MonitorAgent(intervalSeconds, historySize);
-			}else {
-				throw new Exception("Monitor instance is already initialized");
-			}
-			return instance;
-		}
-	}
-	
-	/**
 	 * getInstance
 	 * @return
 	 */
-	public static MonitorAgent getInstance() throws Exception {
+	public synchronized static MonitorAgent getInstance() throws Exception {
 		synchronized(MonitorAgent.class) {
 			if(instance == null) {
-				throw new Exception("Monitor instance is not initialized."); 
+				instance = new MonitorAgent();
 			}
 			return instance;
 		}
@@ -70,9 +52,7 @@ public class MonitorAgent extends Observable implements Runnable {
 	 * @param limit
 	 * @throws Exception
 	 */
-	private MonitorAgent(int interval, int limit) throws Exception {
-		this.intervalSeconds = interval;
-		this.historySize = limit;
+	private MonitorAgent() throws Exception {
 		thread = new Thread(this);
 		thread.setDaemon(true);
 		thread.setPriority(Thread.MAX_PRIORITY);

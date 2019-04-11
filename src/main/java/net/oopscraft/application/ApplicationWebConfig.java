@@ -25,16 +25,16 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 
+import net.oopscraft.application.monitor.MonitorAgent;
+
 @EnableWebMvc
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @ComponentScan(
 	basePackages = "net.oopscraft.application",
 	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
 	lazyInit = true,
 	includeFilters = @Filter(type=FilterType.ANNOTATION, value={Controller.class,RestController.class,ControllerAdvice.class})
 )
-public class ApplicationWebContext implements WebMvcConfigurer, WebSecurityConfigurer<WebSecurity> {
+public class ApplicationWebConfig implements WebMvcConfigurer {
 	
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
@@ -53,6 +53,11 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSecurityConfi
 		SessionLocaleResolver localeResolver = new SessionLocaleResolver();
 		localeResolver.setDefaultLocale(Locale.ENGLISH);
 		return localeResolver;
+	}
+	
+	@Bean
+	public MonitorAgent monitorAgent() throws Exception {
+		return MonitorAgent.getInstance();
 	}
 
 	/**
@@ -102,44 +107,4 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSecurityConfi
 		return multipartResolver;
 	}
 
-	@Override
-	public void init(WebSecurity builder) throws Exception {
-		// TODO Auto-generated method stub
-		System.err.println("#################### init");
-		
-		ObjectPostProcessor<Object> objectPostProcessor = new ObjectPostProcessor<Object>() {
-			public <T> T postProcess(T object) {
-				throw new IllegalStateException(
-						ObjectPostProcessor.class.getName()
-								+ " is a required bean. Ensure you have used @EnableWebSecurity and @Configuration");
-			}
-		};
-		
-		
-		
-		DefaultAuthenticationEventPublisher eventPublisher = objectPostProcessor.postProcess(new DefaultAuthenticationEventPublisher());
-		localConfigureAuthenticationBldr.authenticationEventPublisher(eventPublisher);
-
-		AuthenticationManager authenticationManager = authenticationManager();
-		authenticationBuilder.parentAuthenticationManager(authenticationManager);
-		Map<Class<? extends Object>, Object> sharedObjects = createSharedObjects();
-
-		HttpSecurity http = new HttpSecurity(objectPostProcessor, authenticationBuilder, sharedObjects);
-		
-		
-		web.addSecurityFilterChainBuilder(http).postBuildAction(new Runnable() {
-			public void run() {
-				FilterSecurityInterceptor securityInterceptor = http
-						.getSharedObject(FilterSecurityInterceptor.class);
-				web.securityInterceptor(securityInterceptor);
-			}
-		});
-	}
-
-	@Override
-	public void configure(WebSecurity builder) throws Exception {
-		// TODO Auto-generated method stub
-		System.err.println("#################### configure");
-	}
-    
 }
