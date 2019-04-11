@@ -1,8 +1,14 @@
 package net.oopscraft.application;
 
+import java.util.Locale;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,22 +16,41 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 
 @EnableWebMvc
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @ComponentScan(
 	basePackages = "net.oopscraft.application",
 	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
 	lazyInit = true,
-	includeFilters = @Filter(type=FilterType.ANNOTATION, value={Controller.class,RestController.class, ControllerAdvice.class})
+	includeFilters = @Filter(type=FilterType.ANNOTATION, value={Controller.class,RestController.class,ControllerAdvice.class})
 )
-public class ApplicationWebContext implements WebMvcConfigurer {
+public class ApplicationWebContext implements WebMvcConfigurer, WebSecurityConfigurer<WebSecurity> {
 	
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		configurer.enable();
+	}
+	
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+		localeChangeInterceptor.setParamName("language");
+		registry.addInterceptor(localeChangeInterceptor);
+	}
+	
+	@Bean
+	public SessionLocaleResolver localeResolver() throws Exception {
+		SessionLocaleResolver localeResolver = new SessionLocaleResolver();
+		localeResolver.setDefaultLocale(Locale.ENGLISH);
+		return localeResolver;
 	}
 
 	/**
@@ -73,6 +98,18 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
 		multipartResolver.setMaxUploadSizePerFile(10485760);	// limits 10MB
 		return multipartResolver;
+	}
+
+	@Override
+	public void init(WebSecurity builder) throws Exception {
+		// TODO Auto-generated method stub
+		System.err.println("#################### init");
+	}
+
+	@Override
+	public void configure(WebSecurity builder) throws Exception {
+		// TODO Auto-generated method stub
+		System.err.println("#################### configure");
 	}
     
 }

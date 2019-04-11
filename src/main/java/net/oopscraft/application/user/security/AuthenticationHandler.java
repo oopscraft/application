@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -37,6 +38,7 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationHandler.class);
 
 	@Autowired
+	@Lazy
 	HttpServletRequest request;
 	
 	@Autowired
