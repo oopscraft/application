@@ -17,7 +17,7 @@ public class Application {
 	
 	public static void main(String[] args) throws Exception {
 		
-		applicationContext = new AnnotationConfigApplicationContext(ApplicationContext.class);
+		applicationContext = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 		
 		for(String name : applicationContext.getBeanDefinitionNames()) {
 			System.out.println(name);

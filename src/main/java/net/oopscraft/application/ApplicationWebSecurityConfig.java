@@ -15,12 +15,12 @@ import net.oopscraft.application.user.security.AuthenticationFilter;
 import net.oopscraft.application.user.security.AuthenticationHandler;
 import net.oopscraft.application.user.security.AuthenticationProvider;
 
-//@EnableWebSecurity
-//@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-public class ApplicationWebSecurityContext extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+public class ApplicationWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	ApplicationWebSecurityContext(){
-		System.err.println("################");
+	ApplicationWebSecurityConfig(){
+		System.err.println("################ ApplicationWebSecurityContext");
 	}
 		
     @Autowired
@@ -35,6 +35,8 @@ public class ApplicationWebSecurityContext extends WebSecurityConfigurerAdapter 
     @Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.antMatcher("/admin/**/*");
+		http.csrf().disable();
+
 
 		http.authorizeRequests().antMatchers("/admin/login").permitAll();
 		http.authorizeRequests().antMatchers("/admin/login/*").permitAll();

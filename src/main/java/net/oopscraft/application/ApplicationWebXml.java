@@ -35,20 +35,19 @@ public class ApplicationWebXml implements ServletContainerInitializer {
 		
 		// invokes application context
 		if(Application.applicationContext == null) {
-			Application.applicationContext = new AnnotationConfigApplicationContext(ApplicationContext.class);
+			Application.applicationContext = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 		}
 
 		
 		// adds application context
 		AnnotationConfigWebApplicationContext webAapplicationContext = new AnnotationConfigWebApplicationContext();
 		webAapplicationContext.setParent(Application.applicationContext);
-        webAapplicationContext.register(ApplicationWebContext.class);
-        //webAapplicationContext.register(ApplicationWebSecurityContext.class);
-        
+        webAapplicationContext.register(ApplicationWebConfig.class);
+        webAapplicationContext.register(ApplicationWebSocketConfig.class);
         servletContext.addListener(new ContextLoaderListener(webAapplicationContext));
-        
-        
         webAapplicationContext.setServletContext(servletContext);
+        
+        // add dispatcher servlet
         ServletRegistration.Dynamic servlet = servletContext.addServlet("dispatcherServlet", new DispatcherServlet(webAapplicationContext));
         servlet.setLoadOnStartup(1);
         servlet.addMapping("/");
