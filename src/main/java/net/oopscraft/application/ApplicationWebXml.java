@@ -35,15 +35,15 @@ public class ApplicationWebXml implements ServletContainerInitializer {
 		
 		// invokes application context
 		if(Application.applicationContext == null) {
-			Application.applicationContext = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+			Application.applicationContext = new AnnotationConfigApplicationContext(ApplicationContext.class);
 		}
 
 		
 		// adds application context
 		AnnotationConfigWebApplicationContext webAapplicationContext = new AnnotationConfigWebApplicationContext();
 		webAapplicationContext.setParent(Application.applicationContext);
-        webAapplicationContext.register(ApplicationWebConfig.class);
-        webAapplicationContext.register(ApplicationWebSocketConfig.class);
+        webAapplicationContext.register(ApplicationWebContext.class);
+        webAapplicationContext.register(ApplicationWebSocketContext.class);
         servletContext.addListener(new ContextLoaderListener(webAapplicationContext));
         webAapplicationContext.setServletContext(servletContext);
         

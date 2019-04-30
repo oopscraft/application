@@ -34,7 +34,7 @@ import net.oopscraft.application.monitor.MonitorAgent;
 	lazyInit = true,
 	includeFilters = @Filter(type=FilterType.ANNOTATION, value={Controller.class,RestController.class,ControllerAdvice.class})
 )
-public class ApplicationWebConfig implements WebMvcConfigurer {
+public class ApplicationWebContext implements WebMvcConfigurer {
 	
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {

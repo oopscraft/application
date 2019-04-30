@@ -1,5 +1,7 @@
 package net.oopscraft.application;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import net.oopscraft.application.core.webserver.WebServer;
@@ -12,15 +14,17 @@ import net.oopscraft.application.core.webserver.WebServerContext;
  */
 public class Application {
 	
+	public static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
+	
 	public static AnnotationConfigApplicationContext applicationContext = null;
 	public static WebServer webServer = null;
 	
 	public static void main(String[] args) throws Exception {
 		
-		applicationContext = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		applicationContext = new AnnotationConfigApplicationContext(ApplicationContext.class);
 		
 		for(String name : applicationContext.getBeanDefinitionNames()) {
-			System.out.println(name);
+			LOGGER.info(name);
 		}
 		
 		// hooking kill signal

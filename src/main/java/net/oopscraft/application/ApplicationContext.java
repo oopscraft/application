@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -61,7 +63,7 @@ import net.oopscraft.application.core.mybatis.PageInterceptor;
 	lazyInit = true,
 	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,RestController.class,ControllerAdvice.class,EnableWebSecurity.class})
 )
-public class ApplicationConfig {
+public class ApplicationContext {
 	
 	static String propertiesPath = "conf/application.properties";
 	static Properties properties;
@@ -153,6 +155,16 @@ public class ApplicationConfig {
 	}
 	
 	/**
+	 * Creates entityManager object
+	 * @return
+	 * @throws Exception
+	 */
+	@Bean
+	public EntityManager entityManager() throws Exception {
+		return entityManagerFactory().getObject().createEntityManager();
+	}
+	
+	/**
 	 * Creates MYBIATIS SqlSessionFactory bean.
 	 * @return
 	 * @throws Exception
@@ -195,6 +207,16 @@ public class ApplicationConfig {
 		// invokes afterPropertiesSet method
 		sqlSessionFactoryBean.afterPropertiesSet();
 		return sqlSessionFactoryBean;
+	}
+
+	/**
+	 * Creates sqlSession object.
+	 * @return
+	 * @throws Exception
+	 */
+	@Bean
+	public SqlSession sqlSession() throws Exception {
+		return sqlSessionFactory().getObject().openSession();
 	}
 	
 	/**

@@ -17,9 +17,9 @@ import net.oopscraft.application.user.security.AuthenticationProvider;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-public class ApplicationWebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class ApplicationWebSecurityContext extends WebSecurityConfigurerAdapter {
 	
-	ApplicationWebSecurityConfig(){
+	ApplicationWebSecurityContext(){
 		System.err.println("################ ApplicationWebSecurityContext");
 	}
 		

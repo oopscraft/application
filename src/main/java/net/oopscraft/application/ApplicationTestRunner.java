@@ -10,7 +10,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-	classes= ApplicationConfig.class, 
+	classes= ApplicationContext.class, 
 	loader=AnnotationConfigContextLoader.class
 )
 @Transactional
