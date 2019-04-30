@@ -20,11 +20,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import net.oopscraft.application.ApplicationConfig;
+import net.oopscraft.application.ApplicationContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-	classes=ApplicationConfig.class, 
+	classes=ApplicationContext.class, 
 	loader=AnnotationConfigContextLoader.class
 )
 //@ContextConfiguration(locations = {"classpath:conf/spring.xml","classpath:conf/dispatcher-servlet.xml"})

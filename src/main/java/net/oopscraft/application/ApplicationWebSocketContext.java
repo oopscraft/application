@@ -20,7 +20,7 @@ import net.oopscraft.application.admin.AdminWebSocketHandler;
  *
  */
 @EnableWebSocket
-public class ApplicationWebSocketConfig implements WebSocketConfigurer {
+public class ApplicationWebSocketContext implements WebSocketConfigurer {
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
