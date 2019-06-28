@@ -26,7 +26,7 @@ public class XPathReader {
 	 * @throws Exception
 	 */
 	public XPathReader(File xmlFile) throws Exception {
-		this.dbf = DocumentBuilderFactory.newInstance();
+		this.dbf = createDefaultDocumentBuilderFactory();
 		this.db = dbf.newDocumentBuilder();
 		this.document = db.parse(xmlFile);
 		this.xPath = XPathFactory.newInstance().newXPath();
@@ -38,10 +38,20 @@ public class XPathReader {
 	 * @throws Exception
 	 */
 	public XPathReader(InputStream is) throws Exception {
-		this.dbf = DocumentBuilderFactory.newInstance();
+		this.dbf = createDefaultDocumentBuilderFactory();
 		this.db = dbf.newDocumentBuilder();
 		this.document = db.parse(is);
 		this.xPath = XPathFactory.newInstance().newXPath();
+	}
+	
+	/*
+	 * createDefaultDocumentBuilderFactory
+	 */
+	private DocumentBuilderFactory createDefaultDocumentBuilderFactory() {
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		documentBuilderFactory.setValidating(false);
+		documentBuilderFactory.setIgnoringComments(false);
+		return documentBuilderFactory;
 	}
 	
 	/**
