@@ -26,8 +26,7 @@ public class XPathReader {
 	 * @throws Exception
 	 */
 	public XPathReader(File xmlFile) throws Exception {
-		this.dbf = createDefaultDocumentBuilderFactory();
-		this.db = dbf.newDocumentBuilder();
+		initialize();
 		this.document = db.parse(xmlFile);
 		this.xPath = XPathFactory.newInstance().newXPath();
 	}
@@ -38,20 +37,25 @@ public class XPathReader {
 	 * @throws Exception
 	 */
 	public XPathReader(InputStream is) throws Exception {
-		this.dbf = createDefaultDocumentBuilderFactory();
-		this.db = dbf.newDocumentBuilder();
+		initialize();
 		this.document = db.parse(is);
 		this.xPath = XPathFactory.newInstance().newXPath();
 	}
 	
 	/*
-	 * createDefaultDocumentBuilderFactory
+	 * initialize resource
 	 */
-	private DocumentBuilderFactory createDefaultDocumentBuilderFactory() {
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		documentBuilderFactory.setValidating(false);
-		documentBuilderFactory.setIgnoringComments(false);
-		return documentBuilderFactory;
+	private void initialize() throws Exception {
+		this.dbf = DocumentBuilderFactory.newInstance();
+		this.dbf.setValidating(false);
+		this.dbf.setIgnoringComments(false);
+		this.db = dbf.newDocumentBuilder();
+		this.db.setEntityResolver(new EntityResolver() {
+			@Override
+			public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+				return new InputSource(new StringReader(""));
+			}
+		});
 	}
 	
 	/**
