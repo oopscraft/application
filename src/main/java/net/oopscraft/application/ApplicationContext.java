@@ -19,6 +19,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -68,6 +69,10 @@ public class ApplicationContext {
 	static String propertiesPath = "conf/application.properties";
 	static Properties properties;
 	
+	DataSource dataSource;
+	LocalContainerEntityManagerFactoryBean entityManagerFactory;
+	SqlSessionFactoryBean sqlSessionFactoryBean;
+	
 	/*
 	 * Creates static resources 
 	 */
@@ -111,7 +116,7 @@ public class ApplicationContext {
 		datasourceProperties.put("validationQuery", properties.getProperty("application.dataSource.validationQuery"));
 		
 		// creates dastaSource instance.
-		DataSource dataSource = BasicDataSourceFactory.createDataSource(datasourceProperties);
+		dataSource = BasicDataSourceFactory.createDataSource(datasourceProperties);
 		return dataSource;
 	}
 	
@@ -121,11 +126,12 @@ public class ApplicationContext {
 	 * @throws Exception
 	 */
 	@Bean
+	@DependsOn({"dataSource"})
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
 		
 		// creates LocalContainerEntityManagerFactoryBean instance.
-		LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
-		entityManagerFactory.setDataSource(dataSource());
+		entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
+		entityManagerFactory.setDataSource(dataSource);
 
 		// defines vendor adapter
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
@@ -155,24 +161,15 @@ public class ApplicationContext {
 	}
 	
 	/**
-	 * Creates entityManager object
-	 * @return
-	 * @throws Exception
-	 */
-	@Bean
-	public EntityManager entityManager() throws Exception {
-		return entityManagerFactory().getObject().createEntityManager();
-	}
-	
-	/**
 	 * Creates MYBIATIS SqlSessionFactory bean.
 	 * @return
 	 * @throws Exception
 	 */
 	@Bean
+	@DependsOn({"dataSource"})
 	public SqlSessionFactoryBean sqlSessionFactory() throws Exception {
 		SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-		sqlSessionFactoryBean.setDataSource(dataSource());
+		sqlSessionFactoryBean.setDataSource(dataSource);
 		
 		// sets configurations
 		org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
@@ -209,16 +206,6 @@ public class ApplicationContext {
 		return sqlSessionFactoryBean;
 	}
 
-	/**
-	 * Creates sqlSession object.
-	 * @return
-	 * @throws Exception
-	 */
-	@Bean
-	public SqlSession sqlSession() throws Exception {
-		return sqlSessionFactory().getObject().openSession();
-	}
-	
 	/**
 	 * Creates chained transaction manager bean.
 	 * @return
