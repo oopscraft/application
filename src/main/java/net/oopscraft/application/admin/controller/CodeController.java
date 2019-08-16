@@ -20,9 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.code.Code;
 import net.oopscraft.application.code.CodeService;
 import net.oopscraft.application.code.CodeService.CodeSearchType;
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 
 
 @PreAuthorize("hasAuthority('ADMIN_CODE')")
@@ -69,12 +69,12 @@ public class CodeController {
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
 		CodeSearchType codeSearchType = null;
-		if(StringUtils.isNotEmpty(searchType)) {
+		if(StringUtility.isNotEmpty(searchType)) {
 			codeSearchType = CodeSearchType.valueOf(searchType); 
 		}
 		List<Code> codes = codeService.getCodes(pageInfo, codeSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(codes);
+		return JsonUtility.toJson(codes);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class CodeController {
 	@Transactional
 	public String getCode(@RequestParam(value = "id") String id) throws Exception {
 		Code code = codeService.getCode(id);
-		return JsonUtils.toJson(code);
+		return JsonUtility.toJson(code);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class CodeController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveCode(@RequestBody String payload) throws Exception {
-		Code code = JsonUtils.toObject(payload, Code.class);
+		Code code = JsonUtility.toObject(payload, Code.class);
 		codeService.saveCode(code);
 	}
 

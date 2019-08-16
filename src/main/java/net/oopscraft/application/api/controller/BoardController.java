@@ -31,10 +31,10 @@ import net.oopscraft.application.board.ArticleService;
 import net.oopscraft.application.board.ArticleService.ArticleSearchType;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.BoardService;
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.RandomUtils;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.core.TextTable;
 
 @Controller
@@ -98,7 +98,7 @@ public class BoardController {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
 		List<Article> latestArticles = articleService.getLatestArticles(pageInfo, boardId);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return new ResponseEntity<>(JsonUtils.toJson(latestArticles), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(latestArticles), HttpStatus.OK);
 	}
 	
 	/**
@@ -117,7 +117,7 @@ public class BoardController {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
 		List<Article> bestArticles = articleService.getBestArticles(pageInfo, boardId);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return new ResponseEntity<>(JsonUtils.toJson(bestArticles), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(bestArticles), HttpStatus.OK);
 	}
 	
 	/**
@@ -130,7 +130,7 @@ public class BoardController {
 	@RequestMapping(value = "/{boardId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getBoard(@PathVariable("boardId") String boardId) throws Exception {
 		Board board = boardService.getBoard(boardId);
-		return new ResponseEntity<>(JsonUtils.toJson(board), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(board), HttpStatus.OK);
 	}
 	
 	/**
@@ -154,14 +154,14 @@ public class BoardController {
 		Board board = boardService.getBoard(boardId);
 		PageInfo pageInfo = new PageInfo(board.getRowsPerPage(), page, true);
 		ArticleSearchType articleSearchType;
-		if(StringUtils.isNotEmpty(searchType)) {
+		if(StringUtility.isNotEmpty(searchType)) {
 			articleSearchType = ArticleSearchType.valueOf(searchType);
 		}else {
 			articleSearchType = null;
 		}
 		List<Article> articles = articleService.getArticles(pageInfo, boardId, categoryId, articleSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return new ResponseEntity<>(JsonUtils.toJson(articles), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(articles), HttpStatus.OK);
 	}
 	
 	/**
@@ -178,7 +178,7 @@ public class BoardController {
 		@PathVariable("articleId") String articleId
 	) throws Exception {
 		Article article = articleService.getArticle(articleId);
-		return new ResponseEntity<>(JsonUtils.toJson(article), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(article), HttpStatus.OK);
 	}
 	
 	/**
@@ -195,10 +195,10 @@ public class BoardController {
 		@PathVariable("boardId") String boardId,
 		@RequestBody String payload
 	) throws Exception {
-		Article article = JsonUtils.toObject(payload, Article.class);
+		Article article = JsonUtility.toObject(payload, Article.class);
 		article.setBoardId(boardId);
 		articleService.saveArticle(article);
-		return new ResponseEntity<>(JsonUtils.toJson(article), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(article), HttpStatus.OK);
 	}
 	
 	/**
@@ -217,7 +217,7 @@ public class BoardController {
 	) throws Exception {
 		Article article = articleService.getArticle(articleId);
 		articleService.deleteArticle(article);
-		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(null), HttpStatus.OK);
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class BoardController {
 	) throws Exception {
 		Article article = articleService.getArticle(articleId);
 		List<ArticleReply> articleReplies = article.getReplies();
-		return new ResponseEntity<>(JsonUtils.toJson(articleReplies), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(articleReplies), HttpStatus.OK);
 	}
 	
 	/**
@@ -253,10 +253,10 @@ public class BoardController {
 		@PathVariable("articleId")String articleId,
 		@RequestBody String payload
 	) throws Exception {
-		ArticleReply articleReply = JsonUtils.toObject(payload, ArticleReply.class);
+		ArticleReply articleReply = JsonUtility.toObject(payload, ArticleReply.class);
 		Article article = articleService.getArticle(articleId);
 		articleReply = article.saveReply(articleReply);
-		return new ResponseEntity<>(JsonUtils.toJson(articleReply), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(articleReply), HttpStatus.OK);
 	}
 	
 	/**
@@ -275,7 +275,7 @@ public class BoardController {
 	) throws Exception {
 		Article article = articleService.getArticle(articleId);
 		article.deleteReply(replyId);
-		return new ResponseEntity<>(JsonUtils.toJson(null), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(null), HttpStatus.OK);
 	}
 	
 	/**
@@ -307,7 +307,7 @@ public class BoardController {
 		
 		// sends response
 		LOGGER.debug("{}", new TextTable(articleFile));
-		return new ResponseEntity<>(JsonUtils.toJson(articleFile), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(articleFile), HttpStatus.OK);
 	}
 	
 

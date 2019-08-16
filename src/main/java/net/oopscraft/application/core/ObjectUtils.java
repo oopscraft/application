@@ -36,7 +36,7 @@ public class ObjectUtils {
 		           Field field = currentClass.getDeclaredField(fieldName);
 		           fieldValue = field.get(obj);
 	    	   }catch(Exception e) {
-	    		   Method getterMethod = currentClass.getDeclaredMethod("get" + StringUtils.toPascalCase(fieldName));
+	    		   Method getterMethod = currentClass.getDeclaredMethod("get" + StringUtility.toPascalCase(fieldName));
 	    		   fieldValue = getterMethod.invoke(obj);
 	    	   }
 	    	   break;

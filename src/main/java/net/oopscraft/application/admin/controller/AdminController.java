@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.menu.Menu;
 import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.user.Authority;
@@ -69,7 +69,7 @@ public class AdminController {
 	@Transactional
 	public String getGroups() throws Exception {
 		List<Group> groups = groupService.getGroups();
-		return JsonUtils.toJson(groups);
+		return JsonUtility.toJson(groups);
 	}
 
 	/**
@@ -94,12 +94,12 @@ public class AdminController {
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
 		RoleSearchType roleSearchType= null;
-		if(StringUtils.isNotEmpty(searchType)) {
+		if(StringUtility.isNotEmpty(searchType)) {
 			roleSearchType = RoleSearchType.valueOf(searchType);
 		}
 		List<Role> roles = roleService.getRoles(pageInfo, roleSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(roles);
+		return JsonUtility.toJson(roles);
 	}
 
 	/**
@@ -124,12 +124,12 @@ public class AdminController {
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
 		AuthoritySearchType authoritySearchType= null;
-		if(StringUtils.isNotEmpty(searchType)) {
+		if(StringUtility.isNotEmpty(searchType)) {
 			authoritySearchType = AuthoritySearchType.valueOf(searchType);
 		}
 		List<Authority> properties = authorityService.getAuthorities(pageInfo, authoritySearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(properties);
+		return JsonUtility.toJson(properties);
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class AdminController {
 	@Transactional
 	public String getMenus() throws Exception {
 		List<Menu> groups = menuService.getMenus();
-		return JsonUtils.toJson(groups);
+		return JsonUtility.toJson(groups);
 	}
 
 }

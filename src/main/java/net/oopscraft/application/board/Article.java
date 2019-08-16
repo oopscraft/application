@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.oopscraft.application.board.repository.ArticleReplyRepository;
 import net.oopscraft.application.board.repository.ArticleRepository;
 import net.oopscraft.application.core.RandomUtils;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 
 @Entity
 @Table(name = "APP_ATCL_INFO")
@@ -112,12 +112,12 @@ public class Article {
 	 */
 	public ArticleReply saveReply(ArticleReply reply) throws Exception {
 		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
-		if(StringUtils.isEmpty(reply.getId())) {
+		if(StringUtility.isEmpty(reply.getId())) {
 			reply.setArticleId(id);
 			reply.setId(RandomUtils.generateUUID());
 			
 			// In case of child reply(has upper no)
-			if(StringUtils.isNotEmpty(reply.getUpperId())) {
+			if(StringUtility.isNotEmpty(reply.getUpperId())) {
 				ArticleReply upperArticleReply = articleReplyRepository.findOne(new ArticleReply.Pk(id,reply.getUpperId()));
 				reply.setSequence(upperArticleReply.getSequence());
 				StringBuffer level = new StringBuffer();

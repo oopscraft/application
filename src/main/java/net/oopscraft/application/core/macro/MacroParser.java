@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.core.ValueMap; 
 
 public class MacroParser { 
@@ -118,7 +118,7 @@ public class MacroParser {
 			String argumentClause = matcher.group(2); 
 			argumentClause = executeMacro(macroContext, argumentClause); 
 			// execute macro 
-			String macroClassName = String.format("%s.%sMacro", this.macroPackage, StringUtils.toPascalCase(macroName)); 
+			String macroClassName = String.format("%s.%sMacro", this.macroPackage, StringUtility.toPascalCase(macroName)); 
 			Class<?> macroClass = Class.forName(macroClassName); 
 			Macro macro = (Macro) macroClass.newInstance(); 
 			String result = macro.execute(macroContext, splitArgument(argumentClause)); 

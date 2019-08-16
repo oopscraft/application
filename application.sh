@@ -7,7 +7,7 @@ PID=$(cat ${PID_FILE})
 MAIN_CLASS="net.oopscraft.application.ApplicationContainer"
 
 # load profile
-source ${APP_NAME}.profile
+source ${APP_NAME}.env
 
 # start
 function start() {
@@ -19,7 +19,7 @@ function start() {
 	fi
 	CLASSPATH="./*:./lib/*"
 	JAVA_OPTS=" -server -Djava.net.preferIPv4Stack=true -Dlog4j.configuration=file:conf/log4j2.xml "${JAVA_OPTS}
-	java ${JAVA_OPTS} -classpath ${CLASSPATH} ${MAIN_CLASS} 2>&1>/dev/null & 
+	java ${JAVA_OPTS} -classpath ${CLASSPATH} ${MAIN_CLASS} > /dev/null & 
 	echo $! > ${PID_FILE}
 }
 
@@ -37,7 +37,7 @@ function stop() {
 		exit -1
 	fi
 	printf "shutting down."
-	kill ${PID}
+	kill -15 ${PID}
 	while kill -0 ${PID} 2>/dev/null; do printf "."; sleep 1; done
 	echo -e "\nshutdown is complete."
 }
@@ -46,7 +46,7 @@ function stop() {
 function log() {
 	tput rmam
 	tail -F ./log/${APP_NAME}.log
-}	
+}
 
 # crypto
 function crypto() {

@@ -20,9 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.board.BoardService.BoardSearchType;
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 
 @PreAuthorize("hasAuthority('ADMIN_BOARD')")
 @Controller
@@ -70,12 +70,12 @@ public class BoardController {
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
 		BoardSearchType boardSearchType = null;
-		if(StringUtils.isNotEmpty(searchType)) {
+		if(StringUtility.isNotEmpty(searchType)) {
 			boardSearchType = BoardSearchType.valueOf(searchType);
 		}
 		List<Board> boards = boardService.getBoards(pageInfo, boardSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(boards);
+		return JsonUtility.toJson(boards);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class BoardController {
 	@ResponseBody
 	public String getBoard(@RequestParam(value = "id") String id) throws Exception {
 		Board board = boardService.getBoard(id);
-		return JsonUtils.toJson(board);
+		return JsonUtility.toJson(board);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class BoardController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveBoard(@RequestBody String payload) throws Exception {
-		Board board = JsonUtils.toObject(payload, Board.class);
+		Board board = JsonUtility.toObject(payload, Board.class);
 		boardService.saveBoard(board);
 	}
 
@@ -129,7 +129,7 @@ public class BoardController {
 	@RequestMapping(value="getPolicies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public String getPolicies() throws Exception {
-		return JsonUtils.toJson(Board.Policy.values());
+		return JsonUtility.toJson(Board.Policy.values());
 	}
 
 }

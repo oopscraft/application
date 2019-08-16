@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.menu.Menu;
 import net.oopscraft.application.menu.MenuService;
 
@@ -30,7 +30,7 @@ public class MenuController {
 	@RequestMapping(value = "/menus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getMenus() throws Exception {
 		List<Menu> menus = menuService.getMenus();
-		return new ResponseEntity<>(JsonUtils.toJson(menus), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(menus), HttpStatus.OK);
 	}
 	
 	/**
@@ -42,7 +42,7 @@ public class MenuController {
 	@RequestMapping(value = "/menu/{menuId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getMenu(@RequestParam(value = "menuId") String menuId) throws Exception {
 		Menu menu = menuService.getMenu(menuId);
-		return new ResponseEntity<>(JsonUtils.toJson(menu), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(menu), HttpStatus.OK);
 	}
 
 }

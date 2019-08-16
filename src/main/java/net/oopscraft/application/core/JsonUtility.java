@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-public class JsonUtils {
+public class JsonUtility {
 	
 	public static ObjectMapper objectMapper = new ObjectMapper();
 	static {
