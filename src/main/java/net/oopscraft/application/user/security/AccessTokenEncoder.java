@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.User;
 
@@ -29,7 +29,7 @@ public class AccessTokenEncoder {
 				  .claim("name", user.getName())
 				  .claim("nickName", user.getNickname())
 				  .claim("status", user.getStatus())
-				  .claim("authorities", JsonUtils.toJson(user.getAuthorities()))
+				  .claim("authorities", JsonUtility.toJson(user.getAuthorities()))
 				  .signWith(SignatureAlgorithm.HS256, secret.getBytes("UTF-8"))
 				  .compact();
 		return jwt;
@@ -55,7 +55,7 @@ public class AccessTokenEncoder {
     	user.setName(name);
     	user.setNickname(nickname);
     	user.setStatus(User.Status.valueOf(status));
-    	user.setAuthorities(JsonUtils.toList(authorities, Authority.class));
+    	user.setAuthorities(JsonUtility.toList(authorities, Authority.class));
 		return user;
 	}
 

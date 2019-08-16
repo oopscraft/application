@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
 
@@ -57,7 +57,7 @@ public class GroupController {
 	@ResponseBody
 	public String getGroups() throws Exception {
 		List<Group> groups = groupService.getGroups();
-		return JsonUtils.toJson(groups);
+		return JsonUtility.toJson(groups);
 	}
 	
 	/**
@@ -71,7 +71,7 @@ public class GroupController {
 	@ResponseBody
 	public String getGroup(@RequestParam(value = "id") String id) throws Exception {
 		Group group = groupService.getGroup(id);
-		return JsonUtils.toJson(group);
+		return JsonUtility.toJson(group);
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class GroupController {
 	@ResponseBody
 	public String getBreadCrumbs(@RequestParam(value = "id") String id) throws Exception {
 		List<Group> breadCrumbs = groupService.getBreadCrumbs(id);
-		return JsonUtils.toJson(breadCrumbs);
+		return JsonUtility.toJson(breadCrumbs);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class GroupController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveGroup(@RequestBody String payload) throws Exception {
-		Group role = JsonUtils.toObject(payload, Group.class);
+		Group role = JsonUtility.toObject(payload, Group.class);
 		groupService.saveGroup(role);
 	}
 	

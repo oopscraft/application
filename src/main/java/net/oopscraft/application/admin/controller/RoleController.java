@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.user.Role;
 import net.oopscraft.application.user.RoleService;
 import net.oopscraft.application.user.RoleService.RoleSearchType;
@@ -67,12 +67,12 @@ public class RoleController {
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
 		RoleSearchType roleSearchType= null;
-		if(StringUtils.isNotEmpty(searchType)) {
+		if(StringUtility.isNotEmpty(searchType)) {
 			roleSearchType = RoleSearchType.valueOf(searchType);
 		}
 		List<Role> roles = roleService.getRoles(pageInfo, roleSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(roles);
+		return JsonUtility.toJson(roles);
 	}
 	
 	/**
@@ -86,7 +86,7 @@ public class RoleController {
 	@ResponseBody
 	public String getRoles(@RequestParam(value = "id") String id) throws Exception {
 		Role role = roleService.getRole(id);
-		return JsonUtils.toJson(role);
+		return JsonUtility.toJson(role);
 	}
 	
 	/**
@@ -100,7 +100,7 @@ public class RoleController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveRole(@RequestBody String payload) throws Exception {
-		Role role = JsonUtils.toObject(payload, Role.class);
+		Role role = JsonUtility.toObject(payload, Role.class);
 		roleService.saveRole(role);
 	}
 	

@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.property.Property;
 import net.oopscraft.application.property.PropertyService;
 import net.oopscraft.application.property.PropertyService.PropertySearchType;
@@ -68,12 +68,12 @@ public class PropertyController {
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
 		PropertySearchType propertySearchType= null;
-		if(StringUtils.isNotEmpty(searchType)) {
+		if(StringUtility.isNotEmpty(searchType)) {
 			propertySearchType = PropertySearchType.valueOf(searchType);
 		}
 		List<Property> properties = propertyService.getProperties(pageInfo, propertySearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(properties);
+		return JsonUtility.toJson(properties);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class PropertyController {
 	@ResponseBody
 	public String getProperty(@RequestParam(value = "id") String id) throws Exception {
 		Property property = propertyService.getProperty(id);
-		return JsonUtils.toJson(property);
+		return JsonUtility.toJson(property);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class PropertyController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveProperty(@RequestBody String payload) throws Exception {
-		Property property = JsonUtils.toObject(payload, Property.class);
+		Property property = JsonUtility.toObject(payload, Property.class);
 		propertyService.saveProperty(property);
 	}
 

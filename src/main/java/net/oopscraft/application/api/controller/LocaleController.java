@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.LocaleUtils;
 
 @Controller
@@ -21,7 +21,7 @@ public class LocaleController {
 	 */
 	@RequestMapping(value = "locales", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getLocales() throws Exception {
-		return new ResponseEntity<>(JsonUtils.toJson(LocaleUtils.getLocales()), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(LocaleUtils.getLocales()), HttpStatus.OK);
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class LocaleController {
 	 */
 	@RequestMapping(value="languages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getLanguages() throws Exception {
-		return new ResponseEntity<>(JsonUtils.toJson(LocaleUtils.getLanguages()), HttpStatus.OK);
+		return new ResponseEntity<>(JsonUtility.toJson(LocaleUtils.getLanguages()), HttpStatus.OK);
 	}
 
 }

@@ -212,8 +212,8 @@ public class TextTable {
 		if(obj == null) {
 			return null;
 		}
-		String printableValue = StringUtils.stripWhitespace(obj.toString());
-		printableValue = StringUtils.toEllipsis(printableValue, MAX_COLUMN_SIZE - 3);
+		String printableValue = StringUtility.stripWhitespace(obj.toString());
+		printableValue = StringUtility.toEllipsis(printableValue, MAX_COLUMN_SIZE - 3);
 		return printableValue;
 	}
 	

@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.message.Message;
 import net.oopscraft.application.message.MessageService;
 import net.oopscraft.application.message.MessageService.MessageSearchType;
@@ -67,12 +67,12 @@ public class MessageController {
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
 		MessageSearchType messageSearchType= null;
-		if(StringUtils.isNotEmpty(searchType)) {
+		if(StringUtility.isNotEmpty(searchType)) {
 			messageSearchType = MessageSearchType.valueOf(searchType);
 		}
 		List<Message> messages = messageService.getMessages(pageInfo, messageSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(messages);
+		return JsonUtility.toJson(messages);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class MessageController {
 	@ResponseBody
 	public String getMessage(@RequestParam(value = "id") String id) throws Exception {
 		Message message = messageService.getMessage(id);
-		return JsonUtils.toJson(message);
+		return JsonUtility.toJson(message);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class MessageController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveMessage(@RequestBody String payload) throws Exception {
-		Message message = JsonUtils.toObject(payload, Message.class);
+		Message message = JsonUtility.toObject(payload, Message.class);
 		messageService.saveMessage(message);
 	}
 

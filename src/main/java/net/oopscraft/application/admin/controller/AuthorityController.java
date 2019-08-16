@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.AuthorityService;
 import net.oopscraft.application.user.AuthorityService.AuthoritySearchType;
@@ -67,12 +67,12 @@ public class AuthorityController {
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
 		AuthoritySearchType authoritySearchType= null;
-		if(StringUtils.isNotEmpty(searchType)) {
+		if(StringUtility.isNotEmpty(searchType)) {
 			authoritySearchType = AuthoritySearchType.valueOf(searchType);
 		}
 		List<Authority> properties = authorityService.getAuthorities(pageInfo, authoritySearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(properties);
+		return JsonUtility.toJson(properties);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class AuthorityController {
 	@ResponseBody
 	public String getAuthority(@RequestParam(value = "id") String id) throws Exception {
 		Authority authority = authorityService.getAuthority(id);
-		return JsonUtils.toJson(authority);
+		return JsonUtility.toJson(authority);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class AuthorityController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveAuthority(@RequestBody String payload) throws Exception {
-		Authority authority = JsonUtils.toObject(payload, Authority.class);
+		Authority authority = JsonUtility.toObject(payload, Authority.class);
 		authorityService.saveAuthority(authority);
 	}
 

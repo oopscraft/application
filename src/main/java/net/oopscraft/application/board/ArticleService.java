@@ -21,7 +21,7 @@ import net.oopscraft.application.board.repository.ArticleReplyRepository;
 import net.oopscraft.application.board.repository.ArticleRepository;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.RandomUtils;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.core.mybatis.PageRowBounds;
 
 @Service
@@ -124,7 +124,7 @@ public class ArticleService {
 	public void saveArticle(Article article) throws Exception {
 
 		// In case of new article(articleNo is empty)
-		if (StringUtils.isEmpty(article.getId())) {
+		if (StringUtility.isEmpty(article.getId())) {
 			article.setId(RandomUtils.generateUUID());
 			article.setRegistDate(new Date());
 			articleRepository.saveAndFlush(article);

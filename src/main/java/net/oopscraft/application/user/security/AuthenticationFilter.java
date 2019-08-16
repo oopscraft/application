@@ -21,7 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.User;
 
@@ -50,7 +50,7 @@ public class AuthenticationFilter extends GenericFilterBean   {
         
         // JWT Token
         String authorization = request.getHeader(AUTHORIZATION_HEADER);
-        if(StringUtils.isNotEmpty(authorization)) {
+        if(StringUtility.isNotEmpty(authorization)) {
         	
             // decode principal
             try {

@@ -1,6 +1,6 @@
 package net.oopscraft.application.core;
 
-public class StringUtils {
+public class StringUtility {
 	
 	/**
 	 * Checks value is empty

@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.user.repository.UserRepository;
 
 @Service
@@ -90,16 +90,16 @@ public class UserService {
 	public User saveUser(User user) throws Exception {
 		
 		// checks validation
-		if(StringUtils.isEmpty(user.getId())) {
+		if(StringUtility.isEmpty(user.getId())) {
 			throw new IllegalArgumentException("invalid id");
 		}
-		if(StringUtils.isEmpty(user.getName())) {
+		if(StringUtility.isEmpty(user.getName())) {
 			throw new IllegalArgumentException("invalid name");
 		}
-		if(StringUtils.isEmpty(user.getNickname())) {
+		if(StringUtility.isEmpty(user.getNickname())) {
 			throw new IllegalArgumentException("invalid nickname");
 		}
-		if(StringUtils.isEmpty(user.getEmail())) {
+		if(StringUtility.isEmpty(user.getEmail())) {
 			throw new IllegalArgumentException("invalid email");
 		}
 		

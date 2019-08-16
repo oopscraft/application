@@ -25,10 +25,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtils;
+import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.LocaleUtils;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtils;
+import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.UserService.UserSearchType;
@@ -79,12 +79,12 @@ public class UserController {
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
 		UserSearchType userSearchType= null;
-		if(StringUtils.isNotEmpty(searchType)) {
+		if(StringUtility.isNotEmpty(searchType)) {
 			userSearchType = UserSearchType.valueOf(searchType);
 		}
 		List<User> users = userService.getUsers(pageInfo, userSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtils.toJson(users);
+		return JsonUtility.toJson(users);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class UserController {
 	@ResponseBody
 	public String getUser(@RequestParam(value = "id") String id) throws Exception {
 		User user = userService.getUser(id);
-		return JsonUtils.toJson(user);
+		return JsonUtility.toJson(user);
 	}
 
 	/**
@@ -112,9 +112,9 @@ public class UserController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public String saveUser(@RequestBody String payload) throws Exception {
-		User user = JsonUtils.toObject(payload, User.class);
+		User user = JsonUtility.toObject(payload, User.class);
 		user = userService.saveUser(user);
-		return JsonUtils.toJson(user);
+		return JsonUtility.toJson(user);
 	}
 	
 	/**
