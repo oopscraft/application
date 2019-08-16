@@ -20,7 +20,7 @@ import net.oopscraft.application.board.repository.ArticleFileRepository;
 import net.oopscraft.application.board.repository.ArticleReplyRepository;
 import net.oopscraft.application.board.repository.ArticleRepository;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.RandomUtils;
+import net.oopscraft.application.core.EncodeUtility;
 import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.core.mybatis.PageRowBounds;
 
@@ -125,7 +125,7 @@ public class ArticleService {
 
 		// In case of new article(articleNo is empty)
 		if (StringUtility.isEmpty(article.getId())) {
-			article.setId(RandomUtils.generateUUID());
+			article.setId(EncodeUtility.generateUUID());
 			article.setRegistDate(new Date());
 			articleRepository.saveAndFlush(article);
 		}

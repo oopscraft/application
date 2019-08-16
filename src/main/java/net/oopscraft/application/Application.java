@@ -1,5 +1,6 @@
 package net.oopscraft.application;
 
+import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -21,24 +22,31 @@ public class Application {
 	
 	public static void main(String[] args) throws Exception {
 		
-		applicationContext = new AnnotationConfigApplicationContext(ApplicationContext.class);
-		
+		// setting log4j2 configuration path
+		Configurator.initialize(null, "conf/log4j2.xml");
+
+		// loads application context
+		applicationContext = new AnnotationConfigApplicationContext(
+				 ApplicationContext.class
+				//,ApplicationScheduleContext.class
+				);
 		for(String name : applicationContext.getBeanDefinitionNames()) {
-			LOGGER.info(name);
+			LOGGER.info("Bean:{}", name);
 		}
 		
 		// hooking kill signal
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
 			public void run() {
+				printInfo("Runtime.getRuntime().addShutdownHook...");
 				try {
 					applicationContext.close();
 				}catch(Exception e){
 					e.printStackTrace(System.err);
 				}
 				try {
-					webServer.stop();
-				}catch(Exception e) {
-					e.printStackTrace(System.err);
+					applicationContext.close();
+				}catch(Exception e){
+					printError(e.getMessage(), e);
 				}
 			}
 		}));
@@ -54,6 +62,16 @@ public class Application {
 		
 		// join main thread
 		Thread.currentThread().join();
+	}
+	
+	private static void printInfo(Object message) {
+		LOGGER.warn("{}", message);
+		System.err.println(message);
+	}
+	
+	private static void printError(String messgae, Exception e) {
+		LOGGER.error(e.getMessage(), e);
+		e.printStackTrace(System.err);
 	}
 
 }

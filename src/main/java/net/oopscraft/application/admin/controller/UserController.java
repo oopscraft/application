@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtility;
-import net.oopscraft.application.core.LocaleUtils;
+import net.oopscraft.application.core.LocaleUtility;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.user.User;
@@ -54,7 +54,7 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView user() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/user.tiles");
-		modelAndView.addObject("locales", LocaleUtils.getLocales());
+		modelAndView.addObject("locales", LocaleUtility.getLocales());
 		modelAndView.addObject("statuses", User.Status.values());
 		return modelAndView;
 	}

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class LocaleUtils {
+public class LocaleUtility {
 	
 	public static List<ValueMap> getLocales() {
 		List<ValueMap> locales = new ArrayList<ValueMap>();
