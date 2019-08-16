@@ -33,7 +33,7 @@ import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.RandomUtils;
+import net.oopscraft.application.core.EncodeUtility;
 import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.core.TextTable;
 
@@ -297,7 +297,7 @@ public class BoardController {
 		// defines object
 		ArticleFile articleFile = new ArticleFile();
 		articleFile.setArticleId(articleId);
-		articleFile.setId(RandomUtils.generateUUID());
+		articleFile.setId(EncodeUtility.generateUUID());
 		articleFile.setName(multipartFile.getOriginalFilename());
 		articleFile.setType(multipartFile.getContentType());
 		articleFile.setSize(multipartFile.getSize());

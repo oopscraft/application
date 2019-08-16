@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,7 +34,6 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -65,6 +64,8 @@ import net.oopscraft.application.core.mybatis.PageInterceptor;
 	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,RestController.class,ControllerAdvice.class,EnableWebSecurity.class})
 )
 public class ApplicationContext {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContext.class);
 	
 	static String propertiesPath = "conf/application.properties";
 	static Properties properties;
@@ -136,7 +137,9 @@ public class ApplicationContext {
 		// defines vendor adapter
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(false);
-        vendorAdapter.setShowSql(false);
+        if(LOGGER.isDebugEnabled() == true) {
+        	vendorAdapter.setShowSql(true);
+        }
         vendorAdapter.setDatabasePlatform(properties.getProperty("application.entityManagerFactory.databasePlatform"));
         entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
 

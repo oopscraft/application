@@ -9,13 +9,13 @@ import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.board.Article;
 import net.oopscraft.application.board.Board;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.RandomUtils;
+import net.oopscraft.application.core.EncodeUtility;
 import net.oopscraft.application.core.TextTable;
 
 public class ArticleRepositoryTest extends ApplicationTestRunner {
 	
 	private static String TEST_BOARD_ID = "JUnit";
-	private static String TEST_ARTICLE_ID = RandomUtils.generateUUID();
+	private static String TEST_ARTICLE_ID = EncodeUtility.generateUUID();
 	private static String TEST_ARTICLE_TITLE = "JUnit test case";
 	
 	@Autowired
@@ -85,7 +85,7 @@ public class ArticleRepositoryTest extends ApplicationTestRunner {
 		
 		for(int i = 0; i < 100; i ++) {
 			Article article = new Article();
-			article.setId(RandomUtils.generateUUID());
+			article.setId(EncodeUtility.generateUUID());
 			article.setBoardId(TEST_BOARD_ID);
 			article.setTitle(TEST_ARTICLE_TITLE);
 			articleRepository.saveAndFlush(article);

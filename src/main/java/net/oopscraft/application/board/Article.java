@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.oopscraft.application.board.repository.ArticleReplyRepository;
 import net.oopscraft.application.board.repository.ArticleRepository;
-import net.oopscraft.application.core.RandomUtils;
+import net.oopscraft.application.core.EncodeUtility;
 import net.oopscraft.application.core.StringUtility;
 
 @Entity
@@ -114,7 +114,7 @@ public class Article {
 		ArticleReplyRepository articleReplyRepository = new JpaRepositoryFactory(entityManager).getRepository(ArticleReplyRepository.class);
 		if(StringUtility.isEmpty(reply.getId())) {
 			reply.setArticleId(id);
-			reply.setId(RandomUtils.generateUUID());
+			reply.setId(EncodeUtility.generateUUID());
 			
 			// In case of child reply(has upper no)
 			if(StringUtility.isNotEmpty(reply.getUpperId())) {

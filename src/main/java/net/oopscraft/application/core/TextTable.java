@@ -1,15 +1,19 @@
 package net.oopscraft.application.core;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 
 public class TextTable {
 	
-	private static final int MAX_COLUMN_SIZE = 32;
+	private static final int MAX_COLUMN_SIZE = 1024;
 	
 	Object obj;
 	Collection<?> collection;
@@ -172,7 +176,7 @@ public class TextTable {
 		}else {
 			Class<?> objClass = obj.getClass();
 			Vector<String> columnNamesVector = new Vector<String>();
-			Field[] fields = ObjectUtils.getFields(objClass);
+			Field[] fields = getFields(objClass);
 			for(Field field : fields) {
 				String fieldName = field.getName();
 				columnNamesVector.add(fieldName);
@@ -201,7 +205,7 @@ public class TextTable {
 			columnValues = new String[columnNames.length];
 			for(int i = 0, iSize = columnNames.length; i < iSize; i ++ ) {
 				String columnName = columnNames[i];
-				Object columnValue = ObjectUtils.getFieldValue(obj, columnName);
+				Object columnValue = getFieldValue(obj, columnName);
 				columnValues[i] = toPrintableValue(columnValue);
 			}
 		}
@@ -212,11 +216,72 @@ public class TextTable {
 		if(obj == null) {
 			return null;
 		}
-		String printableValue = StringUtility.stripWhitespace(obj.toString());
+		String printableValue = stripWhitespace(obj.toString());
 		printableValue = StringUtility.toEllipsis(printableValue, MAX_COLUMN_SIZE - 3);
 		return printableValue;
 	}
 	
+	/**
+	 * Remove line break and white space chars.
+	 * @param value
+	 * @return
+	 */
+	private static String stripWhitespace(String value) {
+        if(value == null || value.length() <= 2) {
+            return value;
+        }
+        StringBuffer b = new StringBuffer(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (Character.isWhitespace(c)) {
+                if (i > 0 && !Character.isWhitespace(value.charAt(i - 1))) {
+                    b.append(' ');
+                }
+            } else {
+                b.append(c);
+            }
+        }
+        return b.toString();
+	}
+	
+	/**
+	 * Gets all field names recursively in super class.
+	 * @param type
+	 * @return
+	 */
+	public static Field[] getFields(Class<?> type) {
+        List<Field> fields = new ArrayList<Field>();
+        for (Class<?> c = type; c != null; c = c.getSuperclass()) {
+            fields.addAll(Arrays.asList(c.getDeclaredFields()));
+        }
+        return fields.toArray(new Field[fields.size()-1]);
+    }
+	
+	/**
+	 * Gets field value recursively in super class.
+	 * @param obj
+	 * @param fieldName
+	 * @return
+	 */
+	public static Object getFieldValue(Object obj, String fieldName) {
+		Object fieldValue = null;
+	    Class<?> currentClass = obj.getClass();
+	    do {
+	       try {
+	    	   try {
+		           Field field = currentClass.getDeclaredField(fieldName);
+		           fieldValue = field.get(obj);
+	    	   }catch(Exception e) {
+	    		   Method getterMethod = currentClass.getDeclaredMethod("get" + StringUtility.toPascalCase(fieldName));
+	    		   fieldValue = getterMethod.invoke(obj);
+	    	   }
+	    	   break;
+	       } catch(Exception e) { 
+	    	   fieldValue = e.getMessage();
+	       }
+	    } while((currentClass = currentClass.getSuperclass()) != null);
+	    return fieldValue;
+	}
 
 
 	private static String build(Object obj) {
