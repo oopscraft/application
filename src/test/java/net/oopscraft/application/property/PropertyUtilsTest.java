@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.property.entity.Property;
 
 public class PropertyUtilsTest extends ApplicationTestRunner {
 
