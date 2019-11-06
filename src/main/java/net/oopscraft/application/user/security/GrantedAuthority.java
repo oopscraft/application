@@ -1,7 +1,7 @@
 package net.oopscraft.application.user.security;
 
-import net.oopscraft.application.user.Authority;
-import net.oopscraft.application.user.Role;
+import net.oopscraft.application.user.entity.Authority;
+import net.oopscraft.application.user.entity.Role;
 
 public class GrantedAuthority implements org.springframework.security.core.GrantedAuthority{
 

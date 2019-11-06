@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 
-import net.oopscraft.application.user.Authority;
-import net.oopscraft.application.user.Group;
-import net.oopscraft.application.user.Role;
-import net.oopscraft.application.user.User;
+import net.oopscraft.application.user.entity.Authority;
+import net.oopscraft.application.user.entity.Group;
+import net.oopscraft.application.user.entity.Role;
+import net.oopscraft.application.user.entity.User;
 
 public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
 

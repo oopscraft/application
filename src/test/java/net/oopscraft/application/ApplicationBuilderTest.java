@@ -23,7 +23,7 @@ import net.oopscraft.application.board.mapper.ArticleMapper;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.XPathReader;
 import net.oopscraft.application.core.webserver.WebServer;
-import net.oopscraft.application.user.User;
+import net.oopscraft.application.user.entity.User;
 import net.oopscraft.application.user.repository.UserRepository;
 
 public class ApplicationBuilderTest {

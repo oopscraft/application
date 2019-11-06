@@ -21,6 +21,10 @@ import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
+import net.oopscraft.application.user.entity.Authority;
+import net.oopscraft.application.user.entity.Group;
+import net.oopscraft.application.user.entity.Role;
+import net.oopscraft.application.user.entity.User;
 import net.oopscraft.application.user.repository.UserRepository;
 
 @Service

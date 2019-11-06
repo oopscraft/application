@@ -20,9 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
-import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.AuthorityService;
 import net.oopscraft.application.user.AuthorityService.AuthoritySearchType;
+import net.oopscraft.application.user.entity.Authority;
 
 @PreAuthorize("hasAuthority('ADMIN_AUTHORITY')")
 @Controller

@@ -20,7 +20,7 @@ import org.hibernate.annotations.WhereJoinTable;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
-import net.oopscraft.application.user.Authority;
+import net.oopscraft.application.user.entity.Authority;
 
 @Entity
 @Table(name = "APP_MENU_INFO")

@@ -23,7 +23,7 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.user.User;
+import net.oopscraft.application.user.entity.User;
 
 @Component
 public class AuthenticationFilter extends GenericFilterBean   {

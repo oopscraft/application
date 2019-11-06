@@ -29,9 +29,9 @@ import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.LocaleUtility;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
-import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.UserService.UserSearchType;
+import net.oopscraft.application.user.entity.User;
 
 @PreAuthorize("hasAuthority('ADMIN_USER')")
 @Controller

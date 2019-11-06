@@ -6,7 +6,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.test.ApplicationTestRunnerWithSpring;
-import net.oopscraft.application.user.User;
+import net.oopscraft.application.user.entity.User;
 
 @WithMockUser(username = "junit", authorities = {"ADMIN","ADMIN_USER"})
 public class UserControllerTest extends ApplicationTestRunnerWithSpring {

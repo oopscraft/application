@@ -8,8 +8,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import net.oopscraft.application.core.JsonUtility;
-import net.oopscraft.application.user.Authority;
-import net.oopscraft.application.user.User;
+import net.oopscraft.application.user.entity.Authority;
+import net.oopscraft.application.user.entity.User;
 
 @Component
 public class AccessTokenEncoder {
