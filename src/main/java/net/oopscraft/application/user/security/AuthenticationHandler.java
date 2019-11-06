@@ -28,9 +28,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 
-import net.oopscraft.application.user.UserLogin;
 import net.oopscraft.application.user.dao.UserLoginRepository;
 import net.oopscraft.application.user.entity.User;
+import net.oopscraft.application.user.entity.UserLoginHistory;
 
 @Component
 public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler {
@@ -79,7 +79,7 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 		}
 		
 		// Saves Login History
-		UserLogin userLogin = new UserLogin();
+		UserLoginHistory userLogin = new UserLoginHistory();
         UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
 		userLogin.setUserId(user.getId());
@@ -119,7 +119,7 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 		
 		// Saves Login History
 		if(exception instanceof UsernameNotFoundException == false) {
-			UserLogin userLogin = new UserLogin();
+			UserLoginHistory userLogin = new UserLoginHistory();
 			userLogin.setUserId(request.getParameter("id"));
 			userLogin.setDate(new Date());
 			userLogin.setSuccessYn("N");

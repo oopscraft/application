@@ -1,4 +1,4 @@
-package net.oopscraft.application.user;
+package net.oopscraft.application.user.entity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -11,8 +11,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "APP_USER_LOGN_HIST")
-@IdClass(UserLogin.Pk.class)
-public class UserLogin {
+@IdClass(UserLoginHistory.Pk.class)
+public class UserLoginHistory {
 	
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
