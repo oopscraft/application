@@ -1,4 +1,4 @@
-package net.oopscraft.application.api.controller;
+package net.oopscraft.application.api;
 
 import java.net.URLEncoder;
 import java.util.List;
@@ -24,12 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import net.oopscraft.application.board.Article;
-import net.oopscraft.application.board.ArticleFile;
-import net.oopscraft.application.board.ArticleReply;
 import net.oopscraft.application.board.ArticleService;
 import net.oopscraft.application.board.ArticleService.ArticleSearchType;
-import net.oopscraft.application.board.Board;
+import net.oopscraft.application.board.entity.Article;
+import net.oopscraft.application.board.entity.ArticleFile;
+import net.oopscraft.application.board.entity.ArticleReply;
+import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;

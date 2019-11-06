@@ -1,4 +1,4 @@
-package net.oopscraft.application.api.controller;
+package net.oopscraft.application.api;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import net.oopscraft.application.core.JsonUtility;
-import net.oopscraft.application.menu.Menu;
 import net.oopscraft.application.menu.MenuService;
+import net.oopscraft.application.menu.entity.Menu;
 
 @Controller
 @RequestMapping("/api")

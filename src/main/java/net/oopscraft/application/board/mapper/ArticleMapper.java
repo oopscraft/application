@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
-import net.oopscraft.application.board.Article;
+import net.oopscraft.application.board.entity.Article;
 
 @Mapper
 public interface ArticleMapper {

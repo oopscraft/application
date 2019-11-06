@@ -15,6 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.board.entity.Article;
+import net.oopscraft.application.board.entity.ArticleFile;
+import net.oopscraft.application.board.entity.ArticleReply;
 import net.oopscraft.application.board.mapper.ArticleMapper;
 import net.oopscraft.application.board.repository.ArticleFileRepository;
 import net.oopscraft.application.board.repository.ArticleReplyRepository;

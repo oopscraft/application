@@ -18,7 +18,7 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
-import net.oopscraft.application.board.Article;
+import net.oopscraft.application.board.entity.Article;
 import net.oopscraft.application.board.mapper.ArticleMapper;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.XPathReader;

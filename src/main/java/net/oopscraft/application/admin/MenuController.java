@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtility;
-import net.oopscraft.application.menu.Menu;
 import net.oopscraft.application.menu.MenuService;
+import net.oopscraft.application.menu.entity.Menu;
 
 
 @PreAuthorize("hasAuthority('ADMIN_MENU')")

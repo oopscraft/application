@@ -1,4 +1,4 @@
-package net.oopscraft.application.api.controller;
+package net.oopscraft.application.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

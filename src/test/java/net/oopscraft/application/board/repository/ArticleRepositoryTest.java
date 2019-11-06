@@ -6,8 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.oopscraft.application.ApplicationTestRunner;
-import net.oopscraft.application.board.Article;
-import net.oopscraft.application.board.Board;
+import net.oopscraft.application.board.entity.Article;
+import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.EncodeUtility;
 import net.oopscraft.application.core.TextTable;

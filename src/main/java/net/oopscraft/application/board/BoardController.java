@@ -1,4 +1,4 @@
-package net.oopscraft.application.board.controller;
+package net.oopscraft.application.board;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.board.Article;
-import net.oopscraft.application.board.ArticleService;
-import net.oopscraft.application.board.Board;
-import net.oopscraft.application.board.BoardService;
+import net.oopscraft.application.board.entity.Article;
+import net.oopscraft.application.board.entity.Board;
 
 @Controller
 @RequestMapping("/board")

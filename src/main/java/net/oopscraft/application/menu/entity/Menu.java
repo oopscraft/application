@@ -1,4 +1,4 @@
-package net.oopscraft.application.menu;
+package net.oopscraft.application.menu.entity;
 
 import java.util.List;
 

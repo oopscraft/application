@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import net.oopscraft.application.board.Article;
+import net.oopscraft.application.board.entity.Article;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, String>{
