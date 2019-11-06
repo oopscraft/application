@@ -8,6 +8,7 @@ import org.junit.Test;
 import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.property.Property;
+import net.oopscraft.application.property.PropertyRepository;
 
 public class PropertyRepositoryTest extends ApplicationTestRunner {
 	

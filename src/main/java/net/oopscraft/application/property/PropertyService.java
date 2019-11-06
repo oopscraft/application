@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.property.repository.PropertyRepository;
 
 @Service
 public class PropertyService {

@@ -1,10 +1,8 @@
-package net.oopscraft.application.property.repository;
+package net.oopscraft.application.property;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import net.oopscraft.application.property.Property;
 
 public interface PropertyRepository extends JpaRepository<Property,String>{
 
