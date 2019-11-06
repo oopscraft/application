@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.code.Code;
 import net.oopscraft.application.code.CodeService;
 import net.oopscraft.application.code.CodeService.CodeSearchType;
+import net.oopscraft.application.code.entity.Code;
 import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;

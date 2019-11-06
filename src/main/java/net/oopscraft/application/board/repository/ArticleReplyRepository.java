@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import net.oopscraft.application.board.ArticleReply;
-import net.oopscraft.application.board.ArticleReply.Pk;
+import net.oopscraft.application.board.entity.ArticleReply;
+import net.oopscraft.application.board.entity.ArticleReply.Pk;
 
 public interface ArticleReplyRepository extends JpaRepository<ArticleReply, ArticleReply.Pk>{
 	

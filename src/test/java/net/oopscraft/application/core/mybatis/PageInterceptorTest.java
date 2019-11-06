@@ -5,7 +5,7 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.oopscraft.application.board.Article;
+import net.oopscraft.application.board.entity.Article;
 import net.oopscraft.application.board.mapper.ArticleMapper;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;

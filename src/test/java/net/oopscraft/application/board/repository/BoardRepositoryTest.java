@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.oopscraft.application.ApplicationTestRunner;
-import net.oopscraft.application.board.Board;
+import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.core.TextTable;
 
 public class BoardRepositoryTest extends ApplicationTestRunner {

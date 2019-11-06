@@ -1,4 +1,4 @@
-package net.oopscraft.application.code;
+package net.oopscraft.application.code.entity;
 
 import java.util.ArrayList;
 import java.util.List;
