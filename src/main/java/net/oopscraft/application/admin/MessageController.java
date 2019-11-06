@@ -1,4 +1,4 @@
-package net.oopscraft.application.admin.controller;
+package net.oopscraft.application.admin;
 
 import java.util.List;
 
@@ -17,20 +17,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.board.Board;
-import net.oopscraft.application.board.BoardService;
-import net.oopscraft.application.board.BoardService.BoardSearchType;
 import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
+import net.oopscraft.application.message.Message;
+import net.oopscraft.application.message.MessageService;
+import net.oopscraft.application.message.MessageService.MessageSearchType;
 
-@PreAuthorize("hasAuthority('ADMIN_BOARD')")
+@PreAuthorize("hasAuthority('ADMIN_MESSAGE')")
 @Controller
-@RequestMapping("/admin/board")
-public class BoardController {
+@RequestMapping("/admin/message")
+public class MessageController {
 
 	@Autowired
-	BoardService boardService;
+	MessageService messageService;
 
 	@Autowired
 	HttpServletResponse response;
@@ -43,15 +43,12 @@ public class BoardController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/board.tiles");
-		modelAndView.addObject("skins", new String[] {"board","blog"});
-		modelAndView.addObject("policies", Board.Policy.values());
-		modelAndView.addObject("rowsPerPage", new long[] {10,20,30,40,50});
+		ModelAndView modelAndView = new ModelAndView("admin/message.tiles");
 		return modelAndView;
 	}
 
 	/**
-	 * Gets boards
+	 * Gets messages
 	 * 
 	 * @param searchKey
 	 * @param searchValue
@@ -60,76 +57,65 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getBoards", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "getMessages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getBoards(
+	public String getMessages(
 		@RequestParam(value = "rows")Integer rows,
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
-		BoardSearchType boardSearchType = null;
+		MessageSearchType messageSearchType= null;
 		if(StringUtility.isNotEmpty(searchType)) {
-			boardSearchType = BoardSearchType.valueOf(searchType);
+			messageSearchType = MessageSearchType.valueOf(searchType);
 		}
-		List<Board> boards = boardService.getBoards(pageInfo, boardSearchType, searchValue);
+		List<Message> messages = messageService.getMessages(pageInfo, messageSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(boards);
+		return JsonUtility.toJson(messages);
 	}
 
 	/**
-	 * Gets board
+	 * Gets message details.
 	 * 
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getBoard", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "getMessage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getBoard(@RequestParam(value = "id") String id) throws Exception {
-		Board board = boardService.getBoard(id);
-		return JsonUtility.toJson(board);
+	public String getMessage(@RequestParam(value = "id") String id) throws Exception {
+		Message message = messageService.getMessage(id);
+		return JsonUtility.toJson(message);
 	}
 
 	/**
-	 * Saves board
+	 * Saves message.
 	 * 
 	 * @param payload
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "saveBoard", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "saveMessage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void saveBoard(@RequestBody String payload) throws Exception {
-		Board board = JsonUtility.toObject(payload, Board.class);
-		boardService.saveBoard(board);
+	public void saveMessage(@RequestBody String payload) throws Exception {
+		Message message = JsonUtility.toObject(payload, Message.class);
+		messageService.saveMessage(message);
 	}
 
 	/**
-	 * Deletes board
+	 * Deletes message.
 	 * 
 	 * @param payload
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "deleteBoard", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteMessage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteBoard(@RequestParam(value = "id") String id) throws Exception {
-		boardService.deleteBoard(id);
-	}
-	
-	/**
-	 * Gets Policies
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value="getPolicies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public String getPolicies() throws Exception {
-		return JsonUtility.toJson(Board.Policy.values());
+	public void deleteMessage(@RequestParam(value = "id") String id) throws Exception {
+		messageService.deleteMessage(id);
 	}
 
 }
