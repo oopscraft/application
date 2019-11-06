@@ -1,4 +1,4 @@
-package net.oopscraft.application.board.mapper;
+package net.oopscraft.application.board.dao;
 
 import java.util.List;
 
