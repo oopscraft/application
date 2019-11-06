@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.user.entity.Group;
 import net.oopscraft.application.user.repository.GroupRepository;
 
 @Service
@@ -100,7 +101,7 @@ public class GroupService {
 		}
 
 		// sets properties
-		one.setUpperId(group.upperId);
+		one.setUpperId(group.getUpperId());
 		one.setName(group.getName());
 		one.setDescription(group.getDescription());
 		one.setDisplaySeq(group.getDisplaySeq());

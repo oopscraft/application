@@ -28,8 +28,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 
-import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserLogin;
+import net.oopscraft.application.user.entity.User;
 import net.oopscraft.application.user.repository.UserLoginRepository;
 
 @Component

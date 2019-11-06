@@ -23,14 +23,14 @@ import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.menu.entity.Menu;
-import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.AuthorityService;
 import net.oopscraft.application.user.AuthorityService.AuthoritySearchType;
-import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
-import net.oopscraft.application.user.Role;
 import net.oopscraft.application.user.RoleService;
 import net.oopscraft.application.user.RoleService.RoleSearchType;
+import net.oopscraft.application.user.entity.Authority;
+import net.oopscraft.application.user.entity.Group;
+import net.oopscraft.application.user.entity.Role;
 
 @Controller
 @RequestMapping("/admin")

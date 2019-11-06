@@ -5,7 +5,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.test.ApplicationTestRunnerWithSpring;
-import net.oopscraft.application.user.Group;
+import net.oopscraft.application.user.entity.Group;
 
 @WithMockUser(username = "junit", authorities = {"ADMIN","ADMIN_GROUP"})
 public class GroupControllerTest extends ApplicationTestRunnerWithSpring {

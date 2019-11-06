@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonUtility;
-import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
+import net.oopscraft.application.user.entity.Group;
 
 @PreAuthorize("hasAuthority('ADMIN_GROUP')")
 @Controller

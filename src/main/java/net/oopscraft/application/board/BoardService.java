@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.repository.BoardRepository;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.user.Authority;
+import net.oopscraft.application.user.entity.Authority;
 import net.oopscraft.application.user.security.UserDetails;
 
 @Service
