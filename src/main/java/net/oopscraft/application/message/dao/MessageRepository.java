@@ -1,4 +1,4 @@
-package net.oopscraft.application.message.repository;
+package net.oopscraft.application.message.dao;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
