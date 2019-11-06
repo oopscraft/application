@@ -1,4 +1,4 @@
-package net.oopscraft.application.message;
+package net.oopscraft.application.message.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

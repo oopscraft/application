@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import net.oopscraft.application.message.Message;
+import net.oopscraft.application.message.entity.Message;
 
 public interface MessageRepository extends JpaRepository<Message,String>{
 
