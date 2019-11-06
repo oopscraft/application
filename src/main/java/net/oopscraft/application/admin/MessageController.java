@@ -20,9 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
-import net.oopscraft.application.message.Message;
 import net.oopscraft.application.message.MessageService;
 import net.oopscraft.application.message.MessageService.MessageSearchType;
+import net.oopscraft.application.message.entity.Message;
 
 @PreAuthorize("hasAuthority('ADMIN_MESSAGE')")
 @Controller
