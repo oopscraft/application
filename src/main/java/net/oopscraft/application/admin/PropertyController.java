@@ -20,9 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
-import net.oopscraft.application.property.Property;
 import net.oopscraft.application.property.PropertyService;
 import net.oopscraft.application.property.PropertyService.PropertySearchType;
+import net.oopscraft.application.property.entity.Property;
 
 
 @PreAuthorize("hasAuthority('ADMIN_PROPERTY')")

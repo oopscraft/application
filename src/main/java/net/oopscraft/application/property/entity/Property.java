@@ -1,4 +1,4 @@
-package net.oopscraft.application.property;
+package net.oopscraft.application.property.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
