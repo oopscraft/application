@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.oopscraft.application.ApplicationTestRunner;
+import net.oopscraft.application.board.dao.ArticleRepository;
+import net.oopscraft.application.board.dao.BoardRepository;
 import net.oopscraft.application.board.entity.Article;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.core.PageInfo;

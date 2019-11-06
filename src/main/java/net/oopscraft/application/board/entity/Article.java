@@ -19,8 +19,8 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import net.oopscraft.application.board.repository.ArticleReplyRepository;
-import net.oopscraft.application.board.repository.ArticleRepository;
+import net.oopscraft.application.board.dao.ArticleReplyRepository;
+import net.oopscraft.application.board.dao.ArticleRepository;
 import net.oopscraft.application.core.EncodeUtility;
 import net.oopscraft.application.core.StringUtility;
 

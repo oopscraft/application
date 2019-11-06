@@ -1,4 +1,4 @@
-package net.oopscraft.application.board.repository;
+package net.oopscraft.application.board.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
