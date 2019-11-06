@@ -1,4 +1,4 @@
-package net.oopscraft.application.admin.controller;
+package net.oopscraft.application.admin;
 
 import java.util.List;
 
@@ -20,35 +20,36 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
-import net.oopscraft.application.user.Role;
-import net.oopscraft.application.user.RoleService;
-import net.oopscraft.application.user.RoleService.RoleSearchType;
+import net.oopscraft.application.property.Property;
+import net.oopscraft.application.property.PropertyService;
+import net.oopscraft.application.property.PropertyService.PropertySearchType;
 
-@PreAuthorize("hasAuthority('ADMIN_ROLE')")
+
+@PreAuthorize("hasAuthority('ADMIN_PROPERTY')")
 @Controller
-@RequestMapping("/admin/role")
-public class RoleController {
+@RequestMapping("/admin/property")
+public class PropertyController {
 
 	@Autowired
-	RoleService roleService;
-	
+	PropertyService propertyService;
+
 	@Autowired
 	HttpServletResponse response;
 
 	/**
-	 * Forwards user page
+	 * Forwards page
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView role() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/role.tiles");
+	public ModelAndView index() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("admin/property.tiles");
 		return modelAndView;
 	}
-	
+
 	/**
-	 * Gets groups
+	 * Gets properties
 	 * 
 	 * @param searchKey
 	 * @param searchValue
@@ -57,65 +58,65 @@ public class RoleController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getRoles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "getProperties", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getRoles(
+	public String getProperties(
 		@RequestParam(value = "rows")Integer rows,
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
-		RoleSearchType roleSearchType= null;
+		PropertySearchType propertySearchType= null;
 		if(StringUtility.isNotEmpty(searchType)) {
-			roleSearchType = RoleSearchType.valueOf(searchType);
+			propertySearchType = PropertySearchType.valueOf(searchType);
 		}
-		List<Role> roles = roleService.getRoles(pageInfo, roleSearchType, searchValue);
+		List<Property> properties = propertyService.getProperties(pageInfo, propertySearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(roles);
+		return JsonUtility.toJson(properties);
 	}
-	
+
 	/**
-	 * Gets user details.
+	 * Gets property details.
 	 * 
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getRole", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "getProperty", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getRoles(@RequestParam(value = "id") String id) throws Exception {
-		Role role = roleService.getRole(id);
-		return JsonUtility.toJson(role);
+	public String getProperty(@RequestParam(value = "id") String id) throws Exception {
+		Property property = propertyService.getProperty(id);
+		return JsonUtility.toJson(property);
 	}
-	
+
 	/**
-	 * Saves role.
+	 * Saves property.
 	 * 
 	 * @param payload
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "saveRole", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "saveProperty", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void saveRole(@RequestBody String payload) throws Exception {
-		Role role = JsonUtility.toObject(payload, Role.class);
-		roleService.saveRole(role);
+	public void saveProperty(@RequestBody String payload) throws Exception {
+		Property property = JsonUtility.toObject(payload, Property.class);
+		propertyService.saveProperty(property);
 	}
-	
+
 	/**
-	 * Removes role.
+	 * Deletes property.
 	 * 
 	 * @param payload
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "deleteRole", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteProperty", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteRole(@RequestParam(value = "id") String id) throws Exception {
-		roleService.deleteRole(id);
+	public void deleteProperty(@RequestParam(value = "id") String id) throws Exception {
+		propertyService.deleteProperty(id);
 	}
 
 }

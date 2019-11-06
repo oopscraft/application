@@ -1,4 +1,4 @@
-package net.oopscraft.application.admin.controller;
+package net.oopscraft.application.admin;
 
 import java.util.List;
 
@@ -17,20 +17,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import net.oopscraft.application.code.Code;
+import net.oopscraft.application.code.CodeService;
+import net.oopscraft.application.code.CodeService.CodeSearchType;
 import net.oopscraft.application.core.JsonUtility;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
-import net.oopscraft.application.user.Authority;
-import net.oopscraft.application.user.AuthorityService;
-import net.oopscraft.application.user.AuthorityService.AuthoritySearchType;
 
-@PreAuthorize("hasAuthority('ADMIN_AUTHORITY')")
+
+@PreAuthorize("hasAuthority('ADMIN_CODE')")
 @Controller
-@RequestMapping("/admin/authority")
-public class AuthorityController {
+@RequestMapping("/admin/code")
+public class CodeController {
 
 	@Autowired
-	AuthorityService authorityService;
+	CodeService codeService;
 
 	@Autowired
 	HttpServletResponse response;
@@ -43,12 +44,12 @@ public class AuthorityController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/authority.tiles");
+		ModelAndView modelAndView = new ModelAndView("admin/code.tiles");
 		return modelAndView;
 	}
 
 	/**
-	 * Gets authorities
+	 * Gets codes
 	 * 
 	 * @param searchKey
 	 * @param searchValue
@@ -57,65 +58,67 @@ public class AuthorityController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "getCodes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getAuthorities(
+	@Transactional
+	public String getCodes(
 		@RequestParam(value = "rows")Integer rows,
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
 		PageInfo pageInfo = new PageInfo(rows, page, true);
-		AuthoritySearchType authoritySearchType= null;
+		CodeSearchType codeSearchType = null;
 		if(StringUtility.isNotEmpty(searchType)) {
-			authoritySearchType = AuthoritySearchType.valueOf(searchType);
+			codeSearchType = CodeSearchType.valueOf(searchType); 
 		}
-		List<Authority> properties = authorityService.getAuthorities(pageInfo, authoritySearchType, searchValue);
+		List<Code> codes = codeService.getCodes(pageInfo, codeSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(properties);
+		return JsonUtility.toJson(codes);
 	}
 
 	/**
-	 * Gets authority details.
+	 * Gets code details.
 	 * 
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "getAuthority", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "getCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getAuthority(@RequestParam(value = "id") String id) throws Exception {
-		Authority authority = authorityService.getAuthority(id);
-		return JsonUtility.toJson(authority);
+	@Transactional
+	public String getCode(@RequestParam(value = "id") String id) throws Exception {
+		Code code = codeService.getCode(id);
+		return JsonUtility.toJson(code);
 	}
 
 	/**
-	 * Saves authority.
+	 * Saves code.
 	 * 
 	 * @param payload
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "saveAuthority", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "saveCode", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void saveAuthority(@RequestBody String payload) throws Exception {
-		Authority authority = JsonUtility.toObject(payload, Authority.class);
-		authorityService.saveAuthority(authority);
+	public void saveCode(@RequestBody String payload) throws Exception {
+		Code code = JsonUtility.toObject(payload, Code.class);
+		codeService.saveCode(code);
 	}
 
 	/**
-	 * Removes authority.
+	 * Removes code.
 	 * 
 	 * @param payload
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "deleteAuthority", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteAuthority(@RequestParam(value = "id") String id) throws Exception {
-		authorityService.deleteAuthority(id);
+	public void deleteCode(@RequestParam(value = "id") String id) throws Exception {
+		codeService.deleteCode(id);
 	}
 
 }

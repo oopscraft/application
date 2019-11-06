@@ -1,4 +1,4 @@
-package net.oopscraft.application.admin.controller;
+package net.oopscraft.application.admin;
 
 import java.util.List;
 
