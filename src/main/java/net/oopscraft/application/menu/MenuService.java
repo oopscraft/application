@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.menu.dao.MenuRepository;
 import net.oopscraft.application.menu.entity.Menu;
-import net.oopscraft.application.menu.repository.MenuRepository;
 
 
 @Service

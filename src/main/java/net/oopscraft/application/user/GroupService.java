@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.user.dao.GroupRepository;
 import net.oopscraft.application.user.entity.Group;
-import net.oopscraft.application.user.repository.GroupRepository;
 
 @Service
 public class GroupService {
