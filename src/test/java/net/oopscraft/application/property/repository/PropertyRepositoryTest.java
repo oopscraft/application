@@ -23,11 +23,6 @@ public class PropertyRepositoryTest extends ApplicationTestRunner {
 		super();
 	}
 	
-	@Before
-	public void before() throws Exception {
-		propertyRepository = this.getJpaRepository(PropertyRepository.class);
-	}
-	
 	@Test 
 	public void testSave() throws Exception {
 		Property property = new Property();

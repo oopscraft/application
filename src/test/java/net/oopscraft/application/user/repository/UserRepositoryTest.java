@@ -22,11 +22,7 @@ public class UserRepositoryTest extends ApplicationTestRunner {
 	public UserRepositoryTest() throws Exception {
 		super();
 	}
-	
-	@Before
-	public void before() throws Exception {
-		userRepository = this.getJpaRepository(UserRepository.class);
-	}
+
 	
 	@Test 
 	public void testInsert() throws Exception {

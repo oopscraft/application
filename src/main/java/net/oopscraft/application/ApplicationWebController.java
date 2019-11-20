@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @ControllerAdvice
 @RequestMapping("/")
-public class ApplicationWebControllerAdvice {
+public class ApplicationWebController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
