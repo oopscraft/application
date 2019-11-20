@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
-<mapper namespace="net.oopscraft.application.board.mapper.ArticleMapper">
+<mapper namespace="net.oopscraft.application.board.dao.ArticleMapper">
 
 	<cache
 		eviction="FIFO"
@@ -11,7 +11,7 @@
 		size="128"
 		readOnly="true"/>
 
-    <resultMap id="article" type="net.oopscraft.application.board.Article">
+    <resultMap id="article" type="net.oopscraft.application.board.entity.Article">
     	<result column="ATCL_ID" property="id"/>
     	<result column="BORD_ID" property="boardId"/>
     	<result column="BORD_NAME" property="boardName"/>
