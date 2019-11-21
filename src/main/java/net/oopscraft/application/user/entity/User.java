@@ -31,27 +31,27 @@ public class User extends SystemEntity {
 	@Column(name = "USER_ID")
 	String id;
 
-	@Column(name = "USER_PWD")
-	String password;
-	
-	@Column(name = "USER_EMIL")
-	String email;
-
-	@Column(name = "USER_LC")
-	String locale;
-	
-	@Column(name = "USER_PHON")
-	String phone;
-
 	@Column(name = "USER_NAME")
 	String name;
-
+	
+	@Column(name = "USER_PASS")
+	String password;
+	
 	public enum Status {
 		ACTIVE, SUSPENDED, CLOSED
 	}
 	@Column(name = "USER_STAT")
 	@Enumerated(EnumType.STRING)
 	Status status = Status.ACTIVE;
+	
+	@Column(name = "USER_EMIL")
+	String email;
+
+	@Column(name = "USER_PHON")
+	String phone;
+
+	@Column(name = "USER_LOCL")
+	String locale;
 
 	@Column(name = "USER_NICK")
 	String nickname;

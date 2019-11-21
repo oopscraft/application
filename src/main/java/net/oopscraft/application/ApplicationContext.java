@@ -19,8 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
@@ -45,8 +46,8 @@ import net.oopscraft.application.core.mybatis.PageInterceptor;
  * Application Context Configuration
  * @author chomookun@gmail.com
  * @version 0.0.1
- * @see    None
  */
+@Configuration
 @EnableJpaRepositories(
 	basePackages = "net.oopscraft.application",
 	entityManagerFactoryRef = "entityManagerFactory"
@@ -66,9 +67,8 @@ import net.oopscraft.application.core.mybatis.PageInterceptor;
 public class ApplicationContext {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContext.class);
-	
-	static String propertiesPath = "conf/application.properties";
-	static Properties properties;
+
+	protected static Properties properties;
 	
 	DataSource dataSource;
 	LocalContainerEntityManagerFactoryBean entityManagerFactory;
@@ -79,7 +79,7 @@ public class ApplicationContext {
 	 */
 	static {
 		try {
-			properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(new File(propertiesPath)));
+			properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(new File("conf/application.properties")));
 		}catch(Exception e) {
 			e.printStackTrace(System.err);
 		}
