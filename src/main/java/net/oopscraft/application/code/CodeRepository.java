@@ -1,4 +1,4 @@
-package net.oopscraft.application.code.dao;
+package net.oopscraft.application.code;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

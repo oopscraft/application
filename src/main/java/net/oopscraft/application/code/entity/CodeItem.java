@@ -9,7 +9,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_CD_ITEM_INFO")
+@Table(name = "APP_CODE_ITEM_INFO")
 @IdClass(CodeItem.Pk.class)
 public class CodeItem {
 	
@@ -67,15 +67,18 @@ public class CodeItem {
 	}
 
 	@Id
-	@Column(name = "CD_ID")
+	@Column(name = "CODE_ID")
 	String codeId;
 	
 	@Id
-	@Column(name = "CD_ITEM_ID")
+	@Column(name = "ITEM_ID")
 	String id;
 	
-	@Column(name = "CD_ITEM_NAME")
+	@Column(name = "ITEM_NAME")
 	String name;
+	
+	@Column(name = "ITEM_DESC")
+	String description;
 	
 	@Column(name = "DISP_SEQ")
 	int displaySeq;

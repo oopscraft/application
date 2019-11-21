@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.user.dao.UserRepository;
+import net.oopscraft.application.user.UserRepository;
 import net.oopscraft.application.user.entity.User;
 
 public class UserRepositoryTest extends ApplicationTestRunner {

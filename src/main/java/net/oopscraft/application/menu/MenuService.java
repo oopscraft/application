@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.menu.dao.MenuRepository;
 import net.oopscraft.application.menu.entity.Menu;
 
 
@@ -112,8 +111,8 @@ public class MenuService {
 		one.setValue(menu.getValue());
 		one.setDescription(menu.getDescription());
 		one.setDisplaySeq(menu.getDisplaySeq());
-		one.setDisplayPolicy(menu.getDisplayPolicy());
-		one.setAccessPolicy(menu.getAccessPolicy());
+		one.setPolicyDisplay(menu.getPolicyDisplay());
+		one.setPolicyAccess(menu.getPolicyAccess());
 		
 		// Checks id and upperId is same.
 		if (one.getId().equals(one.getUpperId()) == true) {

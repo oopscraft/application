@@ -1,4 +1,4 @@
-package net.oopscraft.application.menu.dao;
+package net.oopscraft.application.menu;
 
 import java.util.List;
 

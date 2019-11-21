@@ -36,6 +36,9 @@ public class Menu extends SystemEntity {
 
 	@Column(name = "MENU_NAME")
 	String name;
+	
+	@Column(name = "MENU_DESC")
+	String description;
 
 	@Column(name = "MENU_ICON")
 	String icon;
@@ -51,35 +54,33 @@ public class Menu extends SystemEntity {
 	@Column(name = "MENU_VAL")
 	String value;
 
-	@Column(name = "MENU_DESC")
-	String description;
-
 	public enum Policy {
 		ANONYMOUS, AUTHENTICATED, AUTHORIZED
 	}
 	
-	@Column(name = "ACES_PLCY")
-	@Enumerated(EnumType.STRING)
-	Policy accessPolicy = Policy.ANONYMOUS;
+	@Column(name = "DISP_SEQ")
+	Integer displaySeq;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_MENU_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "MENU_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	@WhereJoinTable(clause = "PLCY_TYPE ='ACES_PLCY'")
-	@SQLInsert(sql = "INSERT INTO APP_MENU_PLCY_AUTH_MAP (MENU_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'ACES_PLCY', ?)") 
-	List<Authority> accessAuthorities;
-
-	@Column(name = "DISP_PLCY")
+	@Column(name = "PLCY_DISP")
 	@Enumerated(EnumType.STRING)
-	Policy displayPolicy = Policy.ANONYMOUS;
+	Policy policyDisplay = Policy.ANONYMOUS;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APP_MENU_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "MENU_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
 	@WhereJoinTable(clause = "PLCY_TYPE ='DISP_PLCY'")
 	@SQLInsert(sql = "INSERT INTO APP_MENU_PLCY_AUTH_MAP (MENU_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'DISP_PLCY', ?)") 
 	List<Authority> displayAuthorities;
+
+	@Column(name = "PLCY_ACES")
+	@Enumerated(EnumType.STRING)
+	Policy policyAccess = Policy.ANONYMOUS;
 	
-	@Column(name = "DISP_SEQ")
-	Integer displaySeq;
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "APP_MENU_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "MENU_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@WhereJoinTable(clause = "PLCY_TYPE ='ACES_PLCY'")
+	@SQLInsert(sql = "INSERT INTO APP_MENU_PLCY_AUTH_MAP (MENU_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'ACES_PLCY', ?)") 
+	List<Authority> accessAuthorities;
+	
 	
 	@Transient
 	List<Menu> childMenus;
@@ -144,14 +145,6 @@ public class Menu extends SystemEntity {
 		return displaySeq;
 	}
 
-	public Policy getAccessPolicy() {
-		return accessPolicy;
-	}
-
-	public void setAccessPolicy(Policy accessPolicy) {
-		this.accessPolicy = accessPolicy;
-	}
-
 	public List<Authority> getAccessAuthorities() {
 		return accessAuthorities;
 	}
@@ -162,14 +155,6 @@ public class Menu extends SystemEntity {
 
 	public void setDisplaySeq(Integer displaySeq) {
 		this.displaySeq = displaySeq;
-	}
-
-	public Policy getDisplayPolicy() {
-		return displayPolicy;
-	}
-
-	public void setDisplayPolicy(Policy displayPolicy) {
-		this.displayPolicy = displayPolicy;
 	}
 
 	public List<Authority> getDisplayAuthorities() {
@@ -187,5 +172,23 @@ public class Menu extends SystemEntity {
 	public void setChildMenus(List<Menu> childMenus) {
 		this.childMenus = childMenus;
 	}
+
+	public Policy getPolicyDisplay() {
+		return policyDisplay;
+	}
+
+	public void setPolicyDisplay(Policy policyDisplay) {
+		this.policyDisplay = policyDisplay;
+	}
+
+	public Policy getPolicyAccess() {
+		return policyAccess;
+	}
+
+	public void setPolicyAccess(Policy policyAccess) {
+		this.policyAccess = policyAccess;
+	}
+	
+	
 
 }

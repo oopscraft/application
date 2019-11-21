@@ -17,18 +17,21 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_CD_INFO")
+@Table(name = "APP_CODE_INFO")
 @EntityListeners(SystemEntityListener.class)
 public class Code extends SystemEntity {
 
 	@Id
-	@Column(name = "CD_ID")
+	@Column(name = "CODE_ID")
 	String id;
 	
-	@Column(name = "CD_NAME")
+	@Column(name = "UPER_CODE_ID")
+	String upperId;
+	
+	@Column(name = "CODE_NAME")
 	String name;
 
-	@Column(name = "CD_DESC")
+	@Column(name = "CODE_DESC")
 	String description;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "codeId", cascade = CascadeType.ALL, orphanRemoval = true)
