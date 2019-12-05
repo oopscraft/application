@@ -7,9 +7,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 
-import net.oopscraft.application.user.security.AuthenticationFilter;
-import net.oopscraft.application.user.security.AuthenticationHandler;
-import net.oopscraft.application.user.security.AuthenticationProvider;
+import net.oopscraft.application.security.AuthenticationFilter;
+import net.oopscraft.application.security.AuthenticationHandler;
+import net.oopscraft.application.security.AuthenticationProvider;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)

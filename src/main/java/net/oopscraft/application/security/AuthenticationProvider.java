@@ -1,4 +1,4 @@
-package net.oopscraft.application.user.security;
+package net.oopscraft.application.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

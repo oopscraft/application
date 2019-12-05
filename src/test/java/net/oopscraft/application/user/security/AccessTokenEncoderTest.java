@@ -3,6 +3,7 @@ package net.oopscraft.application.user.security;
 import org.junit.Test;
 
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.security.AccessTokenEncoder;
 import net.oopscraft.application.user.entity.User;
 
 public class AccessTokenEncoderTest {

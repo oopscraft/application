@@ -1,4 +1,4 @@
-package net.oopscraft.application.user.security;
+package net.oopscraft.application.security;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,14 +32,14 @@ public class UserDetails implements org.springframework.security.core.userdetail
 		
 		// Adds user authorities
 		for(Authority authority : user.getAuthorities()) {
-			addAuthority(new net.oopscraft.application.user.security.GrantedAuthority(authority));
+			addAuthority(new net.oopscraft.application.security.GrantedAuthority(authority));
 		}
 		
 		// Adds user roles
 		for(Role role : user.getRoles()) {
-			addAuthority(new net.oopscraft.application.user.security.GrantedAuthority(role));
+			addAuthority(new net.oopscraft.application.security.GrantedAuthority(role));
 			for(Authority authority : role.getAuthorities()) {
-				addAuthority(new net.oopscraft.application.user.security.GrantedAuthority(authority));
+				addAuthority(new net.oopscraft.application.security.GrantedAuthority(authority));
 			}
 		}
 		
@@ -48,14 +48,14 @@ public class UserDetails implements org.springframework.security.core.userdetail
 		for(Group group : groups) {
 			// Adds group roles
 			for(Role role : group.getRoles()) {
-				this.authorities.add(new net.oopscraft.application.user.security.GrantedAuthority(role));
+				this.authorities.add(new net.oopscraft.application.security.GrantedAuthority(role));
 				for(Authority authority : role.getAuthorities()) {
-					addAuthority(new net.oopscraft.application.user.security.GrantedAuthority(authority));
+					addAuthority(new net.oopscraft.application.security.GrantedAuthority(authority));
 				}
 			}
 			// Adds group authorities
 			for(Authority authority : group.getAuthorities()) {
-				this.addAuthority(new net.oopscraft.application.user.security.GrantedAuthority(authority));
+				this.addAuthority(new net.oopscraft.application.security.GrantedAuthority(authority));
 			}
 		}
 	}

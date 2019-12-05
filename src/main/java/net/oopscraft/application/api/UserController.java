@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.security.UserDetails;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.entity.User;
-import net.oopscraft.application.user.security.UserDetails;
 
 @Controller
 @RequestMapping("/api/user")
