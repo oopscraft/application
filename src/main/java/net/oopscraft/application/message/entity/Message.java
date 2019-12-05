@@ -21,11 +21,11 @@ public class Message extends SystemEntity {
 	@Column(name = "MSG_NAME")
 	String name;
 
-	@Column(name = "MSG_VAL")
-	String value;
-
 	@Column(name = "MSG_DESC")
 	String description;
+	
+	@Column(name = "MSG_VAL")
+	String value;
 
 	public String getId() {
 		return id;

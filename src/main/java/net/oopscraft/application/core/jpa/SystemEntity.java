@@ -11,13 +11,13 @@ public class SystemEntity {
 	@Column(name="SYS_DATA_YN")
 	String systemDataYn;
 	
-	@Column(name="SYS_INST_DTTM")
+	@Column(name="SYS_INST_DATE")
 	Date systemInsertDate;
 	
 	@Column(name="SYS_INST_USER_ID")
 	String systemInsertUserId;
 	
-	@Column(name="SYS_UPDT_DTTM")
+	@Column(name="SYS_UPDT_DATE")
 	Date systemUpdateDate;
 	
 	@Column(name="SYS_UPDT_USER_ID")

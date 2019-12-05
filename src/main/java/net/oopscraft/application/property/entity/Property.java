@@ -21,11 +21,11 @@ public class Property extends SystemEntity {
 	@Column(name = "PROP_NAME")
 	String name;
 
-	@Column(name = "PROP_VAL")
-	String value;
-
 	@Column(name = "PROP_DESC")
 	String description;
+
+	@Column(name = "PROP_VAL")
+	String value;
 
 	public String getId() {
 		return id;
