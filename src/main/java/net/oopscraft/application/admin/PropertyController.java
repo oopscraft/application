@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.property.PropertyService;
@@ -73,7 +73,7 @@ public class PropertyController {
 		}
 		List<Property> properties = propertyService.getProperties(pageInfo, propertySearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(properties);
+		return JsonConverter.toJson(properties);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class PropertyController {
 	@ResponseBody
 	public String getProperty(@RequestParam(value = "id") String id) throws Exception {
 		Property property = propertyService.getProperty(id);
-		return JsonUtility.toJson(property);
+		return JsonConverter.toJson(property);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class PropertyController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveProperty(@RequestBody String payload) throws Exception {
-		Property property = JsonUtility.toObject(payload, Property.class);
+		Property property = JsonConverter.toObject(payload, Property.class);
 		propertyService.saveProperty(property);
 	}
 

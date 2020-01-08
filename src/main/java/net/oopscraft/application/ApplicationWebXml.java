@@ -34,6 +34,7 @@ public class ApplicationWebXml implements ServletContainerInitializer {
 		LOGGER.info("ApplicationWebXml start...");
 		
 		// invokes application context
+		LOGGER.info("$$$$$$$$$$applicationContext:{}", Application.applicationContext);
 		if(Application.applicationContext == null) {
 			Application.applicationContext = new AnnotationConfigApplicationContext(ApplicationContext.class);
 		}

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.security.UserDetails;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.entity.User;
@@ -36,7 +36,7 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<?> addUser(@RequestBody String payload) throws Exception {
-		User payloadUser = JsonUtility.toObject(payload, User.class);
+		User payloadUser = JsonConverter.toObject(payload, User.class);
 
 		// exiting user
 		User user = userService.getUser(payloadUser.getId());
@@ -48,7 +48,7 @@ public class UserController {
 		userService.saveUser(payloadUser);
 		
 		// response
-		return new ResponseEntity<>(JsonUtility.toJson(payloadUser), HttpStatus.OK);
+		return new ResponseEntity<>(JsonConverter.toJson(payloadUser), HttpStatus.OK);
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class UserController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> updateUser(@PathVariable("id")String id, @RequestBody String payload) throws Exception {
 		
-		User payloadUser = JsonUtility.toObject(payload, User.class);
+		User payloadUser = JsonConverter.toObject(payload, User.class);
 		payloadUser.setId(id);
 		
 		SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -82,7 +82,7 @@ public class UserController {
 		userService.saveUser(payloadUser);
 		
 		// response
-		return new ResponseEntity<>(JsonUtility.toJson(payloadUser), HttpStatus.OK);
+		return new ResponseEntity<>(JsonConverter.toJson(payloadUser), HttpStatus.OK);
 	}
 
 }

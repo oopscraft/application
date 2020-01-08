@@ -6,13 +6,13 @@ public class JsonUtilsTest {
 	
 	@Test
 	public void testToJsonMap() throws Exception {
-		String jsonString = JsonUtility.toJson(new ValueMap());
+		String jsonString = JsonConverter.toJson(new ValueMap());
 		System.out.println(jsonString);
 	}
 	
 	@Test
 	public void testToJsonObject() throws Exception {
-		String jsonString = JsonUtility.toJson(new Object());
+		String jsonString = JsonConverter.toJson(new Object());
 		System.out.println(jsonString);
 	}
 	
@@ -20,7 +20,7 @@ public class JsonUtilsTest {
 	
 	@Test
 	public void testToJsonEnum() throws Exception {
-		String jsonString = JsonUtility.toJson(Enums.values());
+		String jsonString = JsonConverter.toJson(Enums.values());
 		System.out.println(jsonString);
 	}
 

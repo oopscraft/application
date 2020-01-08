@@ -12,6 +12,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,110 +27,129 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.LocaleUtility;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
+import net.oopscraft.application.core.ValueMap;
+import net.oopscraft.application.user.UserRepository;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.UserService.UserSearchType;
 import net.oopscraft.application.user.entity.User;
 
-@PreAuthorize("hasAuthority('ADMIN_USER')")
+//@PreAuthorize("hasAuthority('ADMIN_USER')")
 @Controller
 @RequestMapping("/admin/user")
 public class UserController {
-
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+	
 	@Autowired
-	UserService userService;
-
-	@Autowired
-	HttpServletResponse response;
-
-	/**
-	 * Forwards user page
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
+	UserRepository userRepository;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView user() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/user.tiles");
-		modelAndView.addObject("locales", LocaleUtility.getLocales());
-		modelAndView.addObject("statuses", User.Status.values());
+	public ModelAndView index() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("admin/user.html");
 		return modelAndView;
 	}
-
-	/**
-	 * Gets users
-	 * 
-	 * @param key
-	 * @param value
-	 * @param page
-	 * @param rows
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public String getUsers(
-		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows,
-		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-		@RequestParam(value = "searchType", required = false) String searchType,
-		@RequestParam(value = "searchValue", required = false) String searchValue
-	) throws Exception {
-		PageInfo pageInfo = new PageInfo(rows, page, true);
-		UserSearchType userSearchType= null;
-		if(StringUtility.isNotEmpty(searchType)) {
-			userSearchType = UserSearchType.valueOf(searchType);
-		}
-		List<User> users = userService.getUsers(pageInfo, userSearchType, searchValue);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(users);
-	}
-
-	/**
-	 * Gets user details.
-	 * 
-	 * @param id
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "getUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public String getUser(@RequestParam(value = "id") String id) throws Exception {
-		User user = userService.getUser(id);
-		return JsonUtility.toJson(user);
-	}
-
-	/**
-	 * Saves user details.
-	 * 
-	 * @param payload
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "saveUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
-	public String saveUser(@RequestBody String payload) throws Exception {
-		User user = JsonUtility.toObject(payload, User.class);
-		user = userService.saveUser(user);
-		return JsonUtility.toJson(user);
-	}
 	
-	/**
-	 * Deletes user.
-	 * 
-	 * @param payload
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "deleteUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteUser(@RequestParam(value = "id") String id) throws Exception {
-		userService.deleteUser(id);
+	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody List<User> getUsers(User user, PageInfo pageInfo) throws Exception {
+		LOGGER.info(JsonConverter.toJson(user));
+		LOGGER.info(JsonConverter.toJson(pageInfo));
+		List<User> users = userRepository.findAll();
+		LOGGER.info(JsonConverter.toJson(users));
+		return users;
 	}
+
+//	/**
+//	 * Forwards user page
+//	 * 
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	
+//	@RequestMapping(method = RequestMethod.GET)
+//	public ModelAndView index() throws Exception {
+//		ModelAndView modelAndView = new ModelAndView("admin/__admin.html");
+//		ValueMap user = new ValueMap();
+//		user.setString("id", "user id");
+//		user.setString("name", "user name");
+//		modelAndView.addObject("user", user);
+//		return modelAndView;
+//	}
+	
+
+//	/**
+//	 * Gets users
+//	 * 
+//	 * @param key
+//	 * @param value
+//	 * @param page
+//	 * @param rows
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@ResponseBody
+//	public String getUsers(
+//		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows,
+//		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+//		@RequestParam(value = "searchType", required = false) String searchType,
+//		@RequestParam(value = "searchValue", required = false) String searchValue
+//	) throws Exception {
+//		PageInfo pageInfo = new PageInfo(rows, page, true);
+//		UserSearchType userSearchType= null;
+//		if(StringUtility.isNotEmpty(searchType)) {
+//			userSearchType = UserSearchType.valueOf(searchType);
+//		}
+//		List<User> users = userService.getUsers(pageInfo, userSearchType, searchValue);
+//		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+//		return JsonUtility.toJson(users);
+//	}
+//
+//	/**
+//	 * Gets user details.
+//	 * 
+//	 * @param id
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value = "getUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@ResponseBody
+//	public String getUser(@RequestParam(value = "id") String id) throws Exception {
+//		User user = userService.getUser(id);
+//		return JsonUtility.toJson(user);
+//	}
+//
+//	/**
+//	 * Saves user details.
+//	 * 
+//	 * @param payload
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value = "saveUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@ResponseBody
+//	@Transactional(rollbackFor = Exception.class)
+//	public String saveUser(@RequestBody String payload) throws Exception {
+//		User user = JsonUtility.toObject(payload, User.class);
+//		user = userService.saveUser(user);
+//		return JsonUtility.toJson(user);
+//	}
+//	
+//	/**
+//	 * Deletes user.
+//	 * 
+//	 * @param payload
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value = "deleteUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@ResponseBody
+//	@Transactional(rollbackFor = Exception.class)
+//	public void deleteUser(@RequestParam(value = "id") String id) throws Exception {
+//		userService.deleteUser(id);
+//	}
 
 }

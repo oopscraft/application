@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.user.AuthorityService;
@@ -72,7 +72,7 @@ public class AuthorityController {
 		}
 		List<Authority> properties = authorityService.getAuthorities(pageInfo, authoritySearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(properties);
+		return JsonConverter.toJson(properties);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class AuthorityController {
 	@ResponseBody
 	public String getAuthority(@RequestParam(value = "id") String id) throws Exception {
 		Authority authority = authorityService.getAuthority(id);
-		return JsonUtility.toJson(authority);
+		return JsonConverter.toJson(authority);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class AuthorityController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveAuthority(@RequestBody String payload) throws Exception {
-		Authority authority = JsonUtility.toObject(payload, Authority.class);
+		Authority authority = JsonConverter.toObject(payload, Authority.class);
 		authorityService.saveAuthority(authority);
 	}
 

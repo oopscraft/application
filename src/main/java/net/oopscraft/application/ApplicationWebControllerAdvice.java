@@ -1,20 +1,50 @@
 package net.oopscraft.application;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.ValueMap;
+import net.oopscraft.application.user.UserRepository;
+import net.oopscraft.application.user.entity.User;
 
 @Controller
 @ControllerAdvice
 @RequestMapping("/")
-public class ApplicationWebController {
+public class ApplicationWebControllerAdvice {
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(ApplicationWebControllerAdvice.class);
+	
+	@Autowired
+	UserRepository userRepository;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("main.tiles");
+	public ModelAndView index(User user, PageInfo pageInfo) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("admin/__admin.html");
+		LOGGER.info(JsonConverter.toJson(user));
+		LOGGER.info(JsonConverter.toJson(pageInfo));
 		return modelAndView;
+	}
+	
+	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody List<User> getUsers(User user, PageInfo pageInfo) throws Exception {
+		LOGGER.info(JsonConverter.toJson(user));
+		LOGGER.info(JsonConverter.toJson(pageInfo));
+		List<User> users = userRepository.findAll();
+		LOGGER.info(JsonConverter.toJson(users));
+		return users;
 	}
 	
 //    @ModelAttribute("__configuration")

@@ -6,7 +6,7 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.monitor.MonitorAgent;
 import net.oopscraft.application.monitor.MonitorInfo;
@@ -55,7 +55,7 @@ public class AdminWebSocketHandler extends net.oopscraft.application.core.spring
 		ValueMap messageMap = new ValueMap();
 		messageMap.put("id", messageId);
 		messageMap.put("message", message);
-		return JsonUtility.toJson(messageMap);
+		return JsonConverter.toJson(messageMap);
 	}
 
 
@@ -81,7 +81,7 @@ public class AdminWebSocketHandler extends net.oopscraft.application.core.spring
 	public void onMessage(WebSocketSession session, TextMessage message) {
 		LOGGER.info("onMessage");
 		try {
-			ValueMap messageMap = JsonUtility.toObject(message.getPayload(), ValueMap.class);
+			ValueMap messageMap = JsonConverter.toObject(message.getPayload(), ValueMap.class);
 			MessageId messageId = MessageId.valueOf(messageMap.getString("id"));
 			String responseMessage = null;
 			switch(messageId){

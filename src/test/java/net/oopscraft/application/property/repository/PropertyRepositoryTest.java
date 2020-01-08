@@ -5,10 +5,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.property.PropertyRepository;
 import net.oopscraft.application.property.entity.Property;
+import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class PropertyRepositoryTest extends ApplicationTestRunner {
 	

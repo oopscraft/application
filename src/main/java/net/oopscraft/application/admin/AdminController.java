@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.menu.MenuService;
@@ -69,7 +69,7 @@ public class AdminController {
 	@Transactional
 	public String getGroups() throws Exception {
 		List<Group> groups = groupService.getGroups();
-		return JsonUtility.toJson(groups);
+		return JsonConverter.toJson(groups);
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class AdminController {
 		}
 		List<Role> roles = roleService.getRoles(pageInfo, roleSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(roles);
+		return JsonConverter.toJson(roles);
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class AdminController {
 		}
 		List<Authority> properties = authorityService.getAuthorities(pageInfo, authoritySearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(properties);
+		return JsonConverter.toJson(properties);
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class AdminController {
 	@Transactional
 	public String getMenus() throws Exception {
 		List<Menu> groups = menuService.getMenus();
-		return JsonUtility.toJson(groups);
+		return JsonConverter.toJson(groups);
 	}
 
 }

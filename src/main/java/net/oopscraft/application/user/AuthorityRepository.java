@@ -10,7 +10,7 @@ import net.oopscraft.application.user.entity.Authority;
 @Repository
 public interface AuthorityRepository extends JpaRepository<Authority,String> {
 	
-	public Page<Authority> findAllByOrderBySystemDataYnDescSystemInsertDateDesc(Pageable pageable) throws Exception;
+	public Page<Authority> findAllByOrderBySystemInsertDateDesc(Pageable pageable) throws Exception;
 
 	public Page<Authority> findByIdContaining(String id, Pageable pageable) throws Exception;
 	

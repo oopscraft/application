@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.monitor.MonitorAgent;
 import net.oopscraft.application.monitor.MonitorInfo;
 
@@ -35,7 +35,7 @@ public class MonitorController {
 	@ResponseBody
 	public String getMonitorInfos() throws Exception {
 		List<MonitorInfo> monitorInfos = MonitorAgent.getInstance().getMonitorInfos();
-		return JsonUtility.toJson(monitorInfos);
+		return JsonConverter.toJson(monitorInfos);
 	}
 
 }

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.menu.entity.Menu;
 
@@ -61,7 +61,7 @@ public class MenuController {
 	@Transactional
 	public String getMenus() throws Exception {
 		List<Menu> menus = menuService.getMenus();
-		return JsonUtility.toJson(menus);
+		return JsonConverter.toJson(menus);
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public class MenuController {
 	@Transactional
 	public String getMenu(@RequestParam(value = "id") String id) throws Exception {
 		Menu menu = menuService.getMenu(id);
-		return JsonUtility.toJson(menu);
+		return JsonConverter.toJson(menu);
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class MenuController {
 	@Transactional
 	public String getBreadCrumbs(@RequestParam(value = "id") String id) throws Exception {
 		List<Menu> breadCrumbs = menuService.getBreadCrumbs(id);
-		return JsonUtility.toJson(breadCrumbs);
+		return JsonConverter.toJson(breadCrumbs);
 	}
 
 	/**
@@ -104,9 +104,9 @@ public class MenuController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public String saveMenu(@RequestBody String payload) throws Exception {
-		Menu role = JsonUtility.toObject(payload, Menu.class);
+		Menu role = JsonConverter.toObject(payload, Menu.class);
 		role = menuService.saveMenu(role);
-		return JsonUtility.toJson(role);
+		return JsonConverter.toJson(role);
 	}
 	
 	/**
@@ -121,7 +121,7 @@ public class MenuController {
 	@Transactional(rollbackFor = Exception.class)
 	public String deleteMenu(@RequestParam(value = "id") String id) throws Exception {
 		menuService.deleteMenu(id);
-		return JsonUtility.toJson(id);
+		return JsonConverter.toJson(id);
 	}
 
 }

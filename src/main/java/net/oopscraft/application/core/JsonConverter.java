@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-public class JsonUtility {
+public class JsonConverter {
 	
 	public static ObjectMapper objectMapper = new ObjectMapper();
 	static {
@@ -27,10 +27,6 @@ public class JsonUtility {
 	
 	public static String toJson(List<?> list) throws Exception {
 		return objectMapper.writeValueAsString(list);
-	}
-	
-	public static String toJson1(Enum<?> enm) throws Exception {
-		return null;
 	}
 	
 	public static <T> T toObject(String json, Class<T> clazz) throws Exception {

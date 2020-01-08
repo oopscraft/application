@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.code.CodeService;
 import net.oopscraft.application.code.CodeService.CodeSearchType;
 import net.oopscraft.application.code.entity.Code;
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
 
@@ -74,7 +74,7 @@ public class CodeController {
 		}
 		List<Code> codes = codeService.getCodes(pageInfo, codeSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(codes);
+		return JsonConverter.toJson(codes);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class CodeController {
 	@Transactional
 	public String getCode(@RequestParam(value = "id") String id) throws Exception {
 		Code code = codeService.getCode(id);
-		return JsonUtility.toJson(code);
+		return JsonConverter.toJson(code);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class CodeController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveCode(@RequestBody String payload) throws Exception {
-		Code code = JsonUtility.toObject(payload, Code.class);
+		Code code = JsonConverter.toObject(payload, Code.class);
 		codeService.saveCode(code);
 	}
 

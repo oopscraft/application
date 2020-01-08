@@ -3,9 +3,9 @@ package net.oopscraft.application.code;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.code.entity.Code;
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class CodeServiceTest extends ApplicationTestRunner {
 	

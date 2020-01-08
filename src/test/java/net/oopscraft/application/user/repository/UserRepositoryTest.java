@@ -8,8 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.test.ApplicationTestRunner;
 import net.oopscraft.application.user.UserRepository;
 import net.oopscraft.application.user.entity.User;
 
@@ -57,7 +57,7 @@ public class UserRepositoryTest extends ApplicationTestRunner {
 	@Test
 	public void testFindAllByOrderByJoinDateDesc() throws Exception {
 		Pageable pageable = new PageRequest(0, 10);
-		Page<User> page = userRepository.findAllByOrderBySystemDataYnDescJoinDateDesc(pageable);
+		Page<User> page = userRepository.findAllByOrderByJoinDateDesc(pageable);
 		List<User> users = page.getContent();
 		System.out.println(new TextTable(users));
 		assert(true);

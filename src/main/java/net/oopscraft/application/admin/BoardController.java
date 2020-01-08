@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.board.BoardService.BoardSearchType;
 import net.oopscraft.application.board.entity.Board;
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
 
@@ -75,7 +75,7 @@ public class BoardController {
 		}
 		List<Board> boards = boardService.getBoards(pageInfo, boardSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(boards);
+		return JsonConverter.toJson(boards);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class BoardController {
 	@ResponseBody
 	public String getBoard(@RequestParam(value = "id") String id) throws Exception {
 		Board board = boardService.getBoard(id);
-		return JsonUtility.toJson(board);
+		return JsonConverter.toJson(board);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class BoardController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveBoard(@RequestBody String payload) throws Exception {
-		Board board = JsonUtility.toObject(payload, Board.class);
+		Board board = JsonConverter.toObject(payload, Board.class);
 		boardService.saveBoard(board);
 	}
 
@@ -129,7 +129,7 @@ public class BoardController {
 	@RequestMapping(value="getPolicies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public String getPolicies() throws Exception {
-		return JsonUtility.toJson(Board.Policy.values());
+		return JsonConverter.toJson(Board.Policy.values());
 	}
 
 }

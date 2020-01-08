@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.message.MessageService;
@@ -72,7 +72,7 @@ public class MessageController {
 		}
 		List<Message> messages = messageService.getMessages(pageInfo, messageSearchType, searchValue);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(messages);
+		return JsonConverter.toJson(messages);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class MessageController {
 	@ResponseBody
 	public String getMessage(@RequestParam(value = "id") String id) throws Exception {
 		Message message = messageService.getMessage(id);
-		return JsonUtility.toJson(message);
+		return JsonConverter.toJson(message);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class MessageController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void saveMessage(@RequestBody String payload) throws Exception {
-		Message message = JsonUtility.toObject(payload, Message.class);
+		Message message = JsonConverter.toObject(payload, Message.class);
 		messageService.saveMessage(message);
 	}
 

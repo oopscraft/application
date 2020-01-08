@@ -10,7 +10,7 @@ import net.oopscraft.application.code.entity.Code;
 @Repository
 public interface CodeRepository extends JpaRepository<Code,String> {
 	
-	public Page<Code> findAllByOrderBySystemDataYn(Pageable pageable) throws Exception;
+	public Page<Code> findAllBy(Pageable pageable) throws Exception;
 
 	public Page<Code> findByIdContaining(String id, Pageable pageable) throws Exception;
 	

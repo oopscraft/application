@@ -8,7 +8,7 @@ import net.oopscraft.application.message.entity.Message;
 
 public interface MessageRepository extends JpaRepository<Message,String>{
 
-	public Page<Message> findAllByOrderBySystemDataYn(Pageable pageable) throws Exception;
+	public Page<Message> findAll(Pageable pageable);
 
 	public Page<Message> findByIdContaining(String id, Pageable pageable) throws Exception;
 	

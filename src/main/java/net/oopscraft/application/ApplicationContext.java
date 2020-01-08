@@ -39,7 +39,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import net.oopscraft.application.core.PBEncryptor;
 import net.oopscraft.application.core.mybatis.PageInterceptor;
 
 /**
@@ -68,7 +73,8 @@ public class ApplicationContext {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContext.class);
 
-	protected static Properties properties;
+	static String propertiesPath = "conf/application.properties";
+	static Properties properties;
 	
 	DataSource dataSource;
 	LocalContainerEntityManagerFactoryBean entityManagerFactory;
@@ -78,8 +84,14 @@ public class ApplicationContext {
 	 * Creates static resources 
 	 */
 	static {
+		LOGGER.info("Loads properties file[{}]", propertiesPath);
 		try {
-			properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(new File("conf/application.properties")));
+			properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(new File(propertiesPath)));
+			PBEncryptor pbEncryptor = new PBEncryptor();
+			for(String propertyName : properties.stringPropertyNames()) {
+				String value = properties.getProperty(propertyName);
+				properties.put(propertyName, pbEncryptor.decryptIdentifiedValue(value));
+			}
 		}catch(Exception e) {
 			e.printStackTrace(System.err);
 		}
@@ -246,4 +258,8 @@ public class ApplicationContext {
 		return applicationMessageSource;
 	}
 
+
+
+	
+	
 }

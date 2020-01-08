@@ -8,7 +8,7 @@ import net.oopscraft.application.property.entity.Property;
 
 public interface PropertyRepository extends JpaRepository<Property,String>{
 
-	public Page<Property> findAllByOrderBySystemDataYn(Pageable pageable) throws Exception;
+	public Page<Property> findAllBy(Pageable pageable) throws Exception;
 
 	public Page<Property> findByIdContaining(String id, Pageable pageable) throws Exception;
 	

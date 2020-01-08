@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -62,22 +63,25 @@ public class User extends SystemEntity {
 	@Column(name = "USER_SIGN")
 	String signature;
 	
-	@Column(name = "USER_JOIN_DTTM")
+	@Column(name = "JOIN_DATE")
 	Date joinDate;
 	
-	@Column(name = "USER_CLOS_DTTM")
+	@Column(name = "CLOS_DATE")
 	Date closeDate;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_USER_GROP_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROP_ID"))
+//	@ManyToMany(fetch = FetchType.LAZY)
+//	@JoinTable(name = "APP_USER_GROP_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROP_ID"))
+	@Transient
 	List<Group> groups = new ArrayList<Group>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_USER_ROLE_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+//	@ManyToMany(fetch = FetchType.LAZY)
+//	@JoinTable(name = "APP_USER_ROLE_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+	@Transient
 	List<Role> roles = new ArrayList<Role>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_USER_AUTH_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+//	@ManyToMany(fetch = FetchType.LAZY)
+//	@JoinTable(name = "APP_USER_AUTH_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@Transient
 	List<Authority> authorities = new ArrayList<Authority>();
 
 	public String getId() {

@@ -16,7 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.restclient.example.ExampleClient;
@@ -81,7 +81,7 @@ public class RestClientMain extends JFrame {
 					Object restClient = RestClientFactory.getRestClient(clazz, restRequestXml, host);
 					ValueMap params = null; 
 					if(testTextArea.getText() != null) { 
-						params = JsonUtility.toObject(testTextArea.getText(), ValueMap.class); 
+						params = JsonConverter.toObject(testTextArea.getText(), ValueMap.class); 
 					} 
 					resultTextArea.setText(""); 
 					
@@ -109,7 +109,7 @@ public class RestClientMain extends JFrame {
 					Object response = method.invoke(restClient, args.toArray(new Object[args.size()-1]));
 					String result = null;
 					if(response instanceof Object) {
-						result = JsonUtility.toJson(response);
+						result = JsonConverter.toJson(response);
 					}else {
 						result = (String) response;
 					}
