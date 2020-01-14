@@ -10,12 +10,14 @@ import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,24 +28,30 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 @Entity
 @Table(name = "APP_USER_INFO")
 @EntityListeners(SystemEntityListener.class)
+@Inheritance(
+    strategy = InheritanceType.JOINED
+)
 public class User extends SystemEntity {
 	
 	@Id
-	@Column(name = "USER_ID")
+	@Column(name = "USER_ID", length=32)
 	String id;
+
+	@Column(name = "USER_PASS")
+	String password;
 
 	@Column(name = "USER_NAME")
 	String name;
 	
-	@Column(name = "USER_PASS")
-	String password;
+	@Column(name = "USER_NICK")
+	String nickname;
 	
 	public enum Status {
 		ACTIVE, SUSPENDED, CLOSED
 	}
 	@Column(name = "USER_STAT")
 	@Enumerated(EnumType.STRING)
-	Status status = Status.ACTIVE;
+	Status status;
 	
 	@Column(name = "USER_EMIL")
 	String email;
@@ -53,15 +61,12 @@ public class User extends SystemEntity {
 
 	@Column(name = "USER_LOCL")
 	String locale;
-
-	@Column(name = "USER_NICK")
-	String nickname;
 	
-	@Column(name = "USER_AVAT")
-	String avatar;
+	@Column(name = "USER_IMGE", length=4000)
+	String image;
 
-	@Column(name = "USER_SIGN")
-	String signature;
+	@Column(name = "USER_PRFL", length=4000)
+	String profile;
 	
 	@Column(name = "JOIN_DATE")
 	Date joinDate;
@@ -69,19 +74,34 @@ public class User extends SystemEntity {
 	@Column(name = "CLOS_DATE")
 	Date closeDate;
 
-//	@ManyToMany(fetch = FetchType.LAZY)
-//	@JoinTable(name = "APP_USER_GROP_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROP_ID"))
-	@Transient
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+		name = "APP_USER_GROP_MAP", 
+		joinColumns = @JoinColumn(name = "USER_ID"), 
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "GROP_ID"), 
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Group> groups = new ArrayList<Group>();
 
-//	@ManyToMany(fetch = FetchType.LAZY)
-//	@JoinTable(name = "APP_USER_ROLE_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
-	@Transient
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+		name = "APP_USER_ROLE_MAP", 
+		joinColumns = @JoinColumn(name = "USER_ID"), 
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "ROLE_ID"), 
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Role> roles = new ArrayList<Role>();
 
-//	@ManyToMany(fetch = FetchType.LAZY)
-//	@JoinTable(name = "APP_USER_AUTH_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	@Transient
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+		name = "APP_USER_AUTH_MAP", 
+		joinColumns = @JoinColumn(name = "USER_ID"), 
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"), 
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Authority> authorities = new ArrayList<Authority>();
 
 	public String getId() {
@@ -150,20 +170,20 @@ public class User extends SystemEntity {
 		this.nickname = nickname;
 	}
 
-	public String getAvatar() {
-		return avatar;
+	public String getImage() {
+		return image;
 	}
 
-	public void setAvatar(String avatar) {
-		this.avatar = avatar;
+	public void setImage(String image) {
+		this.image = image;
 	}
 
-	public String getSignature() {
-		return signature;
+	public String getProfile() {
+		return profile;
 	}
 
-	public void setSignature(String signature) {
-		this.signature = signature;
+	public void setProfile(String profile) {
+		this.profile = profile;
 	}
 	
 	public Date getJoinDate() {

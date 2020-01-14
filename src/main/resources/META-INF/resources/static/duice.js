@@ -33,6 +33,23 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 var duice;
 (function (duice) {
     /**
+     * Configuration
+     */
+    duice.Configuration = {
+        version: '0.9',
+        cssEnable: true
+    };
+    function initialize() {
+        // prints configuration
+        console.log(duice.Configuration);
+        // initializes component
+        var $context = typeof self !== 'undefined' ? self :
+            typeof window !== 'undefined' ? window :
+                {};
+        duice.initializeComponent(document, $context);
+    }
+    duice.initialize = initialize;
+    /**
      * Component definition registry
      */
     duice.ComponentDefinitionRegistry = {
@@ -87,6 +104,27 @@ var duice;
         });
     }
     duice.initializeComponent = initializeComponent;
+    /**
+     * Loads external style
+     * @param href
+     */
+    function loadExternalStyle(href) {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        document.head.appendChild(link);
+    }
+    duice.loadExternalStyle = loadExternalStyle;
+    /**
+     * Loads external script
+     * @param src
+     */
+    function loadExternalScript(src) {
+        var script = document.createElement('script');
+        script.src = src;
+        document.head.appendChild(script);
+    }
+    duice.loadExternalScript = loadExternalScript;
     /**
      * duice.Observable
      * Observable abstract class of Observer Pattern
@@ -615,6 +653,14 @@ var duice;
         return uuid;
     }
     /**
+     * Adds class
+     */
+    function addClassNameIfCssEnable(element, className) {
+        if (duice.Configuration.cssEnable) {
+            element.classList.add(className);
+        }
+    }
+    /**
      * Checks mobile browser
      */
     function isMobile() {
@@ -632,6 +678,22 @@ var duice;
         }
     }
     duice.isMobile = isMobile;
+    /**
+     * Returns Query Variables
+     */
+    function getQueryVariables() {
+        var queryVariables = new Object();
+        var queryString = window.location.search.substring(1);
+        var vars = queryString.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            var key = decodeURIComponent(pair[0]);
+            var value = decodeURIComponent(pair[1]);
+            queryVariables[key] = value;
+        }
+        return queryVariables;
+    }
+    duice.getQueryVariables = getQueryVariables;
     /**
      * Check if value is empty
      * @param value
@@ -835,6 +897,7 @@ var duice;
             }
         }, millis);
     }
+    duice.delayCall = delayCall;
     /**
      * Returns current max z-index value.
      * @return max z-index value
@@ -1319,7 +1382,7 @@ var duice;
             __extends(GenericInput, _super);
             function GenericInput(input) {
                 var _this = _super.call(this, input) || this;
-                _this.input.classList.add('duice-ui-genericInput');
+                addClassNameIfCssEnable(_this.input, 'duice-ui-genericInput');
                 return _this;
             }
             GenericInput.prototype.update = function (map, obj) {
@@ -1350,7 +1413,7 @@ var duice;
             __extends(TextInput, _super);
             function TextInput(input) {
                 var _this = _super.call(this, input) || this;
-                _this.input.classList.add('duice-ui-textInput');
+                addClassNameIfCssEnable(_this.input, 'duice-ui-textInput');
                 _this.format = new StringFormat();
                 return _this;
             }
@@ -1388,7 +1451,7 @@ var duice;
             __extends(NumberInput, _super);
             function NumberInput(input) {
                 var _this = _super.call(this, input) || this;
-                _this.input.classList.add('duice-ui-numberInput');
+                addClassNameIfCssEnable(_this.input, 'duice-ui-numberInput');
                 _this.input.setAttribute('type', 'text');
                 _this.format = new NumberFormat();
                 return _this;
@@ -1425,7 +1488,7 @@ var duice;
             __extends(CheckboxInput, _super);
             function CheckboxInput(input) {
                 var _this = _super.call(this, input) || this;
-                _this.input.classList.add('duice-ui-checkboxInput');
+                addClassNameIfCssEnable(_this.input, 'duice-ui-checkboxInput');
                 // stop click event propagation
                 _this.input.addEventListener('click', function (event) {
                     event.stopPropagation();
@@ -1454,7 +1517,7 @@ var duice;
             __extends(RadioInput, _super);
             function RadioInput(input) {
                 var _this = _super.call(this, input) || this;
-                _this.input.classList.add('duice-ui-radioInput');
+                addClassNameIfCssEnable(_this.input, 'duice-ui-radioInput');
                 return _this;
             }
             RadioInput.prototype.update = function (map, obj) {
@@ -1481,7 +1544,7 @@ var duice;
                 var _this = _super.call(this, input) || this;
                 _this.type = _this.input.getAttribute('type').toLowerCase();
                 _this.input.setAttribute('type', 'text');
-                _this.input.classList.add('duice-ui-dateInput');
+                addClassNameIfCssEnable(_this.input, 'duice-ui-dateInput');
                 // adds click event listener
                 var $this = _this;
                 _this.input.addEventListener('click', function (event) {
@@ -1878,7 +1941,6 @@ var duice;
             Select.prototype.update = function (map, obj) {
                 var value = map.get(this.getName());
                 this.select.value = defaultIfEmpty(value, '');
-                console.log('this.select.selectedIndex', this.select.selectedIndex);
                 if (this.select.selectedIndex < 0) {
                     if (this.defaultOptions.length > 0) {
                         this.defaultOptions[0].selected = true;
@@ -2045,30 +2107,30 @@ var duice;
                 var _this = _super.call(this, table) || this;
                 _this.tbodies = new Array();
                 _this.table = table;
-                _this.table.classList.add('duice-ui-table');
+                addClassNameIfCssEnable(_this.table, 'duice-ui-table');
                 // initializes caption
                 var caption = _this.table.querySelector('caption');
                 if (caption) {
-                    caption.classList.add('duice-ui-table__caption');
+                    addClassNameIfCssEnable(caption, 'duice-ui-table__caption');
                     caption = executeExpression(caption, new Object());
                     initializeComponent(caption, new Object());
                 }
                 // initializes head
                 var thead = _this.table.querySelector('thead');
                 if (thead) {
-                    thead.classList.add('duice-ui-table__thead');
+                    addClassNameIfCssEnable(thead, 'duice-ui-table__thead');
                     thead = executeExpression(thead, new Object());
                     initializeComponent(thead, new Object());
                 }
                 // clones body
                 var tbody = _this.table.querySelector('tbody');
                 _this.tbody = tbody.cloneNode(true);
-                _this.tbody.classList.add('duice-ui-table__tbody');
+                addClassNameIfCssEnable(_this.tbody, 'duice-ui-table__tbody');
                 _this.table.removeChild(tbody);
                 // initializes foot
                 var tfoot = _this.table.querySelector('tfoot');
                 if (tfoot) {
-                    tfoot.classList.add('duice-ui-table__tfoot');
+                    addClassNameIfCssEnable(tfoot, 'duice-ui-table__tfoot');
                     tfoot = executeExpression(tfoot, new Object());
                     initializeComponent(tfoot, new Object());
                 }
@@ -2151,7 +2213,7 @@ var duice;
             Table.prototype.createTbody = function (index, map) {
                 var $this = this;
                 var tbody = this.tbody.cloneNode(true);
-                tbody.classList.add('duice-ui-table__tbody');
+                addClassNameIfCssEnable(tbody, 'duice-ui-table__tbody');
                 var $context = new Object;
                 $context['index'] = index;
                 $context[this.item] = map;
@@ -2512,19 +2574,36 @@ var duice;
         }(ListUiComponent));
         ui.UList = UList;
         /**
-         * new duice.dialog.Blocker(this.div).block().unblock();
-         *
+         * duice.ui.Blocker
          */
         var Blocker = /** @class */ (function () {
             function Blocker(element) {
+                this.opacity = 0.2;
                 this.element = element;
                 this.div = document.createElement('div');
                 this.div.classList.add('duice-ui-blocker');
             }
+            Blocker.prototype.setOpacity = function (opacity) {
+                this.opacity = opacity;
+            };
             Blocker.prototype.block = function () {
                 // adjusting position
                 this.div.style.position = 'fixed';
                 this.div.style.zIndex = String(getCurrentMaxZIndex() + 1);
+                this.div.style.background = 'rgba(0, 0, 0, ' + this.opacity + ')';
+                this.takePosition();
+                // adds events
+                var $this = this;
+                getCurrentWindow().addEventListener('scroll', function () {
+                    $this.takePosition();
+                });
+                // append
+                this.element.appendChild(this.div);
+            };
+            Blocker.prototype.unblock = function () {
+                this.element.removeChild(this.div);
+            };
+            Blocker.prototype.takePosition = function () {
                 // full blocking in case of BODY
                 if (this.element.tagName == 'BODY') {
                     this.div.style.width = '100%';
@@ -2544,15 +2623,34 @@ var duice;
                     this.div.style.top = top + 'px';
                     this.div.style.left = left + 'px';
                 }
-                // append
-                this.element.appendChild(this.div);
             };
-            Blocker.prototype.unblock = function () {
-                this.element.removeChild(this.div);
+            Blocker.prototype.getBlockDiv = function () {
+                return this.div;
             };
             return Blocker;
         }());
         ui.Blocker = Blocker;
+        /**
+         * duice.ui.Progress
+         */
+        var Progress = /** @class */ (function () {
+            function Progress(element) {
+                this.blocker = new Blocker(element);
+                this.blocker.setOpacity(0.0);
+            }
+            Progress.prototype.start = function () {
+                this.blocker.block();
+                this.div = document.createElement('div');
+                this.div.classList.add('duice-ui-progress');
+                this.blocker.getBlockDiv().appendChild(this.div);
+            };
+            Progress.prototype.stop = function () {
+                this.blocker.getBlockDiv().removeChild(this.div);
+                this.blocker.unblock();
+            };
+            return Progress;
+        }());
+        ui.Progress = Progress;
         /**
          * duice.ui.Modal
          */
@@ -2878,8 +2976,5 @@ var duice;
  * DOMContentLoaded event process
  */
 document.addEventListener("DOMContentLoaded", function (event) {
-    var $context = typeof self !== 'undefined' ? self :
-        typeof window !== 'undefined' ? window :
-            {};
-    duice.initializeComponent(document, $context);
+    duice.initialize();
 });

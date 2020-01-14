@@ -3,7 +3,6 @@
 /target/
 /log/
 /lib/
-/data/
 /doc/apidocs/
 /.classpath
 /.project
@@ -15,5 +14,3 @@
 *.pid
 *.swo
 *.swp
-
-/dat/

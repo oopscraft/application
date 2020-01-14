@@ -121,7 +121,7 @@ CREATE TABLE APP_AUTH_INFO
 	-- Authority ID
 	AUTH_ID varchar(32) NOT NULL,
 	-- System Data Yn
-	SYS_DATA_YN varchar(1),
+	SYS_EMBD_YN varchar(1),
 	-- System Insert Date
 	SYS_INST_DATE datetime,
 	-- System Insert User ID
@@ -213,7 +213,7 @@ CREATE TABLE APP_CODE_INFO
 	-- Code ID
 	CODE_ID varchar(32) NOT NULL,
 	-- System Data Yn
-	SYS_DATA_YN varchar(1),
+	SYS_EMBD_YN varchar(1),
 	-- System Insert Date
 	SYS_INST_DATE datetime,
 	-- System Insert User ID
@@ -238,7 +238,7 @@ CREATE TABLE APP_CODE_ITEM_INFO
 	-- Item ID
 	ITEM_ID varchar(32) NOT NULL,
 	-- System Data Yn
-	SYS_DATA_YN varchar(1) NOT NULL,
+	SYS_EMBD_YN varchar(1) NOT NULL,
 	-- System Insert Date
 	SYS_INST_DATE datetime NOT NULL,
 	-- System Insert User ID
@@ -264,6 +264,10 @@ CREATE TABLE APP_GROP_AUTH_MAP
 	GROP_ID varchar(32) NOT NULL,
 	-- Authority ID
 	AUTH_ID varchar(32) NOT NULL,
+	-- Start Time
+	STRT_DATE datetime NOT NULL,
+	-- End Date
+	END_DATE datetime NOT NULL,
 	PRIMARY KEY (GROP_ID, AUTH_ID)
 );
 
@@ -274,7 +278,7 @@ CREATE TABLE APP_GROP_INFO
 	-- Group ID
 	GROP_ID varchar(32) NOT NULL,
 	-- System Data Yn
-	SYS_DATA_YN varchar(1),
+	SYS_EMBD_YN varchar(1),
 	-- System Insert Date
 	SYS_INST_DATE datetime,
 	-- System Insert User ID
@@ -289,8 +293,6 @@ CREATE TABLE APP_GROP_INFO
 	GROP_NAME varchar(256),
 	-- Group Description
 	GROP_DESC varchar(4000),
-	-- Display Sequence
-	DISP_SEQ int,
 	PRIMARY KEY (GROP_ID)
 );
 
@@ -302,6 +304,10 @@ CREATE TABLE APP_GROP_ROLE_MAP
 	GROP_ID varchar(32) NOT NULL,
 	-- Role ID
 	ROLE_ID varchar(32) NOT NULL,
+	-- Start Time
+	STRT_DATE datetime NOT NULL,
+	-- End Date
+	END_DATE datetime NOT NULL,
 	PRIMARY KEY (GROP_ID, ROLE_ID)
 );
 
@@ -312,7 +318,7 @@ CREATE TABLE APP_MENU_INFO
 	-- Menu ID
 	MENU_ID varchar(32) NOT NULL,
 	-- System Data Yn
-	SYS_DATA_YN varchar(1) NOT NULL,
+	SYS_EMBD_YN varchar(1) NOT NULL,
 	-- System Insert Date
 	SYS_INST_DATE datetime NOT NULL,
 	-- System Insert User ID
@@ -362,7 +368,7 @@ CREATE TABLE APP_MESG_INFO
 	-- MESG_ID
 	MESG_ID varchar(32) NOT NULL,
 	-- System Data Yn
-	SYS_DATA_YN varchar(1) NOT NULL,
+	SYS_EMBD_YN varchar(1) NOT NULL,
 	-- System Insert Date
 	SYS_INST_DATE datetime NOT NULL,
 	-- System Insert User ID
@@ -387,7 +393,7 @@ CREATE TABLE APP_PROP_INFO
 	-- PROP_ID
 	PROP_ID varchar(32) NOT NULL,
 	-- System Data Yn
-	SYS_DATA_YN varchar(1) NOT NULL,
+	SYS_EMBD_YN varchar(1) NOT NULL,
 	-- System Insert Date
 	SYS_INST_DATE datetime NOT NULL,
 	-- System Insert User ID
@@ -413,6 +419,10 @@ CREATE TABLE APP_ROLE_AUTH_MAP
 	ROLE_ID varchar(32) NOT NULL,
 	-- Authority ID
 	AUTH_ID varchar(32) NOT NULL,
+	-- Start Time
+	STRT_DATE datetime NOT NULL,
+	-- End Date
+	END_DATE datetime NOT NULL,
 	PRIMARY KEY (ROLE_ID, AUTH_ID)
 );
 
@@ -423,7 +433,7 @@ CREATE TABLE APP_ROLE_INFO
 	-- Role ID
 	ROLE_ID varchar(32) NOT NULL,
 	-- System Data Yn
-	SYS_DATA_YN varchar(1),
+	SYS_EMBD_YN varchar(1),
 	-- System Insert Date
 	SYS_INST_DATE datetime,
 	-- System Insert User ID
@@ -447,6 +457,10 @@ CREATE TABLE APP_USER_AUTH_MAP
 	USER_ID varchar(32) NOT NULL,
 	-- Authority ID
 	AUTH_ID varchar(32) NOT NULL,
+	-- Start Time
+	STRT_DATE datetime NOT NULL,
+	-- End Date
+	END_DATE datetime NOT NULL,
 	PRIMARY KEY (USER_ID, AUTH_ID)
 );
 
@@ -458,6 +472,10 @@ CREATE TABLE APP_USER_GROP_MAP
 	USER_ID varchar(32) NOT NULL,
 	-- Group ID
 	GROP_ID varchar(32) NOT NULL,
+	-- Start Time
+	STRT_DATE datetime NOT NULL,
+	-- End Date
+	END_DATE datetime NOT NULL,
 	PRIMARY KEY (USER_ID, GROP_ID)
 );
 
@@ -468,7 +486,7 @@ CREATE TABLE APP_USER_INFO
 	-- User ID
 	USER_ID varchar(32) NOT NULL,
 	-- System Data Yn
-	SYS_DATA_YN varchar(1),
+	SYS_EMBD_YN varchar(1),
 	-- System Insert Date
 	SYS_INST_DATE datetime,
 	-- System Insert User ID
@@ -480,7 +498,7 @@ CREATE TABLE APP_USER_INFO
 	-- User Email
 	USER_EMIL varchar(256),
 	-- User Phone
-	USER_PHON varchar(16),
+	USER_PHON varchar(32),
 	-- User Password
 	USER_PASS varchar(256),
 	-- User Name
@@ -488,7 +506,7 @@ CREATE TABLE APP_USER_INFO
 	-- User Nickname
 	USER_NICK varchar(256),
 	-- User Status
-	USER_STAT varchar(16),
+	USER_STAT varchar(32),
 	-- User Avatar
 	USER_AVAT varchar(4000),
 	-- User Signature
@@ -530,6 +548,10 @@ CREATE TABLE APP_USER_ROLE_MAP
 	USER_ID varchar(32) NOT NULL,
 	-- Role ID
 	ROLE_ID varchar(32) NOT NULL,
+	-- Start Time
+	STRT_DATE datetime,
+	-- End Date
+	END_DATE datetime,
 	PRIMARY KEY (USER_ID, ROLE_ID)
 );
 

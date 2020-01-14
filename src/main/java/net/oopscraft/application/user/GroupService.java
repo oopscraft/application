@@ -24,7 +24,7 @@ public class GroupService {
 	 * @throws Exception
 	 */
 	public List<Group> getGroups() throws Exception {
-		List<Group> groups = groupRepository.findByUpperIdIsNullOrderByDisplaySeqAsc();
+		List<Group> groups = groupRepository.findByUpperIdIsNull();
 		for (Group group : groups) {
 			fillChildGroupRecursively(group);
 		}
@@ -53,7 +53,7 @@ public class GroupService {
 	 * @throws Exception
 	 */
 	private void fillChildGroupRecursively(Group group) throws Exception {
-		List<Group> childGroups = groupRepository.findByUpperIdOrderByDisplaySeqAsc(group.getId());
+		List<Group> childGroups = groupRepository.findByUpperId(group.getId());
 		group.setChildGroups(childGroups);
 		for (Group childGroup : childGroups) {
 			fillChildGroupRecursively(childGroup);
@@ -103,7 +103,6 @@ public class GroupService {
 		one.setUpperId(group.getUpperId());
 		one.setName(group.getName());
 		one.setDescription(group.getDescription());
-		one.setDisplaySeq(group.getDisplaySeq());
 
 		// adds roles
 		one.setRoles(group.getRoles());
@@ -124,7 +123,7 @@ public class GroupService {
 		Group group = groupRepository.getOne(id);
 
 		// checks child groups
-		List<Group> childGroups = groupRepository.findByUpperIdOrderByDisplaySeqAsc(id);
+		List<Group> childGroups = groupRepository.findByUpperId(id);
 		if (childGroups.size() > 0) {
 			throw new Exception("Can not remove.because has child groups.");
 		}

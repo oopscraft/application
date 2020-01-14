@@ -19,7 +19,7 @@ public class Application {
 	public static WebServer webServer = null;
 	
 	public static void main(String[] args) throws Exception {
-		
+
 		// setting log4j2 configuration path
 		Configurator.initialize(null, "conf/log4j2.xml");
 		

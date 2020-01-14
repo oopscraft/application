@@ -12,6 +12,7 @@ import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.plugin.Interceptor;
+import org.hibernate.cfg.AvailableSettings;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -148,13 +149,24 @@ public class ApplicationContext {
 
 		// defines vendor adapter
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setGenerateDdl(false);
+        Properties jpaProperties = new Properties();
+        jpaProperties.setProperty(AvailableSettings.HQL_BULK_ID_STRATEGY, "org.hibernate.hql.spi.id.inline.InlineIdsOrClauseBulkIdStrategy");	// Bulk-id strategies when you can’t use temporary tables
+
+		String generateDdl = System.getProperty("application.entityManagerFactory.generateDdl");
+		if("true".equals(generateDdl)) {
+			vendorAdapter.setGenerateDdl(true);
+			jpaProperties.setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop");
+			jpaProperties.setProperty(AvailableSettings.HBM2DDL_IMPORT_FILES, "classpath:/net/oopscraft/application/import.sql");
+		}else {
+			vendorAdapter.setGenerateDdl(false);
+		}
         if(LOGGER.isDebugEnabled() == true) {
         	vendorAdapter.setShowSql(true);
         }
         vendorAdapter.setDatabasePlatform(properties.getProperty("application.entityManagerFactory.databasePlatform"));
         entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
-
+        entityManagerFactory.setJpaProperties(jpaProperties);
+        
         // sets packagesToScan property.
 		List<String> packagesToScans = new ArrayList<String>();
 		packagesToScans.add(this.getClass().getPackage().getName());
@@ -166,11 +178,7 @@ public class ApplicationContext {
 		}
         entityManagerFactory.setPackagesToScan(packagesToScans.toArray(new String[packagesToScans.size()-1]));
         
-        // JPA properties
-        Properties jpaProperties = new Properties();
-        jpaProperties.setProperty("hibernate.hql.bulk_id_strategy", "org.hibernate.hql.spi.id.inline.InlineIdsOrClauseBulkIdStrategy");	// Bulk-id strategies when you can’t use temporary tables	
-        entityManagerFactory.setJpaProperties(jpaProperties);
-        
+        // return
         entityManagerFactory.afterPropertiesSet();
         return entityManagerFactory;
 	}

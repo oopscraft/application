@@ -15,6 +15,7 @@ import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -53,15 +54,22 @@ public class ApplicationWebXml implements ServletContainerInitializer {
         servlet.setLoadOnStartup(1);
         servlet.addMapping("/");
         
+        // adds spring CharacterEncodingFilter
+        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+        encodingFilter.setEncoding("UTF-8");
+        FilterRegistration.Dynamic encodingFilterDynamic = servletContext.addFilter("encodingFilter", encodingFilter);
+        encodingFilterDynamic.addMappingForUrlPatterns(null, true, "/*");
+        
+        
         // add JPA transaction filter
-        OpenEntityManagerInViewFilter filter = new OpenEntityManagerInViewFilter();
-        FilterRegistration.Dynamic openEntityManagerInViewFilter = servletContext.addFilter("openEntityManagerInViewFilter", filter);
-        openEntityManagerInViewFilter.addMappingForUrlPatterns(null, true, "/*");
+        OpenEntityManagerInViewFilter openEntityManagerInViewFilter = new OpenEntityManagerInViewFilter();
+        FilterRegistration.Dynamic openEntityManagerInViewFilterDynamic = servletContext.addFilter("openEntityManagerInViewFilter", openEntityManagerInViewFilter);
+        openEntityManagerInViewFilterDynamic.addMappingForUrlPatterns(null, true, "/*");
         
         // adds spring security filter chain
-        DelegatingFilterProxy delegatingFilterProxy = new DelegatingFilterProxy();
-        FilterRegistration.Dynamic springSecurityFilterChain = servletContext.addFilter("springSecurityFilterChain", delegatingFilterProxy);
-        springSecurityFilterChain.addMappingForUrlPatterns(null, true, "/*");
+        DelegatingFilterProxy springSecurityFilterChain = new DelegatingFilterProxy();
+        FilterRegistration.Dynamic springSecurityFilterChainDynamic = servletContext.addFilter("springSecurityFilterChain", springSecurityFilterChain);
+        springSecurityFilterChainDynamic.addMappingForUrlPatterns(null, true, "/*");
 	}
 
 }

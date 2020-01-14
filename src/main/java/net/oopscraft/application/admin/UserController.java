@@ -10,17 +10,11 @@ package net.oopscraft.application.admin;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,13 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonConverter;
-import net.oopscraft.application.core.LocaleUtility;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtility;
-import net.oopscraft.application.core.ValueMap;
-import net.oopscraft.application.user.UserRepository;
 import net.oopscraft.application.user.UserService;
-import net.oopscraft.application.user.UserService.UserSearchType;
 import net.oopscraft.application.user.entity.User;
 
 //@PreAuthorize("hasAuthority('ADMIN_USER')")
@@ -45,7 +34,7 @@ public class UserController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 	
 	@Autowired
-	UserRepository userRepository;
+	UserService userService;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
@@ -54,13 +43,21 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody List<User> getUsers(User user, PageInfo pageInfo) throws Exception {
-		LOGGER.info(JsonConverter.toJson(user));
-		LOGGER.info(JsonConverter.toJson(pageInfo));
-		List<User> users = userRepository.findAll();
-		LOGGER.info(JsonConverter.toJson(users));
+	@ResponseBody
+	public List<User> getUsers(User user, PageInfo pageInfo) throws Exception {
+		List<User> users = userService.getUsers(pageInfo, user);
 		return users;
 	}
+	
+	@RequestMapping(value = "getUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public User getUser(@RequestParam(value = "id") String id) throws Exception {
+		User user = userService.getUser(id);
+		return user;
+	}
+	
+	
+	
 
 //	/**
 //	 * Forwards user page

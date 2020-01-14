@@ -101,6 +101,7 @@ public class ApplicationWebContext implements WebMvcConfigurer {
     public ViewResolver thymeleafViewResolver() {
         viewResolver = new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(templateEngine);
+        viewResolver.setCharacterEncoding("UTF-8");
         viewResolver.setViewNames(new String[]{"*.html"});
         viewResolver.setOrder(1);
         return viewResolver;
@@ -119,7 +120,7 @@ public class ApplicationWebContext implements WebMvcConfigurer {
     public ITemplateResolver templateResolver() {
         templateResolver = new SpringResourceTemplateResolver();
         templateResolver.setPrefix("/WEB-INF/views/");
-        templateResolver.setTemplateMode("HTML5");
+        templateResolver.setTemplateMode("HTML");
         templateResolver.setCacheable(false);
         return templateResolver;
     }

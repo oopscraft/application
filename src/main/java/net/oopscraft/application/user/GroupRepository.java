@@ -10,8 +10,8 @@ import net.oopscraft.application.user.entity.Group;
 @Repository
 public interface GroupRepository extends JpaRepository<Group,String> {
 	
-	public List<Group> findByUpperIdIsNullOrderByDisplaySeqAsc() throws Exception;
+	public List<Group> findByUpperIdIsNull() throws Exception;
 	
-	public List<Group> findByUpperIdOrderByDisplaySeqAsc(String upperId) throws Exception;
+	public List<Group> findByUpperId(String upperId) throws Exception;
 
 }

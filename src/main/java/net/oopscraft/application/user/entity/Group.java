@@ -22,20 +22,20 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 public class Group extends SystemEntity {
 
 	@Id
-	@Column(name = "GROP_ID")
+	@Column(name = "GROP_ID", length=32)
 	String id;
 
-	@Column(name = "UPER_GROP_ID")
+	@Column(name = "UPER_GROP_ID", length=32)
 	String upperId;
 
 	@Column(name = "GROP_NAME")
 	String name;
+	
+	@Column(name = "GROP_ICON", length=4000)
+	String icon;
 
-	@Column(name = "GROP_DESC")
+	@Column(name = "GROP_DESC", length=4000)
 	String description;
-
-	@Column(name = "DISP_SEQ")
-	Integer displaySeq;
 	
 	@Transient
 	List<Group> childGroups;
@@ -76,20 +76,20 @@ public class Group extends SystemEntity {
 		this.upperId = upperId;
 	}
 
-	public Integer getDisplaySeq() {
-		return displaySeq;
-	}
-
-	public void setDisplaySeq(Integer displaySeq) {
-		this.displaySeq = displaySeq;
-	}
-
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 	public String getDescription() {

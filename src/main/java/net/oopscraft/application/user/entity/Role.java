@@ -26,8 +26,11 @@ public class Role extends SystemEntity {
 
 	@Column(name = "ROLE_NAME")
 	String name;
+	
+	@Column(name = "ROLE_ICON", length=4000)
+	String icon;
 
-	@Column(name = "ROLE_DESC")
+	@Column(name = "ROLE_DESC", length=4000)
 	String description;
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -48,6 +51,14 @@ public class Role extends SystemEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 	public String getDescription() {
