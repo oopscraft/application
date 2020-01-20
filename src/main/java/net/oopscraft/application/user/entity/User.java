@@ -103,6 +103,12 @@ public class User extends SystemEntity {
 		inverseForeignKey = @ForeignKey(name = "none")
 	)
 	List<Authority> authorities = new ArrayList<Authority>();
+	
+	public User() {	}
+	
+	public User(String id) {
+		this.id = id;
+	}
 
 	public String getId() {
 		return id;

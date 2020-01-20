@@ -258,7 +258,7 @@ public class ApplicationContext {
 	@Bean
 	public ReloadableResourceBundleMessageSource messageSource() throws Exception {
 		ReloadableResourceBundleMessageSource applicationMessageSource = new ReloadableResourceBundleMessageSource();
-		applicationMessageSource.setBasename("classpath:conf/i18n/message");
+		applicationMessageSource.setBasename("classpath:net/oopscraft/application/message");
 		applicationMessageSource.setFallbackToSystemLocale(false);
 		applicationMessageSource.setDefaultEncoding("UTF-8");
 		applicationMessageSource.setUseCodeAsDefaultMessage(true);

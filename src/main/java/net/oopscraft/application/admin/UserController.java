@@ -10,18 +10,23 @@ package net.oopscraft.application.admin;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.entity.User;
@@ -34,31 +39,85 @@ public class UserController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 	
 	@Autowired
+	HttpServletResponse response;
+	
+	@Autowired
 	UserService userService;
 	
+	@Autowired
+	MessageSource messageSource;
+	
+	/**
+	 * Forwards user managenemt page
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/user.html");
 		return modelAndView;
 	}
 	
+	/**
+	 * Returns list of users
+	 * @param user
+	 * @param pageInfo
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<User> getUsers(User user, PageInfo pageInfo) throws Exception {
-		List<User> users = userService.getUsers(pageInfo, user);
+	public List<User> getUsers(@ModelAttribute User user,@ModelAttribute PageInfo pageInfo) throws Exception {
+		pageInfo.setEnableTotalCount(true);
+		List<User> users = userService.getUsers(user, pageInfo);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return users;
 	}
 	
+	/**
+	 * Returns specified user.
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "getUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public User getUser(@RequestParam(value = "id") String id) throws Exception {
-		User user = userService.getUser(id);
+	public User getUser(@ModelAttribute User user) throws Exception {
+		user = userService.getUser(user);
 		return user;
 	}
 	
+	/**
+	 * Saves specified user.
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "saveUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public User saveUser(@RequestBody User user) throws Exception {
+		user = userService.saveUser(user);
+		return user;
+	}
 	
+	/**
+	 * Deletes specified user
+	 * @param user
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "deleteUser", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteUser(@RequestBody User user) throws Exception {
+		userService.deleteUser(user);
+	}
+
 	
 
+	
+	
+	
 //	/**
 //	 * Forwards user page
 //	 * 

@@ -25,6 +25,9 @@ public class Authority extends SystemEntity {
 
 	@Column(name = "AUTH_NAME")
 	String name;
+	
+	@Column(name = "AUTH_ICON", length=4000)
+	String icon;
 
 	@Column(name = "AUTH_DESC", length=4000)
 	String description;
@@ -43,6 +46,14 @@ public class Authority extends SystemEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 	public String getDescription() {

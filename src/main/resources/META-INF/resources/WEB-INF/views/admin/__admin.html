@@ -14,7 +14,7 @@
 		body {
 			font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 			font-size: 12px;
-			line-height: 2.4;
+			line-height: 2.0;
 			margin: 0px;
 			padding: 20px;
 			overflow-x: hidden;
@@ -66,6 +66,11 @@
 		.app-col.bottom {
 			align-self: flex-end;
 		}
+		.hr {
+			margin: 1px;
+			border: 0px;
+    		border-bottom: solid 2px #eee;
+		}
 		.menu {
 			min-height: 400px;
 			padding: 10px;
@@ -81,6 +86,8 @@
 			cursor: pointer;
 		}
 		.menu-item__icon {
+			width: 24px;
+			height: 24px;
 			margin-right: 10px;
 		}
 		.menu-item__text {
@@ -112,35 +119,48 @@
 			margin: 2px 0px;
 		}
 		.icon {
-   			vertical-align: middle;
+			width: 24px;
+			height: 24px;
+			vertical-align: middle;
+		}
+		.icon.large {
+			width: 32px;
+			height: 32px;
+		}
+		.icon.small {
+   			width: 16px;
+   			height: 16px;
 		}
 		.button {
-			min-width: 80px;
+			min-width: 70px;
 		    height: inherit;
 		    line-height: inherit;
 		    margin: 0rem;
-		    padding: 0rem 0.3rem;
-		    padding-right: 16px;
-		    box-sizing: border-box;
-		    -moz-box-sizing: border-box;
-		    -webkit-box-sizing: border-box;
-		    -webkit-appearance: none;
-		    -moz-appearance: none;
-		    appearance: none;
-		    border-radius: 2px;
-		    border: 1px solid #cccccc;
-		    background: #eee;
-		    background: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#eee));
-		    background: -moz-linear-gradient(top, #f7f7f7, #eee);
-		    font-weight: bold;
-		    cursor: pointer;
+		    padding: 0rem 0.5rem;
+			box-shadow:inset 0px 1px 0px 0px #ffffff;
+			background:linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
+			background-color:#f9f9f9;
+			border:1px solid #adacac;
+			display:inline-block;
+			cursor:pointer;
+			color:#333;
+			font-weight:bold;
+			text-decoration:none;
 		}
 		.button:hover {
-			border: solid 1px #aaa;
+			background:linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
+			background-color:#e9e9e9;
+		}
+		.button:active {
+			position:relative;
+			top:1px;
+		}
+		.button.small {
+			min-width: 24px;
+		    line-height: initial;
+			padding: 0.2rem 0.2rem;
 		}
 		.button-icon {
-			width: 16px;
-   			height: 16px;
    			vertical-align: middle;
 		}
 		.table {
@@ -150,7 +170,7 @@
 		.table > tr ,
 		.table > thead > tr ,
 		.table > tbody > tr {
-			line-height: 2.4;
+			line-height: 2.0;
 		}
 		.table > tr > th ,
 		.table > thead > tr > th ,
@@ -179,79 +199,108 @@
 		 */
 		var __progress = null;
         $(document).ajaxStart(function(event) {
-        	__progress = new duice.ui.Progress(document.body);
+        	console.log('$(document).ajaxStart');
+        	__progress = new duice.Progress(document.body);
        		__progress.start();
         });
         // If not configure, "Provisional headers are shown" error occured in chrome.
         $(document).ajaxSend(function(event, jqxhr, settings) {
+        	console.log('$(document).ajaxSend');
         	jqxhr.setRequestHeader('Cache-Control','no-cache, no-store, must-revalidate');
         	jqxhr.setRequestHeader('Pragma','no-cache');
         	jqxhr.setRequestHeader('Expires','0');
         });
 		// checks stop event
         $(document).ajaxStop(function(event) {
+        	console.log('$(document).ajaxStop');
         	if(__progress){
         		__progress.stop();
         	}
         });
 		// Checks error except cancelation(readyState = 0)
         $(document).ajaxError(function(event, jqXHR, ajaxSettings,thrownError ){
-        	console.log(jqXHR);
+        	console.error('$(document).ajaxError');
         	if(jqXHR.readyState > 0){
-	        	console.log(event);
-	        	console.log(jqXHR);
-	        	console.log(ajaxSettings);
-	        	console.log(thrownError);
-	        	alert(jqXHR.responseText);
+        		console.error(event, jqXHR, ajaxSettings, thrownError);
+        		new duice.Alert(jqXHR.responseText).open();
         	}
         });
-
-
+        
+        /**
+         * Parsed total count from Content-Range header
+         * @Param {Object} jqXHR
+         */
+        function __parseTotalCount(jqXHR){
+        	var contentRange = jqXHR.getResponseHeader("Content-Range");
+        	try {
+            	var totalCount = contentRange.split(' ')[1].split('/')[1];
+        		return parseInt(totalCount);
+        	}catch(e){
+        		console.error(e);
+        		return -1;
+        	}
+        }
+        
+        /**
+		 * Changes language
+		 */ 
+        function __changeLanguage(language){
+        	window.location = '?__lang=' + language;
+        }
 		</script>
 	</head>
 	<body>
-		<div class="header">
-			<img src="/static/image/application.png"/>
+		<div class="app-row">
+			<div class="app-col left">
+				<img src="/static/image/application.png"/>
+			</div>
+			<div class="app-col right">
+				<select onchange="__changeLanguage(this.value);">
+					<option value="">-</option>
+					<option value="en">English</option>
+					<option value="ko">Korean</option>
+				</select>
+			</div>
 		</div>
 		<hr/>
 		<div style="display:flex;">
 			<div style="width:200px; display:flex; flex-direction:column;">
 				<nav class="menu">
 					<div class="memu-item" onclick="document.location='/admin/user';">
-						<img class="menu-item__icon" src="/static/image/icon_user_32px.png"/>
-						<span class="menu-item__text">User</span>
+						<img class="menu-item__icon" src="/static/image/icon_user.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.user}">User</span>
 					</div>
 					<div class="memu-item" onclick="document.location='/admin/group';">
-						<img class="menu-item__icon" src="/static/image/icon_group_32px.png"/>
-						<span class="menu-item__text">Group</span>
+						<img class="menu-item__icon" src="/static/image/icon_group.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.group}">Group</span>
 					</div>
 					<div class="memu-item" onclick="document.location='/admin/role';">
-						<img class="menu-item__icon" src="/static/image/icon_role_32px.png"/>
-						<span class="menu-item__text">Role</span>
+						<img class="menu-item__icon" src="/static/image/icon_role.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.user}">Role</span>
 					</div>
 					<div class="memu-item">
-						<img class="menu-item__icon" src="/static/image/icon_authority_32px.png"/>
-						<span class="menu-item__text">Authority</span>
+						<img class="menu-item__icon" src="/static/image/icon_authority.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.authority}">Authority</span>
 					</div>
 					<div class="memu-item">
-						<img class="menu-item__icon" src="/static/image/icon_menu_32px.png"/>
-						<span class="menu-item__text">Menu</span>
+						<img class="menu-item__icon" src="/static/image/icon_menu.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.menu}">Menu</span>
 					</div>
 					<div class="memu-item">
-						<img class="menu-item__icon" src="/static/image/icon_property_32px.png"/>
-						<span class="menu-item__text">Property</span>
+						<img class="menu-item__icon" src="/static/image/icon_property.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.property}">Property</span>
 					</div>
 					<div class="memu-item">
-						<img class="menu-item__icon" src="/static/image/icon_message_32px.png"/>
-						<span class="menu-item__text">Message</span>
+						<img class="menu-item__icon" src="/static/image/icon_message.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.message}">Message</span>
 					</div>
 					<div class="memu-item">
-						<img class="menu-item__icon" src="/static/image/icon_code_32px.png"/>
-						<span class="menu-item__text">Code</span>
+						<img class="menu-item__icon" src="/static/image/icon_code.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.code}">Code</span>
 					</div>
 					<div class="memu-item">
-						<img class="menu-item__icon" src="/static/image/icon_board_32px.png"/>
-						<span class="menu-item__text">Board</span>
+						<img class="menu-item__icon" src="/static/image/icon_board.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.board}">Board</span>
 					</div>
 				</nav>
 			</div>
@@ -261,8 +310,196 @@
 			</div>
 		</div>
 		<hr/>
-		<div>
+		<div style="text-align:center;">
 			<img src="/static/image/copyright.png"/>
 		</div>
+		
+		<!-- ====================================================== -->
+		<!-- Roles Dialog											-->
+		<!-- ====================================================== -->
+		<dialog id="__roleDialog" style="width:800px;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" src="/static/image/icon_role.png"/>
+					<span style="font-weight:bold;">
+						Role Select
+					</span>
+				</div>
+			</div>
+			<hr class="hr"/>
+			<div class="app-row">
+				<div class="app-col">
+					<select is="duice-ui-select" data-duice-bind="__roleDialog.search,key" style="width:100px;">
+						<option value>- select -</option>
+						<option value="id">ID</option>
+						<option value="name">Name</option>
+					</select>
+					<input is="duice-ui-input" type="text" data-duice-bind="__roleDialog.search,value" style="width:200px;"/>
+				</div>
+				<div class="app-col right">
+					<button class="button" onclick="__roleDialog.getRoles();">Search</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+					data-duice-bind="__roleDialog.roles,role" 
+					style="width:100%;">
+						<col style="width:5%;"/>
+						<col style="width:10%;"/>
+						<col style="width:35%;"/>
+						<col style="width:50%;"/>
+						<thead>
+							<tr>
+								<th>-</th>
+								<th>No</th>
+								<th>ID</th>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<input is="duice-ui-input" type="checkbox" data-duice-bind="role,__selected" data-id="[[$context.role.get('id')]]" onchange="this.checked ? __roleDialog.selectRole(this.dataset.id) : __roleDialog.unselectRole(this.dataset.id);" [[$context.role.get('__disabled')?'disabled':'']]/>
+								</td>
+								<td>
+									<span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span>
+								</td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="role,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
+									<span is="duice-ui-span" data-duice-bind="role,id"></span>
+								</td>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="role,name"></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col center">
+					<ul is="duice-ui-pagination" data-duice-bind="__roleDialog.search,page,rows,totalCount" data-duice-size="5">
+						<li onclick="__roleDialog.getRoles();"></li>
+					</ul>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+					data-duice-bind="__roleDialog.selectedRoles,role" 
+					style="width:100%;">
+						<col style="width:5%;"/>					
+						<col style="width:10%;"/>
+						<col style="width:35%;"/>
+						<col style="width:50%;"/>
+						<thead>
+							<tr>
+								<th>-</th>
+								<th>No</th>
+								<th>ID</th>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<input is="duice-ui-input" type="checkbox" data-duice-bind="role,__selected" data-id="[[$context.role.get('id')]]" onchange="this.checked ? __roleDialog.selectRole(this.dataset.id) : __roleDialog.unselectRole(this.dataset.id);"/>
+								</td>
+								<td><span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span></td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="role,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
+									<span is="duice-ui-span" data-duice-bind="role,id"></span>
+								</td>
+								<td><span is="duice-ui-span" data-duice-bind="role,name"></span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col right">
+					<button class="button" onclick="__roleDialog.confirm();">OK</button>
+				</div>
+			</div>
+		</dialog>
+		<script>
+        var __roleDialog = {
+        	dialog: new duice.Dialog(document.getElementById('__roleDialog')),
+        	search: new duice.Map({
+        		page: 1,
+        		rows: 10,
+        		totalCount: -1
+        	}),
+        	roles: new duice.List(),
+        	selectedRoles: new duice.List(),
+        	excludedRoles: null,
+        	beforeConfirm(listener){
+        		this.dialog.beforeConfirm(listener);
+        		return this;
+        	},
+        	afterConfirm(listener){
+        		this.dialog.afterConfirm(listener);
+        		return this;
+        	},
+        	setExcludedRoles(excludedRoles){
+        		this.excludedRoles = excludedRoles;
+        		return this;
+        	},
+        	open() {
+        		this.getRoles(1);
+        		this.selectedRoles.fromJson([]);
+        		this.dialog.open();
+        	},
+        	getRoles() {
+				var data = {};
+				if(this.search.get('key')){
+					data[this.search.get('key')] = this.search.get('value');
+				}
+				var $this = this;
+				$.ajax({
+					 url: '/admin/getRoles'
+					,type: 'GET'
+					,data: data
+					,success: function(data, textStatus, jqXHR) {
+						if($this.excludedRoles){
+							data.forEach(function(item) {
+								var contains = $this.excludedRoles.contains(function(role){
+									if(role.get('id') === item.id){
+										return true;
+									}
+								});
+								if(contains){
+									item.__disabled = true;
+								}
+							});
+						}
+						$this.roles.fromJson(data);
+			   	 	}
+				});
+        	},
+        	selectRole(id) {
+        		var index = this.roles.indexOf(function(role){
+        			if(role.get('id') === id){
+        				return true;
+        			}
+        		});
+        		var role = this.roles.get(index);
+    			this.selectedRoles.add(role);
+        	},
+        	unselectRole(id) {
+        		var index = this.selectedRoles.indexOf(function(role){
+        			if(role.get('id') === id){
+        				return true;
+        			}
+        		});
+        		this.selectedRoles.remove(index);
+        	},
+        	confirm() {
+        		this.dialog.confirm(this.selectedRoles);
+        	}
+        };
+		</script>
+
 	</body>
 </html>

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import net.oopscraft.application.user.entity.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor<User> {
+public interface UserRepository extends JpaRepository<User, String>,JpaSpecificationExecutor<User> {
 	
 	
 	

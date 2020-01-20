@@ -3,20 +3,74 @@ package net.oopscraft.application.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.entity.Authority;
 import net.oopscraft.application.user.entity.Role;
+import net.oopscraft.application.user.entity.User;
 
 @Service
 public class RoleService {
-
-	@Autowired
+	
 	RoleRepository roleRepository;
+	
+	/**
+	 * Constructor
+	 * @param roleRepository
+	 */
+	public RoleService(RoleRepository roleRepository) {
+		this.roleRepository = roleRepository;
+	}
+	
+	/**
+	 * Returns roles
+	 * @param user
+	 * @param pageInfo
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Role> getRoles(final Role role, PageInfo pageInfo) throws Exception {
+		Page<Role> rolesPage = roleRepository.findAll(new  Specification<Role>() {
+			@Override
+			public Predicate toPredicate(Root<Role> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+				List<Predicate> predicates = new ArrayList<Predicate>();
+				if(role.getId() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), role.getId() + '%'));
+					predicates.add(predicate);
+				}
+				if(role.getName() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), role.getName() + '%'));
+					predicates.add(predicate);
+				}
+				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
+			}
+		}, pageInfo.toPageable());
+		return rolesPage.getContent();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+//	@Autowired
+//	RoleRepository roleRepository;
 
 	public enum RoleSearchType { ID,NAME	}
 

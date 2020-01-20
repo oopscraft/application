@@ -2,16 +2,20 @@ package net.oopscraft.application;
 
 import java.util.List;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonConverter;
@@ -27,25 +31,39 @@ public class ApplicationWebControllerAdvice {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(ApplicationWebControllerAdvice.class);
 	
-	@Autowired
-	UserRepository userRepository;
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseBody
+	public ValueMap handleException(Exception e) throws Exception {
+		LOGGER.error(e.getMessage(), e);
+		ValueMap responseMap = new ValueMap();
+		responseMap.set("exception", e.getClass().getName());
+		responseMap.set("message", e.getMessage());
+		responseMap.set("stackTrace", ExceptionUtils.getRootCauseMessage(e));
+		return responseMap;
+	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView index(User user, PageInfo pageInfo) throws Exception {
+	public ModelAndView index() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/__admin.html");
-		LOGGER.info(JsonConverter.toJson(user));
-		LOGGER.info(JsonConverter.toJson(pageInfo));
 		return modelAndView;
 	}
+
 	
-	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody List<User> getUsers(User user, PageInfo pageInfo) throws Exception {
-		LOGGER.info(JsonConverter.toJson(user));
-		LOGGER.info(JsonConverter.toJson(pageInfo));
-		List<User> users = userRepository.findAll();
-		LOGGER.info(JsonConverter.toJson(users));
-		return users;
-	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 	
 //    @ModelAttribute("__configuration")
 //    public Map<String,String> getConfiguration() throws Exception {

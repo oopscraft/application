@@ -144,7 +144,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>./lib/</classpathPrefix>
-							<mainClass>net.oopscraft.application.ApplicationContainer</mainClass>
+							<mainClass>net.oopscraft.application.Application</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Class-Path>lib/ojdbc6-4.0.jar</Class-Path>
