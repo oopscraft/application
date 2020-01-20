@@ -30,12 +30,12 @@ import net.oopscraft.application.board.entity.Article;
 import net.oopscraft.application.board.entity.ArticleFile;
 import net.oopscraft.application.board.entity.ArticleReply;
 import net.oopscraft.application.board.entity.Board;
+import net.oopscraft.application.common.EncodeUtility;
+import net.oopscraft.application.common.JsonConverter;
+import net.oopscraft.application.common.PageInfo;
+import net.oopscraft.application.common.StringUtility;
+import net.oopscraft.application.common.TextTable;
 import net.oopscraft.application.board.BoardService;
-import net.oopscraft.application.core.JsonConverter;
-import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.EncodeUtility;
-import net.oopscraft.application.core.StringUtility;
-import net.oopscraft.application.core.TextTable;
 
 @Controller
 @RequestMapping("/api/board")

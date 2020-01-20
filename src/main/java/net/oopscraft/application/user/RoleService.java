@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.common.PageInfo;
 import net.oopscraft.application.user.entity.Authority;
 import net.oopscraft.application.user.entity.Role;
 import net.oopscraft.application.user.entity.User;

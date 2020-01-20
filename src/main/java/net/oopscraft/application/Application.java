@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import net.oopscraft.application.core.webserver.TomcatWebServer;
 import net.oopscraft.application.core.webserver.WebServer;
+import net.oopscraft.application.core.webserver.WebServerBuilder;
 import net.oopscraft.application.core.webserver.WebServerContext;
 
 /**
@@ -46,7 +48,7 @@ public class Application {
 					e.printStackTrace(System.err);
 				}
 				try {
-					applicationContext.close();
+					webServer.stop();
 				}catch(Exception e){
 					printError(e.getMessage(), e);
 				}
@@ -54,12 +56,15 @@ public class Application {
 		}));
 		
 		// creates web server
-		WebServer webServer = new WebServer();
-		webServer.setPort(Integer.parseInt((String)ApplicationContext.properties.get("application.webServer.port")));
-		WebServerContext webServerContext = new WebServerContext();
-		webServerContext.setContextPath("");
-		webServerContext.setResourceBase("webapp");
-		webServer.addContext(webServerContext);
+		WebServerBuilder webServerBuilder = new WebServerBuilder(WebServerBuilder.Type.valueOf((String)ApplicationContext.properties.get("application.webServer.type")));
+		webServerBuilder.setPort(Integer.parseInt((String)ApplicationContext.properties.get("application.webServer.port")));
+		WebServerContext context = new WebServerContext();
+		context.setContextPath("");
+		context.setResourceBase("webapp");
+		webServerBuilder.addContext(context);
+		webServer = webServerBuilder.build();
+		
+		// starts web server
 		webServer.start();
 		
 		// join main thread

@@ -8419,3 +8419,899 @@ COMMIT
 /*C134*/SET SCHEMA PUBLIC
 DISCONNECT
 /*C133*/DISCONNECT
+/*C135*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C136*/SET SCHEMA PUBLIC
+drop table if exists APP_ATCL_FILE_INFO CASCADE 
+drop table if exists APP_ATCL_INFO CASCADE 
+drop table if exists APP_ATCL_RPLY_INFO CASCADE 
+drop table if exists APP_AUTH_INFO CASCADE 
+drop table if exists APP_BORD_CATE_INFO CASCADE 
+drop table if exists APP_BORD_INFO CASCADE 
+drop table if exists APP_BORD_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_CODE_INFO CASCADE 
+drop table if exists APP_CODE_ITEM_INFO CASCADE 
+drop table if exists APP_GROP_AUTH_MAP CASCADE 
+drop table if exists APP_GROP_INFO CASCADE 
+drop table if exists APP_GROP_ROLE_MAP CASCADE 
+drop table if exists APP_MENU_INFO CASCADE 
+drop table if exists APP_MENU_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_MSG_INFO CASCADE 
+drop table if exists APP_PROP_INFO CASCADE 
+drop table if exists APP_ROLE_AUTH_MAP CASCADE 
+drop table if exists APP_ROLE_INFO CASCADE 
+drop table if exists APP_USER_AUTH_MAP CASCADE 
+drop table if exists APP_USER_GROP_MAP CASCADE 
+drop table if exists APP_USER_INFO CASCADE 
+drop table if exists APP_USER_LOGN_HIST CASCADE 
+drop table if exists APP_USER_ROLE_MAP CASCADE 
+create table APP_ATCL_FILE_INFO (ATCL_ID varchar(255) not null, FILE_ID varchar(255) not null, FILE_NAME varchar(255), FILE_SIZE bigint, FILE_TYPE varchar(255), primary key (ATCL_ID, FILE_ID))
+create table APP_ATCL_INFO (ATCL_ID varchar(255) not null, BORD_ID varchar(255), CATE_ID varchar(255), ATCL_CNTS varchar(255), ATCL_MDFY_DTTM timestamp, READ_CNT integer, ATCL_RGST_DTTM timestamp, ATCL_TITL varchar(255), ATCL_USER_ID varchar(255), ATCL_USER_NICK varchar(255), primary key (ATCL_ID))
+create table APP_ATCL_RPLY_INFO (ATCL_ID varchar(255) not null, RPLY_ID varchar(255) not null, RPLY_CNTS varchar(255), RPLY_LEVL varchar(255), RPLY_SEQ integer, UPER_RPLY_ID varchar(255), primary key (ATCL_ID, RPLY_ID))
+create table APP_AUTH_INFO (AUTH_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), AUTH_DESC varchar(4000), AUTH_ICON varchar(4000), AUTH_NAME varchar(255), primary key (AUTH_ID))
+create table APP_BORD_CATE_INFO (BORD_ID varchar(255) not null, CATE_ID varchar(255) not null, DISP_SEQ integer, CATE_NAME varchar(255), primary key (BORD_ID, CATE_ID))
+create table APP_BORD_INFO (BORD_ID varchar(255) not null, ACES_PLCY varchar(255), CATE_USE_YN varchar(255), FILE_USE_YN varchar(255), BORD_ICON varchar(255), BORD_NAME varchar(255), READ_PLCY varchar(255), RPLY_USE_YN varchar(255), ROWS_PER_PAGE integer, BORD_SKIN varchar(255), WRIT_PLCY varchar(255), primary key (BORD_ID))
+create table APP_BORD_PLCY_AUTH_MAP (BORD_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_CODE_INFO (CODE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CODE_DESC varchar(255), CODE_NAME varchar(255), UPER_CODE_ID varchar(255), primary key (CODE_ID))
+create table APP_CODE_ITEM_INFO (CODE_ID varchar(255) not null, ITEM_ID varchar(255) not null, ITEM_DESC varchar(255), DISP_SEQ integer, ITEM_NAME varchar(255), primary key (CODE_ID, ITEM_ID))
+create table APP_GROP_AUTH_MAP (GROP_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_GROP_INFO (GROP_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), GROP_DESC varchar(4000), GROP_ICON varchar(4000), GROP_NAME varchar(255), UPER_GROP_ID varchar(32), primary key (GROP_ID))
+create table APP_GROP_ROLE_MAP (GROP_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+create table APP_MENU_INFO (MENU_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MENU_DESC varchar(255), DISP_SEQ integer, MENU_ICON varchar(255), MENU_NAME varchar(255), PLCY_ACES varchar(255), PLCY_DISP varchar(255), MENU_TYPE varchar(255), UPER_MENU_ID varchar(255), MENU_VAL varchar(255), primary key (MENU_ID))
+create table APP_MENU_PLCY_AUTH_MAP (MENU_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_MSG_INFO (MSG_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MSG_DESC varchar(255), MSG_NAME varchar(255), MSG_VAL varchar(255), primary key (MSG_ID))
+create table APP_PROP_INFO (PROP_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), PROP_DESC varchar(255), PROP_NAME varchar(255), PROP_VAL varchar(255), primary key (PROP_ID))
+create table APP_ROLE_AUTH_MAP (ROLE_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_ROLE_INFO (ROLE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), ROLE_DESC varchar(4000), ROLE_ICON varchar(4000), ROLE_NAME varchar(255), primary key (ROLE_ID))
+create table APP_USER_AUTH_MAP (USER_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_USER_GROP_MAP (USER_ID varchar(32) not null, GROP_ID varchar(32) not null)
+create table APP_USER_INFO (USER_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CLOS_DATE timestamp, USER_EMIL varchar(255), USER_IMGE varchar(4000), JOIN_DATE timestamp, USER_LOCL varchar(255), USER_NAME varchar(255), USER_NICK varchar(255), USER_PASS varchar(255), USER_PHON varchar(255), USER_PRFL varchar(4000), USER_STAT varchar(255), primary key (USER_ID))
+create table APP_USER_LOGN_HIST (LOGN_DTTM timestamp not null, USER_ID varchar(255) not null, LOGN_AGNT varchar(255), LOGN_FAIL_RESN varchar(255), LOGN_IP varchar(255), LOGN_REFR varchar(255), LOGN_SUCS_YN varchar(255), primary key (LOGN_DTTM, USER_ID))
+create table APP_USER_ROLE_MAP (USER_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+alter table APP_ATCL_FILE_INFO add constraint FK11vamwi9kmntgb5sgv3yk5wom foreign key (ATCL_ID) references APP_ATCL_INFO
+alter table APP_BORD_CATE_INFO add constraint FK3o6osakjv3ffbbwasueajih8a foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKf4ijeh20pf9r6cm4ffm67es7k foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKnmd64r3ucb8y6vo61ok8wgsh3 foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_CODE_ITEM_INFO add constraint FKevsc1eg1f3ki8kaevo6ddea57 foreign key (CODE_ID) references APP_CODE_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK339n4jheflud3iyq6h64glklo foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK1y6b1ay68ax3aj05ufepgg144 foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_GROP_ROLE_MAP add constraint FKaefku0msrdtmrk0pmecypf99i foreign key (ROLE_ID) references APP_ROLE_INFO
+alter table APP_GROP_ROLE_MAP add constraint FK1cia7wjwvonuita8ka47cgd8b foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKmkq0hd157hvs638meglvpn4sx foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKh0x884aaj0lcwn06tq43164u6 foreign key (MENU_ID) references APP_MENU_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKq8sm7c0mw17jts6o1rh3pt00p foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKnef5bvb4t8p257gkcir1ci1ix foreign key (ROLE_ID) references APP_ROLE_INFO
+drop table if exists APP_ATCL_FILE_INFO CASCADE 
+drop table if exists APP_ATCL_INFO CASCADE 
+drop table if exists APP_ATCL_RPLY_INFO CASCADE 
+drop table if exists APP_AUTH_INFO CASCADE 
+drop table if exists APP_BORD_CATE_INFO CASCADE 
+drop table if exists APP_BORD_INFO CASCADE 
+drop table if exists APP_BORD_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_CODE_INFO CASCADE 
+drop table if exists APP_CODE_ITEM_INFO CASCADE 
+drop table if exists APP_GROP_AUTH_MAP CASCADE 
+drop table if exists APP_GROP_INFO CASCADE 
+drop table if exists APP_GROP_ROLE_MAP CASCADE 
+drop table if exists APP_MENU_INFO CASCADE 
+drop table if exists APP_MENU_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_MSG_INFO CASCADE 
+drop table if exists APP_PROP_INFO CASCADE 
+drop table if exists APP_ROLE_AUTH_MAP CASCADE 
+drop table if exists APP_ROLE_INFO CASCADE 
+drop table if exists APP_USER_AUTH_MAP CASCADE 
+drop table if exists APP_USER_GROP_MAP CASCADE 
+drop table if exists APP_USER_INFO CASCADE 
+drop table if exists APP_USER_LOGN_HIST CASCADE 
+drop table if exists APP_USER_ROLE_MAP CASCADE 
+create table APP_ATCL_FILE_INFO (ATCL_ID varchar(255) not null, FILE_ID varchar(255) not null, FILE_NAME varchar(255), FILE_SIZE bigint, FILE_TYPE varchar(255), primary key (ATCL_ID, FILE_ID))
+create table APP_ATCL_INFO (ATCL_ID varchar(255) not null, BORD_ID varchar(255), CATE_ID varchar(255), ATCL_CNTS varchar(255), ATCL_MDFY_DTTM timestamp, READ_CNT integer, ATCL_RGST_DTTM timestamp, ATCL_TITL varchar(255), ATCL_USER_ID varchar(255), ATCL_USER_NICK varchar(255), primary key (ATCL_ID))
+create table APP_ATCL_RPLY_INFO (ATCL_ID varchar(255) not null, RPLY_ID varchar(255) not null, RPLY_CNTS varchar(255), RPLY_LEVL varchar(255), RPLY_SEQ integer, UPER_RPLY_ID varchar(255), primary key (ATCL_ID, RPLY_ID))
+create table APP_AUTH_INFO (AUTH_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), AUTH_DESC varchar(4000), AUTH_ICON varchar(4000), AUTH_NAME varchar(255), primary key (AUTH_ID))
+create table APP_BORD_CATE_INFO (BORD_ID varchar(255) not null, CATE_ID varchar(255) not null, DISP_SEQ integer, CATE_NAME varchar(255), primary key (BORD_ID, CATE_ID))
+create table APP_BORD_INFO (BORD_ID varchar(255) not null, ACES_PLCY varchar(255), CATE_USE_YN varchar(255), FILE_USE_YN varchar(255), BORD_ICON varchar(255), BORD_NAME varchar(255), READ_PLCY varchar(255), RPLY_USE_YN varchar(255), ROWS_PER_PAGE integer, BORD_SKIN varchar(255), WRIT_PLCY varchar(255), primary key (BORD_ID))
+create table APP_BORD_PLCY_AUTH_MAP (BORD_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_CODE_INFO (CODE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CODE_DESC varchar(255), CODE_NAME varchar(255), UPER_CODE_ID varchar(255), primary key (CODE_ID))
+create table APP_CODE_ITEM_INFO (CODE_ID varchar(255) not null, ITEM_ID varchar(255) not null, ITEM_DESC varchar(255), DISP_SEQ integer, ITEM_NAME varchar(255), primary key (CODE_ID, ITEM_ID))
+create table APP_GROP_AUTH_MAP (GROP_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_GROP_INFO (GROP_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), GROP_DESC varchar(4000), GROP_ICON varchar(4000), GROP_NAME varchar(255), UPER_GROP_ID varchar(32), primary key (GROP_ID))
+create table APP_GROP_ROLE_MAP (GROP_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+create table APP_MENU_INFO (MENU_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MENU_DESC varchar(255), DISP_SEQ integer, MENU_ICON varchar(255), MENU_NAME varchar(255), PLCY_ACES varchar(255), PLCY_DISP varchar(255), MENU_TYPE varchar(255), UPER_MENU_ID varchar(255), MENU_VAL varchar(255), primary key (MENU_ID))
+create table APP_MENU_PLCY_AUTH_MAP (MENU_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_MSG_INFO (MSG_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MSG_DESC varchar(255), MSG_NAME varchar(255), MSG_VAL varchar(255), primary key (MSG_ID))
+create table APP_PROP_INFO (PROP_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), PROP_DESC varchar(255), PROP_NAME varchar(255), PROP_VAL varchar(255), primary key (PROP_ID))
+create table APP_ROLE_AUTH_MAP (ROLE_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_ROLE_INFO (ROLE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), ROLE_DESC varchar(4000), ROLE_ICON varchar(4000), ROLE_NAME varchar(255), primary key (ROLE_ID))
+create table APP_USER_AUTH_MAP (USER_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_USER_GROP_MAP (USER_ID varchar(32) not null, GROP_ID varchar(32) not null)
+create table APP_USER_INFO (USER_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CLOS_DATE timestamp, USER_EMIL varchar(255), USER_IMGE varchar(4000), JOIN_DATE timestamp, USER_LOCL varchar(255), USER_NAME varchar(255), USER_NICK varchar(255), USER_PASS varchar(255), USER_PHON varchar(255), USER_PRFL varchar(4000), USER_STAT varchar(255), primary key (USER_ID))
+create table APP_USER_LOGN_HIST (LOGN_DTTM timestamp not null, USER_ID varchar(255) not null, LOGN_AGNT varchar(255), LOGN_FAIL_RESN varchar(255), LOGN_IP varchar(255), LOGN_REFR varchar(255), LOGN_SUCS_YN varchar(255), primary key (LOGN_DTTM, USER_ID))
+create table APP_USER_ROLE_MAP (USER_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+alter table APP_ATCL_FILE_INFO add constraint FK11vamwi9kmntgb5sgv3yk5wom foreign key (ATCL_ID) references APP_ATCL_INFO
+alter table APP_BORD_CATE_INFO add constraint FK3o6osakjv3ffbbwasueajih8a foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKf4ijeh20pf9r6cm4ffm67es7k foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKnmd64r3ucb8y6vo61ok8wgsh3 foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_CODE_ITEM_INFO add constraint FKevsc1eg1f3ki8kaevo6ddea57 foreign key (CODE_ID) references APP_CODE_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK339n4jheflud3iyq6h64glklo foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK1y6b1ay68ax3aj05ufepgg144 foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_GROP_ROLE_MAP add constraint FKaefku0msrdtmrk0pmecypf99i foreign key (ROLE_ID) references APP_ROLE_INFO
+alter table APP_GROP_ROLE_MAP add constraint FK1cia7wjwvonuita8ka47cgd8b foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKmkq0hd157hvs638meglvpn4sx foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKh0x884aaj0lcwn06tq43164u6 foreign key (MENU_ID) references APP_MENU_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKq8sm7c0mw17jts6o1rh3pt00p foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKnef5bvb4t8p257gkcir1ci1ix foreign key (ROLE_ID) references APP_ROLE_INFO
+/*C137*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C138*/SET SCHEMA PUBLIC
+drop table if exists APP_ATCL_FILE_INFO CASCADE 
+drop table if exists APP_ATCL_INFO CASCADE 
+drop table if exists APP_ATCL_RPLY_INFO CASCADE 
+drop table if exists APP_AUTH_INFO CASCADE 
+drop table if exists APP_BORD_CATE_INFO CASCADE 
+drop table if exists APP_BORD_INFO CASCADE 
+drop table if exists APP_BORD_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_CODE_INFO CASCADE 
+drop table if exists APP_CODE_ITEM_INFO CASCADE 
+drop table if exists APP_GROP_AUTH_MAP CASCADE 
+drop table if exists APP_GROP_INFO CASCADE 
+drop table if exists APP_GROP_ROLE_MAP CASCADE 
+drop table if exists APP_MENU_INFO CASCADE 
+drop table if exists APP_MENU_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_MSG_INFO CASCADE 
+drop table if exists APP_PROP_INFO CASCADE 
+drop table if exists APP_ROLE_AUTH_MAP CASCADE 
+drop table if exists APP_ROLE_INFO CASCADE 
+drop table if exists APP_USER_AUTH_MAP CASCADE 
+drop table if exists APP_USER_GROP_MAP CASCADE 
+drop table if exists APP_USER_INFO CASCADE 
+drop table if exists APP_USER_LOGN_HIST CASCADE 
+drop table if exists APP_USER_ROLE_MAP CASCADE 
+create table APP_ATCL_FILE_INFO (ATCL_ID varchar(255) not null, FILE_ID varchar(255) not null, FILE_NAME varchar(255), FILE_SIZE bigint, FILE_TYPE varchar(255), primary key (ATCL_ID, FILE_ID))
+create table APP_ATCL_INFO (ATCL_ID varchar(255) not null, BORD_ID varchar(255), CATE_ID varchar(255), ATCL_CNTS varchar(255), ATCL_MDFY_DTTM timestamp, READ_CNT integer, ATCL_RGST_DTTM timestamp, ATCL_TITL varchar(255), ATCL_USER_ID varchar(255), ATCL_USER_NICK varchar(255), primary key (ATCL_ID))
+create table APP_ATCL_RPLY_INFO (ATCL_ID varchar(255) not null, RPLY_ID varchar(255) not null, RPLY_CNTS varchar(255), RPLY_LEVL varchar(255), RPLY_SEQ integer, UPER_RPLY_ID varchar(255), primary key (ATCL_ID, RPLY_ID))
+create table APP_AUTH_INFO (AUTH_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), AUTH_DESC varchar(4000), AUTH_ICON varchar(4000), AUTH_NAME varchar(255), primary key (AUTH_ID))
+create table APP_BORD_CATE_INFO (BORD_ID varchar(255) not null, CATE_ID varchar(255) not null, DISP_SEQ integer, CATE_NAME varchar(255), primary key (BORD_ID, CATE_ID))
+create table APP_BORD_INFO (BORD_ID varchar(255) not null, ACES_PLCY varchar(255), CATE_USE_YN varchar(255), FILE_USE_YN varchar(255), BORD_ICON varchar(255), BORD_NAME varchar(255), READ_PLCY varchar(255), RPLY_USE_YN varchar(255), ROWS_PER_PAGE integer, BORD_SKIN varchar(255), WRIT_PLCY varchar(255), primary key (BORD_ID))
+create table APP_BORD_PLCY_AUTH_MAP (BORD_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_CODE_INFO (CODE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CODE_DESC varchar(255), CODE_NAME varchar(255), UPER_CODE_ID varchar(255), primary key (CODE_ID))
+create table APP_CODE_ITEM_INFO (CODE_ID varchar(255) not null, ITEM_ID varchar(255) not null, ITEM_DESC varchar(255), DISP_SEQ integer, ITEM_NAME varchar(255), primary key (CODE_ID, ITEM_ID))
+create table APP_GROP_AUTH_MAP (GROP_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_GROP_INFO (GROP_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), GROP_DESC varchar(4000), GROP_ICON varchar(4000), GROP_NAME varchar(255), UPER_GROP_ID varchar(32), primary key (GROP_ID))
+create table APP_GROP_ROLE_MAP (GROP_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+create table APP_MENU_INFO (MENU_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MENU_DESC varchar(255), DISP_SEQ integer, MENU_ICON varchar(255), MENU_NAME varchar(255), PLCY_ACES varchar(255), PLCY_DISP varchar(255), MENU_TYPE varchar(255), UPER_MENU_ID varchar(255), MENU_VAL varchar(255), primary key (MENU_ID))
+create table APP_MENU_PLCY_AUTH_MAP (MENU_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_MSG_INFO (MSG_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MSG_DESC varchar(255), MSG_NAME varchar(255), MSG_VAL varchar(255), primary key (MSG_ID))
+create table APP_PROP_INFO (PROP_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), PROP_DESC varchar(255), PROP_NAME varchar(255), PROP_VAL varchar(255), primary key (PROP_ID))
+create table APP_ROLE_AUTH_MAP (ROLE_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_ROLE_INFO (ROLE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), ROLE_DESC varchar(4000), ROLE_ICON varchar(4000), ROLE_NAME varchar(255), primary key (ROLE_ID))
+create table APP_USER_AUTH_MAP (USER_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_USER_GROP_MAP (USER_ID varchar(32) not null, GROP_ID varchar(32) not null)
+create table APP_USER_INFO (USER_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CLOS_DATE timestamp, USER_EMIL varchar(255), USER_IMGE varchar(4000), JOIN_DATE timestamp, USER_LOCL varchar(255), USER_NAME varchar(255), USER_NICK varchar(255), USER_PASS varchar(255), USER_PHON varchar(255), USER_PRFL varchar(4000), USER_STAT varchar(255), primary key (USER_ID))
+create table APP_USER_LOGN_HIST (LOGN_DTTM timestamp not null, USER_ID varchar(255) not null, LOGN_AGNT varchar(255), LOGN_FAIL_RESN varchar(255), LOGN_IP varchar(255), LOGN_REFR varchar(255), LOGN_SUCS_YN varchar(255), primary key (LOGN_DTTM, USER_ID))
+create table APP_USER_ROLE_MAP (USER_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+alter table APP_ATCL_FILE_INFO add constraint FK11vamwi9kmntgb5sgv3yk5wom foreign key (ATCL_ID) references APP_ATCL_INFO
+alter table APP_BORD_CATE_INFO add constraint FK3o6osakjv3ffbbwasueajih8a foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKf4ijeh20pf9r6cm4ffm67es7k foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKnmd64r3ucb8y6vo61ok8wgsh3 foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_CODE_ITEM_INFO add constraint FKevsc1eg1f3ki8kaevo6ddea57 foreign key (CODE_ID) references APP_CODE_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK339n4jheflud3iyq6h64glklo foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK1y6b1ay68ax3aj05ufepgg144 foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_GROP_ROLE_MAP add constraint FKaefku0msrdtmrk0pmecypf99i foreign key (ROLE_ID) references APP_ROLE_INFO
+alter table APP_GROP_ROLE_MAP add constraint FK1cia7wjwvonuita8ka47cgd8b foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKmkq0hd157hvs638meglvpn4sx foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKh0x884aaj0lcwn06tq43164u6 foreign key (MENU_ID) references APP_MENU_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKq8sm7c0mw17jts6o1rh3pt00p foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKnef5bvb4t8p257gkcir1ci1ix foreign key (ROLE_ID) references APP_ROLE_INFO
+INSERT INTO APP_USER_INFO VALUES('admin',NULL,NULL,NULL,NULL,NULL,NULL,'admin@oopscraft.net','data:image/png;base64,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',NULL,NULL,'Administrator','Admin',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test1',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test2',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test3',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test4',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test5',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test6',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test7',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test8',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test9',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test10',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test11',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test12',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test13',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test14',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test15',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test16',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test17',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test18',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test19',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test20',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test21',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test22',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test23',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test24',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test25',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test26',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test27',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test28',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test29',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test30',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test31',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test32',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test33',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test34',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test35',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test36',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test37',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_GROP_INFO VALUES('ADMIN',NULL,NULL,NULL,NULL,NULL,'Administrator Group Description.','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADLklEQVR4XsWWzWtcVRiHn/ecd6YzmQ4BW/wsbkI0266karG6ESUaGtz6FwgpwbqoUlBBEU0kNsGtLl0I0kFxmlYotiX7iKkpUpKKH4RYLJpMNL3nlbxwF+ntqrd3+sDhLgbu87u/95zDiJlxLxEc9JPZT78khDEPZOxCEBwSVlomYOn0sYnXXgFuCqDTM7NfPf/iC6Mjw0MkHBeJQTQIgmMJTIwyBBGWflqme2b+69cnJ44q0IyqoweGhogH97P+zEukDz7jgS+eZP2+p6kf+ZC3zwrDew/x6hPnuXL1MiKU4vHHholRR4GmAo2UjOvX/yJd/pPa0uesvTnHnj8WqP2+wI2D77J6BVZtgbGRv1m5uoIEgDtJYey47t+3D7ME0FBAsMRgo87iwiKIIKs/s/bsDwDEX5c58dyPCMYvv63w8CMP3XEDZuarPdj2JyCa//DvPzcYOfAgMUZyAMRA3IinLoF7siyjt7mB4aAAGOyp1zl8+AjNZhMQwIBcXp48QK/X48KF82A4iksgRqXdbtNqtUgpsb29jUigVlNvxXMglMC/XlXdJYKTj8AFqjUPkmXbXLz4PVNTU3Q636Baz0OUIoSI6n+IuHN3AAxiDKgGzCIfTU3zxvHjZAZnvu2i2vAQZRBxB9gtAZIZBnk9gNA53WGrt8XJk2/Rag7Q7XYpH0DcYUAqNIBX5CvLEuPj40xOHmN6eob5+bM0Gg1CCJRD3AG3jiAZYF5PCLKzXH7q1CzfnTtHa8DrB5G7MwLMncUGYiSq+vPlsaNe2cDeFiEGBKE0Iu4oNmAJAA2KRnVxTWv+vJv3gCDuyJ3FU6ABH0MIVIGPQIunwDEfgddfWQBE3GE4xT2gMRJDdQF8BLffAwaYf331DUTAihcRQIyV7wF3uLN4D0AISqhwBCDuyJ2FU6AaiRWOQETcgd32HrA+jsCK94D1cQQGxU2IsSP2JSJUQf5+bPcmdFJKpJT5P6GqApjZjsNdOQoggATh/ffeIUgAoRr8y5M3nCsUsI2NjUsfz8w9lZLRD0IQNjc3LwEmQBt4FNgPKP3hJrAOXFOgB1wD1gChPxiw5e57zf/Rz2VlmfOMywAAAABJRU5ErkJggg==','Administrator Group',NULL)
+COMMIT
+INSERT INTO APP_USER_GROP_MAP VALUES('admin','ADMIN')
+COMMIT
+INSERT INTO APP_ROLE_INFO VALUES('ADMIN',NULL,NULL,NULL,NULL,NULL,NULL,'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAADgUlEQVR4Xq2WSUhjWRSGj3mJY0EZ7Y29FEFwQHFaKIoDGCyr0uDGJBu7qaSookgVlKveK4qKY2LiJsYkTfeirbIX3XtxoYjiAOI8oGIv0lGDU2uGV/+7FJekyEun2z5wyYObfP85593/3CSJokiJRBLC6XRqU1JSAjqd7g9KMBSJwO12e7vH4/F5vd6Zk5OT3x0Oh9dms2n/FwGADEj+p9XVVXVmZiap1WpaW1v7JhAITFsslu8eJTA+Pm5AC117e3tCYWEh7e/v08HBAZWVldHW1pby4eHh19HRUe1/ErBarfpwOMzgNTU1ND8/T2gPHR4esuf6+nra2NhQ3t3dTQ8PD7/4VwJjY2P6UCjk3t3dFWprayk5OZlubm7o/v6ekDX5/X7Cy6ampiZaX19XXl9ffxwcHHyekABK1geDQff29rZQV1fH4KiEgdF36ZMtJMBENBoNraysKCH6qa+vrzWuAErVA+De2dkRGhoaGBwgtgCNWhBle6mpqdTa2krLy8vKy8vLmd7e3mcxBVCiHhlGwQHhIECjqgA8SkSr1dLi4qLS5/PNdHd3t0QJDAwMtAPgwckQ0NfIzDkI4EiRyH0u0tbWRgsLCyr45beuri4NM6i0RkZGLpaWlp62tLRIfeUwvAsGlwKlM7Dk/LS0NOrs7JTcHbnYHl44TU1NUXNz8589PT3fJqEcHc73zzk5OZSbm8ugsaK/v59ub2/Zc1ZWFpnNZpILnCw6Pj6m4uJijeLs7OzJ6ekpU2ZwmSgtLeWA6upqihP83eFkZSnQs8mCggL/7OwswTSyAnAwB8DFcmyW6NzcHMH5f2GU/KJA70Mo/ceSkpKw2+2WFTGZTJSRkUHZ2dlkMBhk4S6XS6owdHV19YH7YGJiwgbTvC8qKpIVUSgU0ovkn7HgUoJVVVUh7L/CHHNzgS8iFpjmnbwID1l4ZWVlSBAEE8a7I6aTsWGNI8KNFRmYUQxeUVHB4Bjvk3FmERcxfy1ydHTEjun5+TmhvxyOnjO4SqUycri8ABcZh5miRNLT0/k+9ji8vLycwdFzJ8UKuE92vUF0dHSEABGHhobEvLw8EaIi5pYIX4hGozGIr3wfh/GPN5oNR/OtVAnsz6ZmY2Mj4ZlljpnFMn/UnYybzQ6R17jB/Jubm4RpK100F4D/gD3A40fCf1vy8/OVyP4lyv4bvnGJCf7wMykvfnetBBY1AAAAAElFTkSuQmCC','Administrator Role')
+COMMIT
+INSERT INTO APP_ROLE_INFO VALUES('TEST',NULL,NULL,NULL,NULL,NULL,NULL,'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACkklEQVR42pWSbUhTYRTH/3f37s2rrVaimdk00LSsDMOk+pAFBaZ9CAyLYGIYJAhh2Dc/FLRCSQmp7EMFVgst0IVoQaiVISrODNrEWZYvS4fu4jb3ovc+PbNA4hrYgcOB85z/73nOeQ6Df1hjY6OKhhKGYc5LkpQqimI4baOxQa1WPygoKAiFE8xqYrPZHEcIafXwsXvHRR6LhAGv1UCnYqAVJoC58QGWZfOKi4unmNVu9nq9PQuxaRlBZSQK9ydCzbFwekIYmQtgXlQgNG6Hb6TfKgjCARmgvr6+lOi31pHNyTBmhcVUsCThhxDExIIIv8RBJASjXRb4nV8vyQA1NTV9/L4TmdnJ8UiL4RESCbwhCZM+EdMBYD4oIU3P4d2QA86O5/0ygMlk8iTkXojM3BKFGF6JAJ2dK0Aw45coTIJaQbB7kxLNwwLsT256ZYDKykrPnrPlkfHrtdCwDHxLBH7qHK2MCg+RA7brODz+NIvPj67JARUVFX078ooy9XEGWszQfrEc9WoGGzUK6KkHafJhxyBsL+/JWygrKyvVJaTU7cw3IoIK6bwQrVUgOoJFHM8uv6r1mw9vG+5i1jEkH6LRaNRwHPfFcCg3Mf3wcaRs4CiABa+k7SxK6J4M4OPrFox2Nltp+d/fSKq56p+ajJRbjoNHXC7XtD5pV5Ih+xjWxWyDBAJhcgyOD22YGbYO0kXLtVgsK4sUFiOnttw/+Azvu+1vzGL+KbfbXUKPzlFP/VNmo/5UpVLdb2pqWlllUoUq5Ny54re3obe9DdMCes+8QhbWYAy5jhtSjumqaG9R9HT1wOleu/g3oErnXUov4ifaa6WBMXSebsbRtYqXAVOXcXvWh4vf52A5+QKF/yMO2y87gBXoaYuE6wAAAABJRU5ErkJggg==','Test Role')
+COMMIT
+INSERT INTO APP_USER_ROLE_MAP VALUES('admin','ADMIN')
+COMMIT
+INSERT INTO APP_USER_ROLE_MAP VALUES('admin','TEST')
+COMMIT
+INSERT INTO APP_AUTH_INFO VALUES('USER_READ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'User Read Authority')
+COMMIT
+INSERT INTO APP_AUTH_INFO VALUES('USER_MDFY',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'User Modification Authority')
+COMMIT
+INSERT INTO APP_USER_AUTH_MAP VALUES('admin','USER_READ')
+COMMIT
+INSERT INTO APP_USER_AUTH_MAP VALUES('admin','USER_MDFY')
+COMMIT
+drop table if exists APP_ATCL_FILE_INFO CASCADE 
+drop table if exists APP_ATCL_INFO CASCADE 
+drop table if exists APP_ATCL_RPLY_INFO CASCADE 
+drop table if exists APP_AUTH_INFO CASCADE 
+drop table if exists APP_BORD_CATE_INFO CASCADE 
+drop table if exists APP_BORD_INFO CASCADE 
+drop table if exists APP_BORD_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_CODE_INFO CASCADE 
+drop table if exists APP_CODE_ITEM_INFO CASCADE 
+drop table if exists APP_GROP_AUTH_MAP CASCADE 
+drop table if exists APP_GROP_INFO CASCADE 
+drop table if exists APP_GROP_ROLE_MAP CASCADE 
+drop table if exists APP_MENU_INFO CASCADE 
+drop table if exists APP_MENU_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_MSG_INFO CASCADE 
+drop table if exists APP_PROP_INFO CASCADE 
+drop table if exists APP_ROLE_AUTH_MAP CASCADE 
+drop table if exists APP_ROLE_INFO CASCADE 
+drop table if exists APP_USER_AUTH_MAP CASCADE 
+drop table if exists APP_USER_GROP_MAP CASCADE 
+drop table if exists APP_USER_INFO CASCADE 
+drop table if exists APP_USER_LOGN_HIST CASCADE 
+drop table if exists APP_USER_ROLE_MAP CASCADE 
+create table APP_ATCL_FILE_INFO (ATCL_ID varchar(255) not null, FILE_ID varchar(255) not null, FILE_NAME varchar(255), FILE_SIZE bigint, FILE_TYPE varchar(255), primary key (ATCL_ID, FILE_ID))
+create table APP_ATCL_INFO (ATCL_ID varchar(255) not null, BORD_ID varchar(255), CATE_ID varchar(255), ATCL_CNTS varchar(255), ATCL_MDFY_DTTM timestamp, READ_CNT integer, ATCL_RGST_DTTM timestamp, ATCL_TITL varchar(255), ATCL_USER_ID varchar(255), ATCL_USER_NICK varchar(255), primary key (ATCL_ID))
+create table APP_ATCL_RPLY_INFO (ATCL_ID varchar(255) not null, RPLY_ID varchar(255) not null, RPLY_CNTS varchar(255), RPLY_LEVL varchar(255), RPLY_SEQ integer, UPER_RPLY_ID varchar(255), primary key (ATCL_ID, RPLY_ID))
+create table APP_AUTH_INFO (AUTH_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), AUTH_DESC varchar(4000), AUTH_ICON varchar(4000), AUTH_NAME varchar(255), primary key (AUTH_ID))
+create table APP_BORD_CATE_INFO (BORD_ID varchar(255) not null, CATE_ID varchar(255) not null, DISP_SEQ integer, CATE_NAME varchar(255), primary key (BORD_ID, CATE_ID))
+create table APP_BORD_INFO (BORD_ID varchar(255) not null, ACES_PLCY varchar(255), CATE_USE_YN varchar(255), FILE_USE_YN varchar(255), BORD_ICON varchar(255), BORD_NAME varchar(255), READ_PLCY varchar(255), RPLY_USE_YN varchar(255), ROWS_PER_PAGE integer, BORD_SKIN varchar(255), WRIT_PLCY varchar(255), primary key (BORD_ID))
+create table APP_BORD_PLCY_AUTH_MAP (BORD_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_CODE_INFO (CODE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CODE_DESC varchar(255), CODE_NAME varchar(255), UPER_CODE_ID varchar(255), primary key (CODE_ID))
+create table APP_CODE_ITEM_INFO (CODE_ID varchar(255) not null, ITEM_ID varchar(255) not null, ITEM_DESC varchar(255), DISP_SEQ integer, ITEM_NAME varchar(255), primary key (CODE_ID, ITEM_ID))
+create table APP_GROP_AUTH_MAP (GROP_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_GROP_INFO (GROP_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), GROP_DESC varchar(4000), GROP_ICON varchar(4000), GROP_NAME varchar(255), UPER_GROP_ID varchar(32), primary key (GROP_ID))
+create table APP_GROP_ROLE_MAP (GROP_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+create table APP_MENU_INFO (MENU_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MENU_DESC varchar(255), DISP_SEQ integer, MENU_ICON varchar(255), MENU_NAME varchar(255), PLCY_ACES varchar(255), PLCY_DISP varchar(255), MENU_TYPE varchar(255), UPER_MENU_ID varchar(255), MENU_VAL varchar(255), primary key (MENU_ID))
+create table APP_MENU_PLCY_AUTH_MAP (MENU_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_MSG_INFO (MSG_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MSG_DESC varchar(255), MSG_NAME varchar(255), MSG_VAL varchar(255), primary key (MSG_ID))
+create table APP_PROP_INFO (PROP_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), PROP_DESC varchar(255), PROP_NAME varchar(255), PROP_VAL varchar(255), primary key (PROP_ID))
+create table APP_ROLE_AUTH_MAP (ROLE_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_ROLE_INFO (ROLE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), ROLE_DESC varchar(4000), ROLE_ICON varchar(4000), ROLE_NAME varchar(255), primary key (ROLE_ID))
+create table APP_USER_AUTH_MAP (USER_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_USER_GROP_MAP (USER_ID varchar(32) not null, GROP_ID varchar(32) not null)
+create table APP_USER_INFO (USER_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CLOS_DATE timestamp, USER_EMIL varchar(255), USER_IMGE varchar(4000), JOIN_DATE timestamp, USER_LOCL varchar(255), USER_NAME varchar(255), USER_NICK varchar(255), USER_PASS varchar(255), USER_PHON varchar(255), USER_PRFL varchar(4000), USER_STAT varchar(255), primary key (USER_ID))
+create table APP_USER_LOGN_HIST (LOGN_DTTM timestamp not null, USER_ID varchar(255) not null, LOGN_AGNT varchar(255), LOGN_FAIL_RESN varchar(255), LOGN_IP varchar(255), LOGN_REFR varchar(255), LOGN_SUCS_YN varchar(255), primary key (LOGN_DTTM, USER_ID))
+create table APP_USER_ROLE_MAP (USER_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+alter table APP_ATCL_FILE_INFO add constraint FK11vamwi9kmntgb5sgv3yk5wom foreign key (ATCL_ID) references APP_ATCL_INFO
+alter table APP_BORD_CATE_INFO add constraint FK3o6osakjv3ffbbwasueajih8a foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKf4ijeh20pf9r6cm4ffm67es7k foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKnmd64r3ucb8y6vo61ok8wgsh3 foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_CODE_ITEM_INFO add constraint FKevsc1eg1f3ki8kaevo6ddea57 foreign key (CODE_ID) references APP_CODE_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK339n4jheflud3iyq6h64glklo foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK1y6b1ay68ax3aj05ufepgg144 foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_GROP_ROLE_MAP add constraint FKaefku0msrdtmrk0pmecypf99i foreign key (ROLE_ID) references APP_ROLE_INFO
+alter table APP_GROP_ROLE_MAP add constraint FK1cia7wjwvonuita8ka47cgd8b foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKmkq0hd157hvs638meglvpn4sx foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKh0x884aaj0lcwn06tq43164u6 foreign key (MENU_ID) references APP_MENU_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKq8sm7c0mw17jts6o1rh3pt00p foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKnef5bvb4t8p257gkcir1ci1ix foreign key (ROLE_ID) references APP_ROLE_INFO
+INSERT INTO APP_USER_INFO VALUES('admin',NULL,NULL,NULL,NULL,NULL,NULL,'admin@oopscraft.net','data:image/png;base64,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',NULL,NULL,'Administrator','Admin',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test1',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test2',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test3',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test4',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test5',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test6',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test7',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test8',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test9',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test10',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test11',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test12',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test13',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test14',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test15',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test16',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test17',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test18',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test19',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test20',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test21',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test22',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test23',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test24',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test25',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test26',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test27',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test28',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test29',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test30',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test31',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test32',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test33',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test34',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test35',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test36',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test37',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_GROP_INFO VALUES('ADMIN',NULL,NULL,NULL,NULL,NULL,'Administrator Group Description.','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADLklEQVR4XsWWzWtcVRiHn/ecd6YzmQ4BW/wsbkI0266karG6ESUaGtz6FwgpwbqoUlBBEU0kNsGtLl0I0kFxmlYotiX7iKkpUpKKH4RYLJpMNL3nlbxwF+ntqrd3+sDhLgbu87u/95zDiJlxLxEc9JPZT78khDEPZOxCEBwSVlomYOn0sYnXXgFuCqDTM7NfPf/iC6Mjw0MkHBeJQTQIgmMJTIwyBBGWflqme2b+69cnJ44q0IyqoweGhogH97P+zEukDz7jgS+eZP2+p6kf+ZC3zwrDew/x6hPnuXL1MiKU4vHHholRR4GmAo2UjOvX/yJd/pPa0uesvTnHnj8WqP2+wI2D77J6BVZtgbGRv1m5uoIEgDtJYey47t+3D7ME0FBAsMRgo87iwiKIIKs/s/bsDwDEX5c58dyPCMYvv63w8CMP3XEDZuarPdj2JyCa//DvPzcYOfAgMUZyAMRA3IinLoF7siyjt7mB4aAAGOyp1zl8+AjNZhMQwIBcXp48QK/X48KF82A4iksgRqXdbtNqtUgpsb29jUigVlNvxXMglMC/XlXdJYKTj8AFqjUPkmXbXLz4PVNTU3Q636Baz0OUIoSI6n+IuHN3AAxiDKgGzCIfTU3zxvHjZAZnvu2i2vAQZRBxB9gtAZIZBnk9gNA53WGrt8XJk2/Rag7Q7XYpH0DcYUAqNIBX5CvLEuPj40xOHmN6eob5+bM0Gg1CCJRD3AG3jiAZYF5PCLKzXH7q1CzfnTtHa8DrB5G7MwLMncUGYiSq+vPlsaNe2cDeFiEGBKE0Iu4oNmAJAA2KRnVxTWv+vJv3gCDuyJ3FU6ABH0MIVIGPQIunwDEfgddfWQBE3GE4xT2gMRJDdQF8BLffAwaYf331DUTAihcRQIyV7wF3uLN4D0AISqhwBCDuyJ2FU6AaiRWOQETcgd32HrA+jsCK94D1cQQGxU2IsSP2JSJUQf5+bPcmdFJKpJT5P6GqApjZjsNdOQoggATh/ffeIUgAoRr8y5M3nCsUsI2NjUsfz8w9lZLRD0IQNjc3LwEmQBt4FNgPKP3hJrAOXFOgB1wD1gChPxiw5e57zf/Rz2VlmfOMywAAAABJRU5ErkJggg==','Administrator Group',NULL)
+COMMIT
+INSERT INTO APP_USER_GROP_MAP VALUES('admin','ADMIN')
+COMMIT
+INSERT INTO APP_ROLE_INFO VALUES('ADMIN',NULL,NULL,NULL,NULL,NULL,NULL,'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAADgUlEQVR4Xq2WSUhjWRSGj3mJY0EZ7Y29FEFwQHFaKIoDGCyr0uDGJBu7qaSookgVlKveK4qKY2LiJsYkTfeirbIX3XtxoYjiAOI8oGIv0lGDU2uGV/+7FJekyEun2z5wyYObfP85593/3CSJokiJRBLC6XRqU1JSAjqd7g9KMBSJwO12e7vH4/F5vd6Zk5OT3x0Oh9dms2n/FwGADEj+p9XVVXVmZiap1WpaW1v7JhAITFsslu8eJTA+Pm5AC117e3tCYWEh7e/v08HBAZWVldHW1pby4eHh19HRUe1/ErBarfpwOMzgNTU1ND8/T2gPHR4esuf6+nra2NhQ3t3dTQ8PD7/4VwJjY2P6UCjk3t3dFWprayk5OZlubm7o/v6ekDX5/X7Cy6ampiZaX19XXl9ffxwcHHyekABK1geDQff29rZQV1fH4KiEgdF36ZMtJMBENBoNraysKCH6qa+vrzWuAErVA+De2dkRGhoaGBwgtgCNWhBle6mpqdTa2krLy8vKy8vLmd7e3mcxBVCiHhlGwQHhIECjqgA8SkSr1dLi4qLS5/PNdHd3t0QJDAwMtAPgwckQ0NfIzDkI4EiRyH0u0tbWRgsLCyr45beuri4NM6i0RkZGLpaWlp62tLRIfeUwvAsGlwKlM7Dk/LS0NOrs7JTcHbnYHl44TU1NUXNz8589PT3fJqEcHc73zzk5OZSbm8ugsaK/v59ub2/Zc1ZWFpnNZpILnCw6Pj6m4uJijeLs7OzJ6ekpU2ZwmSgtLeWA6upqihP83eFkZSnQs8mCggL/7OwswTSyAnAwB8DFcmyW6NzcHMH5f2GU/KJA70Mo/ceSkpKw2+2WFTGZTJSRkUHZ2dlkMBhk4S6XS6owdHV19YH7YGJiwgbTvC8qKpIVUSgU0ovkn7HgUoJVVVUh7L/CHHNzgS8iFpjmnbwID1l4ZWVlSBAEE8a7I6aTsWGNI8KNFRmYUQxeUVHB4Bjvk3FmERcxfy1ydHTEjun5+TmhvxyOnjO4SqUycri8ABcZh5miRNLT0/k+9ji8vLycwdFzJ8UKuE92vUF0dHSEABGHhobEvLw8EaIi5pYIX4hGozGIr3wfh/GPN5oNR/OtVAnsz6ZmY2Mj4ZlljpnFMn/UnYybzQ6R17jB/Jubm4RpK100F4D/gD3A40fCf1vy8/OVyP4lyv4bvnGJCf7wMykvfnetBBY1AAAAAElFTkSuQmCC','Administrator Role')
+COMMIT
+INSERT INTO APP_ROLE_INFO VALUES('TEST',NULL,NULL,NULL,NULL,NULL,NULL,'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACkklEQVR42pWSbUhTYRTH/3f37s2rrVaimdk00LSsDMOk+pAFBaZ9CAyLYGIYJAhh2Dc/FLRCSQmp7EMFVgst0IVoQaiVISrODNrEWZYvS4fu4jb3ovc+PbNA4hrYgcOB85z/73nOeQ6Df1hjY6OKhhKGYc5LkpQqimI4baOxQa1WPygoKAiFE8xqYrPZHEcIafXwsXvHRR6LhAGv1UCnYqAVJoC58QGWZfOKi4unmNVu9nq9PQuxaRlBZSQK9ydCzbFwekIYmQtgXlQgNG6Hb6TfKgjCARmgvr6+lOi31pHNyTBmhcVUsCThhxDExIIIv8RBJASjXRb4nV8vyQA1NTV9/L4TmdnJ8UiL4RESCbwhCZM+EdMBYD4oIU3P4d2QA86O5/0ygMlk8iTkXojM3BKFGF6JAJ2dK0Aw45coTIJaQbB7kxLNwwLsT256ZYDKykrPnrPlkfHrtdCwDHxLBH7qHK2MCg+RA7brODz+NIvPj67JARUVFX078ooy9XEGWszQfrEc9WoGGzUK6KkHafJhxyBsL+/JWygrKyvVJaTU7cw3IoIK6bwQrVUgOoJFHM8uv6r1mw9vG+5i1jEkH6LRaNRwHPfFcCg3Mf3wcaRs4CiABa+k7SxK6J4M4OPrFox2Nltp+d/fSKq56p+ajJRbjoNHXC7XtD5pV5Ih+xjWxWyDBAJhcgyOD22YGbYO0kXLtVgsK4sUFiOnttw/+Azvu+1vzGL+KbfbXUKPzlFP/VNmo/5UpVLdb2pqWlllUoUq5Ny54re3obe9DdMCes+8QhbWYAy5jhtSjumqaG9R9HT1wOleu/g3oErnXUov4ifaa6WBMXSebsbRtYqXAVOXcXvWh4vf52A5+QKF/yMO2y87gBXoaYuE6wAAAABJRU5ErkJggg==','Test Role')
+COMMIT
+INSERT INTO APP_USER_ROLE_MAP VALUES('admin','ADMIN')
+COMMIT
+INSERT INTO APP_USER_ROLE_MAP VALUES('admin','TEST')
+COMMIT
+INSERT INTO APP_AUTH_INFO VALUES('USER_READ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'User Read Authority')
+COMMIT
+INSERT INTO APP_AUTH_INFO VALUES('USER_MDFY',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'User Modification Authority')
+COMMIT
+INSERT INTO APP_USER_AUTH_MAP VALUES('admin','USER_READ')
+COMMIT
+INSERT INTO APP_USER_AUTH_MAP VALUES('admin','USER_MDFY')
+COMMIT
+INSERT INTO APP_USER_ROLE_MAP VALUES('test1','ADMIN')
+INSERT INTO APP_USER_ROLE_MAP VALUES('test1','TEST')
+COMMIT
+DELETE FROM APP_USER_INFO WHERE USER_ID='test1'
+INSERT INTO APP_USER_INFO VALUES('test1','N',NULL,NULL,'2020-01-20 20:09:53.690000',NULL,NULL,'chomookun@gmail.com',NULL,NULL,'en_US','CHAN LIM','Test1',NULL,'+821033744251',NULL,'ACTIVE')
+DELETE FROM APP_USER_ROLE_MAP WHERE USER_ID='test1' AND ROLE_ID='ADMIN'
+DELETE FROM APP_USER_ROLE_MAP WHERE USER_ID='test1' AND ROLE_ID='TEST'
+INSERT INTO APP_USER_ROLE_MAP VALUES('test1','ADMIN')
+INSERT INTO APP_USER_ROLE_MAP VALUES('test1','TEST')
+COMMIT
+DELETE FROM APP_USER_INFO WHERE USER_ID='test1'
+INSERT INTO APP_USER_INFO VALUES('test1','N',NULL,NULL,'2020-01-20 20:10:28.987000',NULL,NULL,'chomookun@gmail.com',NULL,NULL,'en_US','CHAN LIM','Test1',NULL,'+821033744251',NULL,'CLOSED')
+DELETE FROM APP_USER_ROLE_MAP WHERE USER_ID='test1' AND ROLE_ID='ADMIN'
+DELETE FROM APP_USER_ROLE_MAP WHERE USER_ID='test1' AND ROLE_ID='TEST'
+INSERT INTO APP_USER_ROLE_MAP VALUES('test1','ADMIN')
+INSERT INTO APP_USER_ROLE_MAP VALUES('test1','TEST')
+COMMIT
+DELETE FROM APP_USER_INFO WHERE USER_ID='test1'
+INSERT INTO APP_USER_INFO VALUES('test1','N',NULL,NULL,'2020-01-20 20:10:47.508000',NULL,NULL,'chomookun@gmail.com',NULL,NULL,'en_US','CHAN LIM','Test1',NULL,'+821033744251',NULL,'ACTIVE')
+DELETE FROM APP_USER_ROLE_MAP WHERE USER_ID='test1' AND ROLE_ID='ADMIN'
+DELETE FROM APP_USER_ROLE_MAP WHERE USER_ID='test1' AND ROLE_ID='TEST'
+INSERT INTO APP_USER_ROLE_MAP VALUES('test1','ADMIN')
+INSERT INTO APP_USER_ROLE_MAP VALUES('test1','TEST')
+COMMIT
+/*C136*/DISCONNECT
+/*C138*/DISCONNECT
+/*C139*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C140*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C141*/SET SCHEMA PUBLIC
+drop table if exists APP_ATCL_FILE_INFO CASCADE 
+drop table if exists APP_ATCL_INFO CASCADE 
+drop table if exists APP_ATCL_RPLY_INFO CASCADE 
+drop table if exists APP_AUTH_INFO CASCADE 
+drop table if exists APP_BORD_CATE_INFO CASCADE 
+drop table if exists APP_BORD_INFO CASCADE 
+drop table if exists APP_BORD_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_CODE_INFO CASCADE 
+drop table if exists APP_CODE_ITEM_INFO CASCADE 
+drop table if exists APP_GROP_AUTH_MAP CASCADE 
+drop table if exists APP_GROP_INFO CASCADE 
+drop table if exists APP_GROP_ROLE_MAP CASCADE 
+drop table if exists APP_MENU_INFO CASCADE 
+drop table if exists APP_MENU_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_MSG_INFO CASCADE 
+drop table if exists APP_PROP_INFO CASCADE 
+drop table if exists APP_ROLE_AUTH_MAP CASCADE 
+drop table if exists APP_ROLE_INFO CASCADE 
+drop table if exists APP_USER_AUTH_MAP CASCADE 
+drop table if exists APP_USER_GROP_MAP CASCADE 
+drop table if exists APP_USER_INFO CASCADE 
+drop table if exists APP_USER_LOGN_HIST CASCADE 
+drop table if exists APP_USER_ROLE_MAP CASCADE 
+create table APP_ATCL_FILE_INFO (ATCL_ID varchar(255) not null, FILE_ID varchar(255) not null, FILE_NAME varchar(255), FILE_SIZE bigint, FILE_TYPE varchar(255), primary key (ATCL_ID, FILE_ID))
+create table APP_ATCL_INFO (ATCL_ID varchar(255) not null, BORD_ID varchar(255), CATE_ID varchar(255), ATCL_CNTS varchar(255), ATCL_MDFY_DTTM timestamp, READ_CNT integer, ATCL_RGST_DTTM timestamp, ATCL_TITL varchar(255), ATCL_USER_ID varchar(255), ATCL_USER_NICK varchar(255), primary key (ATCL_ID))
+create table APP_ATCL_RPLY_INFO (ATCL_ID varchar(255) not null, RPLY_ID varchar(255) not null, RPLY_CNTS varchar(255), RPLY_LEVL varchar(255), RPLY_SEQ integer, UPER_RPLY_ID varchar(255), primary key (ATCL_ID, RPLY_ID))
+create table APP_AUTH_INFO (AUTH_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), AUTH_DESC varchar(4000), AUTH_ICON varchar(4000), AUTH_NAME varchar(255), primary key (AUTH_ID))
+create table APP_BORD_CATE_INFO (BORD_ID varchar(255) not null, CATE_ID varchar(255) not null, DISP_SEQ integer, CATE_NAME varchar(255), primary key (BORD_ID, CATE_ID))
+create table APP_BORD_INFO (BORD_ID varchar(255) not null, ACES_PLCY varchar(255), CATE_USE_YN varchar(255), FILE_USE_YN varchar(255), BORD_ICON varchar(255), BORD_NAME varchar(255), READ_PLCY varchar(255), RPLY_USE_YN varchar(255), ROWS_PER_PAGE integer, BORD_SKIN varchar(255), WRIT_PLCY varchar(255), primary key (BORD_ID))
+create table APP_BORD_PLCY_AUTH_MAP (BORD_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_CODE_INFO (CODE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CODE_DESC varchar(255), CODE_NAME varchar(255), UPER_CODE_ID varchar(255), primary key (CODE_ID))
+create table APP_CODE_ITEM_INFO (CODE_ID varchar(255) not null, ITEM_ID varchar(255) not null, ITEM_DESC varchar(255), DISP_SEQ integer, ITEM_NAME varchar(255), primary key (CODE_ID, ITEM_ID))
+create table APP_GROP_AUTH_MAP (GROP_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_GROP_INFO (GROP_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), GROP_DESC varchar(4000), GROP_ICON varchar(4000), GROP_NAME varchar(255), UPER_GROP_ID varchar(32), primary key (GROP_ID))
+create table APP_GROP_ROLE_MAP (GROP_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+create table APP_MENU_INFO (MENU_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MENU_DESC varchar(255), DISP_SEQ integer, MENU_ICON varchar(255), MENU_NAME varchar(255), PLCY_ACES varchar(255), PLCY_DISP varchar(255), MENU_TYPE varchar(255), UPER_MENU_ID varchar(255), MENU_VAL varchar(255), primary key (MENU_ID))
+create table APP_MENU_PLCY_AUTH_MAP (MENU_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_MSG_INFO (MSG_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MSG_DESC varchar(255), MSG_NAME varchar(255), MSG_VAL varchar(255), primary key (MSG_ID))
+create table APP_PROP_INFO (PROP_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), PROP_DESC varchar(255), PROP_NAME varchar(255), PROP_VAL varchar(255), primary key (PROP_ID))
+create table APP_ROLE_AUTH_MAP (ROLE_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_ROLE_INFO (ROLE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), ROLE_DESC varchar(4000), ROLE_ICON varchar(4000), ROLE_NAME varchar(255), primary key (ROLE_ID))
+create table APP_USER_AUTH_MAP (USER_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_USER_GROP_MAP (USER_ID varchar(32) not null, GROP_ID varchar(32) not null)
+create table APP_USER_INFO (USER_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CLOS_DATE timestamp, USER_EMIL varchar(255), USER_IMGE varchar(4000), JOIN_DATE timestamp, USER_LOCL varchar(255), USER_NAME varchar(255), USER_NICK varchar(255), USER_PASS varchar(255), USER_PHON varchar(255), USER_PRFL varchar(4000), USER_STAT varchar(255), primary key (USER_ID))
+create table APP_USER_LOGN_HIST (LOGN_DTTM timestamp not null, USER_ID varchar(255) not null, LOGN_AGNT varchar(255), LOGN_FAIL_RESN varchar(255), LOGN_IP varchar(255), LOGN_REFR varchar(255), LOGN_SUCS_YN varchar(255), primary key (LOGN_DTTM, USER_ID))
+create table APP_USER_ROLE_MAP (USER_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+alter table APP_ATCL_FILE_INFO add constraint FK11vamwi9kmntgb5sgv3yk5wom foreign key (ATCL_ID) references APP_ATCL_INFO
+alter table APP_BORD_CATE_INFO add constraint FK3o6osakjv3ffbbwasueajih8a foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKf4ijeh20pf9r6cm4ffm67es7k foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKnmd64r3ucb8y6vo61ok8wgsh3 foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_CODE_ITEM_INFO add constraint FKevsc1eg1f3ki8kaevo6ddea57 foreign key (CODE_ID) references APP_CODE_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK339n4jheflud3iyq6h64glklo foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK1y6b1ay68ax3aj05ufepgg144 foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_GROP_ROLE_MAP add constraint FKaefku0msrdtmrk0pmecypf99i foreign key (ROLE_ID) references APP_ROLE_INFO
+alter table APP_GROP_ROLE_MAP add constraint FK1cia7wjwvonuita8ka47cgd8b foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKmkq0hd157hvs638meglvpn4sx foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKh0x884aaj0lcwn06tq43164u6 foreign key (MENU_ID) references APP_MENU_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKq8sm7c0mw17jts6o1rh3pt00p foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKnef5bvb4t8p257gkcir1ci1ix foreign key (ROLE_ID) references APP_ROLE_INFO
+drop table if exists APP_ATCL_FILE_INFO CASCADE 
+drop table if exists APP_ATCL_INFO CASCADE 
+drop table if exists APP_ATCL_RPLY_INFO CASCADE 
+drop table if exists APP_AUTH_INFO CASCADE 
+drop table if exists APP_BORD_CATE_INFO CASCADE 
+drop table if exists APP_BORD_INFO CASCADE 
+drop table if exists APP_BORD_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_CODE_INFO CASCADE 
+drop table if exists APP_CODE_ITEM_INFO CASCADE 
+drop table if exists APP_GROP_AUTH_MAP CASCADE 
+drop table if exists APP_GROP_INFO CASCADE 
+drop table if exists APP_GROP_ROLE_MAP CASCADE 
+drop table if exists APP_MENU_INFO CASCADE 
+drop table if exists APP_MENU_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_MSG_INFO CASCADE 
+drop table if exists APP_PROP_INFO CASCADE 
+drop table if exists APP_ROLE_AUTH_MAP CASCADE 
+drop table if exists APP_ROLE_INFO CASCADE 
+drop table if exists APP_USER_AUTH_MAP CASCADE 
+drop table if exists APP_USER_GROP_MAP CASCADE 
+drop table if exists APP_USER_INFO CASCADE 
+drop table if exists APP_USER_LOGN_HIST CASCADE 
+drop table if exists APP_USER_ROLE_MAP CASCADE 
+create table APP_ATCL_FILE_INFO (ATCL_ID varchar(255) not null, FILE_ID varchar(255) not null, FILE_NAME varchar(255), FILE_SIZE bigint, FILE_TYPE varchar(255), primary key (ATCL_ID, FILE_ID))
+create table APP_ATCL_INFO (ATCL_ID varchar(255) not null, BORD_ID varchar(255), CATE_ID varchar(255), ATCL_CNTS varchar(255), ATCL_MDFY_DTTM timestamp, READ_CNT integer, ATCL_RGST_DTTM timestamp, ATCL_TITL varchar(255), ATCL_USER_ID varchar(255), ATCL_USER_NICK varchar(255), primary key (ATCL_ID))
+create table APP_ATCL_RPLY_INFO (ATCL_ID varchar(255) not null, RPLY_ID varchar(255) not null, RPLY_CNTS varchar(255), RPLY_LEVL varchar(255), RPLY_SEQ integer, UPER_RPLY_ID varchar(255), primary key (ATCL_ID, RPLY_ID))
+create table APP_AUTH_INFO (AUTH_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), AUTH_DESC varchar(4000), AUTH_ICON varchar(4000), AUTH_NAME varchar(255), primary key (AUTH_ID))
+create table APP_BORD_CATE_INFO (BORD_ID varchar(255) not null, CATE_ID varchar(255) not null, DISP_SEQ integer, CATE_NAME varchar(255), primary key (BORD_ID, CATE_ID))
+create table APP_BORD_INFO (BORD_ID varchar(255) not null, ACES_PLCY varchar(255), CATE_USE_YN varchar(255), FILE_USE_YN varchar(255), BORD_ICON varchar(255), BORD_NAME varchar(255), READ_PLCY varchar(255), RPLY_USE_YN varchar(255), ROWS_PER_PAGE integer, BORD_SKIN varchar(255), WRIT_PLCY varchar(255), primary key (BORD_ID))
+create table APP_BORD_PLCY_AUTH_MAP (BORD_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_CODE_INFO (CODE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CODE_DESC varchar(255), CODE_NAME varchar(255), UPER_CODE_ID varchar(255), primary key (CODE_ID))
+create table APP_CODE_ITEM_INFO (CODE_ID varchar(255) not null, ITEM_ID varchar(255) not null, ITEM_DESC varchar(255), DISP_SEQ integer, ITEM_NAME varchar(255), primary key (CODE_ID, ITEM_ID))
+create table APP_GROP_AUTH_MAP (GROP_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_GROP_INFO (GROP_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), GROP_DESC varchar(4000), GROP_ICON varchar(4000), GROP_NAME varchar(255), UPER_GROP_ID varchar(32), primary key (GROP_ID))
+create table APP_GROP_ROLE_MAP (GROP_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+create table APP_MENU_INFO (MENU_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MENU_DESC varchar(255), DISP_SEQ integer, MENU_ICON varchar(255), MENU_NAME varchar(255), PLCY_ACES varchar(255), PLCY_DISP varchar(255), MENU_TYPE varchar(255), UPER_MENU_ID varchar(255), MENU_VAL varchar(255), primary key (MENU_ID))
+create table APP_MENU_PLCY_AUTH_MAP (MENU_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_MSG_INFO (MSG_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MSG_DESC varchar(255), MSG_NAME varchar(255), MSG_VAL varchar(255), primary key (MSG_ID))
+create table APP_PROP_INFO (PROP_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), PROP_DESC varchar(255), PROP_NAME varchar(255), PROP_VAL varchar(255), primary key (PROP_ID))
+create table APP_ROLE_AUTH_MAP (ROLE_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_ROLE_INFO (ROLE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), ROLE_DESC varchar(4000), ROLE_ICON varchar(4000), ROLE_NAME varchar(255), primary key (ROLE_ID))
+create table APP_USER_AUTH_MAP (USER_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_USER_GROP_MAP (USER_ID varchar(32) not null, GROP_ID varchar(32) not null)
+create table APP_USER_INFO (USER_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CLOS_DATE timestamp, USER_EMIL varchar(255), USER_IMGE varchar(4000), JOIN_DATE timestamp, USER_LOCL varchar(255), USER_NAME varchar(255), USER_NICK varchar(255), USER_PASS varchar(255), USER_PHON varchar(255), USER_PRFL varchar(4000), USER_STAT varchar(255), primary key (USER_ID))
+create table APP_USER_LOGN_HIST (LOGN_DTTM timestamp not null, USER_ID varchar(255) not null, LOGN_AGNT varchar(255), LOGN_FAIL_RESN varchar(255), LOGN_IP varchar(255), LOGN_REFR varchar(255), LOGN_SUCS_YN varchar(255), primary key (LOGN_DTTM, USER_ID))
+create table APP_USER_ROLE_MAP (USER_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+alter table APP_ATCL_FILE_INFO add constraint FK11vamwi9kmntgb5sgv3yk5wom foreign key (ATCL_ID) references APP_ATCL_INFO
+alter table APP_BORD_CATE_INFO add constraint FK3o6osakjv3ffbbwasueajih8a foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKf4ijeh20pf9r6cm4ffm67es7k foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKnmd64r3ucb8y6vo61ok8wgsh3 foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_CODE_ITEM_INFO add constraint FKevsc1eg1f3ki8kaevo6ddea57 foreign key (CODE_ID) references APP_CODE_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK339n4jheflud3iyq6h64glklo foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK1y6b1ay68ax3aj05ufepgg144 foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_GROP_ROLE_MAP add constraint FKaefku0msrdtmrk0pmecypf99i foreign key (ROLE_ID) references APP_ROLE_INFO
+alter table APP_GROP_ROLE_MAP add constraint FK1cia7wjwvonuita8ka47cgd8b foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKmkq0hd157hvs638meglvpn4sx foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKh0x884aaj0lcwn06tq43164u6 foreign key (MENU_ID) references APP_MENU_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKq8sm7c0mw17jts6o1rh3pt00p foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKnef5bvb4t8p257gkcir1ci1ix foreign key (ROLE_ID) references APP_ROLE_INFO
+/*C142*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C143*/SET SCHEMA PUBLIC
+drop table if exists APP_ATCL_FILE_INFO CASCADE 
+drop table if exists APP_ATCL_INFO CASCADE 
+drop table if exists APP_ATCL_RPLY_INFO CASCADE 
+drop table if exists APP_AUTH_INFO CASCADE 
+drop table if exists APP_BORD_CATE_INFO CASCADE 
+drop table if exists APP_BORD_INFO CASCADE 
+drop table if exists APP_BORD_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_CODE_INFO CASCADE 
+drop table if exists APP_CODE_ITEM_INFO CASCADE 
+drop table if exists APP_GROP_AUTH_MAP CASCADE 
+drop table if exists APP_GROP_INFO CASCADE 
+drop table if exists APP_GROP_ROLE_MAP CASCADE 
+drop table if exists APP_MENU_INFO CASCADE 
+drop table if exists APP_MENU_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_MSG_INFO CASCADE 
+drop table if exists APP_PROP_INFO CASCADE 
+drop table if exists APP_ROLE_AUTH_MAP CASCADE 
+drop table if exists APP_ROLE_INFO CASCADE 
+drop table if exists APP_USER_AUTH_MAP CASCADE 
+drop table if exists APP_USER_GROP_MAP CASCADE 
+drop table if exists APP_USER_INFO CASCADE 
+drop table if exists APP_USER_LOGN_HIST CASCADE 
+drop table if exists APP_USER_ROLE_MAP CASCADE 
+create table APP_ATCL_FILE_INFO (ATCL_ID varchar(255) not null, FILE_ID varchar(255) not null, FILE_NAME varchar(255), FILE_SIZE bigint, FILE_TYPE varchar(255), primary key (ATCL_ID, FILE_ID))
+create table APP_ATCL_INFO (ATCL_ID varchar(255) not null, BORD_ID varchar(255), CATE_ID varchar(255), ATCL_CNTS varchar(255), ATCL_MDFY_DTTM timestamp, READ_CNT integer, ATCL_RGST_DTTM timestamp, ATCL_TITL varchar(255), ATCL_USER_ID varchar(255), ATCL_USER_NICK varchar(255), primary key (ATCL_ID))
+create table APP_ATCL_RPLY_INFO (ATCL_ID varchar(255) not null, RPLY_ID varchar(255) not null, RPLY_CNTS varchar(255), RPLY_LEVL varchar(255), RPLY_SEQ integer, UPER_RPLY_ID varchar(255), primary key (ATCL_ID, RPLY_ID))
+create table APP_AUTH_INFO (AUTH_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), AUTH_DESC varchar(4000), AUTH_ICON varchar(4000), AUTH_NAME varchar(255), primary key (AUTH_ID))
+create table APP_BORD_CATE_INFO (BORD_ID varchar(255) not null, CATE_ID varchar(255) not null, DISP_SEQ integer, CATE_NAME varchar(255), primary key (BORD_ID, CATE_ID))
+create table APP_BORD_INFO (BORD_ID varchar(255) not null, ACES_PLCY varchar(255), CATE_USE_YN varchar(255), FILE_USE_YN varchar(255), BORD_ICON varchar(255), BORD_NAME varchar(255), READ_PLCY varchar(255), RPLY_USE_YN varchar(255), ROWS_PER_PAGE integer, BORD_SKIN varchar(255), WRIT_PLCY varchar(255), primary key (BORD_ID))
+create table APP_BORD_PLCY_AUTH_MAP (BORD_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_CODE_INFO (CODE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CODE_DESC varchar(255), CODE_NAME varchar(255), UPER_CODE_ID varchar(255), primary key (CODE_ID))
+create table APP_CODE_ITEM_INFO (CODE_ID varchar(255) not null, ITEM_ID varchar(255) not null, ITEM_DESC varchar(255), DISP_SEQ integer, ITEM_NAME varchar(255), primary key (CODE_ID, ITEM_ID))
+create table APP_GROP_AUTH_MAP (GROP_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_GROP_INFO (GROP_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), GROP_DESC varchar(4000), GROP_ICON varchar(4000), GROP_NAME varchar(255), UPER_GROP_ID varchar(32), primary key (GROP_ID))
+create table APP_GROP_ROLE_MAP (GROP_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+create table APP_MENU_INFO (MENU_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MENU_DESC varchar(255), DISP_SEQ integer, MENU_ICON varchar(255), MENU_NAME varchar(255), PLCY_ACES varchar(255), PLCY_DISP varchar(255), MENU_TYPE varchar(255), UPER_MENU_ID varchar(255), MENU_VAL varchar(255), primary key (MENU_ID))
+create table APP_MENU_PLCY_AUTH_MAP (MENU_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_MSG_INFO (MSG_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MSG_DESC varchar(255), MSG_NAME varchar(255), MSG_VAL varchar(255), primary key (MSG_ID))
+create table APP_PROP_INFO (PROP_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), PROP_DESC varchar(255), PROP_NAME varchar(255), PROP_VAL varchar(255), primary key (PROP_ID))
+create table APP_ROLE_AUTH_MAP (ROLE_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_ROLE_INFO (ROLE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), ROLE_DESC varchar(4000), ROLE_ICON varchar(4000), ROLE_NAME varchar(255), primary key (ROLE_ID))
+create table APP_USER_AUTH_MAP (USER_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_USER_GROP_MAP (USER_ID varchar(32) not null, GROP_ID varchar(32) not null)
+create table APP_USER_INFO (USER_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CLOS_DATE timestamp, USER_EMIL varchar(255), USER_IMGE varchar(4000), JOIN_DATE timestamp, USER_LOCL varchar(255), USER_NAME varchar(255), USER_NICK varchar(255), USER_PASS varchar(255), USER_PHON varchar(255), USER_PRFL varchar(4000), USER_STAT varchar(255), primary key (USER_ID))
+create table APP_USER_LOGN_HIST (LOGN_DTTM timestamp not null, USER_ID varchar(255) not null, LOGN_AGNT varchar(255), LOGN_FAIL_RESN varchar(255), LOGN_IP varchar(255), LOGN_REFR varchar(255), LOGN_SUCS_YN varchar(255), primary key (LOGN_DTTM, USER_ID))
+create table APP_USER_ROLE_MAP (USER_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+alter table APP_ATCL_FILE_INFO add constraint FK11vamwi9kmntgb5sgv3yk5wom foreign key (ATCL_ID) references APP_ATCL_INFO
+alter table APP_BORD_CATE_INFO add constraint FK3o6osakjv3ffbbwasueajih8a foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKf4ijeh20pf9r6cm4ffm67es7k foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKnmd64r3ucb8y6vo61ok8wgsh3 foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_CODE_ITEM_INFO add constraint FKevsc1eg1f3ki8kaevo6ddea57 foreign key (CODE_ID) references APP_CODE_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK339n4jheflud3iyq6h64glklo foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK1y6b1ay68ax3aj05ufepgg144 foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_GROP_ROLE_MAP add constraint FKaefku0msrdtmrk0pmecypf99i foreign key (ROLE_ID) references APP_ROLE_INFO
+alter table APP_GROP_ROLE_MAP add constraint FK1cia7wjwvonuita8ka47cgd8b foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKmkq0hd157hvs638meglvpn4sx foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKh0x884aaj0lcwn06tq43164u6 foreign key (MENU_ID) references APP_MENU_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKq8sm7c0mw17jts6o1rh3pt00p foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKnef5bvb4t8p257gkcir1ci1ix foreign key (ROLE_ID) references APP_ROLE_INFO
+INSERT INTO APP_USER_INFO VALUES('admin',NULL,NULL,NULL,NULL,NULL,NULL,'admin@oopscraft.net','data:image/png;base64,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',NULL,NULL,'Administrator','Admin',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test1',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test2',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test3',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test4',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test5',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test6',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test7',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test8',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test9',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test10',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test11',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test12',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test13',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test14',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test15',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test16',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test17',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test18',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test19',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test20',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test21',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test22',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test23',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test24',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test25',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test26',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test27',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test28',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test29',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test30',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test31',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test32',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test33',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test34',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test35',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test36',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test37',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_GROP_INFO VALUES('ADMIN',NULL,NULL,NULL,NULL,NULL,'Administrator Group Description.','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADLklEQVR4XsWWzWtcVRiHn/ecd6YzmQ4BW/wsbkI0266karG6ESUaGtz6FwgpwbqoUlBBEU0kNsGtLl0I0kFxmlYotiX7iKkpUpKKH4RYLJpMNL3nlbxwF+ntqrd3+sDhLgbu87u/95zDiJlxLxEc9JPZT78khDEPZOxCEBwSVlomYOn0sYnXXgFuCqDTM7NfPf/iC6Mjw0MkHBeJQTQIgmMJTIwyBBGWflqme2b+69cnJ44q0IyqoweGhogH97P+zEukDz7jgS+eZP2+p6kf+ZC3zwrDew/x6hPnuXL1MiKU4vHHholRR4GmAo2UjOvX/yJd/pPa0uesvTnHnj8WqP2+wI2D77J6BVZtgbGRv1m5uoIEgDtJYey47t+3D7ME0FBAsMRgo87iwiKIIKs/s/bsDwDEX5c58dyPCMYvv63w8CMP3XEDZuarPdj2JyCa//DvPzcYOfAgMUZyAMRA3IinLoF7siyjt7mB4aAAGOyp1zl8+AjNZhMQwIBcXp48QK/X48KF82A4iksgRqXdbtNqtUgpsb29jUigVlNvxXMglMC/XlXdJYKTj8AFqjUPkmXbXLz4PVNTU3Q636Baz0OUIoSI6n+IuHN3AAxiDKgGzCIfTU3zxvHjZAZnvu2i2vAQZRBxB9gtAZIZBnk9gNA53WGrt8XJk2/Rag7Q7XYpH0DcYUAqNIBX5CvLEuPj40xOHmN6eob5+bM0Gg1CCJRD3AG3jiAZYF5PCLKzXH7q1CzfnTtHa8DrB5G7MwLMncUGYiSq+vPlsaNe2cDeFiEGBKE0Iu4oNmAJAA2KRnVxTWv+vJv3gCDuyJ3FU6ABH0MIVIGPQIunwDEfgddfWQBE3GE4xT2gMRJDdQF8BLffAwaYf331DUTAihcRQIyV7wF3uLN4D0AISqhwBCDuyJ2FU6AaiRWOQETcgd32HrA+jsCK94D1cQQGxU2IsSP2JSJUQf5+bPcmdFJKpJT5P6GqApjZjsNdOQoggATh/ffeIUgAoRr8y5M3nCsUsI2NjUsfz8w9lZLRD0IQNjc3LwEmQBt4FNgPKP3hJrAOXFOgB1wD1gChPxiw5e57zf/Rz2VlmfOMywAAAABJRU5ErkJggg==','Administrator Group',NULL)
+COMMIT
+INSERT INTO APP_USER_GROP_MAP VALUES('admin','ADMIN')
+COMMIT
+INSERT INTO APP_ROLE_INFO VALUES('ADMIN',NULL,NULL,NULL,NULL,NULL,NULL,'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAADgUlEQVR4Xq2WSUhjWRSGj3mJY0EZ7Y29FEFwQHFaKIoDGCyr0uDGJBu7qaSookgVlKveK4qKY2LiJsYkTfeirbIX3XtxoYjiAOI8oGIv0lGDU2uGV/+7FJekyEun2z5wyYObfP85593/3CSJokiJRBLC6XRqU1JSAjqd7g9KMBSJwO12e7vH4/F5vd6Zk5OT3x0Oh9dms2n/FwGADEj+p9XVVXVmZiap1WpaW1v7JhAITFsslu8eJTA+Pm5AC117e3tCYWEh7e/v08HBAZWVldHW1pby4eHh19HRUe1/ErBarfpwOMzgNTU1ND8/T2gPHR4esuf6+nra2NhQ3t3dTQ8PD7/4VwJjY2P6UCjk3t3dFWprayk5OZlubm7o/v6ekDX5/X7Cy6ampiZaX19XXl9ffxwcHHyekABK1geDQff29rZQV1fH4KiEgdF36ZMtJMBENBoNraysKCH6qa+vrzWuAErVA+De2dkRGhoaGBwgtgCNWhBle6mpqdTa2krLy8vKy8vLmd7e3mcxBVCiHhlGwQHhIECjqgA8SkSr1dLi4qLS5/PNdHd3t0QJDAwMtAPgwckQ0NfIzDkI4EiRyH0u0tbWRgsLCyr45beuri4NM6i0RkZGLpaWlp62tLRIfeUwvAsGlwKlM7Dk/LS0NOrs7JTcHbnYHl44TU1NUXNz8589PT3fJqEcHc73zzk5OZSbm8ugsaK/v59ub2/Zc1ZWFpnNZpILnCw6Pj6m4uJijeLs7OzJ6ekpU2ZwmSgtLeWA6upqihP83eFkZSnQs8mCggL/7OwswTSyAnAwB8DFcmyW6NzcHMH5f2GU/KJA70Mo/ceSkpKw2+2WFTGZTJSRkUHZ2dlkMBhk4S6XS6owdHV19YH7YGJiwgbTvC8qKpIVUSgU0ovkn7HgUoJVVVUh7L/CHHNzgS8iFpjmnbwID1l4ZWVlSBAEE8a7I6aTsWGNI8KNFRmYUQxeUVHB4Bjvk3FmERcxfy1ydHTEjun5+TmhvxyOnjO4SqUycri8ABcZh5miRNLT0/k+9ji8vLycwdFzJ8UKuE92vUF0dHSEABGHhobEvLw8EaIi5pYIX4hGozGIr3wfh/GPN5oNR/OtVAnsz6ZmY2Mj4ZlljpnFMn/UnYybzQ6R17jB/Jubm4RpK100F4D/gD3A40fCf1vy8/OVyP4lyv4bvnGJCf7wMykvfnetBBY1AAAAAElFTkSuQmCC','Administrator Role')
+COMMIT
+INSERT INTO APP_ROLE_INFO VALUES('TEST',NULL,NULL,NULL,NULL,NULL,NULL,'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACkklEQVR42pWSbUhTYRTH/3f37s2rrVaimdk00LSsDMOk+pAFBaZ9CAyLYGIYJAhh2Dc/FLRCSQmp7EMFVgst0IVoQaiVISrODNrEWZYvS4fu4jb3ovc+PbNA4hrYgcOB85z/73nOeQ6Df1hjY6OKhhKGYc5LkpQqimI4baOxQa1WPygoKAiFE8xqYrPZHEcIafXwsXvHRR6LhAGv1UCnYqAVJoC58QGWZfOKi4unmNVu9nq9PQuxaRlBZSQK9ydCzbFwekIYmQtgXlQgNG6Hb6TfKgjCARmgvr6+lOi31pHNyTBmhcVUsCThhxDExIIIv8RBJASjXRb4nV8vyQA1NTV9/L4TmdnJ8UiL4RESCbwhCZM+EdMBYD4oIU3P4d2QA86O5/0ygMlk8iTkXojM3BKFGF6JAJ2dK0Aw45coTIJaQbB7kxLNwwLsT256ZYDKykrPnrPlkfHrtdCwDHxLBH7qHK2MCg+RA7brODz+NIvPj67JARUVFX078ooy9XEGWszQfrEc9WoGGzUK6KkHafJhxyBsL+/JWygrKyvVJaTU7cw3IoIK6bwQrVUgOoJFHM8uv6r1mw9vG+5i1jEkH6LRaNRwHPfFcCg3Mf3wcaRs4CiABa+k7SxK6J4M4OPrFox2Nltp+d/fSKq56p+ajJRbjoNHXC7XtD5pV5Ih+xjWxWyDBAJhcgyOD22YGbYO0kXLtVgsK4sUFiOnttw/+Azvu+1vzGL+KbfbXUKPzlFP/VNmo/5UpVLdb2pqWlllUoUq5Ny54re3obe9DdMCes+8QhbWYAy5jhtSjumqaG9R9HT1wOleu/g3oErnXUov4ifaa6WBMXSebsbRtYqXAVOXcXvWh4vf52A5+QKF/yMO2y87gBXoaYuE6wAAAABJRU5ErkJggg==','Test Role')
+COMMIT
+INSERT INTO APP_USER_ROLE_MAP VALUES('admin','ADMIN')
+COMMIT
+INSERT INTO APP_USER_ROLE_MAP VALUES('admin','TEST')
+COMMIT
+INSERT INTO APP_AUTH_INFO VALUES('USER_READ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'User Read Authority')
+COMMIT
+INSERT INTO APP_AUTH_INFO VALUES('USER_MDFY',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'User Modification Authority')
+COMMIT
+INSERT INTO APP_USER_AUTH_MAP VALUES('admin','USER_READ')
+COMMIT
+INSERT INTO APP_USER_AUTH_MAP VALUES('admin','USER_MDFY')
+COMMIT
+drop table if exists APP_ATCL_FILE_INFO CASCADE 
+drop table if exists APP_ATCL_INFO CASCADE 
+drop table if exists APP_ATCL_RPLY_INFO CASCADE 
+drop table if exists APP_AUTH_INFO CASCADE 
+drop table if exists APP_BORD_CATE_INFO CASCADE 
+drop table if exists APP_BORD_INFO CASCADE 
+drop table if exists APP_BORD_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_CODE_INFO CASCADE 
+drop table if exists APP_CODE_ITEM_INFO CASCADE 
+drop table if exists APP_GROP_AUTH_MAP CASCADE 
+drop table if exists APP_GROP_INFO CASCADE 
+drop table if exists APP_GROP_ROLE_MAP CASCADE 
+drop table if exists APP_MENU_INFO CASCADE 
+drop table if exists APP_MENU_PLCY_AUTH_MAP CASCADE 
+drop table if exists APP_MSG_INFO CASCADE 
+drop table if exists APP_PROP_INFO CASCADE 
+drop table if exists APP_ROLE_AUTH_MAP CASCADE 
+drop table if exists APP_ROLE_INFO CASCADE 
+drop table if exists APP_USER_AUTH_MAP CASCADE 
+drop table if exists APP_USER_GROP_MAP CASCADE 
+drop table if exists APP_USER_INFO CASCADE 
+drop table if exists APP_USER_LOGN_HIST CASCADE 
+drop table if exists APP_USER_ROLE_MAP CASCADE 
+create table APP_ATCL_FILE_INFO (ATCL_ID varchar(255) not null, FILE_ID varchar(255) not null, FILE_NAME varchar(255), FILE_SIZE bigint, FILE_TYPE varchar(255), primary key (ATCL_ID, FILE_ID))
+create table APP_ATCL_INFO (ATCL_ID varchar(255) not null, BORD_ID varchar(255), CATE_ID varchar(255), ATCL_CNTS varchar(255), ATCL_MDFY_DTTM timestamp, READ_CNT integer, ATCL_RGST_DTTM timestamp, ATCL_TITL varchar(255), ATCL_USER_ID varchar(255), ATCL_USER_NICK varchar(255), primary key (ATCL_ID))
+create table APP_ATCL_RPLY_INFO (ATCL_ID varchar(255) not null, RPLY_ID varchar(255) not null, RPLY_CNTS varchar(255), RPLY_LEVL varchar(255), RPLY_SEQ integer, UPER_RPLY_ID varchar(255), primary key (ATCL_ID, RPLY_ID))
+create table APP_AUTH_INFO (AUTH_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), AUTH_DESC varchar(4000), AUTH_ICON varchar(4000), AUTH_NAME varchar(255), primary key (AUTH_ID))
+create table APP_BORD_CATE_INFO (BORD_ID varchar(255) not null, CATE_ID varchar(255) not null, DISP_SEQ integer, CATE_NAME varchar(255), primary key (BORD_ID, CATE_ID))
+create table APP_BORD_INFO (BORD_ID varchar(255) not null, ACES_PLCY varchar(255), CATE_USE_YN varchar(255), FILE_USE_YN varchar(255), BORD_ICON varchar(255), BORD_NAME varchar(255), READ_PLCY varchar(255), RPLY_USE_YN varchar(255), ROWS_PER_PAGE integer, BORD_SKIN varchar(255), WRIT_PLCY varchar(255), primary key (BORD_ID))
+create table APP_BORD_PLCY_AUTH_MAP (BORD_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_CODE_INFO (CODE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CODE_DESC varchar(255), CODE_NAME varchar(255), UPER_CODE_ID varchar(255), primary key (CODE_ID))
+create table APP_CODE_ITEM_INFO (CODE_ID varchar(255) not null, ITEM_ID varchar(255) not null, ITEM_DESC varchar(255), DISP_SEQ integer, ITEM_NAME varchar(255), primary key (CODE_ID, ITEM_ID))
+create table APP_GROP_AUTH_MAP (GROP_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_GROP_INFO (GROP_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), GROP_DESC varchar(4000), GROP_ICON varchar(4000), GROP_NAME varchar(255), UPER_GROP_ID varchar(32), primary key (GROP_ID))
+create table APP_GROP_ROLE_MAP (GROP_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+create table APP_MENU_INFO (MENU_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MENU_DESC varchar(255), DISP_SEQ integer, MENU_ICON varchar(255), MENU_NAME varchar(255), PLCY_ACES varchar(255), PLCY_DISP varchar(255), MENU_TYPE varchar(255), UPER_MENU_ID varchar(255), MENU_VAL varchar(255), primary key (MENU_ID))
+create table APP_MENU_PLCY_AUTH_MAP (MENU_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_MSG_INFO (MSG_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), MSG_DESC varchar(255), MSG_NAME varchar(255), MSG_VAL varchar(255), primary key (MSG_ID))
+create table APP_PROP_INFO (PROP_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), PROP_DESC varchar(255), PROP_NAME varchar(255), PROP_VAL varchar(255), primary key (PROP_ID))
+create table APP_ROLE_AUTH_MAP (ROLE_ID varchar(255) not null, AUTH_ID varchar(32) not null)
+create table APP_ROLE_INFO (ROLE_ID varchar(255) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), ROLE_DESC varchar(4000), ROLE_ICON varchar(4000), ROLE_NAME varchar(255), primary key (ROLE_ID))
+create table APP_USER_AUTH_MAP (USER_ID varchar(32) not null, AUTH_ID varchar(32) not null)
+create table APP_USER_GROP_MAP (USER_ID varchar(32) not null, GROP_ID varchar(32) not null)
+create table APP_USER_INFO (USER_ID varchar(32) not null, SYS_EMBD_YN varchar(255), SYS_INST_DATE timestamp, SYS_INST_USER_ID varchar(255), SYS_UPDT_DATE timestamp, SYS_UPDT_USER_ID varchar(255), CLOS_DATE timestamp, USER_EMIL varchar(255), USER_IMGE varchar(4000), JOIN_DATE timestamp, USER_LOCL varchar(255), USER_NAME varchar(255), USER_NICK varchar(255), USER_PASS varchar(255), USER_PHON varchar(255), USER_PRFL varchar(4000), USER_STAT varchar(255), primary key (USER_ID))
+create table APP_USER_LOGN_HIST (LOGN_DTTM timestamp not null, USER_ID varchar(255) not null, LOGN_AGNT varchar(255), LOGN_FAIL_RESN varchar(255), LOGN_IP varchar(255), LOGN_REFR varchar(255), LOGN_SUCS_YN varchar(255), primary key (LOGN_DTTM, USER_ID))
+create table APP_USER_ROLE_MAP (USER_ID varchar(32) not null, ROLE_ID varchar(255) not null)
+alter table APP_ATCL_FILE_INFO add constraint FK11vamwi9kmntgb5sgv3yk5wom foreign key (ATCL_ID) references APP_ATCL_INFO
+alter table APP_BORD_CATE_INFO add constraint FK3o6osakjv3ffbbwasueajih8a foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKf4ijeh20pf9r6cm4ffm67es7k foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_BORD_PLCY_AUTH_MAP add constraint FKnmd64r3ucb8y6vo61ok8wgsh3 foreign key (BORD_ID) references APP_BORD_INFO
+alter table APP_CODE_ITEM_INFO add constraint FKevsc1eg1f3ki8kaevo6ddea57 foreign key (CODE_ID) references APP_CODE_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK339n4jheflud3iyq6h64glklo foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_GROP_AUTH_MAP add constraint FK1y6b1ay68ax3aj05ufepgg144 foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_GROP_ROLE_MAP add constraint FKaefku0msrdtmrk0pmecypf99i foreign key (ROLE_ID) references APP_ROLE_INFO
+alter table APP_GROP_ROLE_MAP add constraint FK1cia7wjwvonuita8ka47cgd8b foreign key (GROP_ID) references APP_GROP_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKmkq0hd157hvs638meglvpn4sx foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_MENU_PLCY_AUTH_MAP add constraint FKh0x884aaj0lcwn06tq43164u6 foreign key (MENU_ID) references APP_MENU_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKq8sm7c0mw17jts6o1rh3pt00p foreign key (AUTH_ID) references APP_AUTH_INFO
+alter table APP_ROLE_AUTH_MAP add constraint FKnef5bvb4t8p257gkcir1ci1ix foreign key (ROLE_ID) references APP_ROLE_INFO
+INSERT INTO APP_USER_INFO VALUES('admin',NULL,NULL,NULL,NULL,NULL,NULL,'admin@oopscraft.net','data:image/png;base64,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',NULL,NULL,'Administrator','Admin',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test1',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test2',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test3',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test4',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test5',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test6',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test7',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test8',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test9',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test10',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test11',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test12',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test13',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test14',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test15',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test16',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test17',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test18',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test19',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test20',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test21',NULL,NULL,NULL,NULL,NULL,NULL,'test1@oopscraft.net',NULL,NULL,NULL,'Test user 1','Test1',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test22',NULL,NULL,NULL,NULL,NULL,NULL,'test2@oopscraft.net',NULL,NULL,NULL,'Test user 2','Test2',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test23',NULL,NULL,NULL,NULL,NULL,NULL,'test3@oopscraft.net',NULL,NULL,NULL,'Test user 3','Test3',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test24',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test25',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test26',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test27',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test28',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test29',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test30',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test31',NULL,NULL,NULL,NULL,NULL,NULL,'test4@oopscraft.net',NULL,NULL,NULL,'Test user 4','Test4',NULL,NULL,NULL,'CLOSED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test32',NULL,NULL,NULL,NULL,NULL,NULL,'test5@oopscraft.net',NULL,NULL,NULL,'Test user 5','Test5',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test33',NULL,NULL,NULL,NULL,NULL,NULL,'test6@oopscraft.net',NULL,NULL,NULL,'Test user 6','Test6',NULL,NULL,NULL,'SUSPENDED')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test34',NULL,NULL,NULL,NULL,NULL,NULL,'test7@oopscraft.net',NULL,NULL,NULL,'Test user 7','Test7',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test35',NULL,NULL,NULL,NULL,NULL,NULL,'test8@oopscraft.net',NULL,NULL,NULL,'Test user 8','Test8',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test36',NULL,NULL,NULL,NULL,NULL,NULL,'test9@oopscraft.net',NULL,NULL,NULL,'Test user 9','Test9',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_USER_INFO VALUES('test37',NULL,NULL,NULL,NULL,NULL,NULL,'test10@oopscraft.net',NULL,NULL,NULL,'Test user 10','Test10',NULL,NULL,NULL,'ACTIVE')
+COMMIT
+INSERT INTO APP_GROP_INFO VALUES('ADMIN',NULL,NULL,NULL,NULL,NULL,'Administrator Group Description.','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADLklEQVR4XsWWzWtcVRiHn/ecd6YzmQ4BW/wsbkI0266karG6ESUaGtz6FwgpwbqoUlBBEU0kNsGtLl0I0kFxmlYotiX7iKkpUpKKH4RYLJpMNL3nlbxwF+ntqrd3+sDhLgbu87u/95zDiJlxLxEc9JPZT78khDEPZOxCEBwSVlomYOn0sYnXXgFuCqDTM7NfPf/iC6Mjw0MkHBeJQTQIgmMJTIwyBBGWflqme2b+69cnJ44q0IyqoweGhogH97P+zEukDz7jgS+eZP2+p6kf+ZC3zwrDew/x6hPnuXL1MiKU4vHHholRR4GmAo2UjOvX/yJd/pPa0uesvTnHnj8WqP2+wI2D77J6BVZtgbGRv1m5uoIEgDtJYey47t+3D7ME0FBAsMRgo87iwiKIIKs/s/bsDwDEX5c58dyPCMYvv63w8CMP3XEDZuarPdj2JyCa//DvPzcYOfAgMUZyAMRA3IinLoF7siyjt7mB4aAAGOyp1zl8+AjNZhMQwIBcXp48QK/X48KF82A4iksgRqXdbtNqtUgpsb29jUigVlNvxXMglMC/XlXdJYKTj8AFqjUPkmXbXLz4PVNTU3Q636Baz0OUIoSI6n+IuHN3AAxiDKgGzCIfTU3zxvHjZAZnvu2i2vAQZRBxB9gtAZIZBnk9gNA53WGrt8XJk2/Rag7Q7XYpH0DcYUAqNIBX5CvLEuPj40xOHmN6eob5+bM0Gg1CCJRD3AG3jiAZYF5PCLKzXH7q1CzfnTtHa8DrB5G7MwLMncUGYiSq+vPlsaNe2cDeFiEGBKE0Iu4oNmAJAA2KRnVxTWv+vJv3gCDuyJ3FU6ABH0MIVIGPQIunwDEfgddfWQBE3GE4xT2gMRJDdQF8BLffAwaYf331DUTAihcRQIyV7wF3uLN4D0AISqhwBCDuyJ2FU6AaiRWOQETcgd32HrA+jsCK94D1cQQGxU2IsSP2JSJUQf5+bPcmdFJKpJT5P6GqApjZjsNdOQoggATh/ffeIUgAoRr8y5M3nCsUsI2NjUsfz8w9lZLRD0IQNjc3LwEmQBt4FNgPKP3hJrAOXFOgB1wD1gChPxiw5e57zf/Rz2VlmfOMywAAAABJRU5ErkJggg==','Administrator Group',NULL)
+COMMIT
+INSERT INTO APP_USER_GROP_MAP VALUES('admin','ADMIN')
+COMMIT
+INSERT INTO APP_ROLE_INFO VALUES('ADMIN',NULL,NULL,NULL,NULL,NULL,NULL,'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAADgUlEQVR4Xq2WSUhjWRSGj3mJY0EZ7Y29FEFwQHFaKIoDGCyr0uDGJBu7qaSookgVlKveK4qKY2LiJsYkTfeirbIX3XtxoYjiAOI8oGIv0lGDU2uGV/+7FJekyEun2z5wyYObfP85593/3CSJokiJRBLC6XRqU1JSAjqd7g9KMBSJwO12e7vH4/F5vd6Zk5OT3x0Oh9dms2n/FwGADEj+p9XVVXVmZiap1WpaW1v7JhAITFsslu8eJTA+Pm5AC117e3tCYWEh7e/v08HBAZWVldHW1pby4eHh19HRUe1/ErBarfpwOMzgNTU1ND8/T2gPHR4esuf6+nra2NhQ3t3dTQ8PD7/4VwJjY2P6UCjk3t3dFWprayk5OZlubm7o/v6ekDX5/X7Cy6ampiZaX19XXl9ffxwcHHyekABK1geDQff29rZQV1fH4KiEgdF36ZMtJMBENBoNraysKCH6qa+vrzWuAErVA+De2dkRGhoaGBwgtgCNWhBle6mpqdTa2krLy8vKy8vLmd7e3mcxBVCiHhlGwQHhIECjqgA8SkSr1dLi4qLS5/PNdHd3t0QJDAwMtAPgwckQ0NfIzDkI4EiRyH0u0tbWRgsLCyr45beuri4NM6i0RkZGLpaWlp62tLRIfeUwvAsGlwKlM7Dk/LS0NOrs7JTcHbnYHl44TU1NUXNz8589PT3fJqEcHc73zzk5OZSbm8ugsaK/v59ub2/Zc1ZWFpnNZpILnCw6Pj6m4uJijeLs7OzJ6ekpU2ZwmSgtLeWA6upqihP83eFkZSnQs8mCggL/7OwswTSyAnAwB8DFcmyW6NzcHMH5f2GU/KJA70Mo/ceSkpKw2+2WFTGZTJSRkUHZ2dlkMBhk4S6XS6owdHV19YH7YGJiwgbTvC8qKpIVUSgU0ovkn7HgUoJVVVUh7L/CHHNzgS8iFpjmnbwID1l4ZWVlSBAEE8a7I6aTsWGNI8KNFRmYUQxeUVHB4Bjvk3FmERcxfy1ydHTEjun5+TmhvxyOnjO4SqUycri8ABcZh5miRNLT0/k+9ji8vLycwdFzJ8UKuE92vUF0dHSEABGHhobEvLw8EaIi5pYIX4hGozGIr3wfh/GPN5oNR/OtVAnsz6ZmY2Mj4ZlljpnFMn/UnYybzQ6R17jB/Jubm4RpK100F4D/gD3A40fCf1vy8/OVyP4lyv4bvnGJCf7wMykvfnetBBY1AAAAAElFTkSuQmCC','Administrator Role')
+COMMIT
+INSERT INTO APP_ROLE_INFO VALUES('TEST',NULL,NULL,NULL,NULL,NULL,NULL,'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACkklEQVR42pWSbUhTYRTH/3f37s2rrVaimdk00LSsDMOk+pAFBaZ9CAyLYGIYJAhh2Dc/FLRCSQmp7EMFVgst0IVoQaiVISrODNrEWZYvS4fu4jb3ovc+PbNA4hrYgcOB85z/73nOeQ6Df1hjY6OKhhKGYc5LkpQqimI4baOxQa1WPygoKAiFE8xqYrPZHEcIafXwsXvHRR6LhAGv1UCnYqAVJoC58QGWZfOKi4unmNVu9nq9PQuxaRlBZSQK9ydCzbFwekIYmQtgXlQgNG6Hb6TfKgjCARmgvr6+lOi31pHNyTBmhcVUsCThhxDExIIIv8RBJASjXRb4nV8vyQA1NTV9/L4TmdnJ8UiL4RESCbwhCZM+EdMBYD4oIU3P4d2QA86O5/0ygMlk8iTkXojM3BKFGF6JAJ2dK0Aw45coTIJaQbB7kxLNwwLsT256ZYDKykrPnrPlkfHrtdCwDHxLBH7qHK2MCg+RA7brODz+NIvPj67JARUVFX078ooy9XEGWszQfrEc9WoGGzUK6KkHafJhxyBsL+/JWygrKyvVJaTU7cw3IoIK6bwQrVUgOoJFHM8uv6r1mw9vG+5i1jEkH6LRaNRwHPfFcCg3Mf3wcaRs4CiABa+k7SxK6J4M4OPrFox2Nltp+d/fSKq56p+ajJRbjoNHXC7XtD5pV5Ih+xjWxWyDBAJhcgyOD22YGbYO0kXLtVgsK4sUFiOnttw/+Azvu+1vzGL+KbfbXUKPzlFP/VNmo/5UpVLdb2pqWlllUoUq5Ny54re3obe9DdMCes+8QhbWYAy5jhtSjumqaG9R9HT1wOleu/g3oErnXUov4ifaa6WBMXSebsbRtYqXAVOXcXvWh4vf52A5+QKF/yMO2y87gBXoaYuE6wAAAABJRU5ErkJggg==','Test Role')
+COMMIT
+INSERT INTO APP_USER_ROLE_MAP VALUES('admin','ADMIN')
+COMMIT
+INSERT INTO APP_USER_ROLE_MAP VALUES('admin','TEST')
+COMMIT
+INSERT INTO APP_AUTH_INFO VALUES('USER_READ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'User Read Authority')
+COMMIT
+INSERT INTO APP_AUTH_INFO VALUES('USER_MDFY',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'User Modification Authority')
+COMMIT
+INSERT INTO APP_USER_AUTH_MAP VALUES('admin','USER_READ')
+COMMIT
+INSERT INTO APP_USER_AUTH_MAP VALUES('admin','USER_MDFY')
+COMMIT

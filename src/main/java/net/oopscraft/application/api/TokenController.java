@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import net.oopscraft.application.core.JsonConverter;
-import net.oopscraft.application.core.ValueMap;
+import net.oopscraft.application.common.JsonConverter;
+import net.oopscraft.application.common.ValueMap;
 
 @Controller
 @RequestMapping("/api")

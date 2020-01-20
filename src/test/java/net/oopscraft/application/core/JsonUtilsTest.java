@@ -2,6 +2,9 @@ package net.oopscraft.application.core;
 
 import org.junit.Test;
 
+import net.oopscraft.application.common.JsonConverter;
+import net.oopscraft.application.common.ValueMap;
+
 public class JsonUtilsTest {
 	
 	@Test

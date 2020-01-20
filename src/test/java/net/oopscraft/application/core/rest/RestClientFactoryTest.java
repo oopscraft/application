@@ -2,8 +2,8 @@ package net.oopscraft.application.core.rest;
 
 import org.junit.Test;
 
-import net.oopscraft.application.core.restclient.RestClientFactory;
-import net.oopscraft.application.core.restclient.example.ExampleClient;
+import net.oopscraft.application.common.restclient.RestClientFactory;
+import net.oopscraft.application.common.restclient.example.ExampleClient;
 
 public class RestClientFactoryTest {
 

@@ -45,7 +45,7 @@ import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import net.oopscraft.application.core.PBEncryptor;
+import net.oopscraft.application.common.PBEncryptor;
 import net.oopscraft.application.core.mybatis.PageInterceptor;
 
 /**

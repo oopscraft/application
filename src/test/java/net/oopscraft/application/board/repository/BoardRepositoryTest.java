@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import net.oopscraft.application.board.dao.BoardRepository;
 import net.oopscraft.application.board.entity.Board;
-import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.common.TextTable;
 import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class BoardRepositoryTest extends ApplicationTestRunner {

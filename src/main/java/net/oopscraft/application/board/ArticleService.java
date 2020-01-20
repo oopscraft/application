@@ -22,9 +22,9 @@ import net.oopscraft.application.board.dao.ArticleRepository;
 import net.oopscraft.application.board.entity.Article;
 import net.oopscraft.application.board.entity.ArticleFile;
 import net.oopscraft.application.board.entity.ArticleReply;
-import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.EncodeUtility;
-import net.oopscraft.application.core.StringUtility;
+import net.oopscraft.application.common.EncodeUtility;
+import net.oopscraft.application.common.PageInfo;
+import net.oopscraft.application.common.StringUtility;
 import net.oopscraft.application.core.mybatis.PageRowBounds;
 
 @Service

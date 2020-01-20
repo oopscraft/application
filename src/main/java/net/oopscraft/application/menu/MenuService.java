@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.common.TextTable;
 import net.oopscraft.application.menu.entity.Menu;
 
 

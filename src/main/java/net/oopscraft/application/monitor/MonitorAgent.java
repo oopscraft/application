@@ -14,8 +14,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.core.process.ProcessExecutor;
-import net.oopscraft.application.core.process.ProcessStreamHandler;
+import net.oopscraft.application.common.process.ProcessExecutor;
+import net.oopscraft.application.common.process.ProcessStreamHandler;
 import net.oopscraft.application.monitor.MonitorInfo.ClassInfo;
 import net.oopscraft.application.monitor.MonitorInfo.MemInfo;
 import net.oopscraft.application.monitor.MonitorInfo.OsInfo;

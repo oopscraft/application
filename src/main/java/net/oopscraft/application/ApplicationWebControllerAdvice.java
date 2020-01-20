@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonConverter;
-import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.ValueMap;
+import net.oopscraft.application.common.JsonConverter;
+import net.oopscraft.application.common.PageInfo;
+import net.oopscraft.application.common.ValueMap;
 import net.oopscraft.application.user.UserRepository;
 import net.oopscraft.application.user.entity.User;
 

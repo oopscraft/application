@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonConverter;
-import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtility;
+import net.oopscraft.application.common.JsonConverter;
+import net.oopscraft.application.common.PageInfo;
+import net.oopscraft.application.common.StringUtility;
 import net.oopscraft.application.message.MessageService;
 import net.oopscraft.application.message.MessageService.MessageSearchType;
 import net.oopscraft.application.message.entity.Message;
