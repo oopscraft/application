@@ -21,8 +21,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.oopscraft.application.board.dao.ArticleReplyRepository;
 import net.oopscraft.application.board.dao.ArticleRepository;
-import net.oopscraft.application.common.EncodeUtility;
-import net.oopscraft.application.common.StringUtility;
+import net.oopscraft.application.util.EncodeUtility;
+import net.oopscraft.application.util.StringUtility;
 
 @Entity
 @Table(name = "APP_ATCL_INFO")

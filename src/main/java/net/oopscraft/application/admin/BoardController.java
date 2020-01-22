@@ -20,9 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.board.BoardService.BoardSearchType;
 import net.oopscraft.application.board.entity.Board;
-import net.oopscraft.application.common.JsonConverter;
-import net.oopscraft.application.common.PageInfo;
-import net.oopscraft.application.common.StringUtility;
+import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.util.StringUtility;
 
 @PreAuthorize("hasAuthority('ADMIN_BOARD')")
 @Controller

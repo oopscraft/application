@@ -2,52 +2,62 @@ package net.oopscraft.application.admin;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
-import net.oopscraft.application.common.JsonConverter;
-import net.oopscraft.application.common.PageInfo;
-import net.oopscraft.application.common.StringUtility;
-import net.oopscraft.application.menu.MenuService;
-import net.oopscraft.application.menu.entity.Menu;
+import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.AuthorityService;
-import net.oopscraft.application.user.AuthorityService.AuthoritySearchType;
 import net.oopscraft.application.user.GroupService;
 import net.oopscraft.application.user.RoleService;
-import net.oopscraft.application.user.RoleService.RoleSearchType;
 import net.oopscraft.application.user.entity.Authority;
 import net.oopscraft.application.user.entity.Group;
 import net.oopscraft.application.user.entity.Role;
-import net.oopscraft.application.user.entity.User;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
+	
+	@Autowired
+	GroupService groupService;
+	
 	@Autowired
 	RoleService roleService;
+	
+	@Autowired
+	AuthorityService authorityService;
+	
+	@RequestMapping(value = "getGroups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public List<Group> getGroups(Group group, PageInfo pageInfo) throws Exception {
+		List<Group> groups = groupService.getGroups(group,pageInfo);
+		LOGGER.debug("{}", new TextTable(groups));
+		return groups;
+	}
 	
 	@RequestMapping(value = "getRoles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public List<Role> getUsers(Role role, PageInfo pageInfo) throws Exception {
 		List<Role> roles = roleService.getRoles(role,pageInfo);
+		LOGGER.debug("{}", new TextTable(roles));
 		return roles;
 	}
 	
-	
+	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public List<Authority> getAuthorities(Authority authority, PageInfo pageInfo) throws Exception {
+		List<Authority> authorities = authorityService.getAuthorities(authority, pageInfo);
+		LOGGER.debug("{}", new TextTable(authorities));
+		return authorities;
+	}
 	
 	
 //	@Autowired

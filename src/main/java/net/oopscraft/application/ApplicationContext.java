@@ -40,12 +40,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
-import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import net.oopscraft.application.common.PBEncryptor;
+import net.oopscraft.application.core.PasswordBasedEncryptor;
 import net.oopscraft.application.core.mybatis.PageInterceptor;
 
 /**
@@ -54,6 +50,12 @@ import net.oopscraft.application.core.mybatis.PageInterceptor;
  * @version 0.0.1
  */
 @Configuration
+@ComponentScan(
+	basePackages = "net.oopscraft.application",
+	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
+	lazyInit = true,
+	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,RestController.class,ControllerAdvice.class,EnableWebSecurity.class})
+)
 @EnableJpaRepositories(
 	basePackages = "net.oopscraft.application",
 	entityManagerFactoryRef = "entityManagerFactory"
@@ -63,12 +65,6 @@ import net.oopscraft.application.core.mybatis.PageInterceptor;
 	annotationClass=Mapper.class,
 	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
 	sqlSessionFactoryRef = "sqlSessionFactory"
-)
-@ComponentScan(
-	basePackages = "net.oopscraft.application",
-	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
-	lazyInit = true,
-	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,RestController.class,ControllerAdvice.class,EnableWebSecurity.class})
 )
 public class ApplicationContext {
 	
@@ -88,7 +84,7 @@ public class ApplicationContext {
 		LOGGER.info("Loads properties file[{}]", propertiesPath);
 		try {
 			properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(new File(propertiesPath)));
-			PBEncryptor pbEncryptor = new PBEncryptor();
+			PasswordBasedEncryptor pbEncryptor = new PasswordBasedEncryptor();
 			for(String propertyName : properties.stringPropertyNames()) {
 				String value = properties.getProperty(propertyName);
 				properties.put(propertyName, pbEncryptor.decryptIdentifiedValue(value));
@@ -177,6 +173,7 @@ public class ApplicationContext {
 			}
 		}
         entityManagerFactory.setPackagesToScan(packagesToScans.toArray(new String[packagesToScans.size()-1]));
+
         
         // return
         entityManagerFactory.afterPropertiesSet();

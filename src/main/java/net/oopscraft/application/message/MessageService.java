@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.common.PageInfo;
+import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.message.entity.Message;
 
 @Service

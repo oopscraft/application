@@ -64,7 +64,9 @@
 			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.user})}]]")
 			.afterConfirm(function(){
 				var data = user.toJson();
+				data.groups = userGroups.toJson();
 				data.roles = userRoles.toJson();
+				data.authorities = userAuthorities.toJson();
 				$.ajax({
 					 url: 'user/saveUser'
 					,type: 'POST'
@@ -103,25 +105,63 @@
 		}
 		
 		/**
-		 * Adds role
+		 * Adds user group
 		 */
-		function addRole() {
-			__roleDialog
-			.setExcludedRoles(userRoles)
-			.afterConfirm(function(roles){
-				console.log(roles);
-				roles.forEach(function(role){
-					userRoles.add(role);
+		function addUserGroup() {
+			__groupDialog
+			.setExcludedGroups(userGroups)
+			.afterConfirm(function(groups){
+				groups.forEach(function(group){
+					userGroups.add(group);
 				});
-			})
-			.open();
+			}).open();
 		}
 		
 		/**
-		 * Removes role
+		 * Removes user group
 		 */
-		function removeRole(index) {
+		function removeUserGroup(index) {
+			userGroups.remove(index);
+		}
+		
+		/**
+		 * Adds user role
+		 */
+		function addUserRole() {
+			__roleDialog
+			.setExcludedRoles(userRoles)
+			.afterConfirm(function(roles){
+				roles.forEach(function(role){
+					userRoles.add(role);
+				});
+			}).open();
+		}
+		
+		/**
+		 * Removes user role
+		 */
+		function removeUserRole(index) {
 			userRoles.remove(index);
+		}
+		
+		/**
+		 * Adds user authority
+		 */
+		function addUserAuthority() {
+			__authorityDialog
+			.setExcludedAuthorities(userAuthorities)
+			.afterConfirm(function(authorities){
+				authorities.forEach(function(authority){
+					userAuthorities.add(authority);
+				});
+			}).open();
+		}
+		
+		/**
+		 * Removes user authority
+		 */
+		function removeUserAuthority(index) {
+			userAuthorities.remove(index);
 		}
 		
 		$(document).ready(function() {
@@ -132,17 +172,12 @@
 	<!-- ========================================================================== -->
 	<!-- title row																	-->
 	<!-- ========================================================================== -->
-	<div class="app-row" id="test">
+	<div class="app-row">
 		<div class="app-col">
 			<h1>
 				<img class="icon large" src="/static/image/icon_user.png"/>
 				<span data-th-text="#{application.label.user} + ' ' + #{application.label.management}"></span>
 			</h1>
-		</div>
-		<div class="app-col right bottom">
-			<span is="duice-ui-scriptlet" data-duice-bind="users">
-				return 'Total 12,100 users';
-			</span>
 		</div>
 	</div>
 	<hr class="hr"/>
@@ -159,9 +194,9 @@
 				<div class="app-col">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:100px;">
 						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option value="id">ID</option>
-						<option value="name">Name</option>
-						<option value="email">Email</option>
+						<option value="id" data-th-text="#{application.label.id}">ID</option>
+						<option value="name" data-th-text="#{application.label.name}">Name</option>
+						<option value="email" data-th-text="#{application.label.email}">Email</option>
 					</select>
 					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:200px;"/>
 					<span class="content-search__label">Status</span>
@@ -173,46 +208,62 @@
 					</select>
 				</div>
 				<div class="app-col right">
-					<button class="button" onclick="getUsers();">Search</button>
+					<button class="button" onclick="getUsers();">
+						<img src="/static/image/icon_search.png" class="icon"/>
+						<span data-th-text="#{application.label.search}"></span>
+					</button>
 				</div>
 			</div>
 			<div class="app-row">
 				<div class="app-col">
 					<table is="duice-ui-table" 
 						data-duice-bind="users,user" 
-						data-duice-editable="true"
+						data-duice-selectable="true"
 						style="width:100%;">
+						<col style="width:50px;"/>					
+						<col/>
+						<col/>
+						<col/>
+						<col/>
+						<col style="width:140px;"/>
+						<col style="width:110px;"/>
 						<thead>
 							<tr>
-								<th>No</th>
-								<th>ID</th>
-								<th>Name</th>
-								<th>Nickname</th>
-								<th>Email</th>
-								<th>joinDate</th>
-								<th>Status</th>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.id}">ID</th>
+								<th data-th-text="#{application.label.name}">Name</th>
+								<th data-th-text="#{application.label.nickname}">Nickname</th>
+								<th data-th-text="#{application.label.email}">Email</th>
+								<th data-th-text="#{application.label.mobile}">Mobile</th>
+								<th data-th-text="#{application.label.status}">Status</th>
 							</tr>
 						</thead>
 						<tbody data-id="[[$context.user.get('id')]]" onclick="getUser(this.dataset.id);">
 							<tr>
-								<td><span is="duice-ui-scriptlet" data-duice-bind="users">return $context.index+1;</span></td>
+								<td class="text-center">
+									<span is="duice-ui-scriptlet" data-duice-bind="users">
+										return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+									</span>
+								</td>
 								<td>
-									<img is="duice-ui-img" data-duice-bind="user,image" src="/static/image/icon_user_24px.png" class="icon small"/>
+									<img is="duice-ui-img" data-duice-bind="user,photo" src="/static/image/icon_user_24px.png" class="icon small"/>
 									<span is="duice-ui-span" data-duice-bind="user,id"></span>
 								</td>
 								<td><span is="duice-ui-span" data-duice-bind="user,name"></span></td>
 								<td><span is="duice-ui-span" data-duice-bind="user,nickname"></span></td>
 								<td><span is="duice-ui-span" data-duice-bind="user,email"></span></td>
-								<td><span is="duice-ui-span" data-duice-bind="user,joinDate"></span></td>
-								<td><span is="duice-ui-span" data-duice-bind="user,status"></span></td>
+								<td class="text-center"><span is="duice-ui-span" data-duice-bind="user,mobile"></span></td>
+								<td class="text-center"><span is="duice-ui-span" data-duice-bind="user,status"></span></td>
 							</tr>
 						</tbody>
 						<tfoot>
 							<tr>
 								<td colspan="7">
-									<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
-										<li onclick="getUsers();"></li>
-									</ul>
+									<span>
+										<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5" style="width:50%;">
+											<li onclick="getUsers();"></li>
+										</ul>
+									</span>
 								</td>
 							</tr>
 						</tfoot>
@@ -227,19 +278,21 @@
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" src="/static/image/icon_user.png"/>
-					<span style="font-weight:bold;">
-						User Details
+					<span data-th-text="#{application.label.user} + ' ' + #{application.label.details}" class="font-bold">
 					</span>
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="addUser();">
-						New
+						<img src="/static/image/icon_create.png" class="icon"/>
+						<span data-th-text="#{application.label.new}"></span>
 					</button>
 					<button class="button" onclick="deleteUser();">
-						Delete
+						<img src="/static/image/icon_delete.png" class="icon"/>
+						<span data-th-text="#{application.label.delete}"></span>
 					</button>
 					<button class="button" onclick="saveUser();">
-						Save
+						<img src="/static/image/icon_save.png" class="icon"/>
+						<span data-th-text="#{application.label.save}"></span>
 					</button>
 				</div>
 			</div>
@@ -250,23 +303,23 @@
 						<col/>
 						<tbody>
 							<tr>
-								<th>ID</th>
+								<th data-th-text="#{application.label.id}">ID</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="user,id"/></td>
 							</tr>
 							<tr>
-								<th>Image</th>
-								<td><img is="duice-ui-img" data-duice-bind="user,image" style="height:64px;"/></td>
+								<th data-th-text="#{application.label.photo}">Photo</th>
+								<td><img is="duice-ui-img" data-duice-bind="user,photo" style="height:64px;"/></td>
 							</tr>
 							<tr>
-								<th>Name</th>
+								<th data-th-text="#{application.label.name}">Name</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="user,name"/></td>
 							</tr>
 							<tr>
-								<th>Nickname</th>
+								<th data-th-text="#{application.label.nickname}">Nickname</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="user,nickname"/></td>
 							</tr>
 							<tr>
-								<th>Status</th>
+								<th data-th-text="#{application.label.status}">Status</th>
 								<td>
 									<select is="duice-ui-select" data-duice-bind="user,status">
 										<option> - select - </option>
@@ -277,15 +330,15 @@
 								</td>
 							</tr>
 							<tr>
-								<th>Email</th>
+								<th data-th-text="#{application.label.email}">Email</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="user,email"/></td>
 							</tr>
 							<tr>
-								<th>Phone</th>
-								<td><input is="duice-ui-input" type="text" data-duice-bind="user,phone"/></td>
+								<th data-th-text="#{application.label.mobile}">Mobile</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="user,mobile"/></td>
 							</tr>
 							<tr>
-								<th>Locale</th>
+								<th data-th-text="#{application.label.locale}">Locale</th>
 								<td>
 									<select is="duice-ui-select" data-duice-bind="user,locale">
 										<option> - select - </option>
@@ -295,35 +348,36 @@
 								</td>
 							</tr>
 							<tr>
-								<th>Join Date</th>
+								<th data-th-text="#{application.label.joinDate}">Join Date</th>
 								<td><input is="duice-ui-input" type="datetime-local" data-duice-bind="user,joinDate" data-duice-format="yyyy.MM.dd HH:mm:ss"/></td>
 							</tr>
 							<tr>
-								<th>Close Date</th>
+								<th data-th-text="#{application.label.closeDate}">Close Date</th>
 								<td><input is="duice-ui-input" type="datetime-local" data-duice-bind="user,closeDate" data-duice-format="yyyy.MM.dd HH:mm:ss"/></td>
 							</tr>
 							<tr>
-								<th>Profile</th>
+								<th data-th-text="#{application.label.profile}">Profile</th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="user,profile"></textarea></td>
 							</tr>
 							<tr>
 								<th>
-									<img class="icon small" src="/static/image/icon_group.png"/>
-									Group
+									<img class="icon" src="/static/image/icon_group.png"/>
+									<span data-th-text="#{application.label.group}"></span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
-										data-duice-bind="userGroups,group" 
-										style="width:100%;">
-										<col style="width:40%;"/>
+									data-duice-bind="userGroups,group" style="width:100%;">
+										<col style="width:7%;"/>
+										<col style="width:35%;"/>
 										<col/>
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th>ID</th>
-												<th>Name</th>
-												<th>
-													<button class="button small" data-index="[[$context.index]]" onclick="javascript:removeUserGroup(this.dataset.index);">
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.name}">Name</th>
+												<th class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="javascript:addUserGroup(this.dataset.index);">
 														+
 													</button>
 												</th>
@@ -331,12 +385,15 @@
 										</thead>
 										<tbody>
 											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="group">return $context.index+1;</span>
+												</td>
 												<td>
 													<img is="duice-ui-img" data-duice-bind="group,icon" class="icon small"/>
 													<span is="duice-ui-span" data-duice-bind="group,id"></span>
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="group,name"></span></td>
-												<td>
+												<td class="text-center">
 													<button class="button small" data-index="[[$context.index]]" onclick="javascript:removeUserGroup(this.dataset.index);">
 														-
 													</button>
@@ -348,22 +405,24 @@
 							</tr>
 							<tr>
 								<th>
-									<img class="icon small" src="/static/image/icon_role.png"/>
-									Role
+									<img class="icon" src="/static/image/icon_role.png"/>
+									<span data-th-text="#{application.label.role}"></span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
 									data-duice-bind="userRoles,role" 
 									style="width:100%;">
-										<col style="width:40%;"/>
+										<col style="width:7%;"/>
+										<col style="width:35%;"/>
 										<col/>
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th>ID</th>
-												<th>Name</th>
-												<th>
-													<button class="button small" onclick="addRole();">
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.name}">Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addUserRole();">
 														+
 													</button>
 												</th>
@@ -371,13 +430,16 @@
 										</thead>
 										<tbody>
 											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span>
+												</td>
 												<td>
 													<img is="duice-ui-img" data-duice-bind="role,icon" class="icon small"/>
 													<span is="duice-ui-span" data-duice-bind="role,id"></span>
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="role,name"></span></td>
-												<td>
-													<button class="button small" data-index="[[$context.index]]" onclick="removeRole(this.dataset.index);">
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeUserRole(this.dataset.index);">
 														-
 													</button>
 												</td>
@@ -388,22 +450,24 @@
 							</tr>
 							<tr>
 								<th>
-									<img class="icon small" src="/static/image/icon_authority.png"/>
-									Authority
+									<img class="icon" src="/static/image/icon_authority.png"/>
+									<span data-th-text="#{application.label.authority}"></span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
 										data-duice-bind="userAuthorities,authority" 
 										style="width:100%;">
-										<col style="width:40%;"/>
+										<col style="width:7%;"/>
+										<col style="width:35%;"/>
 										<col/>
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th>ID</th>
-												<th>Name</th>
-												<th>
-													<button class="button small" data-index="[[$context.index]]" onclick="javascript:removeUserGroup(this.dataset.index);">
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.name}">Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addUserAuthority();">
 														+
 													</button>
 												</th>
@@ -411,13 +475,16 @@
 										</thead>
 										<tbody>
 											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
+												</td>
 												<td>
 													<img is="duice-ui-img" data-duice-bind="authority,icon" class="icon small"/>
 													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
-												<td>
-													<button class="button small" data-index="[[$context.index]]" onclick="javascript:removeUserGroup(this.dataset.index);">
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeUserAuthority(this.dataset.index);">
 														-
 													</button>
 												</td>

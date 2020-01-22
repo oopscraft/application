@@ -69,7 +69,8 @@
 		.hr {
 			margin: 1px;
 			border: 0px;
-    		border-bottom: solid 2px #eee;
+			border-top: solid 1px #ddd;
+			border-bottom: solid 1px #eee;
 		}
 		.menu {
 			min-height: 400px;
@@ -111,12 +112,17 @@
 		    border: solid 2px #eee;
 		    margin: 2px 0px;
 		}
-		.content-search__label {
+		.font-bold {
 			font-weight: bold;
-			margin-left: 10px;
 		}
-		.content-result {
-			margin: 2px 0px;
+		.text-left {
+			text-align: left;
+		}
+		.text-center {
+			text-align: center;
+		}
+		.text-right {
+			text-align: right;
 		}
 		.icon {
 			width: 24px;
@@ -141,6 +147,7 @@
 			background:linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
 			background-color:#f9f9f9;
 			border:1px solid #adacac;
+			border-radius: 2px;
 			display:inline-block;
 			cursor:pointer;
 			color:#333;
@@ -160,8 +167,10 @@
 		    line-height: initial;
 			padding: 0.2rem 0.2rem;
 		}
-		.button-icon {
-   			vertical-align: middle;
+		.button > .icon {
+			width: 1rem;
+			height: 1rem;
+			vertical-align: middle;
 		}
 		.table {
 			border-collapse: collapse;
@@ -276,7 +285,7 @@
 					</div>
 					<div class="memu-item" onclick="document.location='/admin/role';">
 						<img class="menu-item__icon" src="/static/image/icon_role.png"/>
-						<span class="menu-item__text" data-th-text="#{application.label.user}">Role</span>
+						<span class="menu-item__text" data-th-text="#{application.label.role}">Role</span>
 					</div>
 					<div class="memu-item">
 						<img class="menu-item__icon" src="/static/image/icon_authority.png"/>
@@ -315,29 +324,223 @@
 		</div>
 		
 		<!-- ====================================================== -->
+		<!-- Groups Dialog											-->
+		<!-- ====================================================== -->
+		<dialog id="__groupDialog" style="width:600px;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" src="/static/image/icon_group.png"/>
+					<span data-th-text="#{application.label.group} + ' ' + #{application.label.select}" class="font-bold"></span>
+				</div>
+			</div>
+			<hr class="hr"/>
+			<div class="app-row">
+				<div class="app-col">
+					<select is="duice-ui-select" data-duice-bind="__groupDialog.search,key" style="width:100px;">
+						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.label.id}">ID</option>
+						<option value="name" data-th-text="#{application.label.name}">Name</option>
+					</select>
+					<input is="duice-ui-input" type="text" data-duice-bind="__groupDialog.search,value" style="width:200px;"/>
+				</div>
+				<div class="app-col right">
+					<button class="button" onclick="__groupDialog.getGroups();">
+						<img src="/static/image/icon_search.png" class="icon"/>
+						<span data-th-text="#{application.label.search}">Search</span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+					data-duice-bind="__groupDialog.groups,group" 
+					style="width:100%;">
+						<col style="width:5%;"/>					
+						<col style="width:10%;"/>
+						<col style="width:35%;"/>
+						<col style="width:50%;"/>
+						<thead>
+							<tr>
+								<th>-</th>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.id}">ID</th>
+								<th data-th-text="#{application.label.name}">Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center">
+									<input is="duice-ui-input" type="checkbox" data-duice-bind="group,__selected" data-id="[[$context.group.get('id')]]" onchange="this.checked ? __groupDialog.selectGroup(this.dataset.id) : __groupDialog.unselectGroup(this.dataset.id);" [[$context.group.get('__disabled')?'disabled':'']]/>
+								</td>
+								<td class="text-center">
+									<span is="duice-ui-scriptlet" data-duice-bind="group">return $context.index+1;</span>
+								</td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="group,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
+									<span is="duice-ui-span" data-duice-bind="group,id"></span>
+								</td>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="group,name"></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col center">
+					<ul is="duice-ui-pagination" data-duice-bind="__groupDialog.search,page,rows,totalCount" data-duice-size="5">
+						<li onclick="__groupDialog.getGroups();"></li>
+					</ul>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+					data-duice-bind="__groupDialog.selectedGroups,group" 
+					style="width:100%;">
+						<col style="width:5%;"/>					
+						<col style="width:10%;"/>
+						<col style="width:35%;"/>
+						<col style="width:50%;"/>
+						<thead>
+							<tr>
+								<th>-</th>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.id}">ID</th>
+								<th data-th-text="#{application.label.name}">Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center">
+									<input is="duice-ui-input" type="checkbox" data-duice-bind="group,__selected" data-id="[[$context.group.get('id')]]" onchange="this.checked ? __groupDialog.selectGroup(this.dataset.id) : __groupDialog.unselectGroup(this.dataset.id);"/>
+								</td>
+								<td class="text-center">
+									<span is="duice-ui-scriptlet" data-duice-bind="group">return $context.index+1;</span>
+								</td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="group,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
+									<span is="duice-ui-span" data-duice-bind="group,id"></span>
+								</td>
+								<td><span is="duice-ui-span" data-duice-bind="group,name"></span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col right">
+					<button class="button" onclick="__groupDialog.confirm();">
+						<img src="/static/image/icon_confirm.png" class="icon"/>
+						Ok
+					</button>
+				</div>
+			</div>
+		</dialog>
+		<script>
+        var __groupDialog = {
+        	dialog: new duice.Dialog(document.getElementById('__groupDialog')),
+        	search: new duice.Map({
+        		page: 1,
+        		rows: 10,
+        		totalCount: -1
+        	}),
+        	groups: new duice.List(),
+        	selectedGroups: new duice.List(),
+        	excludedGroups: null,
+        	beforeConfirm(listener){
+        		this.dialog.beforeConfirm(listener);
+        		return this;
+        	},
+        	afterConfirm(listener){
+        		this.dialog.afterConfirm(listener);
+        		return this;
+        	},
+        	setExcludedGroups(excludedGroups){
+        		this.excludedGroups = excludedGroups;
+        		return this;
+        	},
+        	open() {
+        		this.getGroups(1);
+        		this.selectedGroups.fromJson([]);
+        		this.dialog.open();
+        	},
+        	getGroups() {
+				var data = {};
+				if(this.search.get('key')){
+					data[this.search.get('key')] = this.search.get('value');
+				}
+				var $this = this;
+				$.ajax({
+					 url: '/admin/getGroups'
+					,type: 'GET'
+					,data: data
+					,success: function(data, textStatus, jqXHR) {
+						if($this.excludedGroups){
+							data.forEach(function(item) {
+								var contains = $this.excludedGroups.contains(function(group){
+									if(group.get('id') === item.id){
+										return true;
+									}
+								});
+								if(contains){
+									item.__disabled = true;
+								}
+							});
+						}
+						$this.groups.fromJson(data);
+			   	 	}
+				});
+        	},
+        	selectGroup(id) {
+        		var index = this.groups.indexOf(function(group){
+        			if(group.get('id') === id){
+        				return true;
+        			}
+        		});
+        		var group = this.groups.get(index);
+    			this.selectedGroups.add(group);
+        	},
+        	unselectGroup(id) {
+        		var index = this.selectedGroups.indexOf(function(group){
+        			if(group.get('id') === id){
+        				return true;
+        			}
+        		});
+        		this.selectedGroups.remove(index);
+        	},
+        	confirm() {
+        		this.dialog.confirm(this.selectedGroups);
+        	}
+        };
+		</script>
+		
+		<!-- ====================================================== -->
 		<!-- Roles Dialog											-->
 		<!-- ====================================================== -->
-		<dialog id="__roleDialog" style="width:800px;">
+		<dialog id="__roleDialog" style="width:600px;">
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" src="/static/image/icon_role.png"/>
-					<span style="font-weight:bold;">
-						Role Select
-					</span>
+					<span data-th-text="#{application.label.role} + ' ' + #{application.label.select}" class="font-bold"></span>
 				</div>
 			</div>
 			<hr class="hr"/>
 			<div class="app-row">
 				<div class="app-col">
 					<select is="duice-ui-select" data-duice-bind="__roleDialog.search,key" style="width:100px;">
-						<option value>- select -</option>
-						<option value="id">ID</option>
-						<option value="name">Name</option>
+						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.label.id}">ID</option>
+						<option value="name" data-th-text="#{application.label.name}">Name</option>
 					</select>
 					<input is="duice-ui-input" type="text" data-duice-bind="__roleDialog.search,value" style="width:200px;"/>
 				</div>
 				<div class="app-col right">
-					<button class="button" onclick="__roleDialog.getRoles();">Search</button>
+					<button class="button" onclick="__roleDialog.getRoles();">
+						<img src="/static/image/icon_search.png" class="icon"/>
+						Search
+					</button>
 				</div>
 			</div>
 			<div class="app-row">
@@ -345,33 +548,27 @@
 					<table is="duice-ui-table" 
 					data-duice-bind="__roleDialog.roles,role" 
 					style="width:100%;">
-						<col style="width:5%;"/>
+						<col style="width:5%;"/>					
 						<col style="width:10%;"/>
 						<col style="width:35%;"/>
 						<col style="width:50%;"/>
 						<thead>
 							<tr>
 								<th>-</th>
-								<th>No</th>
-								<th>ID</th>
-								<th>Name</th>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.id}">ID</th>
+								<th data-th-text="#{application.label.name}">Name</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
-								<td>
-									<input is="duice-ui-input" type="checkbox" data-duice-bind="role,__selected" data-id="[[$context.role.get('id')]]" onchange="this.checked ? __roleDialog.selectRole(this.dataset.id) : __roleDialog.unselectRole(this.dataset.id);" [[$context.role.get('__disabled')?'disabled':'']]/>
-								</td>
-								<td>
-									<span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span>
-								</td>
+								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="role,__selected" data-id="[[$context.role.get('id')]]" onchange="this.checked ? __roleDialog.selectRole(this.dataset.id) : __roleDialog.unselectRole(this.dataset.id);" [[$context.role.get('__disabled')?'disabled':'']]/></td>
+								<td class="text-center"><span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span></td>
 								<td>
 									<img is="duice-ui-img" data-duice-bind="role,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
 									<span is="duice-ui-span" data-duice-bind="role,id"></span>
 								</td>
-								<td>
-									<span is="duice-ui-span" data-duice-bind="role,name"></span>
-								</td>
+								<td><span is="duice-ui-span" data-duice-bind="role,name"></span></td>
 							</tr>
 						</tbody>
 					</table>
@@ -396,17 +593,15 @@
 						<thead>
 							<tr>
 								<th>-</th>
-								<th>No</th>
-								<th>ID</th>
-								<th>Name</th>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.id}">ID</th>
+								<th data-th-text="#{application.label.name}">Name</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
-								<td>
-									<input is="duice-ui-input" type="checkbox" data-duice-bind="role,__selected" data-id="[[$context.role.get('id')]]" onchange="this.checked ? __roleDialog.selectRole(this.dataset.id) : __roleDialog.unselectRole(this.dataset.id);"/>
-								</td>
-								<td><span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span></td>
+								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="role,__selected" data-id="[[$context.role.get('id')]]" onchange="this.checked ? __roleDialog.selectRole(this.dataset.id) : __roleDialog.unselectRole(this.dataset.id);"/></td>
+								<td class="text-center"><span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span></td>
 								<td>
 									<img is="duice-ui-img" data-duice-bind="role,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
 									<span is="duice-ui-span" data-duice-bind="role,id"></span>
@@ -419,7 +614,10 @@
 			</div>
 			<div class="app-row">
 				<div class="app-col right">
-					<button class="button" onclick="__roleDialog.confirm();">OK</button>
+					<button class="button" onclick="__roleDialog.confirm();">
+						<img src="/static/image/icon_confirm.png" class="icon"/>
+						Ok
+					</button>
 				</div>
 			</div>
 		</dialog>
@@ -497,6 +695,189 @@
         	},
         	confirm() {
         		this.dialog.confirm(this.selectedRoles);
+        	}
+        };
+		</script>
+		
+		<!-- ====================================================== -->
+		<!-- Authorities Dialog											-->
+		<!-- ====================================================== -->
+		<dialog id="__authorityDialog" style="width:600px;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" src="/static/image/icon_authority.png"/>
+					<span data-th-text="#{application.label.authority} + ' ' + #{application.label.select}" class="font-bold"></span>
+				</div>
+			</div>
+			<hr class="hr"/>
+			<div class="app-row">
+				<div class="app-col">
+					<select is="duice-ui-select" data-duice-bind="__authorityDialog.search,key" style="width:100px;">
+						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.label.id}">ID</option>
+						<option value="name" data-th-text="#{application.label.name}">Name</option>
+					</select>
+					<input is="duice-ui-input" type="text" data-duice-bind="__authorityDialog.search,value" style="width:200px;"/>
+				</div>
+				<div class="app-col right">
+					<button class="button" onclick="__authorityDialog.getAuthorities();">
+						<img src="/static/image/icon_search.png" class="icon"/>
+						Search
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+					data-duice-bind="__authorityDialog.authorities,authority" 
+					style="width:100%;">
+						<col style="width:5%;"/>
+						<col style="width:10%;"/>
+						<col style="width:35%;"/>
+						<col style="width:50%;"/>
+						<thead>
+							<tr>
+								<th>-</th>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.id}">ID</th>
+								<th data-th-text="#{application.label.name}">Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="authority,__selected" data-id="[[$context.authority.get('id')]]" onchange="this.checked ? __authorityDialog.selectAuthorities(this.dataset.id) : __authorityDialog.unselectAuthorities(this.dataset.id);" [[$context.authority.get('__disabled')?'disabled':'']]/></td>
+								<td class="text-center"><span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span></td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="authority,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
+									<span is="duice-ui-span" data-duice-bind="authority,id"></span>
+								</td>
+								<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col center">
+					<ul is="duice-ui-pagination" data-duice-bind="__authorityDialog.search,page,rows,totalCount" data-duice-size="5">
+						<li onclick="__authorityDialog.getAuthorities();"></li>
+					</ul>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+					data-duice-bind="__authorityDialog.selectedAuthorities,authority" 
+					style="width:100%;">
+						<col style="width:5%;"/>					
+						<col style="width:10%;"/>
+						<col style="width:35%;"/>
+						<col style="width:50%;"/>
+						<thead>
+							<tr>
+								<th>-</th>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.id}">ID</th>
+								<th data-th-text="#{application.label.name}">Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="authority,__selected" data-id="[[$context.authority.get('id')]]" onchange="this.checked ? __authorityDialog.selectAuthorities(this.dataset.id) : __authorityDialog.unselectAuthorities(this.dataset.id);"/></td>
+								<td class="text-center"><span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span></td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="authority,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
+									<span is="duice-ui-span" data-duice-bind="authority,id"></span>
+								</td>
+								<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col right">
+					<button class="button" onclick="__authorityDialog.confirm();">
+						<img src="/static/image/icon_confirm.png" class="icon"/>
+						Ok
+					</button>
+				</div>
+			</div>
+		</dialog>
+		<script>
+        var __authorityDialog = {
+        	dialog: new duice.Dialog(document.getElementById('__authorityDialog')),
+        	search: new duice.Map({
+        		page: 1,
+        		rows: 10,
+        		totalCount: -1
+        	}),
+        	authorities: new duice.List(),
+        	selectedAuthorities: new duice.List(),
+        	excludedAuthorities: null,
+        	beforeConfirm(listener){
+        		this.dialog.beforeConfirm(listener);
+        		return this;
+        	},
+        	afterConfirm(listener){
+        		this.dialog.afterConfirm(listener);
+        		return this;
+        	},
+        	setExcludedAuthorities(excludedAuthorities){
+        		this.excludedAuthorities = excludedAuthorities;
+        		return this;
+        	},
+        	open() {
+        		this.getAuthorities(1);
+        		this.selectedAuthorities.fromJson([]);
+        		this.dialog.open();
+        	},
+        	getAuthorities() {
+				var data = {};
+				if(this.search.get('key')){
+					data[this.search.get('key')] = this.search.get('value');
+				}
+				var $this = this;
+				$.ajax({
+					 url: '/admin/getAuthorities'
+					,type: 'GET'
+					,data: data
+					,success: function(data, textStatus, jqXHR) {
+						if($this.excludedAuthorities){
+							data.forEach(function(item) {
+								var contains = $this.excludedAuthorities.contains(function(authority){
+									if(authority.get('id') === item.id){
+										return true;
+									}
+								});
+								if(contains){
+									item.__disabled = true;
+								}
+							});
+						}
+						$this.authorities.fromJson(data);
+			   	 	}
+				});
+        	},
+        	selectAuthorities(id) {
+        		var index = this.authorities.indexOf(function(authority){
+        			if(authority.get('id') === id){
+        				return true;
+        			}
+        		});
+        		var authority = this.authorities.get(index);
+    			this.selectedAuthorities.add(authority);
+        	},
+        	unselectAuthorities(id) {
+        		var index = this.selectedAuthorities.indexOf(function(authority){
+        			if(authority.get('id') === id){
+        				return true;
+        			}
+        		});
+        		this.selectedAuthorities.remove(index);
+        	},
+        	confirm() {
+        		this.dialog.confirm(this.selectedAuthorities);
         	}
         };
 		</script>

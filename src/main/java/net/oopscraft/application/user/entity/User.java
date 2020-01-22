@@ -28,9 +28,6 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 @Entity
 @Table(name = "APP_USER_INFO")
 @EntityListeners(SystemEntityListener.class)
-@Inheritance(
-    strategy = InheritanceType.JOINED
-)
 public class User extends SystemEntity {
 	
 	@Id
@@ -56,14 +53,14 @@ public class User extends SystemEntity {
 	@Column(name = "USER_EMIL")
 	String email;
 
-	@Column(name = "USER_PHON")
-	String phone;
+	@Column(name = "USER_MOBL")
+	String mobile;
 
 	@Column(name = "USER_LOCL")
 	String locale;
 	
-	@Column(name = "USER_IMGE", length=4000)
-	String image;
+	@Column(name = "USER_PHOT", length=4000)
+	String photo;
 
 	@Column(name = "USER_PRFL", length=4000)
 	String profile;
@@ -144,12 +141,12 @@ public class User extends SystemEntity {
 		this.locale = locale;
 	}
 
-	public String getPhone() {
-		return phone;
+	public String getMobile() {
+		return mobile;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 	public String getName() {
@@ -176,12 +173,12 @@ public class User extends SystemEntity {
 		this.nickname = nickname;
 	}
 
-	public String getImage() {
-		return image;
+	public String getPhoto() {
+		return photo;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setPhoto(String photo) {
+		this.photo = photo;
 	}
 
 	public String getProfile() {

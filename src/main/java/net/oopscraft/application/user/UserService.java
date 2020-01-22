@@ -22,7 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.common.PageInfo;
+import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.entity.User;
 
 @Service
@@ -37,7 +37,6 @@ public class UserService {
 	}
 	
 	public List<User> getUsers(final User user, PageInfo pageInfo) throws Exception {
-		
 		Page<User> usersPage = userRepository.findAll(new  Specification<User>() {
 			@Override
 			public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {

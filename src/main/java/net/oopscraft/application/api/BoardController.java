@@ -30,11 +30,11 @@ import net.oopscraft.application.board.entity.Article;
 import net.oopscraft.application.board.entity.ArticleFile;
 import net.oopscraft.application.board.entity.ArticleReply;
 import net.oopscraft.application.board.entity.Board;
-import net.oopscraft.application.common.EncodeUtility;
-import net.oopscraft.application.common.JsonConverter;
-import net.oopscraft.application.common.PageInfo;
-import net.oopscraft.application.common.StringUtility;
-import net.oopscraft.application.common.TextTable;
+import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.util.EncodeUtility;
+import net.oopscraft.application.util.StringUtility;
 import net.oopscraft.application.board.BoardService;
 
 @Controller

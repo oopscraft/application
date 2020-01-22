@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.common.JsonConverter;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.monitor.MonitorAgent;
 import net.oopscraft.application.monitor.MonitorInfo;
 

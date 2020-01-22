@@ -6,12 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
@@ -37,28 +37,25 @@ public class Group extends SystemEntity {
 	@Column(name = "GROP_DESC", length=4000)
 	String description;
 	
-	@Transient
-	List<Group> childGroups;
-
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_GROP_ROLE_MAP", joinColumns = @JoinColumn(name = "GROP_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+	@JoinTable(
+		name = "APP_GROP_ROLE_MAP", 
+		joinColumns = @JoinColumn(name = "GROP_ID"), 
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "ROLE_ID"), 
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Role> roles;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_GROP_AUTH_MAP", joinColumns = @JoinColumn(name = "GROP_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@JoinTable(
+		name = "APP_GROP_AUTH_MAP",
+		joinColumns = @JoinColumn(name = "GROP_ID"),
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Authority> authorities;
-
-	public void setChildGroups(List<Group> childGroups) {
-		this.childGroups = childGroups;
-	}
-
-	public void addChildGroup(Group group) {
-		childGroups.add(group);
-	}
-
-	public List<Group> getChildGroups() {
-		return childGroups;
-	}
 
 	public String getId() {
 		return id;

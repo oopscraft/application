@@ -21,9 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-import net.oopscraft.application.common.StringUtility;
-import net.oopscraft.application.common.TextTable;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.entity.User;
+import net.oopscraft.application.util.StringUtility;
 
 @Component
 public class AuthenticationFilter extends GenericFilterBean   {

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import net.oopscraft.application.common.JsonConverter;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.security.UserDetails;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.entity.User;

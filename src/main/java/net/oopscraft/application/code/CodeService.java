@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.code.entity.Code;
 import net.oopscraft.application.code.entity.CodeItem;
-import net.oopscraft.application.common.PageInfo;
+import net.oopscraft.application.core.PageInfo;
 
 @Service
 public class CodeService {

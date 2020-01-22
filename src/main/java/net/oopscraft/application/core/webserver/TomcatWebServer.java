@@ -24,30 +24,30 @@ public class TomcatWebServer extends WebServer {
 
 	public void start() throws Exception {
 		 
-		this.tomcat = new Tomcat();
-		this.tomcat.setPort(this.port);
+		tomcat = new Tomcat();
+		tomcat.setPort(this.getPort());
 
 		 // setting base directory 
-		File baseDir = new File(".tomcat" + File.separator + this.port);
+		File baseDir = new File(".tomcat" + File.separator + this.getPort());
 		baseDir.mkdirs();
-		this.tomcat.setBaseDir(baseDir.getAbsolutePath());
+		tomcat.setBaseDir(baseDir.getAbsolutePath());
 
 		// setting connector 
 		Connector connector = this.tomcat.getConnector();
-		if(this.ssl) { 
+		if(this.isSsl()) { 
 			connector.setSecure(true);
 			connector.setScheme("https");
 			connector.setAttribute("SSLEnabled", true);
 			connector.setAttribute("protocol", "HTTP/1.1");
 			connector.setAttribute("sslProtocol", "TLS");
 			connector.setAttribute("clientAuth", false);
-			connector.setAttribute("keystoreFile", new File(this.keyStorePath).getAbsolutePath());
-			connector.setAttribute("keystoreType", this.keyStoreType);
-			connector.setAttribute("keystorePass", this.keyStorePass);
+			connector.setAttribute("keystoreFile", new File(this.getKeyStorePath()).getAbsolutePath());
+			connector.setAttribute("keystoreType", this.getKeyStoreType());
+			connector.setAttribute("keystorePass", this.getKeyStorePass());
 		}
 		 
 		// setting context 
-		for(WebServerContext context : this.contexts){
+		for(WebServerContext context : this.getContexts()){
 			File resourceBase = new File(context.getResourceBase());
 			StandardContext ctx = (StandardContext)tomcat.addWebapp(context.getContextPath(), resourceBase.getAbsolutePath());
 			ctx.addParameter("webAppRootKey", UUID.randomUUID().toString());

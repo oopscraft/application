@@ -1,14 +1,22 @@
 package net.oopscraft.application.user;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.common.PageInfo;
+import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.entity.Authority;
+import net.oopscraft.application.user.entity.Role;
 
 @Service
 public class AuthorityService {
@@ -26,27 +34,46 @@ public class AuthorityService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Authority> getAuthorities(PageInfo pageInfo, AuthoritySearchType searchType, String searchValue) throws Exception {
-		Pageable pageable = pageInfo.toPageable();
-		Page<Authority> authoritiesPage = null;
-		if(searchType == null) {
-			authoritiesPage = authorityRepository.findAll(pageable);
-		}else {
-			switch(searchType) {
-				case ID :
-					authoritiesPage = authorityRepository.findByIdContaining(searchValue, pageable);
-				break;
-				case NAME :
-					authoritiesPage = authorityRepository.findByNameContaining(searchValue, pageable);
-				break;
+	public List<Authority> getAuthorities(final Authority authority, PageInfo pageInfo) throws Exception {
+		Page<Authority> authorityPage = authorityRepository.findAll(new  Specification<Authority>() {
+			@Override
+			public Predicate toPredicate(Root<Authority> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+				List<Predicate> predicates = new ArrayList<Predicate>();
+				if(authority.getId() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), authority.getId() + '%'));
+					predicates.add(predicate);
+				}
+				if(authority.getName() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), authority.getName() + '%'));
+					predicates.add(predicate);
+				}
+				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}
-		if (pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(authoritiesPage.getTotalElements());
-		}
-		List<Authority> authorities = authoritiesPage.getContent();
-		return authorities;
+		}, pageInfo.toPageable());
+		return authorityPage.getContent();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Gets detail of authority

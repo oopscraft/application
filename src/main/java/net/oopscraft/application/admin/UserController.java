@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.common.PageInfo;
+import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.entity.User;
 
@@ -83,8 +83,7 @@ public class UserController {
 	@RequestMapping(value = "getUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public User getUser(@ModelAttribute User user) throws Exception {
-		user = userService.getUser(user);
-		return user;
+		return userService.getUser(user);
 	}
 	
 	/**
@@ -97,8 +96,7 @@ public class UserController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public User saveUser(@RequestBody User user) throws Exception {
-		user = userService.saveUser(user);
-		return user;
+		return userService.saveUser(user);
 	}
 	
 	/**

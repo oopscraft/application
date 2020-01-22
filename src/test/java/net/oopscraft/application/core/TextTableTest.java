@@ -5,9 +5,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import net.oopscraft.application.common.TextTable;
-import net.oopscraft.application.common.ValueMap;
-
 public class TextTableTest {
 	
 	@Test

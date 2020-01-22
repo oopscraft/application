@@ -3,9 +3,11 @@ package net.oopscraft.application;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import net.oopscraft.application.core.webserver.TomcatWebServer;
+import net.oopscraft.application.core.spring.FullBeanNameGenerator;
 import net.oopscraft.application.core.webserver.WebServer;
 import net.oopscraft.application.core.webserver.WebServerBuilder;
 import net.oopscraft.application.core.webserver.WebServerContext;

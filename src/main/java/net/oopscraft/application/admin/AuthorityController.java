@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.common.JsonConverter;
-import net.oopscraft.application.common.PageInfo;
-import net.oopscraft.application.common.StringUtility;
+import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.AuthorityService;
 import net.oopscraft.application.user.AuthorityService.AuthoritySearchType;
 import net.oopscraft.application.user.entity.Authority;
+import net.oopscraft.application.util.StringUtility;
 
 @PreAuthorize("hasAuthority('ADMIN_AUTHORITY')")
 @Controller
@@ -65,14 +65,15 @@ public class AuthorityController {
 		@RequestParam(value = "searchType", required = false) String searchType,
 		@RequestParam(value = "searchValue", required = false) String searchValue
 	) throws Exception {
-		PageInfo pageInfo = new PageInfo(rows, page, true);
-		AuthoritySearchType authoritySearchType= null;
-		if(StringUtility.isNotEmpty(searchType)) {
-			authoritySearchType = AuthoritySearchType.valueOf(searchType);
-		}
-		List<Authority> properties = authorityService.getAuthorities(pageInfo, authoritySearchType, searchValue);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonConverter.toJson(properties);
+//		PageInfo pageInfo = new PageInfo(rows, page, true);
+//		AuthoritySearchType authoritySearchType= null;
+//		if(StringUtility.isNotEmpty(searchType)) {
+//			authoritySearchType = AuthoritySearchType.valueOf(searchType);
+//		}
+//		List<Authority> properties = authorityService.getAuthorities(pageInfo, authoritySearchType, searchValue);
+//		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+//		return JsonConverter.toJson(properties);
+		return null;
 	}
 
 	/**

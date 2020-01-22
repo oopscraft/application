@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import net.oopscraft.application.common.TextTable;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.UserService;
 
 @Component

@@ -9,10 +9,10 @@ import net.oopscraft.application.board.dao.ArticleRepository;
 import net.oopscraft.application.board.dao.BoardRepository;
 import net.oopscraft.application.board.entity.Article;
 import net.oopscraft.application.board.entity.Board;
-import net.oopscraft.application.common.EncodeUtility;
-import net.oopscraft.application.common.PageInfo;
-import net.oopscraft.application.common.TextTable;
+import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.test.ApplicationTestRunner;
+import net.oopscraft.application.util.EncodeUtility;
 
 public class ArticleRepositoryTest extends ApplicationTestRunner {
 	

@@ -4,9 +4,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import net.oopscraft.application.common.LocaleUtility;
-import net.oopscraft.application.common.TextTable;
-import net.oopscraft.application.common.ValueMap;
+import net.oopscraft.application.util.LocaleUtility;
 
 public class LocaleUtilsTest {
 	

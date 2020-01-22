@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import net.oopscraft.application.common.JsonConverter;
-import net.oopscraft.application.common.LocaleUtility;
+import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.util.LocaleUtility;
 
 @Controller
 @RequestMapping("/api/locale")
