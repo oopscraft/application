@@ -2,17 +2,18 @@ package net.oopscraft.application.admin;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.AuthorityService;
 import net.oopscraft.application.user.GroupService;
 import net.oopscraft.application.user.RoleService;
@@ -24,7 +25,8 @@ import net.oopscraft.application.user.entity.Role;
 @RequestMapping("/admin")
 public class AdminController {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
+	@Autowired
+	HttpServletResponse response;
 	
 	@Autowired
 	GroupService groupService;
@@ -37,25 +39,25 @@ public class AdminController {
 	
 	@RequestMapping(value = "getGroups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Group> getGroups(Group group, PageInfo pageInfo) throws Exception {
+	public List<Group> getGroups(@ModelAttribute Group group, @ModelAttribute PageInfo pageInfo) throws Exception {
 		List<Group> groups = groupService.getGroups(group,pageInfo);
-		LOGGER.debug("{}", new TextTable(groups));
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return groups;
 	}
 	
 	@RequestMapping(value = "getRoles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Role> getUsers(Role role, PageInfo pageInfo) throws Exception {
+	public List<Role> getUsers(@ModelAttribute Role role, @ModelAttribute PageInfo pageInfo) throws Exception {
 		List<Role> roles = roleService.getRoles(role,pageInfo);
-		LOGGER.debug("{}", new TextTable(roles));
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return roles;
 	}
 	
 	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Authority> getAuthorities(Authority authority, PageInfo pageInfo) throws Exception {
+	public List<Authority> getAuthorities(@ModelAttribute Authority authority, @ModelAttribute PageInfo pageInfo) throws Exception {
 		List<Authority> authorities = authorityService.getAuthorities(authority, pageInfo);
-		LOGGER.debug("{}", new TextTable(authorities));
+		response.setHeader(HttpHeaders.CONTENT_RANGE,  pageInfo.getContentRange());
 		return authorities;
 	}
 	

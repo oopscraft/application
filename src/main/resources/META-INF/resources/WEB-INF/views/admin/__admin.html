@@ -336,97 +336,23 @@
 			<hr class="hr"/>
 			<div class="app-row">
 				<div class="app-col">
-					<select is="duice-ui-select" data-duice-bind="__groupDialog.search,key" style="width:100px;">
-						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option value="id" data-th-text="#{application.label.id}">ID</option>
-						<option value="name" data-th-text="#{application.label.name}">Name</option>
-					</select>
-					<input is="duice-ui-input" type="text" data-duice-bind="__groupDialog.search,value" style="width:200px;"/>
-				</div>
-				<div class="app-col right">
-					<button class="button" onclick="__groupDialog.getGroups();">
-						<img src="/static/image/icon_search.png" class="icon"/>
-						<span data-th-text="#{application.label.search}">Search</span>
-					</button>
-				</div>
-			</div>
-			<div class="app-row">
-				<div class="app-col">
-					<table is="duice-ui-table" 
+					<ul is="duice-ui-ul" 
 					data-duice-bind="__groupDialog.groups,group" 
-					style="width:100%;">
-						<col style="width:5%;"/>					
-						<col style="width:10%;"/>
-						<col style="width:35%;"/>
-						<col style="width:50%;"/>
-						<thead>
-							<tr>
-								<th>-</th>
-								<th data-th-text="#{application.label.no}">No</th>
-								<th data-th-text="#{application.label.id}">ID</th>
-								<th data-th-text="#{application.label.name}">Name</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="text-center">
-									<input is="duice-ui-input" type="checkbox" data-duice-bind="group,__selected" data-id="[[$context.group.get('id')]]" onchange="this.checked ? __groupDialog.selectGroup(this.dataset.id) : __groupDialog.unselectGroup(this.dataset.id);" [[$context.group.get('__disabled')?'disabled':'']]/>
-								</td>
-								<td class="text-center">
-									<span is="duice-ui-scriptlet" data-duice-bind="group">return $context.index+1;</span>
-								</td>
-								<td>
-									<img is="duice-ui-img" data-duice-bind="group,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
-									<span is="duice-ui-span" data-duice-bind="group,id"></span>
-								</td>
-								<td>
-									<span is="duice-ui-span" data-duice-bind="group,name"></span>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div class="app-row">
-				<div class="app-col center">
-					<ul is="duice-ui-pagination" data-duice-bind="__groupDialog.search,page,rows,totalCount" data-duice-size="5">
-						<li onclick="__groupDialog.getGroups();"></li>
-					</ul>
-				</div>
-			</div>
-			<div class="app-row">
-				<div class="app-col">
-					<table is="duice-ui-table" 
-					data-duice-bind="__groupDialog.selectedGroups,group" 
-					style="width:100%;">
-						<col style="width:5%;"/>					
-						<col style="width:10%;"/>
-						<col style="width:35%;"/>
-						<col style="width:50%;"/>
-						<thead>
-							<tr>
-								<th>-</th>
-								<th data-th-text="#{application.label.no}">No</th>
-								<th data-th-text="#{application.label.id}">ID</th>
-								<th data-th-text="#{application.label.name}">Name</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="text-center">
-									<input is="duice-ui-input" type="checkbox" data-duice-bind="group,__selected" data-id="[[$context.group.get('id')]]" onchange="this.checked ? __groupDialog.selectGroup(this.dataset.id) : __groupDialog.unselectGroup(this.dataset.id);"/>
-								</td>
-								<td class="text-center">
-									<span is="duice-ui-scriptlet" data-duice-bind="group">return $context.index+1;</span>
-								</td>
-								<td>
-									<img is="duice-ui-img" data-duice-bind="group,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
-									<span is="duice-ui-span" data-duice-bind="group,id"></span>
-								</td>
-								<td><span is="duice-ui-span" data-duice-bind="group,name"></span></td>
-							</tr>
-						</tbody>
-					</table>
+					data-duice-hierarchy="id,upperId"
+					data-duice-foldable="true"
+					style="max-height:600px; overflow-y:scroll;">
+						<li>
+							<div class="app-row" style="width:95%;border-bottom:dotted 1px #ccc;padding:2px;">
+								<div class="app-col">
+									<img is="duice-ui-img" data-duice-bind="group,icon" class="icon"/>
+									<span is="duice-ui-span" data-duice-bind="group,name" style="font-weight:bold;"></span>
+								</div>
+								<div class="app-col text-right">
+									<input is="duice-ui-input" type="checkbox" data-duice-bind="group,__selected" data-id="[[$context.group.get('id')]]" onchange="this.checked ? __groupDialog.selectGroup(this.dataset.id) : __groupDialog.unselectGroup(this.dataset.id);" [[$context.group.get('__disabled')?'disabled':'']] />
+								</div>
+							</div>
+						</li>
+					</ul>				
 				</div>
 			</div>
 			<div class="app-row">
@@ -443,18 +369,18 @@
         	dialog: new duice.Dialog(document.getElementById('__groupDialog')),
         	search: new duice.Map({
         		page: 1,
-        		rows: 10,
+        		rows: Number.MAX_VALUE,
         		totalCount: -1
         	}),
         	groups: new duice.List(),
         	selectedGroups: new duice.List(),
         	excludedGroups: null,
-        	beforeConfirm(listener){
-        		this.dialog.beforeConfirm(listener);
+        	onBeforeConfirm(listener){
+        		this.dialog.onBeforeConfirm(listener);
         		return this;
         	},
-        	afterConfirm(listener){
-        		this.dialog.afterConfirm(listener);
+        	onAfterConfirm(listener){
+        		this.dialog.onAfterConfirm(listener);
         		return this;
         	},
         	setExcludedGroups(excludedGroups){
@@ -462,7 +388,7 @@
         		return this;
         	},
         	open() {
-        		this.getGroups(1);
+       			this.getGroups(1);
         		this.selectedGroups.fromJson([]);
         		this.dialog.open();
         	},
@@ -485,6 +411,7 @@
 									}
 								});
 								if(contains){
+									item.__selected = true;
 									item.__disabled = true;
 								}
 							});
@@ -632,12 +559,12 @@
         	roles: new duice.List(),
         	selectedRoles: new duice.List(),
         	excludedRoles: null,
-        	beforeConfirm(listener){
-        		this.dialog.beforeConfirm(listener);
+        	onBeforeConfirm(listener){
+        		this.dialog.onBeforeConfirm(listener);
         		return this;
         	},
-        	afterConfirm(listener){
-        		this.dialog.afterConfirm(listener);
+        	onAfterConfirm(listener){
+        		this.dialog.onAfterConfirm(listener);
         		return this;
         	},
         	setExcludedRoles(excludedRoles){
@@ -815,12 +742,12 @@
         	authorities: new duice.List(),
         	selectedAuthorities: new duice.List(),
         	excludedAuthorities: null,
-        	beforeConfirm(listener){
-        		this.dialog.beforeConfirm(listener);
+        	onBeforeConfirm(listener){
+        		this.dialog.onBeforeConfirm(listener);
         		return this;
         	},
-        	afterConfirm(listener){
-        		this.dialog.afterConfirm(listener);
+        	onAfterConfirm(listener){
+        		this.dialog.onAfterConfirm(listener);
         		return this;
         	},
         	setExcludedAuthorities(excludedAuthorities){

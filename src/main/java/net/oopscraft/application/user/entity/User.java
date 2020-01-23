@@ -16,8 +16,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Nationalized;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -59,7 +62,7 @@ public class User extends SystemEntity {
 	@Column(name = "USER_LOCL")
 	String locale;
 	
-	@Column(name = "USER_PHOT", length=4000)
+	@Column(name = "USER_PHOT", length=Integer.MAX_VALUE)
 	String photo;
 
 	@Column(name = "USER_PRFL", length=4000)

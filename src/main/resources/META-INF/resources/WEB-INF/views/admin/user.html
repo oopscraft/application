@@ -19,7 +19,10 @@
 		/**
 		 * Gets users
 		 */
-		function getUsers() {
+		function getUsers(page) {
+			if(page){
+				search.set('page',page);
+			}
 			var data = {};
 			if(search.get('key')){
 				data[search.get('key')] = search.get('value');
@@ -36,9 +39,23 @@
 				,success: function(data, textStatus, jqXHR) {
 					users.fromJson(data);
 					search.set('totalCount', __parseTotalCount(jqXHR));
+					
+					// sets current user
+					users.forEach(function(row,index){
+						if(row.get('id') === user.get('id')){
+							users.setIndex(index);
+							return false;
+						}
+					});
 		   	 	}
 			});	
 		}
+		
+		// adds index changed event listener
+		users.onAfterIndexChange(function(index){
+			var id = this.get(index).get('id');
+			getUser(id);
+		});
 		
 		/**
 		 * Gets specified user
@@ -62,7 +79,7 @@
 		 */
 		function saveUser(){
 			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.user})}]]")
-			.afterConfirm(function(){
+			.onAfterConfirm(function(){
 				var data = user.toJson();
 				data.groups = userGroups.toJson();
 				data.roles = userRoles.toJson();
@@ -74,7 +91,7 @@
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
 						new duice.Alert('[[#{application.message.saveComplete(#{application.label.user})}]]')
-						.afterClose(function(){
+						.onAfterClose(function(){
 							getUsers();
 						}).open();
 			   	 	}
@@ -87,7 +104,7 @@
 		 */
 		function deleteUser(){
 			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.user})}]]")
-			.afterConfirm(function(){
+			.onAfterConfirm(function(){
 				$.ajax({
 					 url: 'user/deleteUser'
 					,type: 'DELETE'
@@ -95,7 +112,7 @@
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
 						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.user})}]]")
-						.afterClose(function(){
+						.onAfterClose(function(){
 							getUsers();
 						}).open();
 			   	 	}
@@ -110,7 +127,7 @@
 		function addUserGroup() {
 			__groupDialog
 			.setExcludedGroups(userGroups)
-			.afterConfirm(function(groups){
+			.onAfterConfirm(function(groups){
 				groups.forEach(function(group){
 					userGroups.add(group);
 				});
@@ -130,7 +147,7 @@
 		function addUserRole() {
 			__roleDialog
 			.setExcludedRoles(userRoles)
-			.afterConfirm(function(roles){
+			.onAfterConfirm(function(roles){
 				roles.forEach(function(role){
 					userRoles.add(role);
 				});
@@ -150,7 +167,7 @@
 		function addUserAuthority() {
 			__authorityDialog
 			.setExcludedAuthorities(userAuthorities)
-			.afterConfirm(function(authorities){
+			.onAfterConfirm(function(authorities){
 				authorities.forEach(function(authority){
 					userAuthorities.add(authority);
 				});
@@ -208,7 +225,7 @@
 					</select>
 				</div>
 				<div class="app-col right">
-					<button class="button" onclick="getUsers();">
+					<button class="button" onclick="getUsers(1);">
 						<img src="/static/image/icon_search.png" class="icon"/>
 						<span data-th-text="#{application.label.search}"></span>
 					</button>
@@ -238,7 +255,7 @@
 								<th data-th-text="#{application.label.status}">Status</th>
 							</tr>
 						</thead>
-						<tbody data-id="[[$context.user.get('id')]]" onclick="getUser(this.dataset.id);">
+						<tbody>
 							<tr>
 								<td class="text-center">
 									<span is="duice-ui-scriptlet" data-duice-bind="users">
@@ -259,11 +276,9 @@
 						<tfoot>
 							<tr>
 								<td colspan="7">
-									<span>
-										<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5" style="width:50%;">
-											<li onclick="getUsers();"></li>
-										</ul>
-									</span>
+									<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+										<li onclick="getUsers();"></li>
+									</ul>
 								</td>
 							</tr>
 						</tfoot>
@@ -367,7 +382,7 @@
 								<td>
 									<table is="duice-ui-table" 
 									data-duice-bind="userGroups,group" style="width:100%;">
-										<col style="width:7%;"/>
+										<col style="width:50px;"/>
 										<col style="width:35%;"/>
 										<col/>
 										<col style="width:5%;"/>
@@ -412,7 +427,7 @@
 									<table is="duice-ui-table" 
 									data-duice-bind="userRoles,role" 
 									style="width:100%;">
-										<col style="width:7%;"/>
+										<col style="width:50px;"/>
 										<col style="width:35%;"/>
 										<col/>
 										<col style="width:5%;"/>
@@ -457,7 +472,7 @@
 									<table is="duice-ui-table" 
 										data-duice-bind="userAuthorities,authority" 
 										style="width:100%;">
-										<col style="width:7%;"/>
+										<col style="width:50px;"/>
 										<col style="width:35%;"/>
 										<col/>
 										<col style="width:5%;"/>

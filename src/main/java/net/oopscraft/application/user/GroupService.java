@@ -45,7 +45,7 @@ public class GroupService {
 					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), group.getName() + '%'));
 					predicates.add(predicate);
 				}
-				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
+				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
 			}
 		}, pageInfo.toPageable());
 		pageInfo.setTotalCount(usersPage.getTotalElements());
