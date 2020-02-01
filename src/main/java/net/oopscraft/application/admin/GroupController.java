@@ -53,12 +53,24 @@ public class GroupController {
 		return groups;
 	}
 
+	/**
+	 * Returns specified group.
+	 * @param group
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "getGroup", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public Group getGroup(@ModelAttribute Group group) throws Exception {
-		return groupService.getGroup(group);
+		return groupService.getGroup(group.getId());
 	}
 	
+	/**
+	 * Saves specified group.
+	 * @param group
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "saveGroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -66,107 +78,16 @@ public class GroupController {
 		return groupService.saveGroup(group);
 	}
 	
+	/**
+	 * Deletes specified group
+	 * @param group
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "deleteGroup", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteGroup(@RequestBody Group group) throws Exception {
 		groupService.deleteGroup(group);
 	}
-	
-
-	
-	
-	
-
-//	@Autowired
-//	GroupService groupService;
-//	
-//	@Autowired
-//	HttpServletResponse response;
-//
-//	/**
-//	 * Forwards user page
-//	 * 
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@RequestMapping(method = RequestMethod.GET)
-//	public ModelAndView group() throws Exception {
-//		ModelAndView modelAndView = new ModelAndView("admin/group.tiles");
-//		return modelAndView;
-//	}
-//	
-//	/**
-//	 * Gets groups
-//	 * 
-//	 * @param searchKey
-//	 * @param searchValue
-//	 * @param page
-//	 * @param rows
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@RequestMapping(value = "getGroups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//	@ResponseBody
-//	public String getGroups() throws Exception {
-//		List<Group> groups = groupService.getGroups();
-//		return JsonConverter.toJson(groups);
-//	}
-//	
-//	/**
-//	 * Gets group details.
-//	 * 
-//	 * @param id
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@RequestMapping(value = "getGroup", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//	@ResponseBody
-//	public String getGroup(@RequestParam(value = "id") String id) throws Exception {
-//		Group group = groupService.getGroup(id);
-//		return JsonConverter.toJson(group);
-//	}
-//	
-//	/**
-//	 * Gets bread crumbs
-//	 * @param id
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@RequestMapping(value = "getBreadCrumbs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//	@ResponseBody
-//	public String getBreadCrumbs(@RequestParam(value = "id") String id) throws Exception {
-//		List<Group> breadCrumbs = groupService.getBreadCrumbs(id);
-//		return JsonConverter.toJson(breadCrumbs);
-//	}
-//
-//	/**
-//	 * Saves group.
-//	 * 
-//	 * @param payload
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@RequestMapping(value = "saveGroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//	@ResponseBody
-//	@Transactional(rollbackFor = Exception.class)
-//	public void saveGroup(@RequestBody String payload) throws Exception {
-//		Group role = JsonConverter.toObject(payload, Group.class);
-//		groupService.saveGroup(role);
-//	}
-//	
-//	/**
-//	 * Removes group.
-//	 * 
-//	 * @param payload
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@RequestMapping(value = "deleteGroup", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//	@ResponseBody
-//	@Transactional(rollbackFor = Exception.class)
-//	public void deleteGroup(@RequestParam(value = "id") String id) throws Exception {
-//		groupService.deleteGroup(id);
-//	}
 
 }

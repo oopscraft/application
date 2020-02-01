@@ -22,19 +22,19 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 public class Group extends SystemEntity {
 
 	@Id
-	@Column(name = "GROP_ID", length=32)
+	@Column(name = "GROP_ID", length = 32)
 	String id;
 
-	@Column(name = "UPER_GROP_ID", length=32)
+	@Column(name = "UPER_GROP_ID", length = 32)
 	String upperId;
 
-	@Column(name = "GROP_NAME")
+	@Column(name = "GROP_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "GROP_ICON", length=4000)
+	@Column(name = "GROP_ICON", length = Integer.MAX_VALUE)
 	String icon;
 
-	@Column(name = "GROP_DESC", length=4000)
+	@Column(name = "GROP_DESC", length = Integer.MAX_VALUE)
 	String description;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -56,6 +56,12 @@ public class Group extends SystemEntity {
 		inverseForeignKey = @ForeignKey(name = "none")
 	)
 	List<Authority> authorities;
+	
+	public Group() { }
+	
+	public Group(String id) {
+		this.id = id;
+	}
 
 	public String getId() {
 		return id;

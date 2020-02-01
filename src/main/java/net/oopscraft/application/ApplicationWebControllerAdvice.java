@@ -1,9 +1,13 @@
 package net.oopscraft.application;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,8 +24,23 @@ import net.oopscraft.application.core.ValueMap;
 @RequestMapping("/")
 public class ApplicationWebControllerAdvice {
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(ApplicationWebControllerAdvice.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationWebControllerAdvice.class);
 	
+	@Autowired
+	HttpServletRequest request;
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView index() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("__index.html");
+		return modelAndView;
+	}
+	
+	/**
+	 * Handles Exception
+	 * @param e
+	 * @return
+	 * @throws Exception
+	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ResponseBody
@@ -34,11 +53,7 @@ public class ApplicationWebControllerAdvice {
 		return responseMap;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/__admin.html");
-		return modelAndView;
-	}
+
 
 	
 

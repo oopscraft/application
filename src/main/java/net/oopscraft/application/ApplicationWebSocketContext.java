@@ -5,7 +5,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-import net.oopscraft.application.admin.AdminWebSocketHandler;
+import net.oopscraft.application.admin.bak.AdminWebSocketHandler;
 
 /**
  * Configuration of web socket handlers

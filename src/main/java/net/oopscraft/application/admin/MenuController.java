@@ -5,32 +5,33 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.menu.entity.Menu;
 
 
-@PreAuthorize("hasAuthority('ADMIN_MENU')")
+//@PreAuthorize("hasAuthority('ADMIN_MENU')")
 @Controller
 @RequestMapping("/admin/menu")
 public class MenuController {
 
 	@Autowired
-	MenuService menuService;
-	
-	@Autowired
 	HttpServletResponse response;
+
+	@Autowired
+	MenuService menuService;
 
 	/**
 	 * Forwards user page
@@ -39,89 +40,64 @@ public class MenuController {
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView menu() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/menu.tiles");
+	public ModelAndView index() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("admin/menu.html");
 		modelAndView.addObject("types", Menu.Type.values());
 		modelAndView.addObject("policies", Menu.Policy.values());
 		return modelAndView;
 	}
 	
 	/**
-	 * Gets menus
-	 * 
-	 * @param searchKey
-	 * @param searchValue
-	 * @param page
-	 * @param rows
+	 * Returns menu list
+	 * @param menu
+	 * @param pageInfo
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getMenus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional
-	public String getMenus() throws Exception {
-		List<Menu> menus = menuService.getMenus();
-		return JsonConverter.toJson(menus);
+	public List<Menu> getMenus(@ModelAttribute Menu menu, @ModelAttribute PageInfo pageInfo) throws Exception {
+		pageInfo.setEnableTotalCount(true);
+		List<Menu> menus = menuService.getMenus(menu, pageInfo);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+		return menus;
 	}
 	
 	/**
-	 * Gets menu details.
-	 * 
-	 * @param id
+	 * Returns menu
+	 * @param menu
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getMenu", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional
-	public String getMenu(@RequestParam(value = "id") String id) throws Exception {
-		Menu menu = menuService.getMenu(id);
-		return JsonConverter.toJson(menu);
-	}
-	
-	/**
-	 * Gets bread crumbs
-	 * @param id
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "getBreadCrumbs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	@Transactional
-	public String getBreadCrumbs(@RequestParam(value = "id") String id) throws Exception {
-		List<Menu> breadCrumbs = menuService.getBreadCrumbs(id);
-		return JsonConverter.toJson(breadCrumbs);
+	public Menu getMenu(@ModelAttribute Menu menu) throws Exception {
+		return menuService.getMenu(menu.getId());
 	}
 
 	/**
-	 * Saves menu.
-	 * 
-	 * @param payload
+	 * Saves menu
+	 * @param menu
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "saveMenu", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public String saveMenu(@RequestBody String payload) throws Exception {
-		Menu role = JsonConverter.toObject(payload, Menu.class);
-		role = menuService.saveMenu(role);
-		return JsonConverter.toJson(role);
+	public Menu saveMenu(@RequestBody Menu menu) throws Exception {
+		return menuService.saveMenu(menu);
 	}
 	
 	/**
-	 * Deletes menu.
-	 * 
-	 * @param payload
-	 * @return
+	 * Deletes menu
+	 * @param menu
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "deleteMenu", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteMenu", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public String deleteMenu(@RequestParam(value = "id") String id) throws Exception {
-		menuService.deleteMenu(id);
-		return JsonConverter.toJson(id);
+	public void deleteMenu(@RequestBody Menu menu) throws Exception {
+		menuService.deleteMenu(menu);
 	}
 
 }

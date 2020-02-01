@@ -1,15 +1,11 @@
 package net.oopscraft.application.api;
 
-import java.net.URLEncoder;
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,18 +20,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import net.oopscraft.application.board.ArticleService;
-import net.oopscraft.application.board.ArticleService.ArticleSearchType;
-import net.oopscraft.application.board.entity.Article;
-import net.oopscraft.application.board.entity.ArticleFile;
-import net.oopscraft.application.board.entity.ArticleReply;
+import net.oopscraft.application.article.ArticleService;
+import net.oopscraft.application.article.entity.Article;
+import net.oopscraft.application.article.entity.ArticleFile;
+import net.oopscraft.application.article.entity.ArticleReply;
+import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.core.JsonConverter;
-import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.util.EncodeUtility;
-import net.oopscraft.application.util.StringUtility;
-import net.oopscraft.application.board.BoardService;
 
 @Controller
 @RequestMapping("/api/board")
@@ -52,73 +45,73 @@ public class BoardController {
 	@Autowired
 	HttpServletResponse response;
 	
-	/**
-	 * checks access authority
-	 * @param boardId
-	 * @return
-	 * @throws Exception
-	 */
-	public boolean hasAccessAuthority(String boardId) throws Exception {
-		return boardService.hasAccessAuthority(boardId);
-	}
+//	/**
+//	 * checks access authority
+//	 * @param boardId
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public boolean hasAccessAuthority(String boardId) throws Exception {
+//		return boardService.hasAccessAuthority(boardId);
+//	}
+//	
+//	/**
+//	 * checks read authority
+//	 * @param boardId
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public boolean hasReadAuthority(String boardId) throws Exception {
+//		return boardService.hasReadAuthority(boardId);
+//	}
+//	
+//	/**
+//	 * checks write authority
+//	 * @param boardId
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public boolean hasWriteAuthority(String boardId) throws Exception {
+//		return boardService.hasWriteAuthority(boardId);
+//	}
 	
-	/**
-	 * checks read authority
-	 * @param boardId
-	 * @return
-	 * @throws Exception
-	 */
-	public boolean hasReadAuthority(String boardId) throws Exception {
-		return boardService.hasReadAuthority(boardId);
-	}
+//	/**
+//	 * Gets latest articles
+//	 * @param page
+//	 * @param rows
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value = "/articles/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	public ResponseEntity<?> getLatestArticles(
+//		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows,
+//		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+//		@RequestParam(value = "boardId", required = false)String boardId
+//	) throws Exception {
+//		PageInfo pageInfo = new PageInfo(rows, page, true);
+//		List<Article> latestArticles = articleService.getLatestArticles(pageInfo, boardId);
+//		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+//		return new ResponseEntity<>(JsonConverter.toJson(latestArticles), HttpStatus.OK);
+//	}
 	
-	/**
-	 * checks write authority
-	 * @param boardId
-	 * @return
-	 * @throws Exception
-	 */
-	public boolean hasWriteAuthority(String boardId) throws Exception {
-		return boardService.hasWriteAuthority(boardId);
-	}
-	
-	/**
-	 * Gets latest articles
-	 * @param page
-	 * @param rows
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/articles/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> getLatestArticles(
-		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows,
-		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-		@RequestParam(value = "boardId", required = false)String boardId
-	) throws Exception {
-		PageInfo pageInfo = new PageInfo(rows, page, true);
-		List<Article> latestArticles = articleService.getLatestArticles(pageInfo, boardId);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return new ResponseEntity<>(JsonConverter.toJson(latestArticles), HttpStatus.OK);
-	}
-	
-	/**
-	 * Gets best articles
-	 * @param page
-	 * @param rows
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/articles/best", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> getBestArticles(
-		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows,
-		@RequestParam(value = "boardId", required = false)String boardId
-	) throws Exception {
-		PageInfo pageInfo = new PageInfo(rows, page, true);
-		List<Article> bestArticles = articleService.getBestArticles(pageInfo, boardId);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return new ResponseEntity<>(JsonConverter.toJson(bestArticles), HttpStatus.OK);
-	}
+//	/**
+//	 * Gets best articles
+//	 * @param page
+//	 * @param rows
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value = "/articles/best", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	public ResponseEntity<?> getBestArticles(
+//		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+//		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows,
+//		@RequestParam(value = "boardId", required = false)String boardId
+//	) throws Exception {
+//		PageInfo pageInfo = new PageInfo(rows, page, true);
+//		List<Article> bestArticles = articleService.getBestArticles(pageInfo, boardId);
+//		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+//		return new ResponseEntity<>(JsonConverter.toJson(bestArticles), HttpStatus.OK);
+//	}
 	
 	/**
 	 * Gets board info
@@ -133,36 +126,36 @@ public class BoardController {
 		return new ResponseEntity<>(JsonConverter.toJson(board), HttpStatus.OK);
 	}
 	
-	/**
-	 * Gets article list.
-	 * @param boardId
-	 * @param page
-	 * @param searchKey
-	 * @param value
-	 * @return
-	 * @throws Exception
-	 */
-	@PreAuthorize("this.hasAccessAuthority(#boardId)")
-	@RequestMapping(value = "/{boardId}/articles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> getArticles(
-		@PathVariable("boardId") String boardId,
-		@RequestParam(value = "page", required = false, defaultValue="1")Integer page,
-		@RequestParam(value = "categoryId", required = false)String categoryId,
-		@RequestParam(value = "searchType", required = false)String searchType,
-		@RequestParam(value = "searchValue", required = false)String searchValue
-	) throws Exception {
-		Board board = boardService.getBoard(boardId);
-		PageInfo pageInfo = new PageInfo(board.getRowsPerPage(), page, true);
-		ArticleSearchType articleSearchType;
-		if(StringUtility.isNotEmpty(searchType)) {
-			articleSearchType = ArticleSearchType.valueOf(searchType);
-		}else {
-			articleSearchType = null;
-		}
-		List<Article> articles = articleService.getArticles(pageInfo, boardId, categoryId, articleSearchType, searchValue);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return new ResponseEntity<>(JsonConverter.toJson(articles), HttpStatus.OK);
-	}
+//	/**
+//	 * Gets article list.
+//	 * @param boardId
+//	 * @param page
+//	 * @param searchKey
+//	 * @param value
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@PreAuthorize("this.hasAccessAuthority(#boardId)")
+//	@RequestMapping(value = "/{boardId}/articles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	public ResponseEntity<?> getArticles(
+//		@PathVariable("boardId") String boardId,
+//		@RequestParam(value = "page", required = false, defaultValue="1")Integer page,
+//		@RequestParam(value = "categoryId", required = false)String categoryId,
+//		@RequestParam(value = "searchType", required = false)String searchType,
+//		@RequestParam(value = "searchValue", required = false)String searchValue
+//	) throws Exception {
+//		Board board = boardService.getBoard(boardId);
+//		PageInfo pageInfo = new PageInfo(board.getRowsPerPage(), page, true);
+//		ArticleSearchType articleSearchType;
+//		if(StringUtility.isNotEmpty(searchType)) {
+//			articleSearchType = ArticleSearchType.valueOf(searchType);
+//		}else {
+//			articleSearchType = null;
+//		}
+//		List<Article> articles = articleService.getArticles(pageInfo, boardId, categoryId, articleSearchType, searchValue);
+//		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+//		return new ResponseEntity<>(JsonConverter.toJson(articles), HttpStatus.OK);
+//	}
 	
 	/**
 	 * Gets article detail
@@ -188,18 +181,18 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@PreAuthorize("this.hasWriteAuthority(#boardId)")
-	@RequestMapping(value = "/{boardId}/article", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@Transactional(rollbackFor = Exception.class)
-	public ResponseEntity<?> saveArticles(
-		@PathVariable("boardId") String boardId,
-		@RequestBody String payload
-	) throws Exception {
-		Article article = JsonConverter.toObject(payload, Article.class);
-		article.setBoardId(boardId);
-		articleService.saveArticle(article);
-		return new ResponseEntity<>(JsonConverter.toJson(article), HttpStatus.OK);
-	}
+//	@PreAuthorize("this.hasWriteAuthority(#boardId)")
+//	@RequestMapping(value = "/{boardId}/article", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@Transactional(rollbackFor = Exception.class)
+//	public ResponseEntity<?> saveArticles(
+//		@PathVariable("boardId") String boardId,
+//		@RequestBody String payload
+//	) throws Exception {
+//		Article article = JsonConverter.toObject(payload, Article.class);
+//		article.setBoardId(boardId);
+//		articleService.saveArticle(article);
+//		return new ResponseEntity<>(JsonConverter.toJson(article), HttpStatus.OK);
+//	}
 	
 	/**
 	 * Deletes article
@@ -220,63 +213,63 @@ public class BoardController {
 		return new ResponseEntity<>(JsonConverter.toJson(null), HttpStatus.OK);
 	}
 
-	/**
-	 * Gets article replies	
-	 * @param id
-	 * @return
-	 * @throws Exception
-	 */
-	@PreAuthorize("this.hasReadAuthority(#boardId)")
-	@RequestMapping(value = "/{boardId}/article/{articleId}/replies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<?> getArticleReplies(
-		@PathVariable("boardId") String boardId,
-		@PathVariable("articleId")String articleId
-	) throws Exception {
-		Article article = articleService.getArticle(articleId);
-		List<ArticleReply> articleReplies = article.getReplies();
-		return new ResponseEntity<>(JsonConverter.toJson(articleReplies), HttpStatus.OK);
-	}
+//	/**
+//	 * Gets article replies	
+//	 * @param id
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@PreAuthorize("this.hasReadAuthority(#boardId)")
+//	@RequestMapping(value = "/{boardId}/article/{articleId}/replies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	public ResponseEntity<?> getArticleReplies(
+//		@PathVariable("boardId") String boardId,
+//		@PathVariable("articleId")String articleId
+//	) throws Exception {
+//		Article article = articleService.getArticle(articleId);
+//		List<ArticleReply> articleReplies = article.getReplies();
+//		return new ResponseEntity<>(JsonConverter.toJson(articleReplies), HttpStatus.OK);
+//	}
 	
-	/**
-	 * Saves article reply
-	 * @param boardId
-	 * @param articleId
-	 * @param payload
-	 * @return
-	 * @throws Exception
-	 */
-	@PreAuthorize("this.hasWriteAuthority(#boardId)")
-	@RequestMapping(value = "/{boardId}/article/{articleId}/reply", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@Transactional(rollbackFor = Exception.class)
-	public ResponseEntity<?> saveArticleReply(
-		@PathVariable("boardId")String boardId,
-		@PathVariable("articleId")String articleId,
-		@RequestBody String payload
-	) throws Exception {
-		ArticleReply articleReply = JsonConverter.toObject(payload, ArticleReply.class);
-		Article article = articleService.getArticle(articleId);
-		articleReply = article.saveReply(articleReply);
-		return new ResponseEntity<>(JsonConverter.toJson(articleReply), HttpStatus.OK);
-	}
-	
-	/**
-	 * Deletes article reply
-	 * @param id
-	 * @return
-	 * @throws Exception
-	 */
-	@PreAuthorize("this.hasWriteAuthority(#boardId)")
-	@RequestMapping(value = "/{boardId}/article/{articleId}/reply/{replyId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@Transactional(rollbackFor = Exception.class)
-	public ResponseEntity<?> deleteArticleReply(
-		@PathVariable("boardId")String boardId,
-		@PathVariable("articleId")String articleId,
-		@PathVariable("replyId")String replyId
-	) throws Exception {
-		Article article = articleService.getArticle(articleId);
-		article.deleteReply(replyId);
-		return new ResponseEntity<>(JsonConverter.toJson(null), HttpStatus.OK);
-	}
+//	/**
+//	 * Saves article reply
+//	 * @param boardId
+//	 * @param articleId
+//	 * @param payload
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@PreAuthorize("this.hasWriteAuthority(#boardId)")
+//	@RequestMapping(value = "/{boardId}/article/{articleId}/reply", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@Transactional(rollbackFor = Exception.class)
+//	public ResponseEntity<?> saveArticleReply(
+//		@PathVariable("boardId")String boardId,
+//		@PathVariable("articleId")String articleId,
+//		@RequestBody String payload
+//	) throws Exception {
+//		ArticleReply articleReply = JsonConverter.toObject(payload, ArticleReply.class);
+//		Article article = articleService.getArticle(articleId);
+//		articleReply = article.saveReply(articleReply);
+//		return new ResponseEntity<>(JsonConverter.toJson(articleReply), HttpStatus.OK);
+//	}
+//	
+//	/**
+//	 * Deletes article reply
+//	 * @param id
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@PreAuthorize("this.hasWriteAuthority(#boardId)")
+//	@RequestMapping(value = "/{boardId}/article/{articleId}/reply/{replyId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@Transactional(rollbackFor = Exception.class)
+//	public ResponseEntity<?> deleteArticleReply(
+//		@PathVariable("boardId")String boardId,
+//		@PathVariable("articleId")String articleId,
+//		@PathVariable("replyId")String replyId
+//	) throws Exception {
+//		Article article = articleService.getArticle(articleId);
+//		article.deleteReply(replyId);
+//		return new ResponseEntity<>(JsonConverter.toJson(null), HttpStatus.OK);
+//	}
 	
 	/**
 	 * Uploads file
@@ -311,34 +304,34 @@ public class BoardController {
 	}
 	
 
-	/**
-	 * Downloads file.
-	 * @param boardId
-	 * @param articleId
-	 * @param fileId
-	 * @throws Exception
-	 */
-	@PreAuthorize("this.hasReadAuthority(#boardId)")
-	@RequestMapping(value = "/{boardId}/article/{articleId}/file/{fileId}", method = RequestMethod.GET)
-	public void downloadArticleFile(
-		@PathVariable("boardId")String boardId,
-		@PathVariable("articleId")String articleId,	
-		@PathVariable("fileId")String fileId
-	) throws Exception {
-		
-		Article article = articleService.getArticle(articleId);
-		ArticleFile articleFile = article.getFile(fileId);
-		
-		// sends file
-		response.setContentType(articleFile.getType());
-		response.setContentLengthLong(articleFile.getSize());
-		StringBuffer contentDisposition = new StringBuffer()
-			.append("attachment")
-			.append(";filename=" + articleFile.getName())
-			.append(";filename*=UTF-8''" + URLEncoder.encode(articleFile.getName(),"UTF-8"));
-		response.setHeader("Content-Disposition", contentDisposition.toString());
-		FileUtils.copyFile(articleFile.getRealFile(), response.getOutputStream());
-	}
+//	/**
+//	 * Downloads file.
+//	 * @param boardId
+//	 * @param articleId
+//	 * @param fileId
+//	 * @throws Exception
+//	 */
+//	@PreAuthorize("this.hasReadAuthority(#boardId)")
+//	@RequestMapping(value = "/{boardId}/article/{articleId}/file/{fileId}", method = RequestMethod.GET)
+//	public void downloadArticleFile(
+//		@PathVariable("boardId")String boardId,
+//		@PathVariable("articleId")String articleId,	
+//		@PathVariable("fileId")String fileId
+//	) throws Exception {
+//		
+//		Article article = articleService.getArticle(articleId);
+//		ArticleFile articleFile = article.getFile(fileId);
+//		
+//		// sends file
+//		response.setContentType(articleFile.getType());
+//		response.setContentLengthLong(articleFile.getSize());
+//		StringBuffer contentDisposition = new StringBuffer()
+//			.append("attachment")
+//			.append(";filename=" + articleFile.getName())
+//			.append(";filename*=UTF-8''" + URLEncoder.encode(articleFile.getName(),"UTF-8"));
+//		response.setHeader("Content-Disposition", contentDisposition.toString());
+//		FileUtils.copyFile(articleFile.getRealFile(), response.getOutputStream());
+//	}
 	
 
 }

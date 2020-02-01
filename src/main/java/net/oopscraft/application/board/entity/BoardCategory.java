@@ -13,6 +13,9 @@ import javax.persistence.Table;
 @IdClass(BoardCategory.Pk.class)
 public class BoardCategory {
 	
+	/**
+	 * BoardCategory.Pk
+	 */
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
@@ -65,6 +68,13 @@ public class BoardCategory {
 		}
 	}
 	
+	public BoardCategory() {}
+	
+	public BoardCategory(String boardId, String id) {
+		this.boardId = id;
+		this.id = id;
+	}
+	
 	@Id
 	@Column(name = "BORD_ID")
 	String boardId;
@@ -73,12 +83,12 @@ public class BoardCategory {
 	@Column(name = "CATE_ID")
 	String id;
 	
+	@Column(name = "CATE_SEQ")
+	int sequence;
+
 	@Column(name = "CATE_NAME")
 	String name;
 	
-	@Column(name = "DISP_SEQ")
-	int displaySeq;
-
 	public String getBoardId() {
 		return boardId;
 	}
@@ -103,12 +113,12 @@ public class BoardCategory {
 		this.name = name;
 	}
 
-	public int getDisplaySeq() {
-		return displaySeq;
+	public int getSequence() {
+		return sequence;
 	}
 
-	public void setDisplaySeq(int displaySeq) {
-		this.displaySeq = displaySeq;
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
 	}
 
 	

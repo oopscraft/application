@@ -1,5 +1,6 @@
 package net.oopscraft.application.menu.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -8,15 +9,12 @@ import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.SQLInsert;
-import org.hibernate.annotations.WhereJoinTable;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
@@ -26,26 +24,30 @@ import net.oopscraft.application.user.entity.Authority;
 @Table(name = "APP_MENU_INFO")
 @EntityListeners(SystemEntityListener.class)
 public class Menu extends SystemEntity {
-
-	@Id
-	@Column(name = "MENU_ID")
-	String id;
-
-	@Column(name = "UPER_MENU_ID")
-	String upperId;
-
-	@Column(name = "MENU_NAME")
-	String name;
-	
-	@Column(name = "MENU_DESC")
-	String description;
-
-	@Column(name = "MENU_ICON")
-	String icon;
 	
 	public enum Type {
 		NONE, LINK, INCLUDE_JSP, INCLUDE_URL
 	}
+	
+	public enum Policy {
+		ANONYMOUS, 	AUTHENTICATED,	AUTHORIZED
+	}
+
+	@Id
+	@Column(name = "MENU_ID", length = 32)
+	String id;
+
+	@Column(name = "UPER_MENU_ID", length = 32)
+	String upperId;
+
+	@Column(name = "MENU_NAME", length = 1024)
+	String name;
+	
+	@Column(name = "MENU_ICON", length = Integer.MAX_VALUE)
+	String icon;
+
+	@Column(name = "MENU_DESC", length = Integer.MAX_VALUE)
+	String description;
 	
 	@Column(name = "MENU_TYPE")
 	@Enumerated(EnumType.STRING)
@@ -54,36 +56,39 @@ public class Menu extends SystemEntity {
 	@Column(name = "MENU_VAL")
 	String value;
 
-	public enum Policy {
-		ANONYMOUS, AUTHENTICATED, AUTHORIZED
-	}
-	
-	@Column(name = "DISP_SEQ")
-	Integer displaySeq;
-	
 	@Column(name = "PLCY_DISP")
 	@Enumerated(EnumType.STRING)
-	Policy policyDisplay = Policy.ANONYMOUS;
-
+	Policy displayPolicy = Policy.ANONYMOUS;
+	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_MENU_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "MENU_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	@WhereJoinTable(clause = "PLCY_TYPE ='DISP_PLCY'")
-	@SQLInsert(sql = "INSERT INTO APP_MENU_PLCY_AUTH_MAP (MENU_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'DISP_PLCY', ?)") 
-	List<Authority> displayAuthorities;
+	@JoinTable(
+		name = "APP_MENU_AUTH_DISP_MAP", 
+		joinColumns = @JoinColumn(name = "MENU_ID"),
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
+	List<Authority> displayAuthorities = new ArrayList<Authority>();
 
 	@Column(name = "PLCY_ACES")
 	@Enumerated(EnumType.STRING)
-	Policy policyAccess = Policy.ANONYMOUS;
+	Policy accessPolicy = Policy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_MENU_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "MENU_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	@WhereJoinTable(clause = "PLCY_TYPE ='ACES_PLCY'")
-	@SQLInsert(sql = "INSERT INTO APP_MENU_PLCY_AUTH_MAP (MENU_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'ACES_PLCY', ?)") 
-	List<Authority> accessAuthorities;
+	@JoinTable(
+		name = "APP_MENU_AUTH_ACES_MAP", 
+		joinColumns = @JoinColumn(name = "MENU_ID"),
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
+	List<Authority> accessAuthorities =  new ArrayList<Authority>();
+
+	public Menu() {}
 	
-	
-	@Transient
-	List<Menu> childMenus;
+	public Menu(String id) {
+		this.id = id;
+	}
 
 	public String getId() {
 		return id;
@@ -141,20 +146,13 @@ public class Menu extends SystemEntity {
 		this.description = description;
 	}
 
-	public Integer getDisplaySeq() {
-		return displaySeq;
+	
+	public Policy getDisplayPolicy() {
+		return displayPolicy;
 	}
 
-	public List<Authority> getAccessAuthorities() {
-		return accessAuthorities;
-	}
-
-	public void setAccessAuthorities(List<Authority> accessAuthorities) {
-		this.accessAuthorities = accessAuthorities;
-	}
-
-	public void setDisplaySeq(Integer displaySeq) {
-		this.displaySeq = displaySeq;
+	public void setDisplayPolicy(Policy displayPolicy) {
+		this.displayPolicy = displayPolicy;
 	}
 
 	public List<Authority> getDisplayAuthorities() {
@@ -165,30 +163,20 @@ public class Menu extends SystemEntity {
 		this.displayAuthorities = displayAuthorities;
 	}
 
-	public List<Menu> getChildMenus() {
-		return childMenus;
+	public Policy getAccessPolicy() {
+		return accessPolicy;
 	}
 
-	public void setChildMenus(List<Menu> childMenus) {
-		this.childMenus = childMenus;
+	public void setAccessPolicy(Policy accessPolicy) {
+		this.accessPolicy = accessPolicy;
 	}
 
-	public Policy getPolicyDisplay() {
-		return policyDisplay;
+	public List<Authority> getAccessAuthorities() {
+		return accessAuthorities;
 	}
 
-	public void setPolicyDisplay(Policy policyDisplay) {
-		this.policyDisplay = policyDisplay;
+	public void setAccessAuthorities(List<Authority> accessAuthorities) {
+		this.accessAuthorities = accessAuthorities;
 	}
-
-	public Policy getPolicyAccess() {
-		return policyAccess;
-	}
-
-	public void setPolicyAccess(Policy policyAccess) {
-		this.policyAccess = policyAccess;
-	}
-	
-	
 
 }

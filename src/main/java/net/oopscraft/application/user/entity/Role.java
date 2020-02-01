@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -21,21 +22,33 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 public class Role extends SystemEntity {
 
 	@Id
-	@Column(name = "ROLE_ID")
+	@Column(name = "ROLE_ID", length = 32)
 	String id;
 
-	@Column(name = "ROLE_NAME")
+	@Column(name = "ROLE_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "ROLE_ICON", length=4000)
+	@Column(name = "ROLE_ICON", length = Integer.MAX_VALUE)
 	String icon;
 
-	@Column(name = "ROLE_DESC", length=4000)
+	@Column(name = "ROLE_DESC", length = Integer.MAX_VALUE)
 	String description;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_ROLE_AUTH_MAP", joinColumns = @JoinColumn(name = "ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@JoinTable(
+		name = "APP_ROLE_AUTH_MAP", 
+		joinColumns = @JoinColumn(name = "ROLE_ID"),
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Authority> authorities;
+	
+	public Role() {}
+	
+	public Role(String id) {
+		this.id = id;
+	}
 
 	public String getId() {
 		return id;

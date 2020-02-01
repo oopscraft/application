@@ -10,113 +10,90 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.AuthorityService;
-import net.oopscraft.application.user.AuthorityService.AuthoritySearchType;
 import net.oopscraft.application.user.entity.Authority;
-import net.oopscraft.application.util.StringUtility;
 
-@PreAuthorize("hasAuthority('ADMIN_AUTHORITY')")
+//@PreAuthorize("hasAuthority('ADMIN_AUTHORITY')")
 @Controller
 @RequestMapping("/admin/authority")
 public class AuthorityController {
 
 	@Autowired
-	AuthorityService authorityService;
-
-	@Autowired
 	HttpServletResponse response;
-
+	
+	@Autowired
+	AuthorityService authorityService;
+	
 	/**
-	 * Forwards page
-	 * 
+	 * Forwards view page
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/authority.tiles");
+		ModelAndView modelAndView = new ModelAndView("admin/authority.html");
 		return modelAndView;
 	}
-
+	
 	/**
-	 * Gets authorities
-	 * 
-	 * @param searchKey
-	 * @param searchValue
-	 * @param page
-	 * @param rows
+	 * Returns authorities
+	 * @param authority
+	 * @param pageInfo
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getAuthorities(
-		@RequestParam(value = "rows")Integer rows,
-		@RequestParam(value = "page") Integer page,
-		@RequestParam(value = "searchType", required = false) String searchType,
-		@RequestParam(value = "searchValue", required = false) String searchValue
-	) throws Exception {
-//		PageInfo pageInfo = new PageInfo(rows, page, true);
-//		AuthoritySearchType authoritySearchType= null;
-//		if(StringUtility.isNotEmpty(searchType)) {
-//			authoritySearchType = AuthoritySearchType.valueOf(searchType);
-//		}
-//		List<Authority> properties = authorityService.getAuthorities(pageInfo, authoritySearchType, searchValue);
-//		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-//		return JsonConverter.toJson(properties);
-		return null;
+	public List<Authority> getAuthorities(@ModelAttribute Authority authority, @ModelAttribute PageInfo pageInfo) throws Exception {
+		pageInfo.setEnableTotalCount(true);
+		List<Authority> authorities = authorityService.getAuthorities(authority, pageInfo);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+		return authorities;
 	}
-
+	
 	/**
-	 * Gets authority details.
-	 * 
-	 * @param id
+	 * Return authority
+	 * @param authority
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getAuthority", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getAuthority(@RequestParam(value = "id") String id) throws Exception {
-		Authority authority = authorityService.getAuthority(id);
-		return JsonConverter.toJson(authority);
+	public Authority getAuthority(@ModelAttribute Authority authority) throws Exception {
+		return authorityService.getAuthority(authority.getId());
 	}
 
 	/**
-	 * Saves authority.
-	 * 
-	 * @param payload
+	 * Saves authority
+	 * @param authority
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "saveAuthority", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void saveAuthority(@RequestBody String payload) throws Exception {
-		Authority authority = JsonConverter.toObject(payload, Authority.class);
-		authorityService.saveAuthority(authority);
+	public Authority saveAuthority(@RequestBody Authority authority) throws Exception {
+		return authorityService.saveAuthority(authority);
 	}
-
+	
 	/**
-	 * Removes authority.
-	 * 
-	 * @param payload
-	 * @return
+	 * Deletes authority
+	 * @param authority
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "deleteAuthority", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteAuthority", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteAuthority(@RequestParam(value = "id") String id) throws Exception {
-		authorityService.deleteAuthority(id);
+	public void deleteAuthority(@RequestBody Authority authority) throws Exception {
+		authorityService.deleteAuthority(authority);
 	}
 
 }

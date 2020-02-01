@@ -12,15 +12,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Nationalized;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,16 +29,16 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 public class User extends SystemEntity {
 	
 	@Id
-	@Column(name = "USER_ID", length=32)
+	@Column(name = "USER_ID", length = 32)
 	String id;
 
-	@Column(name = "USER_PASS")
+	@Column(name = "USER_PASS", length = 255)
 	String password;
 
-	@Column(name = "USER_NAME")
+	@Column(name = "USER_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "USER_NICK")
+	@Column(name = "USER_NICK", length = 1024)
 	String nickname;
 	
 	public enum Status {
@@ -65,7 +60,7 @@ public class User extends SystemEntity {
 	@Column(name = "USER_PHOT", length=Integer.MAX_VALUE)
 	String photo;
 
-	@Column(name = "USER_PRFL", length=4000)
+	@Column(name = "USER_PRFL", length=Integer.MAX_VALUE)
 	String profile;
 	
 	@Column(name = "JOIN_DATE")
@@ -104,7 +99,7 @@ public class User extends SystemEntity {
 	)
 	List<Authority> authorities = new ArrayList<Authority>();
 	
-	public User() {	}
+	public User() { }
 	
 	public User(String id) {
 		this.id = id;
@@ -131,7 +126,7 @@ public class User extends SystemEntity {
 	public String getEmail() {
 		return email;
 	}
-
+ 
 	public void setEmail(String email) {
 		this.email = email;
 	}

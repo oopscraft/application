@@ -39,7 +39,7 @@ public class UserController {
 		User payloadUser = JsonConverter.toObject(payload, User.class);
 
 		// exiting user
-		User user = userService.getUser(payloadUser);
+		User user = userService.getUser(payloadUser.getId());
 		if(user != null) {
 			return new ResponseEntity<>(String.format("ID[%s] is Alreay Exists.",user.getId()), HttpStatus.NOT_ACCEPTABLE);
 		}

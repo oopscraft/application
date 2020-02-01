@@ -1,10 +1,16 @@
 package net.oopscraft.application.message;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
@@ -16,77 +22,138 @@ public class MessageService {
 	@Autowired
 	MessageRepository messageRepository;
 	
-	public enum MessageSearchType { ID,NAME	}
-
 	/**
-	 * Gets messages
-	 * @param searchType
-	 * @param searchValue
+	 * Returns messages
+	 * @param user
 	 * @param pageInfo
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Message> getMessages(PageInfo pageInfo, MessageSearchType searchType, String searchValue) throws Exception {
-		Pageable pageable = pageInfo.toPageable();
-		Page<Message> messagesPage = null;
-		if(searchType == null) {
-			messagesPage = messageRepository.findAll(pageable);
-		}else {
-			switch(searchType) {
-				case ID :
-					messagesPage = messageRepository.findByIdContaining(searchValue, pageable);
-				break;
-				case NAME :
-					messagesPage = messageRepository.findByNameContaining(searchValue, pageable);
-				break;
+	public List<Message> getMessages(final Message message, PageInfo pageInfo) throws Exception {
+		Page<Message> messagesPage = messageRepository.findAll(new  Specification<Message>() {
+			@Override
+			public Predicate toPredicate(Root<Message> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+				List<Predicate> predicates = new ArrayList<Predicate>();
+				if(message.getId() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), message.getId() + '%'));
+					predicates.add(predicate);
+				}
+				if(message.getName() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), message.getName() + '%'));
+					predicates.add(predicate);
+				}
+				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}
-		if (pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(messagesPage.getTotalElements());
-		}
-		List<Message> messages = messagesPage.getContent();
-		return messages;
+		}, pageInfo.toPageable());
+		pageInfo.setTotalCount(messagesPage.getTotalElements());
+		return messagesPage.getContent();
 	}
 	
 	/**
-	 * Gets detail of message
-	 * 
-	 * @param id
-	 * @return
-	 * @throws Exception
-	 */
-	public Message getMessage(String id) throws Exception {
-		Message Message = messageRepository.findOne(id);
-		return Message;
-	}
-	
-	/**
-	 * Saves message
-	 * 
+	 * Gets message
 	 * @param message
 	 * @return
 	 * @throws Exception
 	 */
-	public void saveMessage(Message message) throws Exception {
+	public Message getMessage(String id) throws Exception {
+		return messageRepository.findOne(id);
+	}
+	
+	/**
+	 * Saves message
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	public Message saveMessage(Message message) throws Exception {
 		Message one = messageRepository.findOne(message.getId());
 		if(one == null) {
-			one = new Message();
-			one.setId(message.getId());
+			one = new Message(message.getId());
 		}
 		one.setName(message.getName());
 		one.setValue(message.getValue());
 		one.setDescription(message.getDescription());
-		messageRepository.save(one);
+		return messageRepository.save(one);
 	}
 	
 	/**
-	 * Removes message
-	 * @param id
-	 * @return
+	 * Deletes message
+	 * @param message
 	 * @throws Exception
 	 */
-	public void deleteMessage(String id) throws Exception {
-		Message message = messageRepository.getOne(id);
+	public void deleteMessage(Message message) throws Exception {
 		messageRepository.delete(message);
 	}
+
+//	/**
+//	 * Gets messages
+//	 * @param searchType
+//	 * @param searchValue
+//	 * @param pageInfo
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public List<Message> getMessages(PageInfo pageInfo, MessageSearchType searchType, String searchValue) throws Exception {
+//		Pageable pageable = pageInfo.toPageable();
+//		Page<Message> messagesPage = null;
+//		if(searchType == null) {
+//			messagesPage = messageRepository.findAll(pageable);
+//		}else {
+//			switch(searchType) {
+//				case ID :
+//					messagesPage = messageRepository.findByIdContaining(searchValue, pageable);
+//				break;
+//				case NAME :
+//					messagesPage = messageRepository.findByNameContaining(searchValue, pageable);
+//				break;
+//			}
+//		}
+//		if (pageInfo.isEnableTotalCount() == true) {
+//			pageInfo.setTotalCount(messagesPage.getTotalElements());
+//		}
+//		List<Message> messages = messagesPage.getContent();
+//		return messages;
+//	}
+//	
+//	/**
+//	 * Gets detail of message
+//	 * 
+//	 * @param id
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public Message getMessage(String id) throws Exception {
+//		Message Message = messageRepository.findOne(id);
+//		return Message;
+//	}
+//	
+//	/**
+//	 * Saves message
+//	 * 
+//	 * @param message
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public void saveMessage(Message message) throws Exception {
+//		Message one = messageRepository.findOne(message.getId());
+//		if(one == null) {
+//			one = new Message();
+//			one.setId(message.getId());
+//		}
+//		one.setName(message.getName());
+//		one.setValue(message.getValue());
+//		one.setDescription(message.getDescription());
+//		messageRepository.save(one);
+//	}
+//	
+//	/**
+//	 * Removes message
+//	 * @param id
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public void deleteMessage(String id) throws Exception {
+//		Message message = messageRepository.getOne(id);
+//		messageRepository.delete(message);
+//	}
 }

@@ -2,277 +2,348 @@
 <html layout:decorate="~{admin/__admin.html}">
 <div layout:fragment="content">
 	<script>
-		var searchCondition = new duice.Map({
-			key: '',
-			value: '',
-			joinDateFrom: '',
-			joinDateTo: '',
-			status: ''
+		// document ready
+		$(document).ready(function() {
+			getRoles();
+		    disableDetail(true);
 		});
+	
+		var search = new duice.Map({
+			key: null,
+			value: null,
+			status: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		var roles = new duice.List();
+		var role = new duice.Map();
+		var roleAuthorities = new duice.List();
 
-		function getUsers() {
+		// adds index changed event listener
+		roles.onAfterChangeIndex(function(index){
+			if(index > -1){
+				var id = this.get(index).get('id');
+				getRole(id);	
+			}
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			role.setDisable(disable);
+			$('#deleteRoleButton').prop('disabled', disable);
+			$('#saveRoleButton').prop('disabled', disable);
+		}
+		
+		/**
+		 * Clears detail
+		 */
+		function clearDetail(){
+			role.clear();
+			roleAuthorities.clear();
+		}
+		
+		/**
+		 * Gets roles
+		 */
+		function getRoles(page) {
+			if(page){
+				search.set('page',page);
+			}
+			var data = {};
+			if(search.get('key')){
+				data[search.get('key')] = search.get('value');
+			}
+			if(search.get('status')){
+				data.status = search.get('status');
+			}
+			data.page = search.get('page');
+			data.rows = search.get('rows');
 			$.ajax({
-				 url: 'user/getUsers'
+				 url: 'role/getRoles'
 				,type: 'GET'
-				,data: null
+				,data: data
 				,success: function(data, textStatus, jqXHR) {
-					console.log(data);
-					users.fromJson(data);
+					roles.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					
+					// sets current user
+					roles.forEach(function(row,index){
+						if(row.get('id') === role.get('id')){
+							roles.setIndex(index);
+							return false;
+						}
+					});
 		   	 	}
-				,error: function(e){
-					console.log(e);
-				}
 			});	
 		}
 		
-		$( document ).ready(function() {
-		    console.log( "ready!" );
-		    //getUsers();
-		});
+		/**
+		 * Gets specified role
+		 */
+		function getRole(id){
+			$.ajax({
+				 url: 'role/getRole'
+				,type: 'GET'
+				,data: {id:id}
+				,success: function(data, textStatus, jqXHR) {
+					role.fromJson(data);
+					roleAuthorities.fromJson(data.authorities);
+					disableDetail(false);
+					role.setReadonly('id', true);
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Adds role
+		 */
+		function addRole() {
+			clearDetail();
+			disableDetail(false);
+			role.setReadonly('id',false);
+		}
+		
+		/**
+		 * Saves role
+		 */
+		function saveRole(){
+			
+			// checks changes
+			if(!role.isDirty()
+			&& !roleAuthorities.isDirty()
+			){
+				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
+				return;
+			}
+			
+			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.role})}]]")
+			.onAfterConfirm(function(){
+				var data = role.toJson();
+				data.authorities = roleAuthorities.toJson();
+				$.ajax({
+					 url: 'role/saveRole'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert('[[#{application.message.saveComplete(#{application.label.role})}]]')
+						.onAfterClose(function(){
+							getRoles();
+						}).open();
+			   	 	}
+				});	
+			}).open();
+		}
+		
+		/**
+		 * Deletes role
+		 */
+		function deleteRole(){
+			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.role})}]]")
+			.onAfterConfirm(function(){
+				$.ajax({
+					 url: 'role/deleteRole'
+					,type: 'DELETE'
+					,data: JSON.stringify(user.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.role})}]]")
+						.onAfterClose(function(){
+							clearDetail();
+							getUsers();
+						}).open();
+			   	 	}
+				});
+			}).open();
+		
+		}
+		
+		/**
+		 * Adds role authority
+		 */
+		function addRoleAuthority() {
+			__authorityDialog.open({
+				disabledAuthorities: roleAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						roleAuthorities.add(selectedAuthority);
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes role authority
+		 */
+		function removeRoleAuthority(index) {
+			roleAuthorities.remove(index);
+		}
 	</script>
-	<div class="content-title">
-		<div>
-			<h1>Group Management
-				<small>
-					(Total:
-					<span is="duice-ui-scriptlet" data-duice-bind="users">
-						return $context.users.getSize();
-					</span>
-					users)
-				</small>
+	<div class="app-row">
+		<div class="app-col">
+			<h1>
+				<img class="icon large" src="/static/image/icon_role.png"/>
+				<span data-th-text="#{application.label.role}+' '+#{application.label.management}"></span>
 			</h1>
 		</div>
-		<div>
-		</div>
 	</div>
-	<div style="display:flex; justify-content:space-between;">
-		<div style="width:49%;">
-			<div class="content-search">
-				<div>
-					<select is="duice-ui-select" data-duice-bind="searchCondition,key" style="width:100px;">
-						<option>- select -</option>
-						<option value="id">ID</option>
-						<option value="name">Name</option>
+	<hr class="hr"/>
+	<div class="app-row">
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col" style="width:50%;">
+					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
+						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.label.role}+' '+#{application.label.id}">Role ID</option>
+						<option value="name" data-th-text="#{application.label.role}+' '+#{application.label.name}">Role Name</option>
 					</select>
-					<input is="duice-ui-input" type="text" data-duice-bind="searchCondition,value" style="width:200px;"/>
-					<span class="content-search__label">Status</span>
-					<select is="duice-ui-select" data-duice-bind="searchCondition,key" style="width:100px;">
-						<option>- select -</option>
-						<option value="id">ID</option>
-						<option value="name">Name</option>
-					</select>
+					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 				</div>
-				<div>
-					<button class="button" onclick="users.reset();">
-						<img class="button-image" src="/static/image/icon_search_16px.png"/>
-						Search
+				<div class="app-col right">
+					<button class="button" onclick="getRoles(1);">
+						<img src="/static/image/icon_search.png" class="icon"/>
+						<span data-th-text="#{application.label.search}"></span>
 					</button>
 				</div>
 			</div>
-			<div class="content-result">	
-				<table is="duice-ui-table" 
-					data-duice-bind="users,user" 
-					data-duice-editable="true"
-					style="width:100%;">
-					<thead>
-						<tr>
-							<th>No</th>
-							<th>ID</th>
-							<th>Name</th>
-							<th>Nickname</th>
-							<th>Email</th>
-							<th>Phone</th>
-							<th>joinDate</th>
-							<th>closeDate</th>
-							<th>Status</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><span is="duice-ui-scriptlet" data-duice-bind="users">return $context.index+1;</span></td>
-							<td><span is="duice-ui-span" data-duice-bind="user,id"></span></td>
-							<td><span is="duice-ui-span" data-duice-bind="user,name"></span></td>
-							<td><span is="duice-ui-span" data-duice-bind="user,nickname"></span></td>
-							<td><span is="duice-ui-span" data-duice-bind="user,email"></span></td>
-							<td><span is="duice-ui-span" data-duice-bind="user,phone"></span></td>
-							<td><span is="duice-ui-span" data-duice-bind="user,joinDate"></span></td>
-							<td><span is="duice-ui-span" data-duice-bind="user,closeDate"></span></td>
-							<td><span is="duice-ui-span" data-duice-bind="user,status"></span></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div style="width:49%;">
-			<div class="content-search">
-				<div>
-					<h2>Group Management
-						<small>
-							(Total:
-							<span is="duice-ui-scriptlet" data-duice-bind="users">
-								return $context.users.getSize();
-							</span>
-							users)
-						</small>
-					</h2>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+						data-duice-bind="roles,role" 
+						data-duice-selectable="true"
+						style="width:100%;">
+						<col style="width:70px;"/>					
+						<col/>
+						<col/>
+						<thead>
+							<tr>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.role}+' '+#{application.label.id}">Role ID</th>
+								<th data-th-text="#{application.label.role}+' '+#{application.label.name}">Role Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center">
+									<span is="duice-ui-scriptlet" data-duice-bind="search">
+										return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+									</span>
+								</td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="role,icon" src="/static/image/icon_role.png" class="icon small"/>
+									<span is="duice-ui-span" data-duice-bind="role,id"></span>
+								</td>
+								<td><span is="duice-ui-span" data-duice-bind="role,name"></span></td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="7">
+									<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+										<li onclick="getRoles();"></li>
+									</ul>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
 				</div>
-				<div>
-					<button class="button" onclick="users.reset();">
-						<img class="button-image" src="/static/image/icon_new_16px.png"/>
-						New
+			</div>		
+		</div>
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" src="/static/image/icon_role.png"/>
+					<span data-th-text="#{application.label.role} + ' ' + #{application.label.details}" class="font-bold"></span>
+				</div>
+				<div class="app-col right">
+					<button id="addRoleButton" class="button" onclick="addRole();">
+						<img src="/static/image/icon_create.png" class="icon"/>
+						<span data-th-text="#{application.label.new}"></span>
 					</button>
-					<button class="button" onclick="users.reset();">
-						<img class="button-image" src="/static/image/icon_delete_16px.png"/>
-						Delete
+					<button id="deleteRoleButton" class="button" onclick="deleteRole();">
+						<img src="/static/image/icon_delete.png" class="icon"/>
+						<span data-th-text="#{application.label.delete}"></span>
+					</button>
+					<button id="saveRoleButton" class="button" onclick="saveRole();">
+						<img src="/static/image/icon_save.png" class="icon"/>
+						<span data-th-text="#{application.label.save}"></span>
 					</button>
 				</div>
 			</div>
-			<table class="table" style="width:100%;">
-				<col align="left" />
-				<col align="left" />
-				<col align="right" />
-				<tbody>
-					<tr>
-						<th rowspan="4">duice.ui.Span</th>
-						<td><span is="duice-ui-span" data-duice-bind="user,id"></span></td>
-					</tr>
-					<tr>
-						<td><span is="duice-ui-span" data-duice-bind="user,socialNo" data-duice-format="string,######-#######"></span></td>
-					</tr>
-					<tr>
-						<td align="right"><span is="duice-ui-span" data-duice-bind="user,balance" data-duice-format="number,2"></span></td>
-					</tr>
-					<tr>
-						<td align="center"><span is="duice-ui-span" data-duice-bind="user,hireDate" data-duice-format="date,yyyy.MM.dd HH:mm:ss"></span></td>
-					</tr>
-					<tr>
-						<th rowspan="2">duice.ui.TextInput</th>
-						<td><input is="duice-ui-input" type="text" data-duice-bind="user,name"/></td>
-					</tr>
-					<tr>
-						<td><input is="duice-ui-input" type="text" data-duice-bind="user,socialNo" data-duice-format="######-#######"/></td>
-					</tr>
-					<tr>
-						<th>duice.ui.NumberInput</th>
-						<td><input is="duice-ui-input" type="number" data-duice-bind="user,balance" data-duice-format="2"/></td>
-					</tr>
-					<tr>
-						<th>duice.ui.DatetimeInput</th>
-						<td align="center">
-							<input is="duice-ui-input" type="datetime-local" data-duice-bind="user,hireDate"/>
-						</td>
-					</tr>
-					<tr>
-						<th>duice.ui.CheckboxInput</th>
-						<td align="center">
-							<input is="duice-ui-input" type="checkbox" data-duice-bind="user,active"/>
-						</td>
-					</tr>
-					<tr>
-						<th>duice.ui.RadioInput</th>
-						<td align="center">
-							<input is="duice-ui-input" type="radio" data-duice-bind="user,gender" value="M"/>Male
-							<input is="duice-ui-input" type="radio" data-duice-bind="user,gender" value="F"/>Female
-						</td>
-					</tr>
-					<tr>
-						<th>duice.ui.Select</th>
-						<td>
-							<select is="duice-ui-select" data-duice-bind="user,groupId">
-								<option> - select - </option>
-								<option value="animal">Animal</option>
-								<option value="fruit">Fruit</option>
-								<option value="human">Human</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<th>duice.ui.Image</th>
-						<td>
-							<img is="duice-ui-img" data-duice-bind="user,image"/>
-						</td>
-					</tr>
-					<tr>
-						<th>duice.ui.Textarea</th>
-						<td><textarea is="duice-ui-textarea" data-duice-bind="user,profile"></textarea></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	
-	
-	
-	
-	<div class="content-search">
-		<div>
-			<select is="duice-ui-select" data-duice-bind="searchCondition,key" style="width:100px;">
-				<option>- select -</option>
-				<option value="id">ID</option>
-				<option value="name">Name</option>
-			</select>
-			<input is="duice-ui-input" type="text" data-duice-bind="searchCondition,value" style="width:200px;"/>
-			<span class="content-search__label">Join Date</span>
-			<input is="duice-ui-input" type="date" data-duice-bind="searchCondition,value" style="width:100px;"/>
-			-
-			<input is="duice-ui-input" type="date" data-duice-bind="searchCondition,value" style="width:100px;"/>
-			<span class="content-search__label">Status</span>
-			<select is="duice-ui-select" data-duice-bind="searchCondition,key" style="width:100px;">
-				<option>- select -</option>
-				<option value="id">ID</option>
-				<option value="name">Name</option>
-			</select>
-		</div>
-		<div>
-			<button class="button" onclick="users.reset();">
-				<img class="button-image" src="/static/image/icon_search_16px.png"/>
-				Search
-			</button>
-			<button class="button" onclick="users.reset();">
-				<img class="button-image" src="/static/image/icon_new_16px.png"/>
-				New
-			</button>
-			<button class="button" onclick="users.reset();">
-				<img class="button-image" src="/static/image/icon_delete_16px.png"/>
-				Delete
-			</button>
-		</div>
-	</div>
-	<div class="content-result">
-		<table is="duice-ui-table" 
-			data-duice-bind="users,user" 
-			data-duice-editable="true"
-			style="width:100%;">
-			<thead>
-				<tr>
-					<th>No</th>
-					<th>ID</th>
-					<th>Name</th>
-					<th>Nickname</th>
-					<th>Email</th>
-					<th>Phone</th>
-					<th>joinDate</th>
-					<th>closeDate</th>
-					<th>Status</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td><span is="duice-ui-scriptlet" data-duice-bind="users">return $context.index+1;</span></td>
-					<td><span is="duice-ui-span" data-duice-bind="user,id"></span></td>
-					<td><span is="duice-ui-span" data-duice-bind="user,name"></span></td>
-					<td><span is="duice-ui-span" data-duice-bind="user,nickname"></span></td>
-					<td><span is="duice-ui-span" data-duice-bind="user,email"></span></td>
-					<td><span is="duice-ui-span" data-duice-bind="user,phone"></span></td>
-					<td><span is="duice-ui-span" data-duice-bind="user,joinDate"></span></td>
-					<td><span is="duice-ui-span" data-duice-bind="user,closeDate"></span></td>
-					<td><span is="duice-ui-span" data-duice-bind="user,status"></span></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<div style="padding:1px; display:flex; justify-content:space-between; align-items:baseline;">
-		<div>
+			<div class="app-row">
+				<div class="app-col">
+					<table class="table" style="width:100%;">
+						<col style="width:25%;"/>
+						<col/>
+						<tbody>
+							<tr>
+								<th><span data-th-text="#{application.label.role}+' '+#{application.label.id}" class="mand">Role ID</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="role,id" autocomplete="nope"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.role}+' '+#{application.label.icon}">Role Icon</th>
+								<td><img is="duice-ui-img" data-duice-bind="role,icon" src="/static/image/icon_role.png" style="max-height:32px;"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.role}+' '+#{application.label.name}">Role Name</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="role,name"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.role}+' '+#{application.label.description}">Role Description</th>
+								<td><textarea is="duice-ui-textarea" data-duice-bind="role,description"></textarea></td>
+							</tr>
+							<tr>
+								<th>
+									<img class="icon" src="/static/image/icon_authority.png"/>
+									<span data-th-text="#{application.label.own}+' '+#{application.label.authority}"></span>
+								</th>
+								<td>
+									<table is="duice-ui-table" 
+										data-duice-bind="roleAuthorities,authority" 
+										style="width:100%;">
+										<col style="width:50px;"/>
+										<col style="width:35%;"/>
+										<col/>
+										<col style="width:5%;"/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">Authority ID</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addRoleAuthority();">
+														+
+													</button>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
+												</td>
+												<td>
+													<img is="duice-ui-img" data-duice-bind="authority,icon" class="icon small"/>
+													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
+												</td>
+												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeRoleAuthority(this.dataset.index);">
+														-
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

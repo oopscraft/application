@@ -8,7 +8,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -22,21 +24,29 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 public class Code extends SystemEntity {
 
 	@Id
-	@Column(name = "CODE_ID")
+	@Column(name = "CODE_ID", length = 32)
 	String id;
 	
-	@Column(name = "UPER_CODE_ID")
-	String upperId;
-	
-	@Column(name = "CODE_NAME")
+	@Column(name = "CODE_NAME", length = 1024)
 	String name;
 
-	@Column(name = "CODE_DESC")
+	@Column(name = "CODE_DESC", length = Integer.MAX_VALUE)
 	String description;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "codeId", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(
+		fetch = FetchType.LAZY, 
+		mappedBy = "codeId", 
+		cascade = CascadeType.ALL, 
+		orphanRemoval = true
+	)
 	@OrderBy("displaySeq")
 	List<CodeItem> items = new ArrayList<CodeItem>();
+	
+	public Code() {}
+	
+	public Code(String id) {
+		this.id = id;
+	}
 	
 	/**
 	 * Gets Code Item by id

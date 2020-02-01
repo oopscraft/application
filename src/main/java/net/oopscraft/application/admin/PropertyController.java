@@ -7,116 +7,93 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.property.PropertyService;
-import net.oopscraft.application.property.PropertyService.PropertySearchType;
 import net.oopscraft.application.property.entity.Property;
-import net.oopscraft.application.util.StringUtility;
 
 
-@PreAuthorize("hasAuthority('ADMIN_PROPERTY')")
+//@PreAuthorize("hasAuthority('ADMIN_PROPERTY')")
 @Controller
 @RequestMapping("/admin/property")
 public class PropertyController {
 
 	@Autowired
-	PropertyService propertyService;
+	HttpServletResponse response;
 
 	@Autowired
-	HttpServletResponse response;
+	PropertyService propertyService;
 
 	/**
 	 * Forwards page
-	 * 
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/property.tiles");
+		ModelAndView modelAndView = new ModelAndView("admin/property.html");
 		return modelAndView;
 	}
-
+	
 	/**
-	 * Gets properties
-	 * 
-	 * @param searchKey
-	 * @param searchValue
-	 * @param page
-	 * @param rows
+	 * Returns properties
+	 * @param role
+	 * @param pageInfo
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getProperties", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getProperties(
-		@RequestParam(value = "rows")Integer rows,
-		@RequestParam(value = "page") Integer page,
-		@RequestParam(value = "searchType", required = false) String searchType,
-		@RequestParam(value = "searchValue", required = false) String searchValue
-	) throws Exception {
-		PageInfo pageInfo = new PageInfo(rows, page, true);
-		PropertySearchType propertySearchType= null;
-		if(StringUtility.isNotEmpty(searchType)) {
-			propertySearchType = PropertySearchType.valueOf(searchType);
-		}
-		List<Property> properties = propertyService.getProperties(pageInfo, propertySearchType, searchValue);
+	public List<Property> getProperties(@ModelAttribute Property property, @ModelAttribute PageInfo pageInfo) throws Exception {
+		pageInfo.setEnableTotalCount(true);
+		List<Property> properties = propertyService.getProperties(property, pageInfo);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonConverter.toJson(properties);
+		return properties;
 	}
-
+	
 	/**
-	 * Gets property details.
-	 * 
-	 * @param id
+	 * Returns property
+	 * @param property
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getProperty", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getProperty(@RequestParam(value = "id") String id) throws Exception {
-		Property property = propertyService.getProperty(id);
-		return JsonConverter.toJson(property);
+	public Property getProperty(@ModelAttribute Property property) throws Exception {
+		return propertyService.getProperty(property.getId());
 	}
 
 	/**
-	 * Saves property.
-	 * 
-	 * @param payload
+	 * Saves property
+	 * @param property
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "saveProperty", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void saveProperty(@RequestBody String payload) throws Exception {
-		Property property = JsonConverter.toObject(payload, Property.class);
-		propertyService.saveProperty(property);
+	public Property saveProperty(@RequestBody Property property) throws Exception {
+		return propertyService.saveProperty(property);
 	}
-
+	
 	/**
-	 * Deletes property.
-	 * 
-	 * @param payload
-	 * @return
+	 * Deletes property
+	 * @param property
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "deleteProperty", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteProperty", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteProperty(@RequestParam(value = "id") String id) throws Exception {
-		propertyService.deleteProperty(id);
+	public void deleteProperty(@RequestBody Property property) throws Exception {
+		propertyService.deleteProperty(property);
 	}
 
 }

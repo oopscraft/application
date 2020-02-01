@@ -2,6 +2,12 @@
 <html layout:decorate="~{admin/__admin.html}">
 <div layout:fragment="content">
 	<script>
+		// document ready
+		$(document).ready(function() {
+		    getUsers();
+		    disableDetail(true);
+		});
+	
 		var search = new duice.Map({
 			key: null,
 			value: null,
@@ -16,6 +22,34 @@
 		var userRoles = new duice.List();
 		var userAuthorities = new duice.List();
 
+		// adds index changed event listener
+		users.onAfterChangeIndex(function(index){
+			if(index > -1){
+				var id = this.get(index).get('id');
+				getUser(id);	
+			}
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			user.setDisable(disable);
+			$('#deleteUserButton').prop('disabled', disable);
+			$('#saveUserButton').prop('disabled', disable);
+			$('#changePasswordButton').prop('disabled', disable);
+		}
+		
+		/**
+		 * Clears detail
+		 */
+		function clearDetail(){
+			user.clear();
+			userGroups.clear();
+			userRoles.clear();
+			userAuthorities.clear();
+		}
+		
 		/**
 		 * Gets users
 		 */
@@ -51,12 +85,6 @@
 			});	
 		}
 		
-		// adds index changed event listener
-		users.onAfterIndexChange(function(index){
-			var id = this.get(index).get('id');
-			getUser(id);
-		});
-		
 		/**
 		 * Gets specified user
 		 */
@@ -70,14 +98,40 @@
 					userGroups.fromJson(data.groups);
 					userRoles.fromJson(data.roles);
 					userAuthorities.fromJson(data.authorities);
+					disableDetail(false);
+					user.setReadonly('id', true);
+					$('#passwordTr').hide();
+					$('#passwordConfirmTr').hide();
 		   	 	}
 			});	
+		}
+		
+		/**
+		 * Adds user
+		 */
+		function addUser() {
+			clearDetail();
+			disableDetail(false);
+			user.setReadonly('id',false);
+			$('#passwordTr').show();
+			$('#passwordConfirmTr').show();
 		}
 		
 		/**
 		 * Saves user
 		 */
 		function saveUser(){
+			
+			// checks changes
+			if(!user.isDirty()
+			&& !userGroups.isDirty()
+			&& !userRoles.isDirty()
+			&& !userAuthorities.isDirty()
+			){
+				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
+				return;
+			}
+			
 			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.user})}]]")
 			.onAfterConfirm(function(){
 				var data = user.toJson();
@@ -113,6 +167,7 @@
 					,success: function(data, textStatus, jqXHR) {
 						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.user})}]]")
 						.onAfterClose(function(){
+							clearDetail();
 							getUsers();
 						}).open();
 			   	 	}
@@ -125,13 +180,15 @@
 		 * Adds user group
 		 */
 		function addUserGroup() {
-			__groupDialog
-			.setExcludedGroups(userGroups)
-			.onAfterConfirm(function(groups){
-				groups.forEach(function(group){
-					userGroups.add(group);
-				});
-			}).open();
+			__groupDialog.open({
+				selectedGroups: userGroups,
+				disabledGroups: userGroups,
+				onAfterConfirm: function(selectedGroups){
+					selectedGroups.forEach(function(selectedGroup){
+						userGroups.add(selectedGroup);
+					});
+				}
+			});
 		}
 		
 		/**
@@ -145,13 +202,14 @@
 		 * Adds user role
 		 */
 		function addUserRole() {
-			__roleDialog
-			.setExcludedRoles(userRoles)
-			.onAfterConfirm(function(roles){
-				roles.forEach(function(role){
-					userRoles.add(role);
-				});
-			}).open();
+			__roleDialog.open({
+				disabledRoles: userRoles,
+				onAfterConfirm: function(selectedRoles){
+					selectedRoles.forEach(function(selectedRole){
+						userRoles.add(selectedRole);
+					});
+				}
+			});
 		}
 		
 		/**
@@ -165,13 +223,14 @@
 		 * Adds user authority
 		 */
 		function addUserAuthority() {
-			__authorityDialog
-			.setExcludedAuthorities(userAuthorities)
-			.onAfterConfirm(function(authorities){
-				authorities.forEach(function(authority){
-					userAuthorities.add(authority);
-				});
-			}).open();
+			__authorityDialog.open({
+				disabledAuthorities: userAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						userAuthorities.add(selectedAuthority);
+					});
+				}
+			});
 		}
 		
 		/**
@@ -180,15 +239,21 @@
 		function removeUserAuthority(index) {
 			userAuthorities.remove(index);
 		}
+
+		/**
+		 * Changes password
+		 */
+		function changePassword() {
+			alert('fdsa');
+		}
 		
-		$(document).ready(function() {
-		    console.log( "ready!" );
-		    getUsers();
-		});
+		/**
+		 * Confirms change password
+		 */
+		function changePasswordConfirm() {
+			
+		}
 	</script>
-	<!-- ========================================================================== -->
-	<!-- title row																	-->
-	<!-- ========================================================================== -->
 	<div class="app-row">
 		<div class="app-col">
 			<h1>
@@ -198,17 +263,10 @@
 		</div>
 	</div>
 	<hr class="hr"/>
-
-	<!-- ========================================================== -->
-	<!-- List|Detail row											-->
-	<!-- ========================================================== -->
 	<div class="app-row">
 		<div class="app-col" style="width:50%;">
-			<!-- ========================================================== -->
-			<!-- List row													-->
-			<!-- ========================================================== -->
 			<div class="app-row">
-				<div class="app-col">
+				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:100px;">
 						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
 						<option value="id" data-th-text="#{application.label.id}">ID</option>
@@ -242,7 +300,6 @@
 						<col/>
 						<col/>
 						<col/>
-						<col style="width:140px;"/>
 						<col style="width:110px;"/>
 						<thead>
 							<tr>
@@ -251,7 +308,6 @@
 								<th data-th-text="#{application.label.name}">Name</th>
 								<th data-th-text="#{application.label.nickname}">Nickname</th>
 								<th data-th-text="#{application.label.email}">Email</th>
-								<th data-th-text="#{application.label.mobile}">Mobile</th>
 								<th data-th-text="#{application.label.status}">Status</th>
 							</tr>
 						</thead>
@@ -263,13 +319,12 @@
 									</span>
 								</td>
 								<td>
-									<img is="duice-ui-img" data-duice-bind="user,photo" src="/static/image/icon_user_24px.png" class="icon small"/>
+									<img is="duice-ui-img" data-duice-bind="user,photo" src="/static/image/icon_user.png" class="icon small"/>
 									<span is="duice-ui-span" data-duice-bind="user,id"></span>
 								</td>
 								<td><span is="duice-ui-span" data-duice-bind="user,name"></span></td>
 								<td><span is="duice-ui-span" data-duice-bind="user,nickname"></span></td>
 								<td><span is="duice-ui-span" data-duice-bind="user,email"></span></td>
-								<td class="text-center"><span is="duice-ui-span" data-duice-bind="user,mobile"></span></td>
 								<td class="text-center"><span is="duice-ui-span" data-duice-bind="user,status"></span></td>
 							</tr>
 						</tbody>
@@ -287,25 +342,25 @@
 			</div>		
 		</div>
 		<div class="app-col" style="width:50%;">
-			<!-- ========================================================== -->
-			<!-- Detail	row													-->
-			<!-- ========================================================== -->
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" src="/static/image/icon_user.png"/>
-					<span data-th-text="#{application.label.user} + ' ' + #{application.label.details}" class="font-bold">
-					</span>
+					<span data-th-text="#{application.label.user} + ' ' + #{application.label.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
-					<button class="button" onclick="addUser();">
+					<button id="changePasswordButton" class="button small" onclick="changePassword();">
+						<img src="/static/image/icon_password.png" class="icon"/>
+						<span data-th-text="#{application.label.passwordChange}"></span>
+					</button>
+					<button id="addUserButton" class="button" onclick="addUser();">
 						<img src="/static/image/icon_create.png" class="icon"/>
 						<span data-th-text="#{application.label.new}"></span>
 					</button>
-					<button class="button" onclick="deleteUser();">
+					<button id="deleteUserButton" class="button" onclick="deleteUser();">
 						<img src="/static/image/icon_delete.png" class="icon"/>
 						<span data-th-text="#{application.label.delete}"></span>
 					</button>
-					<button class="button" onclick="saveUser();">
+					<button id="saveUserButton" class="button" onclick="saveUser();">
 						<img src="/static/image/icon_save.png" class="icon"/>
 						<span data-th-text="#{application.label.save}"></span>
 					</button>
@@ -318,15 +373,27 @@
 						<col/>
 						<tbody>
 							<tr>
-								<th data-th-text="#{application.label.id}">ID</th>
-								<td><input is="duice-ui-input" type="text" data-duice-bind="user,id"/></td>
+								<th><span data-th-text="#{application.label.id}" class="mand">ID</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="user,id" autocomplete="nope"/></td>
+							</tr>
+							<tr id="passwordTr">
+								<th><span data-th-text="#{application.label.password}" class="mand">Password</span></th>
+								<td>
+									<input is="duice-ui-input" type="password" data-duice-bind="user,password" autocomplete="nope"/>
+								</td>
+							</tr>
+							<tr id="passwordConfirmTr">
+								<th><span data-th-text="#{application.label.passwordConfirm}" class="mand">Password(Confirm)</span></th>
+								<td>
+									<input is="duice-ui-input" type="password" data-duice-bind="user,passwordConfirm"/>
+								</td>
 							</tr>
 							<tr>
 								<th data-th-text="#{application.label.photo}">Photo</th>
-								<td><img is="duice-ui-img" data-duice-bind="user,photo" style="height:64px;"/></td>
+								<td><img is="duice-ui-img" data-duice-bind="user,photo" src="/static/image/icon_user.png" style="max-height:64px;"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.name}">Name</th>
+								<th><span data-th-text="#{application.label.name}" class="mand">Name</span></th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="user,name"/></td>
 							</tr>
 							<tr>
@@ -334,7 +401,7 @@
 								<td><input is="duice-ui-input" type="text" data-duice-bind="user,nickname"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.status}">Status</th>
+								<th><span data-th-text="#{application.label.status}" class="mand">Status</span></th>
 								<td>
 									<select is="duice-ui-select" data-duice-bind="user,status">
 										<option> - select - </option>
@@ -345,7 +412,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.email}">Email</th>
+								<th><span data-th-text="#{application.label.email}" class="mand">Email</span></th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="user,email"/></td>
 							</tr>
 							<tr>
@@ -364,11 +431,11 @@
 							</tr>
 							<tr>
 								<th data-th-text="#{application.label.joinDate}">Join Date</th>
-								<td><input is="duice-ui-input" type="datetime-local" data-duice-bind="user,joinDate" data-duice-format="yyyy.MM.dd HH:mm:ss"/></td>
+								<td><input is="duice-ui-input" type="datetime-local" data-duice-bind="user,joinDate"/></td>
 							</tr>
 							<tr>
 								<th data-th-text="#{application.label.closeDate}">Close Date</th>
-								<td><input is="duice-ui-input" type="datetime-local" data-duice-bind="user,closeDate" data-duice-format="yyyy.MM.dd HH:mm:ss"/></td>
+								<td><input is="duice-ui-input" type="datetime-local" data-duice-bind="user,closeDate"/></td>
 							</tr>
 							<tr>
 								<th data-th-text="#{application.label.profile}">Profile</th>
@@ -514,7 +581,6 @@
 			</div>
 		</div>
 	</div>
-
 </div>
 
 

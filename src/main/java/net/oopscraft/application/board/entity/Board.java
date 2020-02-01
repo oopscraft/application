@@ -5,10 +5,12 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -17,9 +19,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.SQLInsert;
-import org.hibernate.annotations.WhereJoinTable;
+import org.hibernate.annotations.Formula;
 
+import net.oopscraft.application.core.jpa.BooleanToStringConverter;
 import net.oopscraft.application.user.entity.Authority;
 
 
@@ -27,69 +29,101 @@ import net.oopscraft.application.user.entity.Authority;
 @Table(name = "APP_BORD_INFO")
 public class Board {
 
+	public enum Policy {
+		ANONYMOUS, AUTHENTICATED, AUTHORIZED
+	}
+	
 	@Id
-	@Column(name = "BORD_ID")
+	@Column(name = "BORD_ID", length = 32)
 	String id;
 	
-	@Column(name = "BORD_NAME")
+	@Column(name = "BORD_ICON", length = Integer.MAX_VALUE)
+	String icon;
+
+	@Column(name = "BORD_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "BORD_ICON")
-	String icon;
+	@Column(name = "BORD_DESC", length = Integer.MAX_VALUE)
+	String description;
 	
 	@Column(name = "BORD_SKIN")
 	String skin;
 	
-	public enum Policy {
-		ANONYMOUS, AUTHENTICATED, AUTHORIZED
-	}
+	@Column(name = "ROWS_PER_PAGE")
+	int rowsPerPage = 10;
+	
+	@Formula("(SELECT COUNT(*) FROM APP_BORD_ATCL_INFO A WHERE A.BORD_ID = BORD_ID)")
+	long articleCount = 0;
 
+	@Column(name = "RPLY_USE_YN", length = 1)
+	@Convert(converter=BooleanToStringConverter.class)
+	boolean replyUse = false;
+	
+	@Column(name = "FILE_USE_YN")
+	@Convert(converter=BooleanToStringConverter.class)
+	boolean fileUse = false;
+	
+	@Column(name = "CATE_USE_YN")
+	@Convert(converter=BooleanToStringConverter.class)
+	boolean categoryUse = false;
+	
+	@OneToMany(
+		fetch = FetchType.LAZY, 
+		mappedBy = "boardId", 
+		cascade = CascadeType.ALL, 
+		orphanRemoval = true
+	)
+	@OrderBy("sequence")
+	List<BoardCategory> categories = new ArrayList<BoardCategory>();
+	
 	@Column(name = "ACES_PLCY")
 	@Enumerated(EnumType.STRING)
 	Policy accessPolicy = Policy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_BORD_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	@WhereJoinTable(clause = "PLCY_TYPE ='ACES_PLCY'")
-	@SQLInsert(sql = "INSERT INTO APP_BORD_PLCY_AUTH_MAP (BORD_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'ACES_PLCY', ?)") 
+	@JoinTable(
+		name = "APP_BORD_AUTH_ACES_MAP", 
+		joinColumns = @JoinColumn(name = "BORD_ID"),
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Authority> accessAuthorities = new ArrayList<Authority>();
 
-	@Column(name = "READ_PLCY")
+	@Column(name = "PLCY_READ")
 	@Enumerated(EnumType.STRING)
 	Policy readPolicy = Policy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_BORD_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	@WhereJoinTable(clause = "PLCY_TYPE ='READ_PLCY'")
-	@SQLInsert(sql = "INSERT INTO APP_BORD_PLCY_AUTH_MAP (BORD_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'READ_PLCY', ?)")
+	@JoinTable(
+		name = "APP_BORD_AUTH_READ_MAP", 
+		joinColumns = @JoinColumn(name = "BORD_ID"),
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Authority> readAuthorities = new ArrayList<Authority>();
 	
-	@Column(name = "WRIT_PLCY")
+	@Column(name = "PLCY_WRIT")
 	@Enumerated(EnumType.STRING)
 	Policy writePolicy = Policy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_BORD_PLCY_AUTH_MAP", joinColumns = @JoinColumn(name = "BORD_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
-	@WhereJoinTable(clause = "PLCY_TYPE ='WRIT_PLCY'")
-	@SQLInsert(sql = "INSERT INTO APP_BORD_PLCY_AUTH_MAP (BORD_ID, PLCY_TYPE, AUTH_ID) VALUES (?, 'WRIT_PLCY', ?)")
+	@JoinTable(
+		name = "APP_BORD_AUTH_WRIT_MAP", 
+		joinColumns = @JoinColumn(name = "BORD_ID"),
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Authority> writeAuthorities = new ArrayList<Authority>();
-	
-	@Column(name = "ROWS_PER_PAGE")
-	int rowsPerPage = 10;
-	
-	@Column(name = "CATE_USE_YN")
-	String categoryUseYn;
-	
-	@Column(name = "RPLY_USE_YN")
-	String replyUseYn;
-	
-	@Column(name = "FILE_USE_YN")
-	String fileUseYn;
-	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "boardId", cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("displaySeq")
-	List<BoardCategory> categories = new ArrayList<BoardCategory>();
 
+	public Board() {}
+	
+	public Board(String id) {
+		this.id = id;
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -114,12 +148,28 @@ public class Board {
 		this.icon = icon;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public String getSkin() {
 		return skin;
 	}
 
 	public void setSkin(String skin) {
 		this.skin = skin;
+	}
+	
+	public long getArticleCount() {
+		return articleCount;
+	}
+
+	public void setArticleCount(long articleCount) {
+		this.articleCount = articleCount;
 	}
 
 	public Policy getAccessPolicy() {
@@ -178,28 +228,28 @@ public class Board {
 		this.rowsPerPage = rowsPerPage;
 	}
 
-	public String getCategoryUseYn() {
-		return categoryUseYn;
+	public boolean isCategoryUse() {
+		return categoryUse;
 	}
 
-	public void setCategoryUseYn(String categoryUseYn) {
-		this.categoryUseYn = categoryUseYn;
+	public void setCategoryUse(boolean categoryUse) {
+		this.categoryUse = categoryUse;
 	}
 
-	public String getReplyUseYn() {
-		return replyUseYn;
+	public boolean isReplyUse() {
+		return replyUse;
 	}
 
-	public void setReplyUseYn(String replyUseYn) {
-		this.replyUseYn = replyUseYn;
+	public void setReplyUse(boolean replyUse) {
+		this.replyUse = replyUse;
 	}
 
-	public String getFileUseYn() {
-		return fileUseYn;
+	public boolean isFileUse() {
+		return fileUse;
 	}
 
-	public void setFileUseYn(String fileUseYn) {
-		this.fileUseYn = fileUseYn;
+	public void setFileUse(boolean fileUse) {
+		this.fileUse = fileUse;
 	}
 
 	public List<BoardCategory> getCategories() {

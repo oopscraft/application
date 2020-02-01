@@ -10,21 +10,17 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.entity.Authority;
-import net.oopscraft.application.user.entity.Role;
 
 @Service
 public class AuthorityService {
 	
 	@Autowired
 	AuthorityRepository authorityRepository;
-	
-	public enum AuthoritySearchType { ID,NAME	}
 	
 	/**
 	 * Gets authorities
@@ -52,67 +48,40 @@ public class AuthorityService {
 		}, pageInfo.toPageable());
 		return authorityPage.getContent();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	/**
-	 * Gets detail of authority
-	 * 
+	 * Returns authority
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
 	public Authority getAuthority(String id) throws Exception {
-		Authority authority = authorityRepository.findOne(id);
-		return authority;
+		return authorityRepository.findOne(id);
 	}
 	
 	/**
 	 * Saves authority
-	 * 
 	 * @param authority
 	 * @return
 	 * @throws Exception
 	 */
-	public void saveAuthority(Authority authority) throws Exception {
+	public Authority saveAuthority(Authority authority) throws Exception {
 		Authority one = authorityRepository.findOne(authority.getId());
 		if(one == null) {
-			one = new Authority();
-			one.setId(authority.getId());
+			one = new Authority(authority.getId());
 		}
 		one.setName(authority.getName());
+		one.setIcon(authority.getIcon());
 		one.setDescription(authority.getDescription());
-		authorityRepository.save(one);
+		return authorityRepository.save(one);
 	}
 	
 	/**
 	 * Deletes authority
-	 * @param id
-	 * @return
+	 * @param authority
 	 * @throws Exception
 	 */
-	public void deleteAuthority(String id) throws Exception {
-		Authority authority = authorityRepository.getOne(id);
+	public void deleteAuthority(Authority authority) throws Exception {
 		authorityRepository.delete(authority);
 	}
 	

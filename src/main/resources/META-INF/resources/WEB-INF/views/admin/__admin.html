@@ -11,12 +11,17 @@
 		<link rel="stylesheet" type="text/css" href="/static/duice.css">
 		<script src="/static/jquery.js"></script>
 		<style>
+		html,
+		body {
+		  height: 100%;
+		}
+
 		body {
 			font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 			font-size: 12px;
 			line-height: 2.0;
 			margin: 0px;
-			padding: 20px;
+			padding: 0px;
 			overflow-x: hidden;
 		}
 		h1 { 
@@ -74,8 +79,7 @@
 		}
 		.menu {
 			min-height: 400px;
-			padding: 10px;
-			margin-top: 10px;
+			margin-top: 15px;
    			margin-right: 10px;
 		}
 		.memu-item {
@@ -149,16 +153,19 @@
 			border:1px solid #adacac;
 			border-radius: 2px;
 			display:inline-block;
-			cursor:pointer;
 			color:#333;
 			font-weight:bold;
 			text-decoration:none;
 		}
-		.button:hover {
+		.button:disabled {
+			opacity: 0.8;
+		}
+		.button:hover:not([disabled]){
+			cursor:pointer;
 			background:linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
 			background-color:#e9e9e9;
 		}
-		.button:active {
+		.button:active:not([disabled]) {
 			position:relative;
 			top:1px;
 		}
@@ -200,6 +207,14 @@
 			border: dotted 1px #ccc;
 			padding: 1px;
 			text-overflow: ellipsis;
+		}
+		.mand:before {
+			content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAALpJREFUOI1jYBgFOIHH3DdaMLb7grfauNQx4ZRgYlgIYzP//78AlzpGdAHvBW8C/zEwJDMy/LP5z8B0BKIIwv7/7//MHUmim5HVs6Ab8OKn8BZJns+H//7+uYeZlS2BgYGBAcZ+/oX3I0EviP64zfTv13cWBgYGhn+/vrMgs5UEMV2M4QImAUGPf/8YExkY/sn/Z2CeARGFsL9+fT2bgYFhK/bQQANe89+cxsYm6AUY+M/0LxobexRgAgCexkocIl3odAAAAABJRU5ErkJggg==');
+			vertical-align: middle;
+		}
+		.embd:after {
+			content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAALpJREFUOI1jYBgFOIHH3DdaMLb7grfauNQx4ZRgYlgIYzP//78AlzpGdAHvBW8C/zEwJDMy/LP5z8B0BKIIwv7/7//MHUmim5HVs6Ab8OKn8BZJns+H//7+uYeZlS2BgYGBAcZ+/oX3I0EviP64zfTv13cWBgYGhn+/vrMgs5UEMV2M4QImAUGPf/8YExkY/sn/Z2CeARGFsL9+fT2bgYFhK/bQQANe89+cxsYm6AUY+M/0LxobexRgAgCexkocIl3odAAAAABJRU5ErkJggg==');
+			vertical-align: middle;
 		}
 		</style>
 		<script>
@@ -259,7 +274,7 @@
 		</script>
 	</head>
 	<body>
-		<div class="app-row">
+		<div class="app-row" style="padding:10px 20px; border-bottom:groove 2px #eee; background-color:#fafafa;">
 			<div class="app-col left">
 				<img src="/static/image/application.png"/>
 			</div>
@@ -271,9 +286,8 @@
 				</select>
 			</div>
 		</div>
-		<hr/>
-		<div style="display:flex;">
-			<div style="width:200px; display:flex; flex-direction:column;">
+		<div class="app-row" style="min-height:calc(100% - 120px); padding:10px 20px;">
+			<div class="app-col" style="width:200px;">
 				<nav class="menu">
 					<div class="memu-item" onclick="document.location='/admin/user';">
 						<img class="menu-item__icon" src="/static/image/icon_user.png"/>
@@ -287,39 +301,45 @@
 						<img class="menu-item__icon" src="/static/image/icon_role.png"/>
 						<span class="menu-item__text" data-th-text="#{application.label.role}">Role</span>
 					</div>
-					<div class="memu-item">
+					<div class="memu-item" onclick="document.location='/admin/authority';">
 						<img class="menu-item__icon" src="/static/image/icon_authority.png"/>
 						<span class="menu-item__text" data-th-text="#{application.label.authority}">Authority</span>
 					</div>
-					<div class="memu-item">
-						<img class="menu-item__icon" src="/static/image/icon_menu.png"/>
-						<span class="menu-item__text" data-th-text="#{application.label.menu}">Menu</span>
-					</div>
-					<div class="memu-item">
+					<div class="memu-item" onclick="document.location='/admin/property';">
 						<img class="menu-item__icon" src="/static/image/icon_property.png"/>
 						<span class="menu-item__text" data-th-text="#{application.label.property}">Property</span>
 					</div>
-					<div class="memu-item">
-						<img class="menu-item__icon" src="/static/image/icon_message.png"/>
-						<span class="menu-item__text" data-th-text="#{application.label.message}">Message</span>
-					</div>
-					<div class="memu-item">
+					<div class="memu-item" onclick="document.location='/admin/code';">
 						<img class="menu-item__icon" src="/static/image/icon_code.png"/>
 						<span class="menu-item__text" data-th-text="#{application.label.code}">Code</span>
 					</div>
-					<div class="memu-item">
+					<div class="memu-item" onclick="document.location='/admin/menu';">
+						<img class="menu-item__icon" src="/static/image/icon_menu.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.menu}">Menu</span>
+					</div>
+					<div class="memu-item" onclick="document.location='/admin/message';">
+						<img class="menu-item__icon" src="/static/image/icon_message.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.message}">Message</span>
+					</div>
+					<div class="memu-item" onclick="document.location='/admin/article';">
+						<img class="menu-item__icon" src="/static/image/icon_article.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.article}">Article</span>
+					</div>
+					<div class="memu-item" onclick="document.location='/admin/board';">
 						<img class="menu-item__icon" src="/static/image/icon_board.png"/>
 						<span class="menu-item__text" data-th-text="#{application.label.board}">Board</span>
 					</div>
+					<div class="memu-item" onclick="document.location='/admin/api';">
+						<img class="menu-item__icon" src="/static/image/icon_api.png"/>
+						<span class="menu-item__text" data-th-text="#{application.label.api}">API</span>
+					</div>
 				</nav>
 			</div>
-			<div layout:fragment="content" style="width:calc(100% - 200px);">
+			<div layout:fragment="content" class="app-col" style="width:calc(100% - 200px);">
 				admin.html
-				<div th:text="${#messages.msg('application.label.logout')}">기본값</div>
 			</div>
 		</div>
-		<hr/>
-		<div style="text-align:center;">
+		<div style="text-align:center; border-top:dotted 1px #ccc;">
 			<img src="/static/image/copyright.png"/>
 		</div>
 		
@@ -348,7 +368,7 @@
 									<span is="duice-ui-span" data-duice-bind="group,name" style="font-weight:bold;"></span>
 								</div>
 								<div class="app-col text-right">
-									<input is="duice-ui-input" type="checkbox" data-duice-bind="group,__selected" data-id="[[$context.group.get('id')]]" onchange="this.checked ? __groupDialog.selectGroup(this.dataset.id) : __groupDialog.unselectGroup(this.dataset.id);" [[$context.group.get('__disabled')?'disabled':'']] />
+									<input is="duice-ui-input" type="checkbox" data-duice-bind="group,__selected" data-id="[[$context.group.get('id')]]" onchange="__groupDialog.selectGroup(this.dataset.id);"/>
 								</div>
 							</div>
 						</li>
@@ -365,82 +385,92 @@
 			</div>
 		</dialog>
 		<script>
-        var __groupDialog = {
-        	dialog: new duice.Dialog(document.getElementById('__groupDialog')),
-        	search: new duice.Map({
-        		page: 1,
-        		rows: Number.MAX_VALUE,
-        		totalCount: -1
-        	}),
-        	groups: new duice.List(),
-        	selectedGroups: new duice.List(),
-        	excludedGroups: null,
-        	onBeforeConfirm(listener){
-        		this.dialog.onBeforeConfirm(listener);
-        		return this;
-        	},
-        	onAfterConfirm(listener){
-        		this.dialog.onAfterConfirm(listener);
-        		return this;
-        	},
-        	setExcludedGroups(excludedGroups){
-        		this.excludedGroups = excludedGroups;
-        		return this;
-        	},
-        	open() {
-       			this.getGroups(1);
-        		this.selectedGroups.fromJson([]);
-        		this.dialog.open();
-        	},
-        	getGroups() {
-				var data = {};
-				if(this.search.get('key')){
-					data[this.search.get('key')] = this.search.get('value');
-				}
-				var $this = this;
-				$.ajax({
-					 url: '/admin/getGroups'
-					,type: 'GET'
-					,data: data
-					,success: function(data, textStatus, jqXHR) {
-						if($this.excludedGroups){
-							data.forEach(function(item) {
-								var contains = $this.excludedGroups.contains(function(group){
-									if(group.get('id') === item.id){
-										return true;
-									}
-								});
-								if(contains){
-									item.__selected = true;
-									item.__disabled = true;
+			/**
+			 * Global common group dialog
+			 */
+	        var __groupDialog = {
+	        	dialog: new duice.Dialog(document.getElementById('__groupDialog')),
+	        	groups: new duice.List(),
+	        	singleSelect: false,
+	        	selectedGroups: null,
+	        	disabledGroups: null,
+
+	        	/**
+	        	 * Opens group dialog
+	        	 * @param option.singleSelect 
+				 * @param option.selectedGroups 
+				 * @param option.disabledGroups 
+	        	 */
+	        	open(option) {
+	        		this.singleSelect = option.singleSelect;
+	        		this.selectedGroups = option.selectedGroups;
+	        		this.disabledGroups = option.disabledGroups;
+	        		this.dialog.onAfterConfirm(option.onAfterConfirm);
+	        		this.getGroups(1);
+	        		this.dialog.open();
+	        	},
+	        	
+	        	/**
+	        	 * Executes dialog confirm.
+	        	 */
+	        	confirm() {
+					var selectedGroups = new duice.List();
+					this.groups.forEach(function(group){
+						if(group.isDisable() === false && group.get('__selected') === true){
+							selectedGroups.add(group);
+						}
+					});
+					this.dialog.confirm(selectedGroups);
+	        	},
+	        	
+	        	/**
+	        	 * Getting groups
+	        	 */
+	        	getGroups() {
+					var $this = this;
+					$.ajax({
+						 url: '/admin/getGroups'
+						,type: 'GET'
+						,data: {page:1, rows:10000}
+						,success: function(data, textStatus, jqXHR) {
+							$this.groups.fromJson(data);
+							$this.groups.forEach(function(group){
+								if($this.selectedGroups){
+									$this.selectedGroups.forEach(function(selectedGroup){
+										if(selectedGroup.get('id') === group.get('id')){
+											group.set('__selected', true);
+										}
+									});
+								}
+								if($this.disabledGroups){
+									$this.disabledGroups.forEach(function(disabledGroup){
+										if(disabledGroup.get('id') === group.get('id')){
+											group.setDisable(true);
+										}
+									});
 								}
 							});
-						}
-						$this.groups.fromJson(data);
-			   	 	}
-				});
-        	},
-        	selectGroup(id) {
-        		var index = this.groups.indexOf(function(group){
-        			if(group.get('id') === id){
-        				return true;
-        			}
-        		});
-        		var group = this.groups.get(index);
-    			this.selectedGroups.add(group);
-        	},
-        	unselectGroup(id) {
-        		var index = this.selectedGroups.indexOf(function(group){
-        			if(group.get('id') === id){
-        				return true;
-        			}
-        		});
-        		this.selectedGroups.remove(index);
-        	},
-        	confirm() {
-        		this.dialog.confirm(this.selectedGroups);
-        	}
-        };
+				   	 	}
+					});
+	        	},
+	        	
+	        	/**
+	        	 * Selects group by id
+	        	 * @param id group id
+	        	 */
+	        	selectGroup(id) {
+	        		var $this = this;
+	        		this.groups.forEach(function(group){
+	        			if(group.get('id') === id){
+	        				group.set('__selected',true);
+	        			}else{
+	        				if($this.singleSelect){
+	        					group.set('__selected',false);
+	        				}
+	        			}
+	        		});
+	        	}
+	        };
 		</script>
 		
 		<!-- ====================================================== -->
@@ -489,7 +519,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="role,__selected" data-id="[[$context.role.get('id')]]" onchange="this.checked ? __roleDialog.selectRole(this.dataset.id) : __roleDialog.unselectRole(this.dataset.id);" [[$context.role.get('__disabled')?'disabled':'']]/></td>
+								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="role,__selected" data-id="[[$context.role.get('id')]]" onchange="this.checked ? __roleDialog.selectRole(this.dataset.id) : __roleDialog.unselectRole(this.dataset.id);"/></td>
 								<td class="text-center"><span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span></td>
 								<td>
 									<img is="duice-ui-img" data-duice-bind="role,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
@@ -549,6 +579,9 @@
 			</div>
 		</dialog>
 		<script>
+		/**
+		 * Global common role dialog
+		 */
         var __roleDialog = {
         	dialog: new duice.Dialog(document.getElementById('__roleDialog')),
         	search: new duice.Map({
@@ -557,27 +590,34 @@
         		totalCount: -1
         	}),
         	roles: new duice.List(),
+        	disabledRoles: new duice.List(),
         	selectedRoles: new duice.List(),
-        	excludedRoles: null,
-        	onBeforeConfirm(listener){
-        		this.dialog.onBeforeConfirm(listener);
-        		return this;
-        	},
-        	onAfterConfirm(listener){
-        		this.dialog.onAfterConfirm(listener);
-        		return this;
-        	},
-        	setExcludedRoles(excludedRoles){
-        		this.excludedRoles = excludedRoles;
-        		return this;
-        	},
-        	open() {
-        		this.getRoles(1);
+        	
+        	/**
+        	 * Opens dialogs
+			 * @param option.disabledRoles:duice.List
+			 * @param option.onAfterConfirm:Function 
+        	 */
+        	open(option) {
+        		option.disabledRoles ? this.disabledRoles.fromJson(option.disabledRoles.toJson()) : this.disabledRoles.fromJson([]);
+        		option.onAfterConfirm ? this.dialog.onAfterConfirm(option.onAfterConfirm) : this.dialog.onAfterConfirm(null);
         		this.selectedRoles.fromJson([]);
+        		this.getRoles(1);
         		this.dialog.open();
         	},
+        	
+        	/**
+        	 * Executes confirm
+        	 */
+        	confirm() {
+        		this.dialog.confirm(this.selectedRoles);
+        	},
+        	
+			/**
+			 * Getting groups
+			 */
         	getRoles() {
-				var data = {};
+				var data = this.search.toJson();
 				if(this.search.get('key')){
 					data[this.search.get('key')] = this.search.get('value');
 				}
@@ -587,22 +627,23 @@
 					,type: 'GET'
 					,data: data
 					,success: function(data, textStatus, jqXHR) {
-						if($this.excludedRoles){
-							data.forEach(function(item) {
-								var contains = $this.excludedRoles.contains(function(role){
-									if(role.get('id') === item.id){
-										return true;
-									}
-								});
-								if(contains){
-									item.__disabled = true;
+						$this.roles.fromJson(data);
+						$this.roles.forEach(function(role){
+							$this.disabledRoles.forEach(function(disabledRole){
+								if(disabledRole.get('id') === role.get('id')){
+									role.set('__selected', true);
+									role.setDisable(true);
 								}
 							});
-						}
-						$this.roles.fromJson(data);
+						});
 			   	 	}
 				});
         	},
+        	
+        	/**
+        	 * Selects role by id
+        	 * @param id:string group id to select.
+        	 */
         	selectRole(id) {
         		var index = this.roles.indexOf(function(role){
         			if(role.get('id') === id){
@@ -612,6 +653,11 @@
         		var role = this.roles.get(index);
     			this.selectedRoles.add(role);
         	},
+        	
+        	/**
+        	 * Unselects role by id
+        	 * @param id:id grop id to unselect.
+        	 */
         	unselectRole(id) {
         		var index = this.selectedRoles.indexOf(function(role){
         			if(role.get('id') === id){
@@ -619,15 +665,12 @@
         			}
         		});
         		this.selectedRoles.remove(index);
-        	},
-        	confirm() {
-        		this.dialog.confirm(this.selectedRoles);
         	}
         };
 		</script>
 		
 		<!-- ====================================================== -->
-		<!-- Authorities Dialog											-->
+		<!-- Authorities Dialog										-->
 		<!-- ====================================================== -->
 		<dialog id="__authorityDialog" style="width:600px;">
 			<div class="app-row">
@@ -672,7 +715,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="authority,__selected" data-id="[[$context.authority.get('id')]]" onchange="this.checked ? __authorityDialog.selectAuthorities(this.dataset.id) : __authorityDialog.unselectAuthorities(this.dataset.id);" [[$context.authority.get('__disabled')?'disabled':'']]/></td>
+								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="authority,__selected" data-id="[[$context.authority.get('id')]]" onchange="this.checked ? __authorityDialog.selectAuthorities(this.dataset.id) : __authorityDialog.unselectAuthorities(this.dataset.id);"/></td>
 								<td class="text-center"><span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span></td>
 								<td>
 									<img is="duice-ui-img" data-duice-bind="authority,icon" src="/static/image/icon_user_24px.png" style="height:16px;"/>
@@ -732,6 +775,9 @@
 			</div>
 		</dialog>
 		<script>
+		/**
+		 * Global common authority dialog
+		 */
         var __authorityDialog = {
         	dialog: new duice.Dialog(document.getElementById('__authorityDialog')),
         	search: new duice.Map({
@@ -740,27 +786,34 @@
         		totalCount: -1
         	}),
         	authorities: new duice.List(),
+        	disabledAuthorities: new duice.List(),
         	selectedAuthorities: new duice.List(),
-        	excludedAuthorities: null,
-        	onBeforeConfirm(listener){
-        		this.dialog.onBeforeConfirm(listener);
-        		return this;
-        	},
-        	onAfterConfirm(listener){
-        		this.dialog.onAfterConfirm(listener);
-        		return this;
-        	},
-        	setExcludedAuthorities(excludedAuthorities){
-        		this.excludedAuthorities = excludedAuthorities;
-        		return this;
-        	},
-        	open() {
-        		this.getAuthorities(1);
+        	
+        	/**
+        	 * Opens dialogs
+			 * @param option.disabledAuthorities:duice.List
+			 * @param option.onAfterConfirm:Function 
+        	 */
+        	open(option) {
+        		option.disabledAuthorities ? this.disabledAuthorities.fromJson(option.disabledAuthorities.toJson()) : this.disabledAuthorities.fromJson([]);
+        		option.onAfterConfirm ? this.dialog.onAfterConfirm(option.onAfterConfirm) : this.dialog.onAfterConfirm(null); 
         		this.selectedAuthorities.fromJson([]);
+        		this.getAuthorities(1);
         		this.dialog.open();
         	},
+        	
+        	/**
+        	 * Executes confirm
+        	 */
+        	confirm() {
+        		this.dialog.confirm(this.selectedAuthorities);
+        	},
+
+			/**
+			 * Getting authorities
+			 */
         	getAuthorities() {
-				var data = {};
+				var data = this.search.toJson();
 				if(this.search.get('key')){
 					data[this.search.get('key')] = this.search.get('value');
 				}
@@ -770,22 +823,23 @@
 					,type: 'GET'
 					,data: data
 					,success: function(data, textStatus, jqXHR) {
-						if($this.excludedAuthorities){
-							data.forEach(function(item) {
-								var contains = $this.excludedAuthorities.contains(function(authority){
-									if(authority.get('id') === item.id){
-										return true;
-									}
-								});
-								if(contains){
-									item.__disabled = true;
+						$this.authorities.fromJson(data);
+						$this.authorities.forEach(function(authority){
+							$this.disabledAuthorities.forEach(function(disabledAuthority){
+								if(disabledAuthority.get('id') === authority.get('id')){
+									authority.set('__selected', true);
+									authority.setDisable('__selected', true);
 								}
 							});
-						}
-						$this.authorities.fromJson(data);
+						});
 			   	 	}
 				});
         	},
+        	
+        	/**
+        	 * Selects authority by id
+        	 * @param id:string - authority id to select.
+        	 */
         	selectAuthorities(id) {
         		var index = this.authorities.indexOf(function(authority){
         			if(authority.get('id') === id){
@@ -795,6 +849,11 @@
         		var authority = this.authorities.get(index);
     			this.selectedAuthorities.add(authority);
         	},
+        	
+        	/**
+        	 * Unselects authority by id
+        	 * @param id:id - authority id to unselect.
+        	 */
         	unselectAuthorities(id) {
         		var index = this.selectedAuthorities.indexOf(function(authority){
         			if(authority.get('id') === id){
@@ -802,9 +861,6 @@
         			}
         		});
         		this.selectedAuthorities.remove(index);
-        	},
-        	confirm() {
-        		this.dialog.confirm(this.selectedAuthorities);
         	}
         };
 		</script>

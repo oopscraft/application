@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.board.entity.Article;
+import net.oopscraft.application.article.ArticleService;
+import net.oopscraft.application.article.entity.Article;
 import net.oopscraft.application.board.entity.Board;
 
 @Controller
@@ -36,35 +37,35 @@ public class BoardController {
     @Autowired
     ApplicationContext applicationContext;
     
-	/**
-	 * checks access authority
-	 * @param boardId
-	 * @return
-	 * @throws Exception
-	 */
-	public boolean hasAccessAuthority(String boardId) throws Exception {
-		return boardService.hasAccessAuthority(boardId);
-	}
-	
-	/**
-	 * checks read authority
-	 * @param boardId
-	 * @return
-	 * @throws Exception
-	 */
-	public boolean hasReadAuthority(String boardId) throws Exception {
-		return boardService.hasReadAuthority(boardId);
-	}
-	
-	/**
-	 * checks write authority
-	 * @param boardId
-	 * @return
-	 * @throws Exception
-	 */
-	public boolean hasWriteAuthority(String boardId) throws Exception {
-		return boardService.hasWriteAuthority(boardId);
-	}
+//	/**
+//	 * checks access authority
+//	 * @param boardId
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public boolean hasAccessAuthority(String boardId) throws Exception {
+//		return boardService.hasAccessAuthority(boardId);
+//	}
+//	
+//	/**
+//	 * checks read authority
+//	 * @param boardId
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public boolean hasReadAuthority(String boardId) throws Exception {
+//		return boardService.hasReadAuthority(boardId);
+//	}
+//	
+//	/**
+//	 * checks write authority
+//	 * @param boardId
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public boolean hasWriteAuthority(String boardId) throws Exception {
+//		return boardService.hasWriteAuthority(boardId);
+//	}
 
 	/**
 	 * list
@@ -89,21 +90,21 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@PreAuthorize("this.hasReadAuthority(#boardId)")
-	@RequestMapping(value="{boardId}/read", method = RequestMethod.GET)
-	@Transactional(rollbackFor = Exception.class)
-	public ModelAndView read(
-		@PathVariable("boardId")String boardId,
-		@RequestParam(value="articleId", required=false)String articleId
-	) throws Exception {
-		Board board = boardService.getBoard(boardId);
-		Article article = articleService.getArticle(articleId);
-		article.increaseReadCount();
-		ModelAndView modelAndView = new ModelAndView("board/read.tiles");
-		modelAndView.addObject("this", this);
-		modelAndView.addObject("board", board);
-		return modelAndView;
-	}
+//	@PreAuthorize("this.hasReadAuthority(#boardId)")
+//	@RequestMapping(value="{boardId}/read", method = RequestMethod.GET)
+//	@Transactional(rollbackFor = Exception.class)
+//	public ModelAndView read(
+//		@PathVariable("boardId")String boardId,
+//		@RequestParam(value="articleId", required=false)String articleId
+//	) throws Exception {
+//		Board board = boardService.getBoard(boardId);
+//		Article article = articleService.getArticle(articleId);
+//		//article.increaseReadCount();
+//		ModelAndView modelAndView = new ModelAndView("board/read.tiles");
+//		modelAndView.addObject("this", this);
+//		modelAndView.addObject("board", board);
+//		return modelAndView;
+//	}
 	
 	/**
 	 * write

@@ -1,5 +1,6 @@
 package net.oopscraft.application.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class MenuController {
 	 */
 	@RequestMapping(value = "/menus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getMenus() throws Exception {
-		List<Menu> menus = menuService.getMenus();
+		List<Menu> menus = new ArrayList<Menu>();
 		return new ResponseEntity<>(JsonConverter.toJson(menus), HttpStatus.OK);
 	}
 	
@@ -41,7 +42,7 @@ public class MenuController {
 	 */
 	@RequestMapping(value = "/menu/{menuId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<?> getMenu(@RequestParam(value = "menuId") String menuId) throws Exception {
-		Menu menu = menuService.getMenu(menuId);
+		Menu menu = new Menu();
 		return new ResponseEntity<>(JsonConverter.toJson(menu), HttpStatus.OK);
 	}
 

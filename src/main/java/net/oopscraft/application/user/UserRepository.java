@@ -11,33 +11,5 @@ import net.oopscraft.application.user.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String>,JpaSpecificationExecutor<User> {
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	public Page<User> findByPagingCriteria(User user, Pageable pageable) throws Exception {
-//		
-//	}
-	
-//	public Page<User> findAllByOrderByJoinDateDesc(Pageable pageable) throws Exception;
-//	
-//	public Page<User> findByIdStartingWith(String id, Pageable pageable) throws Exception;
-//	
-//	public Page<User> findByNameStartingWith(String name, Pageable pageable) throws Exception;
-//	
-//	public Page<User> findByEmailStartingWith(String email, Pageable pageable) throws Exception;
-//	
-//	public Page<User> findByPhoneStartingWith(String phone, Pageable pageable) throws Exception;
 
 }

@@ -18,7 +18,7 @@ public class UserDetailsService implements org.springframework.security.core.use
 		// loading user information
 		User user = new User(id);
 		try {
-			user = userService.getUser(user);
+			user = userService.getUser(user.getId());
 		} catch (Exception e) {
 			throw new UsernameNotFoundException(e.getMessage(), e);
 		}

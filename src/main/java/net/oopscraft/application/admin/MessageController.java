@@ -7,115 +7,92 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.message.MessageService;
-import net.oopscraft.application.message.MessageService.MessageSearchType;
 import net.oopscraft.application.message.entity.Message;
-import net.oopscraft.application.util.StringUtility;
 
-@PreAuthorize("hasAuthority('ADMIN_MESSAGE')")
+//@PreAuthorize("hasAuthority('ADMIN_MESSAGE')")
 @Controller
 @RequestMapping("/admin/message")
 public class MessageController {
 
 	@Autowired
-	MessageService messageService;
+	HttpServletResponse response;
 
 	@Autowired
-	HttpServletResponse response;
+	MessageService messageService;
 
 	/**
 	 * Forwards page
-	 * 
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/message.tiles");
+		ModelAndView modelAndView = new ModelAndView("admin/message.html");
 		return modelAndView;
 	}
-
+	
 	/**
-	 * Gets messages
-	 * 
-	 * @param searchKey
-	 * @param searchValue
-	 * @param page
-	 * @param rows
+	 * Returns messages
+	 * @param role
+	 * @param pageInfo
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getMessages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getMessages(
-		@RequestParam(value = "rows")Integer rows,
-		@RequestParam(value = "page") Integer page,
-		@RequestParam(value = "searchType", required = false) String searchType,
-		@RequestParam(value = "searchValue", required = false) String searchValue
-	) throws Exception {
-		PageInfo pageInfo = new PageInfo(rows, page, true);
-		MessageSearchType messageSearchType= null;
-		if(StringUtility.isNotEmpty(searchType)) {
-			messageSearchType = MessageSearchType.valueOf(searchType);
-		}
-		List<Message> messages = messageService.getMessages(pageInfo, messageSearchType, searchValue);
+	public List<Message> getMessages(@ModelAttribute Message message, @ModelAttribute PageInfo pageInfo) throws Exception {
+		pageInfo.setEnableTotalCount(true);
+		List<Message> messages = messageService.getMessages(message, pageInfo);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonConverter.toJson(messages);
+		return messages;
 	}
-
+	
 	/**
-	 * Gets message details.
-	 * 
-	 * @param id
+	 * Returns message
+	 * @param message
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getMessage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getMessage(@RequestParam(value = "id") String id) throws Exception {
-		Message message = messageService.getMessage(id);
-		return JsonConverter.toJson(message);
+	public Message getMessage(@ModelAttribute Message message) throws Exception {
+		return messageService.getMessage(message.getId());
 	}
 
 	/**
-	 * Saves message.
-	 * 
-	 * @param payload
+	 * Saves message
+	 * @param message
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "saveMessage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void saveMessage(@RequestBody String payload) throws Exception {
-		Message message = JsonConverter.toObject(payload, Message.class);
-		messageService.saveMessage(message);
+	public Message saveMessage(@RequestBody Message message) throws Exception {
+		return messageService.saveMessage(message);
 	}
-
+	
 	/**
-	 * Deletes message.
-	 * 
-	 * @param payload
-	 * @return
+	 * Deletes message
+	 * @param message
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "deleteMessage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteMessage", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteMessage(@RequestParam(value = "id") String id) throws Exception {
-		messageService.deleteMessage(id);
+	public void deleteMessage(@RequestBody Message message) throws Exception {
+		messageService.deleteMessage(message);
 	}
 
 }
