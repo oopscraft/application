@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/__admin.html}">
+<div layout:fragment="content">
+	<script>
+		// document ready
+		$(document).ready(function() {
+			getAuthorities();
+		    disableDetail(true);
+		});
+	
+		var search = new duice.Map({
+			key: null,
+			value: null,
+			status: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		var authorities = new duice.List();
+		var authority = new duice.Map();
+
+		// adds index changed event listener
+		authorities.onAfterChangeIndex(function(index){
+			if(index > -1){
+				var id = this.get(index).get('id');
+				getAuthority(id);	
+			}
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			authority.setDisable(disable);
+			$('#deleteAuthorityButton').prop('disabled', disable);
+			$('#saveAuthorityButton').prop('disabled', disable);
+		}
+		
+		/**
+		 * Clears detail
+		 */
+		function clearDetail(){
+			authority.clear();
+		}
+		
+		/**
+		 * Gets authorities
+		 */
+		function getAuthorities(page) {
+			if(page){
+				search.set('page',page);
+			}
+			var data = {};
+			if(search.get('key')){
+				data[search.get('key')] = search.get('value');
+			}
+			if(search.get('status')){
+				data.status = search.get('status');
+			}
+			data.page = search.get('page');
+			data.rows = search.get('rows');
+			$.ajax({
+				 url: 'authority/getAuthorities'
+				,type: 'GET'
+				,data: data
+				,success: function(data, textStatus, jqXHR) {
+					authorities.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					
+					// sets current authority
+					authorities.forEach(function(row,index){
+						if(row.get('id') === authority.get('id')){
+							authorities.setIndex(index);
+							return false;
+						}
+					});
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Gets specified authority
+		 */
+		function getAuthority(id){
+			$.ajax({
+				 url: 'authority/getAuthority'
+				,type: 'GET'
+				,data: {id:id}
+				,success: function(data, textStatus, jqXHR) {
+					authority.fromJson(data);
+					disableDetail(false);
+					authority.setReadonly('id', true);
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Adds authority
+		 */
+		function addAuthority() {
+			clearDetail();
+			disableDetail(false);
+			authority.setReadonly('id',false);
+		}
+		
+		/**
+		 * Saves authority
+		 */
+		function saveAuthority(){
+			
+			// checks changes
+			if(!authority.isDirty()){
+				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
+				return;
+			}
+			
+			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.authority})}]]")
+			.onAfterConfirm(function(){
+				var data = authority.toJson();
+				$.ajax({
+					 url: 'authority/saveAuthority'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert('[[#{application.message.saveComplete(#{application.label.authority})}]]')
+						.onAfterClose(function(){
+							getAuthorities();
+						}).open();
+			   	 	}
+				});	
+			}).open();
+		}
+		
+		/**
+		 * Deletes authority
+		 */
+		function deleteAuthority(){
+			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.authority})}]]")
+			.onAfterConfirm(function(){
+				$.ajax({
+					 url: 'authority/deleteAuthority'
+					,type: 'DELETE'
+					,data: JSON.stringify(authority.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.authority})}]]")
+						.onAfterClose(function(){
+							clearDetail();
+							getAuthorities();
+						}).open();
+			   	 	}
+				});
+			}).open();
+		}
+	</script>
+	<div class="app-row">
+		<div class="app-col">
+			<h1>
+				<img class="icon large" src="/static/image/icon_authority.png"/>
+				<span data-th-text="#{application.label.authority}+' '+#{application.label.management}"></span>
+			</h1>
+		</div>
+	</div>
+	<hr class="hr"/>
+	<div class="app-row">
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col" style="width:50%;">
+					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
+						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.label.authority}+' '+#{application.label.id}">Authority ID</option>
+						<option value="name" data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</option>
+					</select>
+					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
+				</div>
+				<div class="app-col right">
+					<button class="button" onclick="getAuthorities(1);">
+						<img src="/static/image/icon_search.png" class="icon"/>
+						<span data-th-text="#{application.label.search}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+						data-duice-bind="authorities,authority" 
+						data-duice-selectable="true"
+						style="width:100%;">
+						<col style="width:70px;"/>					
+						<col/>
+						<col/>
+						<thead>
+							<tr>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">Authority ID</th>
+								<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center">
+									<span is="duice-ui-scriptlet" data-duice-bind="search">
+										return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+									</span>
+								</td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="authority,icon" src="/static/image/icon_authority.png" class="icon small"/>
+									<span is="duice-ui-span" data-duice-bind="authority,id"></span>
+								</td>
+								<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="7">
+									<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+										<li onclick="getAuthorities();"></li>
+									</ul>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>		
+		</div>
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" src="/static/image/icon_authority.png"/>
+					<span data-th-text="#{application.label.authority} + ' ' + #{application.label.details}" class="font-bold"></span>
+				</div>
+				<div class="app-col right">
+					<button id="addAuthorityButton" class="button" onclick="addAuthority();">
+						<img src="/static/image/icon_create.png" class="icon"/>
+						<span data-th-text="#{application.label.new}"></span>
+					</button>
+					<button id="deleteAuthorityButton" class="button" onclick="deleteAuthority();">
+						<img src="/static/image/icon_delete.png" class="icon"/>
+						<span data-th-text="#{application.label.delete}"></span>
+					</button>
+					<button id="saveAuthorityButton" class="button" onclick="saveAuthority();">
+						<img src="/static/image/icon_save.png" class="icon"/>
+						<span data-th-text="#{application.label.save}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table class="table" style="width:100%;">
+						<col style="width:25%;"/>
+						<col/>
+						<tbody>
+							<tr>
+								<th><span data-th-text="#{application.label.authority}+' '+#{application.label.id}" class="mand">Authority ID</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="authority,id" autocomplete="nope"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.authority}+' '+#{application.label.icon}">Authority Icon</th>
+								<td><img is="duice-ui-img" data-duice-bind="authority,icon" src="/static/image/icon_authority.png" style="max-height:32px;"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="authority,name"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.authority}+' '+#{application.label.description}">Authority Description</th>
+								<td><textarea is="duice-ui-textarea" data-duice-bind="authority,description" style="height:10em;"></textarea></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

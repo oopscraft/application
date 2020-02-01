@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=2048,initial-scale=1">
+    	<title>Application</title>
+		<link rel="stylesheet" type="text/css" href="/static/polyfill/normalize.css">
+		<script src="/static/polyfill/dataset.js"></script>
+		<script src="/static/polyfill/classList.js"></script>
+		<script src="/static/duice.js"></script>
+		<link rel="stylesheet" type="text/css" href="/static/duice.css">
+		<script src="/static/jquery.js"></script>
+		<style>
+		</style>
+		<script>
+		var user = new duice.Map({
+			id:null,
+			password:null
+		});
+		
+		/**
+		 * Requests login
+		 */
+		function doLogin(){
+			$.ajax({
+				 url: '/security/doLogin'
+				,type: 'POST'
+				,data: user.toJson()
+				,success: function(data, textStatus, jqXHR) {
+					location.href='/';
+		    	 }
+			 	,error: function(jqXHR, textStatus, errorThrown) {
+			 		var message = jqXHR.responseText;
+			 		alert(message);
+				 }
+			});
+		}
+		</script>
+	</head>
+	<body>
+		<img src="/static/image/application.png"/>
+		<input is="duice-ui-input" type="text" data-duice-bind="user,id"/>
+		<input is="duice-ui-input" type="text" data-duice-bind="user,password"/>
+		<button onclick="doLogin();">>
+			Login
+		</button>
+	</body>
+</html>
