@@ -30,7 +30,7 @@ import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.entity.User;
 
-@PreAuthorize("hasAuthority('ADMIN_USER')")
+//@PreAuthorize("hasAuthority('ADMIN_USER')")
 @Controller
 @RequestMapping("/admin/user")
 public class UserController {

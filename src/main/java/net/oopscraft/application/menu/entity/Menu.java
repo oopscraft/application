@@ -39,6 +39,9 @@ public class Menu extends SystemEntity {
 
 	@Column(name = "UPER_MENU_ID", length = 32)
 	String upperId;
+	
+	@Column(name = "MENU_SEQ")
+	int sequence;
 
 	@Column(name = "MENU_NAME", length = 1024)
 	String name;
@@ -104,6 +107,14 @@ public class Menu extends SystemEntity {
 
 	public void setUpperId(String upperId) {
 		this.upperId = upperId;
+	}
+
+	public int getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
 	}
 
 	public String getName() {

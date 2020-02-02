@@ -60,6 +60,16 @@ public class MessageService {
 	}
 	
 	/**
+	 * Returns message
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	public Message getMessage(Message message) throws Exception {
+		return getMessage(message.getId());
+	}
+	
+	/**
 	 * Saves message
 	 * @param message
 	 * @return

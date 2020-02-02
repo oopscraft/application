@@ -33,19 +33,39 @@ public class BoardArticleService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<BoardArticle> getCodes(final BoardArticle boardArticle, PageInfo pageInfo) throws Exception {
+	public List<BoardArticle> getBoardArticles(final BoardArticle boardArticle, PageInfo pageInfo) throws Exception {
 		Page<BoardArticle> boardArticlesPage = boardArticleRepository.findAll(new  Specification<BoardArticle>() {
 			@Override
 			public Predicate toPredicate(Root<BoardArticle> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
+				
+				// boardId
 				predicates.add(
 					criteriaBuilder.and(criteriaBuilder.equal(root.get("boardId").as(String.class), boardArticle.getBoardId()))
 				);
-				if(boardArticle.getTitle() != null) {
+				
+				// categoryId
+				if(boardArticle.getCategoryId() != null) {
 					predicates.add(
-						criteriaBuilder.and(criteriaBuilder.like(root.get("title").as(String.class), boardArticle.getTitle() + '%'))
+						criteriaBuilder.and(criteriaBuilder.equal(root.get("categoryId").as(String.class), boardArticle.getCategoryId()))
 					);
 				}
+
+				// title
+				if(boardArticle.getTitle() != null) {
+					predicates.add(
+						criteriaBuilder.and(criteriaBuilder.like(root.get("title").as(String.class), '%' + boardArticle.getTitle() + '%'))
+					);
+				}
+				
+				// contents
+				if(boardArticle.getContents() != null) {
+					predicates.add(
+						criteriaBuilder.and(criteriaBuilder.like(root.get("contents").as(String.class), '%' + boardArticle.getContents() + '%'))
+					);
+				}
+
+				// returns 
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
 		}, pageInfo.toPageable());
@@ -59,8 +79,8 @@ public class BoardArticleService {
 	 * @return
 	 * @throws Exception
 	 */
-	public BoardArticle getBoardArticle(String id) throws Exception {
-		return boardArticleRepository.findOne(id);
+	public BoardArticle getBoardArticle(BoardArticle boardArticle) throws Exception {
+		return boardArticleRepository.findOne(boardArticle.getId());
 	}
 	
 	/**
@@ -69,7 +89,7 @@ public class BoardArticleService {
 	 * @return
 	 * @throws Exception
 	 */
-	public BoardArticle saveCode(BoardArticle boardArticle) throws Exception {
+	public BoardArticle saveBoardArticle(BoardArticle boardArticle) throws Exception {
 		if(StringUtils.isBlank(boardArticle.getId())) {
 			boardArticle.setId(IdGenerator.uuid());
 		}
@@ -85,12 +105,12 @@ public class BoardArticleService {
 	}
 	
 	/**
-	 * Deletes code
+	 * Deletes board article
 	 * @param code
 	 * @throws Exception
 	 */
-	public void deleteCode(BoardArticle code) throws Exception {
-		boardArticleRepository.delete(code);
+	public void deleteBoardArticle(BoardArticle boardArticle) throws Exception {
+		boardArticleRepository.delete(boardArticle);
 	}
 
 }

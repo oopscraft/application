@@ -54,10 +54,19 @@ public class CodeService {
 	 * Gets code
 	 * @param id
 	 * @return
+	 */
+	public Code getCode(String id) {
+		return codeRepository.findOne(id);
+	}
+	
+	/**
+	 * Gets code
+	 * @param id
+	 * @return
 	 * @throws Exception
 	 */
-	public Code getCode(String id) throws Exception {
-		return codeRepository.findOne(id);
+	public Code getCode(Code code) throws Exception {
+		return getCode(code.getId());
 	}
 	
 	/**
@@ -76,9 +85,9 @@ public class CodeService {
 		
 		// resets code items
 		one.getItems().clear();
-		int displaySeq = 1;
+		int sequence = 1;
 		for (CodeItem item : code.getItems()) {
-			item.setDisplaySeq(displaySeq ++);
+			item.setSequence(sequence ++);
 			one.getItems().add(item);
 		}
 		

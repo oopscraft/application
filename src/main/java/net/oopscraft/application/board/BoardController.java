@@ -1,41 +1,48 @@
 package net.oopscraft.application.board;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.article.ArticleService;
 import net.oopscraft.application.article.entity.Article;
-import net.oopscraft.application.board.entity.Board;
+import net.oopscraft.application.board.entity.BoardArticle;
+import net.oopscraft.application.core.PageInfo;
 
 @Controller
 @RequestMapping("/board")
 public class BoardController {
 	
-	@Autowired
-	HttpServletRequest request;
 
-	@Autowired
-	HttpServletResponse response;
 	
-	@Autowired
-	BoardService boardService;
 	
-	@Autowired
-	ArticleService articleService;
 	
-    @Autowired
-    ApplicationContext applicationContext;
+	
+//	@Autowired
+//	HttpServletRequest request;
+//
+//	@Autowired
+//	HttpServletResponse response;
+//	
+//	@Autowired
+//	BoardService boardService;
+//	
+//	@Autowired
+//	ArticleService articleService;
+//	
+//    @Autowired
+//    ApplicationContext applicationContext;
     
 //	/**
 //	 * checks access authority
@@ -67,21 +74,21 @@ public class BoardController {
 //		return boardService.hasWriteAuthority(boardId);
 //	}
 
-	/**
-	 * list
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	@PreAuthorize("this.hasAccessAuthority(#boardId)")
-	@RequestMapping(value="{boardId}", method = RequestMethod.GET)
-	public ModelAndView list(@PathVariable("boardId")String boardId) throws Exception {
-		Board board = boardService.getBoard(boardId);
-		ModelAndView modelAndView = new ModelAndView("board/list.tiles");
-		modelAndView.addObject("boardController", this);
-		modelAndView.addObject("board", board);
-		return modelAndView;
-	}
+//	/**
+//	 * list
+//	 * 
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@PreAuthorize("this.hasAccessAuthority(#boardId)")
+//	@RequestMapping(value="{boardId}", method = RequestMethod.GET)
+//	public ModelAndView list(@PathVariable("boardId")String boardId) throws Exception {
+//		Board board = boardService.getBoard(boardId);
+//		ModelAndView modelAndView = new ModelAndView("board/list.tiles");
+//		modelAndView.addObject("boardController", this);
+//		modelAndView.addObject("board", board);
+//		return modelAndView;
+//	}
 	
 	/**
 	 * read
@@ -106,24 +113,24 @@ public class BoardController {
 //		return modelAndView;
 //	}
 	
-	/**
-	 * write
-	 * @param boardId
-	 * @param articleId
-	 * @return
-	 * @throws Exception
-	 */
-	@PreAuthorize("this.hasWriteAuthority(#boardId)")
-	@RequestMapping(value="{boardId}/write", method = RequestMethod.GET)
-	public ModelAndView write(
-		@PathVariable("boardId")String boardId,
-		@RequestParam(value="articleId", required=false)String articleId
-	) throws Exception {
-		Board board = boardService.getBoard(boardId);
-		ModelAndView modelAndView = new ModelAndView("board/write.tiles");
-		modelAndView.addObject("this", this);
-		modelAndView.addObject("board", board);
-		return modelAndView;
-	}
+//	/**
+//	 * write
+//	 * @param boardId
+//	 * @param articleId
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@PreAuthorize("this.hasWriteAuthority(#boardId)")
+//	@RequestMapping(value="{boardId}/write", method = RequestMethod.GET)
+//	public ModelAndView write(
+//		@PathVariable("boardId")String boardId,
+//		@RequestParam(value="articleId", required=false)String articleId
+//	) throws Exception {
+//		Board board = boardService.getBoard(boardId);
+//		ModelAndView modelAndView = new ModelAndView("board/write.tiles");
+//		modelAndView.addObject("this", this);
+//		modelAndView.addObject("board", board);
+//		return modelAndView;
+//	}
 
 }

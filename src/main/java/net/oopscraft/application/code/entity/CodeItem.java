@@ -78,14 +78,15 @@ public class CodeItem {
 	@Column(name = "ITEM_ID")
 	String id;
 	
+	@Column(name = "ITEM_SEQ")
+	int sequence;
+	
 	@Column(name = "ITEM_NAME")
 	String name;
 	
 	@Column(name = "ITEM_DESC")
 	String description;
-	
-	@Column(name = "DISP_SEQ")
-	int displaySeq;
+
 	
 	public CodeItem() {}
 	
@@ -110,6 +111,14 @@ public class CodeItem {
 		this.id = id;
 	}
 
+	public int getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -118,14 +127,12 @@ public class CodeItem {
 		this.name = name;
 	}
 
-	public int getDisplaySeq() {
-		return displaySeq;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDisplaySeq(int displaySeq) {
-		this.displaySeq = displaySeq;
+	public void setDescription(String description) {
+		this.description = description;
 	}
-	
-	
 	
 }

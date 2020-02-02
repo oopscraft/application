@@ -17,16 +17,19 @@ import javax.persistence.Table;
 public class Article {
 	
 	@Id
-	@Column(name = "ATCL_ID")
+	@Column(name = "ATCL_ID", length = 32)
 	String id;
 	
-	@Column(name = "ATCL_TITL")
+	@Column(name = "ATCL_TITL", length = 1024)
 	String title;
 
-	@Column(name = "ATCL_CNTS")
+	@Column(name = "ATCL_CNTS", length = Integer.MAX_VALUE)
 	String contents;
 
-	@Column(name = "USER_ID")
+	@Column(name = "ATCL_ATHR", length = 1024)
+	String author;
+
+	@Column(name = "USER_ID", length = 32)
 	String userId;
 	
 	@Column(name = "WRIT_DATE")
@@ -63,6 +66,14 @@ public class Article {
 
 	public void setContents(String contents) {
 		this.contents = contents;
+	}
+	
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
 	public String getUserId() {

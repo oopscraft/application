@@ -26,7 +26,6 @@ public class PageInfo {
 		this.enableTotalCount = enableTotalCount;
 	}
 	
-	
 	/**
 	 * Returns spring-data PageRequest object.
 	 * @return

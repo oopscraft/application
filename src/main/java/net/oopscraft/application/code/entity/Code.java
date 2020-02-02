@@ -39,7 +39,7 @@ public class Code extends SystemEntity {
 		cascade = CascadeType.ALL, 
 		orphanRemoval = true
 	)
-	@OrderBy("displaySeq")
+	@OrderBy("sequence")
 	List<CodeItem> items = new ArrayList<CodeItem>();
 	
 	public Code() {}

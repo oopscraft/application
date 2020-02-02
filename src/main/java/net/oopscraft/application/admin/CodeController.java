@@ -69,7 +69,7 @@ public class CodeController {
 	@RequestMapping(value = "getCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public Code getCode(@ModelAttribute Code code) throws Exception {
-		return codeService.getCode(code.getId());
+		return codeService.getCode(code);
 	}
 
 	/**

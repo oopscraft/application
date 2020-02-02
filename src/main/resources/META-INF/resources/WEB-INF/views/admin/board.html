@@ -272,6 +272,13 @@
 			boardWriteAuthorities.remove(index);
 		}
 		
+		/**
+		 * Opens board
+		 */
+		function openBoard(){
+			window.open('/board/' + board.get('id'));
+		}
+		
 	</script>
 	<div class="app-row">
 		<div class="app-col">
@@ -355,6 +362,11 @@
 					<span data-th-text="#{application.label.board} + ' ' + #{application.label.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
+					<button id="openBoardButton" class="button" onclick="openBoard();">
+						<img src="/static/image/icon_open.png" class="icon"/>
+						<span data-th-text="#{application.label.open}"></span>
+					</button>
+					|
 					<button id="addBoardButton" class="button" onclick="addBoard();">
 						<img src="/static/image/icon_create.png" class="icon"/>
 						<span data-th-text="#{application.label.new}"></span>

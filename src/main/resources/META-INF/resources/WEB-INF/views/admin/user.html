@@ -348,10 +348,11 @@
 					<span data-th-text="#{application.label.user} + ' ' + #{application.label.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
-					<button id="changePasswordButton" class="button small" onclick="changePassword();">
+					<button id="changePasswordButton" class="button" onclick="changePassword();">
 						<img src="/static/image/icon_password.png" class="icon"/>
 						<span data-th-text="#{application.label.passwordChange}"></span>
 					</button>
+					|
 					<button id="addUserButton" class="button" onclick="addUser();">
 						<img src="/static/image/icon_create.png" class="icon"/>
 						<span data-th-text="#{application.label.new}"></span>
