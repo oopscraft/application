@@ -4,15 +4,15 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=2048,initial-scale=1">
     	<title>Application</title>
-		<link rel="stylesheet" type="text/css" href="/static/polyfill/normalize.css">
-		<script src="/static/polyfill/dataset.js"></script>
-		<script src="/static/polyfill/classList.js"></script>
-		<script src="/static/duice.js"></script>
-		<link rel="stylesheet" type="text/css" href="/static/duice.css">
-		<script src="/static/jquery.js"></script>
+		<link rel="stylesheet" type="text/css" th:href="@{/static/polyfill/normalize.css}">
+		<script th:src="@{/static/polyfill/dataset.js}"></script>
+		<script th:src="@{/static/polyfill/classList.js}"></script>
+		<script th:src="@{/static/duice.js}"></script>
+		<link rel="stylesheet" type="text/css" th:href="@{/static/duice.css}">
+		<script th:src="@{/static/jquery.js}"></script>
 		<style>
 		</style>
-		<script>
+		<script th:inline="javascript">
 		var user = new duice.Map({
 			id:null,
 			password:null
@@ -23,7 +23,7 @@
 		 */
 		function doLogin(){
 			$.ajax({
-				 url: '/security/doLogin'
+				 url: [[@{/security/doLogin}]]
 				,type: 'POST'
 				,data: user.toJson()
 				,success: function(data, textStatus, jqXHR) {
@@ -38,7 +38,7 @@
 		</script>
 	</head>
 	<body>
-		<img src="/static/image/application.png"/>
+		<img th:src="@{/static/image/application.png}"/>
 		<input is="duice-ui-input" type="text" data-duice-bind="user,id"/>
 		<input is="duice-ui-input" type="text" data-duice-bind="user,password"/>
 		<button onclick="doLogin();">>

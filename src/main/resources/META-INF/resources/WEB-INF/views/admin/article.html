@@ -125,7 +125,7 @@
 	<div class="app-row">
 		<div class="app-col">
 			<h1>
-				<img class="icon large" src="/static/image/icon_article.png"/>
+				<img class="icon large" th:src="@{/static/image/icon_article.png}"/>
 				<span data-th-text="#{application.label.article}+' '+#{application.label.management}"></span>
 			</h1>
 		</div>
@@ -142,13 +142,13 @@
 					</select>
 					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 					<button class="button" onclick="getArticles(1);">
-						<img src="/static/image/icon_search.png" class="icon"/>
+						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
 						<span data-th-text="#{application.label.search}"></span>
 					</button>
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="addArticle();">
-						<img src="/static/image/icon_create.png" class="icon"/>
+						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
 						<span data-th-text="#{application.label.new}"></span>
 					</button>
 				</div>
@@ -207,11 +207,11 @@
 			</div>
 			<div class="app-col right">
 				<button id="deleteArticleButton" class="button" onclick="deleteArticle();">
-					<img src="/static/image/icon_delete.png" class="icon"/>
+					<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 					<span data-th-text="#{application.label.delete}"></span>
 				</button>
 				<button id="saveArticleButton" class="button" onclick="saveArticle();">
-					<img src="/static/image/icon_save.png" class="icon"/>
+					<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 					<span data-th-text="#{application.label.save}"></span>
 				</button>
 			</div>

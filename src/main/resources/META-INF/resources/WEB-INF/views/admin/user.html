@@ -257,25 +257,28 @@
 	<div class="app-row">
 		<div class="app-col">
 			<h1>
-				<img class="icon large" src="/static/image/icon_user.png"/>
+				<img class="icon large" th:src="@{/static/image/icon_user.png}"/>
 				<span data-th-text="#{application.label.user} + ' ' + #{application.label.management}"></span>
 			</h1>
 		</div>
 	</div>
 	<hr class="hr"/>
 	<div class="app-row">
+		<!-- ====================================================== -->
+		<!-- List													-->
+		<!-- ====================================================== -->
 		<div class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col" style="width:50%;">
-					<select is="duice-ui-select" data-duice-bind="search,key" style="width:100px;">
+					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
 						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
 						<option value="id" data-th-text="#{application.label.id}">ID</option>
 						<option value="name" data-th-text="#{application.label.name}">Name</option>
 						<option value="email" data-th-text="#{application.label.email}">Email</option>
 					</select>
-					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:200px;"/>
+					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 					<span class="content-search__label">Status</span>
-					<select is="duice-ui-select" data-duice-bind="search,status" style="width:100px;">
+					<select is="duice-ui-select" data-duice-bind="search,status" style="width:125px;">
 						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
 						<option value="ACTIVE">Active</option>
 						<option value="SUSPENDED">Suspended</option>
@@ -284,7 +287,7 @@
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="getUsers(1);">
-						<img src="/static/image/icon_search.png" class="icon"/>
+						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
 						<span data-th-text="#{application.label.search}"></span>
 					</button>
 				</div>
@@ -319,7 +322,7 @@
 									</span>
 								</td>
 								<td>
-									<img is="duice-ui-img" data-duice-bind="user,photo" src="/static/image/icon_user.png" class="icon small"/>
+									<img is="duice-ui-img" data-duice-bind="user,photo" th:src="@{/static/image/icon_user.png}" class="icon small"/>
 									<span is="duice-ui-span" data-duice-bind="user,id"></span>
 								</td>
 								<td><span is="duice-ui-span" data-duice-bind="user,name"></span></td>
@@ -341,28 +344,31 @@
 				</div>
 			</div>		
 		</div>
+		<!-- ====================================================== -->
+		<!-- Detail													-->
+		<!-- ====================================================== -->
 		<div class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col">
-					<img class="icon" src="/static/image/icon_user.png"/>
+					<img class="icon" th:src="@{/static/image/icon_user.png}"/>
 					<span data-th-text="#{application.label.user} + ' ' + #{application.label.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="changePasswordButton" class="button" onclick="changePassword();">
-						<img src="/static/image/icon_password.png" class="icon"/>
+						<img th:src="@{/static/image/icon_password.png}" class="icon"/>
 						<span data-th-text="#{application.label.passwordChange}"></span>
 					</button>
 					|
 					<button id="addUserButton" class="button" onclick="addUser();">
-						<img src="/static/image/icon_create.png" class="icon"/>
+						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
 						<span data-th-text="#{application.label.new}"></span>
 					</button>
 					<button id="deleteUserButton" class="button" onclick="deleteUser();">
-						<img src="/static/image/icon_delete.png" class="icon"/>
+						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 						<span data-th-text="#{application.label.delete}"></span>
 					</button>
 					<button id="saveUserButton" class="button" onclick="saveUser();">
-						<img src="/static/image/icon_save.png" class="icon"/>
+						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 						<span data-th-text="#{application.label.save}"></span>
 					</button>
 				</div>
@@ -391,7 +397,7 @@
 							</tr>
 							<tr>
 								<th data-th-text="#{application.label.photo}">Photo</th>
-								<td><img is="duice-ui-img" data-duice-bind="user,photo" src="/static/image/icon_user.png" style="max-height:64px;"/></td>
+								<td><img is="duice-ui-img" data-duice-bind="user,photo" th:src="@{/static/image/icon_user.png}" style="max-height:64px;"/></td>
 							</tr>
 							<tr>
 								<th><span data-th-text="#{application.label.name}" class="mand">Name</span></th>
@@ -444,7 +450,8 @@
 							</tr>
 							<tr>
 								<th>
-									<img class="icon" src="/static/image/icon_group.png"/>
+									<img class="icon" th:src="@{/static/image/icon_group.png}"/>
+									<br/>
 									<span data-th-text="#{application.label.group}"></span>
 								</th>
 								<td>
@@ -457,8 +464,8 @@
 										<thead>
 											<tr>
 												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.id}">ID</th>
-												<th data-th-text="#{application.label.name}">Name</th>
+												<th data-th-text="#{application.label.group}+' '+#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.group}+' '+#{application.label.name}">Name</th>
 												<th class="text-center">
 													<button class="button small" data-index="[[$context.index]]" onclick="javascript:addUserGroup(this.dataset.index);">
 														+
@@ -472,7 +479,7 @@
 													<span is="duice-ui-scriptlet" data-duice-bind="group">return $context.index+1;</span>
 												</td>
 												<td>
-													<img is="duice-ui-img" data-duice-bind="group,icon" class="icon small"/>
+													<img is="duice-ui-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
 													<span is="duice-ui-span" data-duice-bind="group,id"></span>
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="group,name"></span></td>
@@ -488,7 +495,8 @@
 							</tr>
 							<tr>
 								<th>
-									<img class="icon" src="/static/image/icon_role.png"/>
+									<img class="icon" th:src="@{/static/image/icon_role.png}"/>
+									<br/>
 									<span data-th-text="#{application.label.role}"></span>
 								</th>
 								<td>
@@ -502,8 +510,8 @@
 										<thead>
 											<tr>
 												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.id}">ID</th>
-												<th data-th-text="#{application.label.name}">Name</th>
+												<th data-th-text="#{application.label.role}+' '+#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.role}+' '+#{application.label.name}">Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addUserRole();">
 														+
@@ -517,7 +525,7 @@
 													<span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span>
 												</td>
 												<td>
-													<img is="duice-ui-img" data-duice-bind="role,icon" class="icon small"/>
+													<img is="duice-ui-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
 													<span is="duice-ui-span" data-duice-bind="role,id"></span>
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="role,name"></span></td>
@@ -533,7 +541,8 @@
 							</tr>
 							<tr>
 								<th>
-									<img class="icon" src="/static/image/icon_authority.png"/>
+									<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
+									<br/>
 									<span data-th-text="#{application.label.authority}"></span>
 								</th>
 								<td>
@@ -547,8 +556,8 @@
 										<thead>
 											<tr>
 												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.id}">ID</th>
-												<th data-th-text="#{application.label.name}">Name</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addUserAuthority();">
 														+
@@ -562,7 +571,7 @@
 													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
 												</td>
 												<td>
-													<img is="duice-ui-img" data-duice-bind="authority,icon" class="icon small"/>
+													<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
 													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>

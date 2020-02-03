@@ -201,7 +201,7 @@
 	<div class="app-row">
 		<div class="app-col">
 			<h1>
-				<img class="icon large" src="/static/image/icon_menu.png"/>
+				<img class="icon large" th:src="@{/static/image/icon_menu.png}"/>
 				<span data-th-text="#{application.label.menu} + ' ' + #{application.label.management}"></span>
 			</h1>
 		</div>
@@ -217,8 +217,8 @@
 					data-duice-hierarchy="id,upperId"
 					data-duice-foldable="true">
 						<li>
-							<div style="border-bottom:dotted 1px #ccc;padding:2px;">
-								<img is="duice-ui-img" data-duice-bind="menu,icon" src="/static/image/icon_menu.png" class="icon"/>
+							<div style="border-bottom:dotted 1px #ccc;">
+								<img is="duice-ui-img" data-duice-bind="menu,icon" th:src="@{/static/image/icon_menu.png}" class="icon small"/>
 								<span is="duice-ui-span" data-duice-bind="menu,name" style="font-weight:bold;"></span>
 							</div>
 						</li>
@@ -229,20 +229,20 @@
 		<div class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col">
-					<img class="icon" src="/static/image/icon_menu.png"/>
+					<img class="icon" th:src="@{/static/image/icon_menu.png}"/>
 					<span data-th-text="#{application.label.menu} + ' ' + #{application.label.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="addMenuButton" class="button" onclick="addMenu();">
-						<img src="/static/image/icon_create.png" class="icon"/>
+						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
 						<span data-th-text="#{application.label.new}"></span>
 					</button>
 					<button id="deleteMenuButton" class="button" onclick="deleteMenu();">
-						<img src="/static/image/icon_delete.png" class="icon"/>
+						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 						<span data-th-text="#{application.label.delete}"></span>
 					</button>
 					<button id="saveMenuButton" class="button" onclick="saveMenu();">
-						<img src="/static/image/icon_save.png" class="icon"/>
+						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 						<span data-th-text="#{application.label.save}"></span>
 					</button>
 				</div>
@@ -262,14 +262,16 @@
 								<td>
 									<span is="duice-ui-span" data-duice-bind="menu,upperId"></span>
 									<button class="button small" onclick="changeUpperId();">
-										<img src="/static/image/icon_change.png" class="icon"/>
+										<img th:src="@{/static/image/icon_change.png}" class="icon"/>
 										<span data-th-text="#{application.label.change}">Change</span>
 									</button>
 								</td>
 							</tr>
 							<tr>
 								<th data-th-text="#{application.label.menu}+' '+#{application.label.icon}">Menu Icon</th>
-								<td><img is="duice-ui-img" data-duice-bind="menu,icon" src="/static/image/icon_menu.png" style="height:32px;"/></td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="menu,icon" th:src="@{/static/image/icon_menu.png}"/>
+								</td>
 							</tr>
 							<tr>
 								<th data-th-text="#{application.label.menu}+' '+#{application.label.name}">Menu Name</th>
@@ -296,7 +298,6 @@
 							</tr>
 							<tr>
 								<th>
-									<img class="icon" src="/static/image/icon_authority.png"/>
 									<span data-th-text="#{application.label.display}+' '+#{application.label.policy}"></span>
 								</th>
 								<td>
@@ -331,7 +332,7 @@
 													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
 												</td>
 												<td>
-													<img is="duice-ui-img" data-duice-bind="authority,icon" class="icon small"/>
+													<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
 													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
@@ -347,7 +348,6 @@
 							</tr>
 							<tr>
 								<th>
-									<img class="icon" src="/static/image/icon_authority.png"/>
 									<span data-th-text="#{application.label.access}+' '+#{application.label.policy}"></span>
 								</th>
 								<td>
@@ -382,7 +382,7 @@
 													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
 												</td>
 												<td>
-													<img is="duice-ui-img" data-duice-bind="authority,icon" class="icon small"/>
+													<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
 													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>

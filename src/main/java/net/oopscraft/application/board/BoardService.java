@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.entity.BoardCategory;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.user.entity.Authority;
 
 @Service
 public class BoardService {

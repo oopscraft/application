@@ -157,7 +157,7 @@
 	<div class="app-row">
 		<div class="app-col">
 			<h1>
-				<img class="icon large" src="/static/image/icon_message.png"/>
+				<img class="icon large" th:src="@{/static/image/icon_message.png}"/>
 				<span data-th-text="#{application.label.message}+' '+#{application.label.management}"></span>
 			</h1>
 		</div>
@@ -176,7 +176,7 @@
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="getMessages(1);">
-						<img src="/static/image/icon_search.png" class="icon"/>
+						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
 						<span data-th-text="#{application.label.search}"></span>
 					</button>
 				</div>
@@ -226,20 +226,20 @@
 		<div class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col">
-					<img class="icon" src="/static/image/icon_message.png"/>
+					<img class="icon" th:src="@{/static/image/icon_message.png}"/>
 					<span data-th-text="#{application.label.message} + ' ' + #{application.label.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="addMessageButton" class="button" onclick="addMessage();">
-						<img src="/static/image/icon_create.png" class="icon"/>
+						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
 						<span data-th-text="#{application.label.new}"></span>
 					</button>
 					<button id="deleteMessageButton" class="button" onclick="deleteMessage();">
-						<img src="/static/image/icon_delete.png" class="icon"/>
+						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 						<span data-th-text="#{application.label.delete}"></span>
 					</button>
 					<button id="saveMessageButton" class="button" onclick="saveMessage();">
-						<img src="/static/image/icon_save.png" class="icon"/>
+						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 						<span data-th-text="#{application.label.save}"></span>
 					</button>
 				</div>

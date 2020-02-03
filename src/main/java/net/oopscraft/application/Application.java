@@ -61,8 +61,8 @@ public class Application {
 		WebServerBuilder webServerBuilder = new WebServerBuilder(WebServerBuilder.Type.valueOf((String)ApplicationContext.properties.get("application.webServer.type")));
 		webServerBuilder.setPort(Integer.parseInt((String)ApplicationContext.properties.get("application.webServer.port")));
 		WebServerContext context = new WebServerContext();
-		context.setContextPath("");
-		context.setResourceBase("webapp");
+		context.setContextPath((String)ApplicationContext.properties.get("application.webServer.context.contextPath"));
+		context.setResourceBase((String)ApplicationContext.properties.get("application.webServer.context.ResourceBase"));
 		webServerBuilder.addContext(context);
 		webServer = webServerBuilder.build();
 		
