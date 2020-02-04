@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,7 +46,18 @@ public class AdminController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/__admin.html");
+		ModelAndView modelAndView = new ModelAndView("admin/admin.html");
+		return modelAndView;
+	}
+	
+	/**
+	 * Login page
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "login", method = RequestMethod.GET)
+	public ModelAndView login() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("admin/login.html");
 		return modelAndView;
 	}
 	
