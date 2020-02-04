@@ -25,6 +25,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 
@@ -33,7 +34,7 @@ import net.oopscraft.application.user.entity.User;
 import net.oopscraft.application.user.entity.UserLoginHistory;
 
 @Component
-public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler {
+public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler, LogoutSuccessHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationHandler.class);
 
@@ -145,6 +146,12 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     	response.getWriter().write("Unauthorized.");
     	response.getWriter().flush();
+	}
+
+	@Override 
+	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+		
+		
 	}
 
 }

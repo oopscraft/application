@@ -31,7 +31,20 @@ public class ApplicationWebControllerAdvice {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("__index.html");
+		ModelAndView modelAndView = new ModelAndView("application.html");
+		modelAndView.addObject("THEME","application");
+//		ModelAndView modelAndView = new ModelAndView("__theme/simple/index.html");
+		return modelAndView;
+	}
+	
+	/**
+	 * Login page
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "login", method = RequestMethod.GET)
+	public ModelAndView login() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("login.html");
 		return modelAndView;
 	}
 	

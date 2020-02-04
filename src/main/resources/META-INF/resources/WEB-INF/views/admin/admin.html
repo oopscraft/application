@@ -235,7 +235,7 @@
 			vertical-align: middle;
 		}
 		</style>
-		<script th:inline="javascript">
+		<script>
 		/**
 		 * ajax setting
 		 */
@@ -248,6 +248,7 @@
         // If not configure, "Provisional headers are shown" error occured in chrome.
         $(document).ajaxSend(function(event, jqxhr, settings) {
         	console.log('$(document).ajaxSend');
+        	jqxhr.setRequestHeader("[[${_csrf}?${_csrf.headerName}:'headerName']]","[[${_csrf}?${_csrf.token}:'token']]");
         	jqxhr.setRequestHeader('Cache-Control','no-cache, no-store, must-revalidate');
         	jqxhr.setRequestHeader('Pragma','no-cache');
         	jqxhr.setRequestHeader('Expires','0');
@@ -282,19 +283,25 @@
         		return -1;
         	}
         }
-         
-        /**
-         * Changes location
-         */
-        function __changeLocation(location){
-        	document.location = location;
-        }
         
         /**
 		 * Changes language
 		 */ 
         function __changeLanguage(language){
         	window.location = '?__lang=' + language;
+        }
+        
+        /**
+         * Exeuctes logout
+         */ 
+        function __logout(){
+			$.ajax({
+				 url: '[[@{/admin/logout}]]'
+				,type: 'POST'
+				,success: function(data, textStatus, jqXHR) {
+					location.href='[[@{/admin}]]';
+		    	 }
+			});
         }
 		</script>
 	</head>
@@ -304,6 +311,9 @@
 				<img th:src="@{/static/image/application.png}"/>
 			</div>
 			<div class="app-col right">
+				<span onclick="__logout();">
+					로그아웃
+				</span>
 				<select onchange="__changeLanguage(this.value);">
 					<option value="">-</option>
 					<option value="en">English</option>
@@ -337,6 +347,12 @@
 							<a class="menu-item" th:href="@{/admin/authority}">
 								<img class="menu-item__icon" th:src="@{/static/image/icon_authority.png}"/>
 								<span class="menu-item__text" data-th-text="#{application.label.authority}">Authority</span>
+							</a>
+						</li>
+						<li>
+							<a class="menu-item" th:href="@{/admin/property}">
+								<img class="menu-item__icon" th:src="@{/static/image/icon_property.png}"/>
+								<span class="menu-item__text" data-th-text="#{application.label.property}">Property</span>
 							</a>
 						</li>
 						<li>
