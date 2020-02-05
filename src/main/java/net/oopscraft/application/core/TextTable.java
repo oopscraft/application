@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.CaseUtils;
+
 
 public class TextTable {
 	
@@ -217,7 +220,7 @@ public class TextTable {
 			return null;
 		}
 		String printableValue = stripWhitespace(obj.toString());
-		printableValue = StringUtility.toEllipsis(printableValue, MAX_COLUMN_SIZE - 3);
+		printableValue = StringUtils.abbreviate(printableValue, MAX_COLUMN_SIZE);
 		return printableValue;
 	}
 	
@@ -272,7 +275,7 @@ public class TextTable {
 		           Field field = currentClass.getDeclaredField(fieldName);
 		           fieldValue = field.get(obj);
 	    	   }catch(Exception e) {
-	    		   Method getterMethod = currentClass.getDeclaredMethod("get" + StringUtility.toPascalCase(fieldName));
+	    		   Method getterMethod = currentClass.getDeclaredMethod("get" + CaseUtils.toCamelCase(fieldName, true, null));
 	    		   fieldValue = getterMethod.invoke(obj);
 	    	   }
 	    	   break;
@@ -319,6 +322,23 @@ public class TextTable {
 		
 		buffer.append(build(columnNames, columnValuesList));
 		return buffer.toString();
+	}
+	
+	/**
+	 * Makes string to ellipsis
+	 * @param value
+	 * @param size
+	 * @return
+	 */
+	public static String toEllipsis(String value, int size) {
+		if(value == null) {
+			return null;
+		}
+		if(value.length() > size) {
+			return value.substring(0, value.length()-3) + "...";
+		}else {
+			return value;
+		}
 	}
 	
 }

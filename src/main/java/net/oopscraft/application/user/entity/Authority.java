@@ -15,14 +15,23 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 public class Authority extends SystemEntity {
 
 	@Id
-	@Column(name = "AUTH_ID")
+	@Column(name = "AUTH_ID", length=32)
 	String id;
 
-	@Column(name = "AUTH_NAME")
+	@Column(name = "AUTH_NAME", length = 1024)
 	String name;
+	
+	@Column(name = "AUTH_ICON", length = Integer.MAX_VALUE)
+	String icon;
 
-	@Column(name = "AUTH_DESC")
+	@Column(name = "AUTH_DESC", length = Integer.MAX_VALUE)
 	String description;
+	
+	public Authority() {}
+	
+	public Authority(String id) {
+		this.id = id;
+	}
 
 	public String getId() {
 		return id;
@@ -38,6 +47,14 @@ public class Authority extends SystemEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 	public String getDescription() {

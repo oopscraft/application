@@ -3,8 +3,8 @@ package net.oopscraft.application.admin.controller;
 import org.junit.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import net.oopscraft.application.core.JsonUtility;
-import net.oopscraft.application.test.ApplicationTestRunnerWithSpring;
+import net.oopscraft.application.ApplicationTestRunnerWithSpring;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.user.entity.Group;
 
 @WithMockUser(username = "junit", authorities = {"ADMIN","ADMIN_GROUP"})
@@ -33,7 +33,7 @@ public class GroupControllerTest extends ApplicationTestRunnerWithSpring {
 		Group group = new Group();
 		group.setId("junit");
 		group.setName("junit");
-		String payload = JsonUtility.toJson(group);
+		String payload = JsonConverter.toJson(group);
 		this.performPostJson("/admin/user/saveGroup", payload);
 		assert(true);
 	}

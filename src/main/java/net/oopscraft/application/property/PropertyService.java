@@ -1,15 +1,22 @@
 package net.oopscraft.application.property;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.property.dao.PropertyRepository;
 import net.oopscraft.application.property.entity.Property;
+import net.oopscraft.application.user.entity.Role;
 
 @Service
 public class PropertyService {
@@ -17,77 +24,66 @@ public class PropertyService {
 	@Autowired
 	PropertyRepository propertyRepository;
 
-	public enum PropertySearchType { ID,NAME	}
-	
 	/**
-	 * Gets properties
-	 * @param searchType
-	 * @param searchValue
+	 * Returns properties.
+	 * @param property
 	 * @param pageInfo
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Property> getProperties(PageInfo pageInfo, PropertySearchType searchType, String searchValue) throws Exception {
-		Pageable pageable = pageInfo.toPageable();
-		Page<Property> propertiesPage = null;
-		if(searchType == null) {
-			propertiesPage = propertyRepository.findAll(pageable);
-		}else {
-			switch(searchType) {
-				case ID :
-					propertiesPage = propertyRepository.findByIdContaining(searchValue, pageable);
-				break;
-				case NAME :
-					propertiesPage = propertyRepository.findByNameContaining(searchValue, pageable);
-				break;
+	public List<Property> getProperties(final Property property, PageInfo pageInfo) throws Exception {
+		Page<Property> propertiesPage = propertyRepository.findAll(new  Specification<Property>() {
+			@Override
+			public Predicate toPredicate(Root<Property> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+				List<Predicate> predicates = new ArrayList<Predicate>();
+				if(property.getId() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), property.getId() + '%'));
+					predicates.add(predicate);
+				}
+				if(property.getName() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), property.getName() + '%'));
+					predicates.add(predicate);
+				}
+				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}
-		if (pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(propertiesPage.getTotalElements());
-		}
-		List<Property> properties = propertiesPage.getContent();
-		return properties;
+		}, pageInfo.toPageable());
+		pageInfo.setTotalCount(propertiesPage.getTotalElements());
+		return propertiesPage.getContent();
 	}
 	
 	/**
-	 * Gets detail of property
-	 * 
+	 * Return property
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
 	public Property getProperty(String id) throws Exception {
-		Property Property = propertyRepository.findOne(id);
-		return Property;
+		return propertyRepository.findOne(id);
 	}
 	
 	/**
-	 * Saves property
-	 * 
+	 * Saves property 
 	 * @param property
 	 * @return
 	 * @throws Exception
 	 */
-	public void saveProperty(Property property) throws Exception {
+	public Property saveProperty(Property property) throws Exception {
 		Property one = propertyRepository.findOne(property.getId());
 		if(one == null) {
-			one = new Property();
-			one.setId(property.getId());
+			one = new Property(property.getId());
 		}
 		one.setName(property.getName());
-		one.setValue(property.getValue());
 		one.setDescription(property.getDescription());
-		propertyRepository.save(one);
+		one.setValue(property.getValue());
+		return propertyRepository.save(one);
 	}
 	
 	/**
-	 * deletes property
-	 * @param id
-	 * @return
+	 * Deletes property
+	 * @param property
 	 * @throws Exception
 	 */
-	public void deleteProperty(String id) throws Exception {
-		Property property = propertyRepository.getOne(id);
+	public void deleteProperty(Property property) throws Exception {
 		propertyRepository.delete(property);
 	}
 

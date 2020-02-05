@@ -12,9 +12,9 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 
 public class ValueMap extends LinkedHashMap<String,Object> {
-	
-	private static final long serialVersionUID = 1L;
-	
+
+	private static final long serialVersionUID = -4534696208478237398L;
+
 	public ValueMap(){
 		super();
 	}

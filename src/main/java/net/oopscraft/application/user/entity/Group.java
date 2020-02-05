@@ -6,12 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
@@ -22,42 +22,45 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 public class Group extends SystemEntity {
 
 	@Id
-	@Column(name = "GROP_ID")
+	@Column(name = "GROP_ID", length = 32)
 	String id;
 
-	@Column(name = "UPER_GROP_ID")
+	@Column(name = "UPER_GROP_ID", length = 32)
 	String upperId;
 
-	@Column(name = "GROP_NAME")
+	@Column(name = "GROP_NAME", length = 1024)
 	String name;
-
-	@Column(name = "GROP_DESC")
-	String description;
-
-	@Column(name = "DISP_SEQ")
-	Integer displaySeq;
 	
-	@Transient
-	List<Group> childGroups;
+	@Column(name = "GROP_ICON", length = Integer.MAX_VALUE)
+	String icon;
 
+	@Column(name = "GROP_DESC", length = Integer.MAX_VALUE)
+	String description;
+	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_GROP_ROLE_MAP", joinColumns = @JoinColumn(name = "GROP_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+	@JoinTable(
+		name = "APP_GROP_ROLE_MAP", 
+		joinColumns = @JoinColumn(name = "GROP_ID"), 
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "ROLE_ID"), 
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Role> roles;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_GROP_AUTH_MAP", joinColumns = @JoinColumn(name = "GROP_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@JoinTable(
+		name = "APP_GROP_AUTH_MAP",
+		joinColumns = @JoinColumn(name = "GROP_ID"),
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Authority> authorities;
-
-	public void setChildGroups(List<Group> childGroups) {
-		this.childGroups = childGroups;
-	}
-
-	public void addChildGroup(Group group) {
-		childGroups.add(group);
-	}
-
-	public List<Group> getChildGroups() {
-		return childGroups;
+	
+	public Group() { }
+	
+	public Group(String id) {
+		this.id = id;
 	}
 
 	public String getId() {
@@ -76,20 +79,20 @@ public class Group extends SystemEntity {
 		this.upperId = upperId;
 	}
 
-	public Integer getDisplaySeq() {
-		return displaySeq;
-	}
-
-	public void setDisplaySeq(Integer displaySeq) {
-		this.displaySeq = displaySeq;
-	}
-
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 	public String getDescription() {

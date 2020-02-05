@@ -17,23 +17,34 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_CD_INFO")
+@Table(name = "APP_CODE_INFO")
 @EntityListeners(SystemEntityListener.class)
 public class Code extends SystemEntity {
 
 	@Id
-	@Column(name = "CD_ID")
+	@Column(name = "CODE_ID", length = 32)
 	String id;
 	
-	@Column(name = "CD_NAME")
+	@Column(name = "CODE_NAME", length = 1024)
 	String name;
 
-	@Column(name = "CD_DESC")
+	@Column(name = "CODE_DESC", length = Integer.MAX_VALUE)
 	String description;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "codeId", cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("displaySeq")
+	@OneToMany(
+		fetch = FetchType.LAZY, 
+		mappedBy = "codeId", 
+		cascade = CascadeType.ALL, 
+		orphanRemoval = true
+	)
+	@OrderBy("sequence")
 	List<CodeItem> items = new ArrayList<CodeItem>();
+	
+	public Code() {}
+	
+	public Code(String id) {
+		this.id = id;
+	}
 	
 	/**
 	 * Gets Code Item by id

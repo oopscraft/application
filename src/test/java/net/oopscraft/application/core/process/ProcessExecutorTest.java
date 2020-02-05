@@ -2,6 +2,9 @@ package net.oopscraft.application.core.process;
 
 import org.junit.Test;
 
+import net.oopscraft.application.util.process.ProcessExecutor;
+import net.oopscraft.application.util.process.ProcessStreamHandler;
+
 public class ProcessExecutorTest {
 	
 	@Test

@@ -10,6 +10,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -28,57 +29,81 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 public class User extends SystemEntity {
 	
 	@Id
-	@Column(name = "USER_ID")
+	@Column(name = "USER_ID", length = 32)
 	String id;
 
-	@Column(name = "USER_PWD")
+	@Column(name = "USER_PASS", length = 255)
 	String password;
-	
-	@Column(name = "USER_EMIL")
-	String email;
 
-	@Column(name = "USER_LC")
-	String locale;
-	
-	@Column(name = "USER_PHON")
-	String phone;
-
-	@Column(name = "USER_NAME")
+	@Column(name = "USER_NAME", length = 1024)
 	String name;
-
+	
+	@Column(name = "USER_NICK", length = 1024)
+	String nickname;
+	
 	public enum Status {
 		ACTIVE, SUSPENDED, CLOSED
 	}
 	@Column(name = "USER_STAT")
 	@Enumerated(EnumType.STRING)
-	Status status = Status.ACTIVE;
-
-	@Column(name = "USER_NICK")
-	String nickname;
+	Status status;
 	
-	@Column(name = "USER_AVAT")
-	String avatar;
+	@Column(name = "USER_EMIL")
+	String email;
 
-	@Column(name = "USER_SIGN")
-	String signature;
+	@Column(name = "USER_MOBL")
+	String mobile;
+
+	@Column(name = "USER_LOCL")
+	String locale;
 	
-	@Column(name = "USER_JOIN_DTTM")
+	@Column(name = "USER_PHOT", length=Integer.MAX_VALUE)
+	String photo;
+
+	@Column(name = "USER_PRFL", length=Integer.MAX_VALUE)
+	String profile;
+	
+	@Column(name = "JOIN_DATE")
 	Date joinDate;
 	
-	@Column(name = "USER_CLOS_DTTM")
+	@Column(name = "CLOS_DATE")
 	Date closeDate;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_USER_GROP_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "GROP_ID"))
+	@JoinTable(
+		name = "APP_USER_GROP_MAP", 
+		joinColumns = @JoinColumn(name = "USER_ID"), 
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "GROP_ID"), 
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Group> groups = new ArrayList<Group>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_USER_ROLE_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+	@JoinTable(
+		name = "APP_USER_ROLE_MAP", 
+		joinColumns = @JoinColumn(name = "USER_ID"), 
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "ROLE_ID"), 
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Role> roles = new ArrayList<Role>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_USER_AUTH_MAP", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "AUTH_ID"))
+	@JoinTable(
+		name = "APP_USER_AUTH_MAP", 
+		joinColumns = @JoinColumn(name = "USER_ID"), 
+		foreignKey = @ForeignKey(name = "none"),
+		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"), 
+		inverseForeignKey = @ForeignKey(name = "none")
+	)
 	List<Authority> authorities = new ArrayList<Authority>();
+	
+	public User() { }
+	
+	public User(String id) {
+		this.id = id;
+	}
 
 	public String getId() {
 		return id;
@@ -101,7 +126,7 @@ public class User extends SystemEntity {
 	public String getEmail() {
 		return email;
 	}
-
+ 
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -114,12 +139,12 @@ public class User extends SystemEntity {
 		this.locale = locale;
 	}
 
-	public String getPhone() {
-		return phone;
+	public String getMobile() {
+		return mobile;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 	public String getName() {
@@ -146,20 +171,20 @@ public class User extends SystemEntity {
 		this.nickname = nickname;
 	}
 
-	public String getAvatar() {
-		return avatar;
+	public String getPhoto() {
+		return photo;
 	}
 
-	public void setAvatar(String avatar) {
-		this.avatar = avatar;
+	public void setPhoto(String photo) {
+		this.photo = photo;
 	}
 
-	public String getSignature() {
-		return signature;
+	public String getProfile() {
+		return profile;
 	}
 
-	public void setSignature(String signature) {
-		this.signature = signature;
+	public void setProfile(String profile) {
+		this.profile = profile;
 	}
 	
 	public Date getJoinDate() {

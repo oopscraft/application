@@ -18,7 +18,7 @@ public class CodeServiceTest extends ApplicationTestRunner {
 	 */
 	@Test
 	public void test() throws Exception {
-		Code code = codeService.getCode("TEST");
+		Code code = codeService.getCode("TSET");
 		System.out.println(new TextTable(code));
 		assert(true);
 	}

@@ -9,10 +9,13 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_CD_ITEM_INFO")
+@Table(name = "APP_CODE_ITEM_INFO")
 @IdClass(CodeItem.Pk.class)
 public class CodeItem {
 	
+	/**
+	 * ClassItem.Pk
+	 */
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}
@@ -67,18 +70,29 @@ public class CodeItem {
 	}
 
 	@Id
-	@Column(name = "CD_ID")
+	@Column(name = "CODE_ID")
 	String codeId;
 	
 	@Id
-	@Column(name = "CD_ITEM_ID")
+	@Column(name = "ITEM_ID")
 	String id;
 	
-	@Column(name = "CD_ITEM_NAME")
+	@Column(name = "ITEM_SEQ")
+	int sequence;
+	
+	@Column(name = "ITEM_NAME")
 	String name;
 	
-	@Column(name = "DISP_SEQ")
-	int displaySeq;
+	@Column(name = "ITEM_DESC")
+	String description;
+
+	
+	public CodeItem() {}
+	
+	public CodeItem(Pk pk) {
+		this.codeId = pk.getCodeId();
+		this.id = pk.getId();
+	}
 	
 	public String getCodeId() {
 		return codeId;
@@ -96,6 +110,14 @@ public class CodeItem {
 		this.id = id;
 	}
 
+	public int getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -104,14 +126,12 @@ public class CodeItem {
 		this.name = name;
 	}
 
-	public int getDisplaySeq() {
-		return displaySeq;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDisplaySeq(int displaySeq) {
-		this.displaySeq = displaySeq;
+	public void setDescription(String description) {
+		this.description = description;
 	}
-	
-	
 	
 }
