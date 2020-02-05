@@ -45,7 +45,7 @@
 		<org.apache.tiles.version>3.0.7</org.apache.tiles.version>
 		<org.jasypt.version>1.9.2</org.jasypt.version>
 		<org.springframework.security.oauth.version>2.0.10.RELEASE</org.springframework.security.oauth.version>
-		<org.springframework.batch.version>3.0.9.RELEASE</org.springframework.batch.version>
+		<org.springframework.batch.version>4.2.1.RELEASE</org.springframework.batch.version>
 		<org.quartz-scheduler.version>1.8.6</org.quartz-scheduler.version>
 	</properties>
 	
