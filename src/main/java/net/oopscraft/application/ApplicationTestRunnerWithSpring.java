@@ -1,11 +1,9 @@
-package net.oopscraft.application.test;
+package net.oopscraft.application;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import javax.transaction.Transactional;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -15,26 +13,28 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-
-import net.oopscraft.application.ApplicationContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-	classes= ApplicationContext.class, 
+	classes=ApplicationContext.class, 
 	loader=AnnotationConfigContextLoader.class
 )
-@Transactional
-@Rollback
-public class ApplicationTestRunner {
+//@ContextConfiguration(locations = {"classpath:conf/spring.xml","classpath:conf/dispatcher-servlet.xml"})
+//@WebAppConfiguration(value="file:conf")
+//@Transactional
+//@Rollback
+public class ApplicationTestRunnerWithSpring {
 	
 	@Autowired
 	private WebApplicationContext webApplicationContext;
 
-	MockMvc mockMvc;
+	private MockMvc mockMvc;
 
 	@Before
 	public void setup() {
@@ -67,5 +67,3 @@ public class ApplicationTestRunner {
 	}
 
 }
-
-

@@ -1,4 +1,4 @@
-package net.oopscraft.application.monitor;
+package net.oopscraft.application.util.monitor;
 
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
@@ -14,10 +14,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.oopscraft.application.monitor.MonitorInfo.ClassInfo;
-import net.oopscraft.application.monitor.MonitorInfo.MemInfo;
-import net.oopscraft.application.monitor.MonitorInfo.OsInfo;
-import net.oopscraft.application.monitor.MonitorInfo.ThreadInfo;
+import net.oopscraft.application.util.monitor.MonitorInfo.ClassInfo;
+import net.oopscraft.application.util.monitor.MonitorInfo.MemInfo;
+import net.oopscraft.application.util.monitor.MonitorInfo.OsInfo;
+import net.oopscraft.application.util.monitor.MonitorInfo.ThreadInfo;
 import net.oopscraft.application.util.process.ProcessExecutor;
 import net.oopscraft.application.util.process.ProcessStreamHandler;
 

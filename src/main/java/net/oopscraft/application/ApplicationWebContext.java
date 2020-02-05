@@ -30,7 +30,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import net.oopscraft.application.core.JsonConverter;
-import net.oopscraft.application.monitor.MonitorAgent;
+import net.oopscraft.application.util.monitor.MonitorAgent;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 @EnableWebMvc

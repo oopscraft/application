@@ -1,4 +1,4 @@
-package net.oopscraft.application.monitor;
+package net.oopscraft.application.util.monitor;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
