@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.entity.BoardArticle;
 import net.oopscraft.application.core.PageInfo;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/board")
 public class BoardController {

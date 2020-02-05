@@ -22,17 +22,13 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Formula;
 
 import net.oopscraft.application.core.jpa.BooleanToStringConverter;
+import net.oopscraft.application.security.SecurityPolicy;
 import net.oopscraft.application.user.entity.Authority;
-
 
 @Entity
 @Table(name = "APP_BORD_INFO")
 public class Board {
 
-	public enum Policy {
-		ANONYMOUS, AUTHENTICATED, AUTHORIZED
-	}
-	
 	@Id
 	@Column(name = "BORD_ID", length = 32)
 	String id;
@@ -78,7 +74,7 @@ public class Board {
 	
 	@Column(name = "ACES_PLCY")
 	@Enumerated(EnumType.STRING)
-	Policy accessPolicy = Policy.ANONYMOUS;
+	SecurityPolicy accessPolicy = SecurityPolicy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
@@ -92,7 +88,7 @@ public class Board {
 
 	@Column(name = "PLCY_READ")
 	@Enumerated(EnumType.STRING)
-	Policy readPolicy = Policy.ANONYMOUS;
+	SecurityPolicy readPolicy = SecurityPolicy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
@@ -106,7 +102,7 @@ public class Board {
 	
 	@Column(name = "PLCY_WRIT")
 	@Enumerated(EnumType.STRING)
-	Policy writePolicy = Policy.ANONYMOUS;
+	SecurityPolicy writePolicy = SecurityPolicy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
@@ -172,11 +168,11 @@ public class Board {
 		this.articleCount = articleCount;
 	}
 
-	public Policy getAccessPolicy() {
+	public SecurityPolicy getAccessPolicy() {
 		return accessPolicy;
 	}
 
-	public void setAccessPolicy(Policy accessPolicy) {
+	public void setAccessPolicy(SecurityPolicy accessPolicy) {
 		this.accessPolicy = accessPolicy;
 	}
 
@@ -188,7 +184,7 @@ public class Board {
 		this.accessAuthorities = accessAuthorities;
 	}
 
-	public Policy getReadPolicy() {
+	public SecurityPolicy getReadPolicy() {
 		return readPolicy;
 	}
 
@@ -200,15 +196,15 @@ public class Board {
 		this.readAuthorities = readAuthorities;
 	}
 
-	public void setReadPolicy(Policy readPolicy) {
+	public void setReadPolicy(SecurityPolicy readPolicy) {
 		this.readPolicy = readPolicy;
 	}
 
-	public Policy getWritePolicy() {
+	public SecurityPolicy getWritePolicy() {
 		return writePolicy;
 	}
 
-	public void setWritePolicy(Policy writePolicy) {
+	public void setWritePolicy(SecurityPolicy writePolicy) {
 		this.writePolicy = writePolicy;
 	}
 	

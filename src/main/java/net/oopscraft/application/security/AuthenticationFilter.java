@@ -6,22 +6,18 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.user.entity.User;
 import net.oopscraft.application.util.StringUtility;
 
@@ -38,15 +34,7 @@ public class AuthenticationFilter extends GenericFilterBean   {
     	HttpServletRequest request = (HttpServletRequest) req;
         String uri = request.getRequestURI();
         String method = request.getMethod();
-        LOGGER.debug(String.format("[%s][%s]",  method, uri));
-        
-        
-        // print remember cookie for test
-        if(request.getCookies() != null) {
-	        for(Cookie cookie : request.getCookies()) {
-	        	LOGGER.debug("Cookie:{}", new TextTable(cookie));
-	        }
-        }
+        LOGGER.debug("[{}][{}]",  method, uri);
         
         // JWT Token
         String authorization = request.getHeader(AUTHORIZATION_HEADER);
@@ -61,10 +49,8 @@ public class AuthenticationFilter extends GenericFilterBean   {
         		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
         		SecurityContext securityContext = SecurityContextHolder.getContext();
         		securityContext.setAuthentication(authentication);
-            }catch(Exception e) {
-            	AuthenticationException authenticationException = new BadCredentialsException("Invalid Token Claims.");
-            	LOGGER.error(authenticationException.getMessage());
-            	throw authenticationException;
+            }catch(Exception ignore) {
+            	LOGGER.warn("Invalid Authentication Token{}[{{}]", AUTHORIZATION_HEADER, authorization);
             }
         } 
         

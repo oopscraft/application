@@ -38,7 +38,7 @@ public class AdminController {
 	
 	@Autowired
 	AuthorityService authorityService;
-	
+
 	/**
 	 * Forwards view page
 	 * @return

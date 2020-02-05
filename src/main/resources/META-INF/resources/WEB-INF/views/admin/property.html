@@ -158,7 +158,7 @@
 	<div class="app-row">
 		<div class="app-col">
 			<h1>
-				<img class="icon large" src="/static/image/icon_property.png"/>
+				<img class="icon large" th:src="@{/static/image/icon_property.png}"/>
 				<span data-th-text="#{application.label.property}+' '+#{application.label.management}"></span>
 			</h1>
 		</div>
@@ -177,7 +177,7 @@
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="getProperties(1);">
-						<img src="/static/image/icon_search.png" class="icon"/>
+						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
 						<span data-th-text="#{application.label.search}"></span>
 					</button>
 				</div>
@@ -227,20 +227,20 @@
 		<div class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col">
-					<img class="icon" src="/static/image/icon_property.png"/>
+					<img class="icon" th:src="@{/static/image/icon_property.png}"/>
 					<span data-th-text="#{application.label.property}+' '+#{application.label.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="addPropertyButton" class="button" onclick="addProperty();">
-						<img src="/static/image/icon_create.png" class="icon"/>
+						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
 						<span data-th-text="#{application.label.new}"></span>
 					</button>
 					<button id="deletePropertyButton" class="button" onclick="deleteProperty();">
-						<img src="/static/image/icon_delete.png" class="icon"/>
+						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 						<span data-th-text="#{application.label.delete}"></span>
 					</button>
 					<button id="savePropertyButton" class="button" onclick="saveProperty();">
-						<img src="/static/image/icon_save.png" class="icon"/>
+						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 						<span data-th-text="#{application.label.save}"></span>
 					</button>
 				</div>
