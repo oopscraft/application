@@ -12,6 +12,7 @@ import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.plugin.Interceptor;
+import org.hibernate.cfg.AvailableSettings;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -19,8 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
@@ -39,14 +41,21 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.oopscraft.application.core.PasswordBasedEncryptor;
 import net.oopscraft.application.core.mybatis.PageInterceptor;
 
 /**
  * Application Context Configuration
  * @author chomookun@gmail.com
  * @version 0.0.1
- * @see    None
  */
+@Configuration
+@ComponentScan(
+	basePackages = "net.oopscraft.application",
+	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
+	lazyInit = true,
+	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,RestController.class,ControllerAdvice.class,EnableWebSecurity.class})
+)
 @EnableJpaRepositories(
 	basePackages = "net.oopscraft.application",
 	entityManagerFactoryRef = "entityManagerFactory"
@@ -57,16 +66,10 @@ import net.oopscraft.application.core.mybatis.PageInterceptor;
 	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
 	sqlSessionFactoryRef = "sqlSessionFactory"
 )
-@ComponentScan(
-	basePackages = "net.oopscraft.application",
-	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
-	lazyInit = true,
-	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,RestController.class,ControllerAdvice.class,EnableWebSecurity.class})
-)
 public class ApplicationContext {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContext.class);
-	
+
 	static String propertiesPath = "conf/application.properties";
 	static Properties properties;
 	
@@ -78,8 +81,14 @@ public class ApplicationContext {
 	 * Creates static resources 
 	 */
 	static {
+		LOGGER.info("Loads properties file[{}]", propertiesPath);
 		try {
 			properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(new File(propertiesPath)));
+			PasswordBasedEncryptor pbEncryptor = new PasswordBasedEncryptor();
+			for(String propertyName : properties.stringPropertyNames()) {
+				String value = properties.getProperty(propertyName);
+				properties.put(propertyName, pbEncryptor.decryptIdentifiedValue(value));
+			}
 		}catch(Exception e) {
 			e.printStackTrace(System.err);
 		}
@@ -118,6 +127,8 @@ public class ApplicationContext {
 		
 		// creates dastaSource instance.
 		dataSource = BasicDataSourceFactory.createDataSource(datasourceProperties);
+		
+		// returns
 		return dataSource;
 	}
 	
@@ -136,13 +147,24 @@ public class ApplicationContext {
 
 		// defines vendor adapter
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setGenerateDdl(false);
+        Properties jpaProperties = new Properties();
+        jpaProperties.setProperty(AvailableSettings.HQL_BULK_ID_STRATEGY, "org.hibernate.hql.spi.id.inline.InlineIdsOrClauseBulkIdStrategy");	// Bulk-id strategies when you can’t use temporary tables
+
+		String generateDdl = System.getProperty("application.entityManagerFactory.generateDdl");
+		if("true".equals(generateDdl)) {
+			vendorAdapter.setGenerateDdl(true);
+			jpaProperties.setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop");
+			jpaProperties.setProperty(AvailableSettings.HBM2DDL_IMPORT_FILES, "classpath:/net/oopscraft/application/import.sql");
+		}else {
+			vendorAdapter.setGenerateDdl(false);
+		}
         if(LOGGER.isDebugEnabled() == true) {
         	vendorAdapter.setShowSql(true);
         }
         vendorAdapter.setDatabasePlatform(properties.getProperty("application.entityManagerFactory.databasePlatform"));
         entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
-
+        entityManagerFactory.setJpaProperties(jpaProperties);
+        
         // sets packagesToScan property.
 		List<String> packagesToScans = new ArrayList<String>();
 		packagesToScans.add(this.getClass().getPackage().getName());
@@ -153,12 +175,9 @@ public class ApplicationContext {
 			}
 		}
         entityManagerFactory.setPackagesToScan(packagesToScans.toArray(new String[packagesToScans.size()-1]));
+
         
-        // JPA properties
-        Properties jpaProperties = new Properties();
-        jpaProperties.setProperty("hibernate.hql.bulk_id_strategy", "org.hibernate.hql.spi.id.inline.InlineIdsOrClauseBulkIdStrategy");	// Bulk-id strategies when you can’t use temporary tables	
-        entityManagerFactory.setJpaProperties(jpaProperties);
-        
+        // return
         entityManagerFactory.afterPropertiesSet();
         return entityManagerFactory;
 	}
@@ -238,7 +257,7 @@ public class ApplicationContext {
 	@Bean
 	public ReloadableResourceBundleMessageSource messageSource() throws Exception {
 		ReloadableResourceBundleMessageSource applicationMessageSource = new ReloadableResourceBundleMessageSource();
-		applicationMessageSource.setBasename("classpath:conf/i18n/message");
+		applicationMessageSource.setBasename("classpath:net/oopscraft/application/message");
 		applicationMessageSource.setFallbackToSystemLocale(false);
 		applicationMessageSource.setDefaultEncoding("UTF-8");
 		applicationMessageSource.setUseCodeAsDefaultMessage(true);
@@ -246,4 +265,8 @@ public class ApplicationContext {
 		return applicationMessageSource;
 	}
 
+
+
+	
+	
 }

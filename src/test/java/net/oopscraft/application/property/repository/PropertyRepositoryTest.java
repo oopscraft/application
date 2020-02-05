@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.property.dao.PropertyRepository;
+import net.oopscraft.application.property.PropertyRepository;
 import net.oopscraft.application.property.entity.Property;
 
 public class PropertyRepositoryTest extends ApplicationTestRunner {
@@ -21,11 +21,6 @@ public class PropertyRepositoryTest extends ApplicationTestRunner {
 	
 	public PropertyRepositoryTest() throws Exception {
 		super();
-	}
-	
-	@Before
-	public void before() throws Exception {
-		propertyRepository = this.getJpaRepository(PropertyRepository.class);
 	}
 	
 	@Test 

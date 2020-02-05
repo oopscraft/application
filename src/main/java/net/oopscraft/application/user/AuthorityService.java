@@ -1,14 +1,19 @@
 package net.oopscraft.application.user;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.user.dao.AuthorityRepository;
 import net.oopscraft.application.user.entity.Authority;
 
 @Service
@@ -16,8 +21,6 @@ public class AuthorityService {
 	
 	@Autowired
 	AuthorityRepository authorityRepository;
-	
-	public enum AuthoritySearchType { ID,NAME	}
 	
 	/**
 	 * Gets authorities
@@ -27,66 +30,58 @@ public class AuthorityService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Authority> getAuthorities(PageInfo pageInfo, AuthoritySearchType searchType, String searchValue) throws Exception {
-		Pageable pageable = pageInfo.toPageable();
-		Page<Authority> authoritiesPage = null;
-		if(searchType == null) {
-			authoritiesPage = authorityRepository.findAll(pageable);
-		}else {
-			switch(searchType) {
-				case ID :
-					authoritiesPage = authorityRepository.findByIdContaining(searchValue, pageable);
-				break;
-				case NAME :
-					authoritiesPage = authorityRepository.findByNameContaining(searchValue, pageable);
-				break;
+	public List<Authority> getAuthorities(final Authority authority, PageInfo pageInfo) throws Exception {
+		Page<Authority> authorityPage = authorityRepository.findAll(new  Specification<Authority>() {
+			@Override
+			public Predicate toPredicate(Root<Authority> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+				List<Predicate> predicates = new ArrayList<Predicate>();
+				if(authority.getId() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), authority.getId() + '%'));
+					predicates.add(predicate);
+				}
+				if(authority.getName() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), authority.getName() + '%'));
+					predicates.add(predicate);
+				}
+				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}
-		if (pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(authoritiesPage.getTotalElements());
-		}
-		List<Authority> authorities = authoritiesPage.getContent();
-		return authorities;
+		}, pageInfo.toPageable());
+		return authorityPage.getContent();
 	}
-	
+
 	/**
-	 * Gets detail of authority
-	 * 
+	 * Returns authority
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
 	public Authority getAuthority(String id) throws Exception {
-		Authority authority = authorityRepository.findOne(id);
-		return authority;
+		return authorityRepository.findOne(id);
 	}
 	
 	/**
 	 * Saves authority
-	 * 
 	 * @param authority
 	 * @return
 	 * @throws Exception
 	 */
-	public void saveAuthority(Authority authority) throws Exception {
+	public Authority saveAuthority(Authority authority) throws Exception {
 		Authority one = authorityRepository.findOne(authority.getId());
 		if(one == null) {
-			one = new Authority();
-			one.setId(authority.getId());
+			one = new Authority(authority.getId());
 		}
 		one.setName(authority.getName());
+		one.setIcon(authority.getIcon());
 		one.setDescription(authority.getDescription());
-		authorityRepository.save(one);
+		return authorityRepository.save(one);
 	}
 	
 	/**
 	 * Deletes authority
-	 * @param id
-	 * @return
+	 * @param authority
 	 * @throws Exception
 	 */
-	public void deleteAuthority(String id) throws Exception {
-		Authority authority = authorityRepository.getOne(id);
+	public void deleteAuthority(Authority authority) throws Exception {
 		authorityRepository.delete(authority);
 	}
 	

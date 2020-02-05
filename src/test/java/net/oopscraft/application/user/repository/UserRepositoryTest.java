@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.user.dao.UserRepository;
+import net.oopscraft.application.user.UserRepository;
 import net.oopscraft.application.user.entity.User;
 
 public class UserRepositoryTest extends ApplicationTestRunner {
@@ -22,18 +22,14 @@ public class UserRepositoryTest extends ApplicationTestRunner {
 	public UserRepositoryTest() throws Exception {
 		super();
 	}
-	
-	@Before
-	public void before() throws Exception {
-		userRepository = this.getJpaRepository(UserRepository.class);
-	}
+
 	
 	@Test 
 	public void testInsert() throws Exception {
 		User user = new User();
 		user.setId(USER_ID);
 		user.setName(user.getId());
-		user.setSignature("User Signature");
+		user.setProfile("User Signature");
 		userRepository.save(user);
 		userRepository.flush();
 		assert(true);
@@ -44,7 +40,7 @@ public class UserRepositoryTest extends ApplicationTestRunner {
 		testInsert();	
 		User one = userRepository.findOne(USER_ID);
 		one.setName("Test Name");
-		one.setSignature(null);
+		one.setProfile(null);
 		userRepository.save(one);
 		userRepository.flush();
 		assert(true);
@@ -58,13 +54,13 @@ public class UserRepositoryTest extends ApplicationTestRunner {
 		assert(true);
 	}
 
-	@Test
-	public void testFindAllByOrderByJoinDateDesc() throws Exception {
-		Pageable pageable = new PageRequest(0, 10);
-		Page<User> page = userRepository.findAllByOrderBySystemDataYnDescJoinDateDesc(pageable);
-		List<User> users = page.getContent();
-		System.out.println(new TextTable(users));
-		assert(true);
-	}
+//	@Test
+//	public void testFindAllByOrderByJoinDateDesc() throws Exception {
+//		Pageable pageable = new PageRequest(0, 10);
+//		Page<User> page = userRepository.findAllByOrderByJoinDateDesc(pageable);
+//		List<User> users = page.getContent();
+//		System.out.println(new TextTable(users));
+//		assert(true);
+//	}
 
 }

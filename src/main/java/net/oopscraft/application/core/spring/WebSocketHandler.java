@@ -27,9 +27,7 @@ public abstract class WebSocketHandler extends TextWebSocketHandler {
 			onDestroy();
 		}catch(Exception ignore){ 
 			LOG.warn(ignore.getMessage(), ignore);
-		}finally{ 
-			super.finalize(); 
-		} 
+		}
 	} 
 	
 	@Override

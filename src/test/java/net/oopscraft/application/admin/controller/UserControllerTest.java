@@ -3,9 +3,9 @@ package net.oopscraft.application.admin.controller;
 import org.junit.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import net.oopscraft.application.core.JsonUtility;
+import net.oopscraft.application.ApplicationTestRunnerWithSpring;
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
-import net.oopscraft.application.test.ApplicationTestRunnerWithSpring;
 import net.oopscraft.application.user.entity.User;
 
 @WithMockUser(username = "junit", authorities = {"ADMIN","ADMIN_USER"})
@@ -37,10 +37,10 @@ public class UserControllerTest extends ApplicationTestRunnerWithSpring {
 		user.setName("junit");
 		user.setNickname("junit");
 		user.setEmail("junit@gmail.com");
-		user.setPhone("010-1234-1234");
-		ValueMap userMap = JsonUtility.toObject(JsonUtility.toJson(user), ValueMap.class);
+		user.setMobile("010-1234-1234");
+		ValueMap userMap = JsonConverter.toObject(JsonConverter.toJson(user), ValueMap.class);
 		userMap.set("password", "1234");
-		String payload = JsonUtility.toJson(userMap);
+		String payload = JsonConverter.toJson(userMap);
 		this.performPostJson("/admin/user/saveUser", payload);
 		assert(true);
 	}

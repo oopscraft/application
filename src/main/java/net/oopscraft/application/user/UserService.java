@@ -9,164 +9,121 @@
 package net.oopscraft.application.user;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtility;
-import net.oopscraft.application.user.dao.UserRepository;
-import net.oopscraft.application.user.entity.Authority;
-import net.oopscraft.application.user.entity.Group;
-import net.oopscraft.application.user.entity.Role;
 import net.oopscraft.application.user.entity.User;
 
 @Service
 public class UserService {
 	
-	public enum UserSearchType { ID, NAME, EMAIL, PHONE	}
-
 	@Autowired
 	UserRepository userRepository;
 	
 	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
+	public static void main(String[] args) throws Exception {
+		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		String password = passwordEncoder.encode("admin");
+		System.out.println(password);
+	}
+	
 	/**
-	 * Gets list of user by search condition and value
+	 * Return users.
+	 * @param user
 	 * @param pageInfo
-	 * @param searchType
-	 * @param searchValue
 	 * @return
 	 * @throws Exception
 	 */
-	public List<User> getUsers(PageInfo pageInfo, UserSearchType searchType, String searchValue) throws Exception {
-		Pageable pageable = pageInfo.toPageable();
-		Page<User> usersPage = null;
-		if(searchType == null) {
-			usersPage = userRepository.findAll(pageable);
-		}else {
-			switch(searchType) {
-				case ID :
-					usersPage = userRepository.findByIdStartingWith(searchValue, pageable);
-				break;
-				case NAME :
-					usersPage = userRepository.findByNameStartingWith(searchValue, pageable);
-				break;
-				case EMAIL: 
-					usersPage = userRepository.findByEmailStartingWith(searchValue, pageable);
-				break;
-				case PHONE:
-					usersPage = userRepository.findByPhoneStartingWith(searchValue, pageable);
-				break;
+	public List<User> getUsers(final User user, PageInfo pageInfo) throws Exception {
+		Page<User> usersPage = userRepository.findAll(new  Specification<User>() {
+			@Override
+			public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+				List<Predicate> predicates = new ArrayList<Predicate>();
+				if(user.getId() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), user.getId() + '%'));
+					predicates.add(predicate);
+				}
+				if(user.getName() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), user.getName() + '%'));
+					predicates.add(predicate);
+				}
+				if(user.getEmail() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("email").as(String.class), user.getEmail() + '%'));
+					predicates.add(predicate);
+				}
+				if(user.getStatus() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(root.get("status"), user.getStatus()));
+					predicates.add(predicate);
+				}
+				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}
-		if (pageInfo.isEnableTotalCount() == true) {
-			pageInfo.setTotalCount(usersPage.getTotalElements());
-		}
-		List<User> users = usersPage.getContent();
-		return users;
+		}, pageInfo.toPageable());
+		pageInfo.setTotalCount(usersPage.getTotalElements());
+		return usersPage.getContent();
 	}
-
+	
 	/**
 	 * Gets user
-	 * 
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
 	public User getUser(String id) throws Exception {
-		User user = userRepository.findOne(id);
-		return user;
+		return userRepository.findOne(id);
 	}
-
+	
 	/**
-	 * Saves user details
-	 * 
+	 * Saves user.
 	 * @param user
+	 * @return
 	 * @throws Exception
 	 */
 	public User saveUser(User user) throws Exception {
-		
-		// checks validation
-		if(StringUtility.isEmpty(user.getId())) {
-			throw new IllegalArgumentException("invalid id");
-		}
-		if(StringUtility.isEmpty(user.getName())) {
-			throw new IllegalArgumentException("invalid name");
-		}
-		if(StringUtility.isEmpty(user.getNickname())) {
-			throw new IllegalArgumentException("invalid nickname");
-		}
-		if(StringUtility.isEmpty(user.getEmail())) {
-			throw new IllegalArgumentException("invalid email");
-		}
-		
-		// In case of new user
 		User one = userRepository.findOne(user.getId());
 		if(one == null) {
-			one = new User();
-			one.setId(user.getId());
-			one.setJoinDate(new Date());
-			one.setGroups(new ArrayList<Group>());
-			one.setRoles(new ArrayList<Role>());
-			one.setAuthorities(new ArrayList<Authority>());
-			
-			// Encodes password
+			one = new User(user.getId());
 			one.setPassword(passwordEncoder.encode(user.getPassword()));
 		}
-		
 		one.setName(user.getName());
 		one.setNickname(user.getNickname());
-		one.setEmail(user.getEmail());
 		one.setStatus(user.getStatus());
+		one.setEmail(user.getEmail());
+		one.setMobile(user.getMobile());
+		one.setPhoto(user.getPhoto());
 		one.setLocale(user.getLocale());
-		one.setPhone(user.getPhone());
-		
-		// AVATAR property
-		if(user.getAvatar() != null) {
-			if(user.getAvatar().length() > 1024*1024) {
-				throw new IllegalArgumentException("Avatar image size exceeds the limit.");
-			}
-		}
-		one.setAvatar(user.getAvatar());
-		
-		// Signature property
-		if(user.getSignature() != null) {
-			if(user.getSignature().length() > 1024*1024) {
-				throw new IllegalArgumentException("Signature size exceeds the limit.");
-			}
-		}
-		one.setSignature(user.getSignature());
-		
-		// add groups
-		one.getGroups().clear();
-		for (Group group : user.getGroups()) {
-			one.getGroups().add(group);
-		}
-		
-		// add authorities
-		one.getAuthorities().clear();
-		for (Authority authority : user.getAuthorities()) {
-			one.getAuthorities().add(authority);
-		}
-		
-		// add authorities
-		one.getRoles().clear();
-		for (Role role : user.getRoles()) {
-			one.getRoles().add(role);
-		}
-		
+		one.setProfile(user.getProfile());
+		one.setJoinDate(user.getJoinDate());
+		one.setCloseDate(user.getCloseDate());
+		one.setGroups(user.getGroups());
+		one.setRoles(user.getRoles());
+		one.setAuthorities(user.getAuthorities());
 		return userRepository.save(one);
 	}
 	
 	/**
-	 * Verify Password
+	 * Deletes user
+	 * @param user
+	 * @throws Exception
+	 */
+	public void deleteUser(User user) throws Exception {
+		userRepository.delete(user);
+	}
+	
+	/**
+	 * Verifies Password
 	 * @param id
 	 * @param password
 	 * @return
@@ -206,19 +163,6 @@ public class UserService {
 		
 		// Saves user
 		userRepository.save(one);
-	}
-
-	/**
-	 * Removes user
-	 * 
-	 * @param id
-	 * @throws Exception
-	 */
-	public void deleteUser(String id) throws Exception {
-		User user = userRepository.findOne(id);
-		if(user != null) {
-			userRepository.delete(user);
-		}
 	}
 
 }

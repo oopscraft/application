@@ -7,8 +7,8 @@ import java.util.List;
 import org.junit.Test;
 
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.core.restclient.RestRequest;
-import net.oopscraft.application.core.restclient.RestRequestFactory;
+import net.oopscraft.application.util.restclient.RestRequest;
+import net.oopscraft.application.util.restclient.RestRequestFactory;
 
 public class RestRequestFactoryTest {
 

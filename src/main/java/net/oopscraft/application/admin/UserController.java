@@ -13,122 +13,98 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.JsonUtility;
-import net.oopscraft.application.core.LocaleUtility;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.core.StringUtility;
 import net.oopscraft.application.user.UserService;
-import net.oopscraft.application.user.UserService.UserSearchType;
 import net.oopscraft.application.user.entity.User;
 
-@PreAuthorize("hasAuthority('ADMIN_USER')")
+//@PreAuthorize("hasAuthority('ADMIN_USER')")
 @Controller
 @RequestMapping("/admin/user")
 public class UserController {
-
-	@Autowired
-	UserService userService;
-
+	
 	@Autowired
 	HttpServletResponse response;
-
+	
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	MessageSource messageSource;
+	
 	/**
-	 * Forwards user page
-	 * 
+	 * Forwards user management page
 	 * @return
 	 * @throws Exception
 	 */
-	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView user() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/user.tiles");
-		modelAndView.addObject("locales", LocaleUtility.getLocales());
-		modelAndView.addObject("statuses", User.Status.values());
+	public ModelAndView index() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("admin/user.html");
 		return modelAndView;
 	}
-
+	
 	/**
-	 * Gets users
-	 * 
-	 * @param key
-	 * @param value
-	 * @param page
-	 * @param rows
+	 * Returns list of users
+	 * @param user
+	 * @param pageInfo
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getUsers(
-		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows,
-		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-		@RequestParam(value = "searchType", required = false) String searchType,
-		@RequestParam(value = "searchValue", required = false) String searchValue
-	) throws Exception {
-		PageInfo pageInfo = new PageInfo(rows, page, true);
-		UserSearchType userSearchType= null;
-		if(StringUtility.isNotEmpty(searchType)) {
-			userSearchType = UserSearchType.valueOf(searchType);
-		}
-		List<User> users = userService.getUsers(pageInfo, userSearchType, searchValue);
+	public List<User> getUsers(@ModelAttribute User user,@ModelAttribute PageInfo pageInfo) throws Exception {
+		pageInfo.setEnableTotalCount(true);
+		List<User> users = userService.getUsers(user, pageInfo);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
-		return JsonUtility.toJson(users);
+		return users;
 	}
-
+	
 	/**
-	 * Gets user details.
-	 * 
+	 * Returns specified user.
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String getUser(@RequestParam(value = "id") String id) throws Exception {
-		User user = userService.getUser(id);
-		return JsonUtility.toJson(user);
+	public User getUser(@ModelAttribute User user) throws Exception {
+		return userService.getUser(user.getId());
 	}
-
+	
 	/**
-	 * Saves user details.
-	 * 
-	 * @param payload
+	 * Saves specified user.
+	 * @param user
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "saveUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public String saveUser(@RequestBody String payload) throws Exception {
-		User user = JsonUtility.toObject(payload, User.class);
-		user = userService.saveUser(user);
-		return JsonUtility.toJson(user);
+	public User saveUser(@RequestBody User user) throws Exception {
+		return userService.saveUser(user);
 	}
 	
 	/**
-	 * Deletes user.
-	 * 
-	 * @param payload
-	 * @return
+	 * Deletes specified user
+	 * @param user
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "deleteUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "deleteUser", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteUser(@RequestParam(value = "id") String id) throws Exception {
-		userService.deleteUser(id);
+	public void deleteUser(@RequestBody User user) throws Exception {
+		userService.deleteUser(user);
 	}
 
 }

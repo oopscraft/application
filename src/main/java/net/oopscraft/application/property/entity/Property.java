@@ -15,17 +15,23 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 public class Property extends SystemEntity {
 
 	@Id
-	@Column(name = "PROP_ID")
+	@Column(name = "PROP_ID", length = 32)
 	String id;
 
-	@Column(name = "PROP_NAME")
+	@Column(name = "PROP_NAME", length = 1024)
 	String name;
 
-	@Column(name = "PROP_VAL")
+	@Column(name = "PROP_VAL", length = Integer.MAX_VALUE)
 	String value;
 
-	@Column(name = "PROP_DESC")
+	@Column(name = "PROP_DESC", length = Integer.MAX_VALUE)
 	String description;
+	
+	public Property() {}
+	
+	public Property(String id) {
+		this.id = id;
+	}
 
 	public String getId() {
 		return id;
