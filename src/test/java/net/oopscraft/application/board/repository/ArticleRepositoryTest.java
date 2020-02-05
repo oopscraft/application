@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
+import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.article.ArticleRepository;
 import net.oopscraft.application.article.entity.Article;
 import net.oopscraft.application.board.BoardRepository;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.test.ApplicationTestRunner;
 import net.oopscraft.application.util.EncodeUtility;
 
 public class ArticleRepositoryTest extends ApplicationTestRunner {

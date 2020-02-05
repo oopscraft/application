@@ -3,8 +3,8 @@ package net.oopscraft.application.board;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.oopscraft.application.ApplicationTestRunnerWithSpring;
 import net.oopscraft.application.article.ArticleService;
-import net.oopscraft.application.test.ApplicationTestRunnerWithSpring;
 
 public class ArticleServiceTest extends ApplicationTestRunnerWithSpring {
 	

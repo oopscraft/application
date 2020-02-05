@@ -5,10 +5,10 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.code.CodeRepository;
 import net.oopscraft.application.code.entity.Code;
 import net.oopscraft.application.core.TextTable;
-import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class CodeRepositoryTest extends ApplicationTestRunner {
 	
