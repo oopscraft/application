@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/admin.html}">
+<div layout:fragment="content">
+	<script>
+		// document ready
+		$(document).ready(function() {
+		    getUsers();
+		    disableDetail(true);
+		});
+	
+		var search = new duice.Map({
+			key: null,
+			value: null,
+			status: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		var users = new duice.List();
+		var user = new duice.Map();
+		var userGroups = new duice.List();
+		var userRoles = new duice.List();
+		var userAuthorities = new duice.List();
+
+		// adds index changed event listener
+		users.onAfterChangeIndex(function(index){
+			if(index > -1){
+				var id = this.get(index).get('id');
+				getUser(id);	
+			}
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			user.setDisable(disable);
+			$('#deleteUserButton').prop('disabled', disable);
+			$('#saveUserButton').prop('disabled', disable);
+			$('#changePasswordButton').prop('disabled', disable);
+		}
+		
+		/**
+		 * Clears detail
+		 */
+		function clearDetail(){
+			user.clear();
+			userGroups.clear();
+			userRoles.clear();
+			userAuthorities.clear();
+		}
+		
+		/**
+		 * Gets users
+		 */
+		function getUsers(page) {
+			if(page){
+				search.set('page',page);
+			}
+			var data = {};
+			if(search.get('key')){
+				data[search.get('key')] = search.get('value');
+			}
+			if(search.get('status')){
+				data.status = search.get('status');
+			}
+			data.page = search.get('page');
+			data.rows = search.get('rows');
+			$.ajax({
+				 url: 'user/getUsers'
+				,type: 'GET'
+				,data: data
+				,success: function(data, textStatus, jqXHR) {
+					users.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					
+					// sets current user
+					users.forEach(function(row,index){
+						if(row.get('id') === user.get('id')){
+							users.setIndex(index);
+							return false;
+						}
+					});
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Gets specified user
+		 */
+		function getUser(id){
+			$.ajax({
+				 url: 'user/getUser'
+				,type: 'GET'
+				,data: {id:id}
+				,success: function(data, textStatus, jqXHR) {
+					user.fromJson(data);
+					userGroups.fromJson(data.groups);
+					userRoles.fromJson(data.roles);
+					userAuthorities.fromJson(data.authorities);
+					disableDetail(false);
+					user.setReadonly('id', true);
+					$('#passwordTr').hide();
+					$('#passwordConfirmTr').hide();
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Adds user
+		 */
+		function addUser() {
+			clearDetail();
+			disableDetail(false);
+			user.setReadonly('id',false);
+			$('#passwordTr').show();
+			$('#passwordConfirmTr').show();
+		}
+		
+		/**
+		 * Saves user
+		 */
+		function saveUser(){
+			
+			// checks changes
+			if(!user.isDirty()
+			&& !userGroups.isDirty()
+			&& !userRoles.isDirty()
+			&& !userAuthorities.isDirty()
+			){
+				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
+				return;
+			}
+			
+			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.user})}]]")
+			.onAfterConfirm(function(){
+				var data = user.toJson();
+				data.groups = userGroups.toJson();
+				data.roles = userRoles.toJson();
+				data.authorities = userAuthorities.toJson();
+				$.ajax({
+					 url: 'user/saveUser'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert('[[#{application.message.saveComplete(#{application.label.user})}]]')
+						.onAfterClose(function(){
+							getUsers();
+						}).open();
+			   	 	}
+				});	
+			}).open();
+		}
+		
+		/**
+		 * Deletes user
+		 */
+		function deleteUser(){
+			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.user})}]]")
+			.onAfterConfirm(function(){
+				$.ajax({
+					 url: 'user/deleteUser'
+					,type: 'DELETE'
+					,data: JSON.stringify(user.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.user})}]]")
+						.onAfterClose(function(){
+							clearDetail();
+							getUsers();
+						}).open();
+			   	 	}
+				});
+			}).open();
+		
+		}
+		
+		/**
+		 * Adds user group
+		 */
+		function addUserGroup() {
+			__groupDialog.open({
+				selectedGroups: userGroups,
+				disabledGroups: userGroups,
+				onAfterConfirm: function(selectedGroups){
+					selectedGroups.forEach(function(selectedGroup){
+						userGroups.add(selectedGroup);
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes user group
+		 */
+		function removeUserGroup(index) {
+			userGroups.remove(index);
+		}
+		
+		/**
+		 * Adds user role
+		 */
+		function addUserRole() {
+			__roleDialog.open({
+				disabledRoles: userRoles,
+				onAfterConfirm: function(selectedRoles){
+					selectedRoles.forEach(function(selectedRole){
+						userRoles.add(selectedRole);
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes user role
+		 */
+		function removeUserRole(index) {
+			userRoles.remove(index);
+		}
+		
+		/**
+		 * Adds user authority
+		 */
+		function addUserAuthority() {
+			__authorityDialog.open({
+				disabledAuthorities: userAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						userAuthorities.add(selectedAuthority);
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes user authority
+		 */
+		function removeUserAuthority(index) {
+			userAuthorities.remove(index);
+		}
+
+		/**
+		 * Changes password
+		 */
+		function changePassword() {
+			alert('fdsa');
+		}
+		
+		/**
+		 * Confirms change password
+		 */
+		function changePasswordConfirm() {
+			
+		}
+	</script>
+	<div class="app-row">
+		<div class="app-col">
+			<h1>
+				<img class="icon large" th:src="@{/static/image/icon_user.png}"/>
+				<span data-th-text="#{application.label.user} + ' ' + #{application.label.management}"></span>
+			</h1>
+		</div>
+	</div>
+	<hr class="hr"/>
+	<div class="app-row">
+		<!-- ====================================================== -->
+		<!-- List													-->
+		<!-- ====================================================== -->
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col" style="width:50%;">
+					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
+						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.label.id}">ID</option>
+						<option value="name" data-th-text="#{application.label.name}">Name</option>
+						<option value="email" data-th-text="#{application.label.email}">Email</option>
+					</select>
+					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
+					<span class="content-search__label">Status</span>
+					<select is="duice-ui-select" data-duice-bind="search,status" style="width:125px;">
+						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
+						<option value="ACTIVE">Active</option>
+						<option value="SUSPENDED">Suspended</option>
+						<option value="CLOSED">Closed</option>
+					</select>
+				</div>
+				<div class="app-col right">
+					<button class="button" onclick="getUsers(1);">
+						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
+						<span data-th-text="#{application.label.search}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+						data-duice-bind="users,user" 
+						data-duice-selectable="true"
+						style="width:100%;">
+						<col style="width:50px;"/>					
+						<col/>
+						<col/>
+						<col/>
+						<col/>
+						<col style="width:110px;"/>
+						<thead>
+							<tr>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.id}">ID</th>
+								<th data-th-text="#{application.label.name}">Name</th>
+								<th data-th-text="#{application.label.nickname}">Nickname</th>
+								<th data-th-text="#{application.label.email}">Email</th>
+								<th data-th-text="#{application.label.status}">Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center">
+									<span is="duice-ui-scriptlet" data-duice-bind="users">
+										return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+									</span>
+								</td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="user,photo" th:src="@{/static/image/icon_user.png}" class="icon small"/>
+									<span is="duice-ui-span" data-duice-bind="user,id"></span>
+								</td>
+								<td><span is="duice-ui-span" data-duice-bind="user,name"></span></td>
+								<td><span is="duice-ui-span" data-duice-bind="user,nickname"></span></td>
+								<td><span is="duice-ui-span" data-duice-bind="user,email"></span></td>
+								<td class="text-center"><span is="duice-ui-span" data-duice-bind="user,status"></span></td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="7">
+									<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+										<li onclick="getUsers();"></li>
+									</ul>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>		
+		</div>
+		<!-- ====================================================== -->
+		<!-- Detail													-->
+		<!-- ====================================================== -->
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" th:src="@{/static/image/icon_user.png}"/>
+					<span data-th-text="#{application.label.user} + ' ' + #{application.label.details}" class="font-bold"></span>
+				</div>
+				<div class="app-col right">
+					<button id="changePasswordButton" class="button" onclick="changePassword();">
+						<img th:src="@{/static/image/icon_password.png}" class="icon"/>
+						<span data-th-text="#{application.label.passwordChange}"></span>
+					</button>
+					|
+					<button id="addUserButton" class="button" onclick="addUser();">
+						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
+						<span data-th-text="#{application.label.new}"></span>
+					</button>
+					<button id="deleteUserButton" class="button" onclick="deleteUser();">
+						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
+						<span data-th-text="#{application.label.delete}"></span>
+					</button>
+					<button id="saveUserButton" class="button" onclick="saveUser();">
+						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
+						<span data-th-text="#{application.label.save}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table class="table" style="width:100%;">
+						<col style="width:25%;"/>
+						<col/>
+						<tbody>
+							<tr>
+								<th><span data-th-text="#{application.label.id}" class="mand">ID</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="user,id" autocomplete="nope"/></td>
+							</tr>
+							<tr id="passwordTr">
+								<th><span data-th-text="#{application.label.password}" class="mand">Password</span></th>
+								<td>
+									<input is="duice-ui-input" type="password" data-duice-bind="user,password" autocomplete="nope"/>
+								</td>
+							</tr>
+							<tr id="passwordConfirmTr">
+								<th><span data-th-text="#{application.label.passwordConfirm}" class="mand">Password(Confirm)</span></th>
+								<td>
+									<input is="duice-ui-input" type="password" data-duice-bind="user,passwordConfirm"/>
+								</td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.photo}">Photo</th>
+								<td><img is="duice-ui-img" data-duice-bind="user,photo" th:src="@{/static/image/icon_user.png}" style="max-height:64px;"/></td>
+							</tr>
+							<tr>
+								<th><span data-th-text="#{application.label.name}" class="mand">Name</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="user,name"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.nickname}">Nickname</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="user,nickname"/></td>
+							</tr>
+							<tr>
+								<th><span data-th-text="#{application.label.status}" class="mand">Status</span></th>
+								<td>
+									<select is="duice-ui-select" data-duice-bind="user,status">
+										<option> - select - </option>
+										<option value="ACTIVE">ACTIVE</option>
+										<option value="SUSPENDED">SUSPENDED</option>
+										<option value="CLOSED">CLOSED</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th><span data-th-text="#{application.label.email}" class="mand">Email</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="user,email"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.mobile}">Mobile</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="user,mobile"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.locale}">Locale</th>
+								<td>
+									<select is="duice-ui-select" data-duice-bind="user,locale">
+										<option> - select - </option>
+										<option value="en_US">en_US</option>
+										<option value="ko_KR">ko_KR</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.joinDate}">Join Date</th>
+								<td><input is="duice-ui-input" type="datetime-local" data-duice-bind="user,joinDate"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.closeDate}">Close Date</th>
+								<td><input is="duice-ui-input" type="datetime-local" data-duice-bind="user,closeDate"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.profile}">Profile</th>
+								<td><textarea is="duice-ui-textarea" data-duice-bind="user,profile"></textarea></td>
+							</tr>
+							<tr>
+								<th>
+									<img class="icon" th:src="@{/static/image/icon_group.png}"/>
+									<br/>
+									<span data-th-text="#{application.label.group}"></span>
+								</th>
+								<td>
+									<table is="duice-ui-table" 
+									data-duice-bind="userGroups,group" style="width:100%;">
+										<col style="width:50px;"/>
+										<col style="width:35%;"/>
+										<col/>
+										<col style="width:5%;"/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.group}+' '+#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.group}+' '+#{application.label.name}">Name</th>
+												<th class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="javascript:addUserGroup(this.dataset.index);">
+														+
+													</button>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="group">return $context.index+1;</span>
+												</td>
+												<td>
+													<img is="duice-ui-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
+													<span is="duice-ui-span" data-duice-bind="group,id"></span>
+												</td>
+												<td><span is="duice-ui-span" data-duice-bind="group,name"></span></td>
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="javascript:removeUserGroup(this.dataset.index);">
+														-
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<img class="icon" th:src="@{/static/image/icon_role.png}"/>
+									<br/>
+									<span data-th-text="#{application.label.role}"></span>
+								</th>
+								<td>
+									<table is="duice-ui-table" 
+									data-duice-bind="userRoles,role" 
+									style="width:100%;">
+										<col style="width:50px;"/>
+										<col style="width:35%;"/>
+										<col/>
+										<col style="width:5%;"/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.role}+' '+#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.role}+' '+#{application.label.name}">Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addUserRole();">
+														+
+													</button>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span>
+												</td>
+												<td>
+													<img is="duice-ui-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
+													<span is="duice-ui-span" data-duice-bind="role,id"></span>
+												</td>
+												<td><span is="duice-ui-span" data-duice-bind="role,name"></span></td>
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeUserRole(this.dataset.index);">
+														-
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
+									<br/>
+									<span data-th-text="#{application.label.authority}"></span>
+								</th>
+								<td>
+									<table is="duice-ui-table" 
+										data-duice-bind="userAuthorities,authority" 
+										style="width:100%;">
+										<col style="width:50px;"/>
+										<col style="width:35%;"/>
+										<col/>
+										<col style="width:5%;"/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addUserAuthority();">
+														+
+													</button>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
+												</td>
+												<td>
+													<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
+												</td>
+												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeUserAuthority(this.dataset.index);">
+														-
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/admin.html}">
+<div layout:fragment="content">
+	<script>
+		// document ready
+		$(document).ready(function() {
+		    getMenus();
+		    disableDetail(true);
+		});
+	
+		var search = new duice.Map({
+			page: 1,
+			rows: 1000,
+			totalCount: -1
+		});
+		var menus = new duice.List();
+		var menu = new duice.Map();
+		var menuDisplayAuthorities = new duice.List();
+		var menuAccessAuthorities = new duice.List();
+		
+		// adds index changed event listener
+		menus.onAfterChangeIndex(function(index){
+			if(index > -1){
+				var id = this.get(index).get('id');
+				getMenu(id);	
+			}
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			menu.setDisable(disable);
+			$('#deleteMenuButton').prop('disabled', disable);
+			$('#saveMenuButton').prop('disabled', disable);
+		}
+		
+		/**
+		 * Clears detail
+		 */
+		function clearDetail(){
+			menu.clear();
+			menuDisplayAuthorities.clear();
+			menuAccessAuthorities.clear();
+		}
+	
+		/**
+		 * Gets menus
+		 * Retrieves list of menu from serer API.
+		 */
+		function getMenus() {
+			var data = {};
+			data.page = search.get('page');
+			data.rows = search.get('rows');
+			$.ajax({
+				 url: 'menu/getMenus'
+				,type: 'GET'
+				,data: data
+				,success: function(data, textStatus, jqXHR) {
+					menus.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					
+					// sets current menu
+					menus.forEach(function(row,index){
+						if(row.get('id') === menu.get('id')){
+							menus.setIndex(index);
+							return false;
+						}
+					});
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Gets specified menu
+		 */
+		function getMenu(id){
+			$.ajax({
+				 url: 'menu/getMenu'
+				,type: 'GET'
+				,data: {id:id}
+				,success: function(data, textStatus, jqXHR) {
+					menu.fromJson(data);
+					menuDisplayAuthorities.fromJson(data.displayAuthorities);
+					menuAccessAuthorities.fromJson(data.accessAuthorities);
+					disableDetail(false);
+					menu.setReadonly('id', true);
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Adds menu
+		 */
+		function addMenu() {
+			clearDetail();
+			disableDetail(false);
+			menu.setReadonly('id',false);
+		}
+		
+		/**
+		 * Saves menu
+		 */
+		function saveMenu(){
+			
+			// checks changes
+			if(!menu.isDirty()
+			&& !menuDisplayAuthorities.isDirty()
+			&& !menuAccessAuthorities.isDirty()
+			){
+				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
+				return;
+			}
+			
+			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.menu})}]]")
+			.onAfterConfirm(function(){
+				var data = menu.toJson();
+				data.displayAuthorities = menuDisplayAuthorities.toJson();
+				data.accessAuthorities = menuAccessAuthorities.toJson();
+				$.ajax({
+					 url: 'menu/saveMenu'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert('[[#{application.message.saveComplete(#{application.label.menu})}]]')
+						.onAfterClose(function(){
+							getMenus();
+						}).open();
+			   	 	}
+				});	
+			}).open();
+		}
+		
+		/**
+		 * Deletes menu
+		 */
+		function deleteMenu(){
+			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.menu})}]]")
+			.onAfterConfirm(function(){
+				$.ajax({
+					 url: 'menu/deleteMenu'
+					,type: 'DELETE'
+					,data: JSON.stringify(menu.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.menu})}]]")
+						.onAfterClose(function(){
+							getMenus();
+						}).open();
+			   	 	}
+				});
+			}).open();
+		
+		}
+		
+		/**
+		 * Adds menu display authority
+		 */
+		function addMenuDisplayAuthority() {
+			__authorityDialog.open({
+				disabledAuthorities: menuDisplayAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						menuDisplayAuthorities.add(selectedAuthority);
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes menu display authority
+		 */
+		function removeMenuDisplayAuthority(index) {
+			menuDisplayAuthorities.remove(index);
+		}
+		
+		/**
+		 * Adds menu access authority
+		 */
+		function addMenuAccessAuthority() {
+			__authorityDialog.open({
+				disabledAuthorities: menuAccessAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						menuAccessAuthorities.add(selectedAuthority);
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes authority
+		 */
+		function removeMenuAccessAuthority(index) {
+			menuAccessAuthorities.remove(index);
+		}
+	
+	</script>
+
+	<div class="app-row">
+		<div class="app-col">
+			<h1>
+				<img class="icon large" th:src="@{/static/image/icon_menu.png}"/>
+				<span data-th-text="#{application.label.menu} + ' ' + #{application.label.management}"></span>
+			</h1>
+		</div>
+	</div>
+	<hr class="hr"/>
+	<div class="app-row">
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col">
+					<ul is="duice-ui-ul" 
+					data-duice-selectable="true"
+					data-duice-bind="menus,menu" 
+					data-duice-hierarchy="id,upperId"
+					data-duice-foldable="true">
+						<li>
+							<div style="border-bottom:dotted 1px #ccc;">
+								<img is="duice-ui-img" data-duice-bind="menu,icon" th:src="@{/static/image/icon_menu.png}" class="icon small"/>
+								<span is="duice-ui-span" data-duice-bind="menu,name" style="font-weight:bold;"></span>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>		
+		</div>
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" th:src="@{/static/image/icon_menu.png}"/>
+					<span data-th-text="#{application.label.menu} + ' ' + #{application.label.details}" class="font-bold"></span>
+				</div>
+				<div class="app-col right">
+					<button id="addMenuButton" class="button" onclick="addMenu();">
+						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
+						<span data-th-text="#{application.label.new}"></span>
+					</button>
+					<button id="deleteMenuButton" class="button" onclick="deleteMenu();">
+						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
+						<span data-th-text="#{application.label.delete}"></span>
+					</button>
+					<button id="saveMenuButton" class="button" onclick="saveMenu();">
+						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
+						<span data-th-text="#{application.label.save}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table class="table" style="width:100%;">
+						<col style="width:25%;"/>
+						<col/>
+						<tbody>
+							<tr>
+								<th><span data-th-text="#{application.label.menu}+' '+#{application.label.id}" class="mand">Menu ID</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="menu,id"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.upper}+' '+#{application.label.menu}">Upper Menu</th>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="menu,upperId"></span>
+									<button class="button small" onclick="changeUpperId();">
+										<img th:src="@{/static/image/icon_change.png}" class="icon"/>
+										<span data-th-text="#{application.label.change}">Change</span>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.menu}+' '+#{application.label.icon}">Menu Icon</th>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="menu,icon" th:src="@{/static/image/icon_menu.png}"/>
+								</td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.menu}+' '+#{application.label.name}">Menu Name</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="menu,name"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.menu}+' '+#{application.label.type}">Menu Type</th>
+								<td>
+									<select is="duice-ui-select" data-duice-bind="menu,type">
+										<option> - select - </option>
+										<option value="NONE">NONE</option>
+										<option value="LINK">LINK</option>
+										<option value="INCLUDE">INCLUDE</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.menu}+' '+#{application.label.value}">Value</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="menu,value"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.menu}+' '+#{application.label.description}">Description</th>
+								<td><textarea is="duice-ui-textarea" data-duice-bind="menu,description" style="height:6rem;"></textarea></td>
+							</tr>
+							<tr>
+								<th>
+									<span data-th-text="#{application.label.display}+' '+#{application.label.policy}"></span>
+								</th>
+								<td>
+									<select is="duice-ui-select" data-duice-bind="menu,displayPolicy">
+										<option> - select - </option>
+										<option value="ANONYMOUS">ANONYMOUS</option>
+										<option value="AUTHENTICATED">AUTHENTICATED</option>
+										<option value="AUTHORIZED">AUTHORIZED</option>
+									</select>
+									<table is="duice-ui-table" 
+										data-duice-bind="menuDisplayAuthorities,authority" 
+										style="width:100%;">
+										<col style="width:50px;"/>
+										<col style="width:35%;"/>
+										<col/>
+										<col style="width:5%;"/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.name}">Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addMenuDisplayAuthority();">
+														+
+													</button>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
+												</td>
+												<td>
+													<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
+												</td>
+												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeMenuDisplayAuthority(this.dataset.index);">
+														-
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<span data-th-text="#{application.label.access}+' '+#{application.label.policy}"></span>
+								</th>
+								<td>
+									<select is="duice-ui-select" data-duice-bind="menu,accessPolicy">
+										<option> - select - </option>
+										<option value="ANONYMOUS">ANONYMOUS</option>
+										<option value="AUTHENTICATED">AUTHENTICATED</option>
+										<option value="AUTHORIZED">AUTHORIZED</option>
+									</select>
+									<table is="duice-ui-table" 
+										data-duice-bind="menuAccessAuthorities,authority" 
+										style="width:100%;">
+										<col style="width:50px;"/>
+										<col style="width:35%;"/>
+										<col/>
+										<col style="width:5%;"/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.name}">Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addMenuAccessAuthority();">
+														+
+													</button>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
+												</td>
+												<td>
+													<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
+												</td>
+												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeMenuAccessAuthority(this.dataset.index);">
+														-
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+

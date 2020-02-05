@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/admin.html}">
+<div layout:fragment="content">
+	<script>
+		// document ready
+		$(document).ready(function() {
+			getRoles();
+		    disableDetail(true);
+		});
+	
+		var search = new duice.Map({
+			key: null,
+			value: null,
+			status: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		var roles = new duice.List();
+		var role = new duice.Map();
+		var roleAuthorities = new duice.List();
+
+		// adds index changed event listener
+		roles.onAfterChangeIndex(function(index){
+			if(index > -1){
+				var id = this.get(index).get('id');
+				getRole(id);	
+			}
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			role.setDisable(disable);
+			$('#deleteRoleButton').prop('disabled', disable);
+			$('#saveRoleButton').prop('disabled', disable);
+		}
+		
+		/**
+		 * Clears detail
+		 */
+		function clearDetail(){
+			role.clear();
+			roleAuthorities.clear();
+		}
+		
+		/**
+		 * Gets roles
+		 */
+		function getRoles(page) {
+			if(page){
+				search.set('page',page);
+			}
+			var data = {};
+			if(search.get('key')){
+				data[search.get('key')] = search.get('value');
+			}
+			if(search.get('status')){
+				data.status = search.get('status');
+			}
+			data.page = search.get('page');
+			data.rows = search.get('rows');
+			$.ajax({
+				 url: 'role/getRoles'
+				,type: 'GET'
+				,data: data
+				,success: function(data, textStatus, jqXHR) {
+					roles.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					
+					// sets current user
+					roles.forEach(function(row,index){
+						if(row.get('id') === role.get('id')){
+							roles.setIndex(index);
+							return false;
+						}
+					});
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Gets specified role
+		 */
+		function getRole(id){
+			$.ajax({
+				 url: 'role/getRole'
+				,type: 'GET'
+				,data: {id:id}
+				,success: function(data, textStatus, jqXHR) {
+					role.fromJson(data);
+					roleAuthorities.fromJson(data.authorities);
+					disableDetail(false);
+					role.setReadonly('id', true);
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Adds role
+		 */
+		function addRole() {
+			clearDetail();
+			disableDetail(false);
+			role.setReadonly('id',false);
+		}
+		
+		/**
+		 * Saves role
+		 */
+		function saveRole(){
+			
+			// checks changes
+			if(!role.isDirty()
+			&& !roleAuthorities.isDirty()
+			){
+				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
+				return;
+			}
+			
+			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.role})}]]")
+			.onAfterConfirm(function(){
+				var data = role.toJson();
+				data.authorities = roleAuthorities.toJson();
+				$.ajax({
+					 url: 'role/saveRole'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert('[[#{application.message.saveComplete(#{application.label.role})}]]')
+						.onAfterClose(function(){
+							getRoles();
+						}).open();
+			   	 	}
+				});	
+			}).open();
+		}
+		
+		/**
+		 * Deletes role
+		 */
+		function deleteRole(){
+			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.role})}]]")
+			.onAfterConfirm(function(){
+				$.ajax({
+					 url: 'role/deleteRole'
+					,type: 'DELETE'
+					,data: JSON.stringify(user.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.role})}]]")
+						.onAfterClose(function(){
+							clearDetail();
+							getUsers();
+						}).open();
+			   	 	}
+				});
+			}).open();
+		
+		}
+		
+		/**
+		 * Adds role authority
+		 */
+		function addRoleAuthority() {
+			__authorityDialog.open({
+				disabledAuthorities: roleAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						roleAuthorities.add(selectedAuthority);
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes role authority
+		 */
+		function removeRoleAuthority(index) {
+			roleAuthorities.remove(index);
+		}
+	</script>
+	<div class="app-row">
+		<div class="app-col">
+			<h1>
+				<img class="icon large" th:src="@{/static/image/icon_role.png}"/>
+				<span data-th-text="#{application.label.role}+' '+#{application.label.management}"></span>
+			</h1>
+		</div>
+	</div>
+	<hr class="hr"/>
+	<div class="app-row">
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col" style="width:50%;">
+					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
+						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.label.role}+' '+#{application.label.id}">Role ID</option>
+						<option value="name" data-th-text="#{application.label.role}+' '+#{application.label.name}">Role Name</option>
+					</select>
+					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
+				</div>
+				<div class="app-col right">
+					<button class="button" onclick="getRoles(1);">
+						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
+						<span data-th-text="#{application.label.search}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+						data-duice-bind="roles,role" 
+						data-duice-selectable="true"
+						style="width:100%;">
+						<col style="width:70px;"/>					
+						<col/>
+						<col/>
+						<thead>
+							<tr>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.role}+' '+#{application.label.id}">Role ID</th>
+								<th data-th-text="#{application.label.role}+' '+#{application.label.name}">Role Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center">
+									<span is="duice-ui-scriptlet" data-duice-bind="search">
+										return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+									</span>
+								</td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
+									<span is="duice-ui-span" data-duice-bind="role,id"></span>
+								</td>
+								<td><span is="duice-ui-span" data-duice-bind="role,name"></span></td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="7">
+									<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+										<li onclick="getRoles();"></li>
+									</ul>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>		
+		</div>
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" th:src="@{/static/image/icon_role.png}"/>
+					<span data-th-text="#{application.label.role} + ' ' + #{application.label.details}" class="font-bold"></span>
+				</div>
+				<div class="app-col right">
+					<button id="addRoleButton" class="button" onclick="addRole();">
+						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
+						<span data-th-text="#{application.label.new}"></span>
+					</button>
+					<button id="deleteRoleButton" class="button" onclick="deleteRole();">
+						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
+						<span data-th-text="#{application.label.delete}"></span>
+					</button>
+					<button id="saveRoleButton" class="button" onclick="saveRole();">
+						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
+						<span data-th-text="#{application.label.save}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table class="table" style="width:100%;">
+						<col style="width:25%;"/>
+						<col/>
+						<tbody>
+							<tr>
+								<th><span data-th-text="#{application.label.role}+' '+#{application.label.id}" class="mand">Role ID</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="role,id" autocomplete="nope"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.role}+' '+#{application.label.icon}">Role Icon</th>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}"/>
+								</td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.role}+' '+#{application.label.name}">Role Name</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="role,name"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.role}+' '+#{application.label.description}">Role Description</th>
+								<td><textarea is="duice-ui-textarea" data-duice-bind="role,description"></textarea></td>
+							</tr>
+							<tr>
+								<th>
+									<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
+									<br/>
+									<span data-th-text="#{application.label.own}+' '+#{application.label.authority}"></span>
+								</th>
+								<td>
+									<table is="duice-ui-table" 
+										data-duice-bind="roleAuthorities,authority" 
+										style="width:100%;">
+										<col style="width:50px;"/>
+										<col style="width:35%;"/>
+										<col/>
+										<col style="width:5%;"/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">Authority ID</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addRoleAuthority();">
+														+
+													</button>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
+												</td>
+												<td>
+													<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
+												</td>
+												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeRoleAuthority(this.dataset.index);">
+														-
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
