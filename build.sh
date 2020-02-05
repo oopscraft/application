@@ -14,11 +14,6 @@ function build() {
 	mvn clean package
 }
 
-# doc
-function doc() {
-	mvn javadoc:javadoc
-}
-
 # main
 case ${1} in
 	update)
@@ -27,13 +22,9 @@ case ${1} in
 	build)
 		build
 		;;
-	doc)
-		doc
-		;;
 	*)
 		update
 		build
-		doc
 		;;
 esac
 
