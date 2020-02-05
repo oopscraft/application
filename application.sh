@@ -4,7 +4,7 @@ APP_NAME=${APP_FILE%.*}
 PID_FILE=${APP_NAME}.pid
 touch ${PID_FILE}
 PID=$(cat ${PID_FILE})
-MAIN_CLASS="net.oopscraft.application.ApplicationContainer"
+MAIN_CLASS="net.oopscraft.application.Application"
 
 # load profile
 source ${APP_NAME}.env
