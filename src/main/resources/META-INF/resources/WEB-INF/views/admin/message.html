@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/admin.html}">
+<div layout:fragment="content">
+	<script>
+		// document ready
+		$(document).ready(function() {
+			getMessages();
+		    disableDetail(true);
+		});
+	
+		var search = new duice.Map({
+			key: null,
+			value: null,
+			status: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		var messages = new duice.List();
+		var message = new duice.Map();
+
+		// adds index changed event listener
+		messages.onAfterChangeIndex(function(index){
+			if(index > -1){
+				var id = this.get(index).get('id');
+				getMessage(id);	
+			}
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			message.setDisable(disable);
+			$('#deleteMessageButton').prop('disabled', disable);
+			$('#saveMessageButton').prop('disabled', disable);
+		}
+		
+		/**
+		 * Clears detail
+		 */
+		function clearDetail(){
+			message.clear();
+		}
+		
+		/**
+		 * Gets messages
+		 */
+		function getMessages(page) {
+			if(page){
+				search.set('page',page);
+			}
+			var data = {};
+			if(search.get('key')){
+				data[search.get('key')] = search.get('value');
+			}
+			if(search.get('status')){
+				data.status = search.get('status');
+			}
+			data.page = search.get('page');
+			data.rows = search.get('rows');
+			$.ajax({
+				 url: 'message/getMessages'
+				,type: 'GET'
+				,data: data
+				,success: function(data, textStatus, jqXHR) {
+					messages.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					
+					// sets current user
+					messages.forEach(function(row,index){
+						if(row.get('id') === message.get('id')){
+							messages.setIndex(index);
+							return false;
+						}
+					});
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Gets specified message
+		 */
+		function getMessage(id){
+			$.ajax({
+				 url: 'message/getMessage'
+				,type: 'GET'
+				,data: {id:id}
+				,success: function(data, textStatus, jqXHR) {
+					message.fromJson(data);
+					disableDetail(false);
+					message.setReadonly('id', true);
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Adds message
+		 */
+		function addMessage() {
+			clearDetail();
+			disableDetail(false);
+			message.setReadonly('id',false);
+		}
+		
+		/**
+		 * Saves message
+		 */
+		function saveMessage(){
+			
+			// checks changes
+			if(!message.isDirty()){
+				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
+				return;
+			}
+			
+			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.message})}]]")
+			.onAfterConfirm(function(){
+				var data = message.toJson();
+				$.ajax({
+					 url: 'message/saveMessage'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert('[[#{application.message.saveComplete(#{application.label.message})}]]')
+						.onAfterClose(function(){
+							getMessages();
+						}).open();
+			   	 	}
+				});	
+			}).open();
+		}
+		
+		/**
+		 * Deletes message
+		 */
+		function deleteMessage(){
+			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.message})}]]")
+			.onAfterConfirm(function(){
+				$.ajax({
+					 url: 'message/deleteMessage'
+					,type: 'DELETE'
+					,data: JSON.stringify(message.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.message})}]]")
+						.onAfterClose(function(){
+							clearDetail();
+							getMessages();
+						}).open();
+			   	 	}
+				});
+			}).open();
+		}
+	</script>
+	<div class="app-row">
+		<div class="app-col">
+			<h1>
+				<img class="icon large" th:src="@{/static/image/icon_message.png}"/>
+				<span data-th-text="#{application.label.message}+' '+#{application.label.management}"></span>
+			</h1>
+		</div>
+	</div>
+	<hr class="hr"/>
+	<div class="app-row">
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col" style="width:50%;">
+					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
+						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.label.message}+' '+#{application.label.id}">ID</option>
+						<option value="name" data-th-text="#{application.label.message}+' '+#{application.label.name}">Name</option>
+					</select>
+					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
+				</div>
+				<div class="app-col right">
+					<button class="button" onclick="getMessages(1);">
+						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
+						<span data-th-text="#{application.label.search}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+						data-duice-bind="messages,message" 
+						data-duice-selectable="true"
+						style="width:100%;">
+						<col style="width:10%;"/>					
+						<col style="width:30%"/>
+						<col style="width:60%"/>
+						<thead>
+							<tr>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.message}+' '+#{application.label.id}">ID</th>
+								<th data-th-text="#{application.label.message}+' '+#{application.label.name}">Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center">
+									<span is="duice-ui-scriptlet" data-duice-bind="search">
+										return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+									</span>
+								</td>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="message,id"></span>
+								</td>
+								<td><span is="duice-ui-span" data-duice-bind="message,name"></span></td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="7">
+									<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+										<li onclick="getMessages();"></li>
+									</ul>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>		
+		</div>
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" th:src="@{/static/image/icon_message.png}"/>
+					<span data-th-text="#{application.label.message} + ' ' + #{application.label.details}" class="font-bold"></span>
+				</div>
+				<div class="app-col right">
+					<button id="addMessageButton" class="button" onclick="addMessage();">
+						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
+						<span data-th-text="#{application.label.new}"></span>
+					</button>
+					<button id="deleteMessageButton" class="button" onclick="deleteMessage();">
+						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
+						<span data-th-text="#{application.label.delete}"></span>
+					</button>
+					<button id="saveMessageButton" class="button" onclick="saveMessage();">
+						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
+						<span data-th-text="#{application.label.save}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table class="table" style="width:100%;">
+						<col style="width:25%;"/>
+						<col/>
+						<tbody>
+							<tr>
+								<th><span data-th-text="#{application.label.message}+' '+#{application.label.id}" class="mand">Message ID</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="message,id" autocomplete="nope"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.message}+' '+#{application.label.name}">Message Name</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="message,name"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.message}+' '+#{application.label.value}">Message Value</th>
+								<td><textarea is="duice-ui-textarea" data-duice-bind="message,value" style="height:6rem;"></textarea></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.message}+' '+#{application.label.description}">Description</th>
+								<td><textarea is="duice-ui-textarea" data-duice-bind="message,description" style="height:6rem;"></textarea></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

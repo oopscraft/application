@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/admin.html}">
+<div layout:fragment="content">
+	<script>
+		// document ready
+		$(document).ready(function() {
+			getBoards();
+		    disableDetail(true);
+		});
+	
+		var search = new duice.Map({
+			key: null,
+			value: null,
+			status: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		var boards = new duice.List();
+		var board = new duice.Map();
+		var boardCategories = new duice.List();
+		var boardAccessAuthorities = new duice.List();
+		var boardReadAuthorities = new duice.List();
+		var boardWriteAuthorities = new duice.List();
+
+		// adds index changed event listener
+		boards.onAfterChangeIndex(function(index){
+			if(index > -1){
+				var id = this.get(index).get('id');
+				getBoard(id);	
+			}
+		});
+		
+		// listens board changes
+		board.onAfterChange(function(){
+			handleVisible(this);
+		});
+
+		/**
+		 * Handles visible
+		 */
+		function handleVisible(board){
+			boardCategories.setVisible(board.get('categoryUse')?true:false);
+			boardAccessAuthorities.setVisible(board.get('accessPolicy')==='AUTHORIZED'?true:false);
+			boardReadAuthorities.setVisible(board.get('readPolicy')==='AUTHORIZED'?true:false);
+			boardWriteAuthorities.setVisible(board.get('writePolicy')==='AUTHORIZED'?true:false);
+		}
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			board.setDisable(disable);
+			$('#deleteBoardButton').prop('disabled', disable);
+			$('#saveBoardButton').prop('disabled', disable);
+		}
+		
+		/**
+		 * Clears detail
+		 */
+		function clearDetail(){
+			board.clear();
+			boardCategories.clear();
+			boardAccessAuthorities.clear();
+			boardReadAuthorities.clear();
+			boardWriteAuthorities.clear();
+		}
+		
+		/**
+		 * Gets boards
+		 */
+		function getBoards(page) {
+			if(page){
+				search.set('page',page);
+			}
+			var data = {};
+			if(search.get('key')){
+				data[search.get('key')] = search.get('value');
+			}
+			if(search.get('status')){
+				data.status = search.get('status');
+			}
+			data.page = search.get('page');
+			data.rows = search.get('rows');
+			$.ajax({
+				 url: 'board/getBoards'
+				,type: 'GET'
+				,data: data
+				,success: function(data, textStatus, jqXHR) {
+					boards.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					
+					// sets current board
+					boards.forEach(function(row,index){
+						if(row.get('id') === board.get('id')){
+							boards.setIndex(index);
+							return false;
+						}
+					});
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Gets specified board
+		 */
+		function getBoard(id){
+			$.ajax({
+				 url: 'board/getBoard'
+				,type: 'GET'
+				,data: {id:id}
+				,success: function(data, textStatus, jqXHR) {
+					board.fromJson(data);
+					boardCategories.fromJson(data.categories);
+					boardAccessAuthorities.fromJson(data.accessAuthorities);
+					boardReadAuthorities.fromJson(data.readAuthorities);
+					boardWriteAuthorities.fromJson(data.writeAuthorities);
+					disableDetail(false);
+					board.setReadonly('id', true);
+					handleVisible(board);
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Adds board
+		 */
+		function addBoard() {
+			clearDetail();
+			disableDetail(false);
+			board.setReadonly('id',false);
+			handleVisible(board);
+		}
+		
+		/**
+		 * Saves board
+		 */
+		function saveBoard(){
+			
+			// checks changes
+			if(!board.isDirty()
+			&& !boardCategories.isDirty()
+			&& !boardAccessAuthorities.isDirty()
+			&& !boardReadAuthorities.isDirty()
+			&& !boardWriteAuthorities.isDirty()
+			){
+				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
+				return;
+			}
+			
+			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.board})}]]")
+			.onAfterConfirm(function(){
+				var data = board.toJson();
+				data.categories = boardCategories.toJson();
+				data.accessAuthorities = boardAccessAuthorities.toJson();
+				data.readAuthorities = boardReadAuthorities.toJson();
+				data.writeAuthorities = boardWriteAuthorities.toJson();
+				$.ajax({
+					 url: 'board/saveBoard'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert('[[#{application.message.saveComplete(#{application.label.board})}]]')
+						.onAfterClose(function(){
+							getBoards();
+						}).open();
+			   	 	}
+				});	
+			}).open();
+		}
+		
+		/**
+		 * Deletes board
+		 */
+		function deleteBoard(){
+			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.board})}]]")
+			.onAfterConfirm(function(){
+				$.ajax({
+					 url: 'board/deleteBoard'
+					,type: 'DELETE'
+					,data: JSON.stringify(board.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.board})}]]")
+						.onAfterClose(function(){
+							clearDetail();
+							getBoards();
+						}).open();
+			   	 	}
+				});
+			}).open();
+		}
+		
+		/**
+		 * Adds board category
+		 */
+		function addBoardCategory() {
+			var boardCategory = new duice.Map({
+				boardId: board.get('id')
+			});
+			boardCategories.add(boardCategory);
+		}
+		
+		/**
+		 * Removes authority
+		 */
+		function removeBoardCategory(index){
+			boardCategories.remove(index);
+		}
+		
+		/**
+		 * Adds board access authority
+		 */
+		function addBoardAccessAuthority(){
+			__authorityDialog.open({
+				disabledAuthorities: boardAccessAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						boardAccessAuthorities.add(selectedAuthority);
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes board access authority
+		 */
+		function removeBoardAccessAuthority(index){
+			boardAccessAuthorities.remove(index);
+		}
+		
+		/**
+		 * Adds board read authority
+		 */
+		function addBoardReadAuthority(){
+			__authorityDialog.open({
+				disabledAuthorities: boardReadAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						boardReadAuthorities.add(selectedAuthority);
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes board write authority
+		 */
+		function removeBoardReadAuthority(index){
+			boardReadAuthorities.remove(index);
+		}
+		
+		/**
+		 * Adds board write authority
+		 */
+		function addBoardWriteAuthority(){
+			__authorityDialog.open({
+				disabledAuthorities: boardWriteAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						boardWriteAuthorities.add(selectedAuthority);
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes board write authority
+		 */
+		function removeBoardWriteAuthority(index){
+			boardWriteAuthorities.remove(index);
+		}
+		
+		/**
+		 * Opens board
+		 */
+		function openBoard(){
+			window.open('/board/' + board.get('id'));
+		}
+		
+	</script>
+	<div class="app-row">
+		<div class="app-col">
+			<h1>
+				<img class="icon large" th:src="@{/static/image/icon_board.png}"/>
+				<span data-th-text="#{application.label.board}+' '+#{application.label.management}"></span>
+			</h1>
+		</div>
+	</div>
+	<hr class="hr"/>
+	<div class="app-row">
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col" style="width:50%;">
+					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
+						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.label.board}+' '+#{application.label.id}">Board ID</option>
+						<option value="name" data-th-text="#{application.label.board}+' '+#{application.label.name}">Board Name</option>
+					</select>
+					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
+				</div>
+				<div class="app-col right">
+					<button class="button" onclick="getBoards(1);">
+						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
+						<span data-th-text="#{application.label.search}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+						data-duice-bind="boards,board" 
+						data-duice-selectable="true"
+						style="width:100%;">
+						<col style="width:10%;"/>					
+						<col style="width:30%;"/>
+						<col/>
+						<col style="width:15%;"/>
+						<thead>
+							<tr>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.board}+' '+#{application.label.id}">Board ID</th>
+								<th data-th-text="#{application.label.board}+' '+#{application.label.name}">Board Name</th>
+								<th data-th-text="#{application.label.article}+' '+#{application.label.count}">Article Count</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center">
+									<span is="duice-ui-scriptlet" data-duice-bind="search">
+										return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+									</span>
+								</td>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="board,icon" th:src="@{/static/image/icon_board.png}" class="icon small"/>
+									<span is="duice-ui-span" data-duice-bind="board,id"></span>
+								</td>
+								<td><span is="duice-ui-span" data-duice-bind="board,name"></span></td>
+								<td class="text-center">
+									<span is="duice-ui-span" data-duice-bind="board,articleCount" data-duice-format="number,0"></span>
+								</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="7">
+									<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+										<li onclick="getBoards();"></li>
+									</ul>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>		
+		</div>
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" th:src="@{/static/image/icon_board.png}"/>
+					<span data-th-text="#{application.label.board} + ' ' + #{application.label.details}" class="font-bold"></span>
+				</div>
+				<div class="app-col right">
+					<button id="openBoardButton" class="button" onclick="openBoard();">
+						<img th:src="@{/static/image/icon_open.png}" class="icon"/>
+						<span data-th-text="#{application.label.open}"></span>
+					</button>
+					|
+					<button id="addBoardButton" class="button" onclick="addBoard();">
+						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
+						<span data-th-text="#{application.label.new}"></span>
+					</button>
+					<button id="deleteBoardButton" class="button" onclick="deleteBoard();">
+						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
+						<span data-th-text="#{application.label.delete}"></span>
+					</button>
+					<button id="saveBoardButton" class="button" onclick="saveBoard();">
+						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
+						<span data-th-text="#{application.label.save}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table class="table" style="width:100%;">
+						<col style="width:25%;"/>
+						<col/>
+						<tbody>
+							<tr>
+								<th><span data-th-text="#{application.label.board}+' '+#{application.label.id}" class="mand">Board ID</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="board,id" autocomplete="nope"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.board}+' '+#{application.label.icon}">Board Icon</th>
+								<td>
+									<img is="duice-ui-img" data-duice-bind="board,icon" th:src="@{/static/image/icon_board.png}"/>
+								</td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.board}+' '+#{application.label.name}">Board Name</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="board,name"/></td>
+							</tr>
+							<tr>
+								<th><span data-th-text="#{application.label.board}+' '+#{application.label.description}">Board Description</span></th>
+								<td><textarea is="duice-ui-textarea" data-duice-bind="board,description"></textarea></td>
+							</tr>
+							<tr>
+								<th><span data-th-text="#{application.label.skin}">Board Name</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="board,skin"/></td>
+							</tr>
+							<tr>
+								<th><span data-th-text="#{application.label.rowsPerPage}">Rows per Page</span></th>
+								<td>
+									<select is="duice-ui-select" data-duice-bind="board,rowsPerPage">
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="30">30</option>
+										<option value="40">40</option>
+										<option value="50">50</option>
+										<option value="60">60</option>
+										<option value="70">70</option>
+										<option value="80">80</option>
+										<option value="90">90</option>
+										<option value="100">100</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th><span data-th-text="#{application.label.reply}+' '+#{application.label.use}">Board Name</span></th>
+								<td><input is="duice-ui-input" type="checkbox" data-duice-bind="board,replyUse"/></td>
+							</tr>
+							<tr>
+								<th><span data-th-text="#{application.label.file}+' '+#{application.label.use}">Board Name</span></th>
+								<td><input is="duice-ui-input" type="checkbox" data-duice-bind="board,fileUse"/></td>
+							</tr>
+							<tr>
+								<th>
+									<span data-th-text="#{application.label.category}+' '+#{application.label.use}">Category Use</span>
+								</th>
+								<td>
+									<input is="duice-ui-input" type="checkbox" data-duice-bind="board,categoryUse"/>
+									<table is="duice-ui-table" 
+										data-duice-bind="boardCategories,category"
+										data-duice-editable="true" 
+										style="width:100%;">
+										<col style="width:15%;"/>
+										<col style="width:35%;"/>
+										<col />
+										<col style="width:5%;"/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.label.sequence}">Sequence</th>
+												<th data-th-text="#{application.label.category}+' '+#{application.label.id}">Category ID</th>
+												<th data-th-text="#{application.label.category}+' '+#{application.label.name}">Category Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addBoardCategory();">
+														+
+													</button>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-center">
+													<span is="duice-ui-span" data-duice-bind="category,sequence"></span>
+												</td>
+												<td>
+													<input is="duice-ui-input" type="text" data-duice-bind="category,id"/>
+												</td>
+												<td>
+													<input is="duice-ui-input" type="text" data-duice-bind="category,name"/>
+												</td>
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeBoardCategory(this.dataset.index);">
+														-
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<span data-th-text="#{application.label.access}+' '+#{application.label.policy}"></span>
+								</th>
+								<td>
+									<select is="duice-ui-select" data-duice-bind="board,accessPolicy">
+										<option> - select - </option>
+										<option value="ANONYMOUS">ANONYMOUS</option>
+										<option value="AUTHENTICATED">AUTHENTICATED</option>
+										<option value="AUTHORIZED">AUTHORIZED</option>
+									</select>
+									<table is="duice-ui-table" 
+										data-duice-bind="boardAccessAuthorities,authority" 
+										style="width:100%;">
+										<col style="width:15%;"/>
+										<col style="width:35%;"/>
+										<col />
+										<col style="width:5%;"/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.id}">ID</th>
+												<th data-th-text="#{application.label.name}">Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addBoardAccessAuthority();">
+														+
+													</button>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
+												</td>
+												<td>
+													<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
+												</td>
+												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeBoardAccessAuthority(this.dataset.index);">
+														-
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<span data-th-text="#{application.label.read}+' '+#{application.label.policy}"></span>
+								</th>
+								<td>
+									<select is="duice-ui-select" data-duice-bind="board,readPolicy">
+										<option> - select - </option>
+										<option value="ANONYMOUS">ANONYMOUS</option>
+										<option value="AUTHENTICATED">AUTHENTICATED</option>
+										<option value="AUTHORIZED">AUTHORIZED</option>
+									</select>
+									<table is="duice-ui-table" 
+										data-duice-bind="boardReadAuthorities,authority" 
+										style="width:100%;">
+										<col style="width:15%;"/>
+										<col style="width:35%;"/>
+										<col />
+										<col style="width:5%;"/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">Authority ID</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addBoardReadAuthority();">
+														+
+													</button>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
+												</td>
+												<td>
+													<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
+												</td>
+												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeBoardReadAuthority(this.dataset.index);">
+														-
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<span data-th-text="#{application.label.write}+' '+#{application.label.policy}"></span>
+								</th>
+								<td>
+									<select is="duice-ui-select" data-duice-bind="board,writePolicy">
+										<option> - select - </option>
+										<option value="ANONYMOUS">ANONYMOUS</option>
+										<option value="AUTHENTICATED">AUTHENTICATED</option>
+										<option value="AUTHORIZED">AUTHORIZED</option>
+									</select>
+									<table is="duice-ui-table" 
+										data-duice-bind="boardWriteAuthorities,authority" 
+										style="width:100%;">
+										<col style="width:15%;"/>
+										<col style="width:35%;"/>
+										<col />
+										<col style="width:5%;"/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.label.no}">No</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">Authority ID</th>
+												<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</th>
+												<th class="text-center">
+													<button class="button small" onclick="addBoardWriteAuthority();">
+														+
+													</button>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="text-center">
+													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
+												</td>
+												<td>
+													<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
+												</td>
+												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+												<td class="text-center">
+													<button class="button small" data-index="[[$context.index]]" onclick="removeBoardWriteAuthority(this.dataset.index);">
+														-
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
