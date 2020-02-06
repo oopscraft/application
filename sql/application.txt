@@ -24,11 +24,10 @@ flush privileges;
 # Oracle Installation
 ################################################################################
 # create user
-CREATE USER application 
-IDENTIFIED BY abcd1234!@#$;
+CREATE USER c##application IDENTIFIED BY abcd1234!@#$;
 
 # grant privileges
-GRANT CONNECT,RESOURCE TO application;
+GRANT CONNECT,RESOURCE TO c##application;
 
 
 

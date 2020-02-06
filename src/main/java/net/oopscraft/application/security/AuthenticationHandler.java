@@ -49,7 +49,7 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 	LocaleResolver localeResolver;
 	
 	@Autowired
-	AccessTokenEncoder accessTokenEncoder;
+	SecurityTokenEncoder accessTokenEncoder;
 	
 	@Autowired
 	UserLoginRepository userLoginRepository;

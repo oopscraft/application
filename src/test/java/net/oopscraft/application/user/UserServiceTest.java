@@ -2,10 +2,10 @@ package net.oopscraft.application.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.oopscraft.application.ApplicationTestRunnerWithSpring;
+import net.oopscraft.application.ApplicationTestRunner;
 
 
-public class UserServiceTest extends ApplicationTestRunnerWithSpring {
+public class UserServiceTest extends ApplicationTestRunner {
 	
 	private static final String USER_ID = "JUnit";
 	private static final String USER_PASSWORD = "1234";

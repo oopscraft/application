@@ -12,14 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
-import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import springfox.documentation.spi.service.contexts.SecurityContext;
 
 /**
  * Implementation of javax.servlet.ServletContainerInitializer
@@ -47,7 +44,7 @@ public class ApplicationWebXml implements ServletContainerInitializer {
         servletContext.addListener(new ContextLoaderListener(webAapplicationContext));
         webAapplicationContext.setServletContext(servletContext);
         
-        // add dispatcher servlet
+        // add dispatcherServlet
         ServletRegistration.Dynamic servlet = servletContext.addServlet("dispatcherServlet", new DispatcherServlet(webAapplicationContext));
         servlet.setLoadOnStartup(1);
         servlet.addMapping("/");
@@ -57,7 +54,6 @@ public class ApplicationWebXml implements ServletContainerInitializer {
         encodingFilter.setEncoding("UTF-8");
         FilterRegistration.Dynamic encodingFilterDynamic = servletContext.addFilter("encodingFilter", encodingFilter);
         encodingFilterDynamic.addMappingForUrlPatterns(null, true, "/*");
-        
         
         // add JPA transaction filter
         OpenEntityManagerInViewFilter openEntityManagerInViewFilter = new OpenEntityManagerInViewFilter();

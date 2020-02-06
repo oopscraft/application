@@ -3,13 +3,13 @@ package net.oopscraft.application.admin.controller;
 import org.junit.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import net.oopscraft.application.ApplicationTestRunnerWithSpring;
+import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.user.entity.User;
 
 @WithMockUser(username = "junit", authorities = {"ADMIN","ADMIN_USER"})
-public class UserControllerTest extends ApplicationTestRunnerWithSpring {
+public class UserControllerTest extends ApplicationTestRunner {
 	
 	@Test
 	public void testGet() throws Exception {

@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -70,22 +71,22 @@ public class CodeItem {
 	}
 
 	@Id
-	@Column(name = "CODE_ID")
+	@Column(name = "CODE_ID", length = 32)
 	String codeId;
 	
 	@Id
-	@Column(name = "ITEM_ID")
+	@Column(name = "ITEM_ID", length = 32)
 	String id;
 	
 	@Column(name = "ITEM_SEQ")
 	int sequence;
 	
-	@Column(name = "ITEM_NAME")
+	@Column(name = "ITEM_NAME", length = 1024)
 	String name;
 	
 	@Column(name = "ITEM_DESC")
+	@Lob
 	String description;
-
 	
 	public CodeItem() {}
 	

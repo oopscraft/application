@@ -14,6 +14,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -57,10 +58,12 @@ public class User extends SystemEntity {
 	@Column(name = "USER_LOCL")
 	String locale;
 	
-	@Column(name = "USER_PHOT", length=Integer.MAX_VALUE)
+	@Column(name = "USER_PHOT")
+	@Lob
 	String photo;
 
-	@Column(name = "USER_PRFL", length=Integer.MAX_VALUE)
+	@Column(name = "USER_PRFL")
+	@Lob
 	String profile;
 	
 	@Column(name = "JOIN_DATE")

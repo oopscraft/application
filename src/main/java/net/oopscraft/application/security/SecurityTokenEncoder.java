@@ -12,7 +12,7 @@ import net.oopscraft.application.user.entity.Authority;
 import net.oopscraft.application.user.entity.User;
 
 @Component
-public class AccessTokenEncoder {
+public class SecurityTokenEncoder {
 	
 	private static String secret = "secret";
 	

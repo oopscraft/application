@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
@@ -21,10 +22,12 @@ public class Authority extends SystemEntity {
 	@Column(name = "AUTH_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "AUTH_ICON", length = Integer.MAX_VALUE)
+	@Column(name = "AUTH_ICON")
+	@Lob
 	String icon;
 
-	@Column(name = "AUTH_DESC", length = Integer.MAX_VALUE)
+	@Column(name = "AUTH_DESC")
+	@Lob
 	String description;
 	
 	public Authority() {}

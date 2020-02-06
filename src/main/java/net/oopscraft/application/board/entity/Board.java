@@ -14,6 +14,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -39,7 +40,8 @@ public class Board {
 	@Column(name = "BORD_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "BORD_DESC", length = Integer.MAX_VALUE)
+	@Column(name = "BORD_DESC")
+	@Lob
 	String description;
 	
 	@Column(name = "BORD_SKIN")

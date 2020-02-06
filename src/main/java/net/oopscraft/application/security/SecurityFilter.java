@@ -22,13 +22,13 @@ import net.oopscraft.application.user.entity.User;
 import net.oopscraft.application.util.StringUtility;
 
 @Component
-public class AuthenticationFilter extends GenericFilterBean   {
+public class SecurityFilter extends GenericFilterBean   {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(AuthenticationFilter.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(SecurityFilter.class);
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 	
 	@Autowired
-	AccessTokenEncoder accessTokenEncoder;
+	SecurityTokenEncoder accessTokenEncoder;
  
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     	HttpServletRequest request = (HttpServletRequest) req;

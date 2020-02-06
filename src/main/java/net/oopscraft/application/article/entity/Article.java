@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -20,10 +21,11 @@ public class Article {
 	@Column(name = "ATCL_ID", length = 32)
 	String id;
 	
-	@Column(name = "ATCL_TITL", length = 1024)
+	@Column(name = "ATCL_TITL", length = 4000)
 	String title;
 
-	@Column(name = "ATCL_CNTS", length = Integer.MAX_VALUE)
+	@Column(name = "ATCL_CNTS")
+	@Lob
 	String contents;
 
 	@Column(name = "ATCL_ATHR", length = 1024)
