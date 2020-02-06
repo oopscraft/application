@@ -10,6 +10,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -28,10 +29,12 @@ public class Role extends SystemEntity {
 	@Column(name = "ROLE_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "ROLE_ICON", length = Integer.MAX_VALUE)
+	@Column(name = "ROLE_ICON")
+	@Lob
 	String icon;
 
-	@Column(name = "ROLE_DESC", length = Integer.MAX_VALUE)
+	@Column(name = "ROLE_DESC")
+	@Lob
 	String description;
 
 	@ManyToMany(fetch = FetchType.LAZY)

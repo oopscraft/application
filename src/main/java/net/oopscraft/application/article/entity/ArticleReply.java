@@ -13,6 +13,9 @@ import javax.persistence.Table;
 @IdClass(ArticleReply.Pk.class)
 public class ArticleReply {
 	
+	/**
+	 * ArticleReply.Pk
+	 */
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;
 		public Pk() {}

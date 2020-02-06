@@ -2,7 +2,10 @@ package net.oopscraft.application;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -17,6 +20,8 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -24,11 +29,18 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.transaction.ChainedTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -40,43 +52,57 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import net.oopscraft.application.core.PasswordBasedEncryptor;
 import net.oopscraft.application.core.mybatis.PageInterceptor;
+import net.oopscraft.application.util.monitor.MonitorAgent;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
  * Application Context Configuration
- * @author chomookun@gmail.com
  * @version 0.0.1
  */
 @Configuration
+@PropertySource("file:conf/application.properties")
 @ComponentScan(
-	basePackages = "net.oopscraft.application",
-	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
-	lazyInit = true,
-	excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {Controller.class,RestController.class,ControllerAdvice.class,EnableWebSecurity.class})
+	 nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class
+	,excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {
+			 Configuration.class
+			,Controller.class
+			,RestController.class
+			,ControllerAdvice.class
+		})
 )
 @EnableJpaRepositories(
-	basePackages = "net.oopscraft.application",
-	entityManagerFactoryRef = "entityManagerFactory"
+	 entityManagerFactoryRef = "entityManagerFactory"
+	,basePackages = "net.oopscraft.application"
 )
 @MapperScan(
-	basePackages = "net.oopscraft.application",
-	annotationClass=Mapper.class,
-	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class,
-	sqlSessionFactoryRef = "sqlSessionFactory"
+	 annotationClass=Mapper.class
+	,nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class
+	,sqlSessionFactoryRef = "sqlSessionFactory"
+	,basePackages = "net.oopscraft.application"
 )
 public class ApplicationContext {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContext.class);
-
 	static String propertiesPath = "conf/application.properties";
-	static Properties properties;
+	static Properties  properties;
 	
 	DataSource dataSource;
 	LocalContainerEntityManagerFactoryBean entityManagerFactory;
 	SqlSessionFactoryBean sqlSessionFactoryBean;
-	
+
 	/*
 	 * Creates static resources 
 	 */
@@ -94,18 +120,6 @@ public class ApplicationContext {
 		}
 	}
 
-	/**
-	 * Creates PropertyPlaceHolderConfigurer bean.
-	 * @return
-	 * @throws Exception
-	 */
-	@Bean
-	public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() throws Exception {
-		PropertyPlaceholderConfigurer propertyPlaceholderConfigurer = new PropertyPlaceholderConfigurer();
-		propertyPlaceholderConfigurer.setProperties(properties);
-		return propertyPlaceholderConfigurer;
-	}
-	
 	/**
 	 * Creates dataSource for database connection pool(DBCP)
 	 * @return
@@ -144,6 +158,7 @@ public class ApplicationContext {
 		// creates LocalContainerEntityManagerFactoryBean instance.
 		entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
 		entityManagerFactory.setDataSource(dataSource);
+		entityManagerFactory.setPersistenceUnitName("entityManagerFactory");
 
 		// defines vendor adapter
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
@@ -154,7 +169,7 @@ public class ApplicationContext {
 		if("true".equals(generateDdl)) {
 			vendorAdapter.setGenerateDdl(true);
 			jpaProperties.setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop");
-			jpaProperties.setProperty(AvailableSettings.HBM2DDL_IMPORT_FILES, "classpath:/net/oopscraft/application/import.sql");
+			jpaProperties.setProperty(AvailableSettings.HBM2DDL_IMPORT_FILES, "/net/oopscraft/application/import.sql");
 		}else {
 			vendorAdapter.setGenerateDdl(false);
 		}
@@ -175,10 +190,8 @@ public class ApplicationContext {
 			}
 		}
         entityManagerFactory.setPackagesToScan(packagesToScans.toArray(new String[packagesToScans.size()-1]));
-
         
         // return
-        entityManagerFactory.afterPropertiesSet();
         return entityManagerFactory;
 	}
 	
@@ -234,15 +247,16 @@ public class ApplicationContext {
 	 * @throws Exception
 	 */
 	@Bean
+	@DependsOn({"dataSource","entityManagerFactory"})
 	public PlatformTransactionManager transactionManager() throws Exception {
 		
 		// JPA transactionManager
 		JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-		jpaTransactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+		jpaTransactionManager.setEntityManagerFactory(entityManagerFactory.getObject());
 		
 		// MYBATIS transactionManager
 		DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
-		dataSourceTransactionManager.setDataSource(dataSource());
+		dataSourceTransactionManager.setDataSource(dataSource);
 		
 		// creates chained transaction manager
 		ChainedTransactionManager transactionManager = new ChainedTransactionManager(jpaTransactionManager, dataSourceTransactionManager);
@@ -265,7 +279,22 @@ public class ApplicationContext {
 		return applicationMessageSource;
 	}
 
+	@Bean
+	public SessionLocaleResolver localeResolver() throws Exception {
+		SessionLocaleResolver localeResolver = new SessionLocaleResolver();
+		localeResolver.setDefaultLocale(Locale.ENGLISH);
+		return localeResolver;
+	}
+	
+	
+	
+	
 
+	
+	
+	
+	
+	
 
 	
 	

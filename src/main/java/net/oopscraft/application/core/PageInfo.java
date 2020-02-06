@@ -38,7 +38,7 @@ public class PageInfo {
 	 * Returns MYBATIS RowBounds object.
 	 * @return
 	 */
-	public PageRowBounds toPageRowBounds() {
+	public PageRowBounds toRowBounds() {
 		return new PageRowBounds(getOffset(), getLimit(), enableTotalCount);
 	}
 

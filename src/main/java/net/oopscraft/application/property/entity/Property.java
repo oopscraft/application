@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
@@ -21,10 +22,12 @@ public class Property extends SystemEntity {
 	@Column(name = "PROP_NAME", length = 1024)
 	String name;
 
-	@Column(name = "PROP_VAL", length = Integer.MAX_VALUE)
+	@Column(name = "PROP_VAL")
+	@Lob
 	String value;
 
-	@Column(name = "PROP_DESC", length = Integer.MAX_VALUE)
+	@Column(name = "PROP_DESC")
+	@Lob
 	String description;
 	
 	public Property() {}

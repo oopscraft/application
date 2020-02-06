@@ -10,6 +10,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -31,10 +32,12 @@ public class Group extends SystemEntity {
 	@Column(name = "GROP_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "GROP_ICON", length = Integer.MAX_VALUE)
+	@Column(name = "GROP_ICON")
+	@Lob
 	String icon;
 
-	@Column(name = "GROP_DESC", length = Integer.MAX_VALUE)
+	@Column(name = "GROP_DESC")
+	@Lob
 	String description;
 	
 	@ManyToMany(fetch = FetchType.LAZY)

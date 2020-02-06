@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -28,7 +29,8 @@ public class Code extends SystemEntity {
 	@Column(name = "CODE_NAME", length = 1024)
 	String name;
 
-	@Column(name = "CODE_DESC", length = Integer.MAX_VALUE)
+	@Column(name = "CODE_DESC")
+	@Lob
 	String description;
 	
 	@OneToMany(

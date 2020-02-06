@@ -4,27 +4,30 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_MASG_INFO")
+@Table(name = "APP_MSGE_INFO")
 @EntityListeners(SystemEntityListener.class)
 public class Message extends SystemEntity {
 
 	@Id
-	@Column(name = "MASG_ID", length = 32)
+	@Column(name = "MSGE_ID", length = 32)
 	String id;
 
-	@Column(name = "MASG_NAME", length = 1024)
+	@Column(name = "MSGE_NAME", length = 1024)
 	String name;
 
-	@Column(name = "MASG_VAL", length = Integer.MAX_VALUE)
+	@Column(name = "MSGE_VAL")
+	@Lob
 	String value;
 
-	@Column(name = "MASG_DESC", length = Integer.MAX_VALUE)
+	@Column(name = "MSGE_DESC")
+	@Lob
 	String description;
 	
 	public Message() {}
