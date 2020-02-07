@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html layout:decorate="~{index.html}">
+<div layout:fragment="content">
+	<script>
+		// document ready
+		$(document).ready(function() {
+			getSamples();
+		    disableDetail(true);
+		});
+	
+		var search = new duice.Map({
+			key: null,
+			value: null,
+			status: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		var samples = new duice.List();
+		var sample = new duice.Map();
+
+		// adds index changed event listener
+		samples.onAfterChangeIndex(function(index){
+			if(index > -1){
+				var id = this.get(index).get('id');
+				getSample(id);	
+			}
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			sample.setDisable(disable);
+			$('#deleteSampleButton').prop('disabled', disable);
+			$('#saveSampleButton').prop('disabled', disable);
+		}
+		
+		/**
+		 * Clears detail
+		 */
+		function clearDetail(){
+			sample.clear();
+		}
+		
+		/**
+		 * Gets samples
+		 */
+		function getSamples(page) {
+			if(page){
+				search.set('page',page);
+			}
+			var data = {};
+			if(search.get('key')){
+				data[search.get('key')] = search.get('value');
+			}
+			if(search.get('status')){
+				data.status = search.get('status');
+			}
+			data.page = search.get('page');
+			data.rows = search.get('rows');
+			$.ajax({
+				 url: 'sample/getSamples'
+				,type: 'GET'
+				,data: data
+				,success: function(data, textStatus, jqXHR) {
+					samples.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					
+					// sets current user
+					samples.forEach(function(row,index){
+						if(row.get('id') === sample.get('id')){
+							samples.setIndex(index);
+							return false;
+						}
+					});
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Gets specified sample
+		 */
+		function getSample(id){
+			$.ajax({
+				 url: 'sample/getSample'
+				,type: 'GET'
+				,data: {id:id}
+				,success: function(data, textStatus, jqXHR) {
+					sample.fromJson(data);
+					disableDetail(false);
+					sample.setReadonly('id', true);
+		   	 	}
+			});	
+		}
+		
+		/**
+		 * Adds sample
+		 */
+		function addSample() {
+			clearDetail();
+			disableDetail(false);
+			sample.setReadonly('id',false);
+		}
+		
+		/**
+		 * Saves sample
+		 */
+		function saveSample(){
+			
+			// checks changes
+			if(!sample.isDirty()){
+				new duice.Alert("[[#{application.sample.changeNotFound}]]").open();
+				return;
+			}
+			
+			new duice.Confirm("[[#{application.sample.saveConfirm(#{application.label.sample})}]]")
+			.onAfterConfirm(function(){
+				var data = sample.toJson();
+				$.ajax({
+					 url: 'sample/saveSample'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert('[[#{application.sample.saveComplete(#{application.label.sample})}]]')
+						.onAfterClose(function(){
+							getSamples();
+						}).open();
+			   	 	}
+				});	
+			}).open();
+		}
+		
+		/**
+		 * Deletes sample
+		 */
+		function deleteSample(){
+			new duice.Confirm("[[#{application.sample.deleteConfirm(#{application.label.sample})}]]")
+			.onAfterConfirm(function(){
+				$.ajax({
+					 url: 'sample/deleteSample'
+					,type: 'DELETE'
+					,data: JSON.stringify(sample.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+					,success: function(data, textStatus, jqXHR) {
+						new duice.Alert("[[#{application.sample.deleteComplete(#{application.label.sample})}]]")
+						.onAfterClose(function(){
+							clearDetail();
+							getSamples();
+						}).open();
+			   	 	}
+				});
+			}).open();
+		}
+	</script>
+	<div class="app-row">
+		<div class="app-col">
+			<h1>
+				<img class="icon large" th:src="@{/static/image/icon_sample.png}"/>
+				<span data-th-text="#{application.label.sample}+' '+#{application.label.management}"></span>
+			</h1>
+		</div>
+	</div>
+	<hr class="hr"/>
+	<div class="app-row">
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col" style="width:50%;">
+					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
+						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.label.sample}+' '+#{application.label.id}">ID</option>
+						<option value="name" data-th-text="#{application.label.sample}+' '+#{application.label.name}">Name</option>
+					</select>
+					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
+				</div>
+				<div class="app-col right">
+					<button class="button" onclick="getSamples(1);">
+						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
+						<span data-th-text="#{application.label.search}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+						data-duice-bind="samples,sample" 
+						data-duice-selectable="true"
+						style="width:100%;">
+						<col style="width:10%;"/>					
+						<col style="width:30%"/>
+						<col style="width:60%"/>
+						<thead>
+							<tr>
+								<th data-th-text="#{application.label.no}">No</th>
+								<th data-th-text="#{application.label.sample}+' '+#{application.label.id}">ID</th>
+								<th data-th-text="#{application.label.sample}+' '+#{application.label.name}">Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="text-center">
+									<span is="duice-ui-scriptlet" data-duice-bind="search">
+										return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+									</span>
+								</td>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="sample,id"></span>
+								</td>
+								<td><span is="duice-ui-span" data-duice-bind="sample,name"></span></td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="7">
+									<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+										<li onclick="getSamples();"></li>
+									</ul>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>		
+		</div>
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" th:src="@{/static/image/icon_sample.png}"/>
+					<span data-th-text="#{application.label.sample} + ' ' + #{application.label.details}" class="font-bold"></span>
+				</div>
+				<div class="app-col right">
+					<button id="addSampleButton" class="button" onclick="addSample();">
+						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
+						<span data-th-text="#{application.label.new}"></span>
+					</button>
+					<button id="deleteSampleButton" class="button" onclick="deleteSample();">
+						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
+						<span data-th-text="#{application.label.delete}"></span>
+					</button>
+					<button id="saveSampleButton" class="button" onclick="saveSample();">
+						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
+						<span data-th-text="#{application.label.save}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table class="table" style="width:100%;">
+						<col style="width:25%;"/>
+						<col/>
+						<tbody>
+							<tr>
+								<th><span data-th-text="#{application.label.sample}+' '+#{application.label.id}" class="mand">Sample ID</span></th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="sample,id" autocomplete="nope"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.sample}+' '+#{application.label.name}">Sample Name</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="sample,name"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.sample}+' '+#{application.label.value}">Sample Value</th>
+								<td><textarea is="duice-ui-textarea" data-duice-bind="sample,value" style="height:6rem;"></textarea></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.sample}+' '+#{application.label.description}">Description</th>
+								<td><textarea is="duice-ui-textarea" data-duice-bind="sample,description" style="height:6rem;"></textarea></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
