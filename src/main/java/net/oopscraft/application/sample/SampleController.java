@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -19,22 +18,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import net.oopscraft.application.Application;
 import net.oopscraft.application.core.PageInfo;
-import net.oopscraft.application.sample.SampleService;
 import net.oopscraft.application.sample.entity.Sample;
 
 @Controller
 @RequestMapping("/sample")
 public class SampleController {
-
+	
 	@Autowired
 	HttpServletResponse response;
 
 	@Autowired
 	SampleService sampleService;
-
+	
 	/**
 	 * Forwards page
+	 * 샘플 화면 이동
 	 * @return
 	 * @throws Exception
 	 */
@@ -46,6 +46,8 @@ public class SampleController {
 	
 	/**
 	 * Returns samples
+	 * 샘플 데이터 목록 조회
+	 * MYBATIS MAPPER로 Entity Class를 이용하여 조회한다.
 	 * @param role
 	 * @param pageInfo
 	 * @return
@@ -60,12 +62,20 @@ public class SampleController {
 		return samples;
 	}
 	
+	/**
+	 * Returns sample summary
+	 * 샘플데이터 통계내역 조회
+	 * MYBATIS MAPPER로 비정형 데이터구조를 Map형태로 조회하여 반환한다.
+	 * @param key1
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "getSampleSummary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Map<String,Object>> getSampleSummary(@RequestParam("key1") String key1, @ModelAttribute PageInfo pageInfo) throws Exception {
-		pageInfo.setEnableTotalCount(true);
-		List<Map<String,Object>> samples = sampleService.getSampleSummary(key1, pageInfo);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+	public List<Map<String,Object>> getSampleSummary(
+		 @RequestParam(value="key1", required=false) String key1
+	) throws Exception {
+		List<Map<String,Object>> samples = sampleService.getSampleSummary(key1);
 		return samples;
 	}
 	

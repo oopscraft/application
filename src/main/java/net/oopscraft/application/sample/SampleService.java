@@ -3,15 +3,20 @@ package net.oopscraft.application.sample;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.mybatis.PageRowBounds;
 import net.oopscraft.application.sample.entity.Sample;
 
 @Service
 public class SampleService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SampleService.class);
 	
 	@Autowired
 	SampleMapper sampleMapper;
@@ -29,6 +34,7 @@ public class SampleService {
 	public List<Sample> getSamples(final Sample sample, PageInfo pageInfo) throws Exception {
 		PageRowBounds rowBounds = pageInfo.toRowBounds();
 		List<Sample> samples = sampleMapper.getSamples(sample, rowBounds);
+		LOGGER.debug("{}",new TextTable(samples));
 		pageInfo.setTotalCount(rowBounds.getTotalCount());
 		return samples;
 	}
@@ -40,10 +46,9 @@ public class SampleService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Map<String,Object>> getSampleSummary(String key1,PageInfo pageInfo) throws Exception {
-		PageRowBounds rowBounds = pageInfo.toRowBounds();
-		List<Map<String,Object>> samples = sampleMapper.getSampleSummary(key1, rowBounds);
-		pageInfo.setTotalCount(rowBounds.getTotalCount());
+	public List<Map<String,Object>> getSampleSummary(String key1) throws Exception {
+		List<Map<String,Object>> samples = sampleMapper.getSampleSummary(key1);
+		LOGGER.debug("{}",new TextTable(samples));
 		return samples;
 	}
 	
@@ -54,7 +59,9 @@ public class SampleService {
 	 * @return
 	 */
 	public Sample getSample(String key1, String key2) {
-		return sampleRepository.findOne(new Sample.Pk(key1,key2));
+		Sample sample = sampleRepository.findOne(new Sample.Pk(key1,key2));
+		LOGGER.debug("{}",new TextTable(sample));
+		return sample;
 	}
 	
 	/**
@@ -74,6 +81,7 @@ public class SampleService {
 	 * @throws Exception
 	 */
 	public Sample saveSample(Sample sample) throws Exception {
+		LOGGER.debug("{}",new TextTable(sample));
 		Sample one = sampleRepository.findOne(new Sample.Pk(sample.getKey1(), sample.getKey2()));
 		if(one == null) {
 			one = new Sample();
@@ -84,7 +92,7 @@ public class SampleService {
 		one.setValueClob(sample.getValueClob());
 		one.setValueInt(sample.getValueInt());
 		one.setValueLong(sample.getValueLong());
-		one.setValueBoolean(sample.isValueBoolean());
+		one.setValueYn(sample.isValueYn());
 		one.setValueEnum(sample.getValueEnum());
 		return sampleRepository.save(one);
 	}
@@ -95,6 +103,7 @@ public class SampleService {
 	 * @throws Exception
 	 */
 	public void deleteSample(Sample sample) throws Exception {
+		LOGGER.debug("{}",new TextTable(sample));
 		sampleRepository.delete(sample);
 	}
 

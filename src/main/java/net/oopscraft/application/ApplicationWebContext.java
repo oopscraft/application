@@ -44,8 +44,8 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 @ComponentScan(
 	nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class
 	,excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {
-			Configuration.class
-		})
+		Configuration.class
+	})
 )
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
@@ -67,11 +67,20 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 	SpringResourceTemplateResolver templateResolver;
 	TemplateEngine templateEngine;
 	
+	/**
+	 * Enables DefaultServletHandlerConfigurer
+	 */
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		configurer.enable();
 	}
 	
+	/**
+	 * Security access handler implementations.
+	 * (AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler, LogoutSuccessHandler)
+	 * @return
+	 * @throws Exception
+	 */
 	@Bean
 	public AuthenticationHandler authenticationHandler() throws Exception {
 		authenticationHandler = new AuthenticationHandler();

@@ -6,6 +6,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,6 +37,12 @@ import net.oopscraft.application.user.entity.User;
 public class ApplicationWebController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationWebController.class);
+	
+	@Autowired
+	Environment environment;
+	
+	@Value("${application.theme}")
+	String theme;
 	
 	/**
 	 * Default exception handler
@@ -106,9 +116,14 @@ public class ApplicationWebController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("application.html");
-		modelAndView.addObject("THEME","application");
+		ModelAndView modelAndView = new ModelAndView("index.html");
 		return modelAndView;
+	}
+	
+	@RequestMapping(value = "public/**", method = RequestMethod.GET)
+	public String forwardPublic(HttpServletRequest request) throws Exception {
+		String resource = request.getRequestURI().replace("public/", "");
+		return String.format("forward:/WEB-INF/theme/%s/public/%s", environment.getProperty("application.theme"), resource);
 	}
 	
 	/**
