@@ -1,0 +1,61 @@
+<link rel="stylesheet"
+	th:href="@{/public/bootstrap/css/bootstrap.min.css}">
+<script th:src="@{/public/bootstrap/js/bootstrap.min.js}"></script>
+
+<style>
+.bd-placeholder-img {
+	font-size: 1.125rem;
+	text-anchor: middle;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+@media ( min-width : 768px) {
+	.bd-placeholder-img-lg {
+		font-size: 3.5rem;
+	}
+}
+
+body {
+	padding-top: 5rem;
+}
+
+.starter-template {
+	padding: 3rem 1.5rem;
+	text-align: center;
+}
+</style>
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color:#eee; border-bottom:dotted 1px #aaa;">
+	<a class="navbar-brand" href="#">
+		<img th:src="@{/static/image/application.png}"/>
+	</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse"
+		data-target="#navbarsExampleDefault"
+		aria-controls="navbarsExampleDefault" aria-expanded="false"
+		aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+
+	<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+		<ul is="duice-ui-ul" class="navbar-nav mr-auto"
+		data-duice-bind="__menus,__menu">
+			<li class="nav-item dropdown">
+				<a class="nav-link" href="#">
+					<span is="duice-ui-span" data-duice-bind="__menu,name"></span>
+				</a>
+			</li>
+		</ul>
+	</div>
+</nav>
+<main role="main" class="container">
+	<div layout:fragment="content" class="starter-template">
+		<h1>Bootstrap starter template</h1>
+		<p class="lead">
+			Use this document as a way to quickly start any new project.<br>
+			All you get is this text and a mostly barebones HTML document.
+		</p>
+	</div>
+</main>
+

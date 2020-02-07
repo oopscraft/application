@@ -1,28 +1,23 @@
 package net.oopscraft.application;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
+import org.apache.commons.text.CaseUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.hibernate.cfg.AvailableSettings;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.PropertiesFactoryBean;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
@@ -30,62 +25,49 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.core.annotation.Order;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
-import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.transaction.ChainedTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.UrlBasedViewResolver;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
-import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import net.oopscraft.application.core.PasswordBasedEncryptor;
-import net.oopscraft.application.core.mybatis.PageInterceptor;
-import net.oopscraft.application.util.monitor.MonitorAgent;
-import nz.net.ultraq.thymeleaf.LayoutDialect;
+import net.oopscraft.application.core.ValueMap;
+import net.oopscraft.application.core.mybatis.CamelCaseValueMap;
+import net.oopscraft.application.core.mybatis.PageRowBoundsInterceptor;
+import net.oopscraft.application.core.mybatis.YesNoBooleanTypeHandler;
+import net.oopscraft.application.core.spring.EncryptedPropertySourceFactory;
 
 /**
  * Application Context Configuration
  * @version 0.0.1
  */
 @Configuration
-@PropertySource("file:conf/application.properties")
+@PropertySources({
+	@PropertySource(value = "file:conf/application.properties", factory = EncryptedPropertySourceFactory.class)
+})
 @ComponentScan(
 	 nameGenerator = net.oopscraft.application.core.spring.FullBeanNameGenerator.class
 	,excludeFilters = @Filter(type=FilterType.ANNOTATION, value= {
-			 Configuration.class
-			,Controller.class
-			,RestController.class
-			,ControllerAdvice.class
-		})
+		 Configuration.class
+		,Controller.class
+		,RestController.class
+		,ControllerAdvice.class
+	})
 )
 @EnableJpaRepositories(
 	 entityManagerFactoryRef = "entityManagerFactory"
-	,basePackages = "net.oopscraft.application"
+	 ,basePackages = "net.oopscraft.application"
 )
 @MapperScan(
 	 annotationClass=Mapper.class
@@ -95,30 +77,12 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 )
 public class ApplicationContext {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContext.class);
-	static String propertiesPath = "conf/application.properties";
-	static Properties  properties;
+	@Autowired
+	private Environment environment;
 	
 	DataSource dataSource;
 	LocalContainerEntityManagerFactoryBean entityManagerFactory;
 	SqlSessionFactoryBean sqlSessionFactoryBean;
-
-	/*
-	 * Creates static resources 
-	 */
-	static {
-		LOGGER.info("Loads properties file[{}]", propertiesPath);
-		try {
-			properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(new File(propertiesPath)));
-			PasswordBasedEncryptor pbEncryptor = new PasswordBasedEncryptor();
-			for(String propertyName : properties.stringPropertyNames()) {
-				String value = properties.getProperty(propertyName);
-				properties.put(propertyName, pbEncryptor.decryptIdentifiedValue(value));
-			}
-		}catch(Exception e) {
-			e.printStackTrace(System.err);
-		}
-	}
 
 	/**
 	 * Creates dataSource for database connection pool(DBCP)
@@ -131,13 +95,13 @@ public class ApplicationContext {
 		// parses dataSource properties
 		Properties datasourceProperties = new Properties();
 		datasourceProperties.put("defaultAutoCommit", false);
-		datasourceProperties.put("driver", properties.getProperty("application.dataSource.driver"));
-		datasourceProperties.put("url", properties.getProperty("application.dataSource.url"));
-		datasourceProperties.put("username", properties.getProperty("application.dataSource.username"));
-		datasourceProperties.put("password", properties.getProperty("application.dataSource.password"));
-		datasourceProperties.put("initialSize", properties.getProperty("application.dataSource.initialSize"));
-		datasourceProperties.put("maxActive", properties.getProperty("application.dataSource.maxActive"));
-		datasourceProperties.put("validationQuery", properties.getProperty("application.dataSource.validationQuery"));
+		datasourceProperties.put("driver", environment.getProperty("application.dataSource.driver"));
+		datasourceProperties.put("url", environment.getProperty("application.dataSource.url"));
+		datasourceProperties.put("username", environment.getProperty("application.dataSource.username"));
+		datasourceProperties.put("password", environment.getProperty("application.dataSource.password"));
+		datasourceProperties.put("initialSize", environment.getProperty("application.dataSource.initialSize"));
+		datasourceProperties.put("maxActive", environment.getProperty("application.dataSource.maxActive"));
+		datasourceProperties.put("validationQuery", environment.getProperty("application.dataSource.validationQuery"));
 		
 		// creates dastaSource instance.
 		dataSource = BasicDataSourceFactory.createDataSource(datasourceProperties);
@@ -164,6 +128,7 @@ public class ApplicationContext {
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         Properties jpaProperties = new Properties();
         jpaProperties.setProperty(AvailableSettings.HQL_BULK_ID_STRATEGY, "org.hibernate.hql.spi.id.inline.InlineIdsOrClauseBulkIdStrategy");	// Bulk-id strategies when you can’t use temporary tables
+        jpaProperties.setProperty(AvailableSettings.FORMAT_SQL, "true");
 
 		String generateDdl = System.getProperty("application.entityManagerFactory.generateDdl");
 		if("true".equals(generateDdl)) {
@@ -173,17 +138,15 @@ public class ApplicationContext {
 		}else {
 			vendorAdapter.setGenerateDdl(false);
 		}
-        if(LOGGER.isDebugEnabled() == true) {
-        	vendorAdapter.setShowSql(true);
-        }
-        vendorAdapter.setDatabasePlatform(properties.getProperty("application.entityManagerFactory.databasePlatform"));
+		
+		vendorAdapter.setDatabasePlatform(environment.getProperty("application.entityManagerFactory.databasePlatform"));
         entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
         entityManagerFactory.setJpaProperties(jpaProperties);
         
         // sets packagesToScan property.
 		List<String> packagesToScans = new ArrayList<String>();
 		packagesToScans.add(this.getClass().getPackage().getName());
-		String packagesToScan = properties.getProperty("application.entityManagerFactory.packagesToScan");
+		String packagesToScan = environment.getProperty("application.entityManagerFactory.packagesToScan");
 		for(String element : packagesToScan.split(",")) {
 			if(element.trim().length() > 0) {
 				packagesToScans.add(element.trim());
@@ -211,22 +174,21 @@ public class ApplicationContext {
 		configuration.setCacheEnabled(true);
 		configuration.setCallSettersOnNulls(true);
 		configuration.setMapUnderscoreToCamelCase(true);
-		configuration.setDatabaseId(properties.getProperty("application.sqlSessionFactory.databaseId"));
+		configuration.setDatabaseId(environment.getProperty("application.sqlSessionFactory.databaseId"));
 		configuration.setLogImpl(Slf4jImpl.class);
+		configuration.getTypeAliasRegistry().registerAlias(CaseUtils.toCamelCase(ValueMap.class.getSimpleName(),false), CamelCaseValueMap.class);
+		configuration.getTypeAliasRegistry().registerAlias(CaseUtils.toCamelCase(YesNoBooleanTypeHandler.class.getSimpleName(),false), YesNoBooleanTypeHandler.class);
 		sqlSessionFactoryBean.setConfiguration(configuration);
 		
 		// sets intercepter instance
 		sqlSessionFactoryBean.setPlugins(new Interceptor[] {
-			new PageInterceptor()
+			new PageRowBoundsInterceptor()
 		});
 		
 		// sets mapLocations
 		Vector<Resource> mapperLocationResources = new Vector<Resource>();
 		PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
-		for(Resource mapperLocationResource : resourceResolver.getResources("classpath*:net/oopscraft/application/**/*Mapper.xml")) {
-			mapperLocationResources.add(mapperLocationResource);
-		}
-		String mapperLocations = properties.getProperty("application.sqlSessionFactory.mapperLocations");
+		String mapperLocations = environment.getProperty("application.sqlSessionFactory.mapperLocations");
 		for(String mapperLocation : mapperLocations.split(",")) {
 			if(mapperLocation.trim().length() > 0) {
 				for(Resource mapperLocationResource : resourceResolver.getResources(mapperLocation)) {
@@ -285,17 +247,5 @@ public class ApplicationContext {
 		localeResolver.setDefaultLocale(Locale.ENGLISH);
 		return localeResolver;
 	}
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-
-	
 	
 }

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+    	<title>Application</title>
+		<link rel="stylesheet" type="text/css" th:href="@{/static/polyfill/normalize.css}">
+		<script th:src="@{/static/polyfill/dataset.js}"></script>
+		<script th:src="@{/static/polyfill/classList.js}"></script>
+		<script th:src="@{/static/duice.js}"></script>
+		<link rel="stylesheet" type="text/css" th:href="@{/static/duice.css}">
+		<script th:src="@{/static/jquery.js}"></script>
+		<script>
+		/**
+		 * ajax setting
+		 */
+		var __progress = null;
+        $(document).ajaxStart(function(event) {
+        	console.log('$(document).ajaxStart');
+        	__progress = new duice.Progress(document.body);
+       		__progress.start();
+        });
+        // If not configure, "Provisional headers are shown" error occured in chrome.
+        $(document).ajaxSend(function(event, jqxhr, settings) {
+        	console.log('$(document).ajaxSend');
+        	jqxhr.setRequestHeader("[[${_csrf}?${_csrf.headerName}:'headerName']]","[[${_csrf}?${_csrf.token}:'token']]");
+        	jqxhr.setRequestHeader('Cache-Control','no-cache, no-store, must-revalidate');
+        	jqxhr.setRequestHeader('Pragma','no-cache');
+        	jqxhr.setRequestHeader('Expires','0');
+        });
+		// checks stop event
+        $(document).ajaxStop(function(event) {
+        	console.log('$(document).ajaxStop');
+        	if(__progress){
+        		__progress.stop();
+        	}
+        });
+		// Checks error except cancelation(readyState = 0)
+        $(document).ajaxError(function(event, jqXHR, ajaxSettings,thrownError ){
+        	console.error('$(document).ajaxError');
+        	if(jqXHR.readyState > 0){
+        		console.error(event, jqXHR, ajaxSettings, thrownError);
+        		new duice.Alert(jqXHR.responseText).open();
+        	}
+        });
+        
+        /**
+         * Parsed total count from Content-Range header
+         * @Param {Object} jqXHR
+         */
+        function __parseTotalCount(jqXHR){
+        	var contentRange = jqXHR.getResponseHeader("Content-Range");
+        	try {
+            	var totalCount = contentRange.split(' ')[1].split('/')[1];
+        		return parseInt(totalCount);
+        	}catch(e){
+        		console.error(e);
+        		return -1;
+        	}
+        }
+        
+        /**
+		 * Changes language
+		 */ 
+        function __changeLanguage(language){
+        	window.location = '?__lang=' + language;
+        }
+        
+        /**
+         * Exeuctes logout
+         */ 
+        function __logout(){
+			$.ajax({
+				 url: '[[@{/admin/logout}]]'
+				,type: 'POST'
+				,success: function(data, textStatus, jqXHR) {
+					location.href='[[@{/admin}]]';
+		    	 }
+			});
+        }
+        
+        var __menus = new duice.List();
+        __menus.fromJson([
+		{
+        	  "id" : "menu1",
+        	  "upperId" : null,
+        	  "sequence" : 1,
+        	  "name" : "Menu 1",
+        	  "icon" : null,
+        	  "description" : null,
+        	  "type" : null,
+        	  "value" : null,
+        	  "displayPolicy" : null,
+        	  "displayAuthorities" : [ ],
+        	  "accessPolicy" : null,
+        	  "accessAuthorities" : [ ],
+        	  "systemEmbedded" : false,
+        	  "systemInsertDate" : null,
+        	  "systemInsertUserId" : null,
+        	  "systemUpdateDate" : null,
+        	  "systemUpdateUserId" : null
+        	}, {
+        	  "id" : "menu2",
+        	  "upperId" : null,
+        	  "sequence" : 2,
+        	  "name" : "Menu 2",
+        	  "icon" : null,
+        	  "description" : null,
+        	  "type" : null,
+        	  "value" : null,
+        	  "displayPolicy" : null,
+        	  "displayAuthorities" : [ ],
+        	  "accessPolicy" : null,
+        	  "accessAuthorities" : [ ],
+        	  "systemEmbedded" : false,
+        	  "systemInsertDate" : null,
+        	  "systemInsertUserId" : null,
+        	  "systemUpdateDate" : null,
+        	  "systemUpdateUserId" : null
+        	}, {
+        	  "id" : "menu3",
+        	  "upperId" : null,
+        	  "sequence" : 3,
+        	  "name" : "Menu 3",
+        	  "icon" : null,
+        	  "description" : null,
+        	  "type" : null,
+        	  "value" : null,
+        	  "displayPolicy" : null,
+        	  "displayAuthorities" : [ ],
+        	  "accessPolicy" : null,
+        	  "accessAuthorities" : [ ],
+        	  "systemEmbedded" : false,
+        	  "systemInsertDate" : null,
+        	  "systemInsertUserId" : null,
+        	  "systemUpdateDate" : null,
+        	  "systemUpdateUserId" : null
+        	}, {
+        	  "id" : "menu4",
+        	  "upperId" : null,
+        	  "sequence" : 4,
+        	  "name" : "Menu 4",
+        	  "icon" : null,
+        	  "description" : null,
+        	  "type" : null,
+        	  "value" : null,
+        	  "displayPolicy" : null,
+        	  "displayAuthorities" : [ ],
+        	  "accessPolicy" : null,
+        	  "accessAuthorities" : [ ],
+        	  "systemEmbedded" : false,
+        	  "systemInsertDate" : null,
+        	  "systemInsertUserId" : null,
+        	  "systemUpdateDate" : null,
+        	  "systemUpdateUserId" : null
+        	}, {
+        	  "id" : "menu5",
+        	  "upperId" : null,
+        	  "sequence" : 5,
+        	  "name" : "Menu 5",
+        	  "icon" : null,
+        	  "description" : null,
+        	  "type" : null,
+        	  "value" : null,
+        	  "displayPolicy" : null,
+        	  "displayAuthorities" : [ ],
+        	  "accessPolicy" : null,
+        	  "accessAuthorities" : [ ],
+        	  "systemEmbedded" : false,
+        	  "systemInsertDate" : null,
+        	  "systemInsertUserId" : null,
+        	  "systemUpdateDate" : null,
+        	  "systemUpdateUserId" : null
+        	}, {
+        	  "id" : "menu6",
+        	  "upperId" : null,
+        	  "sequence" : 6,
+        	  "name" : "Menu 6",
+        	  "icon" : null,
+        	  "description" : null,
+        	  "type" : null,
+        	  "value" : null,
+        	  "displayPolicy" : null,
+        	  "displayAuthorities" : [ ],
+        	  "accessPolicy" : null,
+        	  "accessAuthorities" : [ ],
+        	  "systemEmbedded" : false,
+        	  "systemInsertDate" : null,
+        	  "systemInsertUserId" : null,
+        	  "systemUpdateDate" : null,
+        	  "systemUpdateUserId" : null
+        	}, {
+        	  "id" : "menu7",
+        	  "upperId" : null,
+        	  "sequence" : 7,
+        	  "name" : "Menu 7",
+        	  "icon" : null,
+        	  "description" : null,
+        	  "type" : null,
+        	  "value" : null,
+        	  "displayPolicy" : null,
+        	  "displayAuthorities" : [ ],
+        	  "accessPolicy" : null,
+        	  "accessAuthorities" : [ ],
+        	  "systemEmbedded" : false,
+        	  "systemInsertDate" : null,
+        	  "systemInsertUserId" : null,
+        	  "systemUpdateDate" : null,
+        	  "systemUpdateUserId" : null
+        	} 
+		]);
+        
+		</script>
+	</head>
+	<body> 
+		<th:block th:include="|../theme/application/index.html|"></th:block>
+	</body>
+</html>

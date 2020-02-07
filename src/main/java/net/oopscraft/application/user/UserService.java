@@ -35,10 +35,6 @@ public class UserService {
 	
 	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
-    @Value("${application.config.securityPolicy}")
-    private String securityPolicyString;
-    
-	
 	public static void main(String[] args) throws Exception {
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		String password = passwordEncoder.encode("admin");
@@ -53,11 +49,6 @@ public class UserService {
 	 * @throws Exception
 	 */
 	public List<User> getUsers(final User user, PageInfo pageInfo) throws Exception {
-		
-		
-		System.err.println("##############" + securityPolicyString);
-		
-		
 		Page<User> usersPage = userRepository.findAll(new  Specification<User>() {
 			@Override
 			public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {

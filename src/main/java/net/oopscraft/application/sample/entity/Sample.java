@@ -20,7 +20,7 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_SMPL_INFO")
+@Table(name = "APP_SAMP_INFO")
 @EntityListeners(SystemEntityListener.class)
 @IdClass(Sample.Pk.class)
 public class Sample extends SystemEntity {
@@ -103,14 +103,14 @@ public class Sample extends SystemEntity {
 	
 	@Column(name = "VAL_YN", length = 1)
 	@Convert(converter=BooleanToStringConverter.class)
-	boolean valueBoolean;
+	boolean valueYn;
 	
 	enum Code { CODE_1, CODE_2, CODE_3 }
 	@Column(name = "VAL_ENUM")
 	@Enumerated(EnumType.STRING)
 	Code valueEnum;
 	
-	@Formula("(SELECT COUNT(*) FROM APP_SMPL_INFO)")
+	@Formula("(SELECT COUNT(*) FROM APP_SAMP_INFO)")
 	long valueSubQuery = 0;
 
 	public String getKey1() {
@@ -161,12 +161,12 @@ public class Sample extends SystemEntity {
 		this.valueLong = valueLong;
 	}
 
-	public boolean isValueBoolean() {
-		return valueBoolean;
+	public boolean isValueYn() {
+		return valueYn;
 	}
 
-	public void setValueBoolean(boolean valueBoolean) {
-		this.valueBoolean = valueBoolean;
+	public void setValueYn(boolean valueYn) {
+		this.valueYn = valueYn;
 	}
 
 	public Code getValueEnum() {
@@ -184,7 +184,5 @@ public class Sample extends SystemEntity {
 	public void setValueSubQuery(long valueSubQuery) {
 		this.valueSubQuery = valueSubQuery;
 	}
-	
-	
 
 }
