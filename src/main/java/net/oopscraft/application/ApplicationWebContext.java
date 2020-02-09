@@ -1,5 +1,7 @@
 package net.oopscraft.application;
 
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -196,9 +202,32 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 	 */
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
-    	MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-    	messageConverter.setObjectMapper(JsonConverter.getObjectMapper());
-    	messageConverters.add(messageConverter);
+
+        // form
+        FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
+        messageConverters.add(formHttpMessageConverter);
+
+        // JSON message
+    	MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
+    	jsonMessageConverter.setObjectMapper(JsonConverter.getObjectMapper());
+    	messageConverters.add(jsonMessageConverter);
+    	
+    	// text
+    	StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter();
+    	stringHttpMessageConverter.setDefaultCharset(Charset.forName("UTF-8"));
+        List<MediaType> stringSupportedMediaTypes = new ArrayList<MediaType>();
+        stringSupportedMediaTypes.add(MediaType.TEXT_PLAIN);
+        stringHttpMessageConverter.setSupportedMediaTypes(stringSupportedMediaTypes);
+        messageConverters.add(stringHttpMessageConverter);
+
+    	// Binary message converter
+        ByteArrayHttpMessageConverter byteArrayHttpMessageConverter = new ByteArrayHttpMessageConverter();
+        List<MediaType> byteArraySupportedMediaTypes = new ArrayList<MediaType>();
+        byteArraySupportedMediaTypes.add(MediaType.IMAGE_PNG);
+        byteArraySupportedMediaTypes.add(MediaType.IMAGE_JPEG);
+        byteArraySupportedMediaTypes.add(MediaType.IMAGE_GIF);
+        byteArrayHttpMessageConverter.setSupportedMediaTypes(byteArraySupportedMediaTypes);
+        messageConverters.add(byteArrayHttpMessageConverter);
     }
 	
     /**

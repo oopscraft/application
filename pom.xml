@@ -429,6 +429,13 @@
 			<systemPath>${basedir}/repo/ojdbc6.jar</systemPath>
 		</dependency>
 		
+		<!-- https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml -->
+		<dependency>
+		    <groupId>net.sourceforge.plantuml</groupId>
+		    <artifactId>plantuml</artifactId>
+		    <version>8059</version>
+		</dependency>
+
 		<!-- com.fasterxml.jackson.core -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

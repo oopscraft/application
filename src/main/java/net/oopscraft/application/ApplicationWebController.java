@@ -1,14 +1,24 @@
 package net.oopscraft.application;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -17,9 +27,11 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,6 +42,9 @@ import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.security.UserDetails;
 import net.oopscraft.application.user.entity.Authority;
 import net.oopscraft.application.user.entity.User;
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.SourceStringReader;
 
 @Controller
 @ControllerAdvice
@@ -120,10 +135,54 @@ public class ApplicationWebController {
 		return modelAndView;
 	}
 	
+	/**
+	 * Returns README.md contents
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "readme", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String readme() throws Exception {
+		File file = null;
+		try {
+			file = new ClassPathResource("README.md").getFile();
+		}catch(Exception e) {
+			file = new File("README.md");
+		}
+		return FileUtils.readFileToString(file, "UTF-8");
+	}
+	
+	/**
+	 * Returns Plant UML image from requested code
+	 * @param plantumlCode
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "plantuml", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.IMAGE_PNG_VALUE)
+	@ResponseBody
+	public byte[] plantuml(@RequestBody String plantumlCode) throws Exception {
+		byte[] imageBytes;
+        SourceStringReader reader = new SourceStringReader(plantumlCode);
+        OutputStream os = null;
+        ByteArrayOutputStream baos = null;
+        try {
+        	os = new ByteArrayOutputStream();
+	        reader.generateImage(os, new FileFormatOption(FileFormat.PNG, false));
+	        baos = (ByteArrayOutputStream) os;  
+	        imageBytes = baos.toByteArray();
+        }catch(Exception e) {
+        	throw e;
+        }finally {
+        	if(baos != null) try { baos.close(); }catch(Exception ignore) {}
+        	if(os != null) try { os.close(); }catch(Exception ignore) {}
+        }
+		return imageBytes;
+	}
+	
 	@RequestMapping(value = "public/**", method = RequestMethod.GET)
 	public String forwardPublic(HttpServletRequest request) throws Exception {
 		String resource = request.getRequestURI().replace("public/", "");
-		return String.format("forward:/WEB-INF/theme/%s/public/%s", environment.getProperty("application.theme"), resource);
+		return String.format("forward:/WEB-INF/theme/%s/%s", environment.getProperty("application.theme"), resource);
 	}
 	
 	/**
