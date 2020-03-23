@@ -13,16 +13,58 @@
 			rows: 1000,
 			totalCount: -1
 		});
-		var menus = new duice.List();
-		var menu = new duice.Map();
-		var menuDisplayAuthorities = new duice.List();
+		const menus = new duice.List();
+		const menu = new duice.Map();
+		const menuDisplayAuthorities = new duice.List();
+		var isNew = false;
 		
 		// adds index changed event listener
-		menus.onAfterChangeIndex(function(index){
-			if(index > -1){
-				var id = this.get(index).get('id');
-				getMenu(id);	
+		menus.onBeforeSelectRow(async function(index){
+			if(isDetailChanged()){
+				return await new duice.Confirm("[[#{application.message.changeFound}+'\n'+#{application.message.ignoreChange}]]")
+				.onAfterConfirm(function(){
+					resetDetail();
+				})
+				.open();
 			}
+		});
+		
+		// event listener for select row
+		menus.onAfterSelectRow(function(selectedRow){
+			getMenu(selectedRow.get('id'));	
+		});
+		
+		// event listner for before move row
+		menus.onBeforeMoveRow(async function(sourceRow,targetRow){
+			console.log('menus.onBeforeMoveRow', sourceRow.toJson(), targetRow && targetRow.toJson());
+			return await new duice.Confirm("[[#{application.message.changePositionConfirm(#{application.label.group})}]]")
+			.open();
+		});
+		
+		// event listner for after move row
+		menus.onAfterMoveRow(async function(sourceRow,targetRow){
+			console.log('menus.onAfterMoveRow', sourceRow.toJson(), targetRow && targetRow.toJson());
+			var group = sourceRow;
+			var id = group.get('id');
+			$.ajax({
+				 url: 'menu/changeUpperId'
+				,type: 'POST'
+				,data: JSON.stringify(group.toJson())
+				,contentType: 'application/json;charset=UTF-8'
+				,success: function(data, textStatus, jqXHR) {
+					new duice.Alert('[[#{application.message.changePositionComplete(#{application.label.group})}]]')
+					.onAfterClose(async function(){
+						await getGroups();
+						menus.forEach(function(row,index){
+							if(row.get('id') === id){
+								initializeDetail();
+								menus.selectRow(index);
+								return true;
+							}
+						});
+					}).open();
+		   	 	}
+			});	
 		});
 		
 		/**
@@ -30,16 +72,38 @@
 		 */
 		function disableDetail(disable){
 			menu.setDisable(disable);
-			$('#deleteMenuButton').prop('disabled', disable);
-			$('#saveMenuButton').prop('disabled', disable);
+			$('#detailDiv').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
 		}
 		
 		/**
-		 * Clears detail
+		 * Returns detail changed.
 		 */
-		function clearDetail(){
-			menu.clear();
-			menuDisplayAuthorities.clear();
+		function isDetailChanged() {
+			if(menu.isDirty()
+			|| menuDisplayAuthorities.isDirty()
+			){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		/**
+		 * Initiates detail
+		 */
+		function initializeDetail() {
+			menu.fromJson({});
+			menuDisplayAuthorities.fromJson([]);
+		}
+		
+		/**
+		 * Resets detail
+		 */
+		function resetDetail(){
+			menu.reset();
+			menuDisplayAuthorities.reset();
 		}
 	
 		/**
@@ -47,26 +111,26 @@
 		 * Retrieves list of menu from serer API.
 		 */
 		function getMenus() {
-			var data = {};
-			data.page = search.get('page');
-			data.rows = search.get('rows');
-			$.ajax({
-				 url: 'menu/getMenus'
-				,type: 'GET'
-				,data: data
-				,success: function(data, textStatus, jqXHR) {
+			return new Promise(function(resolve,reject){
+				var data = {};
+				data.page = search.get('page');
+				data.rows = search.get('rows');
+				$.ajax({
+					 url: 'menu/getMenus'
+					,type: 'GET'
+					,data: data
+					,success: function(data, textStatus, jqXHR) {
+						menus.fromJson(data);
+						search.set('totalCount', __parseTotalCount(jqXHR));
+						resolve(true);
+			   	 	}
+				})
+				.done(function(data, textStatus, jqXHR) {
 					menus.fromJson(data);
 					search.set('totalCount', __parseTotalCount(jqXHR));
-					
-					// sets current menu
-					menus.forEach(function(row,index){
-						if(row.get('id') === menu.get('id')){
-							menus.setIndex(index);
-							return false;
-						}
-					});
-		   	 	}
-			});	
+					resolve(true);
+			   	});
+			});
 		}
 		
 		/**
@@ -77,54 +141,113 @@
 				 url: 'menu/getMenu'
 				,type: 'GET'
 				,data: {id:id}
-				,success: function(data, textStatus, jqXHR) {
-					menu.fromJson(data);
-					menuDisplayAuthorities.fromJson(data.displayAuthorities);
-					disableDetail(false);
-					menu.setReadonly('id', true);
-		   	 	}
-			});	
+			})
+			.done(function(data, textStatus, jqXHR) {
+				menu.fromJson(data);
+				menuDisplayAuthorities.fromJson(data.displayAuthorities);
+				disableDetail(false);
+				menu.setReadonly('id', true);
+				isNew = false;
+			});
 		}
 		
 		/**
 		 * Adds menu
 		 */
 		function addMenu() {
-			clearDetail();
+			initializeDetail();
 			disableDetail(false);
 			menu.setReadonly('id',false);
+			isNew = true;
+			menu.setFocus('id');
+		}
+		
+		/**
+		 * Returns duplicate menu
+		 */
+		function isDuplicateMenu(id){
+			var duplicateMenu = false;
+			$.ajax({
+				 url: 'menu/getMenu'
+				,type: 'GET'
+				,data: {id:id}
+				,async: false
+			})
+			.done(function(data, textStatus, jqXHR) {
+				if(data && data.id === id){
+					duplicateMenu = true;
+				}
+			});
+			return duplicateMenu;
 		}
 		
 		/**
 		 * Saves menu
 		 */
-		function saveMenu(){
+		async function saveMenu(){
 			
 			// checks changes
-			if(!menu.isDirty()
-			&& !menuDisplayAuthorities.isDirty()
-			){
-				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
-				return;
+			if(isNew === false && isDetailChanged() === false) {
+				await duice.alert("[[#{application.message.changeNotFound}]]");
+				return false;
 			}
 			
-			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.menu})}]]")
-			.onAfterConfirm(function(){
+			// checks id
+			if(duice.isEmpty(user.get('id'))){
+				user.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+				return false;
+			}
+			if(!duice.isIdFormat(user.get('id'))){
+				user.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+				return false;
+			}
+			
+			// checks new user is existed
+			if(isNew){
+				if(isDuplicateUser(user.get('id'))){
+					user.setFocus('id', '[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+					return false;
+				}
+			}
+			
+			// checks user name
+			if(duice.isEmpty(user.get('name'))){
+				user.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+				return false;
+			}
+
+			
+			// enters save process
+			if(await duice.confirm("[[#{application.message.saveConfirm(#{application.label.user})}]]")){
 				var data = menu.toJson();
-				data.displayAuthorities = menuDisplayAuthorities.toJson();
+				data.displayAuthorities = displayAuthorities.toJson();
 				$.ajax({
 					 url: 'menu/saveMenu'
 					,type: 'POST'
 					,data: JSON.stringify(data)
 					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert('[[#{application.message.saveComplete(#{application.label.menu})}]]')
-						.onAfterClose(function(){
-							getMenus();
-						}).open();
-			   	 	}
-				});	
-			}).open();
+				})
+				.done(function(data, textStatus, jqXHR) {
+					new duice.Alert('[[#{application.message.saveComplete(#{application.label.user})}]]')
+					.onAfterClose(async function(){
+						await getMenus();
+						
+						// refresh list and details
+						var index = menus.indexOf(function(row){
+							if(row.get('id') === menu.get('id')){
+								return true;
+							}
+						});
+						if(index > -1){
+							initializeDetail();
+							menus.selectRow(index);
+						}else{
+							getMenu(menu.get('id'));
+						}
+					})
+					.open();
+				});
+			}
 		}
 		
 		/**
@@ -146,7 +269,6 @@
 			   	 	}
 				});
 			}).open();
-		
 		}
 		
 		/**
@@ -182,7 +304,10 @@
 	</div>
 	<hr class="hr"/>
 	<div class="app-row">
-		<div class="app-col" style="width:50%;">
+		<!-- ====================================================== -->
+		<!-- List													-->
+		<!-- ====================================================== -->
+		<div id="listDiv" class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col">
 					<ul is="duice-ui-ul" 
@@ -200,7 +325,10 @@
 				</div>
 			</div>		
 		</div>
-		<div class="app-col" style="width:50%;">
+		<!-- ====================================================== -->
+		<!-- Start Detail											-->
+		<!-- ====================================================== -->
+		<div id="detailDiv" class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_menu.png}"/>
@@ -235,7 +363,7 @@
 								<th data-th-text="#{application.label.upper}+' '+#{application.label.menu}">Upper Menu</th>
 								<td>
 									<span is="duice-ui-span" data-duice-bind="menu,upperId"></span>
-									<button class="button small" onclick="changeUpperId();">
+									<button class="button small" onclick="openUpperMenuDialog();">
 										<img th:src="@{/static/image/icon_change.png}" class="icon"/>
 										<span data-th-text="#{application.label.change}">Change</span>
 									</button>
@@ -324,6 +452,104 @@
 			</div>
 		</div>
 	</div>
+	
+	<!-- ====================================================== -->
+	<!-- upperMenuDialog									-->
+	<!-- ====================================================== -->
+	<script>
+		const upperMenus = new duice.List();
+		upperMenus.onAfterSelectRow(function(row){
+			upperMenus.forEach(function(item){
+				item.set('__checked', false);
+			});
+			row.set('__checked', true);
+		});
+	</script>
+	<dialog id="upperMenuDialog" style="width:600px;">
+		<div class="app-row">
+			<div class="app-col">
+				<img class="icon" th:src="@{/static/image/icon_group.png}"/>
+				<span data-th-text="#{application.label.group} + ' ' + #{application.label.select}" class="font-bold"></span>
+			</div>
+		</div>
+		<hr class="hr"/>
+		<div class="app-row">
+			<div class="app-col">
+				<ul is="duice-ui-ul" 
+				data-duice-bind="upperMenus,menu" 
+				data-duice-hierarchy="id,upperId"
+				data-duice-selectable="true"
+				data-duice-foldable="true"
+				style="max-height:600px; overflow-y:scroll;">
+					<li>
+						<div class="app-row" style="width:95%;border-bottom:dotted 1px #ccc;">
+							<div class="app-col">
+								<img is="duice-ui-img" data-duice-bind="menu,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
+								<span is="duice-ui-span" data-duice-bind="menu,name" style="font-weight:bold;"></span>
+							</div>
+							<div class="app-col text-right">
+								<input is="duice-ui-input" type="checkbox" data-duice-bind="menu,__checked"/>
+							</div>
+						</div>
+					</li>
+				</ul>				
+			</div>
+		</div>
+		<div class="app-row">
+			<div class="app-col right">
+				<button class="button" onclick="changeUpperMenu();">
+					<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
+					OK
+				</button>
+			</div>
+		</div>
+	</dialog>
+	<script>
+		var upperMenuDialog = new duice.Dialog($('#upperMenuDialog')[0]);
+	
+		/**
+		 * Changes password
+		 */
+		function openUpperMenuDialog() {
+			$.ajax({
+				 url: 'menu/getMenus'
+				,type: 'GET'
+				,data: {}
+			})
+			.done(function(data, textStatus, jqXHR) {
+				var upperId = menu.get('upperId');
+				upperMenus.fromJson(data);
+				upperMenus.forEach(function(row){
+					if(row.get('id') === upperId) {
+						row.set('__checked', true);
+					}else{
+						row.set('__checked', false);
+					}
+				});
+				upperMenuDialog.open();
+			});
+		}
+		
+		/**
+		 * Confirms change password
+		 */
+		function changeUpperMenu() {
+			var checkedIndex = upperMenus.indexOf(function(row){
+				if(row.get('__checked') === true){
+					return true;
+				}
+			});
+			if(checkedIndex > -1){
+				var newUpperId = upperMenus.getRow(checkedIndex).get('id');
+				menu.set('upperId', newUpperId);
+			}else{
+				menu.set('upperId', null);
+			}
+			upperMenuDialog.close();
+		}
+	</script>
+
+	
 </div>
 
 

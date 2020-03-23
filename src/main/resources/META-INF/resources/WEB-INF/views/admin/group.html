@@ -20,14 +20,6 @@
 	const groupAuthorities = new duice.List();
 	var isNew = false;
 	
-	// handle when search option is changed.
-	search.onAfterChange(function(name, value){
-		// if select all option, reset value. 
-		if(name === 'key' && !value){
-			search.set('value',null);				
-		}
-	});
-	
 	// adds index changed event listener
 	groups.onBeforeSelectRow(async function(index){
 		if(isDetailChanged()){
