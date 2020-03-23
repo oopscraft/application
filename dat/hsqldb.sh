@@ -11,7 +11,7 @@ function start() {
 }
 
 function status() {
-	ps -f ${PID}
+	ps -f ${PID} | grep java | hsqldb.jar org.hsqldb.server.Server
 }
 
 function stop() {
