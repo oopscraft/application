@@ -37,7 +37,6 @@ public class UserControllerTest extends ApplicationTestRunner {
 		user.setName("junit");
 		user.setNickname("junit");
 		user.setEmail("junit@gmail.com");
-		user.setMobile("010-1234-1234");
 		ValueMap userMap = JsonConverter.toObject(JsonConverter.toJson(user), ValueMap.class);
 		userMap.set("password", "1234");
 		String payload = JsonConverter.toJson(userMap);
