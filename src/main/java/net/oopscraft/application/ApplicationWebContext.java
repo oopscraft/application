@@ -4,7 +4,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -23,7 +22,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -40,9 +41,9 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.security.AuthenticationFilter;
 import net.oopscraft.application.security.AuthenticationHandler;
 import net.oopscraft.application.security.AuthenticationProvider;
-import net.oopscraft.application.security.SecurityFilter;
 import net.oopscraft.application.security.SecurityPolicy;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
@@ -60,14 +61,9 @@ public class ApplicationWebContext implements WebMvcConfigurer {
     @Value("${application.securityPolicy:AUTHENTICATED}")
     private SecurityPolicy securityPolicy;
     
-    @Autowired
-    private AuthenticationProvider authenticationProvider;
-    
-    @Autowired
-    private AuthenticationHandler authenticationHandler;
-    
-    @Autowired
-    private SecurityFilter securityFilter;
+    AuthenticationProvider authenticationProvider;
+    AuthenticationHandler authenticationHandler;
+    AuthenticationFilter authenticationFilter;
 	
 	ThymeleafViewResolver viewResolver;
 	SpringResourceTemplateResolver templateResolver;
@@ -82,6 +78,17 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 	}
 	
 	/**
+	 * Creates AuthenticationProvider
+	 * @return
+	 * @throws Exception
+	 */
+	@Bean
+	public AuthenticationProvider authenticationProvider() throws Exception {
+		authenticationProvider = new AuthenticationProvider();
+		return authenticationProvider;
+	}
+	
+	/**
 	 * Security access handler implementations.
 	 * (AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler, LogoutSuccessHandler)
 	 * @return
@@ -93,6 +100,17 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 		return authenticationHandler;
 	}
 	
+	/**
+	 * Creates AuthenticationFilter
+	 * @return
+	 * @throws Exception
+	 */
+	@Bean
+	public AuthenticationFilter authenticationFilter() throws Exception {
+		authenticationFilter = new AuthenticationFilter();
+		return authenticationFilter;
+	}
+
     /**
      * Static resource security configuration
      */
@@ -100,6 +118,7 @@ public class ApplicationWebContext implements WebMvcConfigurer {
     @Order(1)
     public class StaticWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     	protected void configure(HttpSecurity http) throws Exception {
+    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     		http
     		.antMatcher("/static/**")
 	    		.authorizeRequests()
@@ -107,22 +126,31 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 	    		.permitAll();
         }
     }
-    
+
     /**
      * Administrator security configuration
      */
     @Configuration
     @Order(2)
+    @DependsOn({
+    	 "authenticationProvider"
+    	,"authenticationHandler" 
+    	,"authenticationFilter"
+    })
     public class AdminWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     	protected void configure(HttpSecurity http) throws Exception {
-    		http
-    		.antMatcher("/admin/**")
+    		http.antMatcher("/admin/**")
 	    		.authorizeRequests()
 	    		.anyRequest()
 	    		.authenticated()
 	    		.and()
-	    	.authenticationProvider(authenticationProvider)
-	    	.addFilterAfter(securityFilter, ChannelProcessingFilter.class)
+    		.sessionManagement()
+    			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+    			.and()
+    		.csrf()
+    			.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+    			.and()
+	    	.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class)
     		.formLogin()
 				.loginPage("/admin/login")
 				.loginProcessingUrl("/admin/doLogin")
@@ -132,12 +160,17 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 				.failureHandler(authenticationHandler)
 				.permitAll()
 				.and()
+	    	.authenticationProvider(authenticationProvider)
+	    	.exceptionHandling()
+    			.authenticationEntryPoint(authenticationHandler)
+    			.accessDeniedHandler(authenticationHandler)
+	    		.and()
 			.logout()
 				.logoutUrl("/admin/logout")
-				.logoutSuccessHandler(authenticationHandler)
 				.logoutSuccessUrl("/admin/login")
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
+				.logoutSuccessHandler(authenticationHandler)
 				.permitAll();
 			;
         }
@@ -150,6 +183,7 @@ public class ApplicationWebContext implements WebMvcConfigurer {
     @Order(3)
     public class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     	protected void configure(HttpSecurity http) throws Exception {
+    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     		if(securityPolicy != SecurityPolicy.ANONYMOUS) {
 	    		http.antMatcher("/api/**")
 		    		.authorizeRequests()
@@ -167,6 +201,7 @@ public class ApplicationWebContext implements WebMvcConfigurer {
     @Configuration
     public class GlobalWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     	protected void configure(HttpSecurity http) throws Exception {
+    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     		if(securityPolicy != SecurityPolicy.ANONYMOUS) {
 	    		http
 	    		.antMatcher("/**")
@@ -174,8 +209,13 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 		    		.anyRequest()
 		    		.authenticated()
 		    		.and()
-		    	.authenticationProvider(authenticationProvider)
-		    	.addFilterAfter(securityFilter, ChannelProcessingFilter.class)
+	    		.sessionManagement()
+	    			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+	    			.and()
+	    		.csrf()
+	    			.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+	    			.and()
+		    	.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class)
 	    		.formLogin()
 					.loginPage("/user/login")
 					.loginProcessingUrl("/user/doLogin")
@@ -185,6 +225,7 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 					.failureHandler(authenticationHandler)
 					.permitAll()
 					.and()
+			    	.authenticationProvider(authenticationProvider)
 				.logout()
 					.logoutUrl("/user/logout")
 					.logoutSuccessHandler(authenticationHandler)

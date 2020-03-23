@@ -88,5 +88,17 @@ public class GroupService {
 	public void deleteGroup(Group group) throws Exception {
 		groupRepository.delete(group);
 	}
+	
+	/**
+	 * Changes upper id
+	 * @param id
+	 * @param upperId
+	 * @return
+	 */
+	public Group changeUpperId(String id, String upperId) {
+		Group one = groupRepository.findOne(id);
+		one.setUpperId(upperId);
+		return groupRepository.save(one);
+	}
 
 }

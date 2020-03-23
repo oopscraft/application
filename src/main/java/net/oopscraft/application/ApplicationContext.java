@@ -13,7 +13,6 @@ import org.apache.commons.text.CaseUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.hibernate.cfg.AvailableSettings;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
@@ -40,7 +39,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.mybatis.CamelCaseValueMap;
@@ -232,18 +231,18 @@ public class ApplicationContext {
 	 */
 	@Bean
 	public ReloadableResourceBundleMessageSource messageSource() throws Exception {
-		ReloadableResourceBundleMessageSource applicationMessageSource = new ReloadableResourceBundleMessageSource();
-		applicationMessageSource.setBasename("classpath:net/oopscraft/application/message");
-		applicationMessageSource.setFallbackToSystemLocale(false);
-		applicationMessageSource.setDefaultEncoding("UTF-8");
-		applicationMessageSource.setUseCodeAsDefaultMessage(true);
-		applicationMessageSource.setCacheSeconds(10);
-		return applicationMessageSource;
+		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+		messageSource.setBasename("classpath:net/oopscraft/application/message");
+		messageSource.setFallbackToSystemLocale(false);
+		messageSource.setDefaultEncoding("UTF-8");
+		messageSource.setUseCodeAsDefaultMessage(true);
+		messageSource.setCacheSeconds(10);
+		return messageSource;
 	}
 
 	@Bean
-	public SessionLocaleResolver localeResolver() throws Exception {
-		SessionLocaleResolver localeResolver = new SessionLocaleResolver();
+	public CookieLocaleResolver localeResolver() throws Exception {
+		CookieLocaleResolver localeResolver = new CookieLocaleResolver();
 		localeResolver.setDefaultLocale(Locale.ENGLISH);
 		return localeResolver;
 	}

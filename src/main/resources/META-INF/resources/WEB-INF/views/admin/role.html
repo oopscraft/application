@@ -7,8 +7,9 @@
 			getRoles();
 		    disableDetail(true);
 		});
-	
-		var search = new duice.Map({
+		
+		// defines roles and role data 
+		const search = new duice.Map({
 			key: null,
 			value: null,
 			status: null,
@@ -16,16 +17,33 @@
 			rows: 20,
 			totalCount: -1
 		});
-		var roles = new duice.List();
-		var role = new duice.Map();
-		var roleAuthorities = new duice.List();
-
-		// adds index changed event listener
-		roles.onAfterChangeIndex(function(index){
-			if(index > -1){
-				var id = this.get(index).get('id');
-				getRole(id);	
+		const roles = new duice.List();
+		const role = new duice.Map();
+		const roleAuthorities = new duice.List();
+		var isNew = false;
+		
+		// handle when search option is changed.
+		search.onAfterChange(function(name, value){
+			// if select all option, reset value. 
+			if(name === 'key' && !value){
+				search.set('value',null);				
 			}
+		});
+
+		// checks when select row is changed.
+		roles.onBeforeSelectRow(async function(selectedRow){
+			if(isDetailChanged()){
+				return await new duice.Confirm("[[#{application.message.changeFound}+'\n'+#{application.message.ignoreChange}]]")
+				.onAfterConfirm(function(){
+					resetDetail();
+				})
+				.open();
+			}
+		});
+		
+		// event listener for select row
+		roles.onAfterSelectRow(function(selectedRow){
+			getRole(selectedRow.get('id'));
 		});
 		
 		/**
@@ -33,51 +51,65 @@
 		 */
 		function disableDetail(disable){
 			role.setDisable(disable);
-			$('#deleteRoleButton').prop('disabled', disable);
-			$('#saveRoleButton').prop('disabled', disable);
+			$('#detailDiv').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
 		}
 		
 		/**
-		 * Clears detail
+		 * Returns detail changed.
 		 */
-		function clearDetail(){
-			role.clear();
-			roleAuthorities.clear();
+		function isDetailChanged() {
+			if(role.isDirty()
+			|| roleAuthorities.isDirty()
+			){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		/**
+		 * Initializes detail
+		 */
+		function initializeDetail() {
+			role.fromJson({});
+			roleAuthorities.fromJson([]);
+		}
+		
+		/**
+		 * Resets detail
+		 */ 
+		function resetDetail() {
+			role.reset();
+			roleAuthorities.reset();
 		}
 		
 		/**
 		 * Gets roles
 		 */
 		function getRoles(page) {
-			if(page){
-				search.set('page',page);
-			}
-			var data = {};
-			if(search.get('key')){
-				data[search.get('key')] = search.get('value');
-			}
-			if(search.get('status')){
-				data.status = search.get('status');
-			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
-			$.ajax({
-				 url: 'role/getRoles'
-				,type: 'GET'
-				,data: data
-				,success: function(data, textStatus, jqXHR) {
-					roles.fromJson(data);
-					search.set('totalCount', __parseTotalCount(jqXHR));
-					
-					// sets current user
-					roles.forEach(function(row,index){
-						if(row.get('id') === role.get('id')){
-							roles.setIndex(index);
-							return false;
-						}
-					});
-		   	 	}
-			});	
+			return new Promise(function(resolve,reject){
+				if(page){
+					search.set('page',page);
+				}
+				var data = {};
+				if(search.get('key')){
+					data[search.get('key')] = search.get('value');
+				}
+				data.page = search.get('page');
+				data.rows = search.get('rows');
+				$.ajax({
+					 url: 'role/getRoles'
+					,type: 'GET'
+					,data: data
+					,success: function(data, textStatus, jqXHR) {
+						roles.fromJson(data);
+						search.set('totalCount', __parseTotalCount(jqXHR));
+						resolve(true);
+			   	 	}
+				});
+			});
 		}
 		
 		/**
@@ -93,6 +125,7 @@
 					roleAuthorities.fromJson(data.authorities);
 					disableDetail(false);
 					role.setReadonly('id', true);
+					isNew = false;
 		   	 	}
 			});	
 		}
@@ -101,9 +134,10 @@
 		 * Adds role
 		 */
 		function addRole() {
-			clearDetail();
+			initializeDetail();
 			disableDetail(false);
 			role.setReadonly('id',false);
+			isNew = true;
 		}
 		
 		/**
@@ -112,13 +146,28 @@
 		function saveRole(){
 			
 			// checks changes
-			if(!role.isDirty()
-			&& !roleAuthorities.isDirty()
-			){
+			if(isNew === false && isDetailChanged() === false) {
 				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
 				return;
 			}
 			
+			// checks id
+			if(duice.isEmpty(role.get('id'))){
+				user.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+				return false;
+			}
+			if(!duice.isIdFormat(role.get('id'))){
+				user.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+				return false;
+			}
+			
+			// checks user name
+			if(duice.isEmpty(role.get('name'))){
+				user.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+				return false;
+			}
+			
+			// enters save process
 			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.role})}]]")
 			.onAfterConfirm(function(){
 				var data = role.toJson();
@@ -130,8 +179,21 @@
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
 						new duice.Alert('[[#{application.message.saveComplete(#{application.label.role})}]]')
-						.onAfterClose(function(){
-							getRoles();
+						.onAfterClose(async function(){
+							await getRoles();
+							
+							// refresh list and details
+							var index = roles.indexOf(function(row){
+								if(row.get('id') === role.get('id')){
+									return true;
+								}
+							});
+							if(index > -1){
+								initializeDetail();
+								roles.selectRow(index);
+							}else{
+								getRole(role.get('id'));
+							}
 						}).open();
 			   	 	}
 				});	
@@ -147,13 +209,14 @@
 				$.ajax({
 					 url: 'role/deleteRole'
 					,type: 'DELETE'
-					,data: JSON.stringify(user.toJson())
+					,data: JSON.stringify(role.toJson())
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
 						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.role})}]]")
-						.onAfterClose(function(){
-							clearDetail();
-							getUsers();
+						.onAfterClose(async function(){
+							await getRoles();
+							initializeDetail();
+							disableDetail(true);
 						}).open();
 			   	 	}
 				});
@@ -166,10 +229,10 @@
 		 */
 		function addRoleAuthority() {
 			__authorityDialog.open({
-				disabledAuthorities: roleAuthorities,
+				disabledAuthorities: roleAuthorities.toJson(),
 				onAfterConfirm: function(selectedAuthorities){
-					selectedAuthorities.forEach(function(selectedAuthority){
-						roleAuthorities.add(selectedAuthority);
+					selectedAuthorities.forEach(function(item){
+						roleAuthorities.addRow(new duice.Map(item));
 					});
 				}
 			});
@@ -179,7 +242,7 @@
 		 * Removes role authority
 		 */
 		function removeRoleAuthority(index) {
-			roleAuthorities.remove(index);
+			roleAuthorities.removeRow(index);
 		}
 	</script>
 	<div class="app-row">
@@ -192,7 +255,10 @@
 	</div>
 	<hr class="hr"/>
 	<div class="app-row">
-		<div class="app-col" style="width:50%;">
+		<!-- ====================================================== -->
+		<!-- List													-->
+		<!-- ====================================================== -->
+		<div id="listDiv" class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
@@ -252,7 +318,10 @@
 				</div>
 			</div>		
 		</div>
-		<div class="app-col" style="width:50%;">
+		<!-- ====================================================== -->
+		<!-- Start Detail											-->
+		<!-- ====================================================== -->
+		<div id="detailDiv" class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_role.png}"/>
@@ -334,7 +403,7 @@
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
 												<td class="text-center">
-													<button class="button small" data-index="[[$context.index]]" onclick="removeRoleAuthority(this.dataset.index);">
+													<button class="button small" data-index="[@duice[$context.index]]" onclick="removeRoleAuthority(this.dataset.index);">
 														-
 													</button>
 												</td>

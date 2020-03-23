@@ -32,33 +32,34 @@ public class User extends SystemEntity {
 	@Id
 	@Column(name = "USER_ID", length = 32)
 	String id;
+	
+	@Column(name = "USER_EMAL")
+	String email;
 
+	@Column(name = "USER_MOBL_CTRY")
+	String mobileCountry;
+	
+	@Column(name = "USER_MOBL_NO")
+	String mobileNumber;
+
+	@JsonIgnore
 	@Column(name = "USER_PASS", length = 255)
 	String password;
 
-	@Column(name = "USER_NAME", length = 1024)
-	String name;
-	
-	@Column(name = "USER_NICK", length = 1024)
-	String nickname;
-	
 	public enum Status {
 		ACTIVE, SUSPENDED, CLOSED
 	}
 	@Column(name = "USER_STAT")
 	@Enumerated(EnumType.STRING)
 	Status status;
-	
-	@Column(name = "USER_EMIL")
-	String email;
 
-	@Column(name = "USER_MOBL")
-	String mobile;
-
-	@Column(name = "USER_LOCL")
-	String locale;
+	@Column(name = "USER_NAME", length = 1024)
+	String name;
 	
-	@Column(name = "USER_PHOT")
+	@Column(name = "USER_NICK", length = 1024)
+	String nickname;
+
+	@Column(name = "USER_PHOT", length = Integer.MAX_VALUE)
 	@Lob
 	String photo;
 
@@ -66,6 +67,9 @@ public class User extends SystemEntity {
 	@Lob
 	String profile;
 	
+	@Column(name = "USER_LANG")
+	String language;
+
 	@Column(name = "JOIN_DATE")
 	Date joinDate;
 	
@@ -134,20 +138,20 @@ public class User extends SystemEntity {
 		this.email = email;
 	}
 
-	public String getLocale() {
-		return locale;
+	public String getMobileCountry() {
+		return mobileCountry;
 	}
 
-	public void setLocale(String locale) {
-		this.locale = locale;
+	public void setMobileCountry(String mobileCountry) {
+		this.mobileCountry = mobileCountry;
 	}
 
-	public String getMobile() {
-		return mobile;
+	public String getMobileNumber() {
+		return mobileNumber;
 	}
 
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
 
 	public String getName() {
@@ -188,6 +192,14 @@ public class User extends SystemEntity {
 
 	public void setProfile(String profile) {
 		this.profile = profile;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 	
 	public Date getJoinDate() {

@@ -2,58 +2,115 @@
 <html layout:decorate="~{admin/admin.html}">
 <div layout:fragment="content">
 	<script>
-		// document ready
-		$(document).ready(function() {
-		    getUsers();
-		    disableDetail(true);
-		});
-	
-		var search = new duice.Map({
-			key: null,
-			value: null,
-			status: null,
-			page: 1,
-			rows: 20,
-			totalCount: -1
-		});
-		var users = new duice.List();
-		var user = new duice.Map();
-		var userGroups = new duice.List();
-		var userRoles = new duice.List();
-		var userAuthorities = new duice.List();
+	// document ready
+	$(document).ready(function() {
+	    getUsers();
+	    disableDetail(true);
+	});
 
-		// adds index changed event listener
-		users.onAfterChangeIndex(function(index){
-			if(index > -1){
-				var id = this.get(index).get('id');
-				getUser(id);	
+	// defines variables 
+	const search = new duice.Map({
+		key: null,
+		value: null,
+		status: null,
+		page: 1,
+		rows: 20,
+		totalCount: -1
+	});
+	const users = new duice.List();
+	users.setReadonly('photo',true);
+	users.setReadonly('status',true);
+	const user = new duice.Map();
+	const userGroups = new duice.List();
+	const userRoles = new duice.List();
+	const userAuthorities = new duice.List();
+	var isNew = false;
+	
+	// handle when search option is changed.
+	search.onAfterChange(function(name, value){
+		// if select all option, reset value. 
+		if(name === 'key' && !value){
+			search.set('value',null);				
+		}
+	});
+	
+	// checks when select row is changed.
+	users.onBeforeSelectRow(async function(selectedRow){
+		if(isDetailChanged()){
+			if(await duice.confirm("[[#{application.message.changeFound}+'\n'+#{application.message.ignoreChange}]]")){
+				resetDetail();
+				return true;
+			}else{
+				return false;
 			}
+		}
+	});
+	
+	// event listener for select row
+	users.onAfterSelectRow(function(selectedRow){
+		getUser(selectedRow.get('id'));
+	});
+	
+	// checks user properties change
+	user.onBeforeChange(async function(name,value){
+		if(name === 'id'){
+			if(isDuplicateUser(value)){
+				await duice.alert('[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+				return false;
+			}
+		}
+	});
+	
+	/**
+	 * Disables detail
+	 */
+	function disableDetail(disable){
+		user.setDisable(disable);
+		$('#detailDiv').find('button').each(function(index, element){
+			$(element).prop('disabled', disable);
 		});
-		
-		/**
-		 * Disables detail
-		 */
-		function disableDetail(disable){
-			user.setDisable(disable);
-			$('#deleteUserButton').prop('disabled', disable);
-			$('#saveUserButton').prop('disabled', disable);
-			$('#changePasswordButton').prop('disabled', disable);
+	}
+	
+	/**
+	 * Returns detail changed.
+	 */
+	function isDetailChanged() {
+		if(user.isDirty()
+		|| userGroups.isDirty()
+		|| userRoles.isDirty()
+		|| userAuthorities.isDirty()
+		){
+			return true;
+		}else{
+			return false;
 		}
-		
-		/**
-		 * Clears detail
-		 */
-		function clearDetail(){
-			user.clear();
-			userGroups.clear();
-			userRoles.clear();
-			userAuthorities.clear();
-		}
-		
-		/**
-		 * Gets users
-		 */
-		function getUsers(page) {
+	}
+	
+	/**
+	 * Initializes detail
+	 */
+	function initializeDetail() {
+		user.fromJson({});
+		userGroups.fromJson([]);
+		userRoles.fromJson([]);
+		userAuthorities.fromJson([]);
+	}
+	
+	/**
+	 * Resets detail
+	 */ 
+	function resetDetail() {
+		user.reset();
+		userGroups.reset();
+		userRoles.reset();
+		userAuthorities.reset();
+	}
+	
+	/**
+	 * Gets users
+	 */
+	function getUsers(page) {
+		return new Promise(function(resolve,reject){
 			if(page){
 				search.set('page',page);
 			}
@@ -70,189 +127,260 @@
 				 url: 'user/getUsers'
 				,type: 'GET'
 				,data: data
-				,success: function(data, textStatus, jqXHR) {
-					users.fromJson(data);
-					search.set('totalCount', __parseTotalCount(jqXHR));
-					
-					// sets current user
-					users.forEach(function(row,index){
-						if(row.get('id') === user.get('id')){
-							users.setIndex(index);
-							return false;
-						}
-					});
-		   	 	}
-			});	
-		}
-		
-		/**
-		 * Gets specified user
-		 */
-		function getUser(id){
-			$.ajax({
-				 url: 'user/getUser'
-				,type: 'GET'
-				,data: {id:id}
-				,success: function(data, textStatus, jqXHR) {
-					user.fromJson(data);
-					userGroups.fromJson(data.groups);
-					userRoles.fromJson(data.roles);
-					userAuthorities.fromJson(data.authorities);
-					disableDetail(false);
-					user.setReadonly('id', true);
-					$('#passwordTr').hide();
-					$('#passwordConfirmTr').hide();
-		   	 	}
-			});	
-		}
-		
-		/**
-		 * Adds user
-		 */
-		function addUser() {
-			clearDetail();
+			})
+			.done(function(data, textStatus, jqXHR) {
+				users.fromJson(data);
+				search.set('totalCount', __parseTotalCount(jqXHR));
+				resolve(true);
+		   	});
+		});
+	}
+	
+	/**
+	 * Gets specified user
+	 */
+	function getUser(id){
+		$.ajax({
+			 url: 'user/getUser'
+			,type: 'GET'
+			,data: {id:id}
+		})
+		.done(function(data, textStatus, jqXHR) {
+			user.fromJson(data);
+			userGroups.fromJson(data.groups);
+			userRoles.fromJson(data.roles);
+			userAuthorities.fromJson(data.authorities);
 			disableDetail(false);
-			user.setReadonly('id',false);
-			$('#passwordTr').show();
-			$('#passwordConfirmTr').show();
-		}
-		
-		/**
-		 * Saves user
-		 */
-		function saveUser(){
-			
-			// checks changes
-			if(!user.isDirty()
-			&& !userGroups.isDirty()
-			&& !userRoles.isDirty()
-			&& !userAuthorities.isDirty()
-			){
-				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
-				return;
+			user.setReadonly('id', true);
+			$('#passwordTr').hide();
+			$('#passwordConfirmTr').hide();
+			isNew = false;
+		});
+	}
+	
+	/**
+	 * Adds user
+	 */
+	function addUser() {
+		initializeDetail();
+		disableDetail(false);
+		user.setReadonly('id',false);
+		$('#passwordTr').show();
+		$('#passwordConfirmTr').show();
+		isNew = true;
+		user.setFocus('id');
+	}
+	
+	/**
+	 * Returns duplicate user
+	 */
+	function isDuplicateUser(id){
+		var duplicateUser = false;
+		$.ajax({
+			 url: 'user/getUser'
+			,type: 'GET'
+			,data: {id:id}
+			,async: false
+		})
+		.done(function(data, textStatus, jqXHR) {
+			if(data && data.id === id){
+				duplicateUser = true;
 			}
-			
-			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.user})}]]")
-			.onAfterConfirm(function(){
-				var data = user.toJson();
-				data.groups = userGroups.toJson();
-				data.roles = userRoles.toJson();
-				data.authorities = userAuthorities.toJson();
-				$.ajax({
-					 url: 'user/saveUser'
-					,type: 'POST'
-					,data: JSON.stringify(data)
-					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert('[[#{application.message.saveComplete(#{application.label.user})}]]')
-						.onAfterClose(function(){
-							getUsers();
-						}).open();
-			   	 	}
-				});	
-			}).open();
+		});
+		return duplicateUser;
+	}
+	
+	/**
+	 * Saves user
+	 */
+	async function saveUser(){
+		
+		// checks changes
+		if(isNew === false && isDetailChanged() === false) {
+			await duice.alert("[[#{application.message.changeNotFound}]]");
+			return false;
 		}
 		
-		/**
-		 * Deletes user
-		 */
-		function deleteUser(){
-			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.user})}]]")
-			.onAfterConfirm(function(){
-				$.ajax({
-					 url: 'user/deleteUser'
-					,type: 'DELETE'
-					,data: JSON.stringify(user.toJson())
-					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.user})}]]")
-						.onAfterClose(function(){
-							clearDetail();
-							getUsers();
-						}).open();
-			   	 	}
-				});
-			}).open();
-		
+		// checks id
+		if(duice.isEmpty(user.get('id'))){
+			user.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+			return false;
+		}
+		if(!duice.isIdFormat(user.get('id'))){
+			user.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+			return false;
 		}
 		
-		/**
-		 * Adds user group
-		 */
-		function addUserGroup() {
-			__groupDialog.open({
-				selectedGroups: userGroups,
-				disabledGroups: userGroups,
-				onAfterConfirm: function(selectedGroups){
-					selectedGroups.forEach(function(selectedGroup){
-						userGroups.add(selectedGroup);
-					});
-				}
-			});
+		// checks new user is existed
+		if(isNew){
+			if(isDuplicateUser(user.get('id'))){
+				user.setFocus('id', '[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+				return false;
+			}
 		}
 		
-		/**
-		 * Removes user group
-		 */
-		function removeUserGroup(index) {
-			userGroups.remove(index);
+		// checks email
+		if(duice.isEmpty(user.get('email'))){
+			user.setFocus('email', '[[#{application.message.enterItem(#{application.label.email})}]]');
+			return false;
 		}
-		
-		/**
-		 * Adds user role
-		 */
-		function addUserRole() {
-			__roleDialog.open({
-				disabledRoles: userRoles,
-				onAfterConfirm: function(selectedRoles){
-					selectedRoles.forEach(function(selectedRole){
-						userRoles.add(selectedRole);
-					});
-				}
-			});
+		if(!duice.isEmailFormat(user.get('email'))){
+			user.setFocus('email', '[[#{application.message.notValidItemFormat(#{application.label.email})}]]');
+			return false;
 		}
-		
-		/**
-		 * Removes user role
-		 */
-		function removeUserRole(index) {
-			userRoles.remove(index);
+		// checks password and password confirm, in case of new
+		if(isNew) {
+			if(duice.isEmpty(user.get('password'))){
+				user.setFocus('password', '[[#{application.message.enterItem(#{application.label.password})}]]');
+				return false;
+			}
+			if(!duice.isPasswordFormat(user.get('password'))){
+				user.setFocus('password', '[[#{application.message.notValidPassowrdFormat}]]');
+				return false;
+			}
+			if(duice.isEmpty(user.get('passwordConfirm'))){
+				user.setFocus('passwordConfirm', '[[#{application.message.enterItem(#{application.label.passwordConfirm})}]]');
+				return false;
+			}
+			if(user.get('passwordConfirm') !== user.get('password')){
+				user.setFocus('passwordConfirm', '[[#{application.message.itemNotMatch(#{application.label.passwordConfirm})}]]');
+				return false;
+			}
 		}
-		
-		/**
-		 * Adds user authority
-		 */
-		function addUserAuthority() {
-			__authorityDialog.open({
-				disabledAuthorities: userAuthorities,
-				onAfterConfirm: function(selectedAuthorities){
-					selectedAuthorities.forEach(function(selectedAuthority){
-						userAuthorities.add(selectedAuthority);
-					});
-				}
-			});
+		// checks user status
+		if(duice.isEmpty(user.get('status'))){
+			user.setFocus('status', '[[#{application.message.enterItem(#{application.label.status})}]]');
+			return false;
 		}
-		
-		/**
-		 * Removes user authority
-		 */
-		function removeUserAuthority(index) {
-			userAuthorities.remove(index);
+		// checks user name
+		if(duice.isEmpty(user.get('name'))){
+			user.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+			return false;
 		}
 
-		/**
-		 * Changes password
-		 */
-		function changePassword() {
-			alert('fdsa');
+		// enters save process
+		if(await duice.confirm("[[#{application.message.saveConfirm(#{application.label.user})}]]")){
+			var data = user.toJson();
+			data.groups = userGroups.toJson();
+			data.roles = userRoles.toJson();
+			data.authorities = userAuthorities.toJson();
+			$.ajax({
+				 url: 'user/saveUser'
+				,type: 'POST'
+				,data: JSON.stringify(data)
+				,contentType: 'application/json;charset=UTF-8'
+			})
+			.done(function(data, textStatus, jqXHR) {
+				new duice.Alert('[[#{application.message.saveComplete(#{application.label.user})}]]')
+				.onAfterClose(async function(){
+					await getUsers();
+					
+					// refresh list and details
+					var index = users.indexOf(function(row){
+						if(row.get('id') === user.get('id')){
+							return true;
+						}
+					});
+					if(index > -1){
+						initializeDetail();
+						users.selectRow(index);
+					}else{
+						getUser(user.get('id'));
+					}
+				})
+				.open();
+			});
 		}
-		
-		/**
-		 * Confirms change password
-		 */
-		function changePasswordConfirm() {
-			
-		}
+	}
+	
+	/**
+	 * Deletes user
+	 */
+	function deleteUser(){
+		new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.user})}]]")
+		.onAfterConfirm(function(){
+			$.ajax({
+				 url: 'user/deleteUser'
+				,type: 'DELETE'
+				,data: JSON.stringify(user.toJson())
+				,contentType: 'application/json;charset=UTF-8'
+				,success: function(data, textStatus, jqXHR) {
+					new duice.Alert("[[#{application.message.deleteComplete(#{application.label.user})}]]")
+					.onAfterClose(async function(){
+						await getUsers();
+						initializeDetail();
+						disableDetail(true);
+					}).open();
+		   	 	}
+			});
+		}).open();
+	}
+	
+	/**
+	 * Adds user group
+	 */
+	function addUserGroup() {
+		__groupDialog.open({
+			checkedGroups: userGroups.toJson(),
+			disabledGroups: userGroups.toJson(),
+			onAfterConfirm: function(returnGroups){
+				returnGroups.forEach(function(group){
+					userGroups.addRow(new duice.Map(group));
+				});
+			}
+		});
+	}
+	
+	/**
+	 * Removes user group
+	 */
+	function removeUserGroup(index) {
+		userGroups.removeRow(index);
+	}
+	
+	/**
+	 * Adds user role
+	 */
+	function addUserRole() {
+		__roleDialog.open({
+			checkedRoles: userRoles.toJson(),
+			disabledRoles: userRoles.toJson(),
+			onAfterConfirm: function(selectedRoles){
+				selectedRoles.forEach(function(item){
+					userRoles.addRow(new duice.Map(item));
+				});
+			}
+		});
+	}
+	
+	/**
+	 * Removes user role
+	 */
+	function removeUserRole(index) {
+		userRoles.removeRow(index);
+	}
+	
+	/**
+	 * Adds user authority
+	 */
+	function addUserAuthority() {
+		__authorityDialog.open({
+			checkedAuthorities: userAuthorities.toJson(),
+			disabledAuthorities: userAuthorities.toJson(),
+			onAfterConfirm: function(selectedAuthorities){
+				selectedAuthorities.forEach(function(item){
+					userAuthorities.addRow(new duice.Map(item));
+				});
+			}
+		});
+	}
+	
+	/**
+	 * Removes user authority
+	 */
+	function removeUserAuthority(index) {
+		userAuthorities.removeRow(index);
+	}
 	</script>
 	<div class="app-row">
 		<div class="app-col">
@@ -267,7 +395,7 @@
 		<!-- ====================================================== -->
 		<!-- List													-->
 		<!-- ====================================================== -->
-		<div class="app-col" style="width:50%;">
+		<div id="listDiv" class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
@@ -277,12 +405,11 @@
 						<option value="email" data-th-text="#{application.label.email}">Email</option>
 					</select>
 					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
-					<span class="content-search__label">Status</span>
+					&nbsp;
+					<span data-th-text="#{application.label.status}">Status</span>
 					<select is="duice-ui-select" data-duice-bind="search,status" style="width:125px;">
 						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option value="ACTIVE">Active</option>
-						<option value="SUSPENDED">Suspended</option>
-						<option value="CLOSED">Closed</option>
+						<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.label.status.'+${status}}"></option>
 					</select>
 				</div>
 				<div class="app-col right">
@@ -308,9 +435,9 @@
 							<tr>
 								<th data-th-text="#{application.label.no}">No</th>
 								<th data-th-text="#{application.label.id}">ID</th>
+								<th data-th-text="#{application.label.email}">Email</th>
 								<th data-th-text="#{application.label.name}">Name</th>
 								<th data-th-text="#{application.label.nickname}">Nickname</th>
-								<th data-th-text="#{application.label.email}">Email</th>
 								<th data-th-text="#{application.label.status}">Status</th>
 							</tr>
 						</thead>
@@ -325,10 +452,14 @@
 									<img is="duice-ui-img" data-duice-bind="user,photo" th:src="@{/static/image/icon_user.png}" class="icon small"/>
 									<span is="duice-ui-span" data-duice-bind="user,id"></span>
 								</td>
+								<td><span is="duice-ui-span" data-duice-bind="user,email"></span></td>
 								<td><span is="duice-ui-span" data-duice-bind="user,name"></span></td>
 								<td><span is="duice-ui-span" data-duice-bind="user,nickname"></span></td>
-								<td><span is="duice-ui-span" data-duice-bind="user,email"></span></td>
-								<td class="text-center"><span is="duice-ui-span" data-duice-bind="user,status"></span></td>
+								<td class="text-center">
+									<select is="duice-ui-select" data-duice-bind="user,status">
+										<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.label.status.'+${status}}"></option>
+									</select>
+								</td>
 							</tr>
 						</tbody>
 						<tfoot>
@@ -345,18 +476,18 @@
 			</div>		
 		</div>
 		<!-- ====================================================== -->
-		<!-- Detail													-->
+		<!-- Start Detail											-->
 		<!-- ====================================================== -->
-		<div class="app-col" style="width:50%;">
+		<div id="detailDiv" class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_user.png}"/>
 					<span data-th-text="#{application.label.user} + ' ' + #{application.label.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
-					<button id="changePasswordButton" class="button" onclick="changePassword();">
+					<button id="changePasswordButton" class="button" onclick="openChangePassword();">
 						<img th:src="@{/static/image/icon_password.png}" class="icon"/>
-						<span data-th-text="#{application.label.passwordChange}"></span>
+						<span data-th-text="#{application.label.changePassword}"></span>
 					</button>
 					|
 					<button id="addUserButton" class="button" onclick="addUser();">
@@ -381,12 +512,34 @@
 						<tbody>
 							<tr>
 								<th><span data-th-text="#{application.label.id}" class="mand">ID</span></th>
-								<td><input is="duice-ui-input" type="text" data-duice-bind="user,id" autocomplete="nope"/></td>
+								<td><input id="userId" is="duice-ui-input" type="text" data-duice-bind="user,id" autocomplete="nope"/></td>
+							</tr>
+							<tr>
+								<th><span data-th-text="#{application.label.email}" class="mand">Email</span></th>
+								<td>
+									<input is="duice-ui-input" type="text" data-duice-bind="user,email"/>
+								</td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.mobile}">Mobile</th>
+								<td>
+									<div class="app-row">
+										<div class="app-col" style="width:25%;">
+											<select is="duice-ui-select" data-duice-bind="user,mobileCountry">
+												<option value data-th-text="'- '+#{application.label.select}+' -'"></option>
+												<option th:each="country:${__countries}" th:value="${country.country}" th:text="${country.displayCountry}"></option>
+											</select>
+										</div>
+										<div class="app-col" style="width:75%;">
+											<input is="duice-ui-input" type="text" data-duice-bind="user,mobileNumber"/>
+										</div>
+									</div>
+								</td>
 							</tr>
 							<tr id="passwordTr">
 								<th><span data-th-text="#{application.label.password}" class="mand">Password</span></th>
 								<td>
-									<input is="duice-ui-input" type="password" data-duice-bind="user,password" autocomplete="nope"/>
+									<input is="duice-ui-input" type="password" data-duice-bind="user,password"/>
 								</td>
 							</tr>
 							<tr id="passwordConfirmTr">
@@ -396,8 +549,13 @@
 								</td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.photo}">Photo</th>
-								<td><img is="duice-ui-img" data-duice-bind="user,photo" th:src="@{/static/image/icon_user.png}" style="max-height:64px;"/></td>
+								<th><span data-th-text="#{application.label.status}" class="mand">Status</span></th>
+								<td>
+									<select is="duice-ui-select" data-duice-bind="user,status">
+										<option value data-th-text="'- '+#{application.label.select}+' -'"></option>
+										<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.label.status.'+${status}}"></option>
+									</select>
+								</td>
 							</tr>
 							<tr>
 								<th><span data-th-text="#{application.label.name}" class="mand">Name</span></th>
@@ -408,45 +566,29 @@
 								<td><input is="duice-ui-input" type="text" data-duice-bind="user,nickname"/></td>
 							</tr>
 							<tr>
-								<th><span data-th-text="#{application.label.status}" class="mand">Status</span></th>
+								<th data-th-text="#{application.label.photo}">Photo</th>
+								<td><img is="duice-ui-img" data-duice-bind="user,photo" th:src="@{/static/image/icon_user.png}" style="max-height:64px;"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.profile}">Profile</th>
+								<td><textarea is="duice-ui-textarea" data-duice-bind="user,profile"></textarea></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.language}">Locale</th>
 								<td>
-									<select is="duice-ui-select" data-duice-bind="user,status">
-										<option> - select - </option>
-										<option value="ACTIVE">ACTIVE</option>
-										<option value="SUSPENDED">SUSPENDED</option>
-										<option value="CLOSED">CLOSED</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<th><span data-th-text="#{application.label.email}" class="mand">Email</span></th>
-								<td><input is="duice-ui-input" type="text" data-duice-bind="user,email"/></td>
-							</tr>
-							<tr>
-								<th data-th-text="#{application.label.mobile}">Mobile</th>
-								<td><input is="duice-ui-input" type="text" data-duice-bind="user,mobile"/></td>
-							</tr>
-							<tr>
-								<th data-th-text="#{application.label.locale}">Locale</th>
-								<td>
-									<select is="duice-ui-select" data-duice-bind="user,locale">
-										<option> - select - </option>
-										<option value="en_US">en_US</option>
-										<option value="ko_KR">ko_KR</option>
+									<select is="duice-ui-select" data-duice-bind="user,language">
+										<option value data-th-text="'- '+#{application.label.select}+' -'"></option>
+										<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
 									</select>
 								</td>
 							</tr>
 							<tr>
 								<th data-th-text="#{application.label.joinDate}">Join Date</th>
-								<td><input is="duice-ui-input" type="datetime-local" data-duice-bind="user,joinDate"/></td>
+								<td><span is="duice-ui-span" data-duice-bind="user,joinDate" data-duice-format="date,yyyy-MM-dd HH:mm:ss"></span></td>
 							</tr>
 							<tr>
 								<th data-th-text="#{application.label.closeDate}">Close Date</th>
 								<td><input is="duice-ui-input" type="datetime-local" data-duice-bind="user,closeDate"/></td>
-							</tr>
-							<tr>
-								<th data-th-text="#{application.label.profile}">Profile</th>
-								<td><textarea is="duice-ui-textarea" data-duice-bind="user,profile"></textarea></td>
 							</tr>
 							<tr>
 								<th>
@@ -467,7 +609,7 @@
 												<th data-th-text="#{application.label.group}+' '+#{application.label.id}">ID</th>
 												<th data-th-text="#{application.label.group}+' '+#{application.label.name}">Name</th>
 												<th class="text-center">
-													<button class="button small" data-index="[[$context.index]]" onclick="javascript:addUserGroup(this.dataset.index);">
+													<button class="button small" onclick="javascript:addUserGroup();">
 														+
 													</button>
 												</th>
@@ -484,7 +626,7 @@
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="group,name"></span></td>
 												<td class="text-center">
-													<button class="button small" data-index="[[$context.index]]" onclick="javascript:removeUserGroup(this.dataset.index);">
+													<button class="button small" data-index="[@duice[$context.index]]" onclick="javascript:removeUserGroup(this.dataset.index);">
 														-
 													</button>
 												</td>
@@ -530,7 +672,7 @@
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="role,name"></span></td>
 												<td class="text-center">
-													<button class="button small" data-index="[[$context.index]]" onclick="removeUserRole(this.dataset.index);">
+													<button class="button small" data-index="[@duice[$context.index]]" onclick="removeUserRole(this.dataset.index);">
 														-
 													</button>
 												</td>
@@ -576,7 +718,7 @@
 												</td>
 												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
 												<td class="text-center">
-													<button class="button small" data-index="[[$context.index]]" onclick="removeUserAuthority(this.dataset.index);">
+													<button class="button small" data-index="[@duice[$context.index]]" onclick="removeUserAuthority(this.dataset.index);">
 														-
 													</button>
 												</td>
@@ -591,7 +733,113 @@
 			</div>
 		</div>
 	</div>
+	
+	<!-- ====================================================== -->
+	<!-- changePasswordDialog									-->
+	<!-- ====================================================== -->
+	<script>
+	var changePassword = new duice.Map();
+	</script>
+	<dialog id="changePasswordDialog" style="width:400px;">
+		<div class="app-row">
+			<div class="app-col">
+				<img class="icon" th:src="@{/static/image/icon_password.png}"/>
+				<span data-th-text="#{application.label.changePassword}" class="font-bold"></span>
+			</div>
+		</div>
+		<div class="app-row">
+			<div class="app-col">
+				<table class="table" style="width:100%;">
+					<col style="width:35%;"/>
+					<col/>
+					<tbody>
+						<tr>
+							<th><span data-th-text="#{application.label.password}" class="mand">Password</span></th>
+							<td>
+								<input is="duice-ui-input" type="password" data-duice-bind="changePassword,password"/>
+							</td>
+						</tr>
+						<tr>
+							<th><span data-th-text="#{application.label.passwordConfirm}" class="mand">Password(Confirm)</span></th>
+							<td>
+								<input is="duice-ui-input" type="password" data-duice-bind="changePassword,passwordConfirm"/>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="app-row">
+			<div class="app-col right">
+				<button class="button" onclick="confirmChangePassword();">
+					<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
+					<span data-th-text="#{application.label.confirm}"></span>
+				</button>
+			</div>
+		</div>
+	</dialog>
+	<script>
+	var changePasswordDialog = new duice.Dialog($('#changePasswordDialog')[0]);
+
+	/**
+	 * Changes password
+	 */
+	function openChangePassword() {
+		changePassword.fromJson({
+			id: user.get('id'),
+			password: null,
+			passwordConfirm: null
+		});
+		changePasswordDialog.open();
+	}
+	
+	/**
+	 * Confirms change password
+	 */
+	function confirmChangePassword() {
+		
+		// checks password and password confirm, in case of new
+		if(duice.isEmpty(changePassword.get('password'))){
+			changePassword.setFocus('password', '[[#{application.message.enterItem(#{application.label.password})}]]');
+			return false;
+		}
+		if(!duice.isPasswordFormat(changePassword.get('password'))){
+			changePassword.setFocus('password', '[[#{application.message.notValidPassowrdFormat}]]');
+			return false;
+		}
+		if(duice.isEmpty(changePassword.get('passwordConfirm'))){
+			changePassword.setFocus('passwordConfirm', '[[#{application.message.enterItem(#{application.label.passwordConfirm})}]]');
+			return false;
+		}
+		if(changePassword.get('passwordConfirm') !== changePassword.get('password')){
+			changePassword.setFocus('passwordConfirm', '[[#{application.message.itemNotMatch(#{application.label.passwordConfirm})}]]');
+			return false;
+		}
+		
+		new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.password})}]]")
+		.onAfterConfirm(function(){
+			var data = user.toJson();
+			data.groups = userGroups.toJson();
+			data.roles = userRoles.toJson();
+			data.authorities = userAuthorities.toJson();
+			$.ajax({
+				 url: 'user/changePassword'
+				,type: 'POST'
+				,data: JSON.stringify(changePassword.toJson())
+				,contentType: 'application/json;charset=UTF-8'
+				,success: function(data, textStatus, jqXHR) {
+					new duice.Alert('[[#{application.message.saveComplete(#{application.label.password})}]]')
+					.onAfterClose(function(){
+						changePasswordDialog.close();
+					}).open();
+		   	 	}
+			});	
+		}).open();
+	}
+	</script>
 </div>
+
+
 
 
 

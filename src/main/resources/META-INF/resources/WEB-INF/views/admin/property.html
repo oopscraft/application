@@ -16,14 +16,42 @@
 			rows: 20,
 			totalCount: -1
 		});
-		var properties = new duice.List();
-		var property = new duice.Map();
+		const properties = new duice.List();
+		const property = new duice.Map();
+		var isNew = false;
+		
+		// handle when search option is changed.
+		search.onAfterChange(function(name, value){
+			// if select all option, reset value. 
+			if(name === 'key' && !value){
+				search.set('value',null);				
+			}
+		});
 
-		// adds index changed event listener
-		properties.onAfterChangeIndex(function(index){
-			if(index > -1){
-				var id = this.get(index).get('id');
-				getProperty(id);	
+		// checks when select row is changed.
+		properties.onBeforeSelectRow(async function(selectedRow){
+			if(isDetailChanged()){
+				if(await duice.confirm("[[#{application.message.changeFound}+'\n'+#{application.message.ignoreChange}]]")){
+					resetDetail();
+					return true;
+				}else{
+					return false;
+				}
+			}
+		});
+		
+		// event listener for select row
+		properties.onAfterSelectRow(function(selectedRow){
+			getProperty(selectedRow.get('id'));
+		});
+		
+		// checks properties change
+		property.onBeforeChange(async function(name,value){
+			if(name === 'id'){
+				if(isDuplicateProperty(value)){
+					await duice.alert('[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+					return false;
+				}
 			}
 		});
 		
@@ -37,46 +65,58 @@
 		}
 		
 		/**
-		 * Clears detail
+		 * Returns detail changed.
 		 */
-		function clearDetail(){
-			property.clear();
-			propertyProperties.clear();
+		function isDetailChanged() {
+			if(property.isDirty()){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		/**
+		 * Initializes detail
+		 */
+		function initializeDetail() {
+			property.fromJson({});
+		}
+		
+		/**
+		 * Resets detail
+		 */ 
+		function resetDetail() {
+			property.reset();
 		}
 		
 		/**
 		 * Gets properties
 		 */
 		function getProperties(page) {
-			if(page){
-				search.set('page',page);
-			}
-			var data = {};
-			if(search.get('key')){
-				data[search.get('key')] = search.get('value');
-			}
-			if(search.get('status')){
-				data.status = search.get('status');
-			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
-			$.ajax({
-				 url: 'property/getProperties'
-				,type: 'GET'
-				,data: data
-				,success: function(data, textStatus, jqXHR) {
+			return new Promise(function(resolve,reject){
+				if(page){
+					search.set('page',page);
+				}
+				var data = {};
+				if(search.get('key')){
+					data[search.get('key')] = search.get('value');
+				}
+				if(search.get('status')){
+					data.status = search.get('status');
+				}
+				data.page = search.get('page');
+				data.rows = search.get('rows');
+				$.ajax({
+					 url: 'property/getProperties'
+					,type: 'GET'
+					,data: data
+				})
+				.done(function(data, textStatus, jqXHR) {
 					properties.fromJson(data);
 					search.set('totalCount', __parseTotalCount(jqXHR));
-					
-					// sets current property
-					properties.forEach(function(row,index){
-						if(row.get('id') === property.get('id')){
-							properties.setIndex(index);
-							return false;
-						}
-					});
-		   	 	}
-			});	
+					resolve(true);
+			   	});
+			});
 		}
 		
 		/**
@@ -87,50 +127,111 @@
 				 url: 'property/getProperty'
 				,type: 'GET'
 				,data: {id:id}
-				,success: function(data, textStatus, jqXHR) {
-					property.fromJson(data);
-					disableDetail(false);
-					property.setReadonly('id', true);
-		   	 	}
-			});	
+			})
+			.done(function(data, textStatus, jqXHR) {
+				property.fromJson(data);
+				disableDetail(false);
+				property.setReadonly('id', true);
+				isNew = false;
+			});
 		}
 		
 		/**
 		 * Adds property
 		 */
 		function addProperty() {
-			clearDetail();
+			initializeDetail();
 			disableDetail(false);
 			property.setReadonly('id',false);
+			isNew = true;
+			property.setFocus('id');
+		}
+		
+		
+		/**
+		 * Returns duplicate property
+		 */
+		function isDuplicateProperty(id){
+			var duplicateProperty = false;
+			$.ajax({
+				 url: 'property/getProperty'
+				,type: 'GET'
+				,data: {id:id}
+				,async: false
+			})
+			.done(function(data, textStatus, jqXHR) {
+				if(data && data.id === id){
+					duplicateProperty = true;
+				}
+			});
+			return duplicateProperty;
 		}
 		
 		/**
 		 * Saves property
 		 */
-		function saveProperty(){
+		async function saveProperty(){
 			
 			// checks changes
-			if(!property.isDirty()){
-				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
-				return;
+			if(isNew === false && isDetailChanged() === false) {
+				await duice.alert("[[#{application.message.changeNotFound}]]");
+				return false;
 			}
 			
-			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.property})}]]")
-			.onAfterConfirm(function(){
+			// checks id
+			if(duice.isEmpty(property.get('id'))){
+				property.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+				return false;
+			}
+			if(!duice.isIdFormat(property.get('id'))){
+				property.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+				return false;
+			}
+			
+			// checks new property is existed
+			if(isNew){
+				if(isDuplicateProperty(property.get('id'))){
+					property.setFocus('id', '[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+					return false;
+				}
+			}
+			
+			// checks property name
+			if(duice.isEmpty(property.get('name'))){
+				property.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+				return false;
+			}
+
+			// enters save process
+			if(await duice.confirm("[[#{application.message.saveConfirm(#{application.label.property})}]]")){
 				var data = property.toJson();
 				$.ajax({
 					 url: 'property/saveProperty'
 					,type: 'POST'
 					,data: JSON.stringify(data)
 					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert('[[#{application.message.saveComplete(#{application.label.property})}]]')
-						.onAfterClose(function(){
-							getProperties();
-						}).open();
-			   	 	}
-				});	
-			}).open();
+				})
+				.done(function(data, textStatus, jqXHR) {
+					new duice.Alert('[[#{application.message.saveComplete(#{application.label.property})}]]')
+					.onAfterClose(async function(){
+						await getProperties();
+						
+						// refresh list and details
+						var index = properties.indexOf(function(row){
+							if(row.get('id') === property.get('id')){
+								return true;
+							}
+						});
+						if(index > -1){
+							initializeDetail();
+							properties.selectRow(index);
+						}else{
+							getProperty(property.get('id'));
+						}
+					})
+					.open();
+				});
+			}
 		}
 		
 		/**
@@ -146,9 +247,10 @@
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
 						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.property})}]]")
-						.onAfterClose(function(){
-							clearDetail();
-							getUsers();
+						.onAfterClose(async function(){
+							await getProperties();
+							initializeDetail();
+							disableDetail(true);
 						}).open();
 			   	 	}
 				});

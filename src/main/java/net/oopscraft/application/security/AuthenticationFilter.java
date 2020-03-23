@@ -6,8 +6,11 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,54 +24,57 @@ import org.springframework.web.filter.GenericFilterBean;
 import net.oopscraft.application.user.entity.User;
 import net.oopscraft.application.util.StringUtility;
 
-@Component
-public class SecurityFilter extends GenericFilterBean   {
+public class AuthenticationFilter extends GenericFilterBean   {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(SecurityFilter.class);
-	private static final String AUTHORIZATION_HEADER = "Authorization";
+	private final static Logger LOGGER = LoggerFactory.getLogger(AuthenticationFilter.class);
 	
 	@Autowired
-	SecurityTokenEncoder accessTokenEncoder;
+	AuthenticationProvider authenticationProvider;
  
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     	HttpServletRequest request = (HttpServletRequest) req;
+    	HttpServletResponse response = (HttpServletResponse) res;
         String uri = request.getRequestURI();
         String method = request.getMethod();
         LOGGER.debug("[{}][{}]",  method, uri);
         
         // JWT Token
-        String authorization = request.getHeader(AUTHORIZATION_HEADER);
-        if(StringUtility.isNotEmpty(authorization)) {
-        	
-            // decode principal
+        String accessToken = request.getHeader("X-Access-Token");
+        if(StringUtils.isBlank(accessToken)) {
+        	if(request.getCookies() != null) {
+		        for(Cookie cookie : request.getCookies()) {
+		        	if("X-Access-Token".equals(cookie.getName())) {
+		        		accessToken = cookie.getValue();
+		        	}
+		        }
+        	}
+        }
+        
+        // decode principal
+        if(StringUtility.isNotEmpty(accessToken)) {
             try {
-                String token = parseToken(authorization);
-                LOGGER.debug(String.format("token:[%s]", token));
-                User user = accessTokenEncoder.decode(token);
+                LOGGER.debug(String.format("token:[%s]", accessToken));
+                User user = authenticationProvider.decodeAccessToken(accessToken);
         		UserDetails userDetails = new UserDetails(user);
         		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
         		SecurityContext securityContext = SecurityContextHolder.getContext();
         		securityContext.setAuthentication(authentication);
+        		
+        		// keep alive
+        		accessToken = authenticationProvider.encodeAccessToken(user);
+    			response.setHeader("X-Access-Token", accessToken);
+    			Cookie cookie = new Cookie("X-Access-Token", accessToken);
+    			cookie.setPath("/");
+    			cookie.setHttpOnly(true);
+    			response.addCookie(cookie);
+        		
             }catch(Exception ignore) {
-            	LOGGER.warn("Invalid Authentication Token{}[{{}]", AUTHORIZATION_HEADER, authorization);
+            	LOGGER.warn("Invalid Authentication Token{}[{{}]", accessToken);
             }
         } 
         
         // forward
         chain.doFilter(req, res);
     }
-	
-	/**
-	 * Parse token from authorization header
-	 * @param authorization
-	 * @return
-	 */
-	private String parseToken(String authorization) {
-        if(authorization != null && authorization.startsWith("Bearer ")) {
-            String token = authorization.substring(7, authorization.length());
-            return token;
-        }
-        return null;
-	}
 
 }

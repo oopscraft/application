@@ -89,5 +89,12 @@ public class GroupController {
 	public void deleteGroup(@RequestBody Group group) throws Exception {
 		groupService.deleteGroup(group);
 	}
+	
+	@RequestMapping(value = "changeUpperId", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public Group changeUpperId(@RequestBody Group group) throws Exception {
+		return groupService.changeUpperId(group.getId(), group.getUpperId());
+	}
 
 }

@@ -83,13 +83,10 @@ public class MenuService {
 		one.setUpperId(menu.getUpperId());
 		one.setName(menu.getName());
 		one.setIcon(menu.getIcon());
-		one.setType(menu.getType());
-		one.setValue(menu.getValue());
 		one.setDescription(menu.getDescription());
-		one.setDisplayPolicy(menu.getDisplayPolicy());
+		one.setLinkUrl(menu.getLinkUrl());
+		one.setLinkTarget(menu.getLinkTarget());
 		one.setDisplayAuthorities(menu.getDisplayAuthorities());
-		one.setAccessPolicy(menu.getAccessPolicy());
-		one.setAccessAuthorities(menu.getAccessAuthorities());
 		return menuRepository.save(one);
 	}
 

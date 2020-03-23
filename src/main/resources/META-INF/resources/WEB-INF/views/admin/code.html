@@ -8,23 +8,51 @@
 		    disableDetail(true);
 		});
 	
+		// defines variables 
 		var search = new duice.Map({
 			key: null,
 			value: null,
-			status: null,
 			page: 1,
 			rows: 20,
 			totalCount: -1
 		});
-		var codes = new duice.List();
-		var code = new duice.Map();
-		var codeItems = new duice.List();
-
-		// adds index changed event listener
-		codes.onAfterChangeIndex(function(index){
-			if(index > -1){
-				var id = this.get(index).get('id');
-				getCode(id);	
+		const codes = new duice.List();
+		const code = new duice.Map();
+		const codeItems = new duice.List();
+		var isNew = false;
+		
+		// handle when search option is changed.
+		search.onAfterChange(function(name, value){
+			// if select all option, reset value. 
+			if(name === 'key' && !value){
+				search.set('value',null);				
+			}
+		});
+		
+		// checks when select row is changed.
+		codes.onBeforeSelectRow(async function(selectedRow){
+			if(isDetailChanged()){
+				if(await duice.confirm("[[#{application.message.changeFound}+'\n'+#{application.message.ignoreChange}]]")){
+					resetDetail();
+					return true;
+				}else{
+					return false;
+				}
+			}
+		});
+		
+		// event listener for select row
+		codes.onAfterSelectRow(function(selectedRow){
+			getCode(selectedRow.get('id'));
+		});
+		
+		// checks user properties change
+		code.onBeforeChange(async function(name,value){
+			if(name === 'id'){
+				if(isDuplicateCode(value)){
+					await duice.alert('[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+					return false;
+				}
 			}
 		});
 		
@@ -33,51 +61,65 @@
 		 */
 		function disableDetail(disable){
 			code.setDisable(disable);
-			$('#deleteCodeButton').prop('disabled', disable);
-			$('#saveCodeButton').prop('disabled', disable);
+			$('#detailDiv').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
 		}
 		
 		/**
-		 * Clears detail
+		 * Returns detail changed.
 		 */
-		function clearDetail(){
-			code.clear();
-			codeItems.clear();
+		function isDetailChanged() {
+			if(code.isDirty()
+			|| codeItems.isDirty()
+			){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		/**
+		 * Initializes detail
+		 */
+		function initializeDetail() {
+			code.fromJson({});
+			codeItems.fromJson([]);
+		}
+		
+		/**
+		 * Resets detail
+		 */ 
+		function resetDetail() {
+			code.reset();
+			codeItems.reset();
 		}
 		
 		/**
 		 * Gets codes
 		 */
 		function getCodes(page) {
-			if(page){
-				search.set('page',page);
-			}
-			var data = {};
-			if(search.get('key')){
-				data[search.get('key')] = search.get('value');
-			}
-			if(search.get('status')){
-				data.status = search.get('status');
-			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
-			$.ajax({
-				 url: 'code/getCodes'
-				,type: 'GET'
-				,data: data
-				,success: function(data, textStatus, jqXHR) {
+			return new Promise(function(resolve,reject){
+				if(page){
+					search.set('page',page);
+				}
+				var data = {};
+				if(search.get('key')){
+					data[search.get('key')] = search.get('value');
+				}
+				data.page = search.get('page');
+				data.rows = search.get('rows');
+				$.ajax({
+					 url: 'code/getCodes'
+					,type: 'GET'
+					,data: data
+				})
+				.done(function(data, textStatus, jqXHR) {
 					codes.fromJson(data);
 					search.set('totalCount', __parseTotalCount(jqXHR));
-					
-					// sets current user
-					codes.forEach(function(row,index){
-						if(row.get('id') === code.get('id')){
-							codes.setIndex(index);
-							return false;
-						}
-					});
-		   	 	}
-			});	
+					resolve(true);
+			   	});
+			});
 		}
 		
 		/**
@@ -88,37 +130,83 @@
 				 url: 'code/getCode'
 				,type: 'GET'
 				,data: {id:id}
-				,success: function(data, textStatus, jqXHR) {
-					code.fromJson(data);
-					codeItems.fromJson(data.items);
-					disableDetail(false);
-					code.setReadonly('id', true);
-		   	 	}
-			});	
+			})
+			.done(function(data, textStatus, jqXHR) {
+				code.fromJson(data);
+				codeItems.fromJson(data.items);
+				disableDetail(false);
+				code.setReadonly('id', true);
+				isNew = false;
+			});
 		}
 		
 		/**
 		 * Adds code
 		 */
 		function addCode() {
-			clearDetail();
+			initializeDetail();
 			disableDetail(false);
 			code.setReadonly('id',false);
+			code.setFocus('id');
+			isNew = true;
+		}
+		
+		/**
+		 * Returns duplicate code
+		 */
+		function isDuplicateCode(id){
+			var duplicateCode = false;
+			$.ajax({
+				 url: 'code/getCode'
+				,type: 'GET'
+				,data: {id:id}
+				,async: false
+			})
+			.done(function(data, textStatus, jqXHR) {
+				if(data && data.id === id){
+					duplicateCode = true;
+				}
+			});
+			return duplicateCode;
 		}
 		
 		/**
 		 * Saves code
 		 */
-		function saveCode(){
+		async function saveCode(){
 			
 			// checks changes
-			if(!code.isDirty() && !codeItems.isDirty()){
-				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
-				return;
+			if(isNew === false && isDetailChanged() === false) {
+				await duice.alert("[[#{application.message.changeNotFound}]]");
+				return false;
 			}
 			
-			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.code})}]]")
-			.onAfterConfirm(function(){
+			// checks id
+			if(duice.isEmpty(code.get('id'))){
+				code.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+				return false;
+			}
+			if(!duice.isIdFormat(code.get('id'))){
+				code.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+				return false;
+			}
+			
+			// checks new code is existed
+			if(isNew){
+				if(isDuplicateCode(code.get('id'))){
+					code.setFocus('id', '[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+					return false;
+				}
+			}
+			
+			// checks code name
+			if(duice.isEmpty(code.get('name'))){
+				code.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+				return false;
+			}
+			
+			// enters save process
+			if(await duice.confirm("[[#{application.message.saveConfirm(#{application.label.code})}]]")){
 				var data = code.toJson();
 				data.items = codeItems.toJson();
 				$.ajax({
@@ -126,21 +214,35 @@
 					,type: 'POST'
 					,data: JSON.stringify(data)
 					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert('[[#{application.message.saveComplete(#{application.label.code})}]]')
-						.onAfterClose(function(){
-							getCodes();
-						}).open();
-			   	 	}
-				});	
-			}).open();
+				})
+				.done(function(data, textStatus, jqXHR) {
+					new duice.Alert('[[#{application.message.saveComplete(#{application.label.user})}]]')
+					.onAfterClose(async function(){
+						await getCodes();
+						
+						// refresh list and details
+						var index = codes.indexOf(function(row){
+							if(row.get('id') === code.get('id')){
+								return true;
+							}
+						});
+						if(index > -1){
+							initializeDetail();
+							codes.selectRow(index);
+						}else{
+							getCode(code.get('id'));
+						}
+					})
+					.open();
+				});
+			}
 		}
 		
 		/**
 		 * Deletes code
 		 */
 		function deleteCode(){
-			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.code})}]]")
+			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.user})}]]")
 			.onAfterConfirm(function(){
 				$.ajax({
 					 url: 'code/deleteCode'
@@ -148,15 +250,15 @@
 					,data: JSON.stringify(user.toJson())
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.code})}]]")
-						.onAfterClose(function(){
-							clearDetail();
-							getCodes();
+						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.user})}]]")
+						.onAfterClose(async function(){
+							await getUsers();
+							initializeDetail();
+							disableDetail(true);
 						}).open();
 			   	 	}
 				});
 			}).open();
-		
 		}
 		
 		/**
@@ -166,14 +268,14 @@
 			var codeItem = new duice.Map({
 				codeId: code.get('id')
 			});
-			codeItems.add(codeItem);
+			codeItems.addRow(codeItem);
 		}
 		
 		/**
 		 * Removes code authority
 		 */
 		function removeCodeItem(index) {
-			codeItems.remove(index);
+			codeItems.removeRow(index);
 		}
 	</script>
 	<div class="app-row">
@@ -186,7 +288,10 @@
 	</div>
 	<hr class="hr"/>
 	<div class="app-row">
-		<div class="app-col" style="width:50%;">
+		<!-- ====================================================== -->
+		<!-- List													-->
+		<!-- ====================================================== -->
+		<div id="listDiv" class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
@@ -243,7 +348,10 @@
 				</div>
 			</div>		
 		</div>
-		<div class="app-col" style="width:50%;">
+		<!-- ====================================================== -->
+		<!-- Start Detail											-->
+		<!-- ====================================================== -->
+		<div id="detailDiv" class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_code.png}"/>
@@ -317,7 +425,7 @@
 												<td><input is="duice-ui-input" type="text" data-duice-bind="item,id"/></td>
 												<td><input is="duice-ui-input" type="text" data-duice-bind="item,name"/></td>
 												<td class="text-center">
-													<button class="button small" data-index="[[$context.index]]" onclick="removeCodeItem(this.dataset.index);">
+													<button class="button small" data-index="[@duice[$context.index]]" onclick="removeCodeItem(this.dataset.index);">
 														-
 													</button>
 												</td>

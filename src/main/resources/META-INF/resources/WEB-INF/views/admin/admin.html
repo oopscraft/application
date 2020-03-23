@@ -10,286 +10,10 @@
 		<script th:src="@{/static/duice.js}"></script>
 		<link rel="stylesheet" type="text/css" th:href="@{/static/duice.css}">
 		<script th:src="@{/static/jquery.js}"></script>
-		<style>
-		html,
-		body {
-		  height: 100%;
-		}
-		body {
-			font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-			font-size: 12px;
-			line-height: 2.0;
-			margin: 0px;
-			padding: 0px;
-			overflow-x: hidden;
-		}
-		h1 { 
-			color: #111; 
-			font-family: sans-serif; 
-			font-size: 24px; 
-			font-weight: 700; 
-			line-height: 32px; 
-			margin: 0 0 0; 
-			padding: 2px 2px; 
-		}
-		h2 { 
-			color: #111; 
-			font-family: sans-serif; 
-			font-size: 16px; 
-			font-weight: 700; 
-			line-height: 16px; 
-			margin: 0 0 0; 
-			padding: 2px 2px; 
-		}
-		a,
-		a:link,
-		a:visited,
-		a:hover { 
-			text-decoration: none;
-			color: inherit;
-		}
-		.app-row {
-			display: flex;
-			justify-content: space-between;
-			margin: 0px;
-			padding: 0px;
-		}
-		.app-col {
-			flex-grow: 1;
-			margin: 0px;
-			padding: 1px;
-		}
-		.app-col.left {
-			text-align: left;
-		}
-		.app-col.center {
-			text-align: center;
-		}
-		.app-col.right {
-			text-align: right;
-		}
-		.app-col.top {
-			align-self: flex-start;
-		}
-		.app-col.middle {
-			align-self: center;
-		}
-		.app-col.bottom {
-			align-self: flex-end;
-		}
-		.hr {
-			margin: 1px;
-			border: none;
-			border-bottom: solid 1px #eee;
-		}
-		.menu {
-			padding: 0px;
-			margin: 0px;
-   			margin-right: 20px;
-		}
-		.menu ul {
-			list-style: none;
-			padding-left: 0px;
-		}
-		.menu ul > li {
-			padding:3px 10px;
-			border-bottom: dotted 1px #ccc;			
-		}
-		.menu ul > li:hover {
-			background-color: #f7f7f7;
-			transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-			cursor: pointer;
-		}
-		.menu ul > li > a {
-			font-weight: bold;
-			display: block;
-			width: 100%;
-		}
-		.menu ul > li > a > img {
-			vertical-align: middle;
-			width: 24px;
-			height: 24px;
-			margin-right: 10px;
-		}
-		.menu ul > li > a > span {
-			font-weight: bold;
-		}
-		.content-title {
-			display: flex;
-   			justify-content: space-between;
-   			align-items: baseline;
-   			border-bottom: solid 1px #ccc;
-		}
-		.content-subtitle {
-			display: flex;
-   			justify-content: space-between;
-   			align-items: baseline;
-   			padding: 10px;
-			background: url('/static/image/icon_search_24px.png');
-		    background-position: left 10px center;
-		    background-repeat: no-repeat;
-		    padding-left: 40px;
-		    border: solid 2px #eee;
-		    margin: 2px 0px;
-		}
-		.font-bold {
-			font-weight: bold;
-		}
-		.text-left {
-			text-align: left;
-		}
-		.text-center {
-			text-align: center;
-		}
-		.text-right {
-			text-align: right;
-		}
-		.icon {
-			width: 24px;
-			height: 24px;
-			vertical-align: middle;
-		}
-		.icon.large {
-			width: 32px;
-			height: 32px;
-		}
-		.icon.small {
-   			width: 16px;
-   			height: 16px;
-		}
-		.button {
-			min-width: 70px;
-		    height: inherit;
-		    line-height: inherit;
-		    margin: 0rem;
-		    padding: 0rem 0.5rem;
-			box-shadow:inset 0px 1px 0px 0px #ffffff;
-			background:linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
-			background-color:#f9f9f9;
-			border:1px solid #adacac;
-			border-radius: 2px;
-			display:inline-block;
-			color:#333;
-			font-weight:bold;
-			text-decoration:none;
-		}
-		.button:disabled {
-			opacity: 0.8;
-		}
-		.button:hover:not([disabled]){
-			cursor:pointer;
-			background:linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
-			background-color:#e9e9e9;
-		}
-		.button:active:not([disabled]) {
-			position:relative;
-			top:1px;
-		}
-		.button.small {
-			min-width: 24px;
-		    line-height: initial;
-			padding: 0.2rem 0.2rem;
-		}
-		.button > .icon {
-			width: 1rem;
-			height: 1rem;
-			vertical-align: middle;
-		}
-		.table {
-			border-collapse: collapse;
-			border: solid 1px #ccc;
-		}
-		.table > tr ,
-		.table > thead > tr ,
-		.table > tbody > tr {
-			line-height: 2.0;
-		}
-		.table > tr > th ,
-		.table > thead > tr > th ,
-		.table > tbody > tr > th {
-			line-height: inherit;
-			font-weight: bold;
-			margin: 0px;
-			padding: 0px;
-			border: solid 1px #dee2e6;
-			background: #f7f7f7;
-			text-align: center;
-			text-overflow: ellipsis;
-		}
-		.table > tr > td ,
-		.table > tbody > tr > td {
-			height: inherit;
-			line-height: inherit;
-			border: solid 1px #dee2e6;
-			margin: 0px;
-			padding: 1px;
-			text-overflow: ellipsis;
-		}
-		.mand:before {
-			content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAALpJREFUOI1jYBgFOIHH3DdaMLb7grfauNQx4ZRgYlgIYzP//78AlzpGdAHvBW8C/zEwJDMy/LP5z8B0BKIIwv7/7//MHUmim5HVs6Ab8OKn8BZJns+H//7+uYeZlS2BgYGBAcZ+/oX3I0EviP64zfTv13cWBgYGhn+/vrMgs5UEMV2M4QImAUGPf/8YExkY/sn/Z2CeARGFsL9+fT2bgYFhK/bQQANe89+cxsYm6AUY+M/0LxobexRgAgCexkocIl3odAAAAABJRU5ErkJggg==');
-			vertical-align: middle;
-		}
-		.embd:after {
-			content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAALpJREFUOI1jYBgFOIHH3DdaMLb7grfauNQx4ZRgYlgIYzP//78AlzpGdAHvBW8C/zEwJDMy/LP5z8B0BKIIwv7/7//MHUmim5HVs6Ab8OKn8BZJns+H//7+uYeZlS2BgYGBAcZ+/oX3I0EviP64zfTv13cWBgYGhn+/vrMgs5UEMV2M4QImAUGPf/8YExkY/sn/Z2CeARGFsL9+fT2bgYFhK/bQQANe89+cxsYm6AUY+M/0LxobexRgAgCexkocIl3odAAAAABJRU5ErkJggg==');
-			vertical-align: middle;
-		}
-		</style>
+		<link rel="stylesheet" type="text/css" th:href="@{/static/application.css}">
+		<script th:src="@{/static/application.js}"></script>
+		<script th:src="@{/static/libphonenumber.js}"></script>
 		<script>
-		/**
-		 * ajax setting
-		 */
-		var __progress = null;
-        $(document).ajaxStart(function(event) {
-        	console.log('$(document).ajaxStart');
-        	__progress = new duice.Progress(document.body);
-       		__progress.start();
-        });
-        // If not configure, "Provisional headers are shown" error occured in chrome.
-        $(document).ajaxSend(function(event, jqxhr, settings) {
-        	console.log('$(document).ajaxSend');
-        	jqxhr.setRequestHeader("[[${_csrf}?${_csrf.headerName}:'headerName']]","[[${_csrf}?${_csrf.token}:'token']]");
-        	jqxhr.setRequestHeader('Cache-Control','no-cache, no-store, must-revalidate');
-        	jqxhr.setRequestHeader('Pragma','no-cache');
-        	jqxhr.setRequestHeader('Expires','0');
-        });
-		// checks stop event
-        $(document).ajaxStop(function(event) {
-        	console.log('$(document).ajaxStop');
-        	if(__progress){
-        		__progress.stop();
-        	}
-        });
-		// Checks error except cancelation(readyState = 0)
-        $(document).ajaxError(function(event, jqXHR, ajaxSettings,thrownError ){
-        	console.error('$(document).ajaxError');
-        	if(jqXHR.readyState > 0){
-        		console.error(event, jqXHR, ajaxSettings, thrownError);
-        		new duice.Alert(jqXHR.responseText).open();
-        	}
-        });
-        
-        /**
-         * Parsed total count from Content-Range header
-         * @Param {Object} jqXHR
-         */
-        function __parseTotalCount(jqXHR){
-        	var contentRange = jqXHR.getResponseHeader("Content-Range");
-        	try {
-            	var totalCount = contentRange.split(' ')[1].split('/')[1];
-        		return parseInt(totalCount);
-        	}catch(e){
-        		console.error(e);
-        		return -1;
-        	}
-        }
-        
-        /**
-		 * Changes language
-		 */ 
-        function __changeLanguage(language){
-        	window.location = '?__lang=' + language;
-        }
-        
         /**
          * Exeuctes logout
          */ 
@@ -305,18 +29,23 @@
 		</script>
 	</head>
 	<body>
+		<!-- auto completion off -->
+		<div style="display:none;">
+			<input type="text"/>
+			<input type="password"/>
+		</div>
 		<div class="app-row" style="padding:10px 20px; border-bottom:dotted 1px #ccc; background-color:#eee;">
-			<div class="app-col left">
+			<div class="app-col left middle">
 				<img th:src="@{/static/image/application.png}"/>
 			</div>
-			<div class="app-col right">
-				<span onclick="__logout();">
-					로그아웃
-				</span>
-				<select onchange="__changeLanguage(this.value);">
-					<option value="">-</option>
-					<option value="en">English</option>
-					<option value="ko">Korean</option>
+			<div class="app-col right middle">
+				<img th:src="${__user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
+				<span data-th-text="${__user.name}"></span>
+				&nbsp;
+				<span data-th-text="#{application.label.logout}" onclick="__logout();" class="link"></span>
+				&nbsp;
+				<select onchange="__changeLanguage(this.value);" class="duice-ui-select" style="width:120px;">
+					<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
 				</select>
 			</div>
 		</div>
@@ -411,6 +140,7 @@
 					<ul is="duice-ui-ul" 
 					data-duice-bind="__groupDialog.groups,group" 
 					data-duice-hierarchy="id,upperId"
+					data-duice-selectable="true"
 					data-duice-foldable="true"
 					style="max-height:600px; overflow-y:scroll;">
 						<li>
@@ -420,7 +150,7 @@
 									<span is="duice-ui-span" data-duice-bind="group,name" style="font-weight:bold;"></span>
 								</div>
 								<div class="app-col text-right">
-									<input is="duice-ui-input" type="checkbox" data-duice-bind="group,__selected" data-id="[[$context.group.get('id')]]" onchange="__groupDialog.selectGroup(this.dataset.id);"/>
+									<input is="duice-ui-input" type="checkbox" data-duice-bind="group,__checked"/>
 								</div>
 							</div>
 						</li>
@@ -438,13 +168,15 @@
 		</dialog>
 		<script>
 			/**
-			 * Global common group dialog
+			 * Global common group select dialog
 			 */
-	        var __groupDialog = {
+	        const __groupDialog = {
 	        	dialog: new duice.Dialog(document.getElementById('__groupDialog')),
 	        	groups: new duice.List(),
+	        	
+	        	// option
 	        	singleSelect: false,
-	        	selectedGroups: null,
+	        	checkedGroups: null,
 	        	disabledGroups: null,
 
 	        	/**
@@ -452,75 +184,95 @@
 	        	 * @param option.singleSelect 
 				 * @param option.selectedGroups 
 				 * @param option.disabledGroups 
+				 * @param option.onAfterConfirm
 	        	 */
-	        	open(option) {
-	        		this.singleSelect = option.singleSelect;
-	        		this.selectedGroups = option.selectedGroups;
-	        		this.disabledGroups = option.disabledGroups;
-	        		this.dialog.onAfterConfirm(option.onAfterConfirm);
-	        		this.getGroups(1);
+	        	async open(option) {
+	        		
+	        		// setting options
+	        		this.singleSelect = option.singleSelect||false;
+	        		this.checkedGroups = option.checkedGroups||[];
+	        		this.disabledGroups = option.disabledGroups||[];
+	        		this.dialog.onAfterConfirm(option.onAfterConfirm||function(){});
+	        		
+	        		// defines index change event
+	        		var _this = this;
+	        		this.groups.setReadonly('__checked', true);
+	        		this.groups.onAfterSelectRow(function(group){
+        				
+        				// check disabled
+        				if(group.isDisable() === true){
+        					return;
+        				}
+        				
+        				// if singleSelect, desleect all except self index
+        				if(_this.singleSelect === true){
+        					_this.groups.forEach(function(row){
+        						if(row.get('id') !== group.get('id')){
+        							row.set('__checked', false);        							
+        						}
+        					});
+        				}
+
+        				// toggles __checked
+        				var __checked = group.get('__checked');
+        				if(__checked === true){
+        					group.set('__checked', false);
+        				}else{
+        					group.set('__checked', true);
+        				}
+	        		});
+	        		
+	        		// retrieves and open
+	        		await this.getGroups(1);
 	        		this.dialog.open();
+	        	},
+	        	
+	        	/**
+	        	 * Getting groups
+	        	 */
+	        	getGroups(page) {
+					var _this = this;
+					return new Promise(function(resolve,reject){
+						$.ajax({
+							 url: '[[@{/admin/getGroups}]]'
+							,type: 'GET'
+							,data: {page:page, rows:10000}
+							,success: function(data, textStatus, jqXHR) {
+								_this.groups.fromJson(data);
+								_this.groups.forEach(function(group){
+									var id = group.get('id');
+									
+									// checks __selected value, if it set as selected list.
+									_this.checkedGroups.forEach(function(item){
+										if(item.id === id){
+											group.set('__checked', true);
+										}
+									});
+									
+									// excepts disableds list
+									_this.disabledGroups.forEach(function(item){
+										if(item.id === id){
+											group.setDisable(true);
+										}
+									});
+								});
+								resolve(true);
+							}
+						});
+					});
 	        	},
 	        	
 	        	/**
 	        	 * Executes dialog confirm.
 	        	 */
 	        	confirm() {
-					var selectedGroups = new duice.List();
+					var checkedGroups = new Array();
 					this.groups.forEach(function(group){
-						if(group.isDisable() === false && group.get('__selected') === true){
-							selectedGroups.add(group);
+						if(group.isDisable() === false && group.get('__checked') === true){
+							checkedGroups.push(group.toJson());
 						}
 					});
-					this.dialog.confirm(selectedGroups);
-	        	},
-	        	
-	        	/**
-	        	 * Getting groups
-	        	 */
-	        	getGroups() {
-					var $this = this;
-					$.ajax({
-						 url: '[[@{/admin/getGroups}]]'
-						,type: 'GET'
-						,data: {page:1, rows:10000}
-						,success: function(data, textStatus, jqXHR) {
-							$this.groups.fromJson(data);
-							$this.groups.forEach(function(group){
-								if($this.selectedGroups){
-									$this.selectedGroups.forEach(function(selectedGroup){
-										if(selectedGroup.get('id') === group.get('id')){
-											group.set('__selected', true);
-										}
-									});
-								}
-								if($this.disabledGroups){
-									$this.disabledGroups.forEach(function(disabledGroup){
-										if(disabledGroup.get('id') === group.get('id')){
-											group.setDisable(true);
-										}
-									});
-								}
-							});
-				   	 	}
-					});
-	        	},
-	        	
-	        	/**
-	        	 * Selects group by id
-	        	 * @param id group id
-	        	 */
-	        	selectGroup(id) {
-	        		var $this = this;
-	        		this.groups.forEach(function(group){
-	        			if(group.get('id') === id){
-	        				group.set('__selected',true);
-	        			}else{
-	        				if($this.singleSelect){
-	        					group.set('__selected',false);
-	        				}
-	        			}
-	        		});
+					this.dialog.confirm(checkedGroups);
 	        	}
 	        };
 		</script>
@@ -556,6 +308,7 @@
 				<div class="app-col">
 					<table is="duice-ui-table" 
 					data-duice-bind="__roleDialog.roles,role" 
+					data-duice-selectable="true"
 					style="width:100%;">
 						<col style="width:5%;"/>					
 						<col style="width:10%;"/>
@@ -571,7 +324,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="role,__selected" data-id="[[$context.role.get('id')]]" onchange="this.checked ? __roleDialog.selectRole(this.dataset.id) : __roleDialog.unselectRole(this.dataset.id);"/></td>
+								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="role,__checked" /></td>
 								<td class="text-center"><span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span></td>
 								<td>
 									<img is="duice-ui-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
@@ -594,28 +347,31 @@
 				<div class="app-col">
 					<table is="duice-ui-table" 
 					data-duice-bind="__roleDialog.selectedRoles,role" 
+					data-duice-selectable="true"
 					style="width:100%;">
-						<col style="width:5%;"/>					
 						<col style="width:10%;"/>
 						<col style="width:35%;"/>
-						<col style="width:50%;"/>
+						<col/>
+						<col style="width:5%;"/>
 						<thead>
 							<tr>
-								<th>-</th>
 								<th data-th-text="#{application.label.no}">No</th>
 								<th data-th-text="#{application.label.role}+' '+#{application.label.id}">ID</th>
 								<th data-th-text="#{application.label.role}+' '+#{application.label.name}">Name</th>
+								<th>-</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
-								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="role,__selected" data-id="[[$context.role.get('id')]]" onchange="this.checked ? __roleDialog.selectRole(this.dataset.id) : __roleDialog.unselectRole(this.dataset.id);"/></td>
 								<td class="text-center"><span is="duice-ui-scriptlet" data-duice-bind="role">return $context.index+1;</span></td>
 								<td>
 									<img is="duice-ui-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
 									<span is="duice-ui-span" data-duice-bind="role,id"></span>
 								</td>
 								<td><span is="duice-ui-span" data-duice-bind="role,name"></span></td>
+								<td>
+									<button class="button small" data-index="[@duice[$context.index]]" onclick="__roleDialog.selectedRoles.removeRow(this.dataset.index);">-</button>
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -631,94 +387,121 @@
 			</div>
 		</dialog>
 		<script>
-		/**
-		 * Global common role dialog
-		 */
-        var __roleDialog = {
-        	dialog: new duice.Dialog(document.getElementById('__roleDialog')),
-        	search: new duice.Map({
-        		page: 1,
-        		rows: 10,
-        		totalCount: -1
-        	}),
-        	roles: new duice.List(),
-        	disabledRoles: new duice.List(),
-        	selectedRoles: new duice.List(),
-        	
-        	/**
-        	 * Opens dialogs
-			 * @param option.disabledRoles:duice.List
-			 * @param option.onAfterConfirm:Function 
-        	 */
-        	open(option) {
-        		option.disabledRoles ? this.disabledRoles.fromJson(option.disabledRoles.toJson()) : this.disabledRoles.fromJson([]);
-        		option.onAfterConfirm ? this.dialog.onAfterConfirm(option.onAfterConfirm) : this.dialog.onAfterConfirm(null);
-        		this.selectedRoles.fromJson([]);
-        		this.getRoles(1);
-        		this.dialog.open();
-        	},
-        	
-        	/**
-        	 * Executes confirm
-        	 */
-        	confirm() {
-        		this.dialog.confirm(this.selectedRoles);
-        	},
-        	
 			/**
-			 * Getting groups
+			 * Global common role dialog
 			 */
-        	getRoles() {
-				var data = this.search.toJson();
-				if(this.search.get('key')){
-					data[this.search.get('key')] = this.search.get('value');
-				}
-				var $this = this;
-				$.ajax({
-					 url: '[[@{/admin/getRoles}]]'
-					,type: 'GET'
-					,data: data
-					,success: function(data, textStatus, jqXHR) {
-						$this.roles.fromJson(data);
-						$this.roles.forEach(function(role){
-							$this.disabledRoles.forEach(function(disabledRole){
-								if(disabledRole.get('id') === role.get('id')){
-									role.set('__selected', true);
-									role.setDisable(true);
-								}
-							});
+	        const __roleDialog = {
+	        	dialog: new duice.Dialog(document.getElementById('__roleDialog')),
+	        	search: new duice.Map({
+	        		page: 1,
+	        		rows: 10,
+	        		totalCount: -1
+	        	}),
+	        	roles: new duice.List(),
+	        	selectedRoles: new duice.List(),
+	        	
+	        	// option
+	        	checkedRoles: null,
+	        	disabledRoles: null,
+	        	onAfterConfirm: null,
+	        	
+	        	/**
+	        	 * Opens dialogs
+	        	 * @param option.checkedRoles:Array
+				 * @param option.disabledRoles:Array
+				 * @param option.onAfterConfirm:Function 
+	        	 */
+	        	async open(option) {
+					this.checkedRoles = option.checkedRoles || [];
+					this.disabledRoles = option.disabledRoles || [];
+					this.dialog.onAfterConfirm(option.onAfterConfirm || new function(){});
+	        		this.selectedRoles.fromJson([]);
+	        		
+	        		// add index change event listener
+	        		var _this = this;
+	        		this.roles.setReadonly('__checked', true);
+	        		this.roles.onAfterSelectRow(function(role){
+	    				var id = role.get('id');
+	    				
+	    				// check disabled
+	    				if(role.isDisable() === true){
+	    					return;
+	    				}
+	
+	    				// toggles __selected
+	    				var __checked = role.get('__checked');
+	    				if(__checked === true){
+	    					role.set('__checked', false);
+	    					_this.selectedRoles.forEach(function(row,index){
+	    						if(row.get('id') === id){
+	    							_this.selectedRoles.removeRow(index);
+	    							return false;
+	    						}
+	    					});
+	    				}else{
+	    					role.set('__checked', true);
+	    					_this.selectedRoles.addRow(new duice.Map(role.toJson()));
+	    				}
+	        		});
+
+	        		// retrieves roles and open
+	        		await this.getRoles(1);
+	        		this.dialog.open();
+	        	},
+	
+	        	/**
+				 * Getting groups
+				 */
+	        	getRoles(page) {
+	        		var _this = this;
+	        		return new Promise(function(resolve,reject){
+		        		page && _this.search.set('page', page);
+						var data = _this.search.toJson();
+						if(_this.search.get('key')){
+							data[_this.search.get('key')] = _this.search.get('value');
+						}
+						$.ajax({
+							 url: '[[@{/admin/getRoles}]]'
+							,type: 'GET'
+							,data: data
+							,success: function(data, textStatus, jqXHR) {
+								_this.roles.fromJson(data);
+								_this.search.set('totalCount', __parseTotalCount(jqXHR));
+								
+								// check earch role
+								_this.roles.forEach(function(role){
+									var id = role.get('id');
+									
+									// checks disabled	
+									_this.disabledRoles.forEach(function(obj){
+										if(obj.id === id){
+											role.setDisable(true);
+											role.set('__checked', true);
+											return false;
+										}
+									});
+									
+									// checks already selected
+									_this.selectedRoles.forEach(function(map){
+										if(map.get('id') === id){
+											role.set('__checked', true);
+											return false;
+										}
+									});
+								});
+								resolve(true);
+					   	 	}
 						});
-			   	 	}
-				});
-        	},
-        	
-        	/**
-        	 * Selects role by id
-        	 * @param id:string group id to select.
-        	 */
-        	selectRole(id) {
-        		var index = this.roles.indexOf(function(role){
-        			if(role.get('id') === id){
-        				return true;
-        			}
-        		});
-        		var role = this.roles.get(index);
-    			this.selectedRoles.add(role);
-        	},
-        	
-        	/**
-        	 * Unselects role by id
-        	 * @param id:id grop id to unselect.
-        	 */
-        	unselectRole(id) {
-        		var index = this.selectedRoles.indexOf(function(role){
-        			if(role.get('id') === id){
-        				return true;
-        			}
-        		});
-        		this.selectedRoles.remove(index);
-        	}
-        };
+	        		});
+	        	},
+	
+	        	/**
+	        	 * Executes confirm
+	        	 */
+	        	confirm() {
+	        		this.dialog.confirm(this.selectedRoles.toJson());
+	        	}
+	        };
 		</script>
 		
 		<!-- ====================================================== -->
@@ -752,6 +535,7 @@
 				<div class="app-col">
 					<table is="duice-ui-table" 
 					data-duice-bind="__authorityDialog.authorities,authority" 
+					data-duice-selectable="true"
 					style="width:100%;">
 						<col style="width:5%;"/>
 						<col style="width:10%;"/>
@@ -767,7 +551,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="authority,__selected" data-id="[[$context.authority.get('id')]]" onchange="this.checked ? __authorityDialog.selectAuthorities(this.dataset.id) : __authorityDialog.unselectAuthorities(this.dataset.id);"/></td>
+								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="authority,__checked"/></td>
 								<td class="text-center"><span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span></td>
 								<td>
 									<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
@@ -791,27 +575,29 @@
 					<table is="duice-ui-table" 
 					data-duice-bind="__authorityDialog.selectedAuthorities,authority" 
 					style="width:100%;">
-						<col style="width:5%;"/>					
 						<col style="width:10%;"/>
 						<col style="width:35%;"/>
-						<col style="width:50%;"/>
+						<col/>
+						<col style="width:5%;"/>
 						<thead>
 							<tr>
-								<th>-</th>
 								<th data-th-text="#{application.label.no}">No</th>
 								<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">Authority ID</th>
 								<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</th>
+								<th>-</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
-								<td class="text-center"><input is="duice-ui-input" type="checkbox" data-duice-bind="authority,__selected" data-id="[[$context.authority.get('id')]]" onchange="this.checked ? __authorityDialog.selectAuthorities(this.dataset.id) : __authorityDialog.unselectAuthorities(this.dataset.id);"/></td>
 								<td class="text-center"><span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span></td>
 								<td>
 									<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
 									<span is="duice-ui-span" data-duice-bind="authority,id"></span>
 								</td>
 								<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
+								<td style="text-align:center;">
+									<button class="button small" data-index="[@duice[$context.index]]" onclick="__authorityDialog.selectedAuthorities.removeRow(this.dataset.index);">-</button>
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -827,94 +613,118 @@
 			</div>
 		</dialog>
 		<script>
-		/**
-		 * Global common authority dialog
-		 */
         var __authorityDialog = {
-        	dialog: new duice.Dialog(document.getElementById('__authorityDialog')),
-        	search: new duice.Map({
-        		page: 1,
-        		rows: 10,
-        		totalCount: -1
-        	}),
-        	authorities: new duice.List(),
-        	disabledAuthorities: new duice.List(),
-        	selectedAuthorities: new duice.List(),
-        	
-        	/**
-        	 * Opens dialogs
-			 * @param option.disabledAuthorities:duice.List
-			 * @param option.onAfterConfirm:Function 
-        	 */
-        	open(option) {
-        		option.disabledAuthorities ? this.disabledAuthorities.fromJson(option.disabledAuthorities.toJson()) : this.disabledAuthorities.fromJson([]);
-        		option.onAfterConfirm ? this.dialog.onAfterConfirm(option.onAfterConfirm) : this.dialog.onAfterConfirm(null); 
-        		this.selectedAuthorities.fromJson([]);
-        		this.getAuthorities(1);
-        		this.dialog.open();
-        	},
-        	
-        	/**
-        	 * Executes confirm
-        	 */
-        	confirm() {
-        		this.dialog.confirm(this.selectedAuthorities);
-        	},
+            	dialog: new duice.Dialog(document.getElementById('__authorityDialog')),
+            	search: new duice.Map({
+            		page: 1,
+            		rows: 10,
+            		totalCount: -1
+            	}),
+            	authorities: new duice.List(),
+            	selectedAuthorities: new duice.List(),
+            	
+            	// option
+            	checkedAuthorities: null,
+            	disabledAuthorities: null,
+            	onAfterConfirm: null,
+            	
+            	/**
+            	 * Opens dialogs
+            	 * @param option.checkedAuthorities:Array
+    			 * @param option.disabledAuthorities:Array
+    			 * @param option.onAfterConfirm:Function 
+            	 */
+            	async open(option) {
+    				this.checkedAuthorities = option.checkedAuthorities || [];
+    				this.disabledAuthorities = option.disabledAuthorities || [];
+    				this.dialog.onAfterConfirm(option.onAfterConfirm || new function(){});
+            		this.selectedAuthorities.fromJson([]);
+            		
+            		// add index change event listener
+            		var _this = this;
+            		this.authorities.setReadonly('__checked', true);
+            		this.authorities.onAfterSelectRow(function(authority){
+        				var id = authority.get('id');
+        				
+        				// check disabled
+        				if(authority.isDisable() === true){
+        					return;
+        				}
 
-			/**
-			 * Getting authorities
-			 */
-        	getAuthorities() {
-				var data = this.search.toJson();
-				if(this.search.get('key')){
-					data[this.search.get('key')] = this.search.get('value');
-				}
-				var $this = this;
-				$.ajax({
-					 url: '[[@{/admin/getAuthorities}]]'
-					,type: 'GET'
-					,data: data
-					,success: function(data, textStatus, jqXHR) {
-						$this.authorities.fromJson(data);
-						$this.authorities.forEach(function(authority){
-							$this.disabledAuthorities.forEach(function(disabledAuthority){
-								if(disabledAuthority.get('id') === authority.get('id')){
-									authority.set('__selected', true);
-									authority.setDisable('__selected', true);
-								}
-							});
-						});
-			   	 	}
-				});
-        	},
-        	
-        	/**
-        	 * Selects authority by id
-        	 * @param id:string - authority id to select.
-        	 */
-        	selectAuthorities(id) {
-        		var index = this.authorities.indexOf(function(authority){
-        			if(authority.get('id') === id){
-        				return true;
-        			}
-        		});
-        		var authority = this.authorities.get(index);
-    			this.selectedAuthorities.add(authority);
-        	},
-        	
-        	/**
-        	 * Unselects authority by id
-        	 * @param id:id - authority id to unselect.
-        	 */
-        	unselectAuthorities(id) {
-        		var index = this.selectedAuthorities.indexOf(function(authority){
-        			if(authority.get('id') === id){
-        				return true;
-        			}
-        		});
-        		this.selectedAuthorities.remove(index);
-        	}
-        };
+        				// toggles __selected
+        				var __checked = authority.get('__checked');
+        				if(__checked === true){
+        					authority.set('__checked', false);
+        					_this.selectedAuthorities.forEach(function(row,index){
+        						if(row.get('id') === id){
+        							_this.selectedAuthorities.removeRow(index);
+        							return false;
+        						}
+        					});
+        				}else{
+        					authority.set('__checked', true);
+        					_this.selectedAuthorities.addRow(new duice.Map(authority.toJson()));
+        				}
+            		});
+            		
+            		// retrieves and open
+            		await this.getAuthorities(1);
+            		this.dialog.open();
+            	},
+
+            	/**
+    			 * Getting groups
+    			 */
+            	getAuthorities(page) {
+    				var _this = this;
+					return new Promise(function(resolve,reject){
+	            		_this.page && _this.search.set('page', page);
+	    				var data = _this.search.toJson();
+	    				if(_this.search.get('key')){
+	    					data[_this.search.get('key')] = _this.search.get('value');
+	    				}
+	    				$.ajax({
+	    					 url: '[[@{/admin/getAuthorities}]]'
+	    					,type: 'GET'
+	    					,data: data
+	    					,success: function(data, textStatus, jqXHR) {
+	    						_this.authorities.fromJson(data);
+	    						_this.search.set('totalCount', __parseTotalCount(jqXHR));
+	    						
+	    						// check earch authority
+	    						_this.authorities.forEach(function(authority){
+	    							var id = authority.get('id');
+	    							
+	    							// checks disabled	
+	    							_this.disabledAuthorities.forEach(function(obj){
+	    								if(obj.id === id){
+	    									authority.setDisable(true);
+	    									authority.set('__checked', true);
+	    									return false;
+	    								}
+	    							});
+	    							
+	    							// checks already selected
+	    							_this.selectedAuthorities.forEach(function(map){
+	    								if(map.get('id') === id){
+	    									authority.set('__checked', true);
+	    									return false;
+	    								}
+	    							});
+	    						});
+	    						resolve(true);
+	    			   	 	}
+	    				});
+					});  				
+            	},
+
+            	/**
+            	 * Executes confirm
+            	 */
+            	confirm() {
+            		this.dialog.confirm(this.selectedAuthorities.toJson());
+            	}
+            };
 		</script>
 
 	</body>

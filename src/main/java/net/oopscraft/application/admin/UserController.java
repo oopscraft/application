@@ -13,7 +13,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.entity.User;
 
@@ -40,9 +40,6 @@ public class UserController {
 	@Autowired
 	UserService userService;
 	
-	@Autowired
-	MessageSource messageSource;
-	
 	/**
 	 * Forwards user management page
 	 * @return
@@ -51,6 +48,7 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/user.html");
+		modelAndView.addObject("Status", User.Status.values());
 		return modelAndView;
 	}
 	
@@ -107,4 +105,14 @@ public class UserController {
 		userService.deleteUser(user);
 	}
 
+	@RequestMapping(value = "changePassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public void changePassword(@RequestBody ValueMap payload) throws Exception {
+		String id = payload.getString("id");
+		String password = payload.getString("password");
+		userService.changePassword(id, password);
+	}
+	
+	
 }

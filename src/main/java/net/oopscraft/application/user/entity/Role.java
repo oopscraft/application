@@ -29,11 +29,11 @@ public class Role extends SystemEntity {
 	@Column(name = "ROLE_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "ROLE_ICON")
+	@Column(name = "ROLE_ICON", length = Integer.MAX_VALUE)
 	@Lob
 	String icon;
 
-	@Column(name = "ROLE_DESC")
+	@Column(name = "ROLE_DESC", length = Integer.MAX_VALUE)
 	@Lob
 	String description;
 

@@ -1,7 +1,5 @@
 package net.oopscraft.application;
 
-import java.util.Properties;
-
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

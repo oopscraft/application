@@ -10,11 +10,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -33,7 +35,6 @@ import net.oopscraft.application.user.UserLoginRepository;
 import net.oopscraft.application.user.entity.User;
 import net.oopscraft.application.user.entity.UserLoginHistory;
 
-@Component
 public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler, LogoutSuccessHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationHandler.class);
@@ -49,10 +50,10 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 	LocaleResolver localeResolver;
 	
 	@Autowired
-	SecurityTokenEncoder accessTokenEncoder;
+	UserLoginRepository userLoginRepository;
 	
 	@Autowired
-	UserLoginRepository userLoginRepository;
+	AuthenticationProvider authenticationProvider;
 	
 	/**
 	 * On authentication is success.
@@ -61,39 +62,41 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 	 */
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-		
-		// Remember me
-		Cookie cookie = new Cookie("cookie_value", "cookie_value");
-	    cookie.setPath("/");
-		cookie.setMaxAge(60*3);
-		response.addCookie(cookie);
-		
-		// issue JWT access token.
 		try {
-			if(authentication.getPrincipal() instanceof UserDetails) {
-				UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-				response.setHeader("Authorization", "Bearer " + accessTokenEncoder.encode(userDetails.getUser()));
+	        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	        User user = userDetails.getUser();
+			
+			// issue JWT access token.
+	        String accessToken = authenticationProvider.encodeAccessToken(userDetails.getUser());
+			response.setHeader("X-Access-Token", accessToken);
+			Cookie cookie = new Cookie("X-Access-Token", accessToken);
+			cookie.setPath("/");
+			cookie.setHttpOnly(true);
+			response.addCookie(cookie);
+			
+			// sets user default locale
+			if(StringUtils.isNotEmpty(user.getLanguage())){
+				localeResolver.setLocale(request, response, Locale.forLanguageTag(user.getLanguage()));
 			}
+			
+			// Saves Login History
+			UserLoginHistory userLogin = new UserLoginHistory();
+			userLogin.setUserId(user.getId());
+			userLogin.setDate(new Date());
+			userLogin.setSuccessYn("Y");
+			userLogin.setFailReason(null);
+			userLogin.setIp(request.getRemoteAddr());
+			userLogin.setAgent(request.getHeader("User-Agent"));
+			userLogin.setReferer(request.getHeader("referer"));
+			userLoginRepository.saveAndFlush(userLogin);
+			
+			// sets response header
+			response.setStatus(HttpServletResponse.SC_OK);
+			
 		}catch(Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new IOException(e);
+			LOGGER.warn(e.getMessage(), e);
+			throw new ServletException(e);
 		}
-		
-		// Saves Login History
-		UserLoginHistory userLogin = new UserLoginHistory();
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userDetails.getUser();
-		userLogin.setUserId(user.getId());
-		userLogin.setDate(new Date());
-		userLogin.setSuccessYn("Y");
-		userLogin.setFailReason(null);
-		userLogin.setIp(request.getRemoteAddr());
-		userLogin.setAgent(request.getHeader("User-Agent"));
-		userLogin.setReferer(request.getHeader("referer"));
-		userLoginRepository.saveAndFlush(userLogin);
-
-		// sets response header
-		response.setStatus(HttpServletResponse.SC_OK);
 	}
 	
 	/**
@@ -131,15 +134,48 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 			userLoginRepository.saveAndFlush(userLogin);
 		}
 	}
+	
+	/**
+	 * logout
+	 */
+	@Override 
+	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+		if(request.getCookies() != null) {
+	        for(Cookie cookie : request.getCookies()) {
+	        	if("X-Access-Token".equals(cookie.getName())) {
+	        		cookie.setPath("/");
+	        		cookie.setValue("");
+	        		cookie.setMaxAge(-1);
+	        		response.addCookie(cookie);
+	        	}
+	        }
+		}
+	}
 
+	/*
+	 * AuthenticationEntryPoint.commence
+	 */
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
     	LOGGER.warn(authException.getMessage());
-    	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    	response.getWriter().write("Invalid Token Claims.");
-    	response.getWriter().flush();
+    	// in case of AJAX request
+    	if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
+        	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        	response.getWriter().flush();
+        	return;
+    	}
+    	// administrator entry point
+    	if(request.getRequestURI().startsWith("/admin")){
+    		response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+    		response.setHeader("Location", "/admin/login");
+    		response.getWriter().flush();
+    		return;
+    	}
 	}
 	
+	/*
+	 * AccessDeniedHandler.handle
+	 */
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
 		LOGGER.warn(accessDeniedException.getMessage());
@@ -148,10 +184,6 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
     	response.getWriter().flush();
 	}
 
-	@Override 
-	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-		
-		
-	}
+
 
 }

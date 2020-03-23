@@ -19,6 +19,7 @@ import javax.persistence.Table;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
+import net.oopscraft.application.security.SecurityPolicy;
 import net.oopscraft.application.user.entity.Authority;
 
 @Entity
@@ -26,14 +27,6 @@ import net.oopscraft.application.user.entity.Authority;
 @EntityListeners(SystemEntityListener.class)
 public class Menu extends SystemEntity {
 	
-	public enum Type {
-		NONE, LINK, INCLUDE_JSP, INCLUDE_URL
-	}
-	
-	public enum Policy {
-		ANONYMOUS, 	AUTHENTICATED,	AUTHORIZED
-	}
-
 	@Id
 	@Column(name = "MENU_ID", length = 32)
 	String id;
@@ -55,40 +48,29 @@ public class Menu extends SystemEntity {
 	@Lob
 	String description;
 	
-	@Column(name = "MENU_TYPE")
-	@Enumerated(EnumType.STRING)
-	Type type = Type.NONE;
-	
-	@Column(name = "MENU_VAL")
-	String value;
+	@Column(name = "LINK_URL")
+	String linkUrl;
 
-	@Column(name = "PLCY_DISP")
+	public enum LinkTarget {
+		_self, _blank
+	}
+	
+	@Column(name = "LINK_TRGT")
+	LinkTarget linkTarget;
+	
+	@Column(name = "DISP_PLCY")
 	@Enumerated(EnumType.STRING)
-	Policy displayPolicy = Policy.ANONYMOUS;
+	SecurityPolicy displayPolicy = SecurityPolicy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_MENU_AUTH_DISP_MAP", 
+		name = "APP_MENU_DISP_AUTH_MAP", 
 		joinColumns = @JoinColumn(name = "MENU_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
 		inverseForeignKey = @ForeignKey(name = "none")
 	)
 	List<Authority> displayAuthorities = new ArrayList<Authority>();
-
-	@Column(name = "PLCY_ACES")
-	@Enumerated(EnumType.STRING)
-	Policy accessPolicy = Policy.ANONYMOUS;
-	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-		name = "APP_MENU_AUTH_ACES_MAP", 
-		joinColumns = @JoinColumn(name = "MENU_ID"),
-		foreignKey = @ForeignKey(name = "none"),
-		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
-		inverseForeignKey = @ForeignKey(name = "none")
-	)
-	List<Authority> accessAuthorities =  new ArrayList<Authority>();
 
 	public Menu() {}
 	
@@ -136,22 +118,6 @@ public class Menu extends SystemEntity {
 		this.icon = icon;
 	}
 
-	public Type getType() {
-		return type;
-	}
-
-	public void setType(Type type) {
-		this.type = type;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -160,12 +126,27 @@ public class Menu extends SystemEntity {
 		this.description = description;
 	}
 
-	
-	public Policy getDisplayPolicy() {
+	public String getLinkUrl() {
+		return linkUrl;
+	}
+
+	public void setLinkUrl(String linkUrl) {
+		this.linkUrl = linkUrl;
+	}
+
+	public LinkTarget getLinkTarget() {
+		return linkTarget;
+	}
+
+	public void setLinkTarget(LinkTarget linkTarget) {
+		this.linkTarget = linkTarget;
+	}
+
+	public SecurityPolicy getDisplayPolicy() {
 		return displayPolicy;
 	}
 
-	public void setDisplayPolicy(Policy displayPolicy) {
+	public void setDisplayPolicy(SecurityPolicy displayPolicy) {
 		this.displayPolicy = displayPolicy;
 	}
 
@@ -177,20 +158,5 @@ public class Menu extends SystemEntity {
 		this.displayAuthorities = displayAuthorities;
 	}
 
-	public Policy getAccessPolicy() {
-		return accessPolicy;
-	}
-
-	public void setAccessPolicy(Policy accessPolicy) {
-		this.accessPolicy = accessPolicy;
-	}
-
-	public List<Authority> getAccessAuthorities() {
-		return accessAuthorities;
-	}
-
-	public void setAccessAuthorities(List<Authority> accessAuthorities) {
-		this.accessAuthorities = accessAuthorities;
-	}
 
 }

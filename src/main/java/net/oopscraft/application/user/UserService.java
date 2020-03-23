@@ -9,6 +9,7 @@
 package net.oopscraft.application.user;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -97,16 +98,17 @@ public class UserService {
 		if(one == null) {
 			one = new User(user.getId());
 			one.setPassword(passwordEncoder.encode(user.getPassword()));
+			one.setJoinDate(new Date());
 		}
 		one.setName(user.getName());
 		one.setNickname(user.getNickname());
 		one.setStatus(user.getStatus());
 		one.setEmail(user.getEmail());
-		one.setMobile(user.getMobile());
+		one.setMobileCountry(user.getMobileCountry());
+		one.setMobileNumber(user.getMobileNumber());
 		one.setPhoto(user.getPhoto());
-		one.setLocale(user.getLocale());
 		one.setProfile(user.getProfile());
-		one.setJoinDate(user.getJoinDate());
+		one.setLanguage(user.getLanguage());
 		one.setCloseDate(user.getCloseDate());
 		one.setGroups(user.getGroups());
 		one.setRoles(user.getRoles());
@@ -130,8 +132,7 @@ public class UserService {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean isValidPassword(String id, String password) {
-		
+	public boolean isCorrectPassword(String id, String password) {
 		// gets user data
 		User one = userRepository.findOne(id);
 		if(one == null) {
@@ -151,19 +152,16 @@ public class UserService {
 	 * @param newPassword
 	 * @throws Exception
 	 */
-	public void changePassword(String id, String currentPassword, String newPassword) throws Exception {
-		
-		// checking current password
-		if(isValidPassword(id, currentPassword) == false) {
-			throw new Exception("Current password is invalid.");
-		}
-		
-		// Updates new password
+	public void changePassword(String id, String password) throws Exception {
 		User one = userRepository.findOne(id);
-		one.setPassword(passwordEncoder.encode(newPassword));
-		
-		// Saves user
-		userRepository.save(one);
+		if(one != null) {
+			one.setPassword(passwordEncoder.encode(password));
+			userRepository.save(one);
+		}
 	}
+
+	
+	
+
 
 }

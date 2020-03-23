@@ -22,11 +22,11 @@ public class Authority extends SystemEntity {
 	@Column(name = "AUTH_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "AUTH_ICON")
+	@Column(name = "AUTH_ICON", length = Integer.MAX_VALUE)
 	@Lob
 	String icon;
 
-	@Column(name = "AUTH_DESC")
+	@Column(name = "AUTH_DESC", length = Integer.MAX_VALUE)
 	@Lob
 	String description;
 	

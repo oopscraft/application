@@ -16,7 +16,6 @@
 		var menus = new duice.List();
 		var menu = new duice.Map();
 		var menuDisplayAuthorities = new duice.List();
-		var menuAccessAuthorities = new duice.List();
 		
 		// adds index changed event listener
 		menus.onAfterChangeIndex(function(index){
@@ -41,7 +40,6 @@
 		function clearDetail(){
 			menu.clear();
 			menuDisplayAuthorities.clear();
-			menuAccessAuthorities.clear();
 		}
 	
 		/**
@@ -82,7 +80,6 @@
 				,success: function(data, textStatus, jqXHR) {
 					menu.fromJson(data);
 					menuDisplayAuthorities.fromJson(data.displayAuthorities);
-					menuAccessAuthorities.fromJson(data.accessAuthorities);
 					disableDetail(false);
 					menu.setReadonly('id', true);
 		   	 	}
@@ -106,7 +103,6 @@
 			// checks changes
 			if(!menu.isDirty()
 			&& !menuDisplayAuthorities.isDirty()
-			&& !menuAccessAuthorities.isDirty()
 			){
 				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
 				return;
@@ -116,7 +112,6 @@
 			.onAfterConfirm(function(){
 				var data = menu.toJson();
 				data.displayAuthorities = menuDisplayAuthorities.toJson();
-				data.accessAuthorities = menuAccessAuthorities.toJson();
 				$.ajax({
 					 url: 'menu/saveMenu'
 					,type: 'POST'
@@ -174,28 +169,7 @@
 		function removeMenuDisplayAuthority(index) {
 			menuDisplayAuthorities.remove(index);
 		}
-		
-		/**
-		 * Adds menu access authority
-		 */
-		function addMenuAccessAuthority() {
-			__authorityDialog.open({
-				disabledAuthorities: menuAccessAuthorities,
-				onAfterConfirm: function(selectedAuthorities){
-					selectedAuthorities.forEach(function(selectedAuthority){
-						menuAccessAuthorities.add(selectedAuthority);
-					});
-				}
-			});
-		}
-		
-		/**
-		 * Removes authority
-		 */
-		function removeMenuAccessAuthority(index) {
-			menuAccessAuthorities.remove(index);
-		}
-	
+
 	</script>
 
 	<div class="app-row">
@@ -278,23 +252,21 @@
 								<td><input is="duice-ui-input" type="text" data-duice-bind="menu,name"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.menu}+' '+#{application.label.type}">Menu Type</th>
-								<td>
-									<select is="duice-ui-select" data-duice-bind="menu,type">
-										<option> - select - </option>
-										<option value="NONE">NONE</option>
-										<option value="LINK">LINK</option>
-										<option value="INCLUDE">INCLUDE</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<th data-th-text="#{application.label.menu}+' '+#{application.label.value}">Value</th>
-								<td><input is="duice-ui-input" type="text" data-duice-bind="menu,value"/></td>
-							</tr>
-							<tr>
 								<th data-th-text="#{application.label.menu}+' '+#{application.label.description}">Description</th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="menu,description" style="height:6rem;"></textarea></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.link}+' '+#{application.label.url}">Value</th>
+								<td><input is="duice-ui-input" type="text" data-duice-bind="menu,linkUrl"/></td>
+							</tr>
+							<tr>
+								<th data-th-text="#{application.label.link}+' '+#{application.label.target}">Menu Type</th>
+								<td>
+									<select is="duice-ui-select" data-duice-bind="menu,linkTarget">
+										<option value="_self">_self</option>
+										<option value="_blank">_blank</option>
+									</select>
+								</td>
 							</tr>
 							<tr>
 								<th>
@@ -338,56 +310,6 @@
 												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
 												<td class="text-center">
 													<button class="button small" data-index="[[$context.index]]" onclick="removeMenuDisplayAuthority(this.dataset.index);">
-														-
-													</button>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span data-th-text="#{application.label.access}+' '+#{application.label.policy}"></span>
-								</th>
-								<td>
-									<select is="duice-ui-select" data-duice-bind="menu,accessPolicy">
-										<option> - select - </option>
-										<option value="ANONYMOUS">ANONYMOUS</option>
-										<option value="AUTHENTICATED">AUTHENTICATED</option>
-										<option value="AUTHORIZED">AUTHORIZED</option>
-									</select>
-									<table is="duice-ui-table" 
-										data-duice-bind="menuAccessAuthorities,authority" 
-										style="width:100%;">
-										<col style="width:50px;"/>
-										<col style="width:35%;"/>
-										<col/>
-										<col style="width:5%;"/>
-										<thead>
-											<tr>
-												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.id}">ID</th>
-												<th data-th-text="#{application.label.name}">Name</th>
-												<th class="text-center">
-													<button class="button small" onclick="addMenuAccessAuthority();">
-														+
-													</button>
-												</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td class="text-center">
-													<span is="duice-ui-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
-												</td>
-												<td>
-													<img is="duice-ui-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
-													<span is="duice-ui-span" data-duice-bind="authority,id"></span>
-												</td>
-												<td><span is="duice-ui-span" data-duice-bind="authority,name"></span></td>
-												<td class="text-center">
-													<button class="button small" data-index="[[$context.index]]" onclick="removeMenuAccessAuthority(this.dataset.index);">
 														-
 													</button>
 												</td>

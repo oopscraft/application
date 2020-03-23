@@ -2,13 +2,24 @@ package net.oopscraft.application.board;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/board")
 public class BoardController {
 	
-
 	
+	/**
+	 * Forwards view page
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView index() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("board/board.html");
+		return modelAndView;
+	}	
 	
 	
 	
