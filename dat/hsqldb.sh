@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function start() {
-	java -cp hsqldb.jar org.hsqldb.server.Server -database.0 file:application -dbname.0 application
+	java -cp hsqldb.jar org.hsqldb.server.Server -database.0 file:application -dbname.0 application &
 }
 
 function stop() {
