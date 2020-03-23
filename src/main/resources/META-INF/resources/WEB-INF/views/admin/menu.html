@@ -193,34 +193,34 @@
 			}
 			
 			// checks id
-			if(duice.isEmpty(user.get('id'))){
-				user.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+			if(duice.isEmpty(menu.get('id'))){
+				menu.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
 				return false;
 			}
-			if(!duice.isIdFormat(user.get('id'))){
-				user.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+			if(!duice.isIdFormat(menu.get('id'))){
+				menu.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
 				return false;
 			}
 			
-			// checks new user is existed
+			// checks new menu is existed
 			if(isNew){
-				if(isDuplicateUser(user.get('id'))){
-					user.setFocus('id', '[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+				if(isDuplicateUser(menu.get('id'))){
+					menu.setFocus('id', '[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
 					return false;
 				}
 			}
 			
-			// checks user name
-			if(duice.isEmpty(user.get('name'))){
-				user.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+			// checks menu name
+			if(duice.isEmpty(menu.get('name'))){
+				menu.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
 				return false;
 			}
 
 			
 			// enters save process
-			if(await duice.confirm("[[#{application.message.saveConfirm(#{application.label.user})}]]")){
+			if(await duice.confirm("[[#{application.message.saveConfirm(#{application.label.menu})}]]")){
 				var data = menu.toJson();
-				data.displayAuthorities = displayAuthorities.toJson();
+				data.displayAuthorities = menuDisplayAuthorities.toJson();
 				$.ajax({
 					 url: 'menu/saveMenu'
 					,type: 'POST'
@@ -228,7 +228,7 @@
 					,contentType: 'application/json;charset=UTF-8'
 				})
 				.done(function(data, textStatus, jqXHR) {
-					new duice.Alert('[[#{application.message.saveComplete(#{application.label.user})}]]')
+					new duice.Alert('[[#{application.message.saveComplete(#{application.label.menu})}]]')
 					.onAfterClose(async function(){
 						await getMenus();
 						
@@ -276,10 +276,11 @@
 		 */
 		function addMenuDisplayAuthority() {
 			__authorityDialog.open({
-				disabledAuthorities: menuDisplayAuthorities,
+				checkedAuthorities: menuDisplayAuthorities.toJson(),
+				disabledAuthorities: menuDisplayAuthorities.toJson(),
 				onAfterConfirm: function(selectedAuthorities){
-					selectedAuthorities.forEach(function(selectedAuthority){
-						menuDisplayAuthorities.add(selectedAuthority);
+					selectedAuthorities.forEach(function(item){
+						menuDisplayAuthorities.addRow(new duice.Map(item));
 					});
 				}
 			});
@@ -289,7 +290,7 @@
 		 * Removes menu display authority
 		 */
 		function removeMenuDisplayAuthority(index) {
-			menuDisplayAuthorities.remove(index);
+			menuDisplayAuthorities.removeRow(index);
 		}
 
 	</script>
@@ -459,10 +460,27 @@
 	<script>
 		const upperMenus = new duice.List();
 		upperMenus.onAfterSelectRow(function(row){
+			
+			// skip row is disabled.
+			console.log(row.isDisable());
+			if(row.isDisable()){
+				return;				
+			}
+			
+			// release other items
 			upperMenus.forEach(function(item){
-				item.set('__checked', false);
+				if(item.get('id') !== row.get('id')){
+					item.set('__checked', false);	
+				}				
 			});
-			row.set('__checked', true);
+			
+			// toggles __checked in current row.
+			var __checked = row.get('__checked');
+			if(__checked === true){
+				row.set('__checked', false);
+			}else{
+				row.set('__checked', true);
+			}
 		});
 	</script>
 	<dialog id="upperMenuDialog" style="width:600px;">
@@ -517,8 +535,11 @@
 				,data: {}
 			})
 			.done(function(data, textStatus, jqXHR) {
-				var upperId = menu.get('upperId');
 				upperMenus.fromJson(data);
+				var id = menu.get('id');
+				var upperId = menu.get('upperId');
+				
+				// checked current parent menu
 				upperMenus.forEach(function(row){
 					if(row.get('id') === upperId) {
 						row.set('__checked', true);
@@ -526,6 +547,19 @@
 						row.set('__checked', false);
 					}
 				});
+				
+				// make child nodes to be disabled.
+				function findChildMenu(menu){
+					upperMenus.forEach(function(row){
+						if(row.get('upperId') === menu.get('id')){
+							row.setDisable(true);
+							findChildMenu(row);
+						}
+					});
+				}
+				findChildMenu(menu);
+				
+				// opens dialog
 				upperMenuDialog.open();
 			});
 		}

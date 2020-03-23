@@ -63,7 +63,7 @@ public class User extends SystemEntity {
 	@Lob
 	String photo;
 
-	@Column(name = "USER_PRFL")
+	@Column(name = "USER_PRFL", length = Integer.MAX_VALUE)
 	@Lob
 	String profile;
 	

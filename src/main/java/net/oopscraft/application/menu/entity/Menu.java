@@ -40,15 +40,15 @@ public class Menu extends SystemEntity {
 	@Column(name = "MENU_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "MENU_ICON")
+	@Column(name = "MENU_ICON", length = Integer.MAX_VALUE)
 	@Lob
 	String icon;
 
-	@Column(name = "MENU_DESC")
+	@Column(name = "MENU_DESC", length = Integer.MAX_VALUE)
 	@Lob
 	String description;
 	
-	@Column(name = "LINK_URL")
+	@Column(name = "LINK_URL", length = 1024)
 	String linkUrl;
 
 	public enum LinkTarget {
