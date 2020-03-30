@@ -33,7 +33,7 @@
 		// checks when select row is changed.
 		roles.onBeforeSelectRow(async function(selectedRow){
 			if(isDetailChanged()){
-				return await new duice.Confirm("[[#{application.message.changeFound}+'\n'+#{application.message.ignoreChange}]]")
+				return await new duice.Confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")
 				.onAfterConfirm(function(){
 					resetDetail();
 				})
@@ -147,28 +147,28 @@
 			
 			// checks changes
 			if(isNew === false && isDetailChanged() === false) {
-				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
+				new duice.Alert("[[#{application.global.changeNotFound}]]").open();
 				return;
 			}
 			
 			// checks id
 			if(duice.isEmpty(role.get('id'))){
-				user.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+				user.setFocus('id', '[[#{application.global.enterItem(#{application.role.id})}]]');
 				return false;
 			}
 			if(!duice.isIdFormat(role.get('id'))){
-				user.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+				user.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
 				return false;
 			}
 			
 			// checks user name
 			if(duice.isEmpty(role.get('name'))){
-				user.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+				user.setFocus('name', '[[#{application.global.enterItem(#{application.role.name})}]]');
 				return false;
 			}
 			
 			// enters save process
-			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.role})}]]")
+			new duice.Confirm("[[#{application.global.saveConfirm(#{application.role})}]]")
 			.onAfterConfirm(function(){
 				var data = role.toJson();
 				data.authorities = roleAuthorities.toJson();
@@ -178,7 +178,7 @@
 					,data: JSON.stringify(data)
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert('[[#{application.message.saveComplete(#{application.label.role})}]]')
+						new duice.Alert('[[#{application.global.saveComplete(#{application.role})}]]')
 						.onAfterClose(async function(){
 							await getRoles();
 							
@@ -204,7 +204,7 @@
 		 * Deletes role
 		 */
 		function deleteRole(){
-			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.role})}]]")
+			new duice.Confirm("[[#{application.global.deleteConfirm(#{application.role})}]]")
 			.onAfterConfirm(function(){
 				$.ajax({
 					 url: 'role/deleteRole'
@@ -212,7 +212,7 @@
 					,data: JSON.stringify(role.toJson())
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.role})}]]")
+						new duice.Alert("[[#{application.global.deleteComplete(#{application.role})}]]")
 						.onAfterClose(async function(){
 							await getRoles();
 							initializeDetail();
@@ -249,7 +249,7 @@
 		<div class="app-col">
 			<h1>
 				<img class="icon large" th:src="@{/static/image/icon_role.png}"/>
-				<span data-th-text="#{application.label.role}+' '+#{application.label.management}"></span>
+				<span data-th-text="#{application.role}+' '+#{application.global.management}"></span>
 			</h1>
 		</div>
 	</div>
@@ -262,16 +262,16 @@
 			<div class="app-row">
 				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
-						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option value="id" data-th-text="#{application.label.role}+' '+#{application.label.id}">Role ID</option>
-						<option value="name" data-th-text="#{application.label.role}+' '+#{application.label.name}">Role Name</option>
+						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.role.id}">Role ID</option>
+						<option value="name" data-th-text="#{application.role.name}">Role Name</option>
 					</select>
 					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="getRoles(1);">
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-						<span data-th-text="#{application.label.search}"></span>
+						<span data-th-text="#{application.global.search}"></span>
 					</button>
 				</div>
 			</div>
@@ -286,9 +286,9 @@
 						<col/>
 						<thead>
 							<tr>
-								<th data-th-text="#{application.label.no}">No</th>
-								<th data-th-text="#{application.label.role}+' '+#{application.label.id}">Role ID</th>
-								<th data-th-text="#{application.label.role}+' '+#{application.label.name}">Role Name</th>
+								<th data-th-text="#{application.global.no}">No</th>
+								<th data-th-text="#{application.role.id}">Role ID</th>
+								<th data-th-text="#{application.role.name}">Role Name</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -325,20 +325,20 @@
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_role.png}"/>
-					<span data-th-text="#{application.label.role} + ' ' + #{application.label.details}" class="font-bold"></span>
+					<span data-th-text="#{application.role} + ' ' + #{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="addRoleButton" class="button" onclick="addRole();">
 						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.label.new}"></span>
+						<span data-th-text="#{application.global.new}"></span>
 					</button>
 					<button id="deleteRoleButton" class="button" onclick="deleteRole();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
-						<span data-th-text="#{application.label.delete}"></span>
+						<span data-th-text="#{application.global.delete}"></span>
 					</button>
 					<button id="saveRoleButton" class="button" onclick="saveRole();">
 						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
-						<span data-th-text="#{application.label.save}"></span>
+						<span data-th-text="#{application.global.save}"></span>
 					</button>
 				</div>
 			</div>
@@ -349,28 +349,28 @@
 						<col/>
 						<tbody>
 							<tr>
-								<th><span data-th-text="#{application.label.role}+' '+#{application.label.id}" class="mand">Role ID</span></th>
+								<th><span data-th-text="#{application.role.id}" class="mand">Role ID</span></th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="role,id" autocomplete="nope"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.role}+' '+#{application.label.icon}">Role Icon</th>
+								<th data-th-text="#{application.role.icon}">Role Icon</th>
 								<td>
 									<img is="duice-ui-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}"/>
 								</td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.role}+' '+#{application.label.name}">Role Name</th>
+								<th data-th-text="#{application.role.name}">Role Name</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="role,name"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.role}+' '+#{application.label.description}">Role Description</th>
+								<th data-th-text="#{application.role.description}">Role Description</th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="role,description"></textarea></td>
 							</tr>
 							<tr>
 								<th>
 									<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
 									<br/>
-									<span data-th-text="#{application.label.own}+' '+#{application.label.authority}"></span>
+									<span data-th-text="#{application.authority}"></span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
@@ -382,9 +382,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">Authority ID</th>
-												<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</th>
+												<th data-th-text="#{application.global.no}">No</th>
+												<th data-th-text="#{application.role.id}">Authority ID</th>
+												<th data-th-text="#{application.role.name}">Authority Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addRoleAuthority();">
 														+

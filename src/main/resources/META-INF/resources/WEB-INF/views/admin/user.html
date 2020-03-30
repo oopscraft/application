@@ -37,7 +37,7 @@
 	// checks when select row is changed.
 	users.onBeforeSelectRow(async function(selectedRow){
 		if(isDetailChanged()){
-			if(await duice.confirm("[[#{application.message.changeFound}+'\n'+#{application.message.ignoreChange}]]")){
+			if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
 				resetDetail();
 				return true;
 			}else{
@@ -55,7 +55,7 @@
 	user.onBeforeChange(async function(name,value){
 		if(name === 'id'){
 			if(isDuplicateUser(value)){
-				await duice.alert('[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+				await duice.alert('[[#{application.global.alreadyRegisteredItem(#{application.user.id})}]]');
 				return false;
 			}
 		}
@@ -197,69 +197,69 @@
 		
 		// checks changes
 		if(isNew === false && isDetailChanged() === false) {
-			await duice.alert("[[#{application.message.changeNotFound}]]");
+			await duice.alert("[[#{application.global.changeNotFound}]]");
 			return false;
 		}
 		
 		// checks id
 		if(duice.isEmpty(user.get('id'))){
-			user.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+			user.setFocus('id', '[[#{application.global.enterItem(#{application.user.id})}]]');
 			return false;
 		}
 		if(!duice.isIdFormat(user.get('id'))){
-			user.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+			user.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
 			return false;
 		}
 		
 		// checks new user is existed
 		if(isNew){
 			if(isDuplicateUser(user.get('id'))){
-				user.setFocus('id', '[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+				user.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.user.id})}]]');
 				return false;
 			}
 		}
 		
 		// checks email
 		if(duice.isEmpty(user.get('email'))){
-			user.setFocus('email', '[[#{application.message.enterItem(#{application.label.email})}]]');
+			user.setFocus('email', '[[#{application.global.enterItem(#{application.user.email})}]]');
 			return false;
 		}
 		if(!duice.isEmailFormat(user.get('email'))){
-			user.setFocus('email', '[[#{application.message.notValidItemFormat(#{application.label.email})}]]');
+			user.setFocus('email', '[[#{application.global.notValidItemFormat(#{application.user.email})}]]');
 			return false;
 		}
 		// checks password and password confirm, in case of new
 		if(isNew) {
 			if(duice.isEmpty(user.get('password'))){
-				user.setFocus('password', '[[#{application.message.enterItem(#{application.label.password})}]]');
+				user.setFocus('password', '[[#{application.global.enterItem(#{application.user.password})}]]');
 				return false;
 			}
 			if(!duice.isPasswordFormat(user.get('password'))){
-				user.setFocus('password', '[[#{application.message.notValidPassowrdFormat}]]');
+				user.setFocus('password', '[[#{application.global.notValidPassowrdFormat}]]');
 				return false;
 			}
 			if(duice.isEmpty(user.get('passwordConfirm'))){
-				user.setFocus('passwordConfirm', '[[#{application.message.enterItem(#{application.label.passwordConfirm})}]]');
+				user.setFocus('passwordConfirm', '[[#{application.global.enterItem(#{application.user.passwordConfirm})}]]');
 				return false;
 			}
 			if(user.get('passwordConfirm') !== user.get('password')){
-				user.setFocus('passwordConfirm', '[[#{application.message.itemNotMatch(#{application.label.passwordConfirm})}]]');
+				user.setFocus('passwordConfirm', '[[#{application.global.itemNotMatch(#{application.user.passwordConfirm})}]]');
 				return false;
 			}
 		}
 		// checks user status
 		if(duice.isEmpty(user.get('status'))){
-			user.setFocus('status', '[[#{application.message.enterItem(#{application.label.status})}]]');
+			user.setFocus('status', '[[#{application.global.enterItem(#{application.user.status})}]]');
 			return false;
 		}
 		// checks user name
 		if(duice.isEmpty(user.get('name'))){
-			user.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+			user.setFocus('name', '[[#{application.global.enterItem(#{application.user.name})}]]');
 			return false;
 		}
 
 		// enters save process
-		if(await duice.confirm("[[#{application.message.saveConfirm(#{application.label.user})}]]")){
+		if(await duice.confirm("[[#{application.global.saveConfirm(#{application.user})}]]")){
 			var data = user.toJson();
 			data.groups = userGroups.toJson();
 			data.roles = userRoles.toJson();
@@ -271,7 +271,7 @@
 				,contentType: 'application/json;charset=UTF-8'
 			})
 			.done(function(data, textStatus, jqXHR) {
-				new duice.Alert('[[#{application.message.saveComplete(#{application.label.user})}]]')
+				new duice.Alert('[[#{application.global.saveComplete(#{application.user})}]]')
 				.onAfterClose(async function(){
 					await getUsers();
 					
@@ -297,7 +297,7 @@
 	 * Deletes user
 	 */
 	function deleteUser(){
-		new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.user})}]]")
+		new duice.Confirm("[[#{application.global.deleteConfirm(#{application.user})}]]")
 		.onAfterConfirm(function(){
 			$.ajax({
 				 url: 'user/deleteUser'
@@ -305,7 +305,7 @@
 				,data: JSON.stringify(user.toJson())
 				,contentType: 'application/json;charset=UTF-8'
 				,success: function(data, textStatus, jqXHR) {
-					new duice.Alert("[[#{application.message.deleteComplete(#{application.label.user})}]]")
+					new duice.Alert("[[#{application.global.deleteComplete(#{application.user})}]]")
 					.onAfterClose(async function(){
 						await getUsers();
 						initializeDetail();
@@ -386,7 +386,7 @@
 		<div class="app-col">
 			<h1>
 				<img class="icon large" th:src="@{/static/image/icon_user.png}"/>
-				<span data-th-text="#{application.label.user} + ' ' + #{application.label.management}"></span>
+				<span data-th-text="#{application.user} + ' ' + #{application.global.management}"></span>
 			</h1>
 		</div>
 	</div>
@@ -399,23 +399,23 @@
 			<div class="app-row">
 				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
-						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option value="id" data-th-text="#{application.label.id}">ID</option>
-						<option value="name" data-th-text="#{application.label.name}">Name</option>
-						<option value="email" data-th-text="#{application.label.email}">Email</option>
+						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.user.id}">ID</option>
+						<option value="name" data-th-text="#{application.user.name}">Name</option>
+						<option value="email" data-th-text="#{application.user.email}">Email</option>
 					</select>
 					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 					&nbsp;
-					<span data-th-text="#{application.label.status}">Status</span>
+					<span data-th-text="#{application.user.status}">Status</span>
 					<select is="duice-ui-select" data-duice-bind="search,status" style="width:125px;">
-						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.label.status.'+${status}}"></option>
+						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+						<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.user.status.'+${status}}"></option>
 					</select>
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="getUsers(1);">
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-						<span data-th-text="#{application.label.search}"></span>
+						<span data-th-text="#{application.global.search}"></span>
 					</button>
 				</div>
 			</div>
@@ -433,12 +433,12 @@
 						<col style="width:110px;"/>
 						<thead>
 							<tr>
-								<th data-th-text="#{application.label.no}">No</th>
-								<th data-th-text="#{application.label.id}">ID</th>
-								<th data-th-text="#{application.label.email}">Email</th>
-								<th data-th-text="#{application.label.name}">Name</th>
-								<th data-th-text="#{application.label.nickname}">Nickname</th>
-								<th data-th-text="#{application.label.status}">Status</th>
+								<th data-th-text="#{application.global.no}">No</th>
+								<th data-th-text="#{application.user.id}">ID</th>
+								<th data-th-text="#{application.user.email}">Email</th>
+								<th data-th-text="#{application.user.name}">Name</th>
+								<th data-th-text="#{application.user.nickname}">Nickname</th>
+								<th data-th-text="#{application.user.status}">Status</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -457,7 +457,7 @@
 								<td><span is="duice-ui-span" data-duice-bind="user,nickname"></span></td>
 								<td class="text-center">
 									<select is="duice-ui-select" data-duice-bind="user,status">
-										<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.label.status.'+${status}}"></option>
+										<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.user.status.'+${status}}"></option>
 									</select>
 								</td>
 							</tr>
@@ -482,25 +482,25 @@
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_user.png}"/>
-					<span data-th-text="#{application.label.user} + ' ' + #{application.label.details}" class="font-bold"></span>
+					<span data-th-text="#{application.user} + ' ' + #{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="changePasswordButton" class="button" onclick="openChangePassword();">
 						<img th:src="@{/static/image/icon_password.png}" class="icon"/>
-						<span data-th-text="#{application.label.changePassword}"></span>
+						<span data-th-text="#{application.user.changePassword}"></span>
 					</button>
 					|
 					<button id="addUserButton" class="button" onclick="addUser();">
 						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.label.new}"></span>
+						<span data-th-text="#{application.global.new}"></span>
 					</button>
 					<button id="deleteUserButton" class="button" onclick="deleteUser();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
-						<span data-th-text="#{application.label.delete}"></span>
+						<span data-th-text="#{application.global.delete}"></span>
 					</button>
 					<button id="saveUserButton" class="button" onclick="saveUser();">
 						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
-						<span data-th-text="#{application.label.save}"></span>
+						<span data-th-text="#{application.global.save}"></span>
 					</button>
 				</div>
 			</div>
@@ -511,22 +511,22 @@
 						<col/>
 						<tbody>
 							<tr>
-								<th><span data-th-text="#{application.label.id}" class="mand">ID</span></th>
+								<th><span data-th-text="#{application.user.id}" class="mand">ID</span></th>
 								<td><input id="userId" is="duice-ui-input" type="text" data-duice-bind="user,id" autocomplete="nope"/></td>
 							</tr>
 							<tr>
-								<th><span data-th-text="#{application.label.email}" class="mand">Email</span></th>
+								<th><span data-th-text="#{application.user.email}" class="mand">Email</span></th>
 								<td>
 									<input is="duice-ui-input" type="text" data-duice-bind="user,email"/>
 								</td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.mobile}">Mobile</th>
+								<th data-th-text="#{application.user.mobile}">Mobile</th>
 								<td>
 									<div class="app-row">
 										<div class="app-col" style="width:25%;">
 											<select is="duice-ui-select" data-duice-bind="user,mobileCountry">
-												<option value data-th-text="'- '+#{application.label.select}+' -'"></option>
+												<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
 												<option th:each="country:${__countries}" th:value="${country.country}" th:text="${country.displayCountry}"></option>
 											</select>
 										</div>
@@ -537,64 +537,64 @@
 								</td>
 							</tr>
 							<tr id="passwordTr">
-								<th><span data-th-text="#{application.label.password}" class="mand">Password</span></th>
+								<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
 								<td>
 									<input is="duice-ui-input" type="password" data-duice-bind="user,password"/>
 								</td>
 							</tr>
 							<tr id="passwordConfirmTr">
-								<th><span data-th-text="#{application.label.passwordConfirm}" class="mand">Password(Confirm)</span></th>
+								<th><span data-th-text="#{application.user.passwordConfirm}" class="mand">Password(Confirm)</span></th>
 								<td>
 									<input is="duice-ui-input" type="password" data-duice-bind="user,passwordConfirm"/>
 								</td>
 							</tr>
 							<tr>
-								<th><span data-th-text="#{application.label.status}" class="mand">Status</span></th>
+								<th><span data-th-text="#{application.user.status}" class="mand">Status</span></th>
 								<td>
 									<select is="duice-ui-select" data-duice-bind="user,status">
-										<option value data-th-text="'- '+#{application.label.select}+' -'"></option>
-										<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.label.status.'+${status}}"></option>
+										<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
+										<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.user.status.'+${status}}"></option>
 									</select>
 								</td>
 							</tr>
 							<tr>
-								<th><span data-th-text="#{application.label.name}" class="mand">Name</span></th>
+								<th><span data-th-text="#{application.user.name}" class="mand">Name</span></th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="user,name"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.nickname}">Nickname</th>
+								<th data-th-text="#{application.user.nickname}">Nickname</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="user,nickname"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.photo}">Photo</th>
+								<th data-th-text="#{application.user.photo}">Photo</th>
 								<td><img is="duice-ui-img" data-duice-bind="user,photo" th:src="@{/static/image/icon_user.png}" style="max-height:64px;"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.profile}">Profile</th>
+								<th data-th-text="#{application.user.profile}">Profile</th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="user,profile"></textarea></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.language}">Locale</th>
+								<th data-th-text="#{application.user.language}">Locale</th>
 								<td>
 									<select is="duice-ui-select" data-duice-bind="user,language">
-										<option value data-th-text="'- '+#{application.label.select}+' -'"></option>
+										<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
 										<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
 									</select>
 								</td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.joinDate}">Join Date</th>
+								<th data-th-text="#{application.user.joinDate}">Join Date</th>
 								<td><span is="duice-ui-span" data-duice-bind="user,joinDate" data-duice-format="date,yyyy-MM-dd HH:mm:ss"></span></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.closeDate}">Close Date</th>
+								<th data-th-text="#{application.user.closeDate}">Close Date</th>
 								<td><input is="duice-ui-input" type="datetime-local" data-duice-bind="user,closeDate"/></td>
 							</tr>
 							<tr>
 								<th>
 									<img class="icon" th:src="@{/static/image/icon_group.png}"/>
 									<br/>
-									<span data-th-text="#{application.label.group}"></span>
+									<span data-th-text="#{application.group}"></span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
@@ -605,9 +605,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.group}+' '+#{application.label.id}">ID</th>
-												<th data-th-text="#{application.label.group}+' '+#{application.label.name}">Name</th>
+												<th data-th-text="#{application.global.no}">No</th>
+												<th data-th-text="#{application.group.id}">ID</th>
+												<th data-th-text="#{application.group.name}">Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="javascript:addUserGroup();">
 														+
@@ -639,7 +639,7 @@
 								<th>
 									<img class="icon" th:src="@{/static/image/icon_role.png}"/>
 									<br/>
-									<span data-th-text="#{application.label.role}"></span>
+									<span data-th-text="#{application.role}"></span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
@@ -651,9 +651,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.role}+' '+#{application.label.id}">ID</th>
-												<th data-th-text="#{application.label.role}+' '+#{application.label.name}">Name</th>
+												<th data-th-text="#{application.global.no}">No</th>
+												<th data-th-text="#{application.role.id}">ID</th>
+												<th data-th-text="#{application.role.name}">Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addUserRole();">
 														+
@@ -685,7 +685,7 @@
 								<th>
 									<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
 									<br/>
-									<span data-th-text="#{application.label.authority}"></span>
+									<span data-th-text="#{application.authority}"></span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
@@ -697,9 +697,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">ID</th>
-												<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Name</th>
+												<th data-th-text="#{application.global.no}">No</th>
+												<th data-th-text="#{application.authority.id}">ID</th>
+												<th data-th-text="#{application.authority.name}">Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addUserAuthority();">
 														+
@@ -744,7 +744,7 @@
 		<div class="app-row">
 			<div class="app-col">
 				<img class="icon" th:src="@{/static/image/icon_password.png}"/>
-				<span data-th-text="#{application.label.changePassword}" class="font-bold"></span>
+				<span data-th-text="#{application.user.changePassword}" class="font-bold"></span>
 			</div>
 		</div>
 		<div class="app-row">
@@ -754,13 +754,13 @@
 					<col/>
 					<tbody>
 						<tr>
-							<th><span data-th-text="#{application.label.password}" class="mand">Password</span></th>
+							<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
 							<td>
 								<input is="duice-ui-input" type="password" data-duice-bind="changePassword,password"/>
 							</td>
 						</tr>
 						<tr>
-							<th><span data-th-text="#{application.label.passwordConfirm}" class="mand">Password(Confirm)</span></th>
+							<th><span data-th-text="#{application.user.passwordConfirm}" class="mand">Password(Confirm)</span></th>
 							<td>
 								<input is="duice-ui-input" type="password" data-duice-bind="changePassword,passwordConfirm"/>
 							</td>
@@ -773,7 +773,7 @@
 			<div class="app-col right">
 				<button class="button" onclick="confirmChangePassword();">
 					<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
-					<span data-th-text="#{application.label.confirm}"></span>
+					<span data-th-text="#{application.global.confirm}"></span>
 				</button>
 			</div>
 		</div>
@@ -800,23 +800,23 @@
 		
 		// checks password and password confirm, in case of new
 		if(duice.isEmpty(changePassword.get('password'))){
-			changePassword.setFocus('password', '[[#{application.message.enterItem(#{application.label.password})}]]');
+			changePassword.setFocus('password', '[[#{application.global.enterItem(#{application.user.password})}]]');
 			return false;
 		}
 		if(!duice.isPasswordFormat(changePassword.get('password'))){
-			changePassword.setFocus('password', '[[#{application.message.notValidPassowrdFormat}]]');
+			changePassword.setFocus('password', '[[#{application.global.notValidPassowrdFormat}]]');
 			return false;
 		}
 		if(duice.isEmpty(changePassword.get('passwordConfirm'))){
-			changePassword.setFocus('passwordConfirm', '[[#{application.message.enterItem(#{application.label.passwordConfirm})}]]');
+			changePassword.setFocus('passwordConfirm', '[[#{application.global.enterItem(#{application.user.passwordConfirm})}]]');
 			return false;
 		}
 		if(changePassword.get('passwordConfirm') !== changePassword.get('password')){
-			changePassword.setFocus('passwordConfirm', '[[#{application.message.itemNotMatch(#{application.label.passwordConfirm})}]]');
+			changePassword.setFocus('passwordConfirm', '[[#{application.global.itemNotMatch(#{application.user.passwordConfirm})}]]');
 			return false;
 		}
 		
-		new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.password})}]]")
+		new duice.Confirm("[[#{application.global.saveConfirm(#{application.user.password})}]]")
 		.onAfterConfirm(function(){
 			var data = user.toJson();
 			data.groups = userGroups.toJson();
@@ -828,7 +828,7 @@
 				,data: JSON.stringify(changePassword.toJson())
 				,contentType: 'application/json;charset=UTF-8'
 				,success: function(data, textStatus, jqXHR) {
-					new duice.Alert('[[#{application.message.saveComplete(#{application.label.password})}]]')
+					new duice.Alert('[[#{application.global.saveComplete(#{application.user.password})}]]')
 					.onAfterClose(function(){
 						changePasswordDialog.close();
 					}).open();

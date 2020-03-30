@@ -23,7 +23,7 @@
 	// adds index changed event listener
 	groups.onBeforeSelectRow(async function(index){
 		if(isDetailChanged()){
-			return await new duice.Confirm("[[#{application.message.changeFound}+'\n'+#{application.message.ignoreChange}]]")
+			return await new duice.Confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")
 			.onAfterConfirm(function(){
 				resetDetail();
 			})
@@ -39,7 +39,7 @@
 	// event listner for before move row
 	groups.onBeforeMoveRow(async function(sourceRow,targetRow){
 		console.log('groups.onBeforeMoveRow', sourceRow.toJson(), targetRow && targetRow.toJson());
-		return await new duice.Confirm("[[#{application.message.changePositionConfirm(#{application.label.group})}]]")
+		return await new duice.Confirm("[[#{application.global.changePositionConfirm(#{application.group})}]]")
 		.open();
 	});
 	
@@ -54,7 +54,7 @@
 			,data: JSON.stringify(group.toJson())
 			,contentType: 'application/json;charset=UTF-8'
 			,success: function(data, textStatus, jqXHR) {
-				new duice.Alert('[[#{application.message.changePositionComplete(#{application.label.group})}]]')
+				new duice.Alert('[[#{application.global.changePositionComplete(#{application.group})}]]')
 				.onAfterClose(async function(){
 					await getGroups();
 					groups.forEach(function(row,index){
@@ -213,27 +213,27 @@
 		
 		// checks changes
 		if(isNew === false && isDetailChanged() === false) {
-			new duice.Alert("[[#{application.message.changeNotFound}]]").open();
+			new duice.Alert("[[#{application.global.changeNotFound}]]").open();
 			return;
 		}
 		
 		// check group id
 		if(duice.isEmpty(group.get('id'))){
-			group.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+			group.setFocus('id', '[[#{application.global.enterItem(#{application.group.id})}]]');
 			return false;
 		}
 		if(!duice.isIdFormat(group.get('id'))){
-			group.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+			group.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
 			return false;
 		}
 		// checks group name
 		if(duice.isEmpty(group.get('name'))){
-			group.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+			group.setFocus('name', '[[#{application.global.enterItem(#{application.group.name})}]]');
 			return false;
 		}
 					
 		// fires confirm message
-		new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.group})}]]")
+		new duice.Confirm("[[#{application.global.saveConfirm(#{application.group})}]]")
 		.onAfterConfirm(function(){
 			var data = group.toJson();
 			data.roles = groupRoles.toJson();
@@ -244,7 +244,7 @@
 				,data: JSON.stringify(data)
 				,contentType: 'application/json;charset=UTF-8'
 				,success: function(data, textStatus, jqXHR) {
-					new duice.Alert('[[#{application.message.saveComplete(#{application.label.group})}]]')
+					new duice.Alert('[[#{application.global.saveComplete(#{application.group})}]]')
 					.onAfterClose(async function(){
 						await getGroups();
 						
@@ -270,7 +270,7 @@
 	 * Deletes group
 	 */
 	function deleteGroup(){
-		new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.group})}]]")
+		new duice.Confirm("[[#{application.global.deleteConfirm(#{application.group})}]]")
 		.onAfterConfirm(function(){
 			$.ajax({
 				 url: 'group/deleteGroup'
@@ -278,7 +278,7 @@
 				,data: JSON.stringify(group.toJson())
 				,contentType: 'application/json;charset=UTF-8'
 				,success: function(data, textStatus, jqXHR) {
-					new duice.Alert("[[#{application.message.deleteComplete(#{application.label.group})}]]")
+					new duice.Alert("[[#{application.global.deleteComplete(#{application.group})}]]")
 					.onAfterClose(async function(){
 						await getGroups();
 						initializeDetail();
@@ -338,7 +338,7 @@
 		<div class="app-col">
 			<h1>
 				<img class="icon large" th:src="@{/static/image/icon_group.png}"/>
-				<span data-th-text="#{application.label.group}+' '+#{application.label.management}"></span>
+				<span data-th-text="#{application.group}+' '+#{application.global.management}"></span>
 			</h1>
 		</div>
 	</div>
@@ -373,20 +373,20 @@
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_group.png}"/>
-					<span data-th-text="#{application.label.group}+' '+#{application.label.details}" class="font-bold"></span>
+					<span data-th-text="#{application.group}+' '+#{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="addGroupButton" class="button" onclick="addGroup();">
 						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.label.new}"></span>
+						<span data-th-text="#{application.global.new}"></span>
 					</button>
 					<button id="deleteGroupButton" class="button" onclick="deleteGroup();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
-						<span data-th-text="#{application.label.delete}"></span>
+						<span data-th-text="#{application.global.delete}"></span>
 					</button>
 					<button id="saveGroupButton" class="button" onclick="saveGroup();">
 						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
-						<span data-th-text="#{application.label.save}"></span>
+						<span data-th-text="#{application.global.save}"></span>
 					</button>
 				</div>
 			</div>
@@ -397,11 +397,11 @@
 						<col/>
 						<tbody>
 							<tr>
-								<th><span data-th-text="#{application.label.group}+' '+#{application.label.id}" class="mand">Group ID</span></th>
+								<th><span data-th-text="#{application.group.id}" class="mand">Group ID</span></th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="group,id"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.upper}+' '+#{application.label.group}">Upper Group</th>
+								<th data-th-text="#{application.group.upperId}">Upper Group</th>
 								<td>
 									<span is="duice-ui-scriptlet" data-duice-bind="group">
 										<![CDATA[
@@ -427,27 +427,27 @@
 									</span>
 									<button class="button small" onclick="changeUpperId();" style="padding-right:12px;">
 										<img th:src="@{/static/image/icon_change.png}" class="icon small"/>
-										<span data-th-text="#{application.label.change}">Change</span>
+										<span data-th-text="#{application.global.change}">Change</span>
 									</button>
 								</td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.group}+' '+#{application.label.icon}">Group Icon</th>
+								<th data-th-text="#{application.group.icon}">Group Icon</th>
 								<td><img is="duice-ui-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.group}+' '+#{application.label.name}">Group Name</th>
+								<th data-th-text="#{application.group.name}">Group Name</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="group,name"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.group}+' '+#{application.label.description}">Group Description</th>
+								<th data-th-text="#{application.group.description}">Group Description</th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="group,description" style="height:6rem;"></textarea></td>
 							</tr>
 							<tr>
 								<th>
 									<img class="icon" th:src="@{/static/image/icon_role.png}"/>
 									<br/>
-									<span data-th-text="#{application.label.own}+' '+#{application.label.role}"></span>
+									<span data-th-text="#{application.role}"></span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
@@ -459,9 +459,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.role}+' '+#{application.label.id}">ID</th>
-												<th data-th-text="#{application.label.role}+' '+#{application.label.name}">Name</th>
+												<th data-th-text="#{application.global.no}">No</th>
+												<th data-th-text="#{application.role.id}">ID</th>
+												<th data-th-text="#{application.role.name}">Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addGroupRole();">
 														+
@@ -493,7 +493,7 @@
 								<th>
 									<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
 									<br/>
-									<span data-th-text="#{application.label.own}+' '+#{application.label.authority}">Own Authority</span>
+									<span data-th-text="#{application.authority}">Own Authority</span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
@@ -505,9 +505,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">Authority ID</th>
-												<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</th>
+												<th data-th-text="#{application.global.no}">No</th>
+												<th data-th-text="#{application.authority.id}">Authority ID</th>
+												<th data-th-text="#{application.authority.name}">Authority Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addGroupAuthority();">
 														+

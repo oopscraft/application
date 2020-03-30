@@ -52,7 +52,7 @@ public class Menu extends SystemEntity {
 	String linkUrl;
 
 	public enum LinkTarget {
-		_self, _blank
+		SELF, BLANK
 	}
 	
 	@Column(name = "LINK_TRGT")

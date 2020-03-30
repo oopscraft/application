@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.menu.entity.Menu;
+import net.oopscraft.application.security.SecurityPolicy;
 
 
 @Service
@@ -86,6 +87,7 @@ public class MenuService {
 		one.setDescription(menu.getDescription());
 		one.setLinkUrl(menu.getLinkUrl());
 		one.setLinkTarget(menu.getLinkTarget());
+		one.setDisplayPolicy(menu.getDisplayPolicy());
 		one.setDisplayAuthorities(menu.getDisplayAuthorities());
 		return menuRepository.save(one);
 	}
@@ -97,6 +99,18 @@ public class MenuService {
 	 */
 	public void deleteMenu(Menu menu) throws Exception {
 		menuRepository.delete(menu);
+	}
+
+	/**
+	 * Changes group upper id
+	 * @param id
+	 * @param upperId
+	 * @return
+	 */
+	public Menu changeUpperId(String id, String upperId) {
+		Menu one = menuRepository.findOne(id);
+		one.setUpperId(upperId);
+		return menuRepository.save(one);
 	}
 
 }

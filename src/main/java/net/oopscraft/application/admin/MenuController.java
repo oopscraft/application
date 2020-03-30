@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.menu.entity.Menu;
+import net.oopscraft.application.user.entity.Group;
 
 
 //@PreAuthorize("hasAuthority('ADMIN_MENU')")
@@ -95,6 +96,19 @@ public class MenuController {
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteMenu(@RequestBody Menu menu) throws Exception {
 		menuService.deleteMenu(menu);
+	}
+	
+	/**
+	 * Changes menu upper id
+	 * @param menu
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "changeUpperId", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public Menu changeUpperId(@RequestBody Menu menu) throws Exception {
+		return menuService.changeUpperId(menu.getId(), menu.getUpperId());
 	}
 
 }

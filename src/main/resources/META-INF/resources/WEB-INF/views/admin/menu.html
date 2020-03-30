@@ -54,7 +54,7 @@
 				,success: function(data, textStatus, jqXHR) {
 					new duice.Alert('[[#{application.message.changePositionComplete(#{application.label.group})}]]')
 					.onAfterClose(async function(){
-						await getGroups();
+						await getMenus();
 						menus.forEach(function(row,index){
 							if(row.get('id') === id){
 								initializeDetail();
@@ -315,6 +315,7 @@
 					data-duice-selectable="true"
 					data-duice-bind="menus,menu" 
 					data-duice-hierarchy="id,upperId"
+					data-duice-editable="true"
 					data-duice-foldable="true">
 						<li>
 							<div style="border-bottom:dotted 1px #ccc;">
@@ -541,15 +542,20 @@
 				
 				// checked current parent menu
 				upperMenus.forEach(function(row){
+					// set checked upper menu
 					if(row.get('id') === upperId) {
 						row.set('__checked', true);
 					}else{
 						row.set('__checked', false);
 					}
+					// sets diable self
+					if(row.get('id') === id){
+						row.setDisable(true);
+					}
 				});
 				
 				// make child nodes to be disabled.
-				function findChildMenu(menu){
+				function disablbeChildMenu(menu){
 					upperMenus.forEach(function(row){
 						if(row.get('upperId') === menu.get('id')){
 							row.setDisable(true);
@@ -557,7 +563,7 @@
 						}
 					});
 				}
-				findChildMenu(menu);
+				disablbeChildMenu(menu);
 				
 				// opens dialog
 				upperMenuDialog.open();
