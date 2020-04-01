@@ -112,9 +112,9 @@ a:hover {
 }
 .content-subtitle {
 	display: flex;
- 			justify-content: space-between;
- 			align-items: baseline;
- 			padding: 10px;
+ 	justify-content: space-between;
+ 	align-items: baseline;
+ 	padding: 10px;
 	background: url('/static/image/icon_search_24px.png');
     background-position: left 10px center;
     background-repeat: no-repeat;

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.security.core.GrantedAuthority;
-
 import net.oopscraft.application.user.entity.Authority;
 import net.oopscraft.application.user.entity.Group;
 import net.oopscraft.application.user.entity.Role;
@@ -15,31 +13,26 @@ public class UserDetails implements org.springframework.security.core.userdetail
 
 	private static final long serialVersionUID = 4282816224569702221L;
 	
-	User user;
+	String username;
 	List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+	String language;
+	
+	public UserDetails() {}
 	
 	public UserDetails(User user) {
-		this.user = user;
-	}
-	
-	/**
-	 * loadAuthorities
-	 */
-	public void loadAuthorities() {
-		
-		// clear
-		authorities.clear();
+		this.username = user.getId();
+		this.language = user.getLanguage();
 		
 		// Adds user authorities
 		for(Authority authority : user.getAuthorities()) {
-			addAuthority(new net.oopscraft.application.security.GrantedAuthority(authority));
+			addAuthority(new GrantedAuthority(authority));
 		}
 		
 		// Adds user roles
 		for(Role role : user.getRoles()) {
-			addAuthority(new net.oopscraft.application.security.GrantedAuthority(role));
+			addAuthority(new GrantedAuthority(role));
 			for(Authority authority : role.getAuthorities()) {
-				addAuthority(new net.oopscraft.application.security.GrantedAuthority(authority));
+				addAuthority(new GrantedAuthority(authority));
 			}
 		}
 		
@@ -48,14 +41,14 @@ public class UserDetails implements org.springframework.security.core.userdetail
 		for(Group group : groups) {
 			// Adds group roles
 			for(Role role : group.getRoles()) {
-				this.authorities.add(new net.oopscraft.application.security.GrantedAuthority(role));
+				this.authorities.add(new GrantedAuthority(role));
 				for(Authority authority : role.getAuthorities()) {
-					addAuthority(new net.oopscraft.application.security.GrantedAuthority(authority));
+					addAuthority(new GrantedAuthority(authority));
 				}
 			}
 			// Adds group authorities
 			for(Authority authority : group.getAuthorities()) {
-				this.addAuthority(new net.oopscraft.application.security.GrantedAuthority(authority));
+				this.addAuthority(new GrantedAuthority(authority));
 			}
 		}
 	}
@@ -106,24 +99,24 @@ public class UserDetails implements org.springframework.security.core.userdetail
 		}
 		return false;
 	}
-	
-	public User getUser() {
-		return user;
-	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return this.authorities;
 	}
 	
-	@Override
-	public String getPassword() {
-		return user.getPassword();
+	public void setUsername(String username) {
+		this.username = username;
 	}
-
+	
 	@Override
 	public String getUsername() {
-		return user.getId();
+		return username;
+	}
+	
+	@Override
+	public String getPassword() {
+		return null;
 	}
 
 	@Override
@@ -148,6 +141,14 @@ public class UserDetails implements org.springframework.security.core.userdetail
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 

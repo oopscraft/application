@@ -32,7 +32,7 @@
 		// checks when select row is changed.
 		codes.onBeforeSelectRow(async function(selectedRow){
 			if(isDetailChanged()){
-				if(await duice.confirm("[[#{application.message.changeFound}+'\n'+#{application.message.ignoreChange}]]")){
+				if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
 					resetDetail();
 					return true;
 				}else{
@@ -50,7 +50,7 @@
 		code.onBeforeChange(async function(name,value){
 			if(name === 'id'){
 				if(isDuplicateCode(value)){
-					await duice.alert('[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+					await duice.alert('[[#{application.global.alreadyRegisteredItem(#{application.code.id})}]]');
 					return false;
 				}
 			}
@@ -177,36 +177,36 @@
 			
 			// checks changes
 			if(isNew === false && isDetailChanged() === false) {
-				await duice.alert("[[#{application.message.changeNotFound}]]");
+				await duice.alert("[[#{application.global.changeNotFound}]]");
 				return false;
 			}
 			
 			// checks id
 			if(duice.isEmpty(code.get('id'))){
-				code.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+				code.setFocus('id', '[[#{application.global.enterItem(#{application.code.id})}]]');
 				return false;
 			}
 			if(!duice.isIdFormat(code.get('id'))){
-				code.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+				code.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
 				return false;
 			}
 			
 			// checks new code is existed
 			if(isNew){
 				if(isDuplicateCode(code.get('id'))){
-					code.setFocus('id', '[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+					code.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.code.id})}]]');
 					return false;
 				}
 			}
 			
 			// checks code name
 			if(duice.isEmpty(code.get('name'))){
-				code.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+				code.setFocus('name', '[[#{application.global.enterItem(#{application.code.name})}]]');
 				return false;
 			}
 			
 			// enters save process
-			if(await duice.confirm("[[#{application.message.saveConfirm(#{application.label.code})}]]")){
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.code})}]]")){
 				var data = code.toJson();
 				data.items = codeItems.toJson();
 				$.ajax({
@@ -216,7 +216,7 @@
 					,contentType: 'application/json;charset=UTF-8'
 				})
 				.done(function(data, textStatus, jqXHR) {
-					new duice.Alert('[[#{application.message.saveComplete(#{application.label.user})}]]')
+					new duice.Alert('[[#{application.global.saveComplete(#{application.code})}]]')
 					.onAfterClose(async function(){
 						await getCodes();
 						
@@ -242,7 +242,7 @@
 		 * Deletes code
 		 */
 		function deleteCode(){
-			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.user})}]]")
+			new duice.Confirm("[[#{application.global.deleteConfirm(#{application.code})}]]")
 			.onAfterConfirm(function(){
 				$.ajax({
 					 url: 'code/deleteCode'
@@ -250,7 +250,7 @@
 					,data: JSON.stringify(user.toJson())
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.user})}]]")
+						new duice.Alert("[[#{application.global.deleteComplete(#{application.global.user})}]]")
 						.onAfterClose(async function(){
 							await getUsers();
 							initializeDetail();
@@ -282,7 +282,7 @@
 		<div class="app-col">
 			<h1>
 				<img class="icon large" th:src="@{/static/image/icon_code.png}"/>
-				<span data-th-text="#{application.label.code}+' '+#{application.label.management}"></span>
+				<span data-th-text="#{application.code}+' '+#{application.global.management}"></span>
 			</h1>
 		</div>
 	</div>
@@ -295,16 +295,16 @@
 			<div class="app-row">
 				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
-						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option value="id" data-th-text="#{application.label.code}+' '+#{application.label.id}">ID</option>
-						<option value="name" data-th-text="#{application.label.code}+' '+#{application.label.name}">Name</option>
+						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.code.id}">ID</option>
+						<option value="name" data-th-text="#{application.code.name}">Name</option>
 					</select>
 					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="getCodes(1);">
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-						<span data-th-text="#{application.label.search}"></span>
+						<span data-th-text="#{application.global.search}"></span>
 					</button>
 				</div>
 			</div>
@@ -319,9 +319,9 @@
 						<col/>
 						<thead>
 							<tr>
-								<th data-th-text="#{application.label.no}">No</th>
-								<th data-th-text="#{application.label.code}+' '+#{application.label.id}">ID</th>
-								<th data-th-text="#{application.label.code}+' '+#{application.label.name}">Name</th>
+								<th data-th-text="#{application.global.no}">No</th>
+								<th data-th-text="#{application.code.id}">ID</th>
+								<th data-th-text="#{application.code.name}">Name</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -355,20 +355,20 @@
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_code.png}"/>
-					<span data-th-text="#{application.label.code} + ' ' + #{application.label.details}" class="font-bold"></span>
+					<span data-th-text="#{application.code} + ' ' + #{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="addCodeButton" class="button" onclick="addCode();">
 						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.label.new}"></span>
+						<span data-th-text="#{application.global.new}"></span>
 					</button>
 					<button id="deleteCodeButton" class="button" onclick="deleteCode();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
-						<span data-th-text="#{application.label.delete}"></span>
+						<span data-th-text="#{application.global.delete}"></span>
 					</button>
 					<button id="saveCodeButton" class="button" onclick="saveCode();">
 						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
-						<span data-th-text="#{application.label.save}"></span>
+						<span data-th-text="#{application.global.save}"></span>
 					</button>
 				</div>
 			</div>
@@ -379,22 +379,22 @@
 						<col/>
 						<tbody>
 							<tr>
-								<th><span data-th-text="#{application.label.code}+' '+#{application.label.id}" class="mand">Code ID</span></th>
+								<th><span data-th-text="#{application.code.id}" class="mand">Code ID</span></th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="code,id" autocomplete="nope"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.code}+' '+#{application.label.name}">Name</th>
+								<th data-th-text="#{application.code.name}">Name</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="code,name"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.code}+' '+#{application.label.description}">Description</th>
+								<th data-th-text="#{application.code.description}">Description</th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="code,description" style="height:6rem;"></textarea></td>
 							</tr>
 							<tr>
 								<th>
-									<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
+									<img class="icon" th:src="@{/static/image/icon_codeItem.png}"/>
 									<br/>
-									<span data-th-text="#{application.label.code}+' '+#{application.label.item}">Code Item</span>
+									<span data-th-text="#{application.code.item}">Code Item</span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
@@ -407,9 +407,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.seq}">Sequence</th>
-												<th data-th-text="#{application.label.item}+' '+#{application.label.id}">Item ID</th>
-												<th data-th-text="#{application.label.item}+' '+#{application.label.name}">Item Name</th>
+												<th data-th-text="#{application.code.item.sequence}">Sequence</th>
+												<th data-th-text="#{application.code.item.id}">Item ID</th>
+												<th data-th-text="#{application.code.item.name}">Item Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addCodeItem();">
 														+

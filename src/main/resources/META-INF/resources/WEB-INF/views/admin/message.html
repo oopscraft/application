@@ -16,14 +16,42 @@
 			rows: 20,
 			totalCount: -1
 		});
-		var messages = new duice.List();
-		var message = new duice.Map();
-
-		// adds index changed event listener
-		messages.onAfterChangeIndex(function(index){
-			if(index > -1){
-				var id = this.get(index).get('id');
-				getMessage(id);	
+		const messages = new duice.List();
+		const message = new duice.Map();
+		var isNew = false;
+		
+		// handle when search option is changed.
+		search.onAfterChange(function(name, value){
+			// if select all option, reset value. 
+			if(name === 'key' && !value){
+				search.set('value',null);				
+			}
+		});
+		
+		// checks when select row is changed.
+		messages.onBeforeSelectRow(async function(selectedRow){
+			if(isDetailChanged()){
+				if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
+					resetDetail();
+					return true;
+				}else{
+					return false;
+				}
+			}
+		});
+		
+		// event listener for select row
+		messages.onAfterSelectRow(function(selectedRow){
+			getMessage(selectedRow.get('id'));
+		});
+		
+		// checks messages change
+		message.onBeforeChange(async function(name,value){
+			if(name === 'id'){
+				if(isDuplicateMessage(value)){
+					await duice.alert('[[#{application.global.alreadyRegisteredItem(#{application.message.id})}]]');
+					return false;
+				}
 			}
 		});
 		
@@ -32,50 +60,64 @@
 		 */
 		function disableDetail(disable){
 			message.setDisable(disable);
-			$('#deleteMessageButton').prop('disabled', disable);
-			$('#saveMessageButton').prop('disabled', disable);
+			$('#detailDiv').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
 		}
 		
 		/**
-		 * Clears detail
+		 * Returns detail changed.
 		 */
-		function clearDetail(){
-			message.clear();
+		function isDetailChanged() {
+			if(message.isDirty()){
+				return true;
+			}else{
+				return false;
+			}
+		}
+
+		/**
+		 * Initializes detail
+		 */
+		function initializeDetail() {
+			message.fromJson({});
+		}
+		
+		/**
+		 * Resets detail
+		 */ 
+		function resetDetail() {
+			message.reset();
 		}
 		
 		/**
 		 * Gets messages
 		 */
 		function getMessages(page) {
-			if(page){
-				search.set('page',page);
-			}
-			var data = {};
-			if(search.get('key')){
-				data[search.get('key')] = search.get('value');
-			}
-			if(search.get('status')){
-				data.status = search.get('status');
-			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
-			$.ajax({
-				 url: 'message/getMessages'
-				,type: 'GET'
-				,data: data
-				,success: function(data, textStatus, jqXHR) {
+			return new Promise(function(resolve,reject){
+				if(page){
+					search.set('page',page);
+				}
+				var data = {};
+				if(search.get('key')){
+					data[search.get('key')] = search.get('value');
+				}
+				if(search.get('status')){
+					data.status = search.get('status');
+				}
+				data.page = search.get('page');
+				data.rows = search.get('rows');
+				$.ajax({
+					 url: 'message/getMessages'
+					,type: 'GET'
+					,data: data
+				})
+				.done(function(data, textStatus, jqXHR) {
 					messages.fromJson(data);
 					search.set('totalCount', __parseTotalCount(jqXHR));
-					
-					// sets current user
-					messages.forEach(function(row,index){
-						if(row.get('id') === message.get('id')){
-							messages.setIndex(index);
-							return false;
-						}
-					});
-		   	 	}
-			});	
+					resolve(true);
+			   	});
+			});
 		}
 		
 		/**
@@ -86,70 +128,131 @@
 				 url: 'message/getMessage'
 				,type: 'GET'
 				,data: {id:id}
-				,success: function(data, textStatus, jqXHR) {
-					message.fromJson(data);
-					disableDetail(false);
-					message.setReadonly('id', true);
-		   	 	}
-			});	
+			})
+			.done(function(data, textStatus, jqXHR) {
+				message.fromJson(data);
+				disableDetail(false);
+				message.setReadonly('id', true);
+				isNew = false;
+			});
 		}
 		
 		/**
 		 * Adds message
 		 */
 		function addMessage() {
-			clearDetail();
+			initializeDetail();
 			disableDetail(false);
 			message.setReadonly('id',false);
+			isNew = true;
+			message.setFocus('id');
+		}
+		
+		/**
+		 * Returns duplicate message
+		 */
+		function isDuplicateMessage(id){
+			var duplicateMessage = false;
+			$.ajax({
+				 url: 'message/getMessage'
+				,type: 'GET'
+				,data: {id:id}
+				,async: false
+			})
+			.done(function(data, textStatus, jqXHR) {
+				if(data && data.id === id){
+					duplicateMessage = true;
+				}
+			});
+			return duplicateMessage;
 		}
 		
 		/**
 		 * Saves message
 		 */
-		function saveMessage(){
+		async function saveMessage(){
 			
 			// checks changes
-			if(!message.isDirty()){
-				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
-				return;
+			if(isNew === false && isDetailChanged() === false) {
+				await duice.alert("[[#{application.global.changeNotFound}]]");
+				return false;
 			}
 			
-			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.message})}]]")
-			.onAfterConfirm(function(){
+			// checks id
+			if(duice.isEmpty(message.get('id'))){
+				message.setFocus('id', '[[#{application.global.enterItem(#{application.message.id})}]]');
+				return false;
+			}
+			if(!duice.isIdFormat(message.get('id'))){
+				user.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
+				return false;
+			}
+			
+			// checks new message is existed
+			if(isNew){
+				if(isDuplicateMessage(message.get('id'))){
+					message.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.message.id})}]]');
+					return false;
+				}
+			}
+			
+			// checks message name
+			if(duice.isEmpty(message.get('name'))){
+				message.setFocus('name', '[[#{application.global.enterItem(#{application.message.name})}]]');
+				return false;
+			}
+
+			// enters save process
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.message})}]]")){
 				var data = message.toJson();
 				$.ajax({
 					 url: 'message/saveMessage'
 					,type: 'POST'
 					,data: JSON.stringify(data)
 					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert('[[#{application.message.saveComplete(#{application.label.message})}]]')
-						.onAfterClose(function(){
-							getMessages();
-						}).open();
-			   	 	}
-				});	
-			}).open();
+				})
+				.done(function(data, textStatus, jqXHR) {
+					new duice.Alert('[[#{application.global.saveComplete(#{application.message})}]]')
+					.onAfterClose(async function(){
+						await getMessages();
+						
+						// refresh list and details
+						var index = messages.indexOf(function(row){
+							if(row.get('id') === message.get('id')){
+								return true;
+							}
+						});
+						if(index > -1){
+							initializeDetail();
+							messages.selectRow(index);
+						}else{
+							getMessage(message.get('id'));
+						}
+					})
+					.open();
+				});
+			}
 		}
-		
+
 		/**
 		 * Deletes message
 		 */
 		function deleteMessage(){
-			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.message})}]]")
+			new duice.Confirm("[[#{application.global.deleteConfirm(#{application.message})}]]")
 			.onAfterConfirm(function(){
 				$.ajax({
 					 url: 'message/deleteMessage'
 					,type: 'DELETE'
 					,data: JSON.stringify(message.toJson())
 					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.message})}]]")
-						.onAfterClose(function(){
-							clearDetail();
-							getMessages();
+				})
+				.done(function(data, textStatus, jqXHR) {
+						new duice.Alert("[[#{application.global.deleteComplete(#{application.message})}]]")
+						.onAfterClose(async function(){
+							await getMessages();
+							initializeDetail();
+							disableDetail(true);
 						}).open();
-			   	 	}
 				});
 			}).open();
 		}
@@ -158,7 +261,7 @@
 		<div class="app-col">
 			<h1>
 				<img class="icon large" th:src="@{/static/image/icon_message.png}"/>
-				<span data-th-text="#{application.label.message}+' '+#{application.label.management}"></span>
+				<span data-th-text="#{application.message}+' '+#{application.global.management}"></span>
 			</h1>
 		</div>
 	</div>
@@ -168,16 +271,16 @@
 			<div class="app-row">
 				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
-						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option value="id" data-th-text="#{application.label.message}+' '+#{application.label.id}">ID</option>
-						<option value="name" data-th-text="#{application.label.message}+' '+#{application.label.name}">Name</option>
+						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.message.id}">ID</option>
+						<option value="name" data-th-text="#{application.message.name}">Name</option>
 					</select>
 					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="getMessages(1);">
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-						<span data-th-text="#{application.label.search}"></span>
+						<span data-th-text="#{application.global.search}"></span>
 					</button>
 				</div>
 			</div>
@@ -192,9 +295,9 @@
 						<col style="width:60%"/>
 						<thead>
 							<tr>
-								<th data-th-text="#{application.label.no}">No</th>
-								<th data-th-text="#{application.label.message}+' '+#{application.label.id}">ID</th>
-								<th data-th-text="#{application.label.message}+' '+#{application.label.name}">Name</th>
+								<th data-th-text="#{application.global.no}">No</th>
+								<th data-th-text="#{application.message.id}">ID</th>
+								<th data-th-text="#{application.message.name}">Name</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -227,20 +330,20 @@
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_message.png}"/>
-					<span data-th-text="#{application.label.message} + ' ' + #{application.label.details}" class="font-bold"></span>
+					<span data-th-text="#{application.global.message} + ' ' + #{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="addMessageButton" class="button" onclick="addMessage();">
 						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.label.new}"></span>
+						<span data-th-text="#{application.global.new}"></span>
 					</button>
 					<button id="deleteMessageButton" class="button" onclick="deleteMessage();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
-						<span data-th-text="#{application.label.delete}"></span>
+						<span data-th-text="#{application.global.delete}"></span>
 					</button>
 					<button id="saveMessageButton" class="button" onclick="saveMessage();">
 						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
-						<span data-th-text="#{application.label.save}"></span>
+						<span data-th-text="#{application.global.save}"></span>
 					</button>
 				</div>
 			</div>
@@ -251,19 +354,19 @@
 						<col/>
 						<tbody>
 							<tr>
-								<th><span data-th-text="#{application.label.message}+' '+#{application.label.id}" class="mand">Message ID</span></th>
+								<th><span data-th-text="#{application.message.id}" class="mand">Message ID</span></th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="message,id" autocomplete="nope"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.message}+' '+#{application.label.name}">Message Name</th>
+								<th data-th-text="#{application.message.name}">Message Name</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="message,name"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.message}+' '+#{application.label.value}">Message Value</th>
+								<th data-th-text="#{application.message.value}">Message Value</th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="message,value" style="height:6rem;"></textarea></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.message}+' '+#{application.label.description}">Description</th>
+								<th data-th-text="#{application.message.description}">Description</th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="message,description" style="height:6rem;"></textarea></td>
 							</tr>
 						</tbody>

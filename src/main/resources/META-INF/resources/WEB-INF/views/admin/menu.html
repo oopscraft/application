@@ -21,7 +21,7 @@
 		// adds index changed event listener
 		menus.onBeforeSelectRow(async function(index){
 			if(isDetailChanged()){
-				return await new duice.Confirm("[[#{application.message.changeFound}+'\n'+#{application.message.ignoreChange}]]")
+				return await new duice.Confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")
 				.onAfterConfirm(function(){
 					resetDetail();
 				})
@@ -37,7 +37,7 @@
 		// event listner for before move row
 		menus.onBeforeMoveRow(async function(sourceRow,targetRow){
 			console.log('menus.onBeforeMoveRow', sourceRow.toJson(), targetRow && targetRow.toJson());
-			return await new duice.Confirm("[[#{application.message.changePositionConfirm(#{application.label.group})}]]")
+			return await new duice.Confirm("[[#{application.global.changePositionConfirm(#{application.menu})}]]")
 			.open();
 		});
 		
@@ -52,7 +52,7 @@
 				,data: JSON.stringify(group.toJson())
 				,contentType: 'application/json;charset=UTF-8'
 				,success: function(data, textStatus, jqXHR) {
-					new duice.Alert('[[#{application.message.changePositionComplete(#{application.label.group})}]]')
+					new duice.Alert('[[#{application.global.changePositionComplete(#{application.menu})}]]')
 					.onAfterClose(async function(){
 						await getMenus();
 						menus.forEach(function(row,index){
@@ -188,37 +188,37 @@
 			
 			// checks changes
 			if(isNew === false && isDetailChanged() === false) {
-				await duice.alert("[[#{application.message.changeNotFound}]]");
+				await duice.alert("[[#{application.global.changeNotFound}]]");
 				return false;
 			}
 			
 			// checks id
 			if(duice.isEmpty(menu.get('id'))){
-				menu.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+				menu.setFocus('id', '[[#{application.global.enterItem(#{application.menu.id})}]]');
 				return false;
 			}
 			if(!duice.isIdFormat(menu.get('id'))){
-				menu.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+				menu.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
 				return false;
 			}
 			
 			// checks new menu is existed
 			if(isNew){
 				if(isDuplicateUser(menu.get('id'))){
-					menu.setFocus('id', '[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+					menu.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.menu.id})}]]');
 					return false;
 				}
 			}
 			
 			// checks menu name
 			if(duice.isEmpty(menu.get('name'))){
-				menu.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+				menu.setFocus('name', '[[#{application.global.enterItem(#{application.menu.name})}]]');
 				return false;
 			}
 
 			
 			// enters save process
-			if(await duice.confirm("[[#{application.message.saveConfirm(#{application.label.menu})}]]")){
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.menu})}]]")){
 				var data = menu.toJson();
 				data.displayAuthorities = menuDisplayAuthorities.toJson();
 				$.ajax({
@@ -228,7 +228,7 @@
 					,contentType: 'application/json;charset=UTF-8'
 				})
 				.done(function(data, textStatus, jqXHR) {
-					new duice.Alert('[[#{application.message.saveComplete(#{application.label.menu})}]]')
+					new duice.Alert('[[#{application.global.saveComplete(#{application.menu})}]]')
 					.onAfterClose(async function(){
 						await getMenus();
 						
@@ -254,7 +254,7 @@
 		 * Deletes menu
 		 */
 		function deleteMenu(){
-			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.menu})}]]")
+			new duice.Confirm("[[#{application.global.deleteConfirm(#{application.menu})}]]")
 			.onAfterConfirm(function(){
 				$.ajax({
 					 url: 'menu/deleteMenu'
@@ -262,7 +262,7 @@
 					,data: JSON.stringify(menu.toJson())
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.menu})}]]")
+						new duice.Alert("[[#{application.global.deleteComplete(#{application.menu})}]]")
 						.onAfterClose(function(){
 							getMenus();
 						}).open();
@@ -299,7 +299,7 @@
 		<div class="app-col">
 			<h1>
 				<img class="icon large" th:src="@{/static/image/icon_menu.png}"/>
-				<span data-th-text="#{application.label.menu} + ' ' + #{application.label.management}"></span>
+				<span data-th-text="#{application.menu} + ' ' + #{application.global.management}"></span>
 			</h1>
 		</div>
 	</div>
@@ -334,20 +334,20 @@
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_menu.png}"/>
-					<span data-th-text="#{application.label.menu} + ' ' + #{application.label.details}" class="font-bold"></span>
+					<span data-th-text="#{application.menu} + ' ' + #{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="addMenuButton" class="button" onclick="addMenu();">
 						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.label.new}"></span>
+						<span data-th-text="#{application.global.new}"></span>
 					</button>
 					<button id="deleteMenuButton" class="button" onclick="deleteMenu();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
-						<span data-th-text="#{application.label.delete}"></span>
+						<span data-th-text="#{application.global.delete}"></span>
 					</button>
 					<button id="saveMenuButton" class="button" onclick="saveMenu();">
 						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
-						<span data-th-text="#{application.label.save}"></span>
+						<span data-th-text="#{application.global.save}"></span>
 					</button>
 				</div>
 			</div>
@@ -358,39 +358,39 @@
 						<col/>
 						<tbody>
 							<tr>
-								<th><span data-th-text="#{application.label.menu}+' '+#{application.label.id}" class="mand">Menu ID</span></th>
+								<th><span data-th-text="#{application.menu.id}" class="mand">Menu ID</span></th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="menu,id"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.upper}+' '+#{application.label.menu}">Upper Menu</th>
+								<th data-th-text="#{application.menu.upperId}">Upper Menu</th>
 								<td>
 									<span is="duice-ui-span" data-duice-bind="menu,upperId"></span>
 									<button class="button small" onclick="openUpperMenuDialog();">
 										<img th:src="@{/static/image/icon_change.png}" class="icon"/>
-										<span data-th-text="#{application.label.change}">Change</span>
+										<span data-th-text="#{application.global.change}">Change</span>
 									</button>
 								</td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.menu}+' '+#{application.label.icon}">Menu Icon</th>
+								<th data-th-text="#{application.menu.icon}">Menu Icon</th>
 								<td>
 									<img is="duice-ui-img" data-duice-bind="menu,icon" th:src="@{/static/image/icon_menu.png}"/>
 								</td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.menu}+' '+#{application.label.name}">Menu Name</th>
+								<th data-th-text="#{application.menu.name}">Menu Name</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="menu,name"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.menu}+' '+#{application.label.description}">Description</th>
+								<th data-th-text="#{application.menu.description}">Description</th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="menu,description" style="height:6rem;"></textarea></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.link}+' '+#{application.label.url}">Value</th>
+								<th data-th-text="#{application.menu.linkUrl}">Link URL</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="menu,linkUrl"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.link}+' '+#{application.label.target}">Menu Type</th>
+								<th data-th-text="#{application.menu.linkTarget}">Link Target</th>
 								<td>
 									<select is="duice-ui-select" data-duice-bind="menu,linkTarget">
 										<option value="_self">_self</option>
@@ -400,7 +400,7 @@
 							</tr>
 							<tr>
 								<th>
-									<span data-th-text="#{application.label.display}+' '+#{application.label.policy}"></span>
+									<span data-th-text="#{application.menu.displayPolicy}"></span>
 								</th>
 								<td>
 									<select is="duice-ui-select" data-duice-bind="menu,displayPolicy">
@@ -418,9 +418,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.id}">ID</th>
-												<th data-th-text="#{application.label.name}">Name</th>
+												<th data-th-text="#{application.global.no}">No</th>
+												<th data-th-text="#{application.authority.id}">ID</th>
+												<th data-th-text="#{application.authority.name}">Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addMenuDisplayAuthority();">
 														+
@@ -488,7 +488,7 @@
 		<div class="app-row">
 			<div class="app-col">
 				<img class="icon" th:src="@{/static/image/icon_group.png}"/>
-				<span data-th-text="#{application.label.group} + ' ' + #{application.label.select}" class="font-bold"></span>
+				<span data-th-text="#{application.global.group} + ' ' + #{application.global.select}" class="font-bold"></span>
 			</div>
 		</div>
 		<hr class="hr"/>

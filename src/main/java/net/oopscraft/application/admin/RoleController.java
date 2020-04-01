@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,7 +21,7 @@ import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.RoleService;
 import net.oopscraft.application.user.entity.Role;
 
-//@PreAuthorize("hasAuthority('ADMIN_ROLE')")
+@PreAuthorize("hasAuthority('ADMN_ROLE')")
 @Controller
 @RequestMapping("/admin/role")
 public class RoleController {

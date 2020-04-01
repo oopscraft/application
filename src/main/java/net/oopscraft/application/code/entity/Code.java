@@ -29,7 +29,7 @@ public class Code extends SystemEntity {
 	@Column(name = "CODE_NAME", length = 1024)
 	String name;
 
-	@Column(name = "CODE_DESC")
+	@Column(name = "CODE_DESC", length = Integer.MAX_VALUE)
 	@Lob
 	String description;
 	

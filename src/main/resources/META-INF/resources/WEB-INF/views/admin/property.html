@@ -49,7 +49,7 @@
 		property.onBeforeChange(async function(name,value){
 			if(name === 'id'){
 				if(isDuplicateProperty(value)){
-					await duice.alert('[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+					await duice.alert('[[#{application.message.alreadyRegisteredItem(#{application.property.id})}]]');
 					return false;
 				}
 			}
@@ -174,36 +174,36 @@
 			
 			// checks changes
 			if(isNew === false && isDetailChanged() === false) {
-				await duice.alert("[[#{application.message.changeNotFound}]]");
+				await duice.alert("[[#{application.global.changeNotFound}]]");
 				return false;
 			}
 			
 			// checks id
 			if(duice.isEmpty(property.get('id'))){
-				property.setFocus('id', '[[#{application.message.enterItem(#{application.label.id})}]]');
+				property.setFocus('id', '[[#{application.global.enterItem(#{application.property.id})}]]');
 				return false;
 			}
 			if(!duice.isIdFormat(property.get('id'))){
-				property.setFocus('id', '[[#{application.message.notValidIdFormat}]]');
+				property.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
 				return false;
 			}
 			
 			// checks new property is existed
 			if(isNew){
 				if(isDuplicateProperty(property.get('id'))){
-					property.setFocus('id', '[[#{application.message.alreadyRegisteredItem(#{application.label.id})}]]');
+					property.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.property.id})}]]');
 					return false;
 				}
 			}
 			
 			// checks property name
 			if(duice.isEmpty(property.get('name'))){
-				property.setFocus('name', '[[#{application.message.enterItem(#{application.label.name})}]]');
+				property.setFocus('name', '[[#{application.global.enterItem(#{application.property.name})}]]');
 				return false;
 			}
 
 			// enters save process
-			if(await duice.confirm("[[#{application.message.saveConfirm(#{application.label.property})}]]")){
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.property})}]]")){
 				var data = property.toJson();
 				$.ajax({
 					 url: 'property/saveProperty'
@@ -212,7 +212,7 @@
 					,contentType: 'application/json;charset=UTF-8'
 				})
 				.done(function(data, textStatus, jqXHR) {
-					new duice.Alert('[[#{application.message.saveComplete(#{application.label.property})}]]')
+					new duice.Alert('[[#{application.global.saveComplete(#{application.property})}]]')
 					.onAfterClose(async function(){
 						await getProperties();
 						
@@ -238,7 +238,7 @@
 		 * Deletes property
 		 */
 		function deleteProperty(){
-			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.property})}]]")
+			new duice.Confirm("[[#{application.global.deleteConfirm(#{application.property})}]]")
 			.onAfterConfirm(function(){
 				$.ajax({
 					 url: 'property/deleteProperty'
@@ -246,7 +246,7 @@
 					,data: JSON.stringify(property.toJson())
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.property})}]]")
+						new duice.Alert("[[#{application.global.deleteComplete(#{application.property})}]]")
 						.onAfterClose(async function(){
 							await getProperties();
 							initializeDetail();
@@ -261,7 +261,7 @@
 		<div class="app-col">
 			<h1>
 				<img class="icon large" th:src="@{/static/image/icon_property.png}"/>
-				<span data-th-text="#{application.label.property}+' '+#{application.label.management}"></span>
+				<span data-th-text="#{application.property}+' '+#{application.global.management}"></span>
 			</h1>
 		</div>
 	</div>
@@ -271,16 +271,16 @@
 			<div class="app-row">
 				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
-						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option value="id" data-th-text="#{application.label.property}+' '+#{application.label.id}">ID</option>
-						<option value="name" data-th-text="#{application.label.property}+' '+#{application.label.name}">Name</option>
+						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.property.id}">ID</option>
+						<option value="name" data-th-text="#{application.property.name}">Name</option>
 					</select>
 					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="getProperties(1);">
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-						<span data-th-text="#{application.label.search}"></span>
+						<span data-th-text="#{application.global.search}"></span>
 					</button>
 				</div>
 			</div>
@@ -295,9 +295,9 @@
 						<col style="width:60%"/>
 						<thead>
 							<tr>
-								<th data-th-text="#{application.label.no}">No</th>
-								<th data-th-text="#{application.label.property}+' '+#{application.label.id}">Property ID</th>
-								<th data-th-text="#{application.label.property}+' '+#{application.label.name}">Property Name</th>
+								<th data-th-text="#{application.global.no}">No</th>
+								<th data-th-text="#{application.property.id}">Property ID</th>
+								<th data-th-text="#{application.property.name}">Property Name</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -330,20 +330,20 @@
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_property.png}"/>
-					<span data-th-text="#{application.label.property}+' '+#{application.label.details}" class="font-bold"></span>
+					<span data-th-text="#{application.property}+' '+#{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="addPropertyButton" class="button" onclick="addProperty();">
 						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.label.new}"></span>
+						<span data-th-text="#{application.global.new}"></span>
 					</button>
 					<button id="deletePropertyButton" class="button" onclick="deleteProperty();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
-						<span data-th-text="#{application.label.delete}"></span>
+						<span data-th-text="#{application.global.delete}"></span>
 					</button>
 					<button id="savePropertyButton" class="button" onclick="saveProperty();">
 						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
-						<span data-th-text="#{application.label.save}"></span>
+						<span data-th-text="#{application.global.save}"></span>
 					</button>
 				</div>
 			</div>
@@ -355,20 +355,20 @@
 						<tbody>
 							<tr>
 								<th>
-									<span data-th-text="#{application.label.property}+' '+#{application.label.id}" class="mand">Property ID</span>
+									<span data-th-text="#{application.property.id}" class="mand">Property ID</span>
 								</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="property,id" autocomplete="nope"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.property}+' '+#{application.label.name}">Property Name</th>
+								<th data-th-text="#{application.property.name}">Property Name</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="property,name"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.property}+' '+#{application.label.value}">Property Name</th>
+								<th data-th-text="#{application.property.value}">Property Name</th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="property,value" style="height:6rem;"></textarea></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.property}+' '+#{application.label.description}">Property Description</th>
+								<th data-th-text="#{application.property.description}">Property Description</th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="property,description" style="height:6rem;"></textarea></td>
 							</tr>
 						</tbody>

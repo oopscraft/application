@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,7 +23,7 @@ import net.oopscraft.application.menu.entity.Menu;
 import net.oopscraft.application.user.entity.Group;
 
 
-//@PreAuthorize("hasAuthority('ADMIN_MENU')")
+@PreAuthorize("hasAuthority('ADMN_MENU')")
 @Controller
 @RequestMapping("/admin/menu")
 public class MenuController {

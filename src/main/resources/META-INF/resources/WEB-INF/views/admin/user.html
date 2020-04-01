@@ -304,14 +304,14 @@
 				,type: 'DELETE'
 				,data: JSON.stringify(user.toJson())
 				,contentType: 'application/json;charset=UTF-8'
-				,success: function(data, textStatus, jqXHR) {
+			})
+			.done(function(data, textStatus, jqXHR) {
 					new duice.Alert("[[#{application.global.deleteComplete(#{application.user})}]]")
 					.onAfterClose(async function(){
 						await getUsers();
 						initializeDetail();
 						disableDetail(true);
 					}).open();
-		   	 	}
 			});
 		}).open();
 	}
@@ -594,7 +594,7 @@
 								<th>
 									<img class="icon" th:src="@{/static/image/icon_group.png}"/>
 									<br/>
-									<span data-th-text="#{application.group}"></span>
+									<span data-th-text="#{application.user.groups}"></span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
@@ -639,7 +639,7 @@
 								<th>
 									<img class="icon" th:src="@{/static/image/icon_role.png}"/>
 									<br/>
-									<span data-th-text="#{application.role}"></span>
+									<span data-th-text="#{application.user.roles}"></span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 
@@ -685,7 +685,7 @@
 								<th>
 									<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
 									<br/>
-									<span data-th-text="#{application.authority}"></span>
+									<span data-th-text="#{application.user.authorities}"></span>
 								</th>
 								<td>
 									<table is="duice-ui-table" 

@@ -237,7 +237,7 @@ public class User extends SystemEntity {
 	public List<Authority> getAuthorities() {
 		return authorities;
 	}
-
+	
 	public void setAuthorities(List<Authority> authorities) {
 		this.authorities = authorities;
 	}

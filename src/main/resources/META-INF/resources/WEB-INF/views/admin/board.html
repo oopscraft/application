@@ -8,7 +8,8 @@
 		    disableDetail(true);
 		});
 	
-		var search = new duice.Map({
+		// defines variables 
+		const search = new duice.Map({
 			key: null,
 			value: null,
 			status: null,
@@ -16,21 +17,96 @@
 			rows: 20,
 			totalCount: -1
 		});
-		var boards = new duice.List();
-		var board = new duice.Map();
-		var boardCategories = new duice.List();
-		var boardAccessAuthorities = new duice.List();
-		var boardReadAuthorities = new duice.List();
-		var boardWriteAuthorities = new duice.List();
-
-		// adds index changed event listener
-		boards.onAfterChangeIndex(function(index){
-			if(index > -1){
-				var id = this.get(index).get('id');
-				getBoard(id);	
+		const boards = new duice.List();
+		const board = new duice.Map();
+		const boardCategories = new duice.List();
+		const boardAccessAuthorities = new duice.List();
+		const boardReadAuthorities = new duice.List();
+		const boardWriteAuthorities = new duice.List();
+		
+		// handle when search option is changed.
+		search.onAfterChange(function(name, value){
+			// if select all option, reset value. 
+			if(name === 'key' && !value){
+				search.set('value',null);				
 			}
 		});
 		
+		// checks when select row is changed.
+		boards.onBeforeSelectRow(async function(selectedRow){
+			if(isDetailChanged()){
+				if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
+					resetDetail();
+					return true;
+				}else{
+					return false;
+				}
+			}
+		});
+		
+		// event listener for select row
+		boards.onAfterSelectRow(function(selectedRow){
+			getBoard(selectedRow.get('id'));
+		});
+		
+		// checks board properties change
+		board.onBeforeChange(async function(name,value){
+			if(name === 'id'){
+				if(isDuplicateBoard(value)){
+					await duice.alert('[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
+					return false;
+				}
+			}
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			board.setDisable(disable);
+			$('#detailDiv').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
+		}
+		
+		/**
+		 * Returns detail changed.
+		 */
+		function isDetailChanged() {
+			if(board.isDirty()
+			|| boardCategories.isDirty()
+			|| boardAccessAuthorities.isDirty()
+			|| boardReadAuthorities.isDirty()
+			|| boardWriteAuthorities.isDirty()
+			){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		/**
+		 * Initializes detail
+		 */
+		function initializeDetail() {
+			board.fromJson({});
+			boardCategories.fromJson([]);
+			boardAccessAuthorities.fromJson([]);
+			boardReadAuthorities.fromJson([]);
+			boardWriteAuthorities.fromJson([]);
+		}
+		
+		/**
+		 * Resets detail
+		 */ 
+		function resetDetail() {
+			board.reset();
+			boardCategories.reset();
+			boardAccessAuthorities.reset();
+			boardReadAuthorities.reset();
+			boardWriteAuthorities.reset();
+		}
+
 		// listens board changes
 		board.onAfterChange(function(){
 			handleVisible(this);
@@ -47,58 +123,33 @@
 		}
 		
 		/**
-		 * Disables detail
-		 */
-		function disableDetail(disable){
-			board.setDisable(disable);
-			$('#deleteBoardButton').prop('disabled', disable);
-			$('#saveBoardButton').prop('disabled', disable);
-		}
-		
-		/**
-		 * Clears detail
-		 */
-		function clearDetail(){
-			board.clear();
-			boardCategories.clear();
-			boardAccessAuthorities.clear();
-			boardReadAuthorities.clear();
-			boardWriteAuthorities.clear();
-		}
-		
-		/**
 		 * Gets boards
 		 */
 		function getBoards(page) {
-			if(page){
-				search.set('page',page);
-			}
-			var data = {};
-			if(search.get('key')){
-				data[search.get('key')] = search.get('value');
-			}
-			if(search.get('status')){
-				data.status = search.get('status');
-			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
-			$.ajax({
-				 url: 'board/getBoards'
-				,type: 'GET'
-				,data: data
-				,success: function(data, textStatus, jqXHR) {
+			return new Promise(function(resolve,reject){
+				if(page){
+					search.set('page',page);
+				}
+				var data = {};
+				if(search.get('key')){
+					data[search.get('key')] = search.get('value');
+				}
+				if(search.get('status')){
+					data.status = search.get('status');
+				}
+				data.page = search.get('page');
+				data.rows = search.get('rows');
+				$.ajax({
+					 url: 'board/getBoards'
+					,type: 'GET'
+					,data: data
+				})
+				.done(function(data, textStatus, jqXHR) {
 					boards.fromJson(data);
 					search.set('totalCount', __parseTotalCount(jqXHR));
-					
-					// sets current board
-					boards.forEach(function(row,index){
-						if(row.get('id') === board.get('id')){
-							boards.setIndex(index);
-							return false;
-						}
-					});
-		   	 	}
-			});	
+					resolve(true);
+			   	});
+			});
 		}
 		
 		/**
@@ -109,85 +160,144 @@
 				 url: 'board/getBoard'
 				,type: 'GET'
 				,data: {id:id}
-				,success: function(data, textStatus, jqXHR) {
-					board.fromJson(data);
-					boardCategories.fromJson(data.categories);
-					boardAccessAuthorities.fromJson(data.accessAuthorities);
-					boardReadAuthorities.fromJson(data.readAuthorities);
-					boardWriteAuthorities.fromJson(data.writeAuthorities);
-					disableDetail(false);
-					board.setReadonly('id', true);
-					handleVisible(board);
-		   	 	}
-			});	
+			})
+			.done(function(data, textStatus, jqXHR) {
+				board.fromJson(data);
+				boardCategories.fromJson(data.categories);
+				boardAccessAuthorities.fromJson(data.accessAuthorities);
+				boardReadAuthorities.fromJson(data.readAuthorities);
+				boardWriteAuthorities.fromJson(data.writeAuthorities);
+				disableDetail(false);
+				board.setReadonly('id', true);
+				$('#passwordTr').hide();
+				$('#passwordConfirmTr').hide();
+				isNew = false;
+			});
 		}
 		
 		/**
 		 * Adds board
 		 */
 		function addBoard() {
-			clearDetail();
+			initializeDetail();
 			disableDetail(false);
 			board.setReadonly('id',false);
+			$('#passwordTr').show();
+			$('#passwordConfirmTr').show();
+			isNew = true;
+			board.setFocus('id');
 			handleVisible(board);
+		}
+		
+		/**
+		 * Returns duplicate board
+		 */
+		function isDuplicateBoard(id){
+			var duplicateBoard = false;
+			$.ajax({
+				 url: 'board/getBoard'
+				,type: 'GET'
+				,data: {id:id}
+				,async: false
+			})
+			.done(function(data, textStatus, jqXHR) {
+				if(data && data.id === id){
+					duplicateBoard = true;
+				}
+			});
+			return duplicateBoard;
 		}
 		
 		/**
 		 * Saves board
 		 */
-		function saveBoard(){
+		async function saveBoard(){
 			
 			// checks changes
-			if(!board.isDirty()
-			&& !boardCategories.isDirty()
-			&& !boardAccessAuthorities.isDirty()
-			&& !boardReadAuthorities.isDirty()
-			&& !boardWriteAuthorities.isDirty()
-			){
-				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
-				return;
+			if(isNew === false && isDetailChanged() === false) {
+				await duice.alert("[[#{application.global.changeNotFound}]]");
+				return false;
 			}
 			
-			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.board})}]]")
-			.onAfterConfirm(function(){
+			// checks id
+			if(duice.isEmpty(board.get('id'))){
+				board.setFocus('id', '[[#{application.global.enterItem(#{application.board.id})}]]');
+				return false;
+			}
+			if(!duice.isIdFormat(board.get('id'))){
+				board.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
+				return false;
+			}
+			
+			// checks new board is existed
+			if(isNew){
+				if(isDuplicateBoard(board.get('id'))){
+					board.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
+					return false;
+				}
+			}
+			
+			// checks board name
+			if(duice.isEmpty(board.get('name'))){
+				board.setFocus('name', '[[#{application.global.enterItem(#{application.board.name})}]]');
+				return false;
+			}
+
+			// enters save process
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.board})}]]")){
 				var data = board.toJson();
-				data.categories = boardCategories.toJson();
-				data.accessAuthorities = boardAccessAuthorities.toJson();
-				data.readAuthorities = boardReadAuthorities.toJson();
-				data.writeAuthorities = boardWriteAuthorities.toJson();
+				data.boardCategories = boardCategories.toJson();
+				data.boardAccessAuthorities = boardAccessAuthorities.toJson();
+				data.boardReadAuthorities = boardReadAuthorities.toJson();
+				data.boardWriteAuthorities = boardWriteAuthorities.toJson();
 				$.ajax({
 					 url: 'board/saveBoard'
 					,type: 'POST'
 					,data: JSON.stringify(data)
 					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert('[[#{application.message.saveComplete(#{application.label.board})}]]')
-						.onAfterClose(function(){
-							getBoards();
-						}).open();
-			   	 	}
-				});	
-			}).open();
+				})
+				.done(function(data, textStatus, jqXHR) {
+					new duice.Alert('[[#{application.global.saveComplete(#{application.board})}]]')
+					.onAfterClose(async function(){
+						await getBoards();
+						
+						// refresh list and details
+						var index = boards.indexOf(function(row){
+							if(row.get('id') === board.get('id')){
+								return true;
+							}
+						});
+						if(index > -1){
+							initializeDetail();
+							boards.selectRow(index);
+						}else{
+							getBoard(board.get('id'));
+						}
+					})
+					.open();
+				});
+			}
 		}
 		
 		/**
 		 * Deletes board
 		 */
 		function deleteBoard(){
-			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.board})}]]")
+			new duice.Confirm("[[#{application.global.deleteConfirm(#{application.board})}]]")
 			.onAfterConfirm(function(){
 				$.ajax({
 					 url: 'board/deleteBoard'
 					,type: 'DELETE'
 					,data: JSON.stringify(board.toJson())
 					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.board})}]]")
-						.onAfterClose(function(){
-							clearDetail();
-							getBoards();
+				})
+				.done(function(data, textStatus, jqXHR) {
+						new duice.Alert("[[#{application.global.deleteComplete(#{application.board})}]]")
+						.onAfterClose(async function(){
+							await getBoards();
+							initializeDetail();
+							disableDetail(true);
 						}).open();
-			   	 	}
 				});
 			}).open();
 		}
@@ -284,26 +394,29 @@
 		<div class="app-col">
 			<h1>
 				<img class="icon large" th:src="@{/static/image/icon_board.png}"/>
-				<span data-th-text="#{application.label.board}+' '+#{application.label.management}"></span>
+				<span data-th-text="#{application.board}+' '+#{application.global.management}"></span>
 			</h1>
 		</div>
 	</div>
 	<hr class="hr"/>
 	<div class="app-row">
-		<div class="app-col" style="width:50%;">
+		<!-- ====================================================== -->
+		<!-- List													-->
+		<!-- ====================================================== -->
+		<div id="listDiv" class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
-						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option value="id" data-th-text="#{application.label.board}+' '+#{application.label.id}">Board ID</option>
-						<option value="name" data-th-text="#{application.label.board}+' '+#{application.label.name}">Board Name</option>
+						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.board.id}">Board ID</option>
+						<option value="name" data-th-text="#{application.board.name}">Board Name</option>
 					</select>
 					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="getBoards(1);">
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-						<span data-th-text="#{application.label.search}"></span>
+						<span data-th-text="#{application.global.search}"></span>
 					</button>
 				</div>
 			</div>
@@ -319,10 +432,10 @@
 						<col style="width:15%;"/>
 						<thead>
 							<tr>
-								<th data-th-text="#{application.label.no}">No</th>
-								<th data-th-text="#{application.label.board}+' '+#{application.label.id}">Board ID</th>
-								<th data-th-text="#{application.label.board}+' '+#{application.label.name}">Board Name</th>
-								<th data-th-text="#{application.label.article}+' '+#{application.label.count}">Article Count</th>
+								<th data-th-text="#{application.global.no}">No</th>
+								<th data-th-text="#{application.board.id}">Board ID</th>
+								<th data-th-text="#{application.board.name}">Board Name</th>
+								<th data-th-text="#{application.board.count}">Article Count</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -355,29 +468,32 @@
 				</div>
 			</div>		
 		</div>
-		<div class="app-col" style="width:50%;">
+		<!-- ====================================================== -->
+		<!-- Start Detail											-->
+		<!-- ====================================================== -->
+		<div id="detailDiv" class="app-col" style="width:50%;">
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_board.png}"/>
-					<span data-th-text="#{application.label.board} + ' ' + #{application.label.details}" class="font-bold"></span>
+					<span data-th-text="#{application.board} + ' ' + #{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
 					<button id="openBoardButton" class="button" onclick="openBoard();">
 						<img th:src="@{/static/image/icon_open.png}" class="icon"/>
-						<span data-th-text="#{application.label.open}"></span>
+						<span data-th-text="#{application.global.open}"></span>
 					</button>
 					|
 					<button id="addBoardButton" class="button" onclick="addBoard();">
 						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.label.new}"></span>
+						<span data-th-text="#{application.global.new}"></span>
 					</button>
 					<button id="deleteBoardButton" class="button" onclick="deleteBoard();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
-						<span data-th-text="#{application.label.delete}"></span>
+						<span data-th-text="#{application.global.delete}"></span>
 					</button>
 					<button id="saveBoardButton" class="button" onclick="saveBoard();">
 						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
-						<span data-th-text="#{application.label.save}"></span>
+						<span data-th-text="#{application.global.save}"></span>
 					</button>
 				</div>
 			</div>
@@ -388,29 +504,29 @@
 						<col/>
 						<tbody>
 							<tr>
-								<th><span data-th-text="#{application.label.board}+' '+#{application.label.id}" class="mand">Board ID</span></th>
+								<th><span data-th-text="#{application.board.id}" class="mand">Board ID</span></th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="board,id" autocomplete="nope"/></td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.board}+' '+#{application.label.icon}">Board Icon</th>
+								<th data-th-text="#{application.board.icon}">Board Icon</th>
 								<td>
 									<img is="duice-ui-img" data-duice-bind="board,icon" th:src="@{/static/image/icon_board.png}"/>
 								</td>
 							</tr>
 							<tr>
-								<th data-th-text="#{application.label.board}+' '+#{application.label.name}">Board Name</th>
+								<th data-th-text="#{application.board.name}">Board Name</th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="board,name"/></td>
 							</tr>
 							<tr>
-								<th><span data-th-text="#{application.label.board}+' '+#{application.label.description}">Board Description</span></th>
+								<th><span data-th-text="#{application.board.description}">Board Description</span></th>
 								<td><textarea is="duice-ui-textarea" data-duice-bind="board,description"></textarea></td>
 							</tr>
 							<tr>
-								<th><span data-th-text="#{application.label.skin}">Board Name</span></th>
+								<th><span data-th-text="#{application.board.skin}">Board Name</span></th>
 								<td><input is="duice-ui-input" type="text" data-duice-bind="board,skin"/></td>
 							</tr>
 							<tr>
-								<th><span data-th-text="#{application.label.rowsPerPage}">Rows per Page</span></th>
+								<th><span data-th-text="#{application.board.rowsPerPage}">Rows per Page</span></th>
 								<td>
 									<select is="duice-ui-select" data-duice-bind="board,rowsPerPage">
 										<option value="10">10</option>
@@ -427,16 +543,16 @@
 								</td>
 							</tr>
 							<tr>
-								<th><span data-th-text="#{application.label.reply}+' '+#{application.label.use}">Board Name</span></th>
+								<th><span data-th-text="#{application.board.replyUse}">Board Name</span></th>
 								<td><input is="duice-ui-input" type="checkbox" data-duice-bind="board,replyUse"/></td>
 							</tr>
 							<tr>
-								<th><span data-th-text="#{application.label.file}+' '+#{application.label.use}">Board Name</span></th>
+								<th><span data-th-text="#{application.board.fileUse}">Board Name</span></th>
 								<td><input is="duice-ui-input" type="checkbox" data-duice-bind="board,fileUse"/></td>
 							</tr>
 							<tr>
 								<th>
-									<span data-th-text="#{application.label.category}+' '+#{application.label.use}">Category Use</span>
+									<span data-th-text="#{application.board.categoryUse}">Category Use</span>
 								</th>
 								<td>
 									<input is="duice-ui-input" type="checkbox" data-duice-bind="board,categoryUse"/>
@@ -450,9 +566,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.sequence}">Sequence</th>
-												<th data-th-text="#{application.label.category}+' '+#{application.label.id}">Category ID</th>
-												<th data-th-text="#{application.label.category}+' '+#{application.label.name}">Category Name</th>
+												<th data-th-text="#{application.board.category.sequence}">Sequence</th>
+												<th data-th-text="#{application.board.category.id}">Category ID</th>
+												<th data-th-text="#{application.board.category.name}">Category Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addBoardCategory();">
 														+
@@ -483,7 +599,7 @@
 							</tr>
 							<tr>
 								<th>
-									<span data-th-text="#{application.label.access}+' '+#{application.label.policy}"></span>
+									<span data-th-text="#{application.board.accessPolicy}"></span>
 								</th>
 								<td>
 									<select is="duice-ui-select" data-duice-bind="board,accessPolicy">
@@ -501,9 +617,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.id}">ID</th>
-												<th data-th-text="#{application.label.name}">Name</th>
+												<th data-th-text="#{application.global.no}">No</th>
+												<th data-th-text="#{application.authority.id}">ID</th>
+												<th data-th-text="#{application.authority.name}">Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addBoardAccessAuthority();">
 														+
@@ -533,7 +649,7 @@
 							</tr>
 							<tr>
 								<th>
-									<span data-th-text="#{application.label.read}+' '+#{application.label.policy}"></span>
+									<span data-th-text="#{application.board.readPolicy}"></span>
 								</th>
 								<td>
 									<select is="duice-ui-select" data-duice-bind="board,readPolicy">
@@ -551,9 +667,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">Authority ID</th>
-												<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</th>
+												<th data-th-text="#{application.global.no}">No</th>
+												<th data-th-text="#{application.authority.id}">Authority ID</th>
+												<th data-th-text="#{application.authority.name}">Authority Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addBoardReadAuthority();">
 														+
@@ -583,7 +699,7 @@
 							</tr>
 							<tr>
 								<th>
-									<span data-th-text="#{application.label.write}+' '+#{application.label.policy}"></span>
+									<span data-th-text="#{application.board.writePolicy}"></span>
 								</th>
 								<td>
 									<select is="duice-ui-select" data-duice-bind="board,writePolicy">
@@ -601,9 +717,9 @@
 										<col style="width:5%;"/>
 										<thead>
 											<tr>
-												<th data-th-text="#{application.label.no}">No</th>
-												<th data-th-text="#{application.label.authority}+' '+#{application.label.id}">Authority ID</th>
-												<th data-th-text="#{application.label.authority}+' '+#{application.label.name}">Authority Name</th>
+												<th data-th-text="#{application.global.no}">No</th>
+												<th data-th-text="#{application.authority.id}">Authority ID</th>
+												<th data-th-text="#{application.authority.name}">Authority Name</th>
 												<th class="text-center">
 													<button class="button small" onclick="addBoardWriteAuthority();">
 														+

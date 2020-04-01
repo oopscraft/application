@@ -17,14 +17,18 @@ $(document).ajaxSend(function(event, jqXHR, settings) {
 	jqXHR.setRequestHeader('Expires','0');
 });
 // Checks error except cancellation(readyState = 0)
-$(document).ajaxError(function(event, jqXHR, settings,thrownError ){
-	console.debug('$(document).ajaxError');
+$(document).ajaxError(function(event, jqXHR, settings, thrownError){
+	console.debug('$(document).ajaxError', jqXHR);
 	if(jqXHR.readyState > 0){
 		console.error(event, jqXHR, settings, thrownError);
 		if(jqXHR.status === 401){
-			location.reload();
+			new duice.Alert(jqXHR.responseText)
+			.onAfterConfirm(function(){
+				location.reload();	
+			})
+			.open();
 		}else{
-			duice.alert(jqXHR.responseText);	
+			new duice.Alert(jqXHR.responseText).open();
 		}
 	}
 });

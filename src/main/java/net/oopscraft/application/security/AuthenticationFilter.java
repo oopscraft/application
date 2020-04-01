@@ -18,10 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-import net.oopscraft.application.user.entity.User;
 import net.oopscraft.application.util.StringUtility;
 
 public class AuthenticationFilter extends GenericFilterBean   {
@@ -54,14 +52,13 @@ public class AuthenticationFilter extends GenericFilterBean   {
         if(StringUtility.isNotEmpty(accessToken)) {
             try {
                 LOGGER.debug(String.format("token:[%s]", accessToken));
-                User user = authenticationProvider.decodeAccessToken(accessToken);
-        		UserDetails userDetails = new UserDetails(user);
+        		UserDetails userDetails = authenticationProvider.decodeAccessToken(accessToken);
         		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
         		SecurityContext securityContext = SecurityContextHolder.getContext();
         		securityContext.setAuthentication(authentication);
         		
         		// keep alive
-        		accessToken = authenticationProvider.encodeAccessToken(user);
+        		accessToken = authenticationProvider.encodeAccessToken(userDetails);
     			response.setHeader("X-Access-Token", accessToken);
     			Cookie cookie = new Cookie("X-Access-Token", accessToken);
     			cookie.setPath("/");

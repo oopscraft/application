@@ -10,12 +10,18 @@ public class GrantedAuthority implements org.springframework.security.core.Grant
 	
 	String authority;
 	
+	GrantedAuthority(){}
+	
 	GrantedAuthority(Role role){
 		this.authority = ROLE_PREFIX + role.getId();
 	}
 	
 	GrantedAuthority(Authority authority){
 		this.authority = authority.getId();
+	}
+	
+	public void setAuthority(String authority) {
+		this.authority = authority;
 	}
 
 	@Override

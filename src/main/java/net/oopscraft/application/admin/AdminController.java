@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +25,7 @@ import net.oopscraft.application.user.entity.Authority;
 import net.oopscraft.application.user.entity.Group;
 import net.oopscraft.application.user.entity.Role;
 
-//@PreAuthorize("hasAuthority('ADMIN')")
+@PreAuthorize("hasAuthority('ADMN')")
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -64,6 +64,7 @@ public class AdminController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("permitAll()") 
 	@RequestMapping(value = "login", method = RequestMethod.GET)
 	public ModelAndView login() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/login.html");

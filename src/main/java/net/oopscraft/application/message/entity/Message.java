@@ -11,22 +11,22 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_MSGE_INFO")
+@Table(name = "APP_MESG_INFO")
 @EntityListeners(SystemEntityListener.class)
 public class Message extends SystemEntity {
 
 	@Id
-	@Column(name = "MSGE_ID", length = 32)
+	@Column(name = "MESG_ID", length = 32)
 	String id;
 
-	@Column(name = "MSGE_NAME", length = 1024)
+	@Column(name = "MESG_NAME", length = 1024)
 	String name;
 
-	@Column(name = "MSGE_VAL")
+	@Column(name = "MESG_VAL", length = Integer.MAX_VALUE)
 	@Lob
 	String value;
 
-	@Column(name = "MSGE_DESC")
+	@Column(name = "MESG_DESC", length = Integer.MAX_VALUE)
 	@Lob
 	String description;
 	

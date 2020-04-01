@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,7 +21,7 @@ import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.core.PageInfo;
 
-//@PreAuthorize("hasBoard('ADMIN_BOARD')")
+@PreAuthorize("hasAuthority('ADMN_BORD')")
 @Controller
 @RequestMapping("/admin/board")
 public class BoardController {

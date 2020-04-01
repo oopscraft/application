@@ -27,7 +27,6 @@ public class UserDetailsService implements org.springframework.security.core.use
 		}
 		
 		UserDetails userDetails = new UserDetails(user);
-		userDetails.loadAuthorities();
 		return userDetails;
 	}
 

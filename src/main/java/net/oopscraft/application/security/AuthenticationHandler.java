@@ -64,10 +64,9 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 		try {
 	        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	        User user = userDetails.getUser();
 			
 			// issue JWT access token.
-	        String accessToken = authenticationProvider.encodeAccessToken(userDetails.getUser());
+	        String accessToken = authenticationProvider.encodeAccessToken(userDetails);
 			response.setHeader("X-Access-Token", accessToken);
 			Cookie cookie = new Cookie("X-Access-Token", accessToken);
 			cookie.setPath("/");
@@ -75,13 +74,13 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 			response.addCookie(cookie);
 			
 			// sets user default locale
-			if(StringUtils.isNotEmpty(user.getLanguage())){
-				localeResolver.setLocale(request, response, Locale.forLanguageTag(user.getLanguage()));
+			if(StringUtils.isNotEmpty(userDetails.getLanguage())){
+				localeResolver.setLocale(request, response, Locale.forLanguageTag(userDetails.getLanguage()));
 			}
 			
 			// Saves Login History
 			UserLoginHistory userLogin = new UserLoginHistory();
-			userLogin.setUserId(user.getId());
+			userLogin.setUserId(userDetails.getUsername());
 			userLogin.setDate(new Date());
 			userLogin.setSuccessYn("Y");
 			userLogin.setFailReason(null);
@@ -109,11 +108,11 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 		String message = null;
 		Locale locale = localeResolver.resolveLocale(request);
 		if(exception instanceof UsernameNotFoundException) {
-			String item = messageSource.getMessage("application.text.user", null, locale);
-			message = messageSource.getMessage("application.message.itemNotFound", new Object[]{ item }, locale);
+			String item = messageSource.getMessage("application.user", null, locale);
+			message = messageSource.getMessage("application.global.itemNotFound", new Object[]{ item }, locale);
 		}else if(exception instanceof BadCredentialsException) {
-			String item = messageSource.getMessage("application.text.password", null, locale);
-			message = messageSource.getMessage("application.message.invalidItem", new Object[]{ item }, locale);
+			String item = messageSource.getMessage("application.user.password", null, locale);
+			message = messageSource.getMessage("application.global.itemNotMatch", new Object[]{ item }, locale);
 		}else {
 			message = exception.getMessage();
 		}
