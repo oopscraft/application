@@ -58,6 +58,21 @@
 				}
 			}
 		});
+
+		// listens board changes
+		board.onAfterChange(function(){
+			handleVisible(this);
+		});
+
+		/**
+		 * Handles visible
+		 */
+		function handleVisible(board){
+			boardCategories.setVisible(board.get('categoryUse')?true:false);
+			boardAccessAuthorities.setVisible(board.get('accessPolicy')==='AUTHORIZED'?true:false);
+			boardReadAuthorities.setVisible(board.get('readPolicy')==='AUTHORIZED'?true:false);
+			boardWriteAuthorities.setVisible(board.get('writePolicy')==='AUTHORIZED'?true:false);
+		}
 		
 		/**
 		 * Disables detail
@@ -105,21 +120,6 @@
 			boardAccessAuthorities.reset();
 			boardReadAuthorities.reset();
 			boardWriteAuthorities.reset();
-		}
-
-		// listens board changes
-		board.onAfterChange(function(){
-			handleVisible(this);
-		});
-
-		/**
-		 * Handles visible
-		 */
-		function handleVisible(board){
-			boardCategories.setVisible(board.get('categoryUse')?true:false);
-			boardAccessAuthorities.setVisible(board.get('accessPolicy')==='AUTHORIZED'?true:false);
-			boardReadAuthorities.setVisible(board.get('readPolicy')==='AUTHORIZED'?true:false);
-			boardWriteAuthorities.setVisible(board.get('writePolicy')==='AUTHORIZED'?true:false);
 		}
 		
 		/**
@@ -172,6 +172,7 @@
 				$('#passwordTr').hide();
 				$('#passwordConfirmTr').hide();
 				isNew = false;
+				handleVisible(board);
 			});
 		}
 		
@@ -246,10 +247,10 @@
 			// enters save process
 			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.board})}]]")){
 				var data = board.toJson();
-				data.boardCategories = boardCategories.toJson();
-				data.boardAccessAuthorities = boardAccessAuthorities.toJson();
-				data.boardReadAuthorities = boardReadAuthorities.toJson();
-				data.boardWriteAuthorities = boardWriteAuthorities.toJson();
+				data.categories = boardCategories.toJson();
+				data.accessAuthorities = boardAccessAuthorities.toJson();
+				data.readAuthorities = boardReadAuthorities.toJson();
+				data.writeAuthorities = boardWriteAuthorities.toJson();
 				$.ajax({
 					 url: 'board/saveBoard'
 					,type: 'POST'
@@ -309,14 +310,14 @@
 			var boardCategory = new duice.Map({
 				boardId: board.get('id')
 			});
-			boardCategories.add(boardCategory);
+			boardCategories.addRow(boardCategory);
 		}
 		
 		/**
 		 * Removes authority
 		 */
 		function removeBoardCategory(index){
-			boardCategories.remove(index);
+			boardCategories.removeRow(index);
 		}
 		
 		/**
@@ -327,7 +328,7 @@
 				disabledAuthorities: boardAccessAuthorities,
 				onAfterConfirm: function(selectedAuthorities){
 					selectedAuthorities.forEach(function(selectedAuthority){
-						boardAccessAuthorities.add(selectedAuthority);
+						boardAccessAuthorities.addRow(new duice.Map(selectedAuthority));
 					});
 				}
 			});
@@ -348,7 +349,7 @@
 				disabledAuthorities: boardReadAuthorities,
 				onAfterConfirm: function(selectedAuthorities){
 					selectedAuthorities.forEach(function(selectedAuthority){
-						boardReadAuthorities.add(selectedAuthority);
+						boardReadAuthorities.addRow(new duice.Map(selectedAuthority));
 					});
 				}
 			});
@@ -369,7 +370,7 @@
 				disabledAuthorities: boardWriteAuthorities,
 				onAfterConfirm: function(selectedAuthorities){
 					selectedAuthorities.forEach(function(selectedAuthority){
-						boardWriteAuthorities.add(selectedAuthority);
+						boardWriteAuthorities.addRow(new duice.Map(selectedAuthority));
 					});
 				}
 			});
@@ -418,6 +419,10 @@
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
 						<span data-th-text="#{application.global.search}"></span>
 					</button>
+					<button id="addBoardButton" class="button" onclick="addBoard();">
+						<img th:src="@{/static/image/icon_add.png}" class="icon"/>
+						<span data-th-text="#{application.global.add}"></span>
+					</button>
 				</div>
 			</div>
 			<div class="app-row">
@@ -435,7 +440,7 @@
 								<th data-th-text="#{application.global.no}">No</th>
 								<th data-th-text="#{application.board.id}">Board ID</th>
 								<th data-th-text="#{application.board.name}">Board Name</th>
-								<th data-th-text="#{application.board.count}">Article Count</th>
+								<th data-th-text="#{application.board.articleCount}">Article Count</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -481,11 +486,6 @@
 					<button id="openBoardButton" class="button" onclick="openBoard();">
 						<img th:src="@{/static/image/icon_open.png}" class="icon"/>
 						<span data-th-text="#{application.global.open}"></span>
-					</button>
-					|
-					<button id="addBoardButton" class="button" onclick="addBoard();">
-						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.global.new}"></span>
 					</button>
 					<button id="deleteBoardButton" class="button" onclick="deleteBoard();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
@@ -588,7 +588,7 @@
 													<input is="duice-ui-input" type="text" data-duice-bind="category,name"/>
 												</td>
 												<td class="text-center">
-													<button class="button small" data-index="[[$context.index]]" onclick="removeBoardCategory(this.dataset.index);">
+													<button class="button small" data-index="[@duice[$context.index]]" onclick="removeBoardCategory(this.dataset.index);">
 														-
 													</button>
 												</td>

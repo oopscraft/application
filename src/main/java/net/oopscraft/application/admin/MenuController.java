@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.menu.entity.Menu;
-import net.oopscraft.application.user.entity.Group;
+import net.oopscraft.application.security.SecurityPolicy;
 
 
 @PreAuthorize("hasAuthority('ADMN_MENU')")
@@ -43,6 +43,8 @@ public class MenuController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/menu.html");
+		modelAndView.addObject("LinkTarget", Menu.LinkTarget.values());
+		modelAndView.addObject("DisplayPolicy", SecurityPolicy.values());
 		return modelAndView;
 	}
 	

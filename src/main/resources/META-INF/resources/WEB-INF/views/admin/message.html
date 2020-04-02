@@ -282,6 +282,10 @@
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
 						<span data-th-text="#{application.global.search}"></span>
 					</button>
+					<button id="addMessageButton" class="button" onclick="addMessage();">
+						<img th:src="@{/static/image/icon_add.png}" class="icon"/>
+						<span data-th-text="#{application.global.add}"></span>
+					</button>
 				</div>
 			</div>
 			<div class="app-row">
@@ -330,13 +334,9 @@
 			<div class="app-row">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_message.png}"/>
-					<span data-th-text="#{application.global.message} + ' ' + #{application.global.details}" class="font-bold"></span>
+					<span data-th-text="#{application.message} + ' ' + #{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
-					<button id="addMessageButton" class="button" onclick="addMessage();">
-						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.global.new}"></span>
-					</button>
 					<button id="deleteMessageButton" class="button" onclick="deleteMessage();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 						<span data-th-text="#{application.global.delete}"></span>

@@ -7,7 +7,8 @@
 			getArticles();
 		});
 	
-		var search = new duice.Map({
+		// defines variables 
+		const search = new duice.Map({
 			key: null,
 			value: null,
 			status: null,
@@ -15,34 +16,38 @@
 			rows: 20,
 			totalCount: -1
 		});
-		var articles = new duice.List();
-		var article = new duice.Map();
+		const articles = new duice.List();
+		const article = new duice.Map();
+		var isNew = false;
 		
 		/**
 		 * Gets articles
 		 */
 		function getArticles(page) {
-			if(page){
-				search.set('page',page);
-			}
-			var data = {};
-			if(search.get('key')){
-				data[search.get('key')] = search.get('value');
-			}
-			if(search.get('status')){
-				data.status = search.get('status');
-			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
-			$.ajax({
-				 url: 'article/getArticles'
-				,type: 'GET'
-				,data: data
-				,success: function(data, textStatus, jqXHR) {
+			return new Promise(function(resolve,reject){
+				if(page){
+					search.set('page',page);
+				}
+				var data = {};
+				if(search.get('key')){
+					data[search.get('key')] = search.get('value');
+				}
+				if(search.get('status')){
+					data.status = search.get('status');
+				}
+				data.page = search.get('page');
+				data.rows = search.get('rows');
+				$.ajax({
+					 url: 'article/getArticles'
+					,type: 'GET'
+					,data: data
+				})
+				.done(function(data, textStatus, jqXHR) {
 					articles.fromJson(data);
 					search.set('totalCount', __parseTotalCount(jqXHR));
-		   	 	}
-			});	
+					resolve(true);
+			   	});
+			});
 		}
 		
 		/**
@@ -53,12 +58,12 @@
 				 url: 'article/getArticle'
 				,type: 'GET'
 				,data: {id:id}
-				,success: function(data, textStatus, jqXHR) {
-					article.fromJson(data);
-					new duice.Dialog(document.getElementById('articleDialog'))
-					.open();
-		   	 	}
-			});	
+			})
+			.done(function(data, textStatus, jqXHR){
+				article.fromJson(data);
+				new duice.Dialog(document.getElementById('articleDialog'))
+				.open();
+			});
 		}
 		
 		/**
@@ -82,7 +87,7 @@
 				return;
 			}
 			
-			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.article})}]]")
+			new duice.Confirm("[[#{application.message.saveConfirm(#{application.article})}]]")
 			.onAfterConfirm(function(){
 				var data = article.toJson();
 				$.ajax({
@@ -91,7 +96,7 @@
 					,data: JSON.stringify(data)
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert('[[#{application.message.saveComplete(#{application.label.article})}]]')
+						new duice.Alert('[[#{application.message.saveComplete(#{application.article})}]]')
 						.onAfterClose(function(){
 							getArticles();
 						}).open();
@@ -104,7 +109,7 @@
 		 * Deletes article
 		 */
 		function deleteArticle(){
-			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.article})}]]")
+			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.article})}]]")
 			.onAfterConfirm(function(){
 				$.ajax({
 					 url: 'article/deleteArticle'
@@ -112,7 +117,7 @@
 					,data: JSON.stringify(article.toJson())
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.article})}]]")
+						new duice.Alert("[[#{application.message.deleteComplete(#{application.article})}]]")
 						.onAfterClose(function(){
 							clearDetail();
 							getUsers();
@@ -126,7 +131,7 @@
 		<div class="app-col">
 			<h1>
 				<img class="icon large" th:src="@{/static/image/icon_article.png}"/>
-				<span data-th-text="#{application.label.article}+' '+#{application.label.management}"></span>
+				<span data-th-text="#{application.article}+' '+#{application.global.management}"></span>
 			</h1>
 		</div>
 	</div>
@@ -136,20 +141,20 @@
 			<div class="app-row">
 				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
-						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option value="id" data-th-text="#{application.label.article}+' '+#{application.label.id}">ID</option>
-						<option value="name" data-th-text="#{application.label.article}+' '+#{application.label.name}">Name</option>
+						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+						<option value="id" data-th-text="#{application.article}+' '+#{application.global.id}">ID</option>
+						<option value="name" data-th-text="#{application.article}+' '+#{application.global.name}">Name</option>
 					</select>
 					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 					<button class="button" onclick="getArticles(1);">
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-						<span data-th-text="#{application.label.search}"></span>
+						<span data-th-text="#{application.global.search}"></span>
 					</button>
 				</div>
 				<div class="app-col right">
 					<button class="button" onclick="addArticle();">
 						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.label.new}"></span>
+						<span data-th-text="#{application.global.new}"></span>
 					</button>
 				</div>
 			</div>
@@ -159,14 +164,20 @@
 						data-duice-bind="articles,article" 
 						data-duice-selectable="true"
 						style="width:100%;">
-						<col style="width:10%;"/>					
-						<col style="width:30%"/>
-						<col style="width:60%"/>
+						<col style="width:100px;"/>					
+						<col style="width:200px;"/>
+						<col/>
+						<col style="width:10%"/>
+						<col style="width:10%"/>
+						<col style="width:10%"/>
 						<thead>
 							<tr>
-								<th data-th-text="#{application.label.no}">No</th>
-								<th data-th-text="#{application.label.article}+' '+#{application.label.id}">Article ID</th>
-								<th data-th-text="#{application.label.article}+' '+#{application.label.name}">Article Name</th>
+								<th data-th-text="#{application.global.no}">No</th>
+								<th data-th-text="#{application.article.id}">ID</th>
+								<th data-th-text="#{application.article.title}">Title</th>
+								<th data-th-text="#{application.article.author}">Author</th>
+								<th data-th-text="#{application.article.writeDate}">Write Date</th>
+								<th>-</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -179,7 +190,12 @@
 								<td>
 									<span is="duice-ui-span" data-duice-bind="article,id"></span>
 								</td>
-								<td><span is="duice-ui-span" data-duice-bind="article,name"></span></td>
+								<td><span is="duice-ui-span" data-duice-bind="article,title"></span></td>
+								<td><span is="duice-ui-span" data-duice-bind="article,author"></span></td>
+								<td><span is="duice-ui-span" data-duice-bind="article,writeDate"></span></td>
+								<td>
+									<button>삭제</button>
+								</td>
 							</tr>
 						</tbody>
 						<tfoot>
@@ -208,11 +224,11 @@
 			<div class="app-col right">
 				<button id="deleteArticleButton" class="button" onclick="deleteArticle();">
 					<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
-					<span data-th-text="#{application.label.delete}"></span>
+					<span data-th-text="#{application.global.delete}"></span>
 				</button>
 				<button id="saveArticleButton" class="button" onclick="saveArticle();">
 					<img th:src="@{/static/image/icon_save.png}" class="icon"/>
-					<span data-th-text="#{application.label.save}"></span>
+					<span data-th-text="#{application.global.save}"></span>
 				</button>
 			</div>
 		</div>

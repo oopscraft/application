@@ -249,6 +249,10 @@
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
 						<span data-th-text="#{application.global.search}"></span>
 					</button>
+					<button id="addAuthorityButton" class="button" onclick="addAuthority();">
+						<img th:src="@{/static/image/icon_add.png}" class="icon"/>
+						<span data-th-text="#{application.global.add}"></span>
+					</button>
 				</div>
 			</div>
 			<div class="app-row">
@@ -292,7 +296,7 @@
 						</tfoot>
 					</table>
 				</div>
-			</div>		
+			</div>
 		</div>
 		<!-- ====================================================== -->
 		<!-- Start Detail											-->
@@ -304,10 +308,6 @@
 					<span data-th-text="#{application.authority} + ' ' + #{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
-					<button id="addAuthorityButton" class="button" onclick="addAuthority();">
-						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.global.new}"></span>
-					</button>
 					<button id="deleteAuthorityButton" class="button" onclick="deleteAuthority();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 						<span data-th-text="#{application.global.delete}"></span>

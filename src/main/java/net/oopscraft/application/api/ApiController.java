@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -90,6 +91,7 @@ public class ApiController {
 	 * @return
 	 * @throws Exception
 	 */
+	@Description("Getting list of locale.")
 	@RequestMapping(value = "locale", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public List<ValueMap> getLocales() throws Exception {
@@ -101,6 +103,7 @@ public class ApiController {
 	 * @return
 	 * @throws Exception
 	 */
+	@Description("Getting list of country.")
 	@RequestMapping(value = "country", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public List<ValueMap> getCountries() throws Exception {
@@ -112,6 +115,7 @@ public class ApiController {
 	 * @return
 	 * @throws Exception
 	 */
+	@Description("Getting list of language.")
 	@RequestMapping(value = "language", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public List<ValueMap> getLanguages() throws Exception {

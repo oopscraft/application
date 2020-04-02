@@ -273,6 +273,10 @@
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
 						<span data-th-text="#{application.global.search}"></span>
 					</button>
+					<button id="addRoleButton" class="button" onclick="addRole();">
+						<img th:src="@{/static/image/icon_add.png}" class="icon"/>
+						<span data-th-text="#{application.global.add}"></span>
+					</button>
 				</div>
 			</div>
 			<div class="app-row">
@@ -328,10 +332,6 @@
 					<span data-th-text="#{application.role} + ' ' + #{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
-					<button id="addRoleButton" class="button" onclick="addRole();">
-						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.global.new}"></span>
-					</button>
 					<button id="deleteRoleButton" class="button" onclick="deleteRole();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 						<span data-th-text="#{application.global.delete}"></span>

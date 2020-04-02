@@ -397,7 +397,7 @@
 		<!-- ====================================================== -->
 		<div id="listDiv" class="app-col" style="width:50%;">
 			<div class="app-row">
-				<div class="app-col" style="width:50%;">
+				<div class="app-col">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
 						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
 						<option value="id" data-th-text="#{application.user.id}">ID</option>
@@ -417,6 +417,10 @@
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
 						<span data-th-text="#{application.global.search}"></span>
 					</button>
+					<button id="addUserButton" class="button" onclick="addUser();">
+						<img th:src="@{/static/image/icon_add.png}" class="icon"/>
+						<span data-th-text="#{application.global.add}"></span>
+					</button>		
 				</div>
 			</div>
 			<div class="app-row">
@@ -473,7 +477,7 @@
 						</tfoot>
 					</table>
 				</div>
-			</div>		
+			</div>
 		</div>
 		<!-- ====================================================== -->
 		<!-- Start Detail											-->
@@ -488,11 +492,6 @@
 					<button id="changePasswordButton" class="button" onclick="openChangePassword();">
 						<img th:src="@{/static/image/icon_password.png}" class="icon"/>
 						<span data-th-text="#{application.user.changePassword}"></span>
-					</button>
-					|
-					<button id="addUserButton" class="button" onclick="addUser();">
-						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.global.new}"></span>
 					</button>
 					<button id="deleteUserButton" class="button" onclick="deleteUser();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>

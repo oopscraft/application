@@ -21,15 +21,7 @@ $(document).ajaxError(function(event, jqXHR, settings, thrownError){
 	console.debug('$(document).ajaxError', jqXHR);
 	if(jqXHR.readyState > 0){
 		console.error(event, jqXHR, settings, thrownError);
-		if(jqXHR.status === 401){
-			new duice.Alert(jqXHR.responseText)
-			.onAfterConfirm(function(){
-				location.reload();	
-			})
-			.open();
-		}else{
-			new duice.Alert(jqXHR.responseText).open();
-		}
+		new duice.Alert(jqXHR.responseText).open();
 	}
 });
 // Checks

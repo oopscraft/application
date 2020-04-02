@@ -54,63 +54,84 @@
 				<nav class="menu">
 					<ul>
 						<li>
-							<a class="menu-item" th:href="@{/admin/user}">
+							<a th:href="@{/admin/user}">
 								<img class="menu-item__icon" th:src="@{/static/image/icon_user.png}"/>
 								<span class="menu-item__text" data-th-text="#{application.user}">User</span>
 							</a>
 						</li>
 						<li>
-							<a class="menu-item" th:href="@{/admin/group}">
+							<a th:href="@{/admin/group}">
 								<img class="menu-item__icon" th:src="@{/static/image/icon_group.png}"/>
 								<span class="menu-item__text" data-th-text="#{application.group}">Group</span>
 							</a>
 						</li>
 						<li>
-							<a class="menu-item" th:href="@{/admin/role}">
+							<a th:href="@{/admin/role}">
 								<img class="menu-item__icon" th:src="@{/static/image/icon_role.png}"/>
 								<span class="menu-item__text" data-th-text="#{application.role}">Role</span>
 							</a>
 						</li>
 						<li>
-							<a class="menu-item" th:href="@{/admin/authority}">
+							<a th:href="@{/admin/authority}">
 								<img class="menu-item__icon" th:src="@{/static/image/icon_authority.png}"/>
 								<span class="menu-item__text" data-th-text="#{application.authority}">Authority</span>
 							</a>
 						</li>
 						<li>
-							<a class="menu-item" th:href="@{/admin/property}">
+							<a th:href="@{/admin/property}">
 								<img class="menu-item__icon" th:src="@{/static/image/icon_property.png}"/>
 								<span class="menu-item__text" data-th-text="#{application.property}">Property</span>
 							</a>
 						</li>
 						<li>
-							<a class="menu-item" th:href="@{/admin/code}">
+							<a th:href="@{/admin/code}">
 								<img class="menu-item__icon" th:src="@{/static/image/icon_code.png}"/>
 								<span class="menu-item__text" data-th-text="#{application.code}">Code</span>
 							</a>
 						</li>
 						<li>
-							<a class="menu-item" th:href="@{/admin/menu}">
+							<a th:href="@{/admin/menu}">
 								<img class="menu-item__icon" th:src="@{/static/image/icon_menu.png}"/>
 								<span class="menu-item__text" data-th-text="#{application.menu}">Menu</span>
 							</a>
 						</li>
 						<li>
-							<a class="menu-item" th:href="@{/admin/message}">
+							<a th:href="@{/admin/message}">
 								<img class="menu-item__icon" th:src="@{/static/image/icon_message.png}"/>
 								<span class="menu-item__text" data-th-text="#{application.message}">Message</span>
 							</a>
 						</li>
 						<li>
-							<a class="menu-item" th:href="@{/admin/article}">
+							<a th:href="@{/admin/article}">
 								<img class="menu-item__icon" th:src="@{/static/image/icon_article.png}"/>
 								<span class="menu-item__text" data-th-text="#{application.article}">Article</span>
 							</a>
 						</li>
 						<li>
-							<a class="menu-item" th:href="@{/admin/board}">
+							<a th:href="@{/admin/board}">
 								<img class="menu-item__icon" th:src="@{/static/image/icon_board.png}"/>
 								<span class="menu-item__text" data-th-text="#{application.board}">Board</span>
+							</a>
+						</li>
+						<li>
+							<a th:href="@{/admin/api}">
+								<img class="menu-item__icon" th:src="@{/static/image/icon_api.png}"/>
+								<span class="menu-item__text" data-th-text="#{application.api}">API</span>
+							</a>
+						</li>
+					</ul>
+				</nav>
+				<br/>
+				<nav class="banner">
+					<ul>
+						<li>
+							<a th:href="@{/swagger-ui.html}" target="blank">
+								<img class="banner" th:src="@{/static/image/banner_swagger.png}"/>
+							</a>
+						</li>
+						<li>
+							<a href="https://github.com/oopscraft/application" target="blank">
+								<img class="banner" th:src="@{/static/image/banner_github.png}"/>
 							</a>
 						</li>
 					</ul>

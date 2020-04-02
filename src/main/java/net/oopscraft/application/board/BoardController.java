@@ -1,25 +1,30 @@
 package net.oopscraft.application.board;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import net.oopscraft.application.board.entity.Board;
 
 @Controller
 @RequestMapping("/board")
 public class BoardController {
 	
+	@Autowired
+	BoardService boardService;
 	
-	/**
-	 * Forwards view page
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("board/board.html");
+//	@PreAuthorize("this.hasAccessAuthority(#boardId)")
+	@RequestMapping(value="{boardId}", method = RequestMethod.GET)
+	public ModelAndView list(@PathVariable("boardId")String boardId) throws Exception {
+		Board board = boardService.getBoard(boardId);
+		ModelAndView modelAndView = new ModelAndView("board/list.tiles");
+		modelAndView.addObject("boardController", this);
+		modelAndView.addObject("board", board);
 		return modelAndView;
-	}	
+	}
 	
 	
 	

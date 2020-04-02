@@ -56,6 +56,7 @@ public class Menu extends SystemEntity {
 	}
 	
 	@Column(name = "LINK_TRGT")
+	@Enumerated(EnumType.STRING)
 	LinkTarget linkTarget;
 	
 	@Column(name = "DISP_PLCY")

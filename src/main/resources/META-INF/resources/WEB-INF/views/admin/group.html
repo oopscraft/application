@@ -364,7 +364,15 @@
 						</li>
 					</ul>
 				</div>
-			</div>		
+			</div>
+			<div class="app-row">
+				<div class="app-col right">
+					<button id="addGroupButton" class="button" onclick="addGroup();">
+						<img th:src="@{/static/image/icon_add.png}" class="icon"/>
+						<span data-th-text="#{application.global.add}"></span>
+					</button>
+				</div>
+			</div>
 		</div>
 		<!-- ====================================================== -->
 		<!-- Start Detail											-->
@@ -376,10 +384,6 @@
 					<span data-th-text="#{application.group}+' '+#{application.global.details}" class="font-bold"></span>
 				</div>
 				<div class="app-col right">
-					<button id="addGroupButton" class="button" onclick="addGroup();">
-						<img th:src="@{/static/image/icon_create.png}" class="icon"/>
-						<span data-th-text="#{application.global.new}"></span>
-					</button>
 					<button id="deleteGroupButton" class="button" onclick="deleteGroup();">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 						<span data-th-text="#{application.global.delete}"></span>

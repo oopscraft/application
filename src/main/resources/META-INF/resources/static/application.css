@@ -75,7 +75,7 @@ a:hover {
 .menu {
 	padding: 0px;
 	margin: 0px;
- 			margin-right: 20px;
+ 	margin-right: 20px;
 }
 .menu ul {
 	list-style: none;
@@ -103,6 +103,15 @@ a:hover {
 }
 .menu ul > li > a > span {
 	font-weight: bold;
+}
+.banner {
+	padding: 0px;
+	margin: 0px;
+ 	margin-right: 20px;
+}
+.banner ul {
+	list-style: none;
+	padding-left: 0px;
 }
 .content-title {
 	display: flex;
@@ -144,8 +153,12 @@ a:hover {
 	height: 32px;
 }
 .icon.small {
- 			width: 16px;
- 			height: 16px;
+ 	width: 16px;
+ 	height: 16px;
+}
+.banner {
+	height: 24px;
+	cursor: pointer;
 }
 .button {
 	min-width: 70px;
@@ -164,7 +177,7 @@ a:hover {
 	text-decoration:none;
 }
 .button:disabled {
-	opacity: 0.8;
+	opacity: 0.7;
 }
 .button:hover:not([disabled]){
 	cursor:pointer;
