@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/admin.html}">
+<div layout:fragment="content">
+	<script>
+		// document ready
+		$(document).ready(function() {
+			getApis();
+		    disableDetail(true);
+		});
+	
+		var search = new duice.Map({
+			key: null,
+			value: null,
+			status: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		const apis = new duice.List();
+		const api = new duice.Map();
+		
+		// handle when search option is changed.
+		search.onAfterChange(function(name, value){
+			// if select all option, reset value. 
+			if(name === 'key' && !value){
+				search.set('value',null);				
+			}
+		});
+		
+		// event listener for select row
+		apis.onAfterSelectRow(function(selectedRow){
+			api.fromJson(selectedRow.toJson());
+			api.setDisable(false);
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			api.setDisable(disable);
+			$('#detailDiv').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
+		}
+
+		/**
+		 * Gets API list
+		 */
+		function getApis() {
+			return new Promise(function(resolve,reject){
+				$.ajax({
+					 url: '[[@{/api}]]'
+					,type: 'GET'
+					,data: null
+				})
+				.done(function(data, textStatus, jqXHR) {
+					apis.fromJson(data);
+					resolve(true);
+			   	});
+			});
+		}
+	</script>
+	<div class="app-row">
+		<div class="app-col">
+			<h1>
+				<img class="icon large" th:src="@{/static/image/icon_message.png}"/>
+				<span data-th-text="#{application.api}+' '+#{application.global.test}"></span>
+			</h1>
+		</div>
+	</div>
+	<hr class="hr"/>
+	<div class="app-row">
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col">
+					<table is="duice-ui-table" 
+						data-duice-bind="apis,api" 
+						data-duice-selectable="true"
+						style="width:100%;">
+						<col style="width:100px;"/>
+						<col/>
+						<col/>
+						<thead>
+							<tr>
+								<th data-th-text="#{application.api.method}">Method</th>
+								<th data-th-text="#{application.api.uri}">URI</th>
+								<th data-th-text="#{application.api.className}">Class Name</th>
+								<th data-th-text="#{application.api.methodName}">Method Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="api,method"></span>
+								</td>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="api,uri"></span>
+								</td>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="api,className"></span>
+								</td>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="api,methodName"></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>		
+		</div>
+		<div class="app-col" style="width:50%;">
+			<div class="app-row">
+				<div class="app-col">
+					<img class="icon" th:src="@{/static/image/icon_message.png}"/>
+					<span data-th-text="#{application.message} + ' ' + #{application.global.details}" class="font-bold"></span>
+				</div>
+				<div class="app-col right">
+					<button id="deleteMessageButton" class="button" onclick="deleteMessage();">
+						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
+						<span data-th-text="#{application.global.delete}"></span>
+					</button>
+					<button id="saveMessageButton" class="button" onclick="saveMessage();">
+						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
+						<span data-th-text="#{application.global.save}"></span>
+					</button>
+				</div>
+			</div>
+			<div class="app-row">
+				<div class="app-col">
+					<table class="table" style="width:100%;">
+						<col style="width:25%;"/>
+						<col/>
+						<tbody>
+							<tr>
+								<th>
+									<span data-th-text="#{application.api.method}">Method</span>
+								</th>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="api,method"></span>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<span data-th-text="#{application.api.uri}">URI</span>
+								</th>
+								<td>
+									<input is="duice-ui-input" type="text" data-duice-bind="api,uri"/>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<span data-th-text="#{application.api.className}">Class Name</span>
+								</th>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="api,className"></span>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<span data-th-text="#{application.api.methodName}">Method Name</span>
+								</th>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="api,methodName"></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
