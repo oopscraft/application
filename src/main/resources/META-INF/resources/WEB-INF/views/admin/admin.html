@@ -36,7 +36,9 @@
 		</div>
 		<div class="app-row" style="padding:10px 20px; border-bottom:dotted 1px #ccc; background-color:#eee;">
 			<div class="app-col left middle">
-				<img th:src="@{/static/image/application.png}"/>
+				<a th:href="@{/admin}">
+					<img th:src="@{/static/image/application.png}"/>
+				</a>
 			</div>
 			<div class="app-col right middle">
 				<img th:src="${__user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>

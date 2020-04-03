@@ -9,8 +9,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.oopscraft.application.code.CodeService;
@@ -47,7 +49,10 @@ public class CodeController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Code getBoard(@ModelAttribute Code code) throws Exception {
+	@ResponseBody
+	public Code getBoard(@PathVariable("id") String id) throws Exception {
+		Code code = new Code();
+		code.setId(id);
 		return codeService.getCode(code);
 	}
 	
