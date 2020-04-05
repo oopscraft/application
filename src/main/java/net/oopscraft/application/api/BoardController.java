@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.oopscraft.application.article.entity.Article;
-import net.oopscraft.application.board.BoardArticleService;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.entity.BoardArticle;
@@ -33,9 +31,6 @@ public class BoardController {
 	
 	@Autowired
 	BoardService boardService;
-	
-	@Autowired
-	BoardArticleService boardArticleService;
 	
 	/**
 	 * Returns boards
@@ -73,7 +68,7 @@ public class BoardController {
 	@ResponseBody
 	public List<BoardArticle> getBoardArticles(@ModelAttribute BoardArticle boardArticle, @ModelAttribute PageInfo pageInfo) throws Exception {
 		pageInfo.setEnableTotalCount(true);
-		List<BoardArticle> boardArticles = boardArticleService.getBoardArticles(boardArticle, pageInfo);
+		List<BoardArticle> boardArticles = boardService.getBoardArticles(boardArticle, pageInfo);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return boardArticles;
 	}
@@ -87,7 +82,7 @@ public class BoardController {
 	@RequestMapping(value = "{boardId}/article/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public BoardArticle getBoardArticle(@ModelAttribute BoardArticle boardArticle) throws Exception {
-		return boardArticleService.getBoardArticle(boardArticle);
+		return boardService.getBoardArticle(boardArticle);
 	}
 	
 	/**
@@ -99,8 +94,8 @@ public class BoardController {
 	@RequestMapping(value = "{boardId}/article", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public Article createArticle(@RequestBody BoardArticle boardArticle) throws Exception {
-		return boardArticleService.saveBoardArticle(boardArticle);
+	public BoardArticle createArticle(@RequestBody BoardArticle boardArticle) throws Exception {
+		return boardService.saveBoardArticle(boardArticle);
 	}
 	
 	/**
@@ -112,8 +107,8 @@ public class BoardController {
 	@RequestMapping(value = "{boardId}/article/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public Article updateArticle(@RequestBody BoardArticle boardArticle) throws Exception {
-		return boardArticleService.saveBoardArticle(boardArticle);
+	public BoardArticle updateArticle(@RequestBody BoardArticle boardArticle) throws Exception {
+		return boardService.saveBoardArticle(boardArticle);
 	}
 	
 	/**
@@ -126,7 +121,7 @@ public class BoardController {
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteArticle(@RequestBody BoardArticle boardArticle) throws Exception {
-		boardArticleService.deleteBoardArticle(boardArticle);
+		boardService.deleteBoardArticle(boardArticle);
 	}
 	
 	

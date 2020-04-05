@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html layout:decorate="~{index.html}">
+<div layout:fragment="content">
+	<script>
+	// document ready
+	$(document).ready(function() {
+
+	});
+	
+	// defines variables
+	const search = new duice.Map({
+		key: null,
+		value: null,
+		status: null,
+		page: 1,
+		rows: 20,
+		totalCount: -1
+	});
+	const articles = new duice.List();
+	
+	/**
+	 * Gets articles
+	 */
+	function getArticles() {
+		return new Promise(function(resolve,reject){
+			if(page){
+				search.set('page',page);
+			}
+			var data = {};
+			if(search.get('key')){
+				data[search.get('key')] = search.get('value');
+			}
+			if(search.get('status')){
+				data.status = search.get('status');
+			}
+			data.page = search.get('page');
+			data.rows = search.get('rows');
+			$.ajax({
+				 url: 'user/getUsers'
+				,type: 'GET'
+				,data: data
+			})
+			.done(function(data, textStatus, jqXHR) {
+				users.fromJson(data);
+				search.set('totalCount', __parseTotalCount(jqXHR));
+				resolve(true);
+		   	});
+		});
+	}
+	</script>
+	<th:block th:include="|../theme/application/board/default/board.html|"></th:block>
+</div>
+
+
+
+
+

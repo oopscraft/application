@@ -186,8 +186,9 @@ public class ApplicationWebController {
 	
 	@RequestMapping(value = "public/**", method = RequestMethod.GET)
 	public String forwardPublic(HttpServletRequest request) throws Exception {
-		String resource = request.getRequestURI().replace("public/", "");
-		return String.format("forward:/WEB-INF/theme/%s/%s", environment.getProperty("application.theme"), resource);
+		String resource = request.getRequestURI();
+		String resourceForward = String.format("forward:/WEB-INF/theme/%s%s", environment.getProperty("application.theme"), resource);
+		return resourceForward;
 	}
 	
 	/**
