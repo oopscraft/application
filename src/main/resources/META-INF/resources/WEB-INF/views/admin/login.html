@@ -13,12 +13,26 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/static/application.css}">
 		<script th:src="@{/static/application.js}"></script>
 		<style>
+		#messageDiv {
+			white-space: pre-line;
+			font-weight: bold;
+			text-align: center;
+			color: orangered;
+		}
 		</style>
 		<script>
 		// document ready
 		$(document).ready(function() {
 			$('#autocomplete').hide();
 			user.setFocus('id');
+		});
+		
+		// handle global key press event
+		$(document).keypress(function(e){
+			if (e.keyCode == 13){
+				$('#loginButton').focus();
+				$('#loginButton').click();
+			}
 		});
 		
 		// defines variables 
@@ -31,14 +45,41 @@
 		 * Requests login
 		 */
 		function doLogin(){
+			
+			// checks input id
+			if(duice.isEmpty(user.get('id'))){
+				printMessage('아이디 입력해라\n\ndkdkdkdkdkd');
+				user.setFocus('id');
+				return false;
+			}
+			
+			// checks input password
+			if(duice.isEmpty(user.get('password'))){
+				printMessage('패스워드 입력해라');
+				user.setFocus('password');
+				return false;
+			}
+			
+			// requests login process
 			$.ajax({
 				 url: '[[@{/admin/doLogin}]]'
 				,type: 'POST'
 				,data: user.toJson()
+				,suppressErrors: true
 			})
 			.done(function(data, textStatus, jqXHR) {
 				location.href='[[@{/admin}]]';
+		   	})
+		   	.fail(function(jqXHR, textStatus, errorThrown){
+		   		printMessage(jqXHR.responseText);
 		   	});
+		}
+		
+		/**
+		 * Prints message
+		 */
+		function printMessage(message){
+			$('#messageDiv').text(message);
 		}
 		</script>
 	</head>
@@ -53,9 +94,10 @@
 				<img th:src="@{/static/image/application.png}"/>
 				<input is="duice-ui-input" type="text" data-duice-bind="user,id"/>
 				<input is="duice-ui-input" type="password" data-duice-bind="user,password"/>
-				<button class="button" onclick="doLogin();" style="width:100%;">
+				<button id="loginButton" class="button" onclick="doLogin();" style="width:100%;">
 					<span data-th-text="#{application.global.login}"></span>
 				</button>
+				<div id="messageDiv"></div>
 			</div>
 		</div>
 	</body>

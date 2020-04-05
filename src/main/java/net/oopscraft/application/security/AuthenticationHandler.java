@@ -16,26 +16,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 
 import net.oopscraft.application.user.UserLoginRepository;
-import net.oopscraft.application.user.entity.User;
 import net.oopscraft.application.user.entity.UserLoginHistory;
 
-public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler, LogoutSuccessHandler {
+public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, LogoutSuccessHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationHandler.class);
 
@@ -161,28 +156,15 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
     	if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
         	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         	response.getWriter().flush();
-        	return;
-    	}
-    	// administrator entry point
-    	if(request.getRequestURI().startsWith("/admin")){
+    	} else {
     		response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-    		response.setHeader("Location", "/admin/login");
+    		if(request.getRequestURI().startsWith("/admin")){
+    			response.setHeader("Location", "/admin/login");
+    		}else {
+    			response.setHeader("Location", "/user/login");
+    		}
     		response.getWriter().flush();
-    		return;
     	}
 	}
-	
-	/*
-	 * AccessDeniedHandler.handle
-	 */
-	@Override
-	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-		LOGGER.warn(accessDeniedException.getMessage());
-		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-    	response.getWriter().write("Unauthorized.");
-    	response.getWriter().flush();
-	}
-
-
 
 }

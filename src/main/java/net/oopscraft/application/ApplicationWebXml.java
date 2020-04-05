@@ -31,6 +31,10 @@ public class ApplicationWebXml implements ServletContainerInitializer {
 	public void onStartup(Set<Class<?>> c, ServletContext servletContext) throws ServletException {
 		LOGGER.info("ApplicationWebXml start...");
 		
+		// error page
+		
+		
+		
 		// invokes application context
 		LOGGER.info("applicationContext:{}", Application.applicationContext);
 		if(Application.applicationContext == null) {

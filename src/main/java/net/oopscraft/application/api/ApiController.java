@@ -16,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -81,14 +80,7 @@ public class ApiController {
 				ValueMap payload = new ValueMap();
 				for(Parameter parameter : handleMethod.getMethod().getParameters()) {
 					for(Annotation annotation : parameter.getAnnotations()) {
-						if(annotation instanceof PathVariable) {
-							ValueMap parameterMap = new ValueMap();
-							String name = ((PathVariable) annotation).value();
-							Object value = Class.forName(parameter.getType().getName()).getConstructor().newInstance();
-							parameterMap.set("name", name);
-							parameterMap.set("value", value);
-							parameters.add(parameterMap);
-						}else if(annotation instanceof RequestParam) {
+						if(annotation instanceof RequestParam) {
 							ValueMap parameterMap = new ValueMap();
 							String name = ((RequestParam) annotation).value();
 							Object value = Class.forName(parameter.getType().getName()).getConstructor().newInstance();

@@ -19,6 +19,9 @@ $(document).ajaxSend(function(event, jqXHR, settings) {
 // Checks error except cancellation(readyState = 0)
 $(document).ajaxError(function(event, jqXHR, settings, thrownError){
 	console.debug('$(document).ajaxError', jqXHR);
+	if(settings.suppressErrors){
+		return;
+	}
 	if(jqXHR.readyState > 0){
 		console.error(event, jqXHR, settings, thrownError);
 		new duice.Alert(jqXHR.responseText).open();

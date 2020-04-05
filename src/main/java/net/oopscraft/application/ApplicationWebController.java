@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -29,10 +28,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 
+import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.locale.LocaleService;
 import net.oopscraft.application.security.UserDetails;
@@ -70,36 +69,25 @@ public class ApplicationWebController {
 	@Autowired
 	LocaleResolver localeResolver;
 	
-	private boolean isViewRequest() {
-		String contentType = request.getHeader("Content-Type");
-		contentType = response.getContentType();
-		if(contentType != null && MediaType.TEXT_HTML_VALUE.startsWith(contentType)){
-			return true;
-		}
-		return false;
-	}
-	
 	/**
 	 * Default exception handler
 	 * @param request
 	 * @param response
 	 * @param exception
-	 * @return
 	 * @throws Exception
 	 */
 	@ExceptionHandler(Exception.class)
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	@ResponseBody
-	public ValueMap handleException(HttpServletRequest request, HttpServletResponse response, Exception exception) throws Exception {
-		LOGGER.error(exception.getMessage(), exception);
-		if(isViewRequest()) {
-			throw exception;
-		}else {
+	public void handleException(HttpServletRequest request, HttpServletResponse response, Exception exception) throws Exception {
+		LOGGER.error(exception.getMessage());
+		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
 			ValueMap responseMap = new ValueMap();
 			responseMap.set("exception", exception.getClass().getName());
 			responseMap.set("message", exception.getMessage());
 			responseMap.set("stackTrace", ExceptionUtils.getRootCauseMessage(exception));
-			return responseMap;
+	    	response.getWriter().write(JsonConverter.toJson(responseMap));
+	    	response.getWriter().flush();
+		}else {
+			throw exception;
 		}
 	}
 	
