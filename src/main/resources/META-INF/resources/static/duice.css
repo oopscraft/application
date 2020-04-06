@@ -812,6 +812,7 @@ ul[is="duice-ui-pagination"],
 table[is="duice-ui-table"],
 .duice-ui-table {
 	border-collapse: collapse;
+	margin: 0px;
 }
 .duice-ui-table__caption {
 	font-weight: bold;

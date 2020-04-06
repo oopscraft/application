@@ -9,10 +9,11 @@
 <script src="polyfill/classList.js"></script>
 <script src="duice.js"></script>
 <link rel="stylesheet" type="text/css" href="duice.css">
-<!-- suneditor -->
+<!-- suneditor 
 <script src="plugin/duice-plugin-suneditor.js"></script>
 <script src="plugin/suneditor/suneditor.min.js"></script>
 <link rel="stylesheet" type="text/css" href="plugin/suneditor/css/suneditor.min.css">
+-->
 <script>
 /**
  * integrateWith
@@ -66,6 +67,20 @@ user.fromJson({
 	page: 1,
 	rows: 10,
 	totalCount: 89
+});
+
+user.onBeforeChange(function(name, value){
+	console.log('Map.onBeforeChange', name, value);
+	return new Promise(function(resolve, reject){
+		new duice.Confirm('Do you want to change ['+name+'] is ['+ value +']')
+		.onAfterConfirm(function(e){
+			resolve(true);
+		})
+		.onAfterClose(function(e){
+			resolve(false);
+		})
+		.open();
+	});
 });
 
 /**
@@ -314,12 +329,58 @@ users.fromJson([
         color: '#ff0000'
     }
 ]);
-users.onBeforeChangeIndex(function(index){
-	console.log('onBeforeChangeIndex',index);
+
+/**
+ * Tests users event listener
+ */
+// before select row event
+users.onBeforeSelectRow(function(selectedRow){
+	console.log('onBeforeSelectRow',selectedRow.toJson());
 });
-users.onAfterChangeIndex(function(index){
-	console.log('onAfterChangeIndex',index);
-	console.log('user', users.get(index));
+
+// after select row event
+users.onAfterSelectRow(function(selectedRow){
+	console.log('onAfterSelectRow', selectedRow.toJson());
+});
+
+// before move row event
+users.onBeforeMoveRow(function(sourceRow, targetRow){
+	console.log('onBeforeMoveRow', sourceRow.toJson(), (targetRow?targetRow.toJson():targetRow));
+	return new Promise(function(resolve, reject){
+		new duice.Confirm('Do you want to move?')
+		.onAfterConfirm(function(){
+			resolve(true);
+		})
+		.onAfterClose(function(){
+			reject(false);
+		})
+		.open();
+	});
+});
+
+// after move row event
+users.onAfterMoveRow(function(sourceRow, targetRow){
+	console.log('onAfterMoveRow', sourceRow.toJson(), (targetRow?targetRow.toJson():targetRow));
+});
+
+// before change row event
+users.onBeforeChangeRow(function(name, value){
+	console.log('name', name, 'value', value);
+	return new Promise(function(resolve, reject){
+		new duice.Confirm('Do you want to change ['+name+'] is ['+ value +']')
+		.onAfterConfirm(function(e){
+			resolve(true);
+		})
+		.onAfterClose(function(e){
+			resolve(false);
+		})
+		.open();
+	});
+});
+
+// after change row event
+users.onAfterChangeRow(function(name, value){
+	console.log('onAfterChangeRow ' + name + ' is ' + value);
 });
 
 /**
@@ -368,10 +429,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 </script>
 <style>
+html {
+	font-size: 75%;
+}
 body {
-	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	line-height: 2.4;
+	font-family: sans-serif;
+	font-size: 1rem;
+	line-height: 2.0;
 	margin: 0px;
 	padding: 20px;
 	overflow-x: hidden;
@@ -415,37 +479,6 @@ body {
 .textarea:focus {
 	outline: none;
 }
-/*
-.table {
-	border-collapse: collapse;
-	border: solid 1px #ccc;
-}
-.table > tr ,
-.table > thead > tr ,
-.table > tbody > tr {
-	line-height: 2.4;
-}
-.table > tr > th ,
-.table > thead > tr > th ,
-.table > tbody > tr > th {
-	line-height: inherit;
-	font-weight: bold;
-	margin: 0rem;
-	padding: 0.2rem 0.5rem;
-	border: solid 1px #ddd;
-	background: #f7f7f7;
-	text-align: center;
-	text-overflow: ellipsis;
-}
-.table > tr > td ,
-.table > tbody > tr > td {
-	height: inherit;
-	line-height: inherit;
-	border: dotted 1px #ccc;
-	padding: 1px;
-	text-overflow: ellipsis;
-}
-*/
 </style>
 </head>
 <body>
@@ -480,7 +513,7 @@ body {
 				<div style="display:flex; justify-content:space-between; align-items: flex-end;">
 					<h3>duice.ui.MapUIElement <small>(binding to user)</small></h3>
 					<div>
-						<button onclick="user.setFocus('name','message');">setFocus('name','message')</button>
+						<button onclick="user.setFocus('name','This is tooltip message.');">setFocus('name','message')</button>
 						<button onclick="
 							user.getNames().forEach(function(name){
 								user.setReadonly(name,true);
@@ -691,7 +724,7 @@ body {
 							<th>duice.ui.Pagination</th>
 							<td>
 								<ul is="duice-ui-pagination" data-duice-bind="user,page,rows,totalCount" data-duice-size="5" class="pagination">
-									<li data-page="{{$context.page}}" onclick="alert(user.get('page'));" class="page-link"></li>
+									<li data-page="[@duice[$context.page]]" onclick="alert(this.dataset.page);user.set('page',this.dataset.page);" class="page-link"></li>
 								</ul>
 							</td>
 							<td>
@@ -777,7 +810,7 @@ body {
 									(binding to users)
 									-
 									<span is="duice-ui-scriptlet" data-duice-bind="users">
-										return $context.users.getSize();
+										return $context.users.getRowCount();
 									</span>
 									Rows
 								</small>
@@ -808,9 +841,9 @@ body {
 							<button onclick="users.setDisable(false);">
 								setDisable(false)
 							</button>
-							<button onclick="users.add(new duice.Map({}));">add(map)</button>
-							<button onclick="users.insert(users.getIndex(), new duice.Map({}));">insert(map)</button>
-							<button onclick="users.remove(users.getIndex());">remove(index)</button>
+							<button onclick="users.addRow(new duice.Map({}));">addRow(map)</button>
+							<button onclick="users.insertRow(users.getRowIndex(), new duice.Map({}));">insertRow(map)</button>
+							<button onclick="users.removeRow(users.getRowIndex());">removeRow(index)</button>
 							<button onclick="alert(JSON.stringify(users.toJson()));">toJson()</button>
 							<button onclick="alert(users.isDirty());">isDirty()</button>
 							<button onclick="users.reset();">reset()</button>
@@ -822,6 +855,13 @@ body {
 							data-duice-bind="users,user" 
 							data-duice-selectable="true"
 							data-duice-editable="true"
+							data-duice-onRowSelected="
+							function(index){
+								if(1 > 0){
+									console.log(index);
+								}
+							}
+							"
 							class="table table-bordered"
 							style="width:100%;">
 							<thead class="thead-light">
@@ -868,13 +908,15 @@ body {
 							<tfoot>
 								<tr>
 									<td colspan="20" style="text-align:right;">
-										Average Balance :
+										11Average Balance :
 										<span is="duice-ui-scriptlet" data-duice-bind="users">
+											<![CDATA[
 											var totalBalance = 0;
 											$context.users.forEach(function(item){
 												totalBalance += isNaN(item.get('balance')) ? 0 : Number(item.get('balance'));
 											});
-											return Math.ceil(totalBalance/$context.users.getSize());
+											return Math.ceil(totalBalance/$context.users.getRowCount());
+											]]>
 										</span>
 										|
 										Total Balance :
@@ -904,7 +946,7 @@ body {
 									(binding to users)
 									-
 									<span is="duice-ui-scriptlet" data-duice-bind="users">
-										return $context.users.getSize();
+										return $context.users.getRowCount();
 									</span>
 									Rows
 								</small>
@@ -989,7 +1031,7 @@ body {
 				<br/>
 				
 				<!-- ================================================================ -->
-				<!-- duice.ui.UList(hierarchy)									  -->
+				<!-- duice.ui.UList(hierarchy)									 	 -->
 				<!-- ================================================================ -->
 				<div>
 					<div style="padding:1px; display:flex; justify-content:space-between; align-items:baseline;">
@@ -999,7 +1041,7 @@ body {
 									(binding to users)
 									-
 									<span is="duice-ui-scriptlet" data-duice-bind="users">
-										return $context.users.getSize();
+										return $context.users.getRowCount();
 									</span>
 									Rows
 								</small>
@@ -1055,7 +1097,7 @@ body {
 									$context.users.forEach(function(item){
 										totalBalance += isNaN(item.get('balance')) ? 0 : Number(item.get('balance'));
 									});
-									return Math.ceil(totalBalance/$context.users.getSize());
+									return Math.ceil(totalBalance/$context.users.getRowCount());
 								</span>
 								|
 								Total Balance :
@@ -1108,7 +1150,7 @@ body {
 									$context.users.forEach(function(item){
 										totalBalance += isNaN(item.get('balance')) ? 0 : Number(item.get('balance'));
 									});
-									return Math.ceil(totalBalance/$context.users.getSize());
+									return Math.ceil(totalBalance/$context.users.getRowCount());
 								</span>
 								|
 								Total Balance :
@@ -1163,7 +1205,7 @@ body {
 									$context.users.forEach(function(item){
 										totalBalance += isNaN(item.get('balance')) ? 0 : Number(item.get('balance'));
 									});
-									return Math.ceil(totalBalance/$context.users.getSize());
+									return Math.ceil(totalBalance/$context.users.getRowCount());
 								</span>
 								|
 								Total Balance :
@@ -1218,7 +1260,7 @@ body {
 									$context.users.forEach(function(item){
 										totalBalance += isNaN(item.get('balance')) ? 0 : Number(item.get('balance'));
 									});
-									return Math.ceil(totalBalance/$context.users.getSize());
+									return Math.ceil(totalBalance/$context.users.getRowCount());
 								</span>
 								|
 								Total Balance :
@@ -1246,95 +1288,167 @@ body {
 		</div>
 		<div class="chapter__bodyDiv">
 			<div>
+				<!-- ============================================================== -->
+				<!-- duice.Progress									  				-->
+				<!-- ============================================================== -->
 				<button onclick="
 					var progress = new duice.Progress(document.body);
 					progress.start();
-					duice.delayCall(2000, progress.stop, progress);
+					var handler = setTimeout(function(){
+						progress.stop();
+						clearTimeout(handler);
+					},2000);
 				">
 				progress
 				</button>
-				<button onclick="
-					new duice.Alert('alert message...')
-					.onBeforeOpen(function(){
-						return confirm('beforeOpen');
-					})
-					.onAfterOpen(function(){
-						alert('afterOpen');
-					})
-					.onBeforeClose(function(){
-						return confirm('beforeClose');
-					})
-					.onAfterClose(function(){
-						alert('afterClose');
-					})
-					.open();
-				">duice.dialog.Alert</button>
-				<button onclick="
-					new duice.Confirm('confirm message...')
-					.onBeforeOpen(function(){
-						return confirm('beforeOpen');
-					})
-					.onAfterOpen(function(){
-						alert('afterOpen');
-					})
-					.onBeforeClose(function(){
-						return confirm('beforeClose');
-					})
-					.onAfterClose(function(){
-						alert('afterClose');
-					})
-					.onBeforeConfirm(function(){
-						return confirm('beforeConfirm');
-					})
-					.onAfterConfirm(function(){
-						alert('afterConfirm');
-					})
-					.open();
-				">duice.ui.Confirm</button>
-				<button onclick="
-					new duice.Prompt('enter value...')
-					.onBeforeOpen(function(){
-						return confirm('beforeOpen');
-					})
-					.onAfterOpen(function(){
-						alert('afterOpen');
-					})
-					.onBeforeClose(function(){
-						return confirm('beforeClose');
-					})
-					.onAfterClose(function(){
-						alert('afterClose');
-					})
-					.onBeforeConfirm(function(){
-						return confirm('beforeConfirm');
-					})
-					.onAfterConfirm(function(){
-						alert('afterConfirm:' + this.getValue());
-					})
-					.open();
-				">duice.dialog.Prompt</button>
-				<button onclick="
-					var dialog = new duice.Dialog(document.getElementById('dialog'))
-					.onBeforeOpen(function(){
-						return confirm('beforeOpen');
-					})
-					.onAfterOpen(function(){
-						alert('afterOpen');
-					})
-					.onBeforeClose(function(){
-						return confirm('beforeClose');
-					})
-					.onAfterClose(function(){
-						alert('afterClose');
-					})
-					.onBeforeConfirm(function(){
-						alert('beforeConfirm');
-					})
-					.onAfterConfirm(function(){
-						alert('afterConfirm');
-					})
-					.open();
-				">duice.dialog.Dialog</button>
+				<!-- ============================================================== -->
+				<!-- duice.Alert									  				-->
+				<!-- ============================================================== -->
+				<script>
+					async function testAlert() {
+						await new duice.Alert('alert message...')
+						.onBeforeOpen(function(){
+							console.log('onBeforeOpen');
+							return confirm('onBeforeOpen');
+						})
+						.onAfterOpen(function(){
+							console.log('onAfterOpen');
+							alert('onAfterOpen');
+						})
+						.onBeforeClose(function(){
+							console.log('onBeforeClose');
+							return confirm('onBeforeClose');
+						})
+						.onAfterClose(function(){
+							console.log('onAfterClose');
+							alert('onAfterClose');
+						})
+						.open();
+						alert('complete');
+					}
+				</script>
+				<button onclick="testAlert();">duice.Alert</button>
+				<script>
+					async function testAlertFunction() {
+						await duice.alert('alert message...');
+						alert('complete');
+					}
+				</script>
+				<button onclick="testAlertFunction();">duice.alert(message)</button>
+				<!-- ============================================================== -->
+				<!-- duice.Confirm									  				-->
+				<!-- ============================================================== -->
+				<script>
+					async function testConfirm() {
+						await new duice.Confirm('confirm message...')
+						.onBeforeOpen(function(){
+							console.log('onBeforeOpen');
+							return confirm('onBeforeOpen');
+						})
+						.onAfterOpen(function(){
+							console.log('onAfterOpen');
+							alert('onAfterOpen');
+						})
+						.onBeforeClose(function(){
+							console.log('onBeforeClose');
+							return confirm('onBeforeClose');
+						})
+						.onAfterClose(function(){
+							console.log('onAfterClose');
+							alert('onAfterClose');
+						})
+						.onBeforeConfirm(function(){
+							console.log('onBeforeConfirm');
+							return confirm('onBeforeConfirm');
+						})
+						.onAfterConfirm(function(){
+							console.log('onAfterConfirm');
+							alert('onAfterConfirm');
+						})
+						.open();
+						alert('complete');
+					}
+				</script>
+				<button onclick="testConfirm();">duice.Confirm</button>
+				<script>
+					async function testConfirmFunction() {
+						var result = await duice.confirm('confirm message...');
+						alert('result is ' + result);
+					}
+				</script>
+				<button onclick="testConfirmFunction();">duice.confirm(message)</button>
+				<!-- ============================================================== -->
+				<!-- duice.Prompt									  				-->
+				<!-- ============================================================== -->
+				<script>
+					async function testPrompt() {
+						await new duice.Prompt('enter value...')
+						.onBeforeOpen(function(){
+							return confirm('onBeforeOpen');
+						})
+						.onAfterOpen(function(){
+							alert('onAfterOpen');
+						})
+						.onBeforeClose(function(){
+							return confirm('onBeforeClose');
+						})
+						.onAfterClose(function(){
+							alert('onAfterClose');
+						})
+						.onBeforeConfirm(function(){
+							return confirm('onBeforeConfirm:' + this.getValue());
+						})
+						.onAfterConfirm(function(){
+							alert('onAfterConfirm:' + this.getValue());
+						})
+						.open();
+						alert('complete');
+					}
+				</script>
+				<button onclick="testPrompt();">duice.dialog.Prompt</button>
+				<script>
+					async function testPromptFunction() {
+						var value = await duice.prompt('prompt message...');
+						alert('value is ' + value);
+					}
+				</script>
+				<button onclick="testPromptFunction();">duice.prompt(message)</button>
+				<!-- ============================================================== -->
+				<!-- duice.Dialog									  				-->
+				<!-- ============================================================== -->
+				<script>
+					async function testDialog() {
+						await new duice.Dialog(document.getElementById('dialog'))
+						.onBeforeOpen(function(){
+							return confirm('onBeforeOpen');
+						})
+						.onAfterOpen(function(){
+							alert('onAfterOpen');
+						})
+						.onBeforeClose(function(){
+							return confirm('onBeforeClose');
+						})
+						.onAfterClose(function(){
+							alert('onAfterClose');
+						})
+						.onBeforeConfirm(function(){
+							return confirm('onBeforeConfirm');
+						})
+						.onAfterConfirm(function(){
+							alert('onAfterConfirm');
+						})
+						.open();
+						alert('complete');
+					}
+				</script>
+				<button onclick="testDialog();">duice.dialog.Dialog</button>
+				<script>
+					async function testDialogFunction() {
+						await duice.dialog(document.getElementById('dialog'));
+						alert('complete');
+					}
+				</script>
+				<button onclick="testDialogFunction();">duice.dialog(HTMLElement)</button>
 				<dialog id="dialog" style="width:600px; padding:1rem;">
 					<div style="text-align:center;">
 						<img is="duice-ui-img" data-duice-bind="user,image" style="height:64px;"/>

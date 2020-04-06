@@ -4,7 +4,7 @@
 	<script>
 	// document ready
 	$(document).ready(function() {
-
+		getArticles();
 	});
 	
 	// defines variables
@@ -13,7 +13,7 @@
 		value: null,
 		status: null,
 		page: 1,
-		rows: 20,
+		rows: 10,
 		totalCount: -1
 	});
 	const articles = new duice.List();
@@ -21,7 +21,7 @@
 	/**
 	 * Gets articles
 	 */
-	function getArticles() {
+	function getArticles(page) {
 		return new Promise(function(resolve,reject){
 			if(page){
 				search.set('page',page);
@@ -36,12 +36,13 @@
 			data.page = search.get('page');
 			data.rows = search.get('rows');
 			$.ajax({
-				 url: 'user/getUsers'
+				 url: '[[@{/api/board/TEST_BOARD/article}]]'
 				,type: 'GET'
 				,data: data
 			})
 			.done(function(data, textStatus, jqXHR) {
-				users.fromJson(data);
+				console.log('data',data);
+				articles.fromJson(data);
 				search.set('totalCount', __parseTotalCount(jqXHR));
 				resolve(true);
 		   	});

@@ -1,2 +1,86 @@
-fdsafdsa
-1212121
+<div class="container">
+	<div class="row align-items-end">
+		<div class="col">
+			<img th:src="${board.icon}"/>
+			<span th:text="${board.name}" class="font-weight-bold" style="font-size:1.2rem;"></span>
+		</div>
+		<div class="col-3">
+			<div class="input-group">
+				<select class="form-control">
+					<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+					<option th:each="category:${board.categories}" th:value="${category.id}" th:text="${category.name}"></option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<div class="row" style="margin-top:2px;">
+		<div class="col">
+			<table is="duice-ui-table" 
+				data-duice-bind="articles,article" 
+				class="table table-sm"
+				style="width:100%;">
+				<thead>
+					<tr>
+						<th data-th-text="#{application.global.no}">No</th>
+						<th data-th-text="#{application.board.article.title}">Title</th>
+						<th data-th-text="#{application.board.article.author}">Author</th>
+						<th data-th-text="#{application.board.article.writeDate}">Writing Date</th>
+						<th data-th-text="#{application.board.article.reply}">Reply</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="text-center">
+							<span is="duice-ui-scriptlet" data-duice-bind="articles">
+								return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+							</span>
+						</td>
+						<td>
+							<a href="http://www.naver.com">
+								<span is="duice-ui-span" data-duice-bind="article,title"></span>
+							</a>
+						</td>
+						<td class="text-center">
+							<span is="duice-ui-span" data-duice-bind="article,author"></span>
+						</td>
+						<td class="text-center">
+							<span is="duice-ui-span" data-duice-bind="article,writeDate"></span>
+						</td>
+						<td class="text-center">
+							<span is="duice-ui-span" data-duice-bind="article,replyCount"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row align-items-end" style="margin-top:2px;">
+		<div class="col-4">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<select class="form-control">
+						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+						<option value="title" data-th-text="#{application.user.id}">ID</option>
+						<option value="contents" data-th-text="#{application.user.name}">Name</option>
+					</select>
+				</div>
+				<input type="text" class="form-control"/>
+				<div class="input-group-append">
+					<button class="btn btn-primary">
+						검색
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-4 text-center">
+			<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+				<li data-page="[@duice[$context.page]]" onclick="getArticles(this.dataset.page);"></li>
+			</ul>
+		</div>
+		<div class="col-4 text-right">
+			<button class="btn btn-primary">
+				글쓰기
+			</button>
+		</div>
+	</div>
+</div>

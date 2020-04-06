@@ -26,15 +26,10 @@ public class BoardController {
 //	@PreAuthorize("this.hasAccessAuthority(#boardId)")
 	@RequestMapping(value="{boardId}", method = RequestMethod.GET)
 	public ModelAndView list(@PathVariable("boardId")String boardId) throws Exception {
+		Board board = boardService.getBoard(boardId);
 		ModelAndView modelAndView = new ModelAndView("board/board.html");
+		modelAndView.addObject("board", board);
 		return modelAndView;
-		
-		
-//		Board board = boardService.getBoard(boardId);
-//		ModelAndView modelAndView = new ModelAndView("board/list.tiles");
-//		modelAndView.addObject("boardController", this);
-//		modelAndView.addObject("board", board);
-//		return modelAndView;
 	}
 	
 	

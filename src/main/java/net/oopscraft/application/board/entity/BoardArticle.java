@@ -8,7 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Formula;
 
 @Entity
 @Table(name = "APP_BORD_ATCL_INFO")
@@ -95,6 +98,9 @@ public class BoardArticle {
 	@Column(name = "MDFY_DATE")
 	Date modifyDate;
 	
+	@Formula("(SELECT COUNT(*) FROM APP_BORD_ATCL_RPLY_INFO A WHERE A.BORD_ID = BORD_ID AND A.ATCL_ID = ATCL_ID)")
+	long replyCount = 0;
+	
 	public BoardArticle() {}
 	
 	public BoardArticle(String boardId, String id) {
@@ -174,4 +180,12 @@ public class BoardArticle {
 		this.modifyDate = modifyDate;
 	}
 
+	public long getReplyCount() {
+		return replyCount;
+	}
+
+	public void setReplyCount(long replyCount) {
+		this.replyCount = replyCount;
+	}
+	
 }

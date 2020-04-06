@@ -3170,12 +3170,6 @@ var duice;
                 prevLi.classList.add('duice-ui-pagination__li--prev');
                 this.ul.appendChild(prevLi);
                 this.lis.push(prevLi);
-                prevLi.addEventListener('click', function (event) {
-                    _this.page = prevPage;
-                    _this.setChanged();
-                    _this.notifyObservers(_this);
-                    this.click();
-                });
                 if (prevPage < 1) {
                     prevLi.onclick = null;
                     prevLi.style.pointerEvents = 'none';
@@ -3185,13 +3179,6 @@ var duice;
                 for (var i = startPage; i <= endPage; i++) {
                     const page = i;
                     var li = this.createPageItem(page, String(page));
-                    // add event listener
-                    li.addEventListener('click', function (event) {
-                        _this.page = page;
-                        _this.setChanged();
-                        _this.notifyObservers(_this);
-                        this.click();
-                    }, true);
                     this.ul.appendChild(li);
                     this.lis.push(li);
                     if (page === this.page) {
@@ -3206,12 +3193,6 @@ var duice;
                 nextLi.classList.add('duice-ui-pagination__li--next');
                 this.ul.appendChild(nextLi);
                 this.lis.push(nextLi);
-                nextLi.addEventListener('click', function (event) {
-                    _this.page = nextPage;
-                    _this.setChanged();
-                    _this.notifyObservers(_this);
-                    this.click();
-                });
                 if (nextPage > totalPage) {
                     nextLi.onclick = null;
                     nextLi.style.pointerEvents = 'none';
