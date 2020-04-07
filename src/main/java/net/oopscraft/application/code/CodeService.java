@@ -61,7 +61,7 @@ public class CodeService {
 	
 	/**
 	 * Gets code
-	 * @param id
+	 * @param articleId
 	 * @return
 	 * @throws Exception
 	 */

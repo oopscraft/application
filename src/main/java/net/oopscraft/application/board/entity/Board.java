@@ -27,7 +27,7 @@ import net.oopscraft.application.security.SecurityPolicy;
 import net.oopscraft.application.user.entity.Authority;
 
 @Entity
-@Table(name = "APP_BORD_INFO")
+@Table(name = "APP_BORD")
 public class Board {
 
 	@Id
@@ -50,7 +50,7 @@ public class Board {
 	@Column(name = "ROWS_PER_PAGE")
 	int rowsPerPage = 10;
 	
-	@Formula("(SELECT COUNT(*) FROM APP_BORD_ATCL_INFO A WHERE A.BORD_ID = BORD_ID)")
+	@Formula("(SELECT COUNT(*) FROM APP_BORD_ATCL A WHERE A.BORD_ID = BORD_ID)")
 	long articleCount = 0;
 
 	@Column(name = "RPLY_USE_YN", length = 1)
@@ -80,7 +80,7 @@ public class Board {
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_BORD_AUTH_ACES_MAP", 
+		name = "APP_BORD_AUTH_ACES", 
 		joinColumns = @JoinColumn(name = "BORD_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
@@ -94,7 +94,7 @@ public class Board {
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_BORD_AUTH_READ_MAP", 
+		name = "APP_BORD_AUTH_READ", 
 		joinColumns = @JoinColumn(name = "BORD_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
@@ -108,7 +108,7 @@ public class Board {
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_BORD_AUTH_WRIT_MAP", 
+		name = "APP_BORD_AUTH_WRIT", 
 		joinColumns = @JoinColumn(name = "BORD_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),

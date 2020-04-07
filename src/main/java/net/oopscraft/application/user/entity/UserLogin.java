@@ -10,9 +10,9 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_USER_LOGN_HIST")
-@IdClass(UserLoginHistory.Pk.class)
-public class UserLoginHistory {
+@Table(name = "APP_USER_LOGN")
+@IdClass(UserLogin.Pk.class)
+public class UserLogin {
 	
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = 3127781407229494383L;

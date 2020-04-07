@@ -10,9 +10,11 @@ import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,8 +40,16 @@ public class BoardController {
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public List<Board> getBoards(@ModelAttribute Board board, @ModelAttribute PageInfo pageInfo) throws Exception {
-		pageInfo.setEnableTotalCount(true);
+	public List<Board> getBoards(
+		 @RequestParam(value="id", required=false)String id
+		,@RequestParam(value="name", required=false)String name
+		,@RequestParam(value="rows", required=false, defaultValue="100")int rows
+		,@RequestParam(value="page", required=false, defaultValue="1")int page
+	) throws Exception {
+		Board board = new Board();
+		board.setId(id);
+		board.setName(name);
+		PageInfo pageInfo = new PageInfo(rows, page, true);
 		List<Board> boards = boardService.getBoards(board, pageInfo);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return boards;
@@ -52,9 +62,11 @@ public class BoardController {
 	 * @throws Exception
 	 */
 	//@PreAuthorize("this.hasAccessAuthority(#boardId)")
-	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Board getBoard(@ModelAttribute Board board) throws Exception {
-		return boardService.getBoard(board.getId());
+	@RequestMapping(value = "{boardId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public Board getBoard(
+		@PathVariable("boardId")String boardId
+	) throws Exception {
+		return boardService.getBoard(boardId);
 	}
 	
 	/**
@@ -66,8 +78,18 @@ public class BoardController {
 	 */
 	@RequestMapping(value = "{boardId}/article", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<BoardArticle> getBoardArticles(@ModelAttribute BoardArticle boardArticle, @ModelAttribute PageInfo pageInfo) throws Exception {
-		pageInfo.setEnableTotalCount(true);
+	public List<BoardArticle> getBoardArticles(
+		 @PathVariable("boardId")String boardId
+		,@RequestParam(value="title", required=false)String title
+		,@RequestParam(value="contents", required=false)String contents
+		,@RequestParam(value="rows", required=false, defaultValue="100")int rows
+		,@RequestParam(value="page", required=false, defaultValue="1")int page
+	) throws Exception {
+		BoardArticle boardArticle = new BoardArticle();
+		boardArticle.setBoardId(boardId);
+		boardArticle.setTitle(title);
+		boardArticle.setContents(contents);
+		PageInfo pageInfo = new PageInfo(rows, page, true);
 		List<BoardArticle> boardArticles = boardService.getBoardArticles(boardArticle, pageInfo);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
 		return boardArticles;
@@ -79,50 +101,54 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "{boardId}/article/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "{boardId}/article/{articleId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public BoardArticle getBoardArticle(@ModelAttribute BoardArticle boardArticle) throws Exception {
+	public BoardArticle getBoardArticle(
+		 @PathVariable("boardId")String boardId
+		,@PathVariable("articleId")String articleId
+	) throws Exception {
+		BoardArticle boardArticle = new BoardArticle(boardId, articleId);
 		return boardService.getBoardArticle(boardArticle);
 	}
 	
-	/**
-	 * Creates board article
-	 * @param article
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "{boardId}/article", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
-	public BoardArticle createArticle(@RequestBody BoardArticle boardArticle) throws Exception {
-		return boardService.saveBoardArticle(boardArticle);
-	}
-	
-	/**
-	 * Updates board article
-	 * @param article
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "{boardId}/article/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
-	public BoardArticle updateArticle(@RequestBody BoardArticle boardArticle) throws Exception {
-		return boardService.saveBoardArticle(boardArticle);
-	}
-	
-	/**
-	 * Deletes board article
-	 * @param article
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "{boardId}/article/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteArticle(@RequestBody BoardArticle boardArticle) throws Exception {
-		boardService.deleteBoardArticle(boardArticle);
-	}
+//	/**
+//	 * Creates board article
+//	 * @param article
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value = "{boardId}/article", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@ResponseBody
+//	@Transactional(rollbackFor = Exception.class)
+//	public BoardArticle createArticle(@RequestBody BoardArticle boardArticle) throws Exception {
+//		return boardService.saveBoardArticle(boardArticle);
+//	}
+//	
+//	/**
+//	 * Updates board article
+//	 * @param article
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value = "{boardId}/article/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@ResponseBody
+//	@Transactional(rollbackFor = Exception.class)
+//	public BoardArticle updateArticle(@RequestBody BoardArticle boardArticle) throws Exception {
+//		return boardService.saveBoardArticle(boardArticle);
+//	}
+//	
+//	/**
+//	 * Deletes board article
+//	 * @param article
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value = "{boardId}/article/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@ResponseBody
+//	@Transactional(rollbackFor = Exception.class)
+//	public void deleteArticle(@RequestBody BoardArticle boardArticle) throws Exception {
+//		boardService.deleteBoardArticle(boardArticle);
+//	}
 	
 	
 	

@@ -2,7 +2,7 @@
 	<div class="row align-items-end">
 		<div class="col">
 			<img th:src="${board.icon}"/>
-			<span th:text="${board.name}" class="font-weight-bold" style="font-size:1.2rem;"></span>
+			<span th:text="${board.name}" class="font-weight-bold" style="font-size:1.4rem;"></span>
 		</div>
 		<div class="col-3">
 			<div class="input-group">
@@ -36,7 +36,7 @@
 							</span>
 						</td>
 						<td>
-							<a href="http://www.naver.com">
+							<a data-id="[@duice[$context.article.get('id')]]" href="#" onclick="javascript:readArticle(this.dataset.id);">
 								<span is="duice-ui-span" data-duice-bind="article,title"></span>
 							</a>
 						</td>
@@ -72,7 +72,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-4 text-center">
+		<div class="col text-center">
 			<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
 				<li data-page="[@duice[$context.page]]" onclick="getArticles(this.dataset.page);"></li>
 			</ul>

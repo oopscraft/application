@@ -10,21 +10,19 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_BORD_ATCL_FILE_INFO")
+@Table(name = "APP_BORD_ATCL_FILE")
 @IdClass(BoardArticleFile.Pk.class)
 public class BoardArticleFile {
 
 	public static class Pk implements Serializable {
-		private static final long serialVersionUID = 4612920412687440925L;
-		String boardId;
+		private static final long serialVersionUID = 3127781407229494383L;
+		public Pk() {}
+		public Pk(String articleId, String id) {
+			this.articleId = articleId;
+			this.id = id;
+		}
 		String articleId;
 		String id;
-		public String getBoardId() {
-			return boardId;
-		}
-		public void setBoardId(String boardId) {
-			this.boardId = boardId;
-		}
 		public String getArticleId() {
 			return articleId;
 		}
@@ -42,7 +40,6 @@ public class BoardArticleFile {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((articleId == null) ? 0 : articleId.hashCode());
-			result = prime * result + ((boardId == null) ? 0 : boardId.hashCode());
 			result = prime * result + ((id == null) ? 0 : id.hashCode());
 			return result;
 		}
@@ -60,11 +57,6 @@ public class BoardArticleFile {
 					return false;
 			} else if (!articleId.equals(other.articleId))
 				return false;
-			if (boardId == null) {
-				if (other.boardId != null)
-					return false;
-			} else if (!boardId.equals(other.boardId))
-				return false;
 			if (id == null) {
 				if (other.id != null)
 					return false;
@@ -73,13 +65,9 @@ public class BoardArticleFile {
 			return true;
 		}
 	}
-
-	@Id
-	@Column(name = "BORD_ID", length = 32)
-	String boardId;
 	
 	@Id
-	@Column(name = "ATCL_ID", length = 32)
+	@Column(name = "ATCL_ID")
 	String articleId;
 	
 	@Id

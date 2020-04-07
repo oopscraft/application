@@ -10,7 +10,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_CODE_ITEM_INFO")
+@Table(name = "APP_CODE_ITEM")
 @IdClass(CodeItem.Pk.class)
 public class CodeItem {
 	

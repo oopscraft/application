@@ -9,7 +9,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_BORD_CATE_INFO")
+@Table(name = "APP_BORD_CATE")
 @IdClass(BoardCategory.Pk.class)
 public class BoardCategory {
 	

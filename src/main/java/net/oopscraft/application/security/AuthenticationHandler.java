@@ -28,7 +28,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.web.servlet.LocaleResolver;
 
 import net.oopscraft.application.user.UserLoginRepository;
-import net.oopscraft.application.user.entity.UserLoginHistory;
+import net.oopscraft.application.user.entity.UserLogin;
 
 public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, LogoutSuccessHandler {
 	
@@ -74,7 +74,7 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 			}
 			
 			// Saves Login History
-			UserLoginHistory userLogin = new UserLoginHistory();
+			UserLogin userLogin = new UserLogin();
 			userLogin.setUserId(userDetails.getUsername());
 			userLogin.setDate(new Date());
 			userLogin.setSuccessYn("Y");
@@ -117,7 +117,7 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 		
 		// Saves Login History
 		if(exception instanceof UsernameNotFoundException == false) {
-			UserLoginHistory userLogin = new UserLoginHistory();
+			UserLogin userLogin = new UserLogin();
 			userLogin.setUserId(request.getParameter("id"));
 			userLogin.setDate(new Date());
 			userLogin.setSuccessYn("N");

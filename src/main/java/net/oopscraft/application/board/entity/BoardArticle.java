@@ -8,13 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Lob;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Formula;
-
 @Entity
-@Table(name = "APP_BORD_ATCL_INFO")
+@Table(name = "APP_BORD_ATCL")
 @IdClass(BoardArticle.Pk.class)
 public class BoardArticle {
 	
@@ -25,6 +22,11 @@ public class BoardArticle {
 		private static final long serialVersionUID = -1395524870126554667L;
 		String boardId;
 		String id;
+		public Pk() {}
+		public Pk(String boardId, String id) {
+			this.boardId = boardId;
+			this.id = id;
+		}
 		public String getBoardId() {
 			return boardId;
 		}
@@ -76,7 +78,7 @@ public class BoardArticle {
 	@Column(name = "ATCL_ID", length = 32)
 	String id;
 	
-	@Column(name = "CATE_ID")
+	@Column(name = "CATE_ID", length = 32)
 	String categoryId;
 	
 	@Column(name = "ATCL_TITL", length = 4000)
@@ -98,14 +100,11 @@ public class BoardArticle {
 	@Column(name = "MDFY_DATE")
 	Date modifyDate;
 	
-	@Formula("(SELECT COUNT(*) FROM APP_BORD_ATCL_RPLY_INFO A WHERE A.BORD_ID = BORD_ID AND A.ATCL_ID = ATCL_ID)")
-	long replyCount = 0;
-	
 	public BoardArticle() {}
 	
-	public BoardArticle(String boardId, String id) {
+	public BoardArticle(String boardId, String articleId) {
 		this.boardId = boardId;
-		this.id = id;
+		this.id = articleId;
 	}
 
 	public String getBoardId() {
@@ -115,6 +114,14 @@ public class BoardArticle {
 	public void setBoardId(String boardId) {
 		this.boardId = boardId;
 	}
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getCategoryId() {
 		return categoryId;
@@ -122,14 +129,6 @@ public class BoardArticle {
 
 	public void setCategoryId(String categoryId) {
 		this.categoryId = categoryId;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getTitle() {
@@ -178,14 +177,6 @@ public class BoardArticle {
 
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
-	}
-
-	public long getReplyCount() {
-		return replyCount;
-	}
-
-	public void setReplyCount(long replyCount) {
-		this.replyCount = replyCount;
 	}
 	
 }

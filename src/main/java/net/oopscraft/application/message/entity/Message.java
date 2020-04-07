@@ -11,7 +11,7 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_MESG_INFO")
+@Table(name = "APP_MESG")
 @EntityListeners(SystemEntityListener.class)
 public class Message extends SystemEntity {
 

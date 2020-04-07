@@ -18,7 +18,7 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_CODE_INFO")
+@Table(name = "APP_CODE")
 @EntityListeners(SystemEntityListener.class)
 public class Code extends SystemEntity {
 

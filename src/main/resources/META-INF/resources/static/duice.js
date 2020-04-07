@@ -2183,6 +2183,40 @@ var duice;
         }
         ui.Span = Span;
         /**
+         * duice.ui.DivFactory
+         */
+        class DivFactory extends MapUiComponentFactory {
+            getComponent(element) {
+                var div = new Div(element);
+                // binds
+                var bind = element.dataset.duiceBind.split(',');
+                div.bind(this.getContextProperty(bind[0]), bind[1]);
+                return div;
+            }
+        }
+        ui.DivFactory = DivFactory;
+        /**
+         * duice.ui.Div
+         */
+        class Div extends MapUiComponent {
+            constructor(div) {
+                super(div);
+                this.div = div;
+                this.div.classList.add('duice-ui-div');
+            }
+            update(map, obj) {
+                removeChildNodes(this.div);
+                var value = map.get(this.name);
+                value = defaultIfEmpty(value, '');
+                this.div.innerHTML = value;
+            }
+            getValue() {
+                var value = this.div.innerHTML;
+                return value;
+            }
+        }
+        ui.Div = Div;
+        /**
          * duice.ui.InputFactory
          */
         class InputFactory extends MapUiComponentFactory {
@@ -3847,6 +3881,7 @@ var duice;
         duice.ComponentDefinitionRegistry.add(new ComponentDefinition('ul', 'duice-ui-ul', duice.ui.UListFactory));
         duice.ComponentDefinitionRegistry.add(new ComponentDefinition('*', 'duice-ui-scriptlet', duice.ui.ScriptletFactory));
         duice.ComponentDefinitionRegistry.add(new ComponentDefinition('span', 'duice-ui-span', duice.ui.SpanFactory));
+        duice.ComponentDefinitionRegistry.add(new ComponentDefinition('div', 'duice-ui-div', duice.ui.DivFactory));
         duice.ComponentDefinitionRegistry.add(new ComponentDefinition('input', 'duice-ui-input', duice.ui.InputFactory));
         duice.ComponentDefinitionRegistry.add(new ComponentDefinition('select', 'duice-ui-select', duice.ui.SelectFactory));
         duice.ComponentDefinitionRegistry.add(new ComponentDefinition('textarea', 'duice-ui-textarea', duice.ui.TextareaFactory));

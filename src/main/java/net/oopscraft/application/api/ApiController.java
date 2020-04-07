@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ValueConstants;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -83,7 +84,8 @@ public class ApiController {
 						if(annotation instanceof RequestParam) {
 							ValueMap parameterMap = new ValueMap();
 							String name = ((RequestParam) annotation).value();
-							Object value = Class.forName(parameter.getType().getName()).getConstructor().newInstance();
+							String value = ((RequestParam) annotation).defaultValue();
+							value = value.contentEquals(ValueConstants.DEFAULT_NONE) ? "" : value;
 							parameterMap.set("name", name);
 							parameterMap.set("value", value);
 							parameters.add(parameterMap);

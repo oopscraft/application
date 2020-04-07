@@ -71,7 +71,7 @@ public class UserController {
 	
 	/**
 	 * Returns specified user.
-	 * @param id
+	 * @param articleId
 	 * @return
 	 * @throws Exception
 	 */

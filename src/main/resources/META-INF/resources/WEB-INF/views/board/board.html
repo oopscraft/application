@@ -36,7 +36,7 @@
 			data.page = search.get('page');
 			data.rows = search.get('rows');
 			$.ajax({
-				 url: '[[@{/api/board/TEST_BOARD/article}]]'
+				 url: '[[@{/api/board}]]/[[${board.id}]]/article'
 				,type: 'GET'
 				,data: data
 			})
@@ -47,6 +47,13 @@
 				resolve(true);
 		   	});
 		});
+	}
+	
+	/**
+	 * Reads article
+	 */
+	function readArticle(articleId) {
+		window.location.href = "[[@{/board}]]/[[${board.id}]]/readArticle" + "?id=" + articleId;
 	}
 	</script>
 	<th:block th:include="|../theme/application/board/default/board.html|"></th:block>

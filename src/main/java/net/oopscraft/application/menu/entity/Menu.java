@@ -23,7 +23,7 @@ import net.oopscraft.application.security.SecurityPolicy;
 import net.oopscraft.application.user.entity.Authority;
 
 @Entity
-@Table(name = "APP_MENU_INFO")
+@Table(name = "APP_MENU")
 @EntityListeners(SystemEntityListener.class)
 public class Menu extends SystemEntity {
 	
@@ -65,7 +65,7 @@ public class Menu extends SystemEntity {
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_MENU_DISP_AUTH_MAP", 
+		name = "APP_MENU_AUTH_DISP", 
 		joinColumns = @JoinColumn(name = "MENU_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),

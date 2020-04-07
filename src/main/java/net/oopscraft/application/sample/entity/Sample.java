@@ -20,7 +20,7 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_SAMP_INFO")
+@Table(name = "APP_SAMP")
 @EntityListeners(SystemEntityListener.class)
 @IdClass(Sample.Pk.class)
 public class Sample extends SystemEntity {

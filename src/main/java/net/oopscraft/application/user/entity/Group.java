@@ -18,7 +18,7 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_GROP_INFO")
+@Table(name = "APP_GROP")
 @EntityListeners(SystemEntityListener.class)
 public class Group extends SystemEntity {
 
@@ -42,7 +42,7 @@ public class Group extends SystemEntity {
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_GROP_ROLE_MAP", 
+		name = "APP_GROP_ROLE", 
 		joinColumns = @JoinColumn(name = "GROP_ID"), 
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "ROLE_ID"), 
@@ -52,7 +52,7 @@ public class Group extends SystemEntity {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_GROP_AUTH_MAP",
+		name = "APP_GROP_AUTH",
 		joinColumns = @JoinColumn(name = "GROP_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),

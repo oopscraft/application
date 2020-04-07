@@ -11,7 +11,7 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_PROP_INFO")
+@Table(name = "APP_PROP")
 @EntityListeners(SystemEntityListener.class)
 public class Property extends SystemEntity {
 

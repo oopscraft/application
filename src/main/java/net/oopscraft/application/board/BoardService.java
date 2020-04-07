@@ -14,8 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.entity.BoardArticle;
+import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.entity.BoardCategory;
 import net.oopscraft.application.core.IdGenerator;
 import net.oopscraft.application.core.PageInfo;
@@ -172,43 +172,46 @@ public class BoardService {
 	
 	/**
 	 * Gets board article
-	 * @param id
+	 * @param articleId
 	 * @return
 	 * @throws Exception
 	 */
 	public BoardArticle getBoardArticle(BoardArticle boardArticle) throws Exception {
-		return boardArticleRepository.findOne(boardArticle.getId());
+		BoardArticle.Pk pk = new BoardArticle.Pk();
+		pk.setBoardId(boardArticle.getBoardId());
+		pk.setId(boardArticle.getId());
+		return boardArticleRepository.findOne(pk);
 	}
 	
-	/**
-	 * Saves code
-	 * @param code
-	 * @return
-	 * @throws Exception
-	 */
-	public BoardArticle saveBoardArticle(BoardArticle boardArticle) throws Exception {
-		if(StringUtils.isBlank(boardArticle.getId())) {
-			boardArticle.setId(IdGenerator.uuid());
-		}
-		BoardArticle one = boardArticleRepository.findOne(boardArticle.getId());
-		if(one == null) {
-			one = new BoardArticle(boardArticle.getBoardId(),boardArticle.getId());
-		}
-		one.setTitle(boardArticle.getTitle());
-		one.setContents(boardArticle.getContents());
-		
-		// save code entity
-		return boardArticleRepository.save(one);
-	}
-	
-	/**
-	 * Deletes board article
-	 * @param code
-	 * @throws Exception
-	 */
-	public void deleteBoardArticle(BoardArticle boardArticle) throws Exception {
-		boardArticleRepository.delete(boardArticle);
-	}
+//	/**
+//	 * Saves code
+//	 * @param code
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public BoardArticle saveBoardArticle(BoardArticle boardArticle) throws Exception {
+//		if(StringUtils.isBlank(boardArticle.getId())) {
+//			boardArticle.setId(IdGenerator.uuid());
+//		}
+//		BoardArticle one = boardArticleRepository.findOne(new BoardArticle.Pk(boardArticle.getBoardId(), boardArticle.getId()));
+//		if(one == null) {
+//			one = new BoardArticle(boardArticle.getBoardId(),boardArticle.getId());
+//		}
+//		one.setTitle(boardArticle.getTitle());
+//		one.setContents(boardArticle.getContents());
+//		
+//		// save code entity
+//		return boardArticleRepository.save(one);
+//	}
+//	
+//	/**
+//	 * Deletes board article
+//	 * @param code
+//	 * @throws Exception
+//	 */
+//	public void deleteBoardArticle(BoardArticle boardArticle) throws Exception {
+//		boardArticleRepository.delete(boardArticle);
+//	}
 	
 	
 	

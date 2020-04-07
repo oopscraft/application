@@ -1,20 +1,14 @@
 package net.oopscraft.application.board;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.board.entity.Board;
-import net.oopscraft.application.core.PageInfo;
 
 @Controller
 @RequestMapping("/board")
@@ -25,9 +19,28 @@ public class BoardController {
 	
 //	@PreAuthorize("this.hasAccessAuthority(#boardId)")
 	@RequestMapping(value="{boardId}", method = RequestMethod.GET)
-	public ModelAndView list(@PathVariable("boardId")String boardId) throws Exception {
+	public ModelAndView index(@PathVariable("boardId")String boardId) throws Exception {
 		Board board = boardService.getBoard(boardId);
 		ModelAndView modelAndView = new ModelAndView("board/board.html");
+		modelAndView.addObject("board", board);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="{boardId}/readArticle", method = RequestMethod.GET)
+	public ModelAndView readArticle(
+		 @PathVariable("boardId")String boardId
+		,@RequestParam("id")String id
+	) throws Exception {
+		Board board = boardService.getBoard(boardId);
+		ModelAndView modelAndView = new ModelAndView("board/readArticle.html");
+		modelAndView.addObject("board", board);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="{boardId}/writeArticle", method = RequestMethod.GET)
+	public ModelAndView writeArticle(@PathVariable("boardId")String boardId) throws Exception {
+		Board board = boardService.getBoard(boardId);
+		ModelAndView modelAndView = new ModelAndView("board/writeArticle.html");
 		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
