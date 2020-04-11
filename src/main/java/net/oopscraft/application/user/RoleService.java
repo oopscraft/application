@@ -44,7 +44,7 @@ public class RoleService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageable());
+		}, pageInfo.toPageRequest());
 		pageInfo.setTotalCount(rolesPage.getTotalElements());
 		return rolesPage.getContent();
 	}

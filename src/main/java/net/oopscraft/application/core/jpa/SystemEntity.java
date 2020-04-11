@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class SystemEntity {
 	
 	@Column(name="SYS_EMBD_YN")
-	@Convert(converter=BooleanToStringConverter.class)
+	@Convert(converter=BooleanStringConverter.class)
 	@JsonProperty("systemEmbedded")
 	boolean systemEmbedded;
 	

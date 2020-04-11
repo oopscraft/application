@@ -1,7 +1,7 @@
-package net.oopscraft.application.board.entity;
+package net.oopscraft.application.article.entity;
 
-import java.io.File;
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,19 +10,22 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_BORD_ATCL_FILE")
-@IdClass(BoardArticleFile.Pk.class)
-public class BoardArticleFile {
-
+@Table(name = "APP_ATCL_RPLY")
+@IdClass(ArticleReply.Pk.class)
+public class ArticleReply {
+	
+	/**
+	 * ArticleReply.Pk
+	 */
 	public static class Pk implements Serializable {
-		private static final long serialVersionUID = 3127781407229494383L;
+		private static final long serialVersionUID = -2201892754104834161L;
+		String articleId;
+		String id;
 		public Pk() {}
 		public Pk(String articleId, String id) {
 			this.articleId = articleId;
 			this.id = id;
 		}
-		String articleId;
-		String id;
 		public String getArticleId() {
 			return articleId;
 		}
@@ -71,32 +74,32 @@ public class BoardArticleFile {
 	String articleId;
 	
 	@Id
-	@Column(name = "FILE_ID")
+	@Column(name = "RPLY_ID")
 	String id;
 	
-	@Column(name = "FILE_NAME")
-	String name;
+	@Column(name = "UPER_RPLY_ID")
+	String upperId;
 	
-	@Column(name = "FILE_TYPE")
-	String type;
+	@Column(name = "RPLY_CNTS")
+	String contents;
 	
-	@Column(name = "FILE_SIZE")
-	long size;
+	@Column(name = "RPLY_ATHR", length = 1024)
+	String author;
+
+	@Column(name = "USER_ID", length = 32)
+	String userId;
 	
-	/**
-	 * Returns temporary file.
-	 * @return
-	 */
-	public File getTemporaryFile() {
-		return new File(".temp" + File.separator + "board" + File.separator + id);
-	}
+	@Column(name = "WRIT_DATE")
+	Date writeDate;
 	
-	/**
-	 * Returns real file.
-	 * @return
-	 */
-	public File getRealFile() {
-		return new File("data" + File.separator + "board" + File.separator + id);
+	@Column(name = "MDFY_DATE")
+	Date modifyDate;
+	
+	public ArticleReply() {}
+	
+	public ArticleReply(String articleId, String id) {
+		this.articleId = articleId;
+		this.id = id;
 	}
 
 	public String getArticleId() {
@@ -115,28 +118,52 @@ public class BoardArticleFile {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getUpperId() {
+		return upperId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setUpperId(String upperId) {
+		this.upperId = upperId;
 	}
 
-	public String getType() {
-		return type;
+	public String getContents() {
+		return contents;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setContents(String contents) {
+		this.contents = contents;
 	}
 
-	public long getSize() {
-		return size;
+	public String getAuthor() {
+		return author;
 	}
 
-	public void setSize(long size) {
-		this.size = size;
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public Date getWriteDate() {
+		return writeDate;
+	}
+
+	public void setWriteDate(Date writeDate) {
+		this.writeDate = writeDate;
+	}
+
+	public Date getModifyDate() {
+		return modifyDate;
+	}
+
+	public void setModifyDate(Date modifyDate) {
+		this.modifyDate = modifyDate;
+	}
+	
 }

@@ -1,230 +1,38 @@
-<!DOCTYPE html>
-<html layout:decorate="~{__application.html}">
-<div layout:fragment="content">
-	<script>
-		// document ready
-		$(document).ready(function() {
-			getArticles();
-		});
-	
-		var search = new duice.Map({
-			key: null,
-			value: null,
-			status: null,
-			page: 1,
-			rows: 20,
-			totalCount: -1
-		});
-		var articles = new duice.List();
-		var article = new duice.Map();
-		
-		/**
-		 * Gets articles
-		 */
-		function getArticles(page) {
-			if(page){
-				search.set('page',page);
-			}
-			var data = {};
-			if(search.get('key')){
-				data[search.get('key')] = search.get('value');
-			}
-			if(search.get('status')){
-				data.status = search.get('status');
-			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
-			$.ajax({
-				 url: 'article/getArticles'
-				,type: 'GET'
-				,data: data
-				,success: function(data, textStatus, jqXHR) {
-					articles.fromJson(data);
-					search.set('totalCount', __parseTotalCount(jqXHR));
-		   	 	}
-			});	
-		}
-		
-		/**
-		 * Gets specified article
-		 */
-		function getArticle(id){
-			$.ajax({
-				 url: 'article/getArticle'
-				,type: 'GET'
-				,data: {id:id}
-				,success: function(data, textStatus, jqXHR) {
-					article.fromJson(data);
-					new duice.Dialog(document.getElementById('articleDialog'))
-					.open();
-		   	 	}
-			});	
-		}
-		
-		/**
-		 * Adds article
-		 */
-		function addArticle() {
-			article.clear();
-			article.setReadonly('id',false);
-			new duice.Dialog(document.getElementById('articleDialog'))
-			.open();
-		}
-		
-		/**
-		 * Saves article
-		 */
-		function saveArticle(){
-			
-			// checks changes
-			if(!article.isDirty()){
-				new duice.Alert("[[#{application.message.changeNotFound}]]").open();
-				return;
-			}
-			
-			new duice.Confirm("[[#{application.message.saveConfirm(#{application.label.article})}]]")
-			.onAfterConfirm(function(){
-				var data = article.toJson();
-				$.ajax({
-					 url: 'article/saveArticle'
-					,type: 'POST'
-					,data: JSON.stringify(data)
-					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert('[[#{application.message.saveComplete(#{application.label.article})}]]')
-						.onAfterClose(function(){
-							getArticles();
-						}).open();
-			   	 	}
-				});	
-			}).open();
-		}
-		
-		/**
-		 * Deletes article
-		 */
-		function deleteArticle(){
-			new duice.Confirm("[[#{application.message.deleteConfirm(#{application.label.article})}]]")
-			.onAfterConfirm(function(){
-				$.ajax({
-					 url: 'article/deleteArticle'
-					,type: 'DELETE'
-					,data: JSON.stringify(article.toJson())
-					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.message.deleteComplete(#{application.label.article})}]]")
-						.onAfterClose(function(){
-							clearDetail();
-							getUsers();
-						}).open();
-			   	 	}
-				});
-			}).open();
-		}
-	</script>
-	<div class="app-row">
-		<div class="app-col">
-			<h1>
-				<img class="icon large" src="/static/image/icon_article.png"/>
-				<span data-th-text="#{application.label.article}+' '+#{application.label.management}"></span>
-			</h1>
+<div class="container">
+	<div class="row align-items-end">
+		<div class="col">
+			<img th:src="${board.icon}"/>
+			<span th:text="${board.name}" class="font-weight-bold" style="font-size:1.4rem;"></span>
 		</div>
 	</div>
-	<hr class="hr"/>
-	<div class="app-row">
-		<div class="app-col" style="width:50%;">
-			<div class="app-row">
-				<div class="app-col" style="width:50%;">
-					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
-						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
-						<option value="id" data-th-text="#{application.label.article}+' '+#{application.label.id}">ID</option>
-						<option value="name" data-th-text="#{application.label.article}+' '+#{application.label.name}">Name</option>
-					</select>
-					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
-					<button class="button" onclick="getArticles(1);">
-						<img src="/static/image/icon_search.png" class="icon"/>
-						<span data-th-text="#{application.label.search}"></span>
-					</button>
-				</div>
-				<div class="app-col right">
-					<button class="button" onclick="addArticle();">
-						<img src="/static/image/icon_create.png" class="icon"/>
-						<span data-th-text="#{application.label.new}"></span>
-					</button>
-				</div>
-			</div>
-			<div class="app-row">
-				<div class="app-col">
-					<table is="duice-ui-table" 
-						data-duice-bind="articles,article" 
-						data-duice-selectable="true"
-						style="width:100%;">
-						<col style="width:10%;"/>					
-						<col style="width:30%"/>
-						<col style="width:60%"/>
-						<thead>
-							<tr>
-								<th data-th-text="#{application.label.no}">No</th>
-								<th data-th-text="#{application.label.article}+' '+#{application.label.id}">Article ID</th>
-								<th data-th-text="#{application.label.article}+' '+#{application.label.name}">Article Name</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="text-center">
-									<span is="duice-ui-scriptlet" data-duice-bind="search">
-										return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
-									</span>
-								</td>
-								<td>
-									<span is="duice-ui-span" data-duice-bind="article,id"></span>
-								</td>
-								<td><span is="duice-ui-span" data-duice-bind="article,name"></span></td>
-							</tr>
-						</tbody>
-						<tfoot>
-							<tr>
-								<td colspan="7">
-									<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
-										<li onclick="getArticles();"></li>
-									</ul>
-								</td>
-							</tr>
-						</tfoot>
-					</table>
-				</div>
-			</div>		
+	<hr/>
+	<div class="row">
+		<div class="col">
+			<input is="duice-ui-input" type="text" data-duice-bind="article,title"/>
 		</div>
 	</div>
-	
-	<!-- ====================================================== -->
-	<!-- Article Dialog											-->
-	<!-- ====================================================== -->
-	<dialog id="articleDialog" style="width:1000px;">
-		<div class="app-row">
-			<div class="app-col">
-				<input is="duice-ui-input" type="text" data-duice-bind="article,title"/>
-			</div>
-			<div class="app-col right">
-				<button id="deleteArticleButton" class="button" onclick="deleteArticle();">
-					<img src="/static/image/icon_delete.png" class="icon"/>
-					<span data-th-text="#{application.label.delete}"></span>
-				</button>
-				<button id="saveArticleButton" class="button" onclick="saveArticle();">
-					<img src="/static/image/icon_save.png" class="icon"/>
-					<span data-th-text="#{application.label.save}"></span>
-				</button>
-			</div>
+	<div class="row">
+		<div class="col">
+			<textarea is="duice-ui-textarea" data-duice-bind="article,contents"></textarea>
 		</div>
-		<hr class="hr"/>
-		<div class="app-row">
-			<div class="app-col">
-				<textarea is="duice-ui-textarea" data-duice-bind="article,contents" style="height:50rem;"></textarea>
-			</div>
+	</div>
+	<div class="row">
+		<div class="col-3">
+			<span is="duice-ui-span" data-duice-bind="article,author"></span>
+		</div>	
+		<div class="col-9 text-right">
+			<ul is="duice-ui-ul" data-duice-bind="articleFiles,articleFile">
+				<li style="display: inline-block;">
+					<span is="duice-ui-span" data-duice-bind="articleFile,name"></span>
+				</li>
+			</ul>
 		</div>
-	</dialog>
-
+	</div>
+	<div class="row">
+		<div class="col text-right">
+			<button class="btn btn-primary" onclick="saveArticle();">
+				저장
+			</button>
+		</div>
+	</div>
 </div>
-
-
-

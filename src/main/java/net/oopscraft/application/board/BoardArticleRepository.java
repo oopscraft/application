@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import net.oopscraft.application.board.entity.BoardArticle;
 
 @Repository
-public interface BoardArticleRepository extends JpaRepository<BoardArticle, BoardArticle.Pk>, JpaSpecificationExecutor<BoardArticle> {
+public interface BoardArticleRepository extends JpaRepository<BoardArticle, String>, JpaSpecificationExecutor<BoardArticle> {
 		
 //	public Page<Article> findByBoardIdOrderByRegistDateDesc(String boardId, Pageable pageable) throws Exception;
 //

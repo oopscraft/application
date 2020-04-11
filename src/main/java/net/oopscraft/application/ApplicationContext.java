@@ -128,7 +128,9 @@ public class ApplicationContext {
         Properties jpaProperties = new Properties();
         jpaProperties.setProperty(AvailableSettings.HQL_BULK_ID_STRATEGY, "org.hibernate.hql.spi.id.inline.InlineIdsOrClauseBulkIdStrategy");	// Bulk-id strategies when you can’t use temporary tables
         jpaProperties.setProperty(AvailableSettings.FORMAT_SQL, "true");
+        jpaProperties.setProperty(AvailableSettings.DEFAULT_NULL_ORDERING, "last");
 
+        // generates DDL options
 		String generateDdl = System.getProperty("application.entityManagerFactory.generateDdl");
 		if("true".equals(generateDdl)) {
 			vendorAdapter.setGenerateDdl(true);

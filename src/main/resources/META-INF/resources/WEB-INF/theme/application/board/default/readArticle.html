@@ -12,8 +12,15 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col">
+		<div class="col-3">
 			<span is="duice-ui-span" data-duice-bind="article,author"></span>
+		</div>	
+		<div class="col-9 text-right">
+			<ul is="duice-ui-ul" data-duice-bind="articleFiles,articleFile">
+				<li style="display: inline-block;">
+					<span is="duice-ui-span" data-duice-bind="articleFile,name"></span>
+				</li>
+			</ul>
 		</div>
 	</div>
 	<div class="row">
@@ -24,7 +31,58 @@
 	<hr/>
 	<div class="row">
 		<div class="col">
-
+			<ul is="duice-ui-ul" 
+			data-duice-bind="articleReplies,articleReply" 
+			data-duice-hierarchy="id,upperId">
+				<li>
+					<div id="articleReplyDiv_[@duice[$context.articleReply.get('id')]]">
+						<div class="row">
+							<div class="col">
+								<span is="duice-ui-span" data-duice-bind="articleReply,author"></span>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col">
+								<div is="duice-ui-div" data-duice-bind="articleReply,contents"></div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col text-right">
+								<button class="btn btn-danger" data-id="[@duice[$context.articleReply.get('id')]]" onclick="deleteArticleReply(this.dataset.id);">
+									삭제
+								</button>
+								<button class="btn btn-primary" data-id="[@duice[$context.articleReply.get('id')]]" onclick="addChildArticleReply(this.dataset.id);">
+									댓글
+								</button>
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
 		</div>
-	</div>		
+	</div>
+	<div id="articleReplyDivContainer">
+		<div id="articleReplyDiv">
+			<div class="row">
+				<div class="col">
+					<span is="duice-ui-span" data-duice-bind="articleReply,author"></span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<textarea is="duice-ui-textarea" data-duice-bind="articleReply,contents"></textarea>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col text-right">
+					<button class="btn btn-primary" onclick="resetChildArticleReply();">
+						취소
+					</button>
+					<button class="btn btn-primary" onclick="createArticleReply();">
+						저장
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

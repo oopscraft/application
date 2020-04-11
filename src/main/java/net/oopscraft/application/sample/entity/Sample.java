@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
-import net.oopscraft.application.core.jpa.BooleanToStringConverter;
+import net.oopscraft.application.core.jpa.BooleanStringConverter;
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
 
@@ -102,7 +102,7 @@ public class Sample extends SystemEntity {
 	long valueLong;
 	
 	@Column(name = "VAL_YN", length = 1)
-	@Convert(converter=BooleanToStringConverter.class)
+	@Convert(converter=BooleanStringConverter.class)
 	boolean valueYn;
 	
 	enum Code { CODE_1, CODE_2, CODE_3 }

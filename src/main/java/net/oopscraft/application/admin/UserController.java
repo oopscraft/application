@@ -106,6 +106,11 @@ public class UserController {
 		userService.deleteUser(user);
 	}
 
+	/**
+	 * Changes password
+	 * @param payload
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "changePassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)

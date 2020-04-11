@@ -4,21 +4,94 @@
 	<script>
 	// defines variables
 	const article = new duice.Map();
+	const articleFiles = new duice.List();
 	const articleReplies = new duice.List();
+	const articleReply = new duice.Map();
+	articleReply.set('author','홍길동');
 	
 	// document ready
 	$(document).ready(function() {
-		
-		// getting articles
+		getArticle();
+		getArticleReplies();
+	});
+
+	/**
+	 * Getting articles
+	 */
+	function getArticle(){
 		$.ajax({
-			 url: '[[@{/api/board}]]/[[${board.id}]]/article/[[${param.id}]]'
+			 url: '[[@{/api/boards}]]/[[${board.id}]]/articles/[[${param.id}]]'
 			,type: 'GET'
-			,data: null
 		})
 		.done(function(data, textStatus, jqXHR) {
 			article.fromJson(data);
+			articleFiles.fromJson(data.files);
 	   	});
-	});
+	}
+	
+	/**
+	 * Getting article replies
+	 */
+	function getArticleReplies(){
+		$.ajax({
+			 url: '[[@{/api/boards}]]/[[${board.id}]]/articles/[[${param.id}]]/replies'
+			,type: 'GET'
+		})
+		.done(function(data, textStatus, jqXHR) {
+			articleReplies.fromJson(data);
+	   	});
+	}
+	
+	/**
+	 * Adds child reply
+	 */
+	function addChildArticleReply(upperId){
+		articleReply.set('upperId', upperId);
+		$('#articleReplyDiv').appendTo($('#articleReplyDiv_' + upperId));
+	}
+	
+	/**
+	 * Cancels article reply
+	 */
+	function resetChildArticleReply(){
+		articleReply.reset();
+		$('#articleReplyDiv').appendTo($('#articleReplyDivContainer'))
+	}
+	
+	/**
+	 * Saves article reply
+	 */
+	async function createArticleReply(){
+		if(await duice.confirm('confirm message...')){
+			$.ajax({
+				 url: '[[@{/api/boards}]]/[[${board.id}]]/articles/[[${param.id}]]/replies'
+				,type: 'POST'
+				,data: JSON.stringify(articleReply.toJson())
+				,contentType: 'application/json;charset=UTF-8'
+			})
+			.done(function(data, textStatus, jqXHR) {
+				resetChildArticleReply();
+				getArticleReplies();
+		   	});
+		}
+	}
+	
+	/**
+	 * Deletes article reply
+	 */
+	async function deleteArticleReply(replyId){
+		if(await duice.confirm('confirm message...')){
+			$.ajax({
+				 url: '[[@{/api/boards}]]/[[${board.id}]]/articles/[[${param.id}]]/replies/'+replyId
+				,type: 'DELETE'
+				,contentType: 'application/json;charset=UTF-8'
+			})
+			.done(function(data, textStatus, jqXHR) {
+				resetChildArticleReply();
+				getArticleReplies();
+		   	});
+		}
+	}
 	
 	</script>
 	<th:block th:include="|../theme/application/board/default/readArticle.html|"></th:block>

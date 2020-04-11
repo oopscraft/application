@@ -1,7 +1,9 @@
 package net.oopscraft.application.board;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -11,11 +13,18 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.NullHandling;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.board.entity.BoardArticle;
+import net.oopscraft.application.article.ArticleReplyRepository;
+import net.oopscraft.application.article.entity.ArticleReply;
 import net.oopscraft.application.board.entity.Board;
+import net.oopscraft.application.board.entity.BoardArticle;
 import net.oopscraft.application.board.entity.BoardCategory;
 import net.oopscraft.application.core.IdGenerator;
 import net.oopscraft.application.core.PageInfo;
@@ -28,6 +37,9 @@ public class BoardService {
 	
 	@Autowired
 	BoardArticleRepository boardArticleRepository;
+	
+	@Autowired
+	ArticleReplyRepository boardArticleReplyRepository;
 
 	/**
 	 * Gets list of board by search condition and value
@@ -37,7 +49,7 @@ public class BoardService {
 	 * @throws Exception
 	 */
 	public List<Board> getBoards(final Board board, PageInfo pageInfo) throws Exception {
-		Page<Board> boardsPage = boardRepository.findAll(new  Specification<Board>() {
+		Page<Board> boardsPage = boardRepository.findAll(new Specification<Board>() {
 			@Override
 			public Predicate toPredicate(Root<Board> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
@@ -51,7 +63,7 @@ public class BoardService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageable());
+		}, pageInfo.toPageRequest());
 		pageInfo.setTotalCount(boardsPage.getTotalElements());
 		return boardsPage.getContent();
 	}
@@ -131,57 +143,117 @@ public class BoardService {
 	 * @throws Exception
 	 */
 	public List<BoardArticle> getBoardArticles(final BoardArticle boardArticle, PageInfo pageInfo) throws Exception {
+		List<Order> orders = new ArrayList<Order>();
+		orders.add(new Order(Direction.DESC, "notice"));
+		orders.add(new Order(Direction.DESC, "registrationDate"));
+		PageRequest pageRequest = pageInfo.toPageRequest(new Sort(orders));
 		Page<BoardArticle> boardArticlesPage = boardArticleRepository.findAll(new  Specification<BoardArticle>() {
 			@Override
-			public Predicate toPredicate(Root<BoardArticle> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+			public Predicate toPredicate(Root<BoardArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
-				
-				// boardId
-				predicates.add(
-					criteriaBuilder.and(criteriaBuilder.equal(root.get("boardId").as(String.class), boardArticle.getBoardId()))
-				);
-				
-				// categoryId
-				if(boardArticle.getCategoryId() != null) {
-					predicates.add(
-						criteriaBuilder.and(criteriaBuilder.equal(root.get("categoryId").as(String.class), boardArticle.getCategoryId()))
-					);
+				if(!StringUtils.isBlank(boardArticle.getBoardId())) {
+					predicates.add(cb.and(cb.equal(root.get("boardId").as(String.class), boardArticle.getBoardId())));
 				}
-
-				// title
-				if(boardArticle.getTitle() != null) {
-					predicates.add(
-						criteriaBuilder.and(criteriaBuilder.like(root.get("title").as(String.class), '%' + boardArticle.getTitle() + '%'))
-					);
+				if(!StringUtils.isBlank(boardArticle.getCategoryId())) {
+					predicates.add(cb.and(cb.equal(root.get("categoryId").as(String.class), boardArticle.getCategoryId())));
 				}
-				
-				// contents
-				if(boardArticle.getContents() != null) {
-					predicates.add(
-						criteriaBuilder.and(criteriaBuilder.like(root.get("contents").as(String.class), '%' + boardArticle.getContents() + '%'))
-					);
+				if(!StringUtils.isBlank(boardArticle.getTitle())) {
+					predicates.add(cb.and(cb.like(root.get("title").as(String.class), '%'+boardArticle.getTitle()+'%')));
 				}
-
-				// returns 
-				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
+				if(!StringUtils.isBlank(boardArticle.getContents())) {
+					predicates.add(cb.and(cb.like(root.get("contents").as(String.class), '%'+boardArticle.getContents()+'%')));
+				}
+				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 			}
-		}, pageInfo.toPageable());
+		}, pageRequest);
 		pageInfo.setTotalCount(boardArticlesPage.getTotalElements());
 		return boardArticlesPage.getContent();
 	}
 	
 	/**
 	 * Gets board article
+	 * @param boardId
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public BoardArticle getBoardArticle(String boardId, String id) throws Exception {
+		return boardArticleRepository.findOne(id);
+	}
+	
+	/**
+	 * Returns board article
+	 * @param boardArticle
+	 * @return
+	 * @throws Exception
+	 */
+	public BoardArticle saveBoardArticle(BoardArticle boardArticle) throws Exception {
+		BoardArticle one = null;
+		if(boardArticle.getId()==null || (one = boardArticleRepository.findOne(boardArticle.getId())) == null) {
+			one = new BoardArticle();
+			one.setId(IdGenerator.uuid());
+			one.setRegistrationDate(new Date());
+		}
+		one.setBoardId(boardArticle.getBoardId());
+		one.setCategoryId(boardArticle.getCategoryId());
+		one.setAuthor(boardArticle.getAuthor());
+		one.setTitle(boardArticle.getTitle());
+		one.setContents(boardArticle.getContents());
+		return boardArticleRepository.save(one);
+	}
+	
+	/**
+	 * Returns board article replies
+	 * @param boardId
 	 * @param articleId
 	 * @return
 	 * @throws Exception
 	 */
-	public BoardArticle getBoardArticle(BoardArticle boardArticle) throws Exception {
-		BoardArticle.Pk pk = new BoardArticle.Pk();
-		pk.setBoardId(boardArticle.getBoardId());
-		pk.setId(boardArticle.getId());
-		return boardArticleRepository.findOne(pk);
+	public List<ArticleReply> getBoardArticleReplies(final String articleId) throws Exception {
+		List<Order> orders = new ArrayList<Order>();
+		orders.add(new Order(Direction.ASC, "articleId").nullsLast());
+		List<ArticleReply> boardArticleReplies = boardArticleReplyRepository.findAll(new Specification<ArticleReply>() {
+			@Override
+			public Predicate toPredicate(Root<ArticleReply> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				List<Predicate> predicates = new ArrayList<Predicate>();
+				predicates.add(cb.and(cb.equal(root.get("articleId").as(String.class), articleId)));
+				return cb.and(predicates.toArray(new Predicate[predicates.size()]));	
+			}
+		});
+		return boardArticleReplies;
 	}
+
+	/**
+	 * Saves board article reply
+	 * @param articleReply
+	 * @return
+	 * @throws Exception
+	 */
+	public ArticleReply saveBoardArticleReply(ArticleReply articleReply) throws Exception {
+		ArticleReply.Pk pk = new ArticleReply.Pk(articleReply.getArticleId(), articleReply.getId());
+		ArticleReply one = boardArticleReplyRepository.findOne(pk);
+		if(one == null) {
+			one = new ArticleReply();
+			one.setArticleId(articleReply.getArticleId());
+			one.setId(IdGenerator.uuid());
+		}
+		one.setUpperId(articleReply.getUpperId());
+		one.setContents(articleReply.getContents());
+		return boardArticleReplyRepository.save(one);
+	}
+	
+	/**
+	 * Deletes board article reply
+	 * @param boardId
+	 * @param articleId
+	 * @param id
+	 * @throws Exception
+	 */
+	public void deleteBoardArticleReply(String boardId, String articleId, String id) throws Exception {
+		ArticleReply.Pk pk = new ArticleReply.Pk(articleId, id);
+		boardArticleReplyRepository.delete(pk);
+	}
+
 	
 //	/**
 //	 * Saves code

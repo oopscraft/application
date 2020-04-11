@@ -2,6 +2,7 @@ package net.oopscraft.application.core;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import net.oopscraft.application.core.mybatis.PageRowBounds;
 
@@ -30,8 +31,17 @@ public class PageInfo {
 	 * Returns spring-data PageRequest object.
 	 * @return
 	 */
-	public Pageable toPageable() {
+	public PageRequest toPageRequest() {
 		return new PageRequest(page - 1, rows);
+	}
+	
+	/**
+	 * Returns spring-data PageRequest object.
+	 * @param sort
+	 * @return
+	 */
+	public PageRequest toPageRequest(Sort sort) {
+		return new PageRequest(page - 1, rows, sort);
 	}
 
 	/**

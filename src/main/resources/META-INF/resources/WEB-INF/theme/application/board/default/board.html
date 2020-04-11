@@ -6,7 +6,7 @@
 		</div>
 		<div class="col-3">
 			<div class="input-group">
-				<select class="form-control">
+				<select class="form-control" onclick="getArticlesByCategory(this.value);">
 					<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
 					<option th:each="category:${board.categories}" th:value="${category.id}" th:text="${category.name}"></option>
 				</select>
@@ -36,7 +36,7 @@
 							</span>
 						</td>
 						<td>
-							<a data-id="[@duice[$context.article.get('id')]]" href="#" onclick="javascript:readArticle(this.dataset.id);">
+							<a data-id="[@duice[$context.article.get('id')]]" href="javascript:void(0);" onclick="javascript:readArticle(this.dataset.id);">
 								<span is="duice-ui-span" data-duice-bind="article,title"></span>
 							</a>
 						</td>
@@ -58,16 +58,16 @@
 		<div class="col-4">
 			<div class="input-group">
 				<div class="input-group-prepend">
-					<select class="form-control">
+					<select is="duice-ui-select" data-duice-bind="search,key" class="form-control">
 						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
-						<option value="title" data-th-text="#{application.user.id}">ID</option>
-						<option value="contents" data-th-text="#{application.user.name}">Name</option>
+						<option value="title" data-th-text="#{application.board.article.title}">Title</option>
+						<option value="contents" data-th-text="#{application.board.article.contents}">Contents</option>
 					</select>
 				</div>
-				<input type="text" class="form-control"/>
+				<input is="duice-ui-input" data-duice-bind="search,value" type="text" class="form-control"/>
 				<div class="input-group-append">
-					<button class="btn btn-primary">
-						검색
+					<button class="btn btn-primary" onclick="getArticles(1)" th:text="#{application.global.all}">
+						Search
 					</button>
 				</div>
 			</div>
@@ -78,8 +78,8 @@
 			</ul>
 		</div>
 		<div class="col-4 text-right">
-			<button class="btn btn-primary">
-				글쓰기
+			<button class="btn btn-primary" onclick="writeArticle();" th:text="#{application.board.write}">
+				Write
 			</button>
 		</div>
 	</div>

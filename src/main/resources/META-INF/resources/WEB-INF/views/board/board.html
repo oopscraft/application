@@ -4,20 +4,33 @@
 	<script>
 	// document ready
 	$(document).ready(function() {
+		if(window.history.state){
+			search.fromJson(window.history.state);
+			console.log('------------------>', window.history.state);
+		}
 		getArticles();
 	});
 	
+	// hash change
+	window.onpopstate = function(event){
+		if(event.state){
+			console.log('=========>', event.state);
+			search.fromJson(event.state);
+			getArticles();
+		}
+	}
+
 	// defines variables
 	const search = new duice.Map({
 		key: null,
 		value: null,
-		status: null,
+		categoryId: null,
 		page: 1,
 		rows: 10,
 		totalCount: -1
 	});
 	const articles = new duice.List();
-	
+
 	/**
 	 * Gets articles
 	 */
@@ -30,13 +43,13 @@
 			if(search.get('key')){
 				data[search.get('key')] = search.get('value');
 			}
-			if(search.get('status')){
-				data.status = search.get('status');
+			if(search.get('categoryId')){
+				data.categoryId = search.get('categoryId');
 			}
 			data.page = search.get('page');
 			data.rows = search.get('rows');
 			$.ajax({
-				 url: '[[@{/api/board}]]/[[${board.id}]]/article'
+				 url: '[[@{/api/boards}]]/[[${board.id}]]/articles'
 				,type: 'GET'
 				,data: data
 			})
@@ -44,9 +57,26 @@
 				console.log('data',data);
 				articles.fromJson(data);
 				search.set('totalCount', __parseTotalCount(jqXHR));
+				
+				//window.location.hash = $.param(search.toJson());
+				//console.log('window.location.hash', window.location.hash);
+				
+				const state = search.toJson();
+				const title = '';
+				const url = window.location.href;
+				history.pushState(state, title, url)
+				
 				resolve(true);
 		   	});
 		});
+	}
+	
+	/**
+	 * Gets category articles
+	 */
+	function getArticlesByCategory(categoryId){
+		search.set('categoryId', categoryId);
+		getArticles(1);
 	}
 	
 	/**
@@ -54,6 +84,13 @@
 	 */
 	function readArticle(articleId) {
 		window.location.href = "[[@{/board}]]/[[${board.id}]]/readArticle" + "?id=" + articleId;
+	}
+	
+	/**
+	 * Writes article
+	 */
+	function writeArticle() {
+		window.location.href = "[[@{/board}]]/[[${board.id}]]/writeArticle";
 	}
 	</script>
 	<th:block th:include="|../theme/application/board/default/board.html|"></th:block>

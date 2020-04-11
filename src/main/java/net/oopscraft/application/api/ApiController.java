@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -77,11 +78,17 @@ public class ApiController {
 				api.set("method", requestMappingInfo.getMethodsCondition().getMethods().toArray()[0].toString());
 				api.set("className", handleMethod.getMethod().getDeclaringClass().getName());
 				api.set("methodName", handleMethod.getMethod().getName());
+				List<ValueMap> variables = new ArrayList<ValueMap>();
 				List<ValueMap> parameters = new ArrayList<ValueMap>();
 				ValueMap payload = new ValueMap();
 				for(Parameter parameter : handleMethod.getMethod().getParameters()) {
 					for(Annotation annotation : parameter.getAnnotations()) {
-						if(annotation instanceof RequestParam) {
+						if(annotation instanceof PathVariable) {
+							ValueMap variableMap = new ValueMap();
+							String name = ((PathVariable) annotation).value();
+							variableMap.set("name", name);
+							variables.add(variableMap);
+						}else if(annotation instanceof RequestParam) {
 							ValueMap parameterMap = new ValueMap();
 							String name = ((RequestParam) annotation).value();
 							String value = ((RequestParam) annotation).defaultValue();
@@ -107,6 +114,7 @@ public class ApiController {
 						}
 					}
 				}
+				api.set("variables", variables);
 				api.set("parameters", parameters);
 				api.set("payload", payload.isEmpty() ? null : JsonConverter.toJson(payload));
 				apis.add(api);

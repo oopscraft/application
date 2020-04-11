@@ -44,7 +44,7 @@ public class MessageService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageable());
+		}, pageInfo.toPageRequest());
 		pageInfo.setTotalCount(messagesPage.getTotalElements());
 		return messagesPage.getContent();
 	}

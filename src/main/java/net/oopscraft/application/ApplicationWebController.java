@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -85,7 +86,7 @@ public class ApplicationWebController {
 			responseMap.set("message", exception.getMessage());
 			responseMap.set("stackTrace", ExceptionUtils.getRootCauseMessage(exception));
 	    	response.getWriter().write(JsonConverter.toJson(responseMap));
-	    	response.getWriter().flush();
+	    	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}else {
 			throw exception;
 		}

@@ -63,6 +63,44 @@ INSERT INTO APP_MENU (MENU_ID,UPER_MENU_ID,MENU_SEQ,MENU_NAME,LINK_URL,LINK_TRGT
 INSERT INTO APP_MESG (MESG_ID,SYS_EMBD_YN,SYS_INST_DATE,SYS_INST_USER_ID,SYS_UPDT_DATE,SYS_UPDT_USER_ID,MESG_DESC,MESG_NAME,MESG_VAL) VALUES ('INVALID_PARAM','N',{ts '2020-01-31 12:22:06.130000000'},null,{ts '2020-01-31 12:27:54.798000000'},null,'패라미터 오류에 대한 메시지.\nname - 패라미터명\nvalue - 패라미터 값','필수입력값 오류','{}는 필수 입력값입니다.');
 INSERT INTO APP_MESG (MESG_ID,SYS_EMBD_YN,SYS_INST_DATE,SYS_INST_USER_ID,SYS_UPDT_DATE,SYS_UPDT_USER_ID,MESG_DESC,MESG_NAME,MESG_VAL) VALUES ('INVALID_TIME','N',{ts '2020-01-31 12:25:13.196000000'},null,{ts '2020-01-31 12:27:37.760000000'},null,'업무시간 종료 대고객 메시지','업무시간 종료 대고객 메시지','처리가능한 시간이 아닙니다.\n업무시간(09:00~18:00)에만 접수가 가능합니다.\n');
 
+-- APP_ATCL
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('01','게시판 테스트 글 01','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('02','게시판 테스트 글 02','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('03','게시판 테스트 글 03','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('04','게시판 테스트 글 04','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('05','게시판 테스트 글 05','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('06','게시판 테스트 글 06','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('07','게시판 테스트 글 07','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('08','게시판 테스트 글 08','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('09','게시판 테스트 글 09','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('10','게시판 테스트 글 10','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('11','게시판 테스트 글 11','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('12','게시판 테스트 글 12','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('13','게시판 테스트 글 13','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+INSERT INTO APP_ATCL (ATCL_ID,ATCL_TITL,ATCL_CNTS,ATCL_ATHR) VALUES ('14','게시판 테스트 글 14','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용','홍길동');
+
+-- APP_ATCL_FILE
+INSERT INTO APP_ATCL_FILE (ATCL_ID,FILE_ID,FILE_NAME) VALUES ('01','1','file name 1');
+INSERT INTO APP_ATCL_FILE (ATCL_ID,FILE_ID,FILE_NAME) VALUES ('01','2','file name 1');
+INSERT INTO APP_ATCL_FILE (ATCL_ID,FILE_ID,FILE_NAME) VALUES ('02','1','file name 1');
+INSERT INTO APP_ATCL_FILE (ATCL_ID,FILE_ID,FILE_NAME) VALUES ('02','2','file name 1');
+INSERT INTO APP_ATCL_FILE (ATCL_ID,FILE_ID,FILE_NAME) VALUES ('03','1','file name 1');
+INSERT INTO APP_ATCL_FILE (ATCL_ID,FILE_ID,FILE_NAME) VALUES ('03','2','file name 1');
+INSERT INTO APP_ATCL_FILE (ATCL_ID,FILE_ID,FILE_NAME) VALUES ('04','1','file name 1');
+INSERT INTO APP_ATCL_FILE (ATCL_ID,FILE_ID,FILE_NAME) VALUES ('04','2','file name 1');
+
+-- APP_ATCL_RPLY
+INSERT INTO APP_ATCL_RPLY (ATCL_ID,RPLY_ID,UPER_RPLY_ID,RPLY_CNTS,RPLY_ATHR) VALUES ('01','1',NULL,'댓글1...','홍길동1');
+INSERT INTO APP_ATCL_RPLY (ATCL_ID,RPLY_ID,UPER_RPLY_ID,RPLY_CNTS,RPLY_ATHR) VALUES ('01','11','1','댓글11...','홍길동1');
+INSERT INTO APP_ATCL_RPLY (ATCL_ID,RPLY_ID,UPER_RPLY_ID,RPLY_CNTS,RPLY_ATHR) VALUES ('01','12','1','댓글12...','홍길동1');
+INSERT INTO APP_ATCL_RPLY (ATCL_ID,RPLY_ID,UPER_RPLY_ID,RPLY_CNTS,RPLY_ATHR) VALUES ('01','13','1','댓글13...','홍길동1');
+INSERT INTO APP_ATCL_RPLY (ATCL_ID,RPLY_ID,UPER_RPLY_ID,RPLY_CNTS,RPLY_ATHR) VALUES ('01','2',NULL,'댓글2...','홍길동1');
+INSERT INTO APP_ATCL_RPLY (ATCL_ID,RPLY_ID,UPER_RPLY_ID,RPLY_CNTS,RPLY_ATHR) VALUES ('01','21','2','댓글2...','홍길동1');
+INSERT INTO APP_ATCL_RPLY (ATCL_ID,RPLY_ID,UPER_RPLY_ID,RPLY_CNTS,RPLY_ATHR) VALUES ('02','1',NULL,'댓글1...','홍길동1');
+INSERT INTO APP_ATCL_RPLY (ATCL_ID,RPLY_ID,UPER_RPLY_ID,RPLY_CNTS,RPLY_ATHR) VALUES ('02','2',NULL,'댓글2...','홍길동1');
+INSERT INTO APP_ATCL_RPLY (ATCL_ID,RPLY_ID,UPER_RPLY_ID,RPLY_CNTS,RPLY_ATHR) VALUES ('03','1',NULL,'댓글1...','홍길동1');
+INSERT INTO APP_ATCL_RPLY (ATCL_ID,RPLY_ID,UPER_RPLY_ID,RPLY_CNTS,RPLY_ATHR) VALUES ('03','2',NULL,'댓글2...','홍길동1');
+
 -- APP_BORD
 INSERT INTO APP_BORD (BORD_ID,ACES_PLCY,CATE_USE_YN,BORD_DESC,FILE_USE_YN,BORD_ICON,BORD_NAME,PLCY_READ,RPLY_USE_YN,ROWS_PER_PAGE,BORD_SKIN,PLCY_WRIT) VALUES ('TEST','ANONYMOUS','Y','테스트 게시판','Y',null,'테스트 게시판','ANONYMOUS','Y',20,'default','ANONYMOUS');
 
@@ -72,20 +110,21 @@ INSERT INTO APP_BORD_CATE (BORD_ID,CATE_ID,CATE_NAME,CATE_SEQ) VALUES ('TEST','2
 INSERT INTO APP_BORD_CATE (BORD_ID,CATE_ID,CATE_NAME,CATE_SEQ) VALUES ('TEST','3','카테고리3',3);
 
 -- APP_BORD_ATCL
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','01','게시판 테스트 글 01','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','02','게시판 테스트 글 02','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','03','게시판 테스트 글 03','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','04','게시판 테스트 글 04','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','05','게시판 테스트 글 05','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','06','게시판 테스트 글 06','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','07','게시판 테스트 글 07','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','08','게시판 테스트 글 08','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','09','게시판 테스트 글 09','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','10','게시판 테스트 글 10','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','11','게시판 테스트 글 11','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','12','게시판 테스트 글 12','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','13','게시판 테스트 글 13','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
-INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID,ATCL_TITL,ATCL_ATHR,ATCL_CNTS) VALUES ('TEST','14','게시판 테스트 글 14','홍길동','게시물내용게시물내용게시물내용<img src="https://www.google.co.kr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>게시물내용게시물내용게시물내용');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','01');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','02');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','03');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','04');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','05');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','06');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','07');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','08');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','09');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','10');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','11');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','12');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','13');
+INSERT INTO APP_BORD_ATCL (BORD_ID,ATCL_ID) VALUES ('TEST','14');
+
 
 
 

@@ -22,7 +22,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
-import net.oopscraft.application.core.jpa.BooleanToStringConverter;
+import net.oopscraft.application.core.jpa.BooleanStringConverter;
 import net.oopscraft.application.security.SecurityPolicy;
 import net.oopscraft.application.user.entity.Authority;
 
@@ -54,15 +54,15 @@ public class Board {
 	long articleCount = 0;
 
 	@Column(name = "RPLY_USE_YN", length = 1)
-	@Convert(converter=BooleanToStringConverter.class)
+	@Convert(converter=BooleanStringConverter.class)
 	boolean replyUse = false;
 	
 	@Column(name = "FILE_USE_YN")
-	@Convert(converter=BooleanToStringConverter.class)
+	@Convert(converter=BooleanStringConverter.class)
 	boolean fileUse = false;
 	
 	@Column(name = "CATE_USE_YN")
-	@Convert(converter=BooleanToStringConverter.class)
+	@Convert(converter=BooleanStringConverter.class)
 	boolean categoryUse = false;
 	
 	@OneToMany(

@@ -46,7 +46,7 @@ public class MenuService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageable());
+		}, pageInfo.toPageRequest());
 		pageInfo.setTotalCount(menusPage.getTotalElements());
 		return menusPage.getContent();
 	}

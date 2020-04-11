@@ -9,7 +9,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.oopscraft.application.article.entity.ArticleReply;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.entity.BoardArticle;
@@ -25,7 +25,7 @@ import net.oopscraft.application.core.PageInfo;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/board")
+@RequestMapping("/api/boards")
 public class BoardController {
 	
 	@Autowired
@@ -39,7 +39,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public List<Board> getBoards(
 		 @RequestParam(value="id", required=false)String id
 		,@RequestParam(value="name", required=false)String name
@@ -62,7 +62,7 @@ public class BoardController {
 	 * @throws Exception
 	 */
 	//@PreAuthorize("this.hasAccessAuthority(#boardId)")
-	@RequestMapping(value = "{boardId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value="{boardId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public Board getBoard(
 		@PathVariable("boardId")String boardId
 	) throws Exception {
@@ -76,10 +76,11 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "{boardId}/article", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value="{boardId}/articles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public List<BoardArticle> getBoardArticles(
 		 @PathVariable("boardId")String boardId
+		,@RequestParam(value="categoryId", required=false)String categoryId
 		,@RequestParam(value="title", required=false)String title
 		,@RequestParam(value="contents", required=false)String contents
 		,@RequestParam(value="rows", required=false, defaultValue="100")int rows
@@ -87,6 +88,7 @@ public class BoardController {
 	) throws Exception {
 		BoardArticle boardArticle = new BoardArticle();
 		boardArticle.setBoardId(boardId);
+		boardArticle.setCategoryId(categoryId);
 		boardArticle.setTitle(title);
 		boardArticle.setContents(contents);
 		PageInfo pageInfo = new PageInfo(rows, page, true);
@@ -101,15 +103,114 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "{boardId}/article/{articleId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "{boardId}/articles/{articleId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public BoardArticle getBoardArticle(
 		 @PathVariable("boardId")String boardId
 		,@PathVariable("articleId")String articleId
 	) throws Exception {
-		BoardArticle boardArticle = new BoardArticle(boardId, articleId);
-		return boardService.getBoardArticle(boardArticle);
+		return boardService.getBoardArticle(boardId, articleId);
 	}
+	
+	/**
+	 * Creates board article
+	 * @param boardId
+	 * @param boardArticle
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "{boardId}/articles", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public BoardArticle createBoardArticle(
+		@PathVariable("boardId")String boardId,
+		@RequestBody BoardArticle boardArticle
+	) throws Exception {
+		boardArticle.setBoardId(boardId);
+		return boardService.saveBoardArticle(boardArticle);
+	}
+	
+	/**
+	 * Returns board article replies
+	 * @param boardId
+	 * @param articleId
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "{boardId}/articles/{articleId}/replies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public List<ArticleReply> getBoardArticleReplies(
+		 @PathVariable("boardId")String boardId
+		,@PathVariable("articleId")String articleId
+	) throws Exception {
+		Board board = boardService.getBoard(boardId);
+		if(board.isReplyUse() == false) {
+			throw new Exception("Reply Usage is false");
+		}
+		return boardService.getBoardArticleReplies(articleId);
+	}
+	
+	/**
+	 * Creates board article reply
+	 * @param articleReply
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "{boardId}/articles/{articleId}/replies", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public ArticleReply createBoardArticleReply(
+		@PathVariable("boardId")String boardId,
+		@PathVariable("articleId")String articleId,
+		@RequestBody ArticleReply articleReply
+	) throws Exception {
+		articleReply.setArticleId(articleId);
+		return boardService.saveBoardArticleReply(articleReply);
+	}
+	
+	/**
+	 * Updates board article reply
+	 * @param boardId
+	 * @param articleId
+	 * @param id
+	 * @param articleReply
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "{boardId}/articles/{articleId}/replies/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public ArticleReply updateBoardArticleReply(
+		@PathVariable("boardId")String boardId,
+		@PathVariable("articleId")String articleId,
+		@PathVariable("id")String id,
+		@RequestBody ArticleReply articleReply
+	) throws Exception {
+		articleReply.setArticleId(articleId);
+		articleReply.setId(id);
+		return boardService.saveBoardArticleReply(articleReply);
+	}
+	
+	/**
+	 * Deletes board article reply
+	 * @param boardId
+	 * @param articleId
+	 * @param id
+	 * @throws Exception
+	 */
+	@RequestMapping(value="{boardId}/articles/{articleId}/replies/{id}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteBoardArticleReply(
+		@PathVariable("boardId")String boardId,
+		@PathVariable("articleId")String articleId,
+		@PathVariable("id")String id
+	) throws Exception {
+		boardService.deleteBoardArticleReply(boardId, articleId, id);
+	}
+
+	
+	
+	
 	
 //	/**
 //	 * Creates board article

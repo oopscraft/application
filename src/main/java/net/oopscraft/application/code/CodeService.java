@@ -45,7 +45,7 @@ public class CodeService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageable());
+		}, pageInfo.toPageRequest());
 		pageInfo.setTotalCount(codesPage.getTotalElements());
 		return codesPage.getContent();
 	}

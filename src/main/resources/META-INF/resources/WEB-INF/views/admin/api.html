@@ -18,6 +18,7 @@
 		});
 		const apis = new duice.List();
 		const api = new duice.Map();
+		const apiVariables = new duice.List();
 		const apiParameters = new duice.List();
 		const apiPayload = new duice.Map();
 		
@@ -32,6 +33,7 @@
 		// event listener for select row
 		apis.onAfterSelectRow(function(selectedRow){
 			api.fromJson(selectedRow.toJson());
+			apiVariables.fromJson(selectedRow.get('variables'));
 			apiParameters.fromJson(selectedRow.get('parameters'));
 			apiPayload.fromJson(selectedRow.get('payload'));
 			$('#response').empty();
@@ -84,12 +86,20 @@
 		function testApi(){
 			var url = api.get('uri');
 			var type = api.get('method');
-			var data = new Object();
-			$.ajax({
-				 url: url
-				,type: type
-				,data: data
-			})
+			
+			// replaces path variables
+			apiVariables.forEach(function(variable){
+				var name = variable.get('name');
+				var value = variable.get('value');
+				url = url.replace('\{' + name + '\}', value);
+			});
+
+			// calls api
+			var settings = new Object();
+			settings.url = url + '?' + $.param(apiParameters.toJson());
+			settings.type = type;
+			settings.data = apiPayload.toJson();
+			$.ajax(settings)
 			.done(function(data, textStatus, jqXHR) {
 				var response = JSON.stringify(data,null,2);
 				api.set('response', response);
@@ -103,6 +113,7 @@
 		 */
 		function resetApi(){
 			api.reset();
+			apiVariables.reset();
 			apiParameters.reset();
 			apiPayload.reset();
 			$('#response').empty();
@@ -231,6 +242,22 @@
 						<tbody>
 							<tr>
 								<th>
+									<span data-th-text="#{application.api.className}">Class Name</span>
+								</th>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="api,className"></span>
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<span data-th-text="#{application.api.methodName}">Method Name</span>
+								</th>
+								<td>
+									<span is="duice-ui-span" data-duice-bind="api,methodName"></span>
+								</td>
+							</tr>
+							<tr>
+								<th>
 									<span data-th-text="#{application.api.method}">Method</span>
 								</th>
 								<td>
@@ -247,18 +274,30 @@
 							</tr>
 							<tr>
 								<th>
-									<span data-th-text="#{application.api.className}">Class Name</span>
+									<span data-th-text="#{application.api.variables}"></span>
 								</th>
 								<td>
-									<span is="duice-ui-span" data-duice-bind="api,className"></span>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span data-th-text="#{application.api.methodName}">Method Name</span>
-								</th>
-								<td>
-									<span is="duice-ui-span" data-duice-bind="api,methodName"></span>
+									<table is="duice-ui-table" 
+									data-duice-bind="apiVariables,variable" style="width:100%;">
+										<col style="width:30%;"/>
+										<col/>
+										<thead>
+											<tr>
+												<th data-th-text="#{application.api.variable.name}">Type</th>
+												<th data-th-text="#{application.api.variable.value}">Value</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>
+													<span is="duice-ui-span" data-duice-bind="variable,name"></span>
+												</td>
+												<td>
+													<input is="duice-ui-input" type="text" data-duice-bind="variable,value"/>
+												</td>
+											</tr>
+										</tbody>
+									</table>
 								</td>
 							</tr>
 							<tr>

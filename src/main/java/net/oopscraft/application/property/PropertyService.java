@@ -46,7 +46,7 @@ public class PropertyService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageable());
+		}, pageInfo.toPageRequest());
 		pageInfo.setTotalCount(propertiesPage.getTotalElements());
 		return propertiesPage.getContent();
 	}

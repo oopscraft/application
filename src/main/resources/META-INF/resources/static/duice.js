@@ -1124,6 +1124,47 @@ var duice;
     }
     duice.deleteCookie = deleteCookie;
     /**
+     *
+     * @param queryString
+     */
+    function encodeParam(obj) {
+        var param = '';
+        for (var name in obj) {
+            var value = obj[name];
+            param += '&' + encodeURIComponent(name) + '=' + encodeURIComponent(value);
+        }
+        return param;
+    }
+    duice.encodeParam = encodeParam;
+    /**
+     *
+     * @param json
+     */
+    function decodeParam(param) {
+        var queryVariables = new Object();
+        //var queryString = window.location.search.substring(1);
+        var vars = param.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            var key = decodeURIComponent(pair[0]);
+            var value = decodeURIComponent(pair[1]);
+            queryVariables[key] = value;
+        }
+        return queryVariables;
+        // var obj:any = new Object();
+        // var paramPairs = param.split('&');
+        // for(var i = 0, size = paramPairs.length; i < size; i ++ ){
+        //     var paramPair = paramPairs[i];
+        //     var name = paramPair[0];
+        //     if(name){
+        //         var value = paramPair[1];
+        //         obj[name] = value;
+        //     }
+        // }
+        // return obj;
+    }
+    duice.decodeParam = decodeParam;
+    /**
      * Executes custom expression in HTML element and returns.
      * @param element
      * @param $context
