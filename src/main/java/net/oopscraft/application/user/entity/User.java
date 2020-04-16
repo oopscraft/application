@@ -111,6 +111,68 @@ public class User extends SystemEntity {
 	public User(String id) {
 		this.id = id;
 	}
+	
+	/**
+	 * Returns available roles
+	 * @return
+	 */
+	public List<Role> getAvailableRoles() {
+		List<Role> availableRoles = new ArrayList<Role>();
+		
+		// adds own roles
+		for(Role role : this.getRoles()) {
+			availableRoles.add(role);
+		}
+		
+		// adds groups's roles
+		for(Group group : this.getGroups()) {
+			for(Role role : group.getAvailableRoles()) {
+				if(!availableRoles.stream().anyMatch(e -> e.getId().equals(role.getId()))) {
+					role.setHolder(group.getName());
+					availableRoles.add(role);
+				}
+			}
+		}
+		
+		// returns
+		return availableRoles;
+	}
+	
+	/**
+	 * Returns available authorities
+	 * @return
+	 */
+	public List<Authority> getAvailableAuthorities() {
+		List<Authority> availableAuthorities = new ArrayList<Authority>();
+		
+		// adds own authorities
+		for(Authority authority : this.getAuthorities()) {
+			availableAuthorities.add(authority);
+		}
+		
+		// adds role's authorities
+		for(Role role : this.getRoles()){
+			for(Authority authority : role.getAuthorities()) {
+				if(!availableAuthorities.stream().anyMatch(e -> e.getId().equals(authority.getId()))) {
+					authority.setHolder(role.getName());
+					availableAuthorities.add(authority);
+				}
+			}
+		}
+		
+		// adds groups's available authorities
+		for(Group group : this.getGroups()) {
+			for(Authority authority : group.getAvailableAuthorities()) {
+				if(!availableAuthorities.stream().anyMatch(e -> e.getId().equals(authority.getId()))) {
+					authority.setHolder(group.getName());
+					availableAuthorities.add(authority);
+				}
+			}
+		}
+		
+		// return
+		return availableAuthorities;
+	}
 
 	public String getId() {
 		return id;

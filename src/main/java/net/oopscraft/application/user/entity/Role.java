@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
@@ -47,12 +48,15 @@ public class Role extends SystemEntity {
 	)
 	List<Authority> authorities;
 	
+	@Transient
+	String holder = null;
+	
 	public Role() {}
 	
 	public Role(String id) {
 		this.id = id;
 	}
-
+	
 	public String getId() {
 		return id;
 	}
@@ -91,6 +95,14 @@ public class Role extends SystemEntity {
 
 	public void setAuthorities(List<Authority> authorities) {
 		this.authorities = authorities;
+	}
+
+	public String getHolder() {
+		return holder;
+	}
+
+	public void setHolder(String holder) {
+		this.holder = holder;
 	}
 
 }

@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import net.oopscraft.application.user.entity.Authority;
-import net.oopscraft.application.user.entity.Group;
 import net.oopscraft.application.user.entity.Role;
 import net.oopscraft.application.user.entity.User;
 
@@ -23,81 +22,15 @@ public class UserDetails implements org.springframework.security.core.userdetail
 		this.username = user.getId();
 		this.language = user.getLanguage();
 		
-		// Adds user authorities
-		for(Authority authority : user.getAuthorities()) {
-			addAuthority(new GrantedAuthority(authority));
+		// adds roles
+		for(Role role : user.getAvailableRoles()) {
+			authorities.add(new GrantedAuthority(role));
 		}
 		
-		// Adds user roles
-		for(Role role : user.getRoles()) {
-			addAuthority(new GrantedAuthority(role));
-			for(Authority authority : role.getAuthorities()) {
-				addAuthority(new GrantedAuthority(authority));
-			}
+		// adds authorities
+		for(Authority authority : user.getAvailableAuthorities()) {
+			authorities.add(new GrantedAuthority(authority));
 		}
-		
-		// load authorities from group
-		List<Group> groups = user.getGroups();
-		for(Group group : groups) {
-			// Adds group roles
-			for(Role role : group.getRoles()) {
-				this.authorities.add(new GrantedAuthority(role));
-				for(Authority authority : role.getAuthorities()) {
-					addAuthority(new GrantedAuthority(authority));
-				}
-			}
-			// Adds group authorities
-			for(Authority authority : group.getAuthorities()) {
-				this.addAuthority(new GrantedAuthority(authority));
-			}
-		}
-	}
-	
-	/**
-	 * Adds Granted Authority
-	 * @param authority
-	 */
-	private void addAuthority(GrantedAuthority authority) {
-		// checks duplicated authority
-		boolean contains = false;
-		for(GrantedAuthority grantedAuthority : this.authorities) {
-			if(grantedAuthority.getAuthority().equals(authority.getAuthority())) {
-				contains = true;
-				break;
-			}
-		}
-		// if not duplicated, add inputed authority
-		if(contains == false) {
-			this.authorities.add(authority);
-		}
-	}
-	
-	/**
-	 * checks has authority
-	 * @param authority
-	 * @return
-	 */
-	public boolean hasAuthority(Authority authority) {
-		for(GrantedAuthority element : this.authorities) {
-			if(element.getAuthority().equals(authority.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * checks has authorities
-	 * @param authorities
-	 * @return
-	 */
-	public boolean hasAuthority(List<Authority> authorities) {
-		for(Authority authority : authorities) {
-			if(hasAuthority(authority)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override

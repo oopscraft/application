@@ -9,11 +9,16 @@
 		<script th:src="@{/static/polyfill/classList.js}"></script>
 		<script th:src="@{/static/duice.js}"></script>
 		<link rel="stylesheet" type="text/css" th:href="@{/static/duice.css}">
+		<script th:src="@{/static/plugin/ckeditor/ckeditor.js}"></script>
+		<script th:src="@{/static/plugin/duice-plugin-ckeditor.js}"></script>
 		<script th:src="@{/static/jquery.js}"></script>
 		<script th:src="@{/static/marked/marked.min.js}"></script>
 		<link rel="stylesheet" th:href="@{/static/prism/prism.css}">
 		<script th:src="@{/static/prism/prism.js}"></script>
 		<script>
+		// disabled duice style
+		//duice.Configuration.cssEnable = false;
+		
 		/**
 		 * ajax setting
 		 */

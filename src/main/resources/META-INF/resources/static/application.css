@@ -1,5 +1,5 @@
 html {
-	font-size: 75%;
+	font-size: 12px;
 }
 html,
 body {
@@ -16,7 +16,7 @@ body {
 h1 { 
 	color: #111; 
 	font-family: sans-serif; 
-	font-size: 2rem; 
+	font-size: 1.4rem; 
 	font-weight: 700; 
 	line-height: 32px; 
 	margin: 0 0 0; 
@@ -25,7 +25,7 @@ h1 {
 h2 { 
 	color: #111; 
 	font-family: sans-serif; 
-	font-size: 1.8rem; 
+	font-size: 1.2rem; 
 	font-weight: 700; 
 	line-height: 16px; 
 	margin: 0 0 0; 
@@ -43,6 +43,14 @@ a:hover {
 	justify-content: space-between;
 	margin: 0px;
 	padding: 0px;
+}
+.app-row.title {
+	height:3rem;
+	border-bottom: solid 1px #ccc;
+}
+.app-row.search {
+	background-color: #fafafa;
+	padding-top:2px;
 }
 .app-col {
 	flex-grow: 1;
@@ -67,6 +75,12 @@ a:hover {
 .app-col.bottom {
 	align-self: flex-end;
 }
+.app-panel {
+	border: solid 1px #eee;
+    border-radius: 3px;
+    background-color: #fff;
+    padding: 1rem;
+}
 .hr {
 	margin: 1px;
 	border: none;
@@ -83,11 +97,11 @@ a:hover {
 }
 .menu ul > li {
 	padding:3px 10px;
-	border-bottom: dotted 1px #ccc;			
+	border-bottom: dotted 1px #ccc;
 }
 .menu ul > li:hover {
-	background-color: #f7f7f7;
-	transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+	padding-left: 1.25rem;
+	transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 	cursor: pointer;
 }
 .menu ul > li > a {
@@ -104,6 +118,22 @@ a:hover {
 .menu ul > li > a > span {
 	font-weight: bold;
 }
+.tab {
+	display:inline-block;
+	line-height: 2.5rem;
+	margin: 0px;
+	margin-bottom: -1px;
+	padding: 1px 10px;
+	border:1px solid #adacac;
+	border-bottom: none;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	cursor: pointer;
+	font-weight: bold;
+	box-shadow: inset 0px 1px 0px 0px #ffffff;
+    background: linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
+    background-color: #f9f9f9;
+}
 .banner {
 	padding: 0px;
 	margin: 0px;
@@ -112,24 +142,6 @@ a:hover {
 .banner ul {
 	list-style: none;
 	padding-left: 0px;
-}
-.content-title {
-	display: flex;
- 			justify-content: space-between;
- 			align-items: baseline;
- 			border-bottom: solid 1px #ccc;
-}
-.content-subtitle {
-	display: flex;
- 	justify-content: space-between;
- 	align-items: baseline;
- 	padding: 10px;
-	background: url('/static/image/icon_search_24px.png');
-    background-position: left 10px center;
-    background-repeat: no-repeat;
-    padding-left: 40px;
-    border: solid 2px #eee;
-    margin: 2px 0px;
 }
 .font-bold {
 	font-weight: bold;
@@ -188,15 +200,14 @@ a:hover {
 	position:relative;
 	top:1px;
 }
-.button.small {
-	min-width: 24px;
-    line-height: initial;
-	padding: 0.2rem 0.2rem;
-}
 .button > .icon {
-	width: 1rem;
-	height: 1rem;
-	vertical-align: middle;
+	width: 16px;
+	height: 16px;
+ 	vertical-align: text-bottom;
+}
+.button.small {
+	min-width: 2.2rem;
+    line-height: inherit;
 }
 .link {
 	font-weight: bold;
@@ -207,7 +218,7 @@ a:hover {
 }
 .table {
 	border-collapse: collapse;
-	border: solid 1px #ccc;
+	border: solid 1px #dee2e6;
 }
 .table > tr ,
 .table > thead > tr ,
@@ -221,8 +232,8 @@ a:hover {
 	font-weight: bold;
 	margin: 0px;
 	padding: 0px;
-	border: solid 1px #dee2e6;
-	background: #f7f7f7;
+	border: dotted 1px #dee2e6;
+	background-color: #fafafa;
 	text-align: center;
 	text-overflow: ellipsis;
 }
@@ -230,7 +241,7 @@ a:hover {
 .table > tbody > tr > td {
 	height: inherit;
 	line-height: inherit;
-	border: solid 1px #dee2e6;
+	border: dotted 1px #dee2e6;
 	margin: 0px;
 	padding: 1px;
 	text-overflow: ellipsis;

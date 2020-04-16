@@ -37,7 +37,7 @@ public abstract class Article extends SystemEntity {
 	@Column(name="ATCL_TITL", length=4000)
 	String title;
 
-	@Column(name="ATCL_CNTS")
+	@Column(name="ATCL_CNTS", length=Integer.MAX_VALUE)
 	@Lob
 	String contents;
 	

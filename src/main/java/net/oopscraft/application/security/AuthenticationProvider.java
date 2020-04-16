@@ -71,7 +71,6 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		String jwt = Jwts.builder()
 				  .setExpiration(new Date(System.currentTimeMillis() + (sessionTimeout*60*1000)))
 				  .claim("userDetails", JsonConverter.toJson(userDetails))
-				  //.compressWith(CompressionCodecs.GZIP)
 				  .signWith(SignatureAlgorithm.HS256, secretKey.getBytes("UTF-8"))
 				  .compact();
 		return jwt;

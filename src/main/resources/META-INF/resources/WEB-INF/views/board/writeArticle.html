@@ -8,7 +8,9 @@
 	
 	// document ready
 	$(document).ready(function() {
-		// getArticles();
+		if(duice.parseQueryString().id){
+			getArticle();	
+		}
 	});
 	
 	/**

@@ -6,15 +6,13 @@
 	$(document).ready(function() {
 		if(window.history.state){
 			search.fromJson(window.history.state);
-			console.log('------------------>', window.history.state);
 		}
 		getArticles();
 	});
 	
-	// hash change
+	// onpopstate
 	window.onpopstate = function(event){
 		if(event.state){
-			console.log('=========>', event.state);
 			search.fromJson(event.state);
 			getArticles();
 		}
@@ -54,18 +52,16 @@
 				,data: data
 			})
 			.done(function(data, textStatus, jqXHR) {
-				console.log('data',data);
-				articles.fromJson(data);
 				search.set('totalCount', __parseTotalCount(jqXHR));
+				articles.fromJson(data);
 				
-				//window.location.hash = $.param(search.toJson());
-				//console.log('window.location.hash', window.location.hash);
-				
+				// sets history
 				const state = search.toJson();
 				const title = '';
 				const url = window.location.href;
 				history.pushState(state, title, url)
 				
+				// resolve
 				resolve(true);
 		   	});
 		});

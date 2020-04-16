@@ -5,7 +5,6 @@
 			<span th:text="${board.name}" class="font-weight-bold" style="font-size:1.4rem;"></span>
 		</div>
 	</div>
-	<hr/>
 	<div class="row">
 		<div class="col">
 			<span is="duice-ui-span" data-duice-bind="article,title" style="font-size:1.2rem; font-weight:bold;"></span>
@@ -28,7 +27,13 @@
 			<div is="duice-ui-div" data-duice-bind="article,contents"></div>
 		</div>
 	</div>
-	<hr/>
+	<div class="row">
+		<div class="col text-right">
+			<button class="btn btn-primary" onclick="updateArticle();" th:text="#{application.board.write}">
+				Update
+			</button>
+		</div>
+	</div>
 	<div class="row">
 		<div class="col">
 			<ul is="duice-ui-ul" 

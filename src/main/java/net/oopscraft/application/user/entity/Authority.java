@@ -6,6 +6,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
@@ -30,12 +31,15 @@ public class Authority extends SystemEntity {
 	@Lob
 	String description;
 	
+	@Transient
+	String holder = null;
+	
 	public Authority() {}
 	
 	public Authority(String id) {
 		this.id = id;
 	}
-
+	
 	public String getId() {
 		return id;
 	}
@@ -66,6 +70,14 @@ public class Authority extends SystemEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getHolder() {
+		return holder;
+	}
+
+	public void setHolder(String holder) {
+		this.holder = holder;
 	}
 
 }

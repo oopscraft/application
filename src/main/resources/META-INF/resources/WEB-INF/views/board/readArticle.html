@@ -93,6 +93,14 @@
 		}
 	}
 	
+	/**
+	 * Updates article
+	 */
+	function updateArticle(){
+		var articleId = article.get('id');
+		window.location.href = "[[@{/board}]]/[[${board.id}]]/writeArticle" + "?id=" + articleId;
+	}
+	
 	</script>
 	<th:block th:include="|../theme/application/board/default/readArticle.html|"></th:block>
 </div>

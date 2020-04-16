@@ -4,35 +4,33 @@
 			<img th:src="${board.icon}"/>
 			<span th:text="${board.name}" class="font-weight-bold" style="font-size:1.4rem;"></span>
 		</div>
-		<div class="col-3">
-			<div class="input-group">
-				<select class="form-control" onclick="getArticlesByCategory(this.value);">
-					<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
-					<option th:each="category:${board.categories}" th:value="${category.id}" th:text="${category.name}"></option>
-				</select>
-			</div>
+		<div class="col-3 text-right">
+			<select class="custom-select" onclick="getArticlesByCategory(this.value);" style="width:150px;">
+				<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+				<option th:each="category:${board.categories}" th:value="${category.id}" th:text="${category.name}"></option>
+			</select>
 		</div>
 	</div>
-	<div class="row" style="margin-top:2px;">
+	<div class="row">
 		<div class="col">
 			<table is="duice-ui-table" 
 				data-duice-bind="articles,article" 
-				class="table table-sm"
+				class="table table-sm table-hover"
 				style="width:100%;">
 				<thead>
 					<tr>
-						<th data-th-text="#{application.global.no}">No</th>
+						<th data-th-text="#{application.global.no}" class="text-center">No</th>
 						<th data-th-text="#{application.board.article.title}">Title</th>
-						<th data-th-text="#{application.board.article.author}">Author</th>
-						<th data-th-text="#{application.board.article.writeDate}">Writing Date</th>
-						<th data-th-text="#{application.board.article.reply}">Reply</th>
+						<th data-th-text="#{application.board.article.author}" class="text-center">Author</th>
+						<th data-th-text="#{application.board.article.writeDate}" class="text-center">Writing Date</th>
+						<th data-th-text="#{application.board.article.reply}" class="text-center">Reply</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td class="text-center">
 							<span is="duice-ui-scriptlet" data-duice-bind="articles">
-								return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+								return search.get('totalCount') - (search.get('rows')*(search.get('page')-1)) - $context.index;
 							</span>
 						</td>
 						<td>
@@ -54,32 +52,34 @@
 			</table>
 		</div>
 	</div>
-	<div class="row align-items-end" style="margin-top:2px;">
+	<div class="row align-items-end">
 		<div class="col-4">
 			<div class="input-group">
 				<div class="input-group-prepend">
-					<select is="duice-ui-select" data-duice-bind="search,key" class="form-control">
+					<select is="duice-ui-select" data-duice-bind="search,key" class="custom-select">
 						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
 						<option value="title" data-th-text="#{application.board.article.title}">Title</option>
 						<option value="contents" data-th-text="#{application.board.article.contents}">Contents</option>
 					</select>
 				</div>
-				<input is="duice-ui-input" data-duice-bind="search,value" type="text" class="form-control"/>
+				<input is="duice-ui-input" data-duice-bind="search,value" type="text" class="form-control" style="width:50%;"/>
 				<div class="input-group-append">
-					<button class="btn btn-primary" onclick="getArticles(1)" th:text="#{application.global.all}">
-						Search
+					<button class="btn btn-primary" onclick="getArticles(1)">
+						<span class="mdi mdi-select-search"></span>
+						<span th:text="#{application.global.search}">Search</span>
 					</button>
 				</div>
 			</div>
 		</div>
-		<div class="col text-center">
-			<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
-				<li data-page="[@duice[$context.page]]" onclick="getArticles(this.dataset.page);"></li>
+		<div class="col-4">
+			<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5" class="pagination" style="justify-content:center;">
+				<li data-page="[@duice[$context.page]]" onclick="getArticles(this.dataset.page);" class="page-link"></li>
 			</ul>
 		</div>
 		<div class="col-4 text-right">
-			<button class="btn btn-primary" onclick="writeArticle();" th:text="#{application.board.write}">
-				Write
+			<button class="btn btn-primary" onclick="writeArticle();">
+				<span class="mdi mdi-pencil"></span>
+				<span th:text="#{application.board.writeArticle}">Write Article</span>
 			</button>
 		</div>
 	</div>

@@ -120,5 +120,31 @@ public class UserController {
 		userService.changePassword(id, password);
 	}
 	
+	/**
+	 * Returns available roles
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="getAvailableRoles", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public List<?> getAvailableRoles(@ModelAttribute User user) throws Exception {
+		user = userService.getUser(user.getId());
+		return user.getAvailableRoles();
+	}
+
+	/**
+	 * Returns available authorities
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="getAvailableAuthorities", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public List<?> getAvailableAuthorities(@ModelAttribute User user) throws Exception {
+		user = userService.getUser(user.getId());
+		return user.getAvailableAuthorities();
+	}
+	
 	
 }

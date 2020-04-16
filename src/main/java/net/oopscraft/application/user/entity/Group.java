@@ -1,5 +1,6 @@
 package net.oopscraft.application.user.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -64,6 +65,48 @@ public class Group extends SystemEntity {
 	
 	public Group(String id) {
 		this.id = id;
+	}
+
+	/**
+	 * Returns holding roles
+	 * @return
+	 */
+	public List<Role> getAvailableRoles() {
+		List<Role> availableRoles = new ArrayList<Role>();
+		
+		// adds own roles
+		for(Role role : this.getRoles()) {
+			availableRoles.add(role);
+		}
+		
+		// returns
+		return availableRoles;
+	}
+	
+	/**
+	 * Returns holding authorities
+	 * @return
+	 */
+	public List<Authority> getAvailableAuthorities() {
+		List<Authority> availableAuthorities = new ArrayList<Authority>();
+		
+		// adds authorities
+		for(Authority authority : this.getAuthorities()) {
+			availableAuthorities.add(authority);
+		}
+		
+		// adds role's authorities
+		for(Role role : this.getRoles()){
+			for(Authority authority : role.getAuthorities()) {
+				if(!availableAuthorities.stream().anyMatch(e -> e.getId().equals(authority.getId()))) {
+					authority.setHolder(role.getName());
+					availableAuthorities.add(authority);
+				}
+			}
+		}
+		
+		// return
+		return availableAuthorities;
 	}
 
 	public String getId() {

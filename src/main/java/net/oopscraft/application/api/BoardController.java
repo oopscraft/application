@@ -131,6 +131,26 @@ public class BoardController {
 	}
 	
 	/**
+	 * Updates board article
+	 * @param boardId
+	 * @param boardArticle
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "{boardId}/articles/{articleId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public BoardArticle updateBoardArticle(
+		@PathVariable("boardId")String boardId,
+		@PathVariable("articleId")String articleId,
+		@RequestBody BoardArticle boardArticle
+	) throws Exception {
+		boardArticle.setBoardId(boardId);
+		boardArticle.setId(articleId);
+		return boardService.saveBoardArticle(boardArticle);
+	}
+	
+	/**
 	 * Returns board article replies
 	 * @param boardId
 	 * @param articleId
