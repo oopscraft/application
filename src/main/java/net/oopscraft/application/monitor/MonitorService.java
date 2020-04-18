@@ -1,10 +1,16 @@
 package net.oopscraft.application.monitor;
 
+import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
@@ -15,9 +21,14 @@ import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.api.WebSocketHandler;
 import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.process.ProcessExecutor;
 import net.oopscraft.application.core.process.ProcessStreamHandler;
 import net.oopscraft.application.monitor.entity.Monitor;
+import net.oopscraft.application.monitor.entity.Monitor.OperatingSystemKey;
+import net.oopscraft.application.util.monitor.MonitorInfo.ClassInfo;
+import net.oopscraft.application.util.monitor.MonitorInfo.MemInfo;
+import net.oopscraft.application.util.monitor.MonitorInfo.OsInfo;
 
 @Service
 public class MonitorService {
@@ -34,23 +45,69 @@ public class MonitorService {
 	 * Scheduled collecting monitor info
 	 * @throws Exception
 	 */
-	@Scheduled(fixedDelay=1000*3)
+	@Scheduled(fixedDelay=1000)	
 	public void collectMonitor() throws Exception {
-		Monitor monitor = new Monitor();
-		monitor.setOperatingSystem(ManagementFactory.getOperatingSystemMXBean());
-		monitor.setMemory(ManagementFactory.getMemoryMXBean());
-		monitor.setClassLoading(ManagementFactory.getClassLoadingMXBean());
-		List<ThreadInfo> threadInfos = new ArrayList<ThreadInfo>();
-		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
-		long[] allThreadIds = threadBean.getAllThreadIds();
-		for(long threadId : allThreadIds) { 
-			ThreadInfo threadInfo = threadBean.getThreadInfo(threadId);
-			threadInfos.add(threadInfo);
-		}
-		monitor.setThreadInfos(threadInfos);
+		Monitor monitor = new Monitor(new Date());
 		
 		// getting top string
 		monitor.setTop(getTop());
+		
+		// Getting OS info 
+		OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+		ValueMap operatingSystem = new ValueMap();
+		operatingSystem.put(OperatingSystemKey.name.name(), operatingSystemMXBean.getName());
+		operatingSystem.put(OperatingSystemKey.version.name(), operatingSystemMXBean.getVersion());
+		operatingSystem.put(OperatingSystemKey.arch.name(), operatingSystemMXBean.getArch());
+		operatingSystem.put(OperatingSystemKey.availableProcessors.name(), operatingSystemMXBean.getAvailableProcessors());
+		operatingSystem.put(OperatingSystemKey.systemLoadAverage.name(), operatingSystemMXBean.getSystemLoadAverage());
+		monitor.setOperatingSystem(operatingSystem);
+		
+//		monitorInfo.osInfo.put(OsInfo.name, osBean.getName());
+//		monitorInfo.osInfo.put(OsInfo.version, osBean.getVersion());
+//		monitorInfo.osInfo.put(OsInfo.arch, osBean.getArch());
+//		monitorInfo.osInfo.put(OsInfo.availableProcessors, osBean.getAvailableProcessors());
+//		monitorInfo.osInfo.put(OsInfo.systemLoadAverage, osBean.getSystemLoadAverage());
+//		
+//		// Getting memory info 
+//		MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
+//		monitorInfo.memInfo.put(MemInfo.heapMemoryUsage, memBean.getHeapMemoryUsage());
+//		monitorInfo.memInfo.put(MemInfo.nonHeapMemoryUsage, memBean.getNonHeapMemoryUsage());
+//
+//		// Getting class loader info 
+//		ClassLoadingMXBean classBean = ManagementFactory.getClassLoadingMXBean();
+//		monitorInfo.classInfo.put(ClassInfo.totalLoadedClassCount, classBean.getTotalLoadedClassCount());
+//		monitorInfo.classInfo.put(ClassInfo.loadedClassCount, classBean.getLoadedClassCount());
+//		monitorInfo.classInfo.put(ClassInfo.unloadedClassCount, classBean.getUnloadedClassCount());
+//		
+//		// Getting thread info list threadInfoList.clear();
+//		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+//		long[] allThreadIds = threadBean.getAllThreadIds( );
+//		for(long threadId : allThreadIds) { 
+//			Map<ThreadInfo,Object> threadInfoMap = new LinkedHashMap<ThreadInfo,Object>();
+//			java.lang.management.ThreadInfo threadInfo = threadBean.getThreadInfo(threadId);
+//			threadInfoMap.put(ThreadInfo.threadId, threadInfo.getThreadId());
+//			threadInfoMap.put(ThreadInfo.threadName, threadInfo.getThreadName());
+//			threadInfoMap.put(ThreadInfo.threadState, threadInfo.getThreadState().name());
+//			threadInfoMap.put(ThreadInfo.waitedCount, threadInfo.getWaitedCount());
+//			threadInfoMap.put(ThreadInfo.waitedTime, threadInfo.getWaitedTime());
+//			threadInfoMap.put(ThreadInfo.blockCount, threadInfo.getBlockedCount());
+//			threadInfoMap.put(ThreadInfo.blockTime, threadInfo.getBlockedTime());
+//			monitorInfo.threadInfos.add(threadInfoMap);
+//		}
+		
+		
+//		// JMX info
+//		monitor.setOperatingSystem(ManagementFactory.getOperatingSystemMXBean());
+//		monitor.setMemory(ManagementFactory.getMemoryMXBean());
+//		monitor.setClassLoading(ManagementFactory.getClassLoadingMXBean());
+//		List<ThreadInfo> threadInfos = new ArrayList<ThreadInfo>();
+//		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+//		long[] allThreadIds = threadBean.getAllThreadIds();
+//		for(long threadId : allThreadIds) { 
+//			ThreadInfo threadInfo = threadBean.getThreadInfo(threadId);
+//			threadInfos.add(threadInfo);
+//		}
+//		monitor.setThreadInfos(threadInfos);
 		
 		// adds list
 		monitors.add(monitor);
