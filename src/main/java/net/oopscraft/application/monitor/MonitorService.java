@@ -37,9 +37,9 @@ public class MonitorService {
 	@Scheduled(fixedDelay=1000*3)
 	public void collectMonitor() throws Exception {
 		Monitor monitor = new Monitor();
-		monitor.setOperatingSystem(ManagementFactory.getOperatingSystemMXBean());
-		monitor.setMemory(ManagementFactory.getMemoryMXBean());
-		monitor.setClassLoading(ManagementFactory.getClassLoadingMXBean());
+//		monitor.setOperatingSystem(ManagementFactory.getOperatingSystemMXBean());
+//		monitor.setMemory(ManagementFactory.getMemoryMXBean());
+//		monitor.setClassLoading(ManagementFactory.getClassLoadingMXBean());
 		List<ThreadInfo> threadInfos = new ArrayList<ThreadInfo>();
 		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
 		long[] allThreadIds = threadBean.getAllThreadIds();
