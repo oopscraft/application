@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import net.oopscraft.application.user.entity.Authority;
-import net.oopscraft.application.user.entity.Role;
 import net.oopscraft.application.user.entity.User;
 
 public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
@@ -21,11 +20,6 @@ public class UserDetails implements org.springframework.security.core.userdetail
 	public UserDetails(User user) {
 		this.username = user.getId();
 		this.language = user.getLanguage();
-		
-		// adds roles
-		for(Role role : user.getAvailableRoles()) {
-			authorities.add(new GrantedAuthority(role));
-		}
 		
 		// adds authorities
 		for(Authority authority : user.getAvailableAuthorities()) {

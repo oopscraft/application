@@ -19,7 +19,7 @@ import net.oopscraft.application.message.entity.Message;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/message")
+@RequestMapping("/api/messages")
 public class MessageController {
 	
 	@Autowired

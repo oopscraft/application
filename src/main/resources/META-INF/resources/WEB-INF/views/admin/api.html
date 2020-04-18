@@ -2,362 +2,416 @@
 <html layout:decorate="~{admin/admin.html}">
 <div layout:fragment="content">
 	<script>
-		// document ready
-		$(document).ready(function() {
-			getApis();
-		    disableDetail(true);
-		});
+	// defines variables
+	var search = new duice.Map({
+		key: null,
+		value: null,
+		status: null,
+		page: 1,
+		rows: 20,
+		totalCount: -1
+	});
+	const tabFolder = new duice.TabFolder();
+	const apis = new duice.List();
+	const api = new duice.Map();
+	const apiVariables = new duice.List();
+	const apiParameters = new duice.List();
+	const apiPayload = new duice.Map();
+
+	// document ready
+	$(document).ready(function() {
+		
+		// creates tab
+		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
+		tabFolder.selectTab(0);
+
+		// gets apis		
+		getApis();
+	    disableDetail(true);
+	});
 	
-		var search = new duice.Map({
-			key: null,
-			value: null,
-			status: null,
-			page: 1,
-			rows: 20,
-			totalCount: -1
+	// handle when search option is changed.
+	search.onAfterChange(function(name, value){
+		// if select all option, reset value. 
+		if(name === 'key' && !value){
+			search.set('value',null);				
+		}
+	});
+	
+	// event listener for select row
+	apis.onAfterSelectRow(function(selectedRow){
+		api.fromJson(selectedRow.toJson());
+		apiVariables.fromJson(selectedRow.get('variables'));
+		apiParameters.fromJson(selectedRow.get('parameters'));
+		apiPayload.fromJson(selectedRow.get('payload'));
+		$('#response').empty();
+		disableDetail(false);
+		tabFolder.selectTab(0);
+	});
+	
+	/**
+	 * Disables detail
+	 */
+	function disableDetail(disable){
+		api.setDisable(disable);
+		$('#detailDiv').find('button').each(function(index, element){
+			$(element).prop('disabled', disable);
 		});
-		const apis = new duice.List();
-		const api = new duice.Map();
-		const apiVariables = new duice.List();
-		const apiParameters = new duice.List();
-		const apiPayload = new duice.Map();
-		
-		// handle when search option is changed.
-		search.onAfterChange(function(name, value){
-			// if select all option, reset value. 
-			if(name === 'key' && !value){
-				search.set('value',null);				
+	}
+
+	/**
+	 * Gets API list
+	 */
+	function getApis(page) {
+		return new Promise(function(resolve,reject){
+			if(page){
+				search.set('page',page);
 			}
-		});
-		
-		// event listener for select row
-		apis.onAfterSelectRow(function(selectedRow){
-			api.fromJson(selectedRow.toJson());
-			apiVariables.fromJson(selectedRow.get('variables'));
-			apiParameters.fromJson(selectedRow.get('parameters'));
-			apiPayload.fromJson(selectedRow.get('payload'));
-			$('#response').empty();
-			disableDetail(false);
-		});
-		
-		/**
-		 * Disables detail
-		 */
-		function disableDetail(disable){
-			api.setDisable(disable);
-			$('#detailDiv').find('button').each(function(index, element){
-				$(element).prop('disabled', disable);
-			});
-		}
-
-		/**
-		 * Gets API list
-		 */
-		function getApis(page) {
-			return new Promise(function(resolve,reject){
-				if(page){
-					search.set('page',page);
-				}
-				var data = {};
-				if(search.get('key')){
-					data[search.get('key')] = search.get('value');
-				}
-				if(search.get('status')){
-					data.status = search.get('status');
-				}
-				data.page = search.get('page');
-				data.rows = search.get('rows');
-				$.ajax({
-					 url: '[[@{/api}]]'
-					,type: 'GET'
-					,data: data
-				})
-				.done(function(data, textStatus, jqXHR) {
-					apis.fromJson(data);
-					search.set('totalCount', __parseTotalCount(jqXHR));
-					resolve(true);
-			   	});
-			});
-		}
-		
-		/**
-		 * Test API
-		 */
-		function testApi(){
-			var url = api.get('uri');
-			var type = api.get('method');
-			
-			// replaces path variables
-			apiVariables.forEach(function(variable){
-				var name = variable.get('name');
-				var value = variable.get('value');
-				url = url.replace('\{' + name + '\}', value);
-			});
-
-			// calls api
-			var settings = new Object();
-			settings.url = url + '?' + $.param(apiParameters.toJson());
-			settings.type = type;
-			settings.data = apiPayload.toJson();
-			$.ajax(settings)
+			var data = {};
+			if(search.get('key')){
+				data[search.get('key')] = search.get('value');
+			}
+			if(search.get('status')){
+				data.status = search.get('status');
+			}
+			data.page = search.get('page');
+			data.rows = search.get('rows');
+			$.ajax({
+				 url: '[[@{/api}]]'
+				,type: 'GET'
+				,data: data
+			})
 			.done(function(data, textStatus, jqXHR) {
-				var response = JSON.stringify(data,null,2);
-				api.set('response', response);
-				$('#response').text(response);
-				Prism.highlightAll();
+				apis.fromJson(data);
+				search.set('totalCount', __parseTotalCount(jqXHR));
+				resolve(true);
 		   	});
-		}
+		});
+	}
+	
+	/**
+	 * Test API
+	 */
+	function testApi(){
 		
-		/**
-		 * Reset API
-		 */
-		function resetApi(){
-			api.reset();
-			apiVariables.reset();
-			apiParameters.reset();
-			apiPayload.reset();
-			$('#response').empty();
-		}
+		tabFolder.selectTab(1);
+		var url = api.get('uri');
+		var type = api.get('method');
 		
-		/**
-		 * Copy response
-		 */
-		function copyResponse(){
-			var response = api.get('response');
-			navigator.clipboard.writeText(response);
-		}
-		
+		// replaces path variables
+		apiVariables.forEach(function(variable){
+			var name = variable.get('name');
+			var value = variable.get('value');
+			url = url.replace('\{' + name + '\}', value);
+		});
+
+		// calls api
+		var settings = new Object();
+		settings.url = url + '?' + $.param(apiParameters.toJson());
+		settings.type = type;
+		settings.data = apiPayload.toJson();
+		$.ajax(settings)
+		.done(function(data, textStatus, jqXHR) {
+			var response = JSON.stringify(data,null,2);
+			api.set('response', response);
+			$('#response').text(response);
+			Prism.highlightAll();
+	   	});
+	}
+	
+	/**
+	 * Reset API
+	 */
+	function resetApi(){
+		api.reset();
+		apiVariables.reset();
+		apiParameters.reset();
+		apiPayload.reset();
+		$('#response').empty();
+	}
+	
+	/**
+	 * Copy response
+	 */
+	function copyResponse(){
+		var response = api.get('response');
+		navigator.clipboard.writeText(response);
+	}
 	</script>
 	<div class="app-row">
-		<div class="app-col">
-			<h1>
-				<img class="icon large" th:src="@{/static/image/icon_message.png}"/>
-				<span data-th-text="#{application.api}+' '+#{application.global.test}"></span>
-			</h1>
-		</div>
-	</div>
-	<hr class="hr"/>
-	<div class="app-row">
-		<!-- ====================================================== -->
-		<!-- List													-->
-		<!-- ====================================================== -->
-		<div id="listDiv" class="app-col" style="width:50%;">
-			<div class="app-row">
-				<div class="app-col">
-					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
-						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
-						<option value="uri" data-th-text="#{application.api.uri}">URI</option>
-						<option value="method" data-th-text="#{application.api.method}">Method</option>
-						<option value="className" data-th-text="#{application.api.className}">Class Name</option>
-						<option value="methodName" data-th-text="#{application.api.methodName}">Method Name</option>
-					</select>
-					<input is="duice-ui-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
-				</div>
-				<div class="app-col right">
-					<button class="button" onclick="getApis(1);">
-						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-						<span data-th-text="#{application.global.search}"></span>
-					</button>
-				</div>
-			</div>
-			<div class="app-row">
-				<div class="app-col">
-					<table is="duice-ui-table" 
-						data-duice-bind="apis,api" 
-						data-duice-selectable="true"
-						style="width:100%;">
-						<col style="width:70px;"/>
-						<col/>
-						<col/>
-						<col/>
-						<col/>
-						<thead>
-							<tr>
-								<th data-th-text="#{application.global.no}">No</th>
-								<th data-th-text="#{application.api.method}">Method</th>
-								<th data-th-text="#{application.api.uri}">URI</th>
-								<th data-th-text="#{application.api.className}">Class Name</th>
-								<th data-th-text="#{application.api.methodName}">Method Name</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="text-center">
-									<span is="duice-ui-scriptlet" data-duice-bind="apis">
-										return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
-									</span>
-								</td>
-								<td>
-									<span is="duice-ui-span" data-duice-bind="api,method"></span>
-								</td>
-								<td>
-									<span is="duice-ui-span" data-duice-bind="api,uri"></span>
-								</td>
-								<td>
-									<span is="duice-ui-span" data-duice-bind="api,className"></span>
-								</td>
-								<td>
-									<span is="duice-ui-span" data-duice-bind="api,methodName"></span>
-								</td>
-							</tr>
-						</tbody>
-						<tfoot>
-							<tr>
-								<td colspan="7">
-									<ul is="duice-ui-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
-										<li onclick="getApis();"></li>
-									</ul>
-								</td>
-							</tr>
-						</tfoot>
-					</table>
-				</div>
-			</div>		
-		</div>
-		<!-- ====================================================== -->
-		<!-- Start Detail											-->
-		<!-- ====================================================== -->
 		<div class="app-col" style="width:50%;">
-			<div class="app-row">
+			<!-- ====================================================== -->
+			<!-- START:List												-->
+			<!-- ====================================================== -->
+			<div id="listDiv" class="app-row">
 				<div class="app-col">
-					<img class="icon" th:src="@{/static/image/icon_message.png}"/>
-					<span data-th-text="#{application.api} + ' ' + #{application.global.details}" class="font-bold"></span>
+					<div class="app-row title">
+						<div class="app-col bottom">
+							<h1>
+								<img class="icon large" th:src="@{/static/image/icon_api.png}"/>
+								<span data-th-text="#{application.api} + ' ' + #{application.global.test}"></span>
+							</h1>
+						</div>
+					</div>
+					<div class="app-row search">
+						<div class="app-col">
+							<select is="duice-select" data-duice-bind="search,key" style="width:125px;">
+								<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+								<option value="uri" data-th-text="#{application.api.uri}">URI</option>
+								<option value="method" data-th-text="#{application.api.method}">Method</option>
+								<option value="className" data-th-text="#{application.api.className}">Class Name</option>
+								<option value="methodName" data-th-text="#{application.api.methodName}">Method Name</option>
+							</select>
+							<input is="duice-input-text" type="text" data-duice-bind="search,value" style="width:250px;"/>
+						</div>
+						<div class="app-col right">
+							<button class="button" onclick="getApis(1);">
+								<img th:src="@{/static/image/icon_search.png}" class="icon"/>
+								<span data-th-text="#{application.global.search}"></span>
+							</button>
+						</div>
+					</div>
+					<div class="app-row">
+						<div class="app-col">
+							<table is="duice-table" 
+								data-duice-bind="apis,api" 
+								data-duice-selectable="true"
+								style="width:100%;">
+								<col style="width:70px;"/>
+								<col/>
+								<col/>
+								<col/>
+								<col/>
+								<thead>
+									<tr>
+										<th data-th-text="#{application.global.no}">No</th>
+										<th data-th-text="#{application.api.method}">Method</th>
+										<th data-th-text="#{application.api.uri}">URI</th>
+										<th data-th-text="#{application.api.className}">Class Name</th>
+										<th data-th-text="#{application.api.methodName}">Method Name</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="text-center">
+											<span is="duice-scriptlet" data-duice-bind="apis">
+												return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+											</span>
+										</td>
+										<td>
+											<span is="duice-span" data-duice-bind="api,method"></span>
+										</td>
+										<td class="text-left">
+											<span is="duice-span" data-duice-bind="api,uri"></span>
+										</td>
+										<td class="text-left">
+											<span is="duice-span" data-duice-bind="api,className"></span>
+										</td>
+										<td class="text-left">
+											<span is="duice-span" data-duice-bind="api,methodName"></span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="app-row">
+						<div class="app-col">
+							<small>
+								Total
+								<span is="duice-span" data-duice-bind="search,totalCount"></span>
+								Rows
+							</small>
+						</div>
+						<div class="app-col">
+							<ul is="duice-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+								<li onclick="getUsers();"></li>
+							</ul>
+						</div>
+						<div class="app-col right">
+							<button class="button" onclick="addUser();">
+								<img th:src="@{/static/image/icon_add.png}" class="icon"/>
+								<span data-th-text="#{application.global.add}"></span>
+							</button>
+						</div>
+					</div>
 				</div>
-				<div class="app-col right">
-					<button class="button" onclick="resetApi();">
-						<img th:src="@{/static/image/icon_reset.png}" class="icon"/>
-						<span data-th-text="#{application.global.reset}"></span>
-					</button>
-					<button class="button" onclick="testApi();">
-						<img th:src="@{/static/image/icon_test.png}" class="icon"/>
-						<span data-th-text="#{application.global.test}"></span>
-					</button>
+			</div>	
+			<!-- ====================================================== -->
+			<!-- END:List												-->
+			<!-- ====================================================== -->
+		</div>
+		<div class="app-col" style="width:50%;">
+			<!-- ====================================================== -->
+			<!-- START:Start Detail										-->
+			<!-- ====================================================== -->
+			<div id="detailDiv" class="app-row">
+				<div class="app-col">	
+					<div class="app-row title">
+						<div class="app-col bottom">
+							<span id="tabButton1" class="tab">
+								<img class="icon small" th:src="@{/static/image/icon_api.png}"/>
+								<span data-th-text="#{application.api} + ' ' + #{application.global.details}"></span>
+							</span>
+							<span id="tabButton2" class="tab">
+								<img class="icon small" th:src="@{/static/image/icon_response.png}"/>
+								<span data-th-text="#{application.api.response}"></span>
+							</span>
+						</div>
+					</div>
+					<!-- ====================================================== -->
+					<!-- START:Start tabContent1								-->
+					<!-- ====================================================== -->
+					<div id="tabContent1" class="app-row">
+						<div class="app-col">
+							<table class="table" style="width:100%;">
+								<col style="width:25%;"/>
+								<col/>
+								<tbody>
+									<tr>
+										<th>
+											<span data-th-text="#{application.api.className}">Class Name</span>
+										</th>
+										<td>
+											<span is="duice-span" data-duice-bind="api,className"></span>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<span data-th-text="#{application.api.methodName}">Method Name</span>
+										</th>
+										<td>
+											<span is="duice-span" data-duice-bind="api,methodName"></span>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<span data-th-text="#{application.api.method}">Method</span>
+										</th>
+										<td>
+											<span is="duice-span" data-duice-bind="api,method"></span>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<span data-th-text="#{application.api.uri}">URI</span>
+										</th>
+										<td>
+											<input is="duice-input-text" type="text" data-duice-bind="api,uri"/>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<span data-th-text="#{application.api.variables}"></span>
+										</th>
+										<td>
+											<table is="duice-table" 
+											data-duice-bind="apiVariables,variable" style="width:100%;">
+												<col style="width:30%;"/>
+												<col/>
+												<thead>
+													<tr>
+														<th data-th-text="#{application.api.variable.name}">Type</th>
+														<th data-th-text="#{application.api.variable.value}">Value</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>
+															<span is="duice-span" data-duice-bind="variable,name"></span>
+														</td>
+														<td>
+															<input is="duice-input-text" type="text" data-duice-bind="variable,value"/>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<span data-th-text="#{application.api.parameters}"></span>
+										</th>
+										<td>
+											<table is="duice-table" 
+											data-duice-bind="apiParameters,parameter" style="width:100%;">
+												<col style="width:30%;"/>
+												<col/>
+												<thead>
+													<tr>
+														<th data-th-text="#{application.api.parameter.name}">Type</th>
+														<th data-th-text="#{application.api.parameter.value}">Value</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>
+															<span is="duice-span" data-duice-bind="parameter,name"></span>
+														</td>
+														<td>
+															<input is="duice-input" type="text" data-duice-bind="parameter,value"/>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<span data-th-text="#{application.api.payload}"></span>
+										</th>
+										<td>
+											<textarea is="duice-textarea" data-duice-bind="api,payload" style="height:400px;"></textarea>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="app-row">
+								<div class="app-col right">
+									<button class="button" onclick="resetApi();">
+										<img th:src="@{/static/image/icon_reset.png}" class="icon"/>
+										<span data-th-text="#{application.global.reset}"></span>
+									</button>
+									<button class="button" onclick="testApi();">
+										<img th:src="@{/static/image/icon_test.png}" class="icon"/>
+										<span data-th-text="#{application.global.test}"></span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- ====================================================== -->
+					<!-- END: End tabContent1									-->
+					<!-- ====================================================== -->
+					<!-- ====================================================== -->
+					<!-- START:Start tabContent2								-->
+					<!-- ====================================================== -->
+					<div id="tabContent2" class="app-row">
+						<div class="app-col">
+							<div class="app-row">
+								<div class="app-col">
+									<pre style="margin:0px; height:800px; border-radius:3px;"><code id="response" class="language-json line-numbers"></code></pre>
+								</div>
+							</div>
+							<div class="app-row">
+								<div class="app-col right">
+									<button class="button" onclick="javascript:copyResponse();">
+										<img th:src="@{/static/image/icon_copy.png}" class="icon"/>
+										<span data-th-text="#{application.global.copy}"></span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- ====================================================== -->
+					<!-- END: End tabContent2									-->
+					<!-- ====================================================== -->
 				</div>
 			</div>
-			<div class="app-row">
-				<div class="app-col">
-					<table class="table" style="width:100%;">
-						<col style="width:25%;"/>
-						<col/>
-						<tbody>
-							<tr>
-								<th>
-									<span data-th-text="#{application.api.className}">Class Name</span>
-								</th>
-								<td>
-									<span is="duice-ui-span" data-duice-bind="api,className"></span>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span data-th-text="#{application.api.methodName}">Method Name</span>
-								</th>
-								<td>
-									<span is="duice-ui-span" data-duice-bind="api,methodName"></span>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span data-th-text="#{application.api.method}">Method</span>
-								</th>
-								<td>
-									<span is="duice-ui-span" data-duice-bind="api,method"></span>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span data-th-text="#{application.api.uri}">URI</span>
-								</th>
-								<td>
-									<input is="duice-ui-input" type="text" data-duice-bind="api,uri"/>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span data-th-text="#{application.api.variables}"></span>
-								</th>
-								<td>
-									<table is="duice-ui-table" 
-									data-duice-bind="apiVariables,variable" style="width:100%;">
-										<col style="width:30%;"/>
-										<col/>
-										<thead>
-											<tr>
-												<th data-th-text="#{application.api.variable.name}">Type</th>
-												<th data-th-text="#{application.api.variable.value}">Value</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>
-													<span is="duice-ui-span" data-duice-bind="variable,name"></span>
-												</td>
-												<td>
-													<input is="duice-ui-input" type="text" data-duice-bind="variable,value"/>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span data-th-text="#{application.api.parameters}"></span>
-								</th>
-								<td>
-									<table is="duice-ui-table" 
-									data-duice-bind="apiParameters,parameter" style="width:100%;">
-										<col style="width:30%;"/>
-										<col/>
-										<thead>
-											<tr>
-												<th data-th-text="#{application.api.parameter.name}">Type</th>
-												<th data-th-text="#{application.api.parameter.value}">Value</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>
-													<span is="duice-ui-span" data-duice-bind="parameter,name"></span>
-												</td>
-												<td>
-													<input is="duice-ui-input" type="text" data-duice-bind="parameter,value"/>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</td>
-							</tr>
-							<tr>
-								<th>
-									<span data-th-text="#{application.api.payload}"></span>
-								</th>
-								<td>
-									<textarea is="duice-ui-textarea" data-duice-bind="api,payload"></textarea>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					
-				</div>
-			</div>
-			<div class="app-row">
-				<div class="app-col">
-					<img class="icon" th:src="@{/static/image/icon_response.png}"/>
-					<span data-th-text="#{application.api.response}" class="font-bold"></span>
-				</div>
-				<div class="app-col right">
-					<button class="button" onclick="javascript:copyResponse();">
-						<img th:src="@{/static/image/icon_copy.png}" class="icon"/>
-						<span data-th-text="#{application.global.copy}"></span>
-					</button>
-				</div>
-			</div>
-			<div class="app-row">
-				<div class="app-col">
-					<pre style="margin:0px; height:400px; border-radius:3px;"><code id="response" class="language-json line-numbers"></code></pre>
-				</div>
-			</div>
+			<!-- ====================================================== -->
+			<!-- END:Start Detail										-->
+			<!-- ====================================================== -->
 		</div>
 	</div>
 </div>

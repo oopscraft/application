@@ -19,7 +19,6 @@
 	const userGroups = new duice.List();
 	const userRoles = new duice.List();
 	const userAuthorities = new duice.List();
-	const userAvailableRoles = new duice.List();
 	const userAvailableAuthorities = new duice.List();
 	var isNew = false;
 	
@@ -29,12 +28,10 @@
 		// creates tab
 		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
 		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton3'), document.getElementById('tabContent3')));
 		tabFolder.onAfterSelectTab(function(selectedTab){
 			if(user.get('id')){
-				if(selectedTab.getContent() === document.getElementById('tabContent2')){
-					getUserAvailableRoles(user.get('id'));
-				}else if(selectedTab.getContent() === document.getElementById('tabContent3')){
+				// tabButton2
+				if(selectedTab.getButton() === document.getElementById('tabButton2')){
 					getUserAvailableAuthorities(user.get('id'));
 				}
 			}
@@ -107,14 +104,13 @@
 	}
 	
 	/**
-	 * Clears detail
+	 * Initializes detail
 	 */
-	function clearDetail() {
+	function initializeDetail() {
 		user.fromJson({});
 		userGroups.fromJson([]);
 		userRoles.fromJson([]);
 		userAuthorities.fromJson([]);
-		userAvailableRoles.fromJson([]);
 		userAvailableAuthorities.fromJson([]);
 	}
 	
@@ -162,7 +158,7 @@
 	 * Gets specified user
 	 */
 	function getUser(id){
-		clearDetail();
+		initializeDetail();
 		$.ajax({
 			 url: 'user/getUser'
 			,type: 'GET'
@@ -179,20 +175,6 @@
 			$('#passwordConfirmTr').hide();
 			isNew = false;
 			tabFolder.selectTab(0);
-		});
-	}
-	
-	/**
-	 * Gets user holding roles
-	 */
-	function getUserAvailableRoles(id){
-		$.ajax({
-			 url: 'user/getAvailableRoles'
-			,type: 'GET'
-			,data: {id:id}
-		})
-		.done(function(data, textStatus, jqXHR) {
-			userAvailableRoles.fromJson(data);
 		});
 	}
 	
@@ -214,7 +196,7 @@
 	 * Adds user
 	 */
 	function addUser() {
-		clearDetail();
+		initializeDetail();
 		disableDetail(false);
 		user.setReadonly('id',false);
 		$('#passwordTr').show();
@@ -334,7 +316,7 @@
 						}
 					});
 					if(index > -1){
-						clearDetail();
+						initializeDetail();
 						users.selectRow(index);
 					}else{
 						getUser(user.get('id'));
@@ -361,7 +343,7 @@
 					new duice.Alert("[[#{application.global.deleteComplete(#{application.user})}]]")
 					.onAfterClose(async function(){
 						await getUsers();
-						clearDetail();
+						initializeDetail();
 						disableDetail(true);
 					}).open();
 			});
@@ -533,7 +515,7 @@
 							</ul>
 						</div>
 						<div class="app-col right">
-							<button id="addUserButton" class="button" onclick="addUser();">
+							<button class="button" onclick="addUser();">
 								<img th:src="@{/static/image/icon_add.png}" class="icon"/>
 								<span data-th-text="#{application.global.add}"></span>
 							</button>
@@ -558,12 +540,8 @@
 								<span data-th-text="#{application.user} + ' ' + #{application.global.details}"></span>
 							</span>
 							<span id="tabButton2" class="tab">
-								<img class="icon small" th:src="@{/static/image/icon_role.png}"/>
-								<span data-th-text="#{application.global.available} + ' ' + #{application.role}"></span>
-							</span>
-							<span id="tabButton3" class="tab">
 								<img class="icon small" th:src="@{/static/image/icon_authority.png}"/>
-								<span data-th-text="#{application.global.available} + ' ' + #{application.authority}"></span>
+								<span data-th-text="#{application.global.available} + ' ' + #{application.user.authorities}"></span>
 							</span>
 						</div>
 					</div>
@@ -806,11 +784,11 @@
 							</table>
 							<div class="app-row">
 								<div class="app-col right">
-									<button id="deleteUserButton" class="button large" onclick="deleteUser();">
+									<button class="button large" onclick="deleteUser();">
 										<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 										<span data-th-text="#{application.global.delete}"></span>
 									</button>
-									<button id="saveUserButton" class="button large" onclick="saveUser();">
+									<button class="button large" onclick="saveUser();">
 										<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 										<span data-th-text="#{application.global.save}"></span>
 									</button>
@@ -825,51 +803,6 @@
 					<!-- START: Start tabContent2								-->
 					<!-- ====================================================== -->
 					<div id="tabContent2" class="app-row">
-						<div class="app-col">
-							<table is="duice-table" 
-							data-duice-bind="userAvailableRoles,role" 
-							style="width:100%;">
-								<col/>
-								<col/>
-								<col/>
-								<col/>
-								<thead>
-									<tr>
-										<th data-th-text="#{application.global.no}">No</th>
-										<th data-th-text="#{application.role.id}">ID</th>
-										<th data-th-text="#{application.role.name}">Name</th>
-										<th data-th-text="#{application.role.holder}">Holder</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>
-											<span is="duice-scriptlet" data-duice-bind="role">return $context.index+1;</span>
-										</td>
-										<td>
-											<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
-											<span is="duice-span" data-duice-bind="role,id"></span>
-										</td>
-										<td><span is="duice-span" data-duice-bind="role,name"></span></td>
-										<td>
-											<span is="duice-scriptlet" data-duice-bind="role">
-												<![CDATA[
-												return JSON.stringify($context.role.get('holder'));
-												]]>
-											</span>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-					<!-- ====================================================== -->
-					<!-- END: End tabContent2									-->
-					<!-- ====================================================== -->
-					<!-- ====================================================== -->
-					<!-- START: Start tabContent3								-->
-					<!-- ====================================================== -->
-					<div id="tabContent3" class="app-row">
 						<div class="app-col">
 							<table is="duice-table" 
 								data-duice-bind="userAvailableAuthorities,authority" 
@@ -909,7 +842,7 @@
 						</div>
 					</div>
 					<!-- ====================================================== -->
-					<!-- END: End tabContent3									-->
+					<!-- END: End tabContent2									-->
 					<!-- ====================================================== -->
 				</div>
 			</div>
@@ -1025,7 +958,6 @@
 	<!-- ====================================================== -->
 	<!-- END: changePasswordDialog								-->
 	<!-- ====================================================== -->
-	
 </div>
 
 

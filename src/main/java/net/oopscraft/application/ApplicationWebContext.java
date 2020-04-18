@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,6 +19,9 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,12 +38,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import net.oopscraft.application.api.WebSocketHandler;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.security.AuthenticationFilter;
 import net.oopscraft.application.security.AuthenticationHandler;
@@ -61,8 +69,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 )
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+@EnableWebSocket
+@EnableScheduling
 @EnableSwagger2
-public class ApplicationWebContext implements WebMvcConfigurer {
+public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigurer {
 	
     @Value("${application.securityPolicy:AUTHENTICATED}")
     private SecurityPolicy securityPolicy;
@@ -74,6 +84,9 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 	ThymeleafViewResolver viewResolver;
 	SpringResourceTemplateResolver templateResolver;
 	TemplateEngine templateEngine;
+	
+	@Autowired
+	WebSocketHandler webSocketHandler;
 	
 	/**
 	 * Enables DefaultServletHandlerConfigurer
@@ -169,7 +182,6 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 	    	.authenticationProvider(authenticationProvider)
 	    	.exceptionHandling()
     			.authenticationEntryPoint(authenticationHandler)
-    			//.accessDeniedHandler(authenticationHandler)
 	    		.and()
 			.logout()
 				.logoutUrl("/admin/logout")
@@ -178,7 +190,6 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 				.deleteCookies("JSESSIONID")
 				.logoutSuccessHandler(authenticationHandler)
 				.permitAll();
-			;
         }
     }
 
@@ -331,7 +342,6 @@ public class ApplicationWebContext implements WebMvcConfigurer {
         return jstlViewResolver;
     }
 	
-	
 	@Bean
 	public CommonsMultipartResolver multipartResolver() throws Exception {
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
@@ -340,11 +350,24 @@ public class ApplicationWebContext implements WebMvcConfigurer {
 	}
 
 	@Bean
+	public TaskScheduler taskScheduler() {
+	    ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+	    taskScheduler.setPoolSize(10);
+	    taskScheduler.initialize();
+	    return taskScheduler;
+	}
+	
+	@Override
+	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+		registry.addHandler(webSocketHandler, "/api/webSocket");
+	}
+	
+	@Bean
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2) 
 				.select()                                 
 				.apis(RequestHandlerSelectors.any())             
-				.paths(PathSelectors.ant("/api/**/*"))    
+				.paths(PathSelectors.ant("/api/**/*"))
 				.build();                                          
 	}
 

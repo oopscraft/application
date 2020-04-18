@@ -11,13 +11,13 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 
-public abstract class WebSocketHandler extends TextWebSocketHandler {
+public abstract class BroadcastWebSocketHandler extends TextWebSocketHandler {
 	
-	private static final Log LOG = LogFactory.getLog(WebSocketHandler.class);
+	private static final Log LOG = LogFactory.getLog(BroadcastWebSocketHandler.class);
 	
 	private List<WebSocketSession> sessionList = new CopyOnWriteArrayList<WebSocketSession>();
 	
-	public WebSocketHandler() {
+	public BroadcastWebSocketHandler() {
 		super();
 		onCreate();
 	}
@@ -50,25 +50,11 @@ public abstract class WebSocketHandler extends TextWebSocketHandler {
 	}
 	
 	/**
-	 * sendMessage
-	 * @param session
-	 * @param message
-	 */
-	protected final void sendMessage(WebSocketSession session, String message) {
-		try {
-			TextMessage textMessage = new TextMessage(message);
-			session.sendMessage(textMessage);
-		}catch(Exception ignore) {
-			LOG.warn(ignore.getMessage());
-		}
-	}
-	
-	/**
 	 * broadcastMessage
 	 * @param message
 	 * @throws Exception
 	 */
-	protected final void broadcastMessage(String message) {
+	public final void broadcastMessage(String message) {
 		TextMessage textMessage = new TextMessage(message);
 		for(WebSocketSession session : sessionList) {
 			try {
@@ -78,7 +64,6 @@ public abstract class WebSocketHandler extends TextWebSocketHandler {
 			}
 		}
 	}
-	
 
 	/**
 	 * onCreate

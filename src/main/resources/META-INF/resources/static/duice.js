@@ -1321,6 +1321,60 @@ var duice;
     }
     duice.Tab = Tab;
     /**
+     * duice.WebSocketClientEventListener
+     */
+    class WebSocketClientEventListener {
+    }
+    /**
+     * duice.WebSocketClient
+     */
+    class WebSocketClient {
+        constructor() {
+            this.eventListener = new WebSocketClientEventListener();
+        }
+        open(url) {
+            this.webSocket = new WebSocket(url);
+            var _this = this;
+            this.webSocket.onopen = function (event) {
+                if (_this.eventListener.onOpen) {
+                    _this.eventListener.onOpen.call(_this, event);
+                }
+            };
+            this.webSocket.onmessage = function (event) {
+                if (_this.eventListener.onMessage) {
+                    _this.eventListener.onMessage.call(_this, event);
+                }
+            };
+            this.webSocket.onerror = function (event) {
+                if (_this.eventListener.onError) {
+                    _this.eventListener.onError.call(_this, event);
+                }
+            };
+            this.webSocket.onclose = function (event) {
+                if (_this.eventListener.onClose) {
+                    _this.eventListener.onClose.call(_this, event);
+                }
+                // reconnect
+                setTimeout(function () {
+                    _this.open(url);
+                }, 1000);
+            };
+        }
+        onOpen(listener) {
+            this.eventListener.onOpen = listener;
+        }
+        onMessage(listener) {
+            this.eventListener.onMessage = listener;
+        }
+        onError(listener) {
+            this.eventListener.onError = listener;
+        }
+        onClose(listener) {
+            this.eventListener.onClose = listener;
+        }
+    }
+    duice.WebSocketClient = WebSocketClient;
+    /**
      * duice.Observable
      * Observable abstract class of Observer Pattern
      */

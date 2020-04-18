@@ -28,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.user.UserService;
+import net.oopscraft.application.user.entity.Authority;
 import net.oopscraft.application.user.entity.User;
 
 @PreAuthorize("hasAuthority('ADMN_USER')")
@@ -119,19 +120,6 @@ public class UserController {
 		String password = payload.getString("password");
 		userService.changePassword(id, password);
 	}
-	
-	/**
-	 * Returns available roles
-	 * @param user
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value="getAvailableRoles", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public List<?> getAvailableRoles(@ModelAttribute User user) throws Exception {
-		user = userService.getUser(user.getId());
-		return user.getAvailableRoles();
-	}
 
 	/**
 	 * Returns available authorities
@@ -141,7 +129,7 @@ public class UserController {
 	 */
 	@RequestMapping(value="getAvailableAuthorities", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<?> getAvailableAuthorities(@ModelAttribute User user) throws Exception {
+	public List<Authority> getAvailableAuthorities(@ModelAttribute User user) throws Exception {
 		user = userService.getUser(user.getId());
 		return user.getAvailableAuthorities();
 	}

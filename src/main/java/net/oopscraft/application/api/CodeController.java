@@ -21,7 +21,7 @@ import net.oopscraft.application.core.PageInfo;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/code")
+@RequestMapping("/api/codes")
 public class CodeController {
 
 	@Autowired

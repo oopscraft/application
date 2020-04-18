@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.PageInfo;
 import net.oopscraft.application.user.GroupService;
+import net.oopscraft.application.user.entity.Authority;
 import net.oopscraft.application.user.entity.Group;
 
 @PreAuthorize("hasAuthority('ADMN_GROP')")
@@ -104,4 +105,17 @@ public class GroupController {
 		return groupService.changeUpperId(group.getId(), group.getUpperId());
 	}
 
+	/**
+	 * Returns available authorities
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="getAvailableAuthorities", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public List<Authority> getAvailableAuthorities(@ModelAttribute Group group) throws Exception {
+		group = groupService.getGroup(group.getId());
+		return group.getAvailableAuthorities();
+	}
+	
 }

@@ -19,7 +19,7 @@ import net.oopscraft.application.menu.entity.Menu;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/menu")
+@RequestMapping("/api/menus")
 public class MenuController {
 
 	@Autowired

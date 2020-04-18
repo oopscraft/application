@@ -66,22 +66,6 @@ public class Group extends SystemEntity {
 	public Group(String id) {
 		this.id = id;
 	}
-
-	/**
-	 * Returns holding roles
-	 * @return
-	 */
-	public List<Role> getAvailableRoles() {
-		List<Role> availableRoles = new ArrayList<Role>();
-		
-		// adds own roles
-		for(Role role : this.getRoles()) {
-			availableRoles.add(role);
-		}
-		
-		// returns
-		return availableRoles;
-	}
 	
 	/**
 	 * Returns holding authorities

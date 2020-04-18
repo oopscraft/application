@@ -113,32 +113,6 @@ public class User extends SystemEntity {
 	}
 	
 	/**
-	 * Returns available roles
-	 * @return
-	 */
-	public List<Role> getAvailableRoles() {
-		List<Role> availableRoles = new ArrayList<Role>();
-		
-		// adds own roles
-		for(Role role : this.getRoles()) {
-			availableRoles.add(role);
-		}
-		
-		// adds groups's roles
-		for(Group group : this.getGroups()) {
-			for(Role role : group.getAvailableRoles()) {
-				if(!availableRoles.stream().anyMatch(e -> e.getId().equals(role.getId()))) {
-					role.setHolder(group.getName());
-					availableRoles.add(role);
-				}
-			}
-		}
-		
-		// returns
-		return availableRoles;
-	}
-	
-	/**
 	 * Returns available authorities
 	 * @return
 	 */

@@ -16,6 +16,8 @@
 		<link rel="stylesheet" th:href="@{/static/prism/prism.css}">
 		<script th:src="@{/static/prism/prism.js}"></script>
 		<script th:src="@{/static/libphonenumber.js}"></script>
+		<script th:src="@{/static/moment.js}"></script>
+		<script th:src="@{/static/chartjs/Chart.js}"></script>
 		<script>
         /**
          * Exeuctes logout
@@ -37,7 +39,7 @@
 			<input type="text"/>
 			<input type="password"/>
 		</div>
-		<div class="app-row" style="padding:10px 20px; background-color:#fafafa; border-bottom:dotted 1px #ccc;">
+		<div class="app-row" style="padding:10px 20px; background-color:#eee; border-bottom:dotted 1px #ccc;">
 			<div class="app-col left middle">
 				<a th:href="@{/admin}">
 					<img th:src="@{/static/image/application.png}"/>
@@ -137,7 +139,146 @@
 				</nav>
 			</div>
 			<div layout:fragment="content" class="app-col" style="width:calc(100% - 200px); padding:1rem;">
-				admin.html
+				<script>
+				// defines variables		
+				var webSocketClient = new duice.WebSocketClient();
+				
+				// document ready
+				$(document).ready(function() {
+					
+					// creates web socket
+					getMonitors();
+					
+					// connects web socket
+				    var webSocketUrl = (window.location.protocol === 'https'?'wss':'ws')+'://'+location.host+'/api/webSocket';
+					webSocketClient.open(webSocketUrl);
+					webSocketClient.onMessage(function(event){
+						console.log(event);
+						var monitor = JSON.parse(event.data);
+						$('#top').text(monitor.top);
+					});
+				});
+				
+				/**
+				 * Getting monitors
+				 */
+				function getMonitors() {
+					$.ajax({
+						 url: '[[@{/api/monitors}]]'
+						,type: 'GET'
+						,data: null
+					})
+					.done(function(data, textStatus, jqXHR) {
+						var lastMonitor = data[data.length-1];
+						$('#top').text(lastMonitor.top);
+				   	});
+				}
+				</script>
+				<div class="app-row title">
+					<div class="app-col bottom">
+						<h1>
+							<img class="icon large" th:src="@{/static/image/icon_monitor.png}"/>
+							<span data-th-text="#{application.monitor}"></span>
+						</h1>
+					</div>
+				</div>
+				<div class="app-row">
+					<div class="app-col">
+						<pre style="margin:0px; height:300px; border-radius:3px;"><code id="top" class="language-bash line-numbers"></code></pre>	
+					</div>
+				</div>
+				<div class="app-row">
+					<div class="app-col" style="width:30%;">
+						<canvas id="myChart" ></canvas>
+						<script>
+						var ctx = document.getElementById("myChart").getContext('2d');
+						var myChart = new Chart(ctx, {
+						    type: 'line',
+						    data: {
+						        labels: ["Tokyo",	"Mumbai",	"Mexico City",	"Shanghai",	"Sao Paulo",	"New York",	"Karachi","Buenos Aires",	"Delhi","Moscow"],
+						        datasets: [{
+						            label: 'Series 1', // Name the series
+						            data: [500,	50,	2424,	14040,	14141,	4111,	4544,	47,	5555, 6811], // Specify the data values array
+						            fill: false,
+						            borderColor: '#2196f3', // Add custom color border (Line)
+						            backgroundColor: '#2196f3', // Add custom color background (Points and Fill)
+						            borderWidth: 1 // Specify bar border width
+						        }]},
+						    options: {
+						      responsive: true, // Instruct chart js to respond nicely.
+						      maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height 
+						    }
+						});
+						</script>
+					</div>
+					<div class="app-col" style="width:30%;">
+						<canvas id="myChart1" ></canvas>
+						<script>
+						var ctx = document.getElementById('myChart1').getContext('2d');
+						var myChart = new Chart(ctx, {
+						    type: 'bar',
+						    data: {
+						        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+						        datasets: [{
+						            label: '# of Votes',
+						            data: [12, 19, 3, 5, 2, 3],
+						            backgroundColor: [
+						                'rgba(255, 99, 132, 0.2)',
+						                'rgba(54, 162, 235, 0.2)',
+						                'rgba(255, 206, 86, 0.2)',
+						                'rgba(75, 192, 192, 0.2)',
+						                'rgba(153, 102, 255, 0.2)',
+						                'rgba(255, 159, 64, 0.2)'
+						            ],
+						            borderColor: [
+						                'rgba(255, 99, 132, 1)',
+						                'rgba(54, 162, 235, 1)',
+						                'rgba(255, 206, 86, 1)',
+						                'rgba(75, 192, 192, 1)',
+						                'rgba(153, 102, 255, 1)',
+						                'rgba(255, 159, 64, 1)'
+						            ],
+						            borderWidth: 1
+						        }]
+						    },
+						    options: {
+						        scales: {
+						            yAxes: [{
+						                ticks: {
+						                    beginAtZero: true
+						                }
+						            }]
+						        }
+						    }
+						});
+						</script>
+					</div>
+					<div class="app-col" style="width:30%;">
+						fdsa
+					</div>
+				</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
 			</div>
 		</div>
 		<div style="text-align:center; border-top:dotted 1px #ccc;">
@@ -187,114 +328,114 @@
 			</div>
 		</dialog>
 		<script>
-			/**
-			 * Global common group select dialog
-			 */
-	        const __groupDialog = {
-	        	dialog: new duice.Dialog(document.getElementById('__groupDialog')),
-	        	groups: new duice.List(),
-	        	
-	        	// option
-	        	singleSelect: false,
-	        	checkedGroups: null,
-	        	disabledGroups: null,
+		/**
+		 * Global common group select dialog
+		 */
+        const __groupDialog = {
+        	dialog: new duice.Dialog(document.getElementById('__groupDialog')),
+        	groups: new duice.List(),
+        	
+        	// option
+        	singleSelect: false,
+        	checkedGroups: null,
+        	disabledGroups: null,
 
-	        	/**
-	        	 * Opens group dialog
-	        	 * @param option.singleSelect 
-				 * @param option.selectedGroups 
-				 * @param option.disabledGroups 
-				 * @param option.onAfterConfirm
-	        	 */
-	        	async open(option) {
-	        		
-	        		// setting options
-	        		this.singleSelect = option.singleSelect||false;
-	        		this.checkedGroups = option.checkedGroups||[];
-	        		this.disabledGroups = option.disabledGroups||[];
-	        		this.dialog.onAfterConfirm(option.onAfterConfirm||function(){});
-	        		
-	        		// defines index change event
-	        		var _this = this;
-	        		this.groups.setReadonly('__checked', true);
-	        		this.groups.onAfterSelectRow(function(group){
-        				
-        				// check disabled
-        				if(group.isDisable() === true){
-        					return;
-        				}
-        				
-        				// if singleSelect, desleect all except self index
-        				if(_this.singleSelect === true){
-        					_this.groups.forEach(function(row){
-        						if(row.get('id') !== group.get('id')){
-        							row.set('__checked', false);        							
-        						}
-        					});
-        				}
+        	/**
+        	 * Opens group dialog
+        	 * @param option.singleSelect 
+			 * @param option.selectedGroups 
+			 * @param option.disabledGroups 
+			 * @param option.onAfterConfirm
+        	 */
+        	async open(option) {
+        		
+        		// setting options
+        		this.singleSelect = option.singleSelect||false;
+        		this.checkedGroups = option.checkedGroups||[];
+        		this.disabledGroups = option.disabledGroups||[];
+        		this.dialog.onAfterConfirm(option.onAfterConfirm||function(){});
+        		
+        		// defines index change event
+        		var _this = this;
+        		this.groups.setReadonly('__checked', true);
+        		this.groups.onAfterSelectRow(function(group){
+       				
+       				// check disabled
+       				if(group.isDisable() === true){
+       					return;
+       				}
+       				
+       				// if singleSelect, desleect all except self index
+       				if(_this.singleSelect === true){
+       					_this.groups.forEach(function(row){
+       						if(row.get('id') !== group.get('id')){
+       							row.set('__checked', false);        							
+       						}
+       					});
+       				}
 
-        				// toggles __checked
-        				var __checked = group.get('__checked');
-        				if(__checked === true){
-        					group.set('__checked', false);
-        				}else{
-        					group.set('__checked', true);
-        				}
-	        		});
-	        		
-	        		// retrieves and open
-	        		await this.getGroups(1);
-	        		this.dialog.open();
-	        	},
-	        	
-	        	/**
-	        	 * Getting groups
-	        	 */
-	        	getGroups(page) {
-					var _this = this;
-					return new Promise(function(resolve,reject){
-						$.ajax({
-							 url: '[[@{/admin/getGroups}]]'
-							,type: 'GET'
-							,data: {page:page, rows:10000}
-							,success: function(data, textStatus, jqXHR) {
-								_this.groups.fromJson(data);
-								_this.groups.forEach(function(group){
-									var id = group.get('id');
-									
-									// checks __selected value, if it set as selected list.
-									_this.checkedGroups.forEach(function(item){
-										if(item.id === id){
-											group.set('__checked', true);
-										}
-									});
-									
-									// excepts disableds list
-									_this.disabledGroups.forEach(function(item){
-										if(item.id === id){
-											group.setDisable(true);
-										}
-									});
+       				// toggles __checked
+       				var __checked = group.get('__checked');
+       				if(__checked === true){
+       					group.set('__checked', false);
+       				}else{
+       					group.set('__checked', true);
+       				}
+        		});
+        		
+        		// retrieves and open
+        		await this.getGroups(1);
+        		this.dialog.open();
+        	},
+        	
+        	/**
+        	 * Getting groups
+        	 */
+        	getGroups(page) {
+				var _this = this;
+				return new Promise(function(resolve,reject){
+					$.ajax({
+						 url: '[[@{/admin/getGroups}]]'
+						,type: 'GET'
+						,data: {page:page, rows:10000}
+						,success: function(data, textStatus, jqXHR) {
+							_this.groups.fromJson(data);
+							_this.groups.forEach(function(group){
+								var id = group.get('id');
+								
+								// checks __selected value, if it set as selected list.
+								_this.checkedGroups.forEach(function(item){
+									if(item.id === id){
+										group.set('__checked', true);
+									}
 								});
-								resolve(true);
-							}
-						});
-					});
-	        	},
-	        	
-	        	/**
-	        	 * Executes dialog confirm.
-	        	 */
-	        	confirm() {
-					var checkedGroups = new Array();
-					this.groups.forEach(function(group){
-						if(group.isDisable() === false && group.get('__checked') === true){
-							checkedGroups.push(group.toJson());
+								
+								// excepts disableds list
+								_this.disabledGroups.forEach(function(item){
+									if(item.id === id){
+										group.setDisable(true);
+									}
+								});
+							});
+							resolve(true);
 						}
 					});
-					this.dialog.confirm(checkedGroups);
-	        	}
-	        };
+				});
+        	},
+        	
+        	/**
+        	 * Executes dialog confirm.
+        	 */
+        	confirm() {
+				var checkedGroups = new Array();
+				this.groups.forEach(function(group){
+					if(group.isDisable() === false && group.get('__checked') === true){
+						checkedGroups.push(group.toJson());
+					}
+				});
+				this.dialog.confirm(checkedGroups);
+        	}
+        }
 		</script>
 		
 		<!-- ====================================================== -->
@@ -407,121 +548,121 @@
 			</div>
 		</dialog>
 		<script>
-			/**
-			 * Global common role dialog
-			 */
-	        const __roleDialog = {
-	        	dialog: new duice.Dialog(document.getElementById('__roleDialog')),
-	        	search: new duice.Map({
-	        		page: 1,
-	        		rows: 10,
-	        		totalCount: -1
-	        	}),
-	        	roles: new duice.List(),
-	        	selectedRoles: new duice.List(),
-	        	
-	        	// option
-	        	checkedRoles: null,
-	        	disabledRoles: null,
-	        	onAfterConfirm: null,
-	        	
-	        	/**
-	        	 * Opens dialogs
-	        	 * @param option.checkedRoles:Array
-				 * @param option.disabledRoles:Array
-				 * @param option.onAfterConfirm:Function 
-	        	 */
-	        	async open(option) {
-					this.checkedRoles = option.checkedRoles || [];
-					this.disabledRoles = option.disabledRoles || [];
-					this.dialog.onAfterConfirm(option.onAfterConfirm || new function(){});
-	        		this.selectedRoles.fromJson([]);
-	        		
-	        		// add index change event listener
-	        		var _this = this;
-	        		this.roles.setReadonly('__checked', true);
-	        		this.roles.onAfterSelectRow(function(role){
-	    				var id = role.get('id');
-	    				
-	    				// check disabled
-	    				if(role.isDisable() === true){
-	    					return;
-	    				}
-	
-	    				// toggles __selected
-	    				var __checked = role.get('__checked');
-	    				if(__checked === true){
-	    					role.set('__checked', false);
-	    					_this.selectedRoles.forEach(function(row,index){
-	    						if(row.get('id') === id){
-	    							_this.selectedRoles.removeRow(index);
-	    							return false;
-	    						}
-	    					});
-	    				}else{
-	    					role.set('__checked', true);
-	    					_this.selectedRoles.addRow(new duice.Map(role.toJson()));
-	    				}
-	        		});
+		/**
+		 * Global common role dialog
+		 */
+        const __roleDialog = {
+        	dialog: new duice.Dialog(document.getElementById('__roleDialog')),
+        	search: new duice.Map({
+        		page: 1,
+        		rows: 10,
+        		totalCount: -1
+        	}),
+        	roles: new duice.List(),
+        	selectedRoles: new duice.List(),
+        	
+        	// option
+        	checkedRoles: null,
+        	disabledRoles: null,
+        	onAfterConfirm: null,
+        	
+        	/**
+        	 * Opens dialogs
+        	 * @param option.checkedRoles:Array
+			 * @param option.disabledRoles:Array
+			 * @param option.onAfterConfirm:Function 
+        	 */
+        	async open(option) {
+				this.checkedRoles = option.checkedRoles || [];
+				this.disabledRoles = option.disabledRoles || [];
+				this.dialog.onAfterConfirm(option.onAfterConfirm || new function(){});
+        		this.selectedRoles.fromJson([]);
+        		
+        		// add index change event listener
+        		var _this = this;
+        		this.roles.setReadonly('__checked', true);
+        		this.roles.onAfterSelectRow(function(role){
+    				var id = role.get('id');
+    				
+    				// check disabled
+    				if(role.isDisable() === true){
+    					return;
+    				}
 
-	        		// retrieves roles and open
-	        		await this.getRoles(1);
-	        		this.dialog.open();
-	        	},
-	
-	        	/**
-				 * Getting groups
-				 */
-	        	getRoles(page) {
-	        		var _this = this;
-	        		return new Promise(function(resolve,reject){
-		        		page && _this.search.set('page', page);
-						var data = _this.search.toJson();
-						if(_this.search.get('key')){
-							data[_this.search.get('key')] = _this.search.get('value');
-						}
-						$.ajax({
-							 url: '[[@{/admin/getRoles}]]'
-							,type: 'GET'
-							,data: data
-							,success: function(data, textStatus, jqXHR) {
-								_this.roles.fromJson(data);
-								_this.search.set('totalCount', __parseTotalCount(jqXHR));
+    				// toggles __selected
+    				var __checked = role.get('__checked');
+    				if(__checked === true){
+    					role.set('__checked', false);
+    					_this.selectedRoles.forEach(function(row,index){
+    						if(row.get('id') === id){
+    							_this.selectedRoles.removeRow(index);
+    							return false;
+    						}
+    					});
+    				}else{
+    					role.set('__checked', true);
+    					_this.selectedRoles.addRow(new duice.Map(role.toJson()));
+    				}
+        		});
+
+        		// retrieves roles and open
+        		await this.getRoles(1);
+        		this.dialog.open();
+        	},
+
+        	/**
+			 * Getting groups
+			 */
+        	getRoles(page) {
+        		var _this = this;
+        		return new Promise(function(resolve,reject){
+	        		page && _this.search.set('page', page);
+					var data = _this.search.toJson();
+					if(_this.search.get('key')){
+						data[_this.search.get('key')] = _this.search.get('value');
+					}
+					$.ajax({
+						 url: '[[@{/admin/getRoles}]]'
+						,type: 'GET'
+						,data: data
+						,success: function(data, textStatus, jqXHR) {
+							_this.roles.fromJson(data);
+							_this.search.set('totalCount', __parseTotalCount(jqXHR));
+							
+							// check earch role
+							_this.roles.forEach(function(role){
+								var id = role.get('id');
 								
-								// check earch role
-								_this.roles.forEach(function(role){
-									var id = role.get('id');
-									
-									// checks disabled	
-									_this.disabledRoles.forEach(function(obj){
-										if(obj.id === id){
-											role.setDisable(true);
-											role.set('__checked', true);
-											return false;
-										}
-									});
-									
-									// checks already selected
-									_this.selectedRoles.forEach(function(map){
-										if(map.get('id') === id){
-											role.set('__checked', true);
-											return false;
-										}
-									});
+								// checks disabled	
+								_this.disabledRoles.forEach(function(obj){
+									if(obj.id === id){
+										role.setDisable(true);
+										role.set('__checked', true);
+										return false;
+									}
 								});
-								resolve(true);
-					   	 	}
-						});
-	        		});
-	        	},
-	
-	        	/**
-	        	 * Executes confirm
-	        	 */
-	        	confirm() {
-	        		this.dialog.confirm(this.selectedRoles.toJson());
-	        	}
-	        };
+								
+								// checks already selected
+								_this.selectedRoles.forEach(function(map){
+									if(map.get('id') === id){
+										role.set('__checked', true);
+										return false;
+									}
+								});
+							});
+							resolve(true);
+				   	 	}
+					});
+        		});
+        	},
+
+        	/**
+        	 * Executes confirm
+        	 */
+        	confirm() {
+        		this.dialog.confirm(this.selectedRoles.toJson());
+        	}
+        }
 		</script>
 		
 		<!-- ====================================================== -->
@@ -634,117 +775,117 @@
 		</dialog>
 		<script>
         var __authorityDialog = {
-            	dialog: new duice.Dialog(document.getElementById('__authorityDialog')),
-            	search: new duice.Map({
-            		page: 1,
-            		rows: 10,
-            		totalCount: -1
-            	}),
-            	authorities: new duice.List(),
-            	selectedAuthorities: new duice.List(),
-            	
-            	// option
-            	checkedAuthorities: null,
-            	disabledAuthorities: null,
-            	onAfterConfirm: null,
-            	
-            	/**
-            	 * Opens dialogs
-            	 * @param option.checkedAuthorities:Array
-    			 * @param option.disabledAuthorities:Array
-    			 * @param option.onAfterConfirm:Function 
-            	 */
-            	async open(option) {
-    				this.checkedAuthorities = option.checkedAuthorities || [];
-    				this.disabledAuthorities = option.disabledAuthorities || [];
-    				this.dialog.onAfterConfirm(option.onAfterConfirm || new function(){});
-            		this.selectedAuthorities.fromJson([]);
-            		
-            		// add index change event listener
-            		var _this = this;
-            		this.authorities.setReadonly('__checked', true);
-            		this.authorities.onAfterSelectRow(function(authority){
-        				var id = authority.get('id');
-        				
-        				// check disabled
-        				if(authority.isDisable() === true){
-        					return;
-        				}
+           	dialog: new duice.Dialog(document.getElementById('__authorityDialog')),
+           	search: new duice.Map({
+           		page: 1,
+           		rows: 10,
+           		totalCount: -1
+           	}),
+           	authorities: new duice.List(),
+           	selectedAuthorities: new duice.List(),
+           	
+           	// option
+           	checkedAuthorities: null,
+           	disabledAuthorities: null,
+           	onAfterConfirm: null,
+           	
+           	/**
+           	 * Opens dialogs
+           	 * @param option.checkedAuthorities:Array
+   			 * @param option.disabledAuthorities:Array
+   			 * @param option.onAfterConfirm:Function 
+           	 */
+           	async open(option) {
+   				this.checkedAuthorities = option.checkedAuthorities || [];
+   				this.disabledAuthorities = option.disabledAuthorities || [];
+   				this.dialog.onAfterConfirm(option.onAfterConfirm || new function(){});
+           		this.selectedAuthorities.fromJson([]);
+           		
+           		// add index change event listener
+           		var _this = this;
+           		this.authorities.setReadonly('__checked', true);
+           		this.authorities.onAfterSelectRow(function(authority){
+       				var id = authority.get('id');
+       				
+       				// check disabled
+       				if(authority.isDisable() === true){
+       					return;
+       				}
 
-        				// toggles __selected
-        				var __checked = authority.get('__checked');
-        				if(__checked === true){
-        					authority.set('__checked', false);
-        					_this.selectedAuthorities.forEach(function(row,index){
-        						if(row.get('id') === id){
-        							_this.selectedAuthorities.removeRow(index);
-        							return false;
-        						}
-        					});
-        				}else{
-        					authority.set('__checked', true);
-        					_this.selectedAuthorities.addRow(new duice.Map(authority.toJson()));
-        				}
-            		});
-            		
-            		// retrieves and open
-            		await this.getAuthorities(1);
-            		this.dialog.open();
-            	},
+       				// toggles __selected
+       				var __checked = authority.get('__checked');
+       				if(__checked === true){
+       					authority.set('__checked', false);
+       					_this.selectedAuthorities.forEach(function(row,index){
+       						if(row.get('id') === id){
+       							_this.selectedAuthorities.removeRow(index);
+       							return false;
+       						}
+       					});
+       				}else{
+       					authority.set('__checked', true);
+       					_this.selectedAuthorities.addRow(new duice.Map(authority.toJson()));
+       				}
+           		});
+           		
+           		// retrieves and open
+           		await this.getAuthorities(1);
+           		this.dialog.open();
+           	},
 
-            	/**
-    			 * Getting groups
-    			 */
-            	getAuthorities(page) {
-    				var _this = this;
-					return new Promise(function(resolve,reject){
-	            		_this.page && _this.search.set('page', page);
-	    				var data = _this.search.toJson();
-	    				if(_this.search.get('key')){
-	    					data[_this.search.get('key')] = _this.search.get('value');
-	    				}
-	    				$.ajax({
-	    					 url: '[[@{/admin/getAuthorities}]]'
-	    					,type: 'GET'
-	    					,data: data
-	    					,success: function(data, textStatus, jqXHR) {
-	    						_this.authorities.fromJson(data);
-	    						_this.search.set('totalCount', __parseTotalCount(jqXHR));
-	    						
-	    						// check earch authority
-	    						_this.authorities.forEach(function(authority){
-	    							var id = authority.get('id');
-	    							
-	    							// checks disabled	
-	    							_this.disabledAuthorities.forEach(function(obj){
-	    								if(obj.id === id){
-	    									authority.setDisable(true);
-	    									authority.set('__checked', true);
-	    									return false;
-	    								}
-	    							});
-	    							
-	    							// checks already selected
-	    							_this.selectedAuthorities.forEach(function(map){
-	    								if(map.get('id') === id){
-	    									authority.set('__checked', true);
-	    									return false;
-	    								}
-	    							});
-	    						});
-	    						resolve(true);
-	    			   	 	}
-	    				});
-					});  				
-            	},
+           	/**
+   			 * Getting groups
+   			 */
+           	getAuthorities(page) {
+   				var _this = this;
+				return new Promise(function(resolve,reject){
+            		_this.page && _this.search.set('page', page);
+    				var data = _this.search.toJson();
+    				if(_this.search.get('key')){
+    					data[_this.search.get('key')] = _this.search.get('value');
+    				}
+    				$.ajax({
+    					 url: '[[@{/admin/getAuthorities}]]'
+    					,type: 'GET'
+    					,data: data
+    					,success: function(data, textStatus, jqXHR) {
+    						_this.authorities.fromJson(data);
+    						_this.search.set('totalCount', __parseTotalCount(jqXHR));
+    						
+    						// check earch authority
+    						_this.authorities.forEach(function(authority){
+    							var id = authority.get('id');
+    							
+    							// checks disabled	
+    							_this.disabledAuthorities.forEach(function(obj){
+    								if(obj.id === id){
+    									authority.setDisable(true);
+    									authority.set('__checked', true);
+    									return false;
+    								}
+    							});
+    							
+    							// checks already selected
+    							_this.selectedAuthorities.forEach(function(map){
+    								if(map.get('id') === id){
+    									authority.set('__checked', true);
+    									return false;
+    								}
+    							});
+    						});
+    						resolve(true);
+    			   	 	}
+    				});
+				});  				
+           	},
 
-            	/**
-            	 * Executes confirm
-            	 */
-            	confirm() {
-            		this.dialog.confirm(this.selectedAuthorities.toJson());
-            	}
-            };
+           	/**
+           	 * Executes confirm
+           	 */
+           	confirm() {
+           		this.dialog.confirm(this.selectedAuthorities.toJson());
+           	}
+		}
 		</script>
 
 	</body>
