@@ -1,4 +1,4 @@
-package net.oopscraft.application.util.process;
+package net.oopscraft.application.core.process;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
