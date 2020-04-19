@@ -1,16 +1,10 @@
 package net.oopscraft.application.monitor;
 
-import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
@@ -25,10 +19,8 @@ import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.process.ProcessExecutor;
 import net.oopscraft.application.core.process.ProcessStreamHandler;
 import net.oopscraft.application.monitor.entity.Monitor;
+import net.oopscraft.application.monitor.entity.Monitor.MemoryKey;
 import net.oopscraft.application.monitor.entity.Monitor.OperatingSystemKey;
-import net.oopscraft.application.util.monitor.MonitorInfo.ClassInfo;
-import net.oopscraft.application.util.monitor.MonitorInfo.MemInfo;
-import net.oopscraft.application.util.monitor.MonitorInfo.OsInfo;
 
 @Service
 public class MonitorService {
@@ -52,15 +44,28 @@ public class MonitorService {
 		// getting top string
 		monitor.setTop(getTop());
 		
-		// Getting OS info 
+		// getting OperatingSystem info 
 		OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
 		ValueMap operatingSystem = new ValueMap();
 		operatingSystem.put(OperatingSystemKey.name.name(), operatingSystemMXBean.getName());
 		operatingSystem.put(OperatingSystemKey.version.name(), operatingSystemMXBean.getVersion());
 		operatingSystem.put(OperatingSystemKey.arch.name(), operatingSystemMXBean.getArch());
 		operatingSystem.put(OperatingSystemKey.availableProcessors.name(), operatingSystemMXBean.getAvailableProcessors());
-		operatingSystem.put(OperatingSystemKey.systemLoadAverage.name(), operatingSystemMXBean.getSystemLoadAverage());
+		double systemLoadAverage = operatingSystemMXBean.getSystemLoadAverage();
+		if(systemLoadAverage == -1 && operatingSystemMXBean instanceof com.sun.management.OperatingSystemMXBean) {
+			systemLoadAverage = ((com.sun.management.OperatingSystemMXBean)operatingSystemMXBean).getSystemCpuLoad();
+		}
+		operatingSystem.put(OperatingSystemKey.systemLoadAverage.name(), systemLoadAverage);
 		monitor.setOperatingSystem(operatingSystem);
+		
+		// getting memory info
+		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+		ValueMap memory = new ValueMap();
+		memory.put(MemoryKey.heapMemoryUsage.name(), memoryMXBean.getHeapMemoryUsage());
+		memory.put(MemoryKey.nonHeapMemoryUsage.name(), memoryMXBean.getNonHeapMemoryUsage());
+		monitor.setMemory(memory);
+		
+		
 		
 //		monitorInfo.osInfo.put(OsInfo.name, osBean.getName());
 //		monitorInfo.osInfo.put(OsInfo.version, osBean.getVersion());
