@@ -144,6 +144,8 @@
 				var webSocketClient = new duice.WebSocketClient();
 				var loadAverageChart = null;
 				var memoryChart = null;
+				var threadInfoChart = null;
+				var classLoadingChart = null;
 				
 				// document ready
 				$(document).ready(function() {
@@ -162,6 +164,8 @@
 						// updates chart
 						updateLoadAverageChart(monitor);
 						updateMemoryChart(monitor);
+						updateThreadInfoChart(monitor);
+						updateClassLoadingChart(monitor);
 					});
 				});
 				
@@ -182,6 +186,8 @@
 						// initializes chart
 						initializeLoadAverageChart(monitors);
 						initializeMemoryChart(monitors);
+						initializeThreadInfoChart(monitors);
+						initializeClassLoadingChart(monitors);
 				   	});
 				}
 				
@@ -191,11 +197,11 @@
 				function initializeLoadAverageChart(monitors) {
 					var labels = new Array();
 					var data = new Array();
-					var availableProcessors;
+					var yMax;
 					monitors.forEach(function(monitor){
 						labels.push(moment().format('HH:mm:ss',monitor.date));
 						data.push(monitor.operatingSystem.systemLoadAverage);
-						availableProcessors = monitor.operatingSystem.availableProcessors;
+						yMax = monitor.operatingSystem.availableProcessors;
 					});
 					
 					// creates chart
@@ -218,7 +224,7 @@
 							    align: 'start',
 							    labels: {
 							    	boxWidth: 20,
-							    	fontSize: 12,
+							    	fontSize: 11,
 							    	fontStyle: 'bold'
 							    }
 							},
@@ -227,7 +233,7 @@
 									ticks: {
 										fontSize: 8,
 										beginAtZero: true,
-										max: availableProcessors
+										suggestedMax: yMax
 									}
 								}],
 								xAxes: [{
@@ -249,7 +255,7 @@
 				 * updateLoadAverageChart
 				 */
 				function updateLoadAverageChart(monitor) {
-					loadAverageChart.config.options.scales.yAxes[0].ticks.max = monitor.operatingSystem.availableProcessors;
+					loadAverageChart.config.options.scales.yAxes[0].ticks.suggestedMax = monitor.operatingSystem.availableProcessors;
 					loadAverageChart.config.data.labels.shift();
 					loadAverageChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
 					loadAverageChart.config.data.datasets[0].data.shift();
@@ -263,12 +269,12 @@
 				function initializeMemoryChart(monitors) {
 					var labels = new Array();
 					var data = new Array();
-					var memoryMax;
+					var yMax;
 					monitors.forEach(function(monitor){
 						console.log(monitor);
 						labels.push(moment().format('HH:mm:ss',monitor.date));
 						data.push(monitor.memory.heapMemoryUsage.used/1024/1024);
-						memoryMax = Math.max(monitor.memory.heapMemoryUsage.committed, monitor.memory.heapMemoryUsage.max)/1024/1024;
+						yMax = Math.max(monitor.memory.heapMemoryUsage.committed, monitor.memory.heapMemoryUsage.max)/1024/1024;
 					});
 					
 					// creates chart
@@ -291,7 +297,7 @@
 							    align: 'start',
 							    labels: {
 							    	boxWidth: 20,
-							    	fontSize: 12,
+							    	fontSize: 11,
 							    	fontStyle: 'bold'
 							    }
 							},
@@ -300,15 +306,9 @@
 									ticks: {
 										fontSize: 8,
 										beginAtZero: true,
-										max: memoryMax,
+										suggestedMax: yMax,
 									    userCallback: function(value, index, values) {
-									    	/*
-									        value = value.toString();
-									        value = value.split(/(?=(?:...)*$)/);
-									        value = value.join(',');
-									        return value + ' m';
-									        */
-									        return new duice.NumberFormat(0).encode(value);
+									        return new duice.NumberFormat(0).encode(value) + ' m';
 									    }
 									}
 								}],
@@ -331,12 +331,162 @@
 				 * updateMemoryChart
 				 */
 				function updateMemoryChart(monitor) {
-					memoryChart.config.options.scales.yAxes[0].ticks.max = Math.max(monitor.memory.heapMemoryUsage.committed, monitor.memory.heapMemoryUsage.max)/1024/1024;
+					memoryChart.config.options.scales.yAxes[0].ticks.suggestedMax = Math.max(monitor.memory.heapMemoryUsage.committed, monitor.memory.heapMemoryUsage.max)/1024/1024;
 					memoryChart.config.data.labels.shift();
 					memoryChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
 					memoryChart.config.data.datasets[0].data.shift();
 					memoryChart.config.data.datasets[0].data.push(monitor.memory.heapMemoryUsage.used/1024/1024);
 					memoryChart.update();
+				}
+				
+				/**
+				 * initializeThreadInfoChart
+				 */
+				function initializeThreadInfoChart(monitors) {
+					var labels = new Array();
+					var data = new Array();
+					var yMax = 100;
+					monitors.forEach(function(monitor){
+						labels.push(moment().format('HH:mm:ss',monitor.date));
+						data.push(monitor.threadInfos.length);
+						yMax = Math.pow(10,String(monitor.threadInfos.length).length);
+					});
+					
+					// creates chart
+					threadInfoChart = new Chart(document.getElementById("threadInfoChart").getContext('2d'), {
+					    type: 'line',
+					    data: {
+					        labels: labels,
+					        datasets: [{
+					            label: 'Thread Info',
+					            data: data,
+					            fill: true,
+					            borderColor: 'steelblue',
+					            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+					            borderWidth: 1
+					        }]},
+					    options: {
+							responsive: true,
+							legend: {
+							    position: 'top',
+							    align: 'start',
+							    labels: {
+							    	boxWidth: 20,
+							    	fontSize: 11,
+							    	fontStyle: 'bold'
+							    }
+							},
+					    	scales: {
+								yAxes: [{
+									ticks: {
+										fontSize: 8,
+										beginAtZero: true,
+										suggestedMax: yMax,
+									    userCallback: function(value, index, values) {
+									        return new duice.NumberFormat(0).encode(value);
+									    }
+									}
+								}],
+								xAxes: [{
+									ticks: {
+										fontSize: 8
+									}
+								}]
+							},
+							elements: {
+								point: {
+									pointStyle: 'crossRot'
+								}
+							}
+					    }
+					});
+				}
+				
+				/**
+				 * updateThreadInfoChart
+				 */
+				function updateThreadInfoChart(monitor) {
+					threadInfoChart.config.options.scales.yAxes[0].ticks.suggestedMax = Math.pow(10,String(monitor.threadInfos.length).length);
+					threadInfoChart.config.data.labels.shift();
+					threadInfoChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
+					threadInfoChart.config.data.datasets[0].data.shift();
+					threadInfoChart.config.data.datasets[0].data.push(monitor.threadInfos.length);
+					threadInfoChart.update();
+				}
+				
+				/**
+				 * initializeClassLoadingChart
+				 */
+				function initializeClassLoadingChart(monitors) {
+					var labels = new Array();
+					var data = new Array();
+					var yMax = 100;
+					monitors.forEach(function(monitor){
+						labels.push(moment().format('HH:mm:ss',monitor.date));
+						data.push(monitor.classLoading.totalLoadedClassCount);
+						yMax = Math.pow(10,String(monitor.classLoading.totalLoadedClassCount).length);
+					});
+					
+					// creates chart
+					classLoadingChart = new Chart(document.getElementById("classLoadingChart").getContext('2d'), {
+					    type: 'line',
+					    data: {
+					        labels: labels,
+					        datasets: [{
+					            label: 'Class Loading',
+					            data: data,
+					            fill: true,
+					            borderColor: 'steelblue',
+					            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+					            borderWidth: 1
+					        }]},
+					    options: {
+							responsive: true,
+							legend: {
+							    position: 'top',
+							    align: 'start',
+							    labels: {
+							    	boxWidth: 20,
+							    	fontSize: 11,
+							    	fontStyle: 'bold'
+							    }
+							},
+					    	scales: {
+								yAxes: [{
+									ticks: {
+										fontSize: 8,
+										beginAtZero: true,
+										suggestedMax: yMax,
+									    userCallback: function(value, index, values) {
+									        return new duice.NumberFormat(0).encode(value);
+									    }
+									}
+								}],
+								xAxes: [{
+									ticks: {
+										fontSize: 8
+									}
+								}]
+							},
+							elements: {
+								point: {
+									pointStyle: 'crossRot'
+								}
+							}
+					    }
+					});
+				}
+				
+				/**
+				 * updateClassLoadingChart
+				 */
+				function updateClassLoadingChart(monitor) {
+					classLoadingChart.config.options.scales.yAxes[0].ticks.suggestedMax = Math.pow(10,String(monitor.classLoading.totalLoadedClassCount).length);
+					classLoadingChart.config.data.labels.shift();
+					classLoadingChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
+					classLoadingChart.config.data.datasets[0].data.shift();
+					classLoadingChart.config.data.datasets[0].data.push(monitor.classLoading.totalLoadedClassCount);
+					classLoadingChart.update();
 				}
 				</script>
 				<div class="app-row title">
@@ -349,81 +499,25 @@
 				</div>
 				<div class="app-row">
 					<div class="app-col">
-						<pre style="margin:0px; height:200px; border-radius:3px;"><code id="top" class="language-bash line-numbers"></code></pre>	
+						<pre style="margin:0px; height:300px; border-radius:3px;">
+							<code id="top" class="language-bash line-numbers" style="white-space:pre-wrap;"></code>
+						</pre>
 					</div>
 				</div>
 				<div class="app-row">
-					<div class="app-col" style="width:30%;">
+					<div class="app-col" style="width:20%;">
 						<canvas id="loadAverageChart"></canvas>
 					</div>
-					<div class="app-col" style="width:30%;">
+					<div class="app-col" style="width:20%;">
 						<canvas id="memoryChart"></canvas>
 					</div>
-					<div class="app-col" style="width:30%;">
-						<canvas id="myChart2" ></canvas>
-						<script>
-						var ctx = document.getElementById('myChart2').getContext('2d');
-						var myChart = new Chart(ctx, {
-						    type: 'bar',
-						    data: {
-						        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-						        datasets: [{
-						            label: '# of Votes',
-						            data: [12, 19, 3, 5, 2, 3],
-						            backgroundColor: [
-						                'rgba(255, 99, 132, 0.2)',
-						                'rgba(54, 162, 235, 0.2)',
-						                'rgba(255, 206, 86, 0.2)',
-						                'rgba(75, 192, 192, 0.2)',
-						                'rgba(153, 102, 255, 0.2)',
-						                'rgba(255, 159, 64, 0.2)'
-						            ],
-						            borderColor: [
-						                'rgba(255, 99, 132, 1)',
-						                'rgba(54, 162, 235, 1)',
-						                'rgba(255, 206, 86, 1)',
-						                'rgba(75, 192, 192, 1)',
-						                'rgba(153, 102, 255, 1)',
-						                'rgba(255, 159, 64, 1)'
-						            ],
-						            borderWidth: 1
-						        }]
-						    },
-						    options: {
-						        scales: {
-						            yAxes: [{
-						                ticks: {
-						                    beginAtZero: true
-						                }
-						            }]
-						        }
-						    }
-						});
-						</script>
+					<div class="app-col" style="width:20%;">
+						<canvas id="threadInfoChart"></canvas>
+					</div>
+					<div class="app-col" style="width:20%;">
+						<canvas id="classLoadingChart"></canvas>
 					</div>
 				</div>
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
 			</div>
 		</div>
 		<div style="text-align:center; border-top:dotted 1px #ccc;">
