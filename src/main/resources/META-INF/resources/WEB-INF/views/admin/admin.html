@@ -141,11 +141,12 @@
 			<div layout:fragment="content" class="app-col" style="width:calc(100% - 200px); padding:1rem;">
 				<script>
 				// defines variables		
-				var webSocketClient = new duice.WebSocketClient();
+				const webSocketClient = new duice.WebSocketClient();
 				var loadAverageChart = null;
 				var memoryChart = null;
 				var threadInfoChart = null;
 				var classLoadingChart = null;
+				const threadInfos = new duice.List();
 				
 				// document ready
 				$(document).ready(function() {
@@ -157,15 +158,22 @@
 				    var webSocketUrl = (window.location.protocol === 'https'?'wss':'ws')+'://'+location.host+'/api/webSocket';
 					webSocketClient.open(webSocketUrl);
 					webSocketClient.onMessage(function(event){
-						console.log(event);
-						var monitor = JSON.parse(event.data);
-						$('#top').text(monitor.top);
+						var data = JSON.parse(event.data);
 						
-						// updates chart
-						updateLoadAverageChart(monitor);
-						updateMemoryChart(monitor);
-						updateThreadInfoChart(monitor);
-						updateClassLoadingChart(monitor);
+						// monitor
+						if(data.id === 'Monitor'){
+							var monitor = data;
+							$('#top').text(monitor.top);
+							
+							// updates chart
+							updateLoadAverageChart(monitor);
+							updateMemoryChart(monitor);
+							updateThreadInfoChart(monitor);
+							updateClassLoadingChart(monitor);
+							
+							// updates threadInfos
+							threadInfos.fromJson(monitor.threadInfos);
+						}
 					});
 				});
 				
@@ -188,6 +196,9 @@
 						initializeMemoryChart(monitors);
 						initializeThreadInfoChart(monitors);
 						initializeClassLoadingChart(monitors);
+						
+						// setting threadInfos
+						threadInfos.fromJson(lastMonitor.threadInfos);
 				   	});
 				}
 				
@@ -499,7 +510,7 @@
 				</div>
 				<div class="app-row">
 					<div class="app-col">
-						<pre style="margin:0px; height:300px; border-radius:3px;">
+						<pre style="margin:0px; width:100%; height:300px; border-radius:3px;">
 							<code id="top" class="language-bash line-numbers" style="white-space:pre-wrap;"></code>
 						</pre>
 					</div>
@@ -516,6 +527,43 @@
 					</div>
 					<div class="app-col" style="width:20%;">
 						<canvas id="classLoadingChart"></canvas>
+					</div>
+				</div>
+				<div class="app-row">
+					<div class="app-col">
+						<table is="duice-table" 
+						data-duice-bind="threadInfos,threadInfo" 
+						style="width:100%; font-size: 10px;">
+							<col/>
+							<col/>
+							<col/>
+							<col/>
+							<col/>
+							<col/>
+							<col/>
+							<thead style="background-color:#efefef;">
+								<tr>
+									<th>Thread ID</th>
+									<th>Thread Name</th>
+									<th>Thread State</th>
+									<th>Waited Count</th>
+									<th>Waited Time</th>
+									<th>Block Count</th>
+									<th>Block Time</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><span is="duice-span" data-duice-bind="threadInfo,threadId"></span></td>
+									<td><span is="duice-span" data-duice-bind="threadInfo,threadName"></span></td>
+									<td><span is="duice-span" data-duice-bind="threadInfo,threadState"></span></td>
+									<td><span is="duice-span" data-duice-bind="threadInfo,waitedCount"></span></td>
+									<td><span is="duice-span" data-duice-bind="threadInfo,waitedTime"></span></td>
+									<td><span is="duice-span" data-duice-bind="threadInfo,blockCount"></span></td>
+									<td><span is="duice-span" data-duice-bind="threadInfo,blockTime"></span></td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>

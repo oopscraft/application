@@ -35,16 +35,26 @@ public class Monitor {
 		loadedClassCount,
 		unloadedClassCount;
 	}
-		
+	
+	String id = this.getClass().getSimpleName();
 	Date date;
 	String top;
 	ValueMap operatingSystem;
 	ValueMap memory;
-	List<ValueMap> threadInfos;
 	ValueMap classLoading;
+	List<ValueMap> threadInfos;
+	List<ValueMap> beans;
 	
 	public Monitor(Date date) {
 		this.date = date;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 	public Date getDate() {
