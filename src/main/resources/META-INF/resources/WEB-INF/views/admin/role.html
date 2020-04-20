@@ -311,7 +311,7 @@
 										</td>
 										<td>
 											<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
-											<span is="duice-span" data-duice-bind="role,id"></span>
+											<span is="duice-span" data-duice-bind="role,id" class="[@duice[$context.role.get('systemEmbedded')===true?'embd':'']]"></span>
 										</td>
 										<td><span is="duice-span" data-duice-bind="role,name"></span></td>
 									</tr>

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.Application;
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.sample.entity.Sample;
 
 @Controller
@@ -49,16 +49,16 @@ public class SampleController {
 	 * 샘플 데이터 목록 조회
 	 * MYBATIS MAPPER로 Entity Class를 이용하여 조회한다.
 	 * @param role
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getSamples", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Sample> getSamples(@ModelAttribute Sample sample, @ModelAttribute PageInfo pageInfo) throws Exception {
-		pageInfo.setEnableTotalCount(true);
-		List<Sample> samples = sampleService.getSamples(sample, pageInfo);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+	public List<Sample> getSamples(@ModelAttribute Sample sample, @ModelAttribute Pagination pagination) throws Exception {
+		pagination.setEnableTotalCount(true);
+		List<Sample> samples = sampleService.getSamples(sample, pagination);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 		return samples;
 	}
 	

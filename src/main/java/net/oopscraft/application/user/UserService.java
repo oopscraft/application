@@ -18,14 +18,14 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 import net.oopscraft.application.user.entity.User;
 
 @Service
@@ -45,11 +45,11 @@ public class UserService {
 	/**
 	 * Return users.
 	 * @param user
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
-	public List<User> getUsers(final User user, PageInfo pageInfo) throws Exception {
+	public List<User> getUsers(final User user, Pagination pagination) throws Exception {
 		Page<User> usersPage = userRepository.findAll(new  Specification<User>() {
 			@Override
 			public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -72,8 +72,8 @@ public class UserService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageRequest());
-		pageInfo.setTotalCount(usersPage.getTotalElements());
+		}, pagination.toPageRequest());
+		pagination.setTotalCount(usersPage.getTotalElements());
 		return usersPage.getContent();
 	}
 	
@@ -122,7 +122,11 @@ public class UserService {
 	 * @throws Exception
 	 */
 	public void deleteUser(User user) throws Exception {
-		userRepository.delete(user);
+		User one = userRepository.findOne(user.getId());
+		if(one.isSystemEmbedded()) {
+			throw new SystemEmbeddedException();
+		}
+		userRepository.delete(one);
 	}
 	
 	/**

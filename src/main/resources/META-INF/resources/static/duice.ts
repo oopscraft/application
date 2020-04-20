@@ -1878,6 +1878,14 @@ namespace duice {
         get(name:string):any {
             return this.data[name];
         }
+
+        /**
+         * Returns value is exists
+         * @param name 
+         */
+        isEmpty(name:string):boolean {
+            return isEmpty(this.get(name));
+        }
         
         /**
          * Returns properties names as array.

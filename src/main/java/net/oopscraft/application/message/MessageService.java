@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.message.entity.Message;
 
 @Service
@@ -25,11 +25,11 @@ public class MessageService {
 	/**
 	 * Returns messages
 	 * @param user
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Message> getMessages(final Message message, PageInfo pageInfo) throws Exception {
+	public List<Message> getMessages(final Message message, Pagination pagination) throws Exception {
 		Page<Message> messagesPage = messageRepository.findAll(new  Specification<Message>() {
 			@Override
 			public Predicate toPredicate(Root<Message> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -44,8 +44,8 @@ public class MessageService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageRequest());
-		pageInfo.setTotalCount(messagesPage.getTotalElements());
+		}, pagination.toPageRequest());
+		pagination.setTotalCount(messagesPage.getTotalElements());
 		return messagesPage.getContent();
 	}
 	
@@ -99,12 +99,12 @@ public class MessageService {
 //	 * Gets messages
 //	 * @param searchType
 //	 * @param searchValue
-//	 * @param pageInfo
+//	 * @param pagination
 //	 * @return
 //	 * @throws Exception
 //	 */
-//	public List<Message> getMessages(PageInfo pageInfo, MessageSearchType searchType, String searchValue) throws Exception {
-//		Pageable pageable = pageInfo.toPageable();
+//	public List<Message> getMessages(pagination pagination, MessageSearchType searchType, String searchValue) throws Exception {
+//		Pageable pageable = pagination.toPageable();
 //		Page<Message> messagesPage = null;
 //		if(searchType == null) {
 //			messagesPage = messageRepository.findAll(pageable);
@@ -118,8 +118,8 @@ public class MessageService {
 //				break;
 //			}
 //		}
-//		if (pageInfo.isEnableTotalCount() == true) {
-//			pageInfo.setTotalCount(messagesPage.getTotalElements());
+//		if (pagination.isEnableTotalCount() == true) {
+//			pagination.setTotalCount(messagesPage.getTotalElements());
 //		}
 //		List<Message> messages = messagesPage.getContent();
 //		return messages;

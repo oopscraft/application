@@ -9,8 +9,8 @@ public class PageInterceptorTest extends ApplicationTestRunner {
 //
 //	@Test
 //	public void test() throws Exception {
-//		PageInfo pageInfo = new PageInfo(2,1);
-//		List<Article> articles = articleMapper.selectLatestArticles(null, pageInfo.toRowBounds());
+//		pagination pagination = new pagination(2,1);
+//		List<Article> articles = articleMapper.selectLatestArticles(null, pagination.toRowBounds());
 //		System.out.println(new TextTable(articles));
 //	}
 	

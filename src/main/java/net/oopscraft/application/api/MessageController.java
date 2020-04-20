@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.message.MessageService;
 import net.oopscraft.application.message.entity.Message;
 
@@ -34,10 +34,10 @@ public class MessageController {
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public List<Message> getMessages(@ModelAttribute Message message, @ModelAttribute PageInfo pageInfo) throws Exception {
-		pageInfo.setEnableTotalCount(true);
-		List<Message> messages = messageService.getMessages(message, pageInfo);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+	public List<Message> getMessages(@ModelAttribute Message message, @ModelAttribute Pagination pagination) throws Exception {
+		pagination.setEnableTotalCount(true);
+		List<Message> messages = messageService.getMessages(message, pagination);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 		return messages;
 	}
 	

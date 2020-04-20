@@ -96,9 +96,26 @@
 	/**
 	 * Updates article
 	 */
-	function updateArticle(){
+	function updateArticle() {
 		var articleId = article.get('id');
 		window.location.href = "[[@{/board}]]/[[${board.id}]]/writeArticle" + "?id=" + articleId;
+	}
+	
+	/**
+	 * Deletes article
+	 */
+	async function deleteArticle() {
+		if(await duice.confirm('[[#{application.global.deleteConfirm(#{application.board.article})}]]')){
+			$.ajax({
+				 url: '[[@{/api/boards}]]/[[${board.id}]]/articles/[[${param.id}]]'
+				,type: 'DELETE'
+				,contentType: 'application/json;charset=UTF-8'
+			})
+			.done(function(data, textStatus, jqXHR) {
+				resetChildArticleReply();
+				getArticleReplies();
+		   	});
+		}
 	}
 	
 	</script>

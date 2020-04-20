@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.entity.Authority;
@@ -57,16 +57,16 @@ public class UserController {
 	/**
 	 * Returns list of users
 	 * @param user
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<User> getUsers(@ModelAttribute User user,@ModelAttribute PageInfo pageInfo) throws Exception {
-		pageInfo.setEnableTotalCount(true);
-		List<User> users = userService.getUsers(user, pageInfo);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+	public List<User> getUsers(@ModelAttribute User user,@ModelAttribute Pagination pagination) throws Exception {
+		pagination.setEnableTotalCount(true);
+		List<User> users = userService.getUsers(user, pagination);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 		return users;
 	}
 	

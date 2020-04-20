@@ -19,6 +19,19 @@
 		<script th:src="@{/static/moment.js}"></script>
 		<script th:src="@{/static/chartjs/Chart.js}"></script>
 		<script>
+		const __menus = new duice.List([
+			{ name:'[[#{application.user}]]', icon:'[[@{/static/image/icon_user.png}]]', linkUrl:'[[@{/admin/user}]]' },
+			{ name:'[[#{application.group}]]', icon:'[[@{/static/image/icon_group.png}]]', linkUrl:'[[@{/admin/group}]]' },
+			{ name:'[[#{application.role}]]', icon:'[[@{/static/image/icon_role.png}]]', linkUrl:'[[@{/admin/role}]]' },
+			{ name:'[[#{application.authority}]]', icon:'[[@{/static/image/icon_authority.png}]]', linkUrl:'[[@{/admin/authority}]]' },
+			{ name:'[[#{application.property}]]', icon:'[[@{/static/image/icon_property.png}]]', linkUrl:'[[@{/admin/property}]]' },
+			{ name:'[[#{application.code}]]', icon:'[[@{/static/image/icon_code.png}]]', linkUrl:'[[@{/admin/code}]]' },
+			{ name:'[[#{application.message}]]', icon:'[[@{/static/image/icon_message.png}]]', linkUrl:'[[@{/admin/message}]]' },
+			{ name:'[[#{application.menu}]]', icon:'[[@{/static/image/icon_menu.png}]]', linkUrl:'[[@{/admin/menu}]]' },
+			{ name:'[[#{application.board}]]', icon:'[[@{/static/image/icon_board.png}]]', linkUrl:'[[@{/admin/board}]]' },
+			{ name:'[[#{application.api}]]', icon:'[[@{/static/image/icon_api.png}]]', linkUrl:'[[@{/admin/api}]]' },
+		]);
+		
         /**
          * Exeuctes logout
          */ 
@@ -57,87 +70,45 @@
 			</div>
 		</div>
 		<div class="app-row" style="min-height:calc(100% - 120px);">
-			<div class="app-col" style="width:200px; padding:1rem;">
-				<nav class="menu">
-					<ul>
-						<li>
-							<a th:href="@{/admin/user}">
-								<img class="menu-item__icon" th:src="@{/static/image/icon_user.png}"/>
-								<span class="menu-item__text" data-th-text="#{application.user}">User</span>
-							</a>
-						</li>
-						<li>
-							<a th:href="@{/admin/group}">
-								<img class="menu-item__icon" th:src="@{/static/image/icon_group.png}"/>
-								<span class="menu-item__text" data-th-text="#{application.group}">Group</span>
-							</a>
-						</li>
-						<li>
-							<a th:href="@{/admin/role}">
-								<img class="menu-item__icon" th:src="@{/static/image/icon_role.png}"/>
-								<span class="menu-item__text" data-th-text="#{application.role}">Role</span>
-							</a>
-						</li>
-						<li>
-							<a th:href="@{/admin/authority}">
-								<img class="menu-item__icon" th:src="@{/static/image/icon_authority.png}"/>
-								<span class="menu-item__text" data-th-text="#{application.authority}">Authority</span>
-							</a>
-						</li>
-						<li>
-							<a th:href="@{/admin/property}">
-								<img class="menu-item__icon" th:src="@{/static/image/icon_property.png}"/>
-								<span class="menu-item__text" data-th-text="#{application.property}">Property</span>
-							</a>
-						</li>
-						<li>
-							<a th:href="@{/admin/code}">
-								<img class="menu-item__icon" th:src="@{/static/image/icon_code.png}"/>
-								<span class="menu-item__text" data-th-text="#{application.code}">Code</span>
-							</a>
-						</li>
-						<li>
-							<a th:href="@{/admin/menu}">
-								<img class="menu-item__icon" th:src="@{/static/image/icon_menu.png}"/>
-								<span class="menu-item__text" data-th-text="#{application.menu}">Menu</span>
-							</a>
-						</li>
-						<li>
-							<a th:href="@{/admin/message}">
-								<img class="menu-item__icon" th:src="@{/static/image/icon_message.png}"/>
-								<span class="menu-item__text" data-th-text="#{application.message}">Message</span>
-							</a>
-						</li>
-						<li>
-							<a th:href="@{/admin/board}">
-								<img class="menu-item__icon" th:src="@{/static/image/icon_board.png}"/>
-								<span class="menu-item__text" data-th-text="#{application.board}">Board</span>
-							</a>
-						</li>
-						<li>
-							<a th:href="@{/admin/api}">
-								<img class="menu-item__icon" th:src="@{/static/image/icon_api.png}"/>
-								<span class="menu-item__text" data-th-text="#{application.api}">API</span>
-							</a>
-						</li>
-					</ul>
-				</nav>
+			<!-- ================================================== -->
+			<!-- START: menu										-->
+			<!-- ================================================== -->
+			<div class="app-col" style="width:200px;">
+				<ul is="duice-ul"
+				data-duice-bind="__menus,__menu" 
+				data-duice-hierarchy="id,upperId"
+				data-duice-foldable="false"
+				style="margin: 1.5rem 1rem;">
+					<li>
+						<a href="javascript:void(0);" 
+						data-link-url="[@duice[$context.__menu.get('linkUrl')]]" 
+						data-link-target="[@duice[$context.__menu.get('linkTarget')]]"
+						onclick="javascript:__openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
+						style="display:block; border-bottom:dotted 1px #ccc; line-height:2.5rem;">
+							<img is="duice-img" data-duice-bind="__menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
+							<span is="duice-span" data-duice-bind="__menu,name" style="font-weight:bold;"></span>
+						</a>
+					</li>
+				</ul>
+				<br/><br/>
+				<div>
+					<a th:href="@{/swagger-ui.html}" target="blank">
+						<img class="banner" th:src="@{/static/image/banner_swagger.png}"/>
+					</a>
+				</div>
 				<br/>
-				<nav class="banner">
-					<ul>
-						<li>
-							<a th:href="@{/swagger-ui.html}" target="blank">
-								<img class="banner" th:src="@{/static/image/banner_swagger.png}"/>
-							</a>
-						</li>
-						<li>
-							<a href="https://github.com/oopscraft/application" target="blank">
-								<img class="banner" th:src="@{/static/image/banner_github.png}"/>
-							</a>
-						</li>
-					</ul>
-				</nav>
+				<div>
+					<a href="https://github.com/oopscraft/application" target="blank">
+						<img class="banner" th:src="@{/static/image/banner_github.png}"/>
+					</a>
+				</div>
 			</div>
+			<!-- ================================================== -->
+			<!-- START: menu										-->
+			<!-- ================================================== -->
+			<!-- ================================================== -->
+			<!-- START: content										-->
+			<!-- ================================================== -->
 			<div layout:fragment="content" class="app-col" style="width:calc(100% - 200px); padding:1rem;">
 				<script>
 				// defines variables		
@@ -510,7 +481,7 @@
 				</div>
 				<div class="app-row">
 					<div class="app-col">
-						<pre style="margin:0px; width:100%; height:300px; border-radius:3px;">
+						<pre style="margin:0px; height:300px; border-radius:3px;">
 							<code id="top" class="language-bash line-numbers" style="white-space:pre-wrap;"></code>
 						</pre>
 					</div>
@@ -541,7 +512,7 @@
 							<col/>
 							<col/>
 							<col/>
-							<thead style="background-color:#efefef;">
+							<thead style="background-color:#fafafa;">
 								<tr>
 									<th>Thread ID</th>
 									<th>Thread Name</th>
@@ -567,19 +538,30 @@
 					</div>
 				</div>
 			</div>
+			<!-- ================================================== -->
+			<!-- END: content										-->
+			<!-- ================================================== -->
 		</div>
+		<!-- ================================================== -->
+		<!-- START: footer										-->
+		<!-- ================================================== -->
 		<div style="text-align:center; border-top:dotted 1px #ccc;">
 			<img th:src="@{/static/image/copyright.png}"/>
 		</div>
+		<!-- ================================================== -->
+		<!-- END: footer										-->
+		<!-- ================================================== -->
 		
 		<!-- ====================================================== -->
-		<!-- Groups Dialog											-->
+		<!-- START: Groups Dialog									-->
 		<!-- ====================================================== -->
-		<dialog id="__groupDialog" style="width:600px;">
-			<div class="app-row">
-				<div class="app-col">
-					<img class="icon" th:src="@{/static/image/icon_group.png}"/>
-					<span data-th-text="#{application.group} + ' ' + #{application.global.select}" class="font-bold"></span>
+		<dialog is="duice-dialog" id="__groupDialog" style="width:600px;">
+			<div class="app-row title">
+				<div class="app-col bottom">
+					<h2>
+						<img class="icon" th:src="@{/static/image/icon_group.png}"/>
+						<span data-th-text="#{application.group} + ' ' + #{application.global.select}" class="font-bold"></span>
+					</h2>
 				</div>
 			</div>
 			<hr class="hr"/>
@@ -724,20 +706,25 @@
         	}
         }
 		</script>
+		<!-- ====================================================== -->
+		<!-- END: Groups Dialog										-->
+		<!-- ====================================================== -->
 		
 		<!-- ====================================================== -->
-		<!-- Roles Dialog											-->
+		<!-- START: Roles Dialog									-->
 		<!-- ====================================================== -->
-		<dialog id="__roleDialog" style="width:600px;">
-			<div class="app-row">
-				<div class="app-col">
-					<img class="icon" th:src="@{/static/image/icon_role.png}"/>
-					<span data-th-text="#{application.role}+' '+#{application.global.select}" class="font-bold"></span>
+		<dialog is="duice-dialog" id="__roleDialog" style="width:600px;">
+			<div class="app-row title">
+				<div class="app-col bottom">
+					<h2>
+						<img class="icon" th:src="@{/static/image/icon_role.png}"/>
+						<span data-th-text="#{application.role}+' '+#{application.global.select}" class="font-bold"></span>
+					</h2>
 				</div>
 			</div>
-			<hr class="hr"/>
-			<div class="app-row">
+			<div class="app-row search">
 				<div class="app-col">
+					<img class="icon" th:src="@{/static/image/icon_search.png}"/>
 					<select is="duice-select" data-duice-bind="__roleDialog.search,key" style="width:125px;">
 						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
 						<option value="id" data-th-text="#{application.role.id}">Role ID</option>
@@ -951,20 +938,25 @@
         	}
         }
 		</script>
+		<!-- ====================================================== -->
+		<!-- END: Roles Dialog										-->
+		<!-- ====================================================== -->
 		
 		<!-- ====================================================== -->
-		<!-- Authorities Dialog										-->
+		<!-- START: Authorities Dialog								-->
 		<!-- ====================================================== -->
 		<dialog id="__authorityDialog" style="width:600px;">
-			<div class="app-row">
-				<div class="app-col">
-					<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
-					<span data-th-text="#{application.authority}+' '+#{application.global.select}" class="font-bold"></span>
+			<div class="app-row title">
+				<div class="app-col bottom">
+					<h2>
+						<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
+						<span data-th-text="#{application.authority}+' '+#{application.global.select}" class="font-bold"></span>
+					</h2>
 				</div>
 			</div>
-			<hr class="hr"/>
-			<div class="app-row">
+			<div class="app-row search">
 				<div class="app-col">
+					<img class="icon" th:src="@{/static/image/icon_search.png}"/>
 					<select is="duice-select" data-duice-bind="__authorityDialog.search,key" style="width:125px;">
 						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
 						<option value="id" data-th-text="#{application.authority.id}">ID</option>
@@ -1174,6 +1166,9 @@
            	}
 		}
 		</script>
+		<!-- ====================================================== -->
+		<!-- END: Authorities Dialog								-->
+		<!-- ====================================================== -->
 
 	</body>
 </html>

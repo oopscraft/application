@@ -393,7 +393,7 @@
 								<li>
 									<div style="border-bottom:dotted 1px #ccc;">
 										<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
-										<span is="duice-span" data-duice-bind="group,name" style="font-weight:bold;"></span>
+										<span is="duice-span" data-duice-bind="group,name" style="font-weight:bold;" class="[@duice[$context.group.get('systemEmbedded') === true ? 'embd' : '']]"></span>
 									</div>
 								</li>
 							</ul>

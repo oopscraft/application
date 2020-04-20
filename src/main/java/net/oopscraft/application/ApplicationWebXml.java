@@ -21,7 +21,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 /**
  * Implementation of javax.servlet.ServletContainerInitializer
  * @version 0.0.1
- * @see    None
+ * @see    
  */
 public class ApplicationWebXml implements ServletContainerInitializer {
 	
@@ -30,10 +30,6 @@ public class ApplicationWebXml implements ServletContainerInitializer {
 	@Override
 	public void onStartup(Set<Class<?>> c, ServletContext servletContext) throws ServletException {
 		LOGGER.info("ApplicationWebXml start...");
-		
-		// error page
-		
-		
 		
 		// invokes application context
 		LOGGER.info("applicationContext:{}", Application.applicationContext);

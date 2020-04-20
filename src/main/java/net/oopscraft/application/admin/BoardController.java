@@ -19,7 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.board.entity.Board;
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.security.SecurityPolicy;
 
 @PreAuthorize("hasAuthority('ADMN_BORD')")
 @Controller
@@ -40,22 +41,23 @@ public class BoardController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/board.html");
+		modelAndView.addObject("SecurityPolicy", SecurityPolicy.values());
 		return modelAndView;
 	}
 	
 	/**
 	 * Returns boards
 	 * @param board
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getBoards", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Board> getBoards(@ModelAttribute Board board, @ModelAttribute PageInfo pageInfo) throws Exception {
-		pageInfo.setEnableTotalCount(true);
-		List<Board> boards = boardService.getBoards(board, pageInfo);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+	public List<Board> getBoards(@ModelAttribute Board board, @ModelAttribute Pagination pagination) throws Exception {
+		pagination.setEnableTotalCount(true);
+		List<Board> boards = boardService.getBoards(board, pagination);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 		return boards;
 	}
 	

@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import net.oopscraft.application.core.JsonConverter;
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.locale.LocaleService;
 import net.oopscraft.application.message.MessageService;
@@ -123,10 +123,10 @@ public class ApiController {
 
 		// pagination
 		List<ValueMap> apisPage = new ArrayList<ValueMap>();
-		PageInfo pageInfo = new PageInfo();
-		pageInfo.setEnableTotalCount(true);
-		pageInfo.setPage(Integer.parseInt(paramMap.getOrDefault("page", "1")));
-		pageInfo.setRows(Integer.parseInt(paramMap.getOrDefault("rows", "10")));
+		Pagination pagination = new Pagination();
+		pagination.setEnableTotalCount(true);
+		pagination.setPage(Integer.parseInt(paramMap.getOrDefault("page", "1")));
+		pagination.setRows(Integer.parseInt(paramMap.getOrDefault("rows", "10")));
 		int count = 0;
 		for(ValueMap api : apis) {
 
@@ -155,14 +155,14 @@ public class ApiController {
 				}
 			}
 			count ++;
-			if(pageInfo.getOffset() < count && count <= pageInfo.getOffset() + pageInfo.getLimit()) {
+			if(pagination.getOffset() < count && count <= pagination.getOffset() + pagination.getLimit()) {
 				apisPage.add(api);	
 			}
 		}
 
 		// returns
-		pageInfo.setTotalCount(count);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());		
+		pagination.setTotalCount(count);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());		
 		return apisPage;
 	}
 	

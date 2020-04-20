@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.menu.entity.Menu;
 import net.oopscraft.application.security.SecurityPolicy;
@@ -44,23 +44,23 @@ public class MenuController {
 	public ModelAndView index() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("admin/menu.html");
 		modelAndView.addObject("LinkTarget", Menu.LinkTarget.values());
-		modelAndView.addObject("DisplayPolicy", SecurityPolicy.values());
+		modelAndView.addObject("SecurityPolicy", SecurityPolicy.values());
 		return modelAndView;
 	}
 	
 	/**
 	 * Returns menu list
 	 * @param menu
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getMenus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Menu> getMenus(@ModelAttribute Menu menu, @ModelAttribute PageInfo pageInfo) throws Exception {
-		pageInfo.setEnableTotalCount(true);
-		List<Menu> menus = menuService.getMenus(menu, pageInfo);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+	public List<Menu> getMenus(@ModelAttribute Menu menu, @ModelAttribute Pagination pagination) throws Exception {
+		pagination.setEnableTotalCount(true);
+		List<Menu> menus = menuService.getMenus(menu, pagination);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 		return menus;
 	}
 	

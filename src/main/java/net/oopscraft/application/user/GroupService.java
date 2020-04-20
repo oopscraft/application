@@ -13,7 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 import net.oopscraft.application.user.entity.Group;
 
 @Service
@@ -30,7 +31,7 @@ public class GroupService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Group> getGroups(final Group group, PageInfo pageInfo) throws Exception {
+	public List<Group> getGroups(final Group group, Pagination pagination) throws Exception {
 		Page<Group> usersPage = groupRepository.findAll(new Specification<Group>() {
 			@Override
 			public Predicate toPredicate(Root<Group> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -45,8 +46,8 @@ public class GroupService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
 			}
-		}, pageInfo.toPageRequest());
-		pageInfo.setTotalCount(usersPage.getTotalElements());
+		}, pagination.toPageRequest());
+		pagination.setTotalCount(usersPage.getTotalElements());
 		return usersPage.getContent();
 	}
 	
@@ -86,7 +87,11 @@ public class GroupService {
 	 * @throws Exception
 	 */
 	public void deleteGroup(Group group) throws Exception {
-		groupRepository.delete(group);
+		Group one = groupRepository.findOne(group.getId());
+		if(one.isSystemEmbedded()) {
+			throw new SystemEmbeddedException();
+		}
+		groupRepository.delete(one);
 	}
 	
 	/**

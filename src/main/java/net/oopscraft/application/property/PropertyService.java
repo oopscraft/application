@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.property.entity.Property;
 import net.oopscraft.application.user.entity.Role;
 
@@ -27,11 +27,11 @@ public class PropertyService {
 	/**
 	 * Returns properties.
 	 * @param property
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Property> getProperties(final Property property, PageInfo pageInfo) throws Exception {
+	public List<Property> getProperties(final Property property, Pagination pagination) throws Exception {
 		Page<Property> propertiesPage = propertyRepository.findAll(new  Specification<Property>() {
 			@Override
 			public Predicate toPredicate(Root<Property> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -46,8 +46,8 @@ public class PropertyService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageRequest());
-		pageInfo.setTotalCount(propertiesPage.getTotalElements());
+		}, pagination.toPageRequest());
+		pagination.setTotalCount(propertiesPage.getTotalElements());
 		return propertiesPage.getContent();
 	}
 	

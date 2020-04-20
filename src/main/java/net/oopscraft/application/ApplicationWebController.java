@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -35,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.locale.LocaleService;
+import net.oopscraft.application.message.MessageException;
 import net.oopscraft.application.security.UserDetails;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.entity.User;
@@ -71,6 +71,17 @@ public class ApplicationWebController {
 	LocaleResolver localeResolver;
 	
 	/**
+	 * index
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(method=RequestMethod.GET)
+	public ModelAndView index() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("index.html");
+		return modelAndView;
+	}
+	
+	/**
 	 * Default exception handler
 	 * @param request
 	 * @param response
@@ -79,6 +90,21 @@ public class ApplicationWebController {
 	 */
 	@ExceptionHandler(Exception.class)
 	public void handleException(HttpServletRequest request, HttpServletResponse response, Exception exception) throws Exception {
+		LOGGER.error(exception.getMessage());
+		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
+			ValueMap responseMap = new ValueMap();
+			responseMap.set("exception", exception.getClass().getName());
+			responseMap.set("message", exception.getMessage());
+			responseMap.set("stackTrace", ExceptionUtils.getRootCauseMessage(exception));
+	    	response.getWriter().write(JsonConverter.toJson(responseMap));
+	    	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}else {
+			throw exception;
+		}
+	}
+	
+	@ExceptionHandler(MessageException.class)
+	public void handleMessageException(HttpServletRequest request, HttpServletResponse response, Exception exception) throws Exception {
 		LOGGER.error(exception.getMessage());
 		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
 			ValueMap responseMap = new ValueMap();
@@ -132,13 +158,6 @@ public class ApplicationWebController {
 	@ModelAttribute("__languages")
 	public List<ValueMap> getLanguages() throws Exception {
 		return localeService.getLanguages(localeResolver.resolveLocale(request));
-	}
-
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("index.html");
-		return modelAndView;
 	}
 	
 	/**

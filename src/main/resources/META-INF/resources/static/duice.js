@@ -1683,6 +1683,13 @@ var duice;
             return this.data[name];
         }
         /**
+         * Returns value is exists
+         * @param name
+         */
+        isEmpty(name) {
+            return isEmpty(this.get(name));
+        }
+        /**
          * Returns properties names as array.
          * @return array of names
          */

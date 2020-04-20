@@ -447,7 +447,7 @@
 										<td>
 											<select is="duice-select" data-duice-bind="menu,displayPolicy">
 												<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
-												<option th:each="displayPolicy:${DisplayPolicy}" th:value="${displayPolicy}" th:text="#{'application.menu.displayPolicy.'+${displayPolicy}}"></option>
+												<option th:each="securityPolicy:${SecurityPolicy}" th:value="${securityPolicy}" th:text="#{'application.global.securityPolicy.'+${securityPolicy}}"></option>
 											</select>
 											<table is="duice-table" 
 												data-duice-bind="menuDisplayAuthorities,authority" 

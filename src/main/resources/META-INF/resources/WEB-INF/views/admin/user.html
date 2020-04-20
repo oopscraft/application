@@ -486,7 +486,7 @@
 										</td>
 										<td>
 											<img is="duice-img" data-duice-bind="user,photo" th:src="@{/static/image/icon_user.png}" class="icon small"/>
-											<span is="duice-span" data-duice-bind="user,id"></span>
+											<span is="duice-span" data-duice-bind="user,id" class="[@duice[$context.user.get('systemEmbedded') === true ? 'embd' : '']]"></span>
 										</td>
 										<td><span is="duice-span" data-duice-bind="user,email"></span></td>
 										<td><span is="duice-span" data-duice-bind="user,name"></span></td>
@@ -861,8 +861,10 @@
 	<dialog id="changePasswordDialog" style="width:400px;">
 		<div class="app-row">
 			<div class="app-col">
-				<img class="icon" th:src="@{/static/image/icon_password.png}"/>
-				<span data-th-text="#{application.user.changePassword}" class="font-bold"></span>
+				<h2>
+					<img class="icon" th:src="@{/static/image/icon_password.png}"/>
+					<span data-th-text="#{application.user.changePassword}" class="font-bold"></span>
+				</h2>
 			</div>
 		</div>
 		<div class="app-row">
@@ -874,13 +876,13 @@
 						<tr>
 							<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
 							<td>
-								<input is="duice-ui-input" type="password" data-duice-bind="changePassword,password"/>
+								<input is="duice-input-text" type="password" data-duice-bind="changePassword,password"/>
 							</td>
 						</tr>
 						<tr>
 							<th><span data-th-text="#{application.user.passwordConfirm}" class="mand">Password(Confirm)</span></th>
 							<td>
-								<input is="duice-ui-input" type="password" data-duice-bind="changePassword,passwordConfirm"/>
+								<input is="duice-input-text" type="password" data-duice-bind="changePassword,passwordConfirm"/>
 							</td>
 						</tr>
 					</tbody>
@@ -915,7 +917,6 @@
 	 * Confirms change password
 	 */
 	function confirmChangePassword() {
-		
 		// checks password and password confirm, in case of new
 		if(duice.isEmpty(changePassword.get('password'))){
 			changePassword.setFocus('password', '[[#{application.global.enterItem(#{application.user.password})}]]');

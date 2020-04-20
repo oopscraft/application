@@ -7,7 +7,7 @@ namespace duice {
     /**
      * duice.plugin.CkeditorFactory
      */
-    export class CkeditorFactory extends duice.MapUiComponentFactory {
+    export class CkeditorFactory extends duice.MapComponentFactory {
         getComponent(element:HTMLTextAreaElement):Ckeditor {
             var config = null;
             if(element.dataset.duiceConfig){
@@ -23,7 +23,7 @@ namespace duice {
     /**
      * duice.plugin.Ckeditor
      */
-    export class Ckeditor extends duice.MapUiComponent {
+    export class Ckeditor extends duice.MapComponent {
         textarea:HTMLTextAreaElement;
         ckeditor:object;
         constructor(textarea:HTMLTextAreaElement, config:object){

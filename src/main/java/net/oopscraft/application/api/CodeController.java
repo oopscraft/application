@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.oopscraft.application.code.CodeService;
 import net.oopscraft.application.code.entity.Code;
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 
 @CrossOrigin
 @RestController
@@ -36,10 +36,10 @@ public class CodeController {
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public List<Code> getCodes(@ModelAttribute Code code, @ModelAttribute PageInfo pageInfo) throws Exception {
-		pageInfo.setEnableTotalCount(true);
-		List<Code> codes = codeService.getCodes(code, pageInfo);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+	public List<Code> getCodes(@ModelAttribute Code code, @ModelAttribute Pagination pagination) throws Exception {
+		pagination.setEnableTotalCount(true);
+		List<Code> codes = codeService.getCodes(code, pagination);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 		return codes;
 	}
 	

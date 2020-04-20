@@ -1,54 +1,189 @@
+<div class="app-row title">
+	<div class="app-col bottom">
+		<h1>
+			<img th:src="${board.icon}" class="icon large"/>
+			<span th:text="${board.name}" class="font-weight-bold"></span>
+		</h1>
+	</div>
+</div>
+<div class="app-row">
+	<div class="app-col">
+		<table class="table" style="width:100%;">
+			<col style="width:10%;"/>
+			<col/>
+			<tbody>
+				<tr>
+					<th>
+						<span data-th-text="#{application.board.article.title}" class="mand">Title</span>
+					</th>
+					<td>
+						<span is="duice-span" data-duice-bind="article,title" style="font-weight:bold;"></span>
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<span data-th-text="#{application.board.article.category}">Category</span>
+					</th>
+					<td>
+						<select is="duice-select" onclick="getArticlesByCategory(this.value);" style="width:200px;">
+							<option value data-th-text="'- '+#{application.board.category}+' -'"></option>
+							<option th:each="category:${board.categories}" th:value="${category.id}" th:text="${category.name}"></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<span data-th-text="#{application.board.article.file}">File</span>
+					</th>
+					<td>
+						<ul is="duice-ul" data-duice-bind="articleFiles,articleFile">
+							<li>
+								<span is="duice-span" data-duice-bind="articleFile,name"></span>
+								(<span is="duice-span" data-duice-bind="articleFile,size"></span>)
+								X
+							</li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div is="duice-div" data-duice-bind="article,contents" style="min-height:300px; padding:1rem;"></div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+
+</div>
+<div class="app-row">
+	<div class="app-col right">
+		<button class="button" onclick="deleteArticle();">
+			<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
+			<span data-th-text="#{application.global.delete}"></span>
+		</button>
+		<button class="button" onclick="updateArticle();">
+			<img th:src="@{/static/image/icon_update.png}" class="icon"/>
+			<span data-th-text="#{application.global.update}"></span>
+		</button>
+	</div>
+</div>
+<div class="app-row">
+	<div class="app-col">
+		<ul is="duice-ul" 
+		data-duice-bind="articleReplies,articleReply" 
+		data-duice-hierarchy="id,upperId">
+			<li>
+				<div id="articleReplyDiv_[@duice[$context.articleReply.get('id')]]" style="border-bottom:dotted 1px #ccc;">
+					<div class="row">
+						<div class="col">
+							<span is="duice-span" data-duice-bind="articleReply,author"></span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">
+							<div is="duice-div" data-duice-bind="articleReply,contents"></div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col text-right">
+							<button class="btn btn-danger" data-id="[@duice[$context.articleReply.get('id')]]" onclick="deleteArticleReply(this.dataset.id);">
+								삭제
+							</button>
+							<button class="btn btn-primary" data-id="[@duice[$context.articleReply.get('id')]]" onclick="addChildArticleReply(this.dataset.id);">
+								댓글
+							</button>
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>
+<div class="app-row">
+	<div class="app-col" id="articleReplyDivContainer">
+		<div id="articleReplyDiv">
+			<span is="duice-span" data-duice-bind="articleReply,author"></span>
+			<textarea is="duice-ckeditor" data-duice-bind="articleReply,contents" data-duice-config="{'height':200}"></textarea>
+			<div class="col text-right">
+				<button class="btn btn-primary" onclick="resetChildArticleReply();">
+					취소
+				</button>
+				<button class="btn btn-primary" onclick="createArticleReply();">
+					저장
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
 <div class="container">
 	<div class="row align-items-end">
 		<div class="col">
-			<img th:src="${board.icon}"/>
-			<span th:text="${board.name}" class="font-weight-bold" style="font-size:1.4rem;"></span>
+			<h1>
+				<img th:src="${board.icon}"/>
+				<span th:text="${board.name}" class="font-weight-bold"></span>
+			</h1>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col">
-			<span is="duice-ui-span" data-duice-bind="article,title" style="font-size:1.2rem; font-weight:bold;"></span>
+			<span is="duice-span" data-duice-bind="article,title" style="font-size:1.2rem; font-weight:bold;"></span>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-3">
-			<span is="duice-ui-span" data-duice-bind="article,author"></span>
+			<span is="duice-span" data-duice-bind="article,author"></span>
 		</div>	
 		<div class="col-9 text-right">
-			<ul is="duice-ui-ul" data-duice-bind="articleFiles,articleFile">
+			<ul is="duice-ul" data-duice-bind="articleFiles,articleFile">
 				<li style="display: inline-block;">
-					<span is="duice-ui-span" data-duice-bind="articleFile,name"></span>
+					<span is="duice-span" data-duice-bind="articleFile,name"></span>
 				</li>
 			</ul>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col">
-			<div is="duice-ui-div" data-duice-bind="article,contents"></div>
+			<div is="duice-div" data-duice-bind="article,contents"></div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col text-right">
-			<button class="btn btn-primary" onclick="updateArticle();" th:text="#{application.board.write}">
+			<button class="btn btn-primary" onclick="deleteArticle();" th:text="#{application.global.delete}">
+				Delete
+			</button>
+			<button class="btn btn-primary" onclick="updateArticle();" th:text="#{application.global.update}">
 				Update
 			</button>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col">
-			<ul is="duice-ui-ul" 
+			<ul is="duice-ul" 
 			data-duice-bind="articleReplies,articleReply" 
 			data-duice-hierarchy="id,upperId">
 				<li>
 					<div id="articleReplyDiv_[@duice[$context.articleReply.get('id')]]">
 						<div class="row">
 							<div class="col">
-								<span is="duice-ui-span" data-duice-bind="articleReply,author"></span>
+								<span is="duice-span" data-duice-bind="articleReply,author"></span>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col">
-								<div is="duice-ui-div" data-duice-bind="articleReply,contents"></div>
+								<div is="duice-div" data-duice-bind="articleReply,contents"></div>
 							</div>
 						</div>
 						<div class="row">
@@ -70,12 +205,12 @@
 		<div id="articleReplyDiv">
 			<div class="row">
 				<div class="col">
-					<span is="duice-ui-span" data-duice-bind="articleReply,author"></span>
+					<span is="duice-span" data-duice-bind="articleReply,author"></span>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col">
-					<textarea is="duice-ui-textarea" data-duice-bind="articleReply,contents"></textarea>
+					<textarea is="duice-textarea" data-duice-bind="articleReply,contents"></textarea>
 				</div>
 			</div>
 			<div class="row">

@@ -3,7 +3,6 @@ package net.oopscraft.application.board;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.NullHandling;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -27,7 +25,7 @@ import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.entity.BoardArticle;
 import net.oopscraft.application.board.entity.BoardCategory;
 import net.oopscraft.application.core.IdGenerator;
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 
 @Service
 public class BoardService {
@@ -48,7 +46,7 @@ public class BoardService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Board> getBoards(final Board board, PageInfo pageInfo) throws Exception {
+	public List<Board> getBoards(final Board board, Pagination pagination) throws Exception {
 		Page<Board> boardsPage = boardRepository.findAll(new Specification<Board>() {
 			@Override
 			public Predicate toPredicate(Root<Board> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -63,8 +61,8 @@ public class BoardService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageRequest());
-		pageInfo.setTotalCount(boardsPage.getTotalElements());
+		}, pagination.toPageRequest());
+		pagination.setTotalCount(boardsPage.getTotalElements());
 		return boardsPage.getContent();
 	}
 
@@ -138,15 +136,15 @@ public class BoardService {
 	/**
 	 * Returns board articles
 	 * @param code
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
-	public List<BoardArticle> getBoardArticles(final BoardArticle boardArticle, PageInfo pageInfo) throws Exception {
+	public List<BoardArticle> getBoardArticles(final BoardArticle boardArticle, Pagination pagination) throws Exception {
 		List<Order> orders = new ArrayList<Order>();
 		orders.add(new Order(Direction.DESC, "notice"));
 		orders.add(new Order(Direction.DESC, "registrationDate"));
-		PageRequest pageRequest = pageInfo.toPageRequest(new Sort(orders));
+		PageRequest pageRequest = pagination.toPageRequest(new Sort(orders));
 		Page<BoardArticle> boardArticlesPage = boardArticleRepository.findAll(new  Specification<BoardArticle>() {
 			@Override
 			public Predicate toPredicate(Root<BoardArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -166,7 +164,7 @@ public class BoardService {
 				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 			}
 		}, pageRequest);
-		pageInfo.setTotalCount(boardArticlesPage.getTotalElements());
+		pagination.setTotalCount(boardArticlesPage.getTotalElements());
 		return boardArticlesPage.getContent();
 	}
 	
@@ -200,6 +198,16 @@ public class BoardService {
 		one.setTitle(boardArticle.getTitle());
 		one.setContents(boardArticle.getContents());
 		return boardArticleRepository.save(one);
+	}
+	
+	/**
+	 * Deletes board article
+	 * @param code
+	 * @throws Exception
+	 */
+	public void deleteBoardArticle(BoardArticle boardArticle) throws Exception {
+		BoardArticle one = boardArticleRepository.findOne(boardArticle.getId());
+		boardArticleRepository.delete(one);
 	}
 	
 	/**
@@ -297,14 +305,14 @@ public class BoardService {
 //	
 //	/**
 //	 * Gets boards
-//	 * @param pageInfo
+//	 * @param pagination
 //	 * @param searchType
 //	 * @param searchValue
 //	 * @return
 //	 * @throws Exception
 //	 */
-//	public List<Board> getBoards(PageInfo pageInfo, BoardSearchType searchType, String searchValue) throws Exception {
-//		Pageable pageable = pageInfo.toPageable();
+//	public List<Board> getBoards(pagination pagination, BoardSearchType searchType, String searchValue) throws Exception {
+//		Pageable pageable = pagination.toPageable();
 //		Page<Board> boardsPage = null;
 //		if(searchType == null) {
 //			boardsPage = boardRepository.findAll(pageable);
@@ -318,7 +326,7 @@ public class BoardService {
 //				break;
 //			}
 //		}
-//		pageInfo.setTotalCount(boardsPage.getTotalElements());
+//		pagination.setTotalCount(boardsPage.getTotalElements());
 //		return boardsPage.getContent();
 //	}
 //	

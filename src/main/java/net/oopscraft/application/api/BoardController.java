@@ -21,7 +21,7 @@ import net.oopscraft.application.article.entity.ArticleReply;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.entity.BoardArticle;
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 
 @CrossOrigin
 @RestController
@@ -49,9 +49,9 @@ public class BoardController {
 		Board board = new Board();
 		board.setId(id);
 		board.setName(name);
-		PageInfo pageInfo = new PageInfo(rows, page, true);
-		List<Board> boards = boardService.getBoards(board, pageInfo);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+		Pagination pagination = new Pagination(rows, page, true);
+		List<Board> boards = boardService.getBoards(board, pagination);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 		return boards;
 	}
 	
@@ -72,7 +72,7 @@ public class BoardController {
 	/**
 	 * Returns board articles
 	 * @param role
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
@@ -91,9 +91,9 @@ public class BoardController {
 		boardArticle.setCategoryId(categoryId);
 		boardArticle.setTitle(title);
 		boardArticle.setContents(contents);
-		PageInfo pageInfo = new PageInfo(rows, page, true);
-		List<BoardArticle> boardArticles = boardService.getBoardArticles(boardArticle, pageInfo);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+		Pagination pagination = new Pagination(rows, page, true);
+		List<BoardArticle> boardArticles = boardService.getBoardArticles(boardArticle, pagination);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 		return boardArticles;
 	}
 	
@@ -149,6 +149,41 @@ public class BoardController {
 		boardArticle.setId(articleId);
 		return boardService.saveBoardArticle(boardArticle);
 	}
+	
+	/**
+	 * Deletes board article
+	 * @param boardId
+	 * @param articleId
+	 * @param boardArticle
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "{boardId}/articles/{articleId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteBoardArticle(
+		@PathVariable("boardId")String boardId,
+		@PathVariable("articleId")String articleId,
+		@RequestBody BoardArticle boardArticle
+	) throws Exception {
+		boardArticle.setBoardId(boardId);
+		boardArticle.setId(articleId);
+		boardService.deleteBoardArticle(boardArticle);
+	}
+	
+//	/**
+//	 * Deletes board article
+//	 * @param article
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@RequestMapping(value = "{boardId}/article/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	@ResponseBody
+//	@Transactional(rollbackFor = Exception.class)
+//	public void deleteArticle(@RequestBody BoardArticle boardArticle) throws Exception {
+//		boardService.deleteBoardArticle(boardArticle);
+//	}
+	
+	
 	
 	/**
 	 * Returns board article replies
@@ -355,9 +390,9 @@ public class BoardController {
 //		@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
 //		@RequestParam(value = "boardId", required = false)String boardId
 //	) throws Exception {
-//		PageInfo pageInfo = new PageInfo(rows, page, true);
-//		List<Article> latestArticles = articleService.getLatestArticles(pageInfo, boardId);
-//		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+//		pagination pagination = new pagination(rows, page, true);
+//		List<Article> latestArticles = articleService.getLatestArticles(pagination, boardId);
+//		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 //		return new ResponseEntity<>(JsonConverter.toJson(latestArticles), HttpStatus.OK);
 //	}
 	
@@ -374,9 +409,9 @@ public class BoardController {
 //		@RequestParam(value = "rows", required = false, defaultValue = "10")Integer rows,
 //		@RequestParam(value = "boardId", required = false)String boardId
 //	) throws Exception {
-//		PageInfo pageInfo = new PageInfo(rows, page, true);
-//		List<Article> bestArticles = articleService.getBestArticles(pageInfo, boardId);
-//		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+//		pagination pagination = new pagination(rows, page, true);
+//		List<Article> bestArticles = articleService.getBestArticles(pagination, boardId);
+//		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 //		return new ResponseEntity<>(JsonConverter.toJson(bestArticles), HttpStatus.OK);
 //	}
 //	
@@ -412,15 +447,15 @@ public class BoardController {
 //		@RequestParam(value = "searchValue", required = false)String searchValue
 //	) throws Exception {
 //		Board board = boardService.getBoard(boardId);
-//		PageInfo pageInfo = new PageInfo(board.getRowsPerPage(), page, true);
+//		pagination pagination = new pagination(board.getRowsPerPage(), page, true);
 //		ArticleSearchType articleSearchType;
 //		if(StringUtility.isNotEmpty(searchType)) {
 //			articleSearchType = ArticleSearchType.valueOf(searchType);
 //		}else {
 //			articleSearchType = null;
 //		}
-//		List<Article> articles = articleService.getArticles(pageInfo, boardId, categoryId, articleSearchType, searchValue);
-//		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+//		List<Article> articles = articleService.getArticles(pagination, boardId, categoryId, articleSearchType, searchValue);
+//		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 //		return new ResponseEntity<>(JsonConverter.toJson(articles), HttpStatus.OK);
 //	}
 	

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.mybatis.PageRowBounds;
 import net.oopscraft.application.sample.entity.Sample;
@@ -27,22 +27,22 @@ public class SampleService {
 	/**
 	 * Returns samples
 	 * @param sample
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Sample> getSamples(final Sample sample, PageInfo pageInfo) throws Exception {
-		PageRowBounds rowBounds = pageInfo.toRowBounds();
+	public List<Sample> getSamples(final Sample sample, Pagination pagination) throws Exception {
+		PageRowBounds rowBounds = pagination.toRowBounds();
 		List<Sample> samples = sampleMapper.getSamples(sample, rowBounds);
 		LOGGER.debug("{}",new TextTable(samples));
-		pageInfo.setTotalCount(rowBounds.getTotalCount());
+		pagination.setTotalCount(rowBounds.getTotalCount());
 		return samples;
 	}
 	
 	/**
 	 * getSampleSummary
 	 * @param key1
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */

@@ -6,23 +6,23 @@ import org.springframework.data.domain.Sort;
 
 import net.oopscraft.application.core.mybatis.PageRowBounds;
 
-public class PageInfo {
+public class Pagination {
 
 	int page = 1;
 	int rows = Integer.MAX_VALUE;
 	boolean enableTotalCount = false;
 	long totalCount = -1;
 	
-	public PageInfo() {
+	public Pagination() {
 		
 	}
 
-	public PageInfo(int rows, int page) {
+	public Pagination(int rows, int page) {
 		this.rows = rows;
 		this.page = page;
 	}
 
-	public PageInfo(int rows, int page, boolean enableTotalCount) {
+	public Pagination(int rows, int page, boolean enableTotalCount) {
 		this(rows, page);
 		this.enableTotalCount = enableTotalCount;
 	}

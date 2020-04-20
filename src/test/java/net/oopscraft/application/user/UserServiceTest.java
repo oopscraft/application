@@ -23,10 +23,10 @@ public class UserServiceTest extends ApplicationTestRunner {
 //	@Test
 //	public void testGetUsers() throws Exception {
 //		UserService.SearchCondition searchCondition = userService.new SearchCondition();
-//		PageInfo pageInfo = new PageInfo(1,20,true);
-//		List<User> users = userService.getUsers(searchCondition, pageInfo);
+//		pagination pagination = new pagination(1,20,true);
+//		List<User> users = userService.getUsers(searchCondition, pagination);
 //		System.out.println(new TextTable(users));
-//		System.out.println(new TextTable(pageInfo));
+//		System.out.println(new TextTable(pagination));
 //	}
 //	
 //	@Test

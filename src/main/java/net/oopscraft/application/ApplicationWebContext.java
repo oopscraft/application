@@ -201,6 +201,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     public class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     	protected void configure(HttpSecurity http) throws Exception {
     		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    		http.csrf().disable();
     		if(securityPolicy != SecurityPolicy.ANONYMOUS) {
 	    		http.antMatcher("/api/**")
 		    		.authorizeRequests()

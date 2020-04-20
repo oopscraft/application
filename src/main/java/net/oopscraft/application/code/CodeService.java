@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.code.entity.Code;
 import net.oopscraft.application.code.entity.CodeItem;
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 
 @Service
 public class CodeService {
@@ -26,11 +26,11 @@ public class CodeService {
 	/**
 	 * Returns codes
 	 * @param code
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Code> getCodes(final Code code, PageInfo pageInfo) throws Exception {
+	public List<Code> getCodes(final Code code, Pagination pagination) throws Exception {
 		Page<Code> codesPage = codeRepository.findAll(new  Specification<Code>() {
 			@Override
 			public Predicate toPredicate(Root<Code> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -45,8 +45,8 @@ public class CodeService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageRequest());
-		pageInfo.setTotalCount(codesPage.getTotalElements());
+		}, pagination.toPageRequest());
+		pagination.setTotalCount(codesPage.getTotalElements());
 		return codesPage.getContent();
 	}
 	

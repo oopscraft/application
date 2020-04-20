@@ -31,7 +31,15 @@
 	 * Saves article reply
 	 */
 	async function saveArticle(){
-		if(await duice.confirm('confirm message...')){
+		
+		// checks title
+		if(article.isEmpty('title')){
+			duice.alert('[[#{application.global.enterItem(#{application.board.article.title})}]]');
+			return false;
+		}
+		
+		// executes save process
+		if(await duice.confirm('[[#{application.global.saveConfirm(#{application.board.article})}]]')){
 			var articleId = article.get('id');
 			var url = '[[@{/api/boards}]]/[[${board.id}]]/articles';
 			var type = 'POST';
@@ -48,7 +56,7 @@
 				,contentType: 'application/json;charset=UTF-8'
 			})
 			.done(function(data, textStatus, jqXHR) {
-				alert('ok');
+				window.history.back();
 		   	});
 		}
 	}

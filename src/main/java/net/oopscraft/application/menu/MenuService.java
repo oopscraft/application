@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.menu.entity.Menu;
 import net.oopscraft.application.security.SecurityPolicy;
 
@@ -31,8 +31,8 @@ public class MenuService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Menu> getMenus(final Menu menu, PageInfo pageInfo) throws Exception {
-		Page<Menu> menusPage = menuRepository.findAll(new  Specification<Menu>() {
+	public List<Menu> getMenus(final Menu menu, Pagination pagination) throws Exception {
+		Page<Menu> menusPage = menuRepository.findAll(new Specification<Menu>() {
 			@Override
 			public Predicate toPredicate(Root<Menu> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
@@ -46,8 +46,8 @@ public class MenuService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageRequest());
-		pageInfo.setTotalCount(menusPage.getTotalElements());
+		}, pagination.toPageRequest());
+		pagination.setTotalCount(menusPage.getTotalElements());
 		return menusPage.getContent();
 	}
 

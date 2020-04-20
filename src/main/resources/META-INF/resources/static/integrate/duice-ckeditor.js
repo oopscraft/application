@@ -6,7 +6,7 @@ var duice;
     /**
      * duice.plugin.CkeditorFactory
      */
-    class CkeditorFactory extends duice.MapUiComponentFactory {
+    class CkeditorFactory extends duice.MapComponentFactory {
         getComponent(element) {
             var config = null;
             if (element.dataset.duiceConfig) {
@@ -22,7 +22,7 @@ var duice;
     /**
      * duice.plugin.Ckeditor
      */
-    class Ckeditor extends duice.MapUiComponent {
+    class Ckeditor extends duice.MapComponent {
         constructor(textarea, config) {
             super(textarea);
             this.textarea = textarea;

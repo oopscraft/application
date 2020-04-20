@@ -13,7 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 import net.oopscraft.application.user.entity.Authority;
 
 @Service
@@ -26,11 +27,11 @@ public class AuthorityService {
 	 * Gets authorities
 	 * @param searchType
 	 * @param searchValue
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Authority> getAuthorities(final Authority authority, PageInfo pageInfo) throws Exception {
+	public List<Authority> getAuthorities(final Authority authority, Pagination pagination) throws Exception {
 		Page<Authority> authorityPage = authorityRepository.findAll(new  Specification<Authority>() {
 			@Override
 			public Predicate toPredicate(Root<Authority> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -45,8 +46,8 @@ public class AuthorityService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pageInfo.toPageRequest());
-		pageInfo.setTotalCount(authorityPage.getTotalElements());
+		}, pagination.toPageRequest());
+		pagination.setTotalCount(authorityPage.getTotalElements());
 		return authorityPage.getContent();
 	}
 
@@ -83,7 +84,11 @@ public class AuthorityService {
 	 * @throws Exception
 	 */
 	public void deleteAuthority(Authority authority) throws Exception {
-		authorityRepository.delete(authority);
+		Authority one = authorityRepository.findOne(authority.getId());
+		if(one.isSystemEmbedded()) {
+			throw new SystemEmbeddedException();
+		}
+		authorityRepository.delete(one);
 	}
 	
 }

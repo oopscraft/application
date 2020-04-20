@@ -1,89 +1,56 @@
-<link rel="stylesheet" th:href="@{/public/bootstrap/css/bootstrap.min.css}">
-<script th:src="@{/public/bootstrap/js/bootstrap.min.js}"></script>
-<link th:href="@{/public/mdi/css/materialdesignicons.min.css}" media="all" rel="stylesheet" type="text/css" />
-<style>
-html {
-	font-size: 75%;
-}
-body {
-	padding-top: 5rem;
-	font-family: sans-serif;
-	font-size: 1rem;
-	line-height: 2.0;
-	overflow-x: hidden;
-}
-.content {
-	width:100%;
-}
-.table tbody+tbody {
-	border-top:none;
-}
-.row,.col {
-	margin:1px;
-}
-</style>
+<!-- ================================================== -->
+<!-- START: top											-->
+<!-- ================================================== -->
+<div class="app-row" style="padding:10px 20px; background-color:#eee; border-bottom:dotted 1px #ccc;">
+	<div class="app-col left middle">
+		<a th:href="@{/admin}">
+			<img th:src="@{/static/image/application.png}"/>
+		</a>
+	</div>
+	<div class="app-col right middle">
+		<img th:src="${__user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
+		<span data-th-text="${__user.name}"></span>
+		&nbsp;
+		<span data-th-text="#{application.global.logout}" onclick="__logout();" class="link"></span>
+		&nbsp;
+		<select is="duice-select" onchange="__changeLanguage(this.value);" class="duice-ui-select" style="width:120px;">
+			<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
+		</select>
+	</div>
+</div>
+<!-- ================================================== -->
+<!-- END: top											-->
+<!-- ================================================== -->
 
-<!-- ================================================== -->
-<!-- Start Navigation 									-->
-<!-- ================================================== -->
-<nav class="navbar navbar-expand-lg fixed-top" style="background-color:#eee; border-bottom:dotted 1px #ccc;">
-	<a class="navbar-brand" href="#">
-		<img th:src="@{/static/image/application.png}"/>
-	</a>
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#__menus" aria-controls="__menus" aria-expanded="false" aria-label="Toggle navigation">
-		<img th:src="@{/static/image/icon_menu.png}"/>
-    </button>
-	<div class="collapse navbar-collapse" id="__menus">
-		<ul is="duice-ui-ul" class="navbar-nav"
-			data-duice-bind="__menus,__menu" data-duice-hierarchy="id,upperId">
-			<li class="{{$context.depth==0?'nav-item dropdown':'dropdown-submenu'}}">
-				<a class="nav-link {{$context.hasChild?'dropdown-toggle':''}}" href="#" id="navbarDropdown_{{$context.index}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<img is="duice-ui-img" data-duice-bind="__menu,icon" src="@{/static/image/icon_menu.png}" style="width:32px;"/>
-					<span is="duice-ui-span" data-duice-bind="__menu,name"></span>
+<div class="app-row" style="min-height:calc(100% - 120px);">
+	<!-- ================================================== -->
+	<!-- START: menu										-->
+	<!-- ================================================== -->
+	<div class="app-col" style="width:250px;">
+		<ul is="duice-ul"
+		data-duice-bind="__menus,__menu" 
+		data-duice-hierarchy="id,upperId"
+		data-duice-foldable="false"
+		style="margin:1rem;">
+			<li>
+				<a href="javascript:void(0);" 
+				data-link-url="[@duice[$context.__menu.get('linkUrl')]]" 
+				data-link-target="[@duice[$context.__menu.get('linkTarget')]]"
+				onclick="javascript:__openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
+				style="display:block; border-bottom:dotted 1px #ccc; line-height:2.5rem;">
+					<img is="duice-img" data-duice-bind="__menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
+					<span is="duice-span" data-duice-bind="__menu,name" style="font-weight:bold;"></span>
 				</a>
-				<ul class="dropdown-menu" aria-labelledby="navbarDropdown_{{$context.index}}">
-				</ul>
 			</li>
 		</ul>
 	</div>
-</nav>
-<style>
-.dropdown-submenu {
-  position: relative;
-}
-.dropdown-submenu>.dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: 0px;
-  margin-left: 0px;
-}
-</style>
-<script>
-$(function() {
-	  $("ul.dropdown-menu [data-toggle='dropdown']").on("click", function(event) {
-	    event.preventDefault();
-	    event.stopPropagation();
-	    $(this).siblings().toggleClass("show");
-	    if (!$(this).next().hasClass('show')) {
-	      $(this).parents('.dropdown-menu').first().find('.show').removeClass("show");
-	    }
-	    $(this).parents('li.nav-item.dropdown.show').on('hidden.bs.dropdown', function(e) {
-	      $('.dropdown-submenu .show').removeClass("show");
-	    });
-
-	  });
-	});
-</script>
-<!-- ================================================== -->
-<!-- End Navigation										-->
-<!-- ================================================== -->
-
-
-<!-- ================================================== -->
-<!-- Start Main 										-->
-<!-- ================================================== -->
-<main role="main" class="container">
-	<div layout:fragment="content" class="content">
+	<!-- ================================================== -->
+	<!-- START: menu										-->
+	<!-- ================================================== -->
+	<!-- ================================================== -->
+	<!-- START: content										-->
+	<!-- ================================================== -->
+	<div layout:fragment="content" class="app-col" style="width:calc(100% - 500px); padding:1rem;">
 		<div id="readme"></div>
 		<script>
 		$.ajax({
@@ -129,8 +96,20 @@ $(function() {
 		});
 		</script>
 	</div>
-</main>
+	<!-- ================================================== -->
+	<!-- END: content										-->
+	<!-- ================================================== -->
+	<div class="app-col" style="width:250px; padding:1rem;">
+	</div>
+</div>
+
 <!-- ================================================== -->
-<!-- End Main 											-->
+<!-- START: footer										-->
+<!-- ================================================== -->
+<div style="text-align:center; border-top:dotted 1px #ccc;">
+	<img th:src="@{/static/image/copyright.png}"/>
+</div>
+<!-- ================================================== -->
+<!-- END: footer										-->
 <!-- ================================================== -->
 

@@ -618,10 +618,8 @@
 										</th>
 										<td>
 											<select is="duice-select" data-duice-bind="board,accessPolicy">
-												<option> - select - </option>
-												<option value="ANONYMOUS">ANONYMOUS</option>
-												<option value="AUTHENTICATED">AUTHENTICATED</option>
-												<option value="AUTHORIZED">AUTHORIZED</option>
+												<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
+												<option th:each="securityPolicy:${SecurityPolicy}" th:value="${securityPolicy}" th:text="#{'application.global.securityPolicy.'+${securityPolicy}}"></option>
 											</select>
 											<table is="duice-table" 
 												data-duice-bind="boardAccessAuthorities,authority" 
@@ -668,10 +666,8 @@
 										</th>
 										<td>
 											<select is="duice-select" data-duice-bind="board,readPolicy">
-												<option> - select - </option>
-												<option value="ANONYMOUS">ANONYMOUS</option>
-												<option value="AUTHENTICATED">AUTHENTICATED</option>
-												<option value="AUTHORIZED">AUTHORIZED</option>
+												<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
+												<option th:each="securityPolicy:${SecurityPolicy}" th:value="${securityPolicy}" th:text="#{'application.global.securityPolicy.'+${securityPolicy}}"></option>
 											</select>
 											<table is="duice-table" 
 												data-duice-bind="boardReadAuthorities,authority" 
@@ -718,10 +714,8 @@
 										</th>
 										<td>
 											<select is="duice-select" data-duice-bind="board,writePolicy">
-												<option> - select - </option>
-												<option value="ANONYMOUS">ANONYMOUS</option>
-												<option value="AUTHENTICATED">AUTHENTICATED</option>
-												<option value="AUTHORIZED">AUTHORIZED</option>
+												<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
+												<option th:each="securityPolicy:${SecurityPolicy}" th:value="${securityPolicy}" th:text="#{'application.global.securityPolicy.'+${securityPolicy}}"></option>
 											</select>
 											<table is="duice-table" 
 												data-duice-bind="boardWriteAuthorities,authority" 
@@ -766,6 +760,10 @@
 							</table>
 							<div class="app-row">
 								<div class="app-col right">
+									<button class="button large" onclick="openBoard();">
+										<img th:src="@{/static/image/icon_open.png}" class="icon"/>
+										<span data-th-text="#{application.global.open}"></span>
+									</button>
 									<button class="button large" onclick="deleteBoard();">
 										<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 										<span data-th-text="#{application.global.delete}"></span>

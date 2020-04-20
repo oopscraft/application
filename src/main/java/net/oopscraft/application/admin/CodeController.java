@@ -19,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.code.CodeService;
 import net.oopscraft.application.code.entity.Code;
-import net.oopscraft.application.core.PageInfo;
+import net.oopscraft.application.core.Pagination;
 
 
 @PreAuthorize("hasAuthority('ADMN_CODE')")
@@ -48,16 +48,16 @@ public class CodeController {
 	/**
 	 * Returns code
 	 * @param code
-	 * @param pageInfo
+	 * @param pagination
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "getCodes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Code> getCodes(@ModelAttribute Code code, @ModelAttribute PageInfo pageInfo) throws Exception {
-		pageInfo.setEnableTotalCount(true);
-		List<Code> codes = codeService.getCodes(code, pageInfo);
-		response.setHeader(HttpHeaders.CONTENT_RANGE, pageInfo.getContentRange());
+	public List<Code> getCodes(@ModelAttribute Code code, @ModelAttribute Pagination pagination) throws Exception {
+		pagination.setEnableTotalCount(true);
+		List<Code> codes = codeService.getCodes(code, pagination);
+		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 		return codes;
 	}
 	
