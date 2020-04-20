@@ -1,0 +1,132 @@
+<link rel="stylesheet" th:href="@{/public/bootstrap/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/public/bootstrap-custom.css}">
+<script th:src="@{/public/bootstrap/js/bootstrap.min.js}"></script>
+<link th:href="@{/public/mdi/css/materialdesignicons.min.css}" media="all" rel="stylesheet" type="text/css" />
+<style>
+html,
+body {
+	padding-top: 3rem;
+	overflow-x: hidden;
+}
+.content {
+	width:100%;
+}
+.table tbody+tbody {
+	border-top:none;
+}
+.row,.col {
+	margin:1px;
+}
+</style>
+
+<!-- ================================================== -->
+<!-- Start Navigation 									-->
+<!-- ================================================== -->
+<nav class="navbar navbar-expand-lg fixed-top" style="background-color:#eee; border-bottom:dotted 1px #ccc;">
+	<a class="navbar-brand" href="#">
+		<img th:src="@{/static/image/application.png}"/>
+	</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#__menus" aria-controls="__menus" aria-expanded="false" aria-label="Toggle navigation">
+		<img th:src="@{/static/image/icon_menu.png}"/>
+    </button>
+	<div class="collapse navbar-collapse" id="__menus">
+		<ul is="duice-ul" class="navbar-nav"
+			data-duice-bind="__menus,__menu" data-duice-hierarchy="id,upperId">
+			<li class="[@duice[$context.depth==0?'nav-item dropdown':'dropdown-submenu']]">
+				<a class="nav-link [@duice[$context.hasChild?'dropdown-toggle':'']]" href="#" id="navbarDropdown_[@duice[$context.index]]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<img is="duice-img" data-duice-bind="__menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:32px;"/>
+					<span is="duice-span" data-duice-bind="__menu,name"></span>
+				</a>
+				<ul class="dropdown-menu" aria-labelledby="navbarDropdown_{{$context.index}}">
+				</ul>
+			</li>
+		</ul>
+	</div>
+</nav>
+<style>
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: 0px;
+  margin-left: 0px;
+}
+</style>
+<script>
+$(function() {
+	  $("ul.dropdown-menu [data-toggle='dropdown']").on("click", function(event) {
+	    event.preventDefault();
+	    event.stopPropagation();
+	    $(this).siblings().toggleClass("show");
+	    if (!$(this).next().hasClass('show')) {
+	      $(this).parents('.dropdown-menu').first().find('.show').removeClass("show");
+	    }
+	    $(this).parents('li.nav-item.dropdown.show').on('hidden.bs.dropdown', function(e) {
+	      $('.dropdown-submenu .show').removeClass("show");
+	    });
+
+	  });
+	});
+</script>
+<!-- ================================================== -->
+<!-- End Navigation										-->
+<!-- ================================================== -->
+
+
+<!-- ================================================== -->
+<!-- Start Main 										-->
+<!-- ================================================== -->
+<main role="main" class="container">
+	<div layout:fragment="content" class="content">
+		<div id="readme"></div>
+		<script>
+		$.ajax({
+			 url: '[[@{/readme}]]'
+			,type: 'GET'
+			,success: function(data, textStatus, jqXHR) {
+				// parse markdown
+				var result = marked(data);
+				$('#readme').html(result);
+				$('#readme').find('[class^=language-]').each(function(){
+					this.classList.add('line-numbers');
+				});
+				$('#readme').find('table').each(function(){
+					this.classList.add('table','table-sm','table-bordered');
+				});
+				$('#readme').find('[class^=language-plantuml]').each(function(){
+					var $this = this;
+					var plantumlCode = $(this).text();
+					var img = document.createElement('img');
+					img.style.width = '100%';
+					this.parentNode.replaceChild(img,this);
+					var xhr = new XMLHttpRequest();
+					xhr.onreadystatechange = function(){
+						if (this.readyState == 4 && this.status == 200){
+					    	var reader = new FileReader();
+					    	reader.onload = function(e) {
+					    		img.src = reader.result;
+					    	}
+					    	reader.readAsDataURL(this.response);
+					    }
+					}
+					xhr.open('POST', '[[@{/plantuml}]]');
+					xhr.responseType = 'blob';
+					xhr.setRequestHeader("[[${_csrf}?${_csrf.headerName}:'headerName']]","[[${_csrf}?${_csrf.token}:'token']]");
+					xhr.setRequestHeader('Cache-Control','no-cache, no-store, must-revalidate');
+					xhr.setRequestHeader('Pragma','no-cache');
+					xhr.setRequestHeader('Expires','0');
+					xhr.send(plantumlCode); 
+				});
+				// highlight
+				Prism.highlightAll();
+	    	 }
+		});
+		</script>
+	</div>
+</main>
+<!-- ================================================== -->
+<!-- End Main 											-->
+<!-- ================================================== -->
+
