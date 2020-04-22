@@ -8,7 +8,7 @@ import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSourceFactory;
+import org.apache.commons.dbcp2.BasicDataSourceFactory;
 import org.apache.commons.text.CaseUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
@@ -92,18 +92,19 @@ public class ApplicationContext {
 	public DataSource dataSource() throws Exception {
 
 		// parses dataSource properties
-		Properties datasourceProperties = new Properties();
-		datasourceProperties.put("defaultAutoCommit", false);
-		datasourceProperties.put("driver", environment.getProperty("application.dataSource.driver"));
-		datasourceProperties.put("url", environment.getProperty("application.dataSource.url"));
-		datasourceProperties.put("username", environment.getProperty("application.dataSource.username"));
-		datasourceProperties.put("password", environment.getProperty("application.dataSource.password"));
-		datasourceProperties.put("initialSize", environment.getProperty("application.dataSource.initialSize"));
-		datasourceProperties.put("maxActive", environment.getProperty("application.dataSource.maxActive"));
-		datasourceProperties.put("validationQuery", environment.getProperty("application.dataSource.validationQuery"));
+		Properties dataSourceProperties = new Properties();
+		dataSourceProperties.put("defaultAutoCommit", false);
+		dataSourceProperties.put("driver", environment.getProperty("application.dataSource.driver"));
+		dataSourceProperties.put("url", environment.getProperty("application.dataSource.url"));
+		dataSourceProperties.put("username", environment.getProperty("application.dataSource.username"));
+		dataSourceProperties.put("password", environment.getProperty("application.dataSource.password"));
+		dataSourceProperties.put("initialSize", environment.getProperty("application.dataSource.initialSize"));
+		dataSourceProperties.put("maxTotal", environment.getProperty("application.dataSource.maxTotal"));
+		dataSourceProperties.put("validationQuery", environment.getProperty("application.dataSource.validationQuery"));
+		dataSourceProperties.put("jmxName","org.apache.commons.dbcp2:name=dataSource,type=BasicDataSource");
 		
 		// creates dastaSource instance.
-		dataSource = BasicDataSourceFactory.createDataSource(datasourceProperties);
+		dataSource = BasicDataSourceFactory.createDataSource(dataSourceProperties);
 		
 		// returns
 		return dataSource;

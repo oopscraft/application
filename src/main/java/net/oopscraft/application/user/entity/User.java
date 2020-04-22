@@ -26,7 +26,6 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
 @Table(name = "APP_USER")
-@EntityListeners(SystemEntityListener.class)
 public class User extends SystemEntity {
 	
 	@Id

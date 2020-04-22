@@ -19,12 +19,11 @@ import javax.persistence.Table;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.core.jpa.SystemEntityListener;
-import net.oopscraft.application.security.SecurityPolicy;
+import net.oopscraft.application.security.entity.SecurityPolicy;
 import net.oopscraft.application.user.entity.Authority;
 
 @Entity
 @Table(name = "APP_MENU")
-@EntityListeners(SystemEntityListener.class)
 public class Menu extends SystemEntity {
 	
 	@Id

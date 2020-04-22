@@ -662,8 +662,8 @@
 														<th data-th-text="#{application.group.id}">ID</th>
 														<th data-th-text="#{application.group.name}">Name</th>
 														<th class="text-center">
-															<button class="button small" onclick="javascript:addUserGroup();">
-																+
+															<button class="button" onclick="javascript:addUserGroup();">
+																<img th:src="@{/static/image/icon_add.png}" class="icon"/>
 															</button>
 														</th>
 													</tr>
@@ -679,8 +679,8 @@
 														</td>
 														<td><span is="duice-span" data-duice-bind="group,name"></span></td>
 														<td class="text-center">
-															<button class="button small" data-index="[@duice[$context.index]]" onclick="javascript:removeUserGroup(this.dataset.index);">
-																-
+															<button class="button" data-index="[@duice[$context.index]]" onclick="javascript:removeUserGroup(this.dataset.index);">
+																<img th:src="@{/static/image/icon_remove.png}" class="icon"/>
 															</button>
 														</td>
 													</tr>
@@ -708,8 +708,8 @@
 														<th data-th-text="#{application.role.id}">ID</th>
 														<th data-th-text="#{application.role.name}">Name</th>
 														<th class="text-center">
-															<button class="button small" onclick="addUserRole();">
-																+
+															<button class="button" onclick="addUserRole();">
+																<img th:src="@{/static/image/icon_add.png}" class="icon"/>
 															</button>
 														</th>
 													</tr>
@@ -725,8 +725,8 @@
 														</td>
 														<td><span is="duice-span" data-duice-bind="role,name"></span></td>
 														<td class="text-center">
-															<button class="button small" data-index="[@duice[$context.index]]" onclick="removeUserRole(this.dataset.index);">
-																-
+															<button class="button" data-index="[@duice[$context.index]]" onclick="removeUserRole(this.dataset.index);">
+																<img th:src="@{/static/image/icon_remove.png}" class="icon"/>
 															</button>
 														</td>
 													</tr>
@@ -754,8 +754,8 @@
 														<th data-th-text="#{application.authority.id}">ID</th>
 														<th data-th-text="#{application.authority.name}">Name</th>
 														<th class="text-center">
-															<button class="button small" onclick="addUserAuthority();">
-																+
+															<button class="button" onclick="addUserAuthority();">
+																<img th:src="@{/static/image/icon_add.png}" class="icon"/>
 															</button>
 														</th>
 													</tr>
@@ -771,8 +771,8 @@
 														</td>
 														<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
 														<td class="text-center">
-															<button class="button small" data-index="[@duice[$context.index]]" onclick="removeUserAuthority(this.dataset.index);">
-																-
+															<button class="button" data-index="[@duice[$context.index]]" onclick="removeUserAuthority(this.dataset.index);">
+																<img th:src="@{/static/image/icon_remove.png}" class="icon"/>
 															</button>
 														</td>
 													</tr>
@@ -782,13 +782,13 @@
 									</tr>
 								</tbody>
 							</table>
-							<div class="app-row">
+							<div class="app-row action">
 								<div class="app-col right">
-									<button class="button large" onclick="deleteUser();">
+									<button class="button" onclick="deleteUser();">
 										<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 										<span data-th-text="#{application.global.delete}"></span>
 									</button>
-									<button class="button large" onclick="saveUser();">
+									<button class="button" onclick="saveUser();">
 										<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 										<span data-th-text="#{application.global.save}"></span>
 									</button>

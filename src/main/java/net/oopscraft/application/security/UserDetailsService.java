@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.security.entity.UserDetails;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.entity.User;
 

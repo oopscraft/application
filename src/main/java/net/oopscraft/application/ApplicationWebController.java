@@ -35,7 +35,7 @@ import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.locale.LocaleService;
 import net.oopscraft.application.message.MessageException;
-import net.oopscraft.application.security.UserDetails;
+import net.oopscraft.application.security.entity.UserDetails;
 import net.oopscraft.application.user.UserService;
 import net.oopscraft.application.user.entity.User;
 import net.sourceforge.plantuml.FileFormat;

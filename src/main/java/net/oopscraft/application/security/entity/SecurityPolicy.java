@@ -1,4 +1,4 @@
-package net.oopscraft.application.security;
+package net.oopscraft.application.security.entity;
 
 public enum SecurityPolicy {
 

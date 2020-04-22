@@ -23,7 +23,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Formula;
 
 import net.oopscraft.application.core.jpa.BooleanStringConverter;
-import net.oopscraft.application.security.SecurityPolicy;
+import net.oopscraft.application.security.entity.SecurityPolicy;
 import net.oopscraft.application.user.entity.Authority;
 
 @Entity

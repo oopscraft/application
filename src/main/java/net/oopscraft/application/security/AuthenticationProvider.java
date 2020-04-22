@@ -14,6 +14,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.security.entity.UserDetails;
 import net.oopscraft.application.user.UserService;
 
 

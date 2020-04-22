@@ -13,7 +13,6 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
 @Table(name = "APP_AUTH")
-@EntityListeners(SystemEntityListener.class)
 public class Authority extends SystemEntity {
 
 	@Id

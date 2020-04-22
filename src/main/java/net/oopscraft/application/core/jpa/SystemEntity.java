@@ -4,11 +4,13 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
+import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @MappedSuperclass
+@EntityListeners(SystemEntityListener.class)
 public class SystemEntity {
 	
 	@Column(name="SYS_EMBD_YN")

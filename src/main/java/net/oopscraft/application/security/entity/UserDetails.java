@@ -1,4 +1,4 @@
-package net.oopscraft.application.security;
+package net.oopscraft.application.security.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;

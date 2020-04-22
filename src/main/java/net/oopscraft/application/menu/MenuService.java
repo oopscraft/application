@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.menu.entity.Menu;
-import net.oopscraft.application.security.SecurityPolicy;
+import net.oopscraft.application.security.entity.SecurityPolicy;
 
 
 @Service

@@ -20,7 +20,6 @@ import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
 @Table(name = "APP_GROP")
-@EntityListeners(SystemEntityListener.class)
 public class Group extends SystemEntity {
 
 	@Id

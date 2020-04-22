@@ -1,4 +1,4 @@
-package net.oopscraft.application.security;
+package net.oopscraft.application.security.entity;
 
 import net.oopscraft.application.user.entity.Authority;
 

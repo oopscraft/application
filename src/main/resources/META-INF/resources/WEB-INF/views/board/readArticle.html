@@ -46,22 +46,22 @@
 	 * Adds child reply
 	 */
 	function addChildArticleReply(upperId){
-		articleReply.set('upperId', upperId);
 		$('#articleReplyDiv').appendTo($('#articleReplyDiv_' + upperId));
+		articleReply.set('upperId', upperId);
 	}
 	
 	/**
-	 * Cancels article reply
+	 * Restore article reply
 	 */
-	function resetChildArticleReply(){
+	function restoreChildArticleReply(){
+		$('#articleReplyDiv').appendTo($('#articleReplyContainerDiv'))
 		articleReply.reset();
-		$('#articleReplyDiv').appendTo($('#articleReplyDivContainer'))
 	}
 	
 	/**
 	 * Saves article reply
 	 */
-	async function createArticleReply(){
+	async function saveArticleReply(){
 		if(await duice.confirm('confirm message...')){
 			$.ajax({
 				 url: '[[@{/api/boards}]]/[[${board.id}]]/articles/[[${param.id}]]/replies'
@@ -70,7 +70,7 @@
 				,contentType: 'application/json;charset=UTF-8'
 			})
 			.done(function(data, textStatus, jqXHR) {
-				resetChildArticleReply();
+				restoreChildArticleReply();
 				getArticleReplies();
 		   	});
 		}
@@ -96,7 +96,7 @@
 	/**
 	 * Updates article
 	 */
-	function updateArticle() {
+	function modifyArticle() {
 		var articleId = article.get('id');
 		window.location.href = "[[@{/board}]]/[[${board.id}]]/writeArticle" + "?id=" + articleId;
 	}

@@ -27,6 +27,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.servlet.LocaleResolver;
 
+import net.oopscraft.application.security.entity.UserDetails;
 import net.oopscraft.application.user.UserLoginRepository;
 import net.oopscraft.application.user.entity.UserLogin;
 

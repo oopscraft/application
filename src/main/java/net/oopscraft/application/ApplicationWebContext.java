@@ -52,7 +52,7 @@ import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.security.AuthenticationFilter;
 import net.oopscraft.application.security.AuthenticationHandler;
 import net.oopscraft.application.security.AuthenticationProvider;
-import net.oopscraft.application.security.SecurityPolicy;
+import net.oopscraft.application.security.entity.SecurityPolicy;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -137,12 +137,11 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     @Order(1)
     public class StaticWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     	protected void configure(HttpSecurity http) throws Exception {
-    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    		http
-    		.antMatcher("/static/**")
+    		http.antMatcher("/static/**")
 	    		.authorizeRequests()
 	    		.anyRequest()
 	    		.permitAll();
+    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         }
     }
 
@@ -161,29 +160,21 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     		http.antMatcher("/admin/**")
 	    		.authorizeRequests()
 	    		.anyRequest()
-	    		.authenticated()
-	    		.and()
-    		.sessionManagement()
-    			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-    			.and()
-    		.csrf()
-    			.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-    			.and()
-	    	.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class)
-    		.formLogin()
+	    		.authenticated();
+    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+	    	http.authenticationProvider(authenticationProvider);
+	    	http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
+	    	http.exceptionHandling().authenticationEntryPoint(authenticationHandler);
+    		http.formLogin()
 				.loginPage("/admin/login")
 				.loginProcessingUrl("/admin/doLogin")
 				.usernameParameter("id")
 				.passwordParameter("password")
 				.successHandler(authenticationHandler)
 				.failureHandler(authenticationHandler)
-				.permitAll()
-				.and()
-	    	.authenticationProvider(authenticationProvider)
-	    	.exceptionHandling()
-    			.authenticationEntryPoint(authenticationHandler)
-	    		.and()
-			.logout()
+				.permitAll();
+			http.logout()
 				.logoutUrl("/admin/logout")
 				.logoutSuccessUrl("/admin/login")
 				.invalidateHttpSession(true)
@@ -200,16 +191,29 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     @Order(3)
     public class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     	protected void configure(HttpSecurity http) throws Exception {
-    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    		http.csrf().disable();
-    		if(securityPolicy != SecurityPolicy.ANONYMOUS) {
-	    		http.antMatcher("/api/**")
+    		
+    		// URL ant matcher
+    		String antMatcher = "/api/**";
+    		
+    		// allow anonymous
+    		if(securityPolicy == SecurityPolicy.ANONYMOUS) {
+	    		http.antMatcher(antMatcher)
 		    		.authorizeRequests()
 		    		.anyRequest()
-		    		.authenticated()
-	    		.and()
-	    			.httpBasic();
+		    		.permitAll();
     		}
+    		// requests authentication
+    		else{
+	    		http.antMatcher(antMatcher)
+		    		.authorizeRequests()
+		    		.anyRequest()
+		    		.authenticated();
+	    		http.httpBasic();
+    		}
+
+			http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			http.csrf().disable();
+	    	http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
         }
     }
 
@@ -219,40 +223,83 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     @Configuration
     public class GlobalWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     	protected void configure(HttpSecurity http) throws Exception {
-    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    		if(securityPolicy != SecurityPolicy.ANONYMOUS) {
-	    		http
-	    		.antMatcher("/**")
+    		
+    		// URL ant matcher
+    		String antMatcher = "/**";
+    		
+    		// allow anonymous
+    		if(securityPolicy == SecurityPolicy.ANONYMOUS) {
+	    		http.antMatcher(antMatcher)
 		    		.authorizeRequests()
 		    		.anyRequest()
-		    		.authenticated()
-		    		.and()
-	    		.sessionManagement()
-	    			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-	    			.and()
-	    		.csrf()
-	    			.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-	    			.and()
-		    	.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class)
-	    		.formLogin()
-					.loginPage("/user/login")
-					.loginProcessingUrl("/user/doLogin")
-					.usernameParameter("id")
-					.passwordParameter("password")
-					.successHandler(authenticationHandler)
-					.failureHandler(authenticationHandler)
-					.permitAll()
-					.and()
-			    	.authenticationProvider(authenticationProvider)
-				.logout()
-					.logoutUrl("/user/logout")
-					.logoutSuccessHandler(authenticationHandler)
-					.logoutSuccessUrl("/user/login")
-					.invalidateHttpSession(true)
-					.deleteCookies("JSESSIONID")
-					.permitAll();
-				;
+		    		.permitAll();
     		}
+    		// requests authentication
+    		else{
+	    		http.antMatcher(antMatcher)
+		    		.authorizeRequests()
+		    		.anyRequest()
+		    		.authenticated();
+    		}
+    		
+    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+    		http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
+    		http.authenticationProvider(authenticationProvider);
+			http.formLogin()
+				.loginPage("/user/login")
+				.loginProcessingUrl("/user/doLogin")
+				.usernameParameter("id")
+				.passwordParameter("password")
+				.successHandler(authenticationHandler)
+				.failureHandler(authenticationHandler)
+				.permitAll();
+			http.logout()
+				.logoutUrl("/user/logout")
+				.logoutSuccessHandler(authenticationHandler)
+				.logoutSuccessUrl("/user/login")
+				.invalidateHttpSession(true)
+				.deleteCookies("JSESSIONID")
+				.permitAll();
+
+    		
+    		
+    		
+    		
+//    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//    		if(securityPolicy != SecurityPolicy.ANONYMOUS) {
+//	    		http
+//	    		.antMatcher("/**")
+//		    		.authorizeRequests()
+//		    		.anyRequest()
+//		    		.authenticated()
+//		    		.and()
+//	    		.sessionManagement()
+//	    			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//	    			.and()
+//	    		.csrf()
+//	    			.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//	    			.and()
+//		    	.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class)
+//	    		.formLogin()
+//					.loginPage("/user/login")
+//					.loginProcessingUrl("/user/doLogin")
+//					.usernameParameter("id")
+//					.passwordParameter("password")
+//					.successHandler(authenticationHandler)
+//					.failureHandler(authenticationHandler)
+//					.permitAll()
+//					.and()
+//			    	.authenticationProvider(authenticationProvider)
+//				.logout()
+//					.logoutUrl("/user/logout")
+//					.logoutSuccessHandler(authenticationHandler)
+//					.logoutSuccessUrl("/user/login")
+//					.invalidateHttpSession(true)
+//					.deleteCookies("JSESSIONID")
+//					.permitAll();
+//				;
+//    		}
         }
     }
 

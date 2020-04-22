@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.menu.entity.Menu;
-import net.oopscraft.application.security.SecurityPolicy;
+import net.oopscraft.application.security.entity.SecurityPolicy;
 
 
 @PreAuthorize("hasAuthority('ADMN_MENU')")
