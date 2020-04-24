@@ -5,34 +5,27 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Formula;
+
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
-@Table(name="APP_ATCL")
-@Inheritance(
-	strategy=InheritanceType.JOINED
-)
+@Table(name="APP_ATCL_INFO")
+@Inheritance(strategy=InheritanceType.JOINED)
 public abstract class Article extends SystemEntity {
 
 	@Id
 	@Column(name="ATCL_ID", length=32)
 	String id;
-	
-	@Column(name="ATCL_ATHR")
-	String author;
 	
 	@Column(name="ATCL_TITL", length=4000)
 	String title;
@@ -41,10 +34,18 @@ public abstract class Article extends SystemEntity {
 	@Lob
 	String contents;
 	
-	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JoinColumns({
-		@JoinColumn(name="ATCL_ID", foreignKey=@ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	})
+	@Column(name="USER_ID", length=32)
+	String userId;
+	
+	@Formula("(select count(*) from APP_ATCL_RPLY_INFO a where a.ATCL_ID = ATCL_ID)")
+	int replyCount;
+	
+	@OneToMany(
+		fetch = FetchType.LAZY, 
+		mappedBy = "articleId",
+		cascade = CascadeType.ALL, 
+		orphanRemoval = true
+	)
 	List<ArticleFile> files=new ArrayList<ArticleFile>();
 	
 	public Article() {}
@@ -53,6 +54,43 @@ public abstract class Article extends SystemEntity {
 		this.id=id;
 	}
 
+	/**
+	 * Returns file by id
+	 * @param fileId
+	 * @return
+	 */
+	public ArticleFile getFile(String fileId) {
+		for(ArticleFile file : files) {
+			if(fileId.contentEquals(file.getId())) {
+				return file;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Removes file by id
+	 * @param fileId
+	 * @return
+	 */
+	public boolean removeFile(String fileId) {
+		for(ArticleFile file : files) {
+			if(fileId.contentEquals(file.getId())) {
+				files.remove(file);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Adds file
+	 * @param file
+	 */
+	public void addFile(ArticleFile file) {
+		this.files.add(file);
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -77,14 +115,22 @@ public abstract class Article extends SystemEntity {
 		this.contents=contents;
 	}
 	
-	public String getAuthor() {
-		return author;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setAuthor(String author) {
-		this.author = author;
-	}	
-	
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public int getReplyCount() {
+		return replyCount;
+	}
+
+	public void setReplyCount(int replyCount) {
+		this.replyCount = replyCount;
+	}
+
 	public List<ArticleFile> getFiles() {
 		return files;
 	}

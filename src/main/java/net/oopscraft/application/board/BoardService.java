@@ -1,5 +1,6 @@
 package net.oopscraft.application.board;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,8 +10,12 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,6 +25,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.article.ArticleReplyRepository;
+import net.oopscraft.application.article.entity.ArticleFile;
 import net.oopscraft.application.article.entity.ArticleReply;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.entity.BoardArticle;
@@ -30,6 +36,11 @@ import net.oopscraft.application.core.Pagination;
 @Service
 public class BoardService {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(BoardService.class);
+	
+    @Value("${application.upload.path}")
+    String uploadPath;
+	
 	@Autowired
 	BoardRepository boardRepository;
 	
@@ -37,7 +48,7 @@ public class BoardService {
 	BoardArticleRepository boardArticleRepository;
 	
 	@Autowired
-	ArticleReplyRepository boardArticleReplyRepository;
+	ArticleReplyRepository articleReplyRepository;
 
 	/**
 	 * Gets list of board by search condition and value
@@ -143,7 +154,7 @@ public class BoardService {
 	public List<BoardArticle> getBoardArticles(final BoardArticle boardArticle, Pagination pagination) throws Exception {
 		List<Order> orders = new ArrayList<Order>();
 		orders.add(new Order(Direction.DESC, "notice"));
-		orders.add(new Order(Direction.DESC, "registrationDate"));
+		orders.add(new Order(Direction.DESC, "registerDate"));
 		PageRequest pageRequest = pagination.toPageRequest(new Sort(orders));
 		Page<BoardArticle> boardArticlesPage = boardArticleRepository.findAll(new  Specification<BoardArticle>() {
 			@Override
@@ -186,17 +197,46 @@ public class BoardService {
 	 * @throws Exception
 	 */
 	public BoardArticle saveBoardArticle(BoardArticle boardArticle) throws Exception {
+		
 		BoardArticle one = null;
-		if(boardArticle.getId()==null || (one = boardArticleRepository.findOne(boardArticle.getId())) == null) {
+		if(boardArticle.getId()==null 
+		||(one = boardArticleRepository.findOne(boardArticle.getId())) == null) {
 			one = new BoardArticle();
 			one.setId(IdGenerator.uuid());
-			one.setRegistrationDate(new Date());
+			one.setAuthorName(boardArticle.getAuthorName());
+			one.setRegisterDate(new Date());
 		}
 		one.setBoardId(boardArticle.getBoardId());
 		one.setCategoryId(boardArticle.getCategoryId());
-		one.setAuthor(boardArticle.getAuthor());
 		one.setTitle(boardArticle.getTitle());
 		one.setContents(boardArticle.getContents());
+		
+		// add new file
+		for (ArticleFile file : boardArticle.getFiles()) {
+			if(one.getFile(file.getId()) == null) {
+				file.setArticleId(boardArticle.getId());
+				one.getFiles().add(file);
+				File temporaryFile = new File(uploadPath + File.separator + file.getId());
+				File realFile = new File(uploadPath + File.separator + "board" + File.pathSeparator + file.getId());
+				try {
+					FileUtils.moveFile(temporaryFile, realFile);
+				} catch (Exception ignore) {
+					LOGGER.warn(ignore.getMessage(), ignore);
+				}
+			}
+		}
+
+		// remove deleted file
+		for (int index = one.getFiles().size() - 1; index >= 0; index--) {
+			ArticleFile file = one.getFiles().get(index);
+			if(boardArticle.getFile(file.getId()) == null) {
+				one.removeFile(file.getId());
+				File realFile = new File(uploadPath + File.separator + "board" + File.pathSeparator + file.getId());
+				FileUtils.deleteQuietly(realFile);
+			}
+		}
+		
+		// saves
 		return boardArticleRepository.save(one);
 	}
 	
@@ -220,7 +260,7 @@ public class BoardService {
 	public List<ArticleReply> getBoardArticleReplies(final String articleId) throws Exception {
 		List<Order> orders = new ArrayList<Order>();
 		orders.add(new Order(Direction.ASC, "articleId").nullsLast());
-		List<ArticleReply> boardArticleReplies = boardArticleReplyRepository.findAll(new Specification<ArticleReply>() {
+		List<ArticleReply> boardArticleReplies = articleReplyRepository.findAll(new Specification<ArticleReply>() {
 			@Override
 			public Predicate toPredicate(Root<ArticleReply> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
@@ -239,7 +279,7 @@ public class BoardService {
 	 */
 	public ArticleReply saveBoardArticleReply(ArticleReply articleReply) throws Exception {
 		ArticleReply.Pk pk = new ArticleReply.Pk(articleReply.getArticleId(), articleReply.getId());
-		ArticleReply one = boardArticleReplyRepository.findOne(pk);
+		ArticleReply one = articleReplyRepository.findOne(pk);
 		if(one == null) {
 			one = new ArticleReply();
 			one.setArticleId(articleReply.getArticleId());
@@ -247,7 +287,7 @@ public class BoardService {
 		}
 		one.setUpperId(articleReply.getUpperId());
 		one.setContents(articleReply.getContents());
-		return boardArticleReplyRepository.save(one);
+		return articleReplyRepository.save(one);
 	}
 	
 	/**
@@ -259,7 +299,7 @@ public class BoardService {
 	 */
 	public void deleteBoardArticleReply(String boardId, String articleId, String id) throws Exception {
 		ArticleReply.Pk pk = new ArticleReply.Pk(articleId, id);
-		boardArticleReplyRepository.delete(pk);
+		articleReplyRepository.delete(pk);
 	}
 
 	

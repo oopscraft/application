@@ -109,13 +109,20 @@
 			$.ajax({
 				 url: '[[@{/api/boards}]]/[[${board.id}]]/articles/[[${param.id}]]'
 				,type: 'DELETE'
-				,contentType: 'application/json;charset=UTF-8'
 			})
 			.done(function(data, textStatus, jqXHR) {
-				resetChildArticleReply();
-				getArticleReplies();
+				history.back();
 		   	});
 		}
+	}
+	
+	/**
+	 * Download artice file
+	 */
+	function downloadArticleFile(id) {
+	    var link = document.createElement('a');
+	    link.href = '[[@{/api/boards}]]/[[${board.id}]]/articles/[[${param.id}]]/files/' + id;
+	    link.click();
 	}
 	
 	</script>

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.oopscraft.application.Application;
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.sample.entity.Sample;
 

@@ -10,7 +10,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_CODE_ITEM")
+@Table(name = "APP_CODE_ITEM_INFO")
 @IdClass(CodeItem.Pk.class)
 public class CodeItem {
 	
@@ -84,7 +84,7 @@ public class CodeItem {
 	@Column(name = "ITEM_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "ITEM_DESC")
+	@Column(name = "ITEM_DESC", length = Integer.MAX_VALUE)
 	@Lob
 	String description;
 	

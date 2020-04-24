@@ -1,7 +1,6 @@
 package net.oopscraft.application.core;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import net.oopscraft.application.core.mybatis.PageRowBounds;

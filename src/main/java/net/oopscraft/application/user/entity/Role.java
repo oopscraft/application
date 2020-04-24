@@ -17,7 +17,7 @@ import javax.persistence.Transient;
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
-@Table(name = "APP_ROLE")
+@Table(name = "APP_ROLE_INFO")
 public class Role extends SystemEntity {
 
 	@Id
@@ -37,7 +37,7 @@ public class Role extends SystemEntity {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_ROLE_AUTH", 
+		name = "APP_ROLE_AUTH_MAP", 
 		joinColumns = @JoinColumn(name = "ROLE_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),

@@ -1,15 +1,25 @@
+<!-- ====================================================== -->
+<!-- START: title											-->
+<!-- ====================================================== -->
 <div class="app-row title">
 	<div class="app-col bottom">
 		<h1>
-			<img th:src="${board.icon}" class="icon large"/>
+			<img th:src="${(board.icon==null?'/static/image/icon_board.png':board.icon)}" class="icon large"/>
 			<span th:text="${board.name}" class="font-weight-bold"></span>
 		</h1>
 	</div>
 </div>
+<!-- ====================================================== -->
+<!-- END: title												-->
+<!-- ====================================================== -->
+
+<!-- ====================================================== -->
+<!-- START: search											-->
+<!-- ====================================================== -->
 <div class="app-row search">
 	<div class="app-col">
 		<img class="icon" th:src="@{/static/image/icon_search.png}"/>
-		<select is="duice-select" onclick="getArticlesByCategory(this.value);" style="width:200px;">
+		<select is="duice-select" data-duice-bind="search,categoryId" onchange="getArticlesByCategory(this.value);" style="width:200px;">
 			<option value data-th-text="'- '+#{application.board.category}+' -'"></option>
 			<option th:each="category:${board.categories}" th:value="${category.id}" th:text="${category.name}"></option>
 		</select>
@@ -27,6 +37,13 @@
 		</button>
 	</div>
 </div>
+<!-- ====================================================== -->
+<!-- END: search											-->
+<!-- ====================================================== -->
+
+<!-- ====================================================== -->
+<!-- START: list											-->
+<!-- ====================================================== -->
 <div class="app-row">
 	<div class="app-col">
 		<table is="duice-table" 
@@ -43,29 +60,21 @@
 					<th data-th-text="#{application.global.no}" class="text-center">No</th>
 					<th data-th-text="#{application.board.article.category}">Category</th>
 					<th data-th-text="#{application.board.article.title}">Title</th>
-					<th data-th-text="#{application.board.article.author}" class="text-center">Author</th>
-					<th data-th-text="#{application.board.article.writeDate}" class="text-center">Writing Date</th>
-					<th data-th-text="#{application.board.article.reply}" class="text-center">Reply</th>
+					<th data-th-text="#{application.board.article.authorName}" class="text-center">Author</th>
+					<th data-th-text="#{application.board.article.registerDate}" class="text-center">Register Date</th>
+					<th data-th-text="#{application.board.article.replyCount}" class="text-center">Reply</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td>
-						<small is="duice-scriptlet" data-duice-bind="articles">
-							return search.get('totalCount') - (search.get('rows')*(search.get('page')-1)) - $context.index;
+						<small is="duice-scriptlet" data-duice-bind="articles" data-duice-value="
+						return search.get('totalCount') - (search.get('rows')*(search.get('page')-1)) - $context.index;
+						">
 						</small>
 					</td>
 					<td>
-						<span is="duice-scriptlet" data-duice-bind="article">
-						<![CDATA[
-						if($context.article.isEmpty('categoryId')){
-							return '-';
-						}else{
-							return $context.article.get('categoryName');
-						}
-						]]>
-						</span>
-						<span is="duice-span" data-duice-bind="article,categoryName"></span>
+						<span is="duice-span" data-duice-bind="article,categoryName"/></span>
 					</td>
 					<td class="text-left">
 						<img th:src="@{/static/image/icon_article.png}" class="icon small"/>
@@ -74,19 +83,30 @@
 						</a>
 					</td>
 					<td>
-						<span is="duice-span" data-duice-bind="article,author"></span>
+						<span is="duice-span" data-duice-bind="article,authorName"></span>
 					</td>
 					<td>
-						<span is="duice-span" data-duice-bind="article,writeDate"></span>
+						<small>
+							<span is="duice-span" data-duice-bind="article,registerDate" data-duice-format="date,yyyy-MM-dd HH:mm:ss"></span>
+						</small>
 					</td>
 					<td>
-						<span is="duice-span" data-duice-bind="article,replyCount"></span>
+						<small>
+							<span is="duice-span" data-duice-bind="article,replyCount"></span>
+						</small>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 </div>
+<!-- ====================================================== -->
+<!-- END: list												-->
+<!-- ====================================================== -->
+
+<!-- ====================================================== -->
+<!-- START: pagination										-->
+<!-- ====================================================== -->
 <div class="app-row">
 	<div class="app-col">
 		<small>
@@ -107,6 +127,6 @@
 		</button>
 	</div>
 </div>
-
-
-
+<!-- ====================================================== -->
+<!-- START: pagination										-->
+<!-- ====================================================== -->

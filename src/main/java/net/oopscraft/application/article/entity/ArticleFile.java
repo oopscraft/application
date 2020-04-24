@@ -1,6 +1,5 @@
 package net.oopscraft.application.article.entity;
 
-import java.io.File;
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -10,7 +9,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_ATCL_FILE")
+@Table(name = "APP_ATCL_FILE_INFO")
 @IdClass(ArticleFile.Pk.class)
 public class ArticleFile {
 
@@ -70,38 +69,22 @@ public class ArticleFile {
 	}
 	
 	@Id
-	@Column(name = "ATCL_ID", length=32)
+	@Column(name = "ATCL_ID", length = 32)
 	String articleId;
 	
 	@Id
-	@Column(name = "FILE_ID", length=32)
+	@Column(name = "FILE_ID", length = 32)
 	String id;
 	
-	@Column(name = "FILE_NAME")
+	@Column(name = "FILE_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "FILE_TYPE")
+	@Column(name = "FILE_TYPE", length = 255)
 	String type;
 	
 	@Column(name = "FILE_SIZE")
 	Long size;
 	
-	/**
-	 * Returns temporary file.
-	 * @return
-	 */
-	public File getTemporaryFile() {
-		return new File(".temp" + File.separator + "board" + File.separator + id);
-	}
-	
-	/**
-	 * Returns real file.
-	 * @return
-	 */
-	public File getRealFile() {
-		return new File("data" + File.separator + "board" + File.separator + id);
-	}
-
 	public String getArticleId() {
 		return articleId;
 	}

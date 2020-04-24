@@ -117,19 +117,6 @@ a:hover {
 .text-right {
 	text-align: right;
 }
-.icon {
-	width: 24px;
-	height: 24px;
-	vertical-align: middle;
-}
-.icon.large {
-	width: 32px;
-	height: 32px;
-}
-.icon.small {
- 	width: 16px;
- 	height: 16px;
-}
 .banner {
 	height: 24px;
 	cursor: pointer;
@@ -167,6 +154,22 @@ a:hover {
 .button:active:not([disabled]) {
 	position:relative;
 	top:1px;
+}
+.icon {
+	width: 24px;
+	height: 24px;
+	vertical-align: middle;
+}
+.icon.large {
+	width: 32px;
+	height: 32px;
+}
+.icon.small {
+ 	width: 16px;
+ 	height: 16px;
+}
+.icon.button {
+	padding: 0px;
 }
 .link {
 	font-weight: bold;

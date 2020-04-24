@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -22,10 +21,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
-import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_USER")
+@Table(name = "APP_USER_INFO")
 public class User extends SystemEntity {
 	
 	@Id
@@ -77,7 +75,7 @@ public class User extends SystemEntity {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_USER_GROP", 
+		name = "APP_USER_GROP_MAP", 
 		joinColumns = @JoinColumn(name = "USER_ID"), 
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "GROP_ID"), 
@@ -87,7 +85,7 @@ public class User extends SystemEntity {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_USER_ROLE", 
+		name = "APP_USER_ROLE_MAP", 
 		joinColumns = @JoinColumn(name = "USER_ID"), 
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "ROLE_ID"), 
@@ -97,7 +95,7 @@ public class User extends SystemEntity {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_USER_AUTH", 
+		name = "APP_USER_AUTH_MAP", 
 		joinColumns = @JoinColumn(name = "USER_ID"), 
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"), 

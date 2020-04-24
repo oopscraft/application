@@ -1,13 +1,29 @@
+<!-- ====================================================== -->
+<!-- START: title											-->
+<!-- ====================================================== -->
 <div class="app-row title">
 	<div class="app-col bottom">
 		<h1>
-			<img th:src="${board.icon}" class="icon large"/>
+			<img th:src="${(board.icon==null?'/static/image/icon_board.png':board.icon)}" class="icon large"/>
 			<span th:text="${board.name}" class="font-weight-bold"></span>
 		</h1>
 	</div>
+	<div class="app-col right bottom">
+		<button class="button" onclick="saveArticle();">
+			<img th:src="@{/static/image/icon_save.png}" class="icon"/>
+			<span data-th-text="#{application.global.save}"></span>
+		</button>
+	</div>
 </div>
+<!-- ====================================================== -->
+<!-- END: title												-->
+<!-- ====================================================== -->
+
+<!-- ====================================================== -->
+<!-- START: contents										-->
+<!-- ====================================================== -->
 <div class="app-row">
-	<div class="app-col">
+	<div class="app-col" style="padding:0px;">
 		<table class="table" style="width:100%;">
 			<col style="width:10%;"/>
 			<col/>
@@ -17,7 +33,12 @@
 						<span data-th-text="#{application.board.article.title}" class="mand">Title</span>
 					</th>
 					<td>
-						<input is="duice-input-text" type="text" data-duice-bind="article,title"/>
+						<div class="app-row">
+							<div class="app-col">
+								<input is="duice-input-text" type="text" data-duice-bind="article,title"/>
+							</div>
+
+						</div>
 					</td>
 				</tr>
 				<tr>
@@ -25,7 +46,7 @@
 						<span data-th-text="#{application.board.article.category}">Category</span>
 					</th>
 					<td>
-						<select is="duice-select" onclick="getArticlesByCategory(this.value);" style="width:200px;">
+						<select is="duice-select" data-duice-bind="article,categoryId" style="width:250px;">
 							<option value data-th-text="'- '+#{application.board.category}+' -'"></option>
 							<option th:each="category:${board.categories}" th:value="${category.id}" th:text="${category.name}"></option>
 						</select>
@@ -36,14 +57,17 @@
 						<span data-th-text="#{application.board.article.file}">File</span>
 					</th>
 					<td>
-						<ul is="duice-ul" data-duice-bind="articleFiles,articleFile">
+						<ul is="duice-ul" data-duice-bind="articleFiles,articleFile" style="margin-left:5px;">
 							<li>
-								<span is="duice-span" data-duice-bind="articleFile,name"></span>
-								(<span is="duice-span" data-duice-bind="articleFile,size"></span>)
-								X
+								<small>
+									<img th:src="@{/static/image/icon_file.png}" class="icon small"/>
+									<span is="duice-span" data-duice-bind="articleFile,name" style="font-weight:bold;"></span>
+									(<span is="duice-span" data-duice-bind="articleFile,size" data-duice-format="number,0"></span>byte )
+									<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeArticleFile(this.dataset.index);"/>
+								</small>
 							</li>
 						</ul>
-						<button class="button" onclick="saveArticle();">
+						<button class="button" onclick="uploadArticleFile();">
 							<img th:src="@{/static/image/icon_upload.png}" class="icon"/>
 							<span data-th-text="#{application.global.upload}">Upload</span>
 						</button>
@@ -58,11 +82,6 @@
 		</table>
 	</div>
 </div>
-<div class="app-row">
-	<div class="app-col right">
-		<button class="button" onclick="saveArticle();">
-			<img th:src="@{/static/image/icon_save.png}" class="icon"/>
-			<span data-th-text="#{application.global.save}"></span>
-		</button>
-	</div>
-</div>
+<!-- ====================================================== -->
+<!-- END: contents											-->
+<!-- ====================================================== -->

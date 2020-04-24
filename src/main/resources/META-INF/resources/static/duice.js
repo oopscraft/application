@@ -1686,8 +1686,8 @@ var duice;
          * Returns value is exists
          * @param name
          */
-        isEmpty(name) {
-            return isEmpty(this.get(name));
+        has(name) {
+            return isNotEmpty(this.get(name));
         }
         /**
          * Returns properties names as array.
@@ -2212,9 +2212,7 @@ var duice;
     class Scriptlet extends MapComponent {
         constructor(element) {
             super(element);
-            this.expression = element.innerHTML;
-            this.expression = this.expression.replace(/<!--\[CDATA\[/gim, "");
-            this.expression = this.expression.replace(/\]\]-->/gim, "");
+            this.expression = element.dataset.duiceValue;
             this.element.classList.add('duice-scriptlet');
         }
         ;

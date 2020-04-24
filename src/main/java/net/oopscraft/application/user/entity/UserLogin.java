@@ -10,7 +10,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_USER_LOGN")
+@Table(name = "APP_USER_LOGN_HIST")
 @IdClass(UserLogin.Pk.class)
 public class UserLogin {
 	

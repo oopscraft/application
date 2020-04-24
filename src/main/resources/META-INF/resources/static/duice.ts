@@ -1883,8 +1883,8 @@ namespace duice {
          * Returns value is exists
          * @param name 
          */
-        isEmpty(name:string):boolean {
-            return isEmpty(this.get(name));
+        has(name:string):boolean {
+            return isNotEmpty(this.get(name));
         }
         
         /**
@@ -2467,9 +2467,7 @@ namespace duice {
         context:any;;
         constructor(element:HTMLElement){
             super(element);
-            this.expression = element.innerHTML;
-            this.expression = this.expression.replace(/<!--\[CDATA\[/gim,"");
-            this.expression = this.expression.replace(/\]\]-->/gim,"");
+            this.expression = element.dataset.duiceValue;
             this.element.classList.add('duice-scriptlet');
         }
         bind(context:any):void {

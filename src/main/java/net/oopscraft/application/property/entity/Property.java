@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
-@Table(name = "APP_PROP")
+@Table(name = "APP_PROP_INFO")
 public class Property extends SystemEntity {
 
 	@Id
@@ -19,11 +19,11 @@ public class Property extends SystemEntity {
 	@Column(name = "PROP_NAME", length = 1024)
 	String name;
 
-	@Column(name = "PROP_VAL")
+	@Column(name = "PROP_VAL", length = Integer.MAX_VALUE)
 	@Lob
 	String value;
 
-	@Column(name = "PROP_DESC")
+	@Column(name = "PROP_DESC", length = Integer.MAX_VALUE)
 	@Lob
 	String description;
 	

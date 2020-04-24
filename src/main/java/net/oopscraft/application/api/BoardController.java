@@ -1,10 +1,14 @@
 package net.oopscraft.application.api;
 
+import java.io.File;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,17 +20,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import net.oopscraft.application.article.entity.ArticleFile;
 import net.oopscraft.application.article.entity.ArticleReply;
 import net.oopscraft.application.board.BoardService;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.entity.BoardArticle;
+import net.oopscraft.application.core.IdGenerator;
 import net.oopscraft.application.core.Pagination;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
+	
+    @Value("${application.upload.path}")
+    String uploadPath;
+    
+    @Value("${application.upload.limit}")
+    int uploadLimit;
 	
 	@Autowired
 	HttpServletResponse response;
@@ -137,53 +150,87 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "{boardId}/articles/{articleId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "{boardId}/articles/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public BoardArticle updateBoardArticle(
 		@PathVariable("boardId")String boardId,
-		@PathVariable("articleId")String articleId,
+		@PathVariable("id")String id,
 		@RequestBody BoardArticle boardArticle
 	) throws Exception {
 		boardArticle.setBoardId(boardId);
-		boardArticle.setId(articleId);
+		boardArticle.setId(id);
 		return boardService.saveBoardArticle(boardArticle);
 	}
 	
 	/**
 	 * Deletes board article
 	 * @param boardId
-	 * @param articleId
+	 * @param id
 	 * @param boardArticle
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "{boardId}/articles/{articleId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "{boardId}/articles/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteBoardArticle(
 		@PathVariable("boardId")String boardId,
-		@PathVariable("articleId")String articleId,
-		@RequestBody BoardArticle boardArticle
+		@PathVariable("id")String id
 	) throws Exception {
+		BoardArticle boardArticle = new BoardArticle();
 		boardArticle.setBoardId(boardId);
-		boardArticle.setId(articleId);
+		boardArticle.setId(id);
 		boardService.deleteBoardArticle(boardArticle);
 	}
 	
-//	/**
-//	 * Deletes board article
-//	 * @param article
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@RequestMapping(value = "{boardId}/article/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//	@ResponseBody
-//	@Transactional(rollbackFor = Exception.class)
-//	public void deleteArticle(@RequestBody BoardArticle boardArticle) throws Exception {
-//		boardService.deleteBoardArticle(boardArticle);
-//	}
+	/**
+	 * Uploads file
+	 * @throws Exception
+	 */
+	@RequestMapping(value="{boardId}/files", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ArticleFile uploadBoardFile(
+		@PathVariable("boardId")String boardId,
+		@RequestParam("file")MultipartFile multipartFile
+	) throws Exception {
+
+		// writes file
+		String temporaryId = IdGenerator.uuid();
+		File temporaryFile = new File(uploadPath + File.separator + temporaryId);
+		FileUtils.copyInputStreamToFile(multipartFile.getInputStream(), temporaryFile);
+		
+		// sends response
+		ArticleFile articleFile = new ArticleFile();
+		articleFile.setId(temporaryId);
+		articleFile.setName(multipartFile.getOriginalFilename());
+		articleFile.setType(multipartFile.getContentType());
+		articleFile.setSize(multipartFile.getSize());
+		return articleFile;
+	}
 	
-	
+	/**
+	 * Downloads files
+	 * @throws Exception
+	 */
+	@RequestMapping(value="{boardId}/articles/{articleId}/files/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public void downloadBoardArticleFile(
+		 @PathVariable("boardId")String boardId
+		,@PathVariable("articleId")String articleId
+		,@PathVariable("id")String id
+	) throws Exception {
+		BoardArticle boardArticle = boardService.getBoardArticle(boardId, articleId);
+		ArticleFile articleFile = boardArticle.getFile(id);
+		
+		// sends file
+		response.setContentType(articleFile.getType());
+		response.setContentLengthLong(articleFile.getSize());
+		StringBuffer contentDisposition = new StringBuffer()
+			.append("attachment")
+			.append(";filename=" + articleFile.getName())
+			.append(";filename*=UTF-8''" + URLEncoder.encode(articleFile.getName(),"UTF-8"));
+		response.setHeader("Content-Disposition", contentDisposition.toString());
+		File file = new File(uploadPath + File.separator + "board" + File.pathSeparator + articleFile.getId());
+		FileUtils.copyFile(file, response.getOutputStream());
+	}
 	
 	/**
 	 * Returns board article replies
@@ -263,8 +310,7 @@ public class BoardController {
 		boardService.deleteBoardArticleReply(boardId, articleId, id);
 	}
 
-	
-	
+
 	
 	
 //	/**

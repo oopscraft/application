@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -15,10 +14,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
-import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_CODE")
+@Table(name = "APP_CODE_INFO")
 public class Code extends SystemEntity {
 
 	@Id

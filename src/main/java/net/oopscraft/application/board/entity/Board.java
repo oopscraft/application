@@ -27,7 +27,7 @@ import net.oopscraft.application.security.entity.SecurityPolicy;
 import net.oopscraft.application.user.entity.Authority;
 
 @Entity
-@Table(name = "APP_BORD")
+@Table(name = "APP_BORD_INFO")
 public class Board {
 
 	@Id
@@ -40,17 +40,17 @@ public class Board {
 	@Column(name = "BORD_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "BORD_DESC")
+	@Column(name = "BORD_DESC", length = Integer.MAX_VALUE)
 	@Lob
 	String description;
 	
-	@Column(name = "BORD_SKIN")
+	@Column(name = "BORD_SKIN", length = 1024)
 	String skin;
 	
 	@Column(name = "ROWS_PER_PAGE")
 	int rowsPerPage = 10;
 	
-	@Formula("(SELECT COUNT(*) FROM APP_BORD_ATCL A WHERE A.BORD_ID = BORD_ID)")
+	@Formula("(select count(*) from APP_BORD_ATCL_INFO a where a.BORD_ID = BORD_ID)")
 	long articleCount = 0;
 
 	@Column(name = "RPLY_USE_YN", length = 1)

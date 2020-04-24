@@ -8,7 +8,7 @@
 		value: null,
 		categoryId: null,
 		page: 1,
-		rows: 10,
+		rows: [[${board.rowsPerPage}]],
 		totalCount: -1
 	});
 	const articles = new duice.List();
@@ -16,7 +16,7 @@
 	// document ready
 	$(document).ready(function() {
 		if(window.history.state){
-			search.fromJson(window.history.state);
+			loadState(window.history.state);
 		}
 		getArticles();
 	});
@@ -24,9 +24,34 @@
 	// onpopstate
 	window.onpopstate = function(event){
 		if(event.state){
-			search.fromJson(event.state);
+			loadState(event.state);
 			getArticles();
 		}
+	}
+	
+	/**
+	 * Loads state
+	 */ 
+	function loadState(state){
+		search.set('key', state.key);
+		search.set('value', state.value);
+		search.set('categoryId', state.categoryId);
+		search.set('page', state.page);
+	}
+
+	/**
+	 * Saves state
+	 */
+	function saveState(){
+		var title = '';
+		var url = window.location.href;
+		var state = {
+			key: search.get('key'),
+			value: search.get('value'),
+			categoryId: search.get('categoryId'),
+			page: search.get('page')
+		};
+		history.pushState(state, title, url);
 	}
 
 	/**
@@ -56,11 +81,8 @@
 				articles.fromJson(data);
 				
 				// sets history
-				const state = search.toJson();
-				const title = '';
-				const url = window.location.href;
-				history.pushState(state, title, url)
-				
+				saveState();
+
 				// resolve
 				resolve(true);
 		   	});

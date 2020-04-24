@@ -708,9 +708,7 @@
 														<th data-th-text="#{application.role.id}">ID</th>
 														<th data-th-text="#{application.role.name}">Name</th>
 														<th class="text-center">
-															<button class="button" onclick="addUserRole();">
-																<img th:src="@{/static/image/icon_add.png}" class="icon"/>
-															</button>
+															<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addUserRole();">
 														</th>
 													</tr>
 												</thead>
@@ -725,9 +723,7 @@
 														</td>
 														<td><span is="duice-span" data-duice-bind="role,name"></span></td>
 														<td class="text-center">
-															<button class="button" data-index="[@duice[$context.index]]" onclick="removeUserRole(this.dataset.index);">
-																<img th:src="@{/static/image/icon_remove.png}" class="icon"/>
-															</button>
+															<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeUserRole(this.dataset.index);">
 														</td>
 													</tr>
 												</tbody>
@@ -754,9 +750,7 @@
 														<th data-th-text="#{application.authority.id}">ID</th>
 														<th data-th-text="#{application.authority.name}">Name</th>
 														<th class="text-center">
-															<button class="button" onclick="addUserAuthority();">
-																<img th:src="@{/static/image/icon_add.png}" class="icon"/>
-															</button>
+															<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addUserAuthority();"/>
 														</th>
 													</tr>
 												</thead>
@@ -771,9 +765,7 @@
 														</td>
 														<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
 														<td class="text-center">
-															<button class="button" data-index="[@duice[$context.index]]" onclick="removeUserAuthority(this.dataset.index);">
-																<img th:src="@{/static/image/icon_remove.png}" class="icon"/>
-															</button>
+															<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeUserAuthority(this.dataset.index);"/>
 														</td>
 													</tr>
 												</tbody>

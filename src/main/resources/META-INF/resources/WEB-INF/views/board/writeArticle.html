@@ -28,12 +28,55 @@
 	}
 	
 	/**
+	 * Uploads article file
+	 */
+	function uploadArticleFile() {
+		var file = document.createElement('input');
+		file.setAttribute('type', 'file');
+		file.addEventListener('change', function(e){
+			var formData = new FormData();
+			formData.append('file', this.files[0]);
+			$.ajax({
+				 url: '[[@{/api/boards}]]/[[${board.id}]]/files'
+				,type: 'POST'
+				,data: formData
+				,enctype: 'multipart/form-data'
+				,cache: false
+				,contentType: false
+				,processData: false
+				,xhr: function() {
+					var xhr = new window.XMLHttpRequest();
+					xhr.upload.addEventListener("progress", function(evt) {
+						if (evt.lengthComputable) {
+							var percentComplete = evt.loaded / evt.total;
+							percentComplete = parseInt(percentComplete * 100);
+							console.log(percentComplete);
+						}
+					}, false);
+				    return xhr;
+				}
+			})
+			.done(function(data, textStatus, jqXHR) {
+				articleFiles.addRow(new duice.Map(data));
+			});
+		});
+		file.click();
+	}
+	
+	/**
+	 * Removes article file
+	 */
+	function removeArticleFile(index) {
+		articleFiles.removeRow(index);
+	}
+	
+	/**
 	 * Saves article reply
 	 */
 	async function saveArticle(){
 		
 		// checks title
-		if(article.isEmpty('title')){
+		if(!article.has('title')){
 			duice.alert('[[#{application.global.enterItem(#{application.board.article.title})}]]');
 			return false;
 		}

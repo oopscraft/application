@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -18,12 +17,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
-import net.oopscraft.application.core.jpa.SystemEntityListener;
 import net.oopscraft.application.security.entity.SecurityPolicy;
 import net.oopscraft.application.user.entity.Authority;
 
 @Entity
-@Table(name = "APP_MENU")
+@Table(name = "APP_MENU_INFO")
 public class Menu extends SystemEntity {
 	
 	@Id

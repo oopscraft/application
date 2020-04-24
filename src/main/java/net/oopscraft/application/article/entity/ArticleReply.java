@@ -10,7 +10,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_ATCL_RPLY")
+@Table(name = "APP_ATCL_RPLY_INFO")
 @IdClass(ArticleReply.Pk.class)
 public class ArticleReply {
 	
@@ -70,17 +70,17 @@ public class ArticleReply {
 	}
 	
 	@Id
-	@Column(name = "ATCL_ID")
+	@Column(name = "ATCL_ID", length = 32)
 	String articleId;
 	
 	@Id
-	@Column(name = "RPLY_ID")
+	@Column(name = "RPLY_ID", length = 32)
 	String id;
 	
-	@Column(name = "UPER_RPLY_ID")
+	@Column(name = "UPER_RPLY_ID", length = 32)
 	String upperId;
 	
-	@Column(name = "RPLY_CNTS")
+	@Column(name = "RPLY_CNTS", length = Integer.MAX_VALUE)
 	String contents;
 	
 	@Column(name = "RPLY_ATHR", length = 1024)

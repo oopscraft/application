@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
@@ -17,10 +16,9 @@ import org.hibernate.annotations.Formula;
 
 import net.oopscraft.application.core.jpa.BooleanStringConverter;
 import net.oopscraft.application.core.jpa.SystemEntity;
-import net.oopscraft.application.core.jpa.SystemEntityListener;
 
 @Entity
-@Table(name = "APP_SAMP")
+@Table(name = "APP_SAMP_INFO")
 @IdClass(Sample.Pk.class)
 public class Sample extends SystemEntity {
 	

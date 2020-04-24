@@ -9,7 +9,7 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_BORD_CATE")
+@Table(name = "APP_BORD_CATE_INFO")
 @IdClass(BoardCategory.Pk.class)
 public class BoardCategory {
 	
@@ -76,17 +76,17 @@ public class BoardCategory {
 	}
 	
 	@Id
-	@Column(name = "BORD_ID")
+	@Column(name = "BORD_ID", length = 32)
 	String boardId;
 	
 	@Id
-	@Column(name = "CATE_ID")
+	@Column(name = "CATE_ID", length = 32)
 	String id;
 	
 	@Column(name = "CATE_SEQ")
 	int sequence;
 
-	@Column(name = "CATE_NAME")
+	@Column(name = "CATE_NAME", length = 1024)
 	String name;
 	
 	public String getBoardId() {
