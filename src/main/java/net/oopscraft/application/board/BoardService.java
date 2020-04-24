@@ -217,7 +217,7 @@ public class BoardService {
 				file.setArticleId(boardArticle.getId());
 				one.getFiles().add(file);
 				File temporaryFile = new File(uploadPath + File.separator + file.getId());
-				File realFile = new File(uploadPath + File.separator + "board" + File.pathSeparator + file.getId());
+				File realFile = new File(uploadPath + File.separator + "board" + File.separator + file.getId());
 				try {
 					FileUtils.moveFile(temporaryFile, realFile);
 				} catch (Exception ignore) {
@@ -231,7 +231,7 @@ public class BoardService {
 			ArticleFile file = one.getFiles().get(index);
 			if(boardArticle.getFile(file.getId()) == null) {
 				one.removeFile(file.getId());
-				File realFile = new File(uploadPath + File.separator + "board" + File.pathSeparator + file.getId());
+				File realFile = new File(uploadPath + File.separator + "board" + File.separator + file.getId());
 				FileUtils.deleteQuietly(realFile);
 			}
 		}
@@ -247,6 +247,10 @@ public class BoardService {
 	 */
 	public void deleteBoardArticle(BoardArticle boardArticle) throws Exception {
 		BoardArticle one = boardArticleRepository.findOne(boardArticle.getId());
+		for(ArticleFile articleFile : one.getFiles()) {
+			File file = new File(uploadPath + File.separator + "board" + File.separator + articleFile.getId());
+			FileUtils.deleteQuietly(file);
+		}
 		boardArticleRepository.delete(one);
 	}
 	

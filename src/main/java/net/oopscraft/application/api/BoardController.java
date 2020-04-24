@@ -228,7 +228,7 @@ public class BoardController {
 			.append(";filename=" + articleFile.getName())
 			.append(";filename*=UTF-8''" + URLEncoder.encode(articleFile.getName(),"UTF-8"));
 		response.setHeader("Content-Disposition", contentDisposition.toString());
-		File file = new File(uploadPath + File.separator + "board" + File.pathSeparator + articleFile.getId());
+		File file = new File(uploadPath + File.separator + "board" + File.separator + articleFile.getId());
 		FileUtils.copyFile(file, response.getOutputStream());
 	}
 	
