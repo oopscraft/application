@@ -30,9 +30,6 @@ public class Menu extends SystemEntity {
 
 	@Column(name = "UPER_MENU_ID", length = 32)
 	String upperId;
-	
-	@Column(name = "MENU_SEQ")
-	int sequence;
 
 	@Column(name = "MENU_NAME", length = 1024)
 	String name;
@@ -44,6 +41,9 @@ public class Menu extends SystemEntity {
 	@Column(name = "MENU_DESC", length = Integer.MAX_VALUE)
 	@Lob
 	String description;
+	
+	@Column(name = "DISP_NO")
+	Integer displayNo;
 	
 	@Column(name = "LINK_URL", length = 1024)
 	String linkUrl;
@@ -62,7 +62,7 @@ public class Menu extends SystemEntity {
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_MENU_AUTH_DISP", 
+		name = "APP_MENU_AUTH_DISP_MAP", 
 		joinColumns = @JoinColumn(name = "MENU_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
@@ -92,14 +92,6 @@ public class Menu extends SystemEntity {
 		this.upperId = upperId;
 	}
 
-	public int getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -122,6 +114,14 @@ public class Menu extends SystemEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Integer getDisplayNo() {
+		return displayNo;
+	}
+
+	public void setDisplayNo(Integer displayNo) {
+		this.displayNo = displayNo;
 	}
 
 	public String getLinkUrl() {

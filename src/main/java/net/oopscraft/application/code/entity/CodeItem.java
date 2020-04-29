@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -78,15 +77,11 @@ public class CodeItem {
 	@Column(name = "ITEM_ID", length = 32)
 	String id;
 	
-	@Column(name = "ITEM_SEQ")
-	int sequence;
-	
 	@Column(name = "ITEM_NAME", length = 1024)
 	String name;
 	
-	@Column(name = "ITEM_DESC", length = Integer.MAX_VALUE)
-	@Lob
-	String description;
+	@Column(name = "DISP_NO")
+	Integer displayNo;
 	
 	public CodeItem() {}
 	
@@ -111,14 +106,6 @@ public class CodeItem {
 		this.id = id;
 	}
 
-	public int getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -127,12 +114,12 @@ public class CodeItem {
 		this.name = name;
 	}
 
-	public String getDescription() {
-		return description;
+	public Integer getDisplayNo() {
+		return displayNo;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setDisplayNo(Integer displayNo) {
+		this.displayNo = displayNo;
 	}
 	
 }

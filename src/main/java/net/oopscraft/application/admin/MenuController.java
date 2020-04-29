@@ -82,6 +82,7 @@ public class MenuController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_MENU_EDIT')")
 	@RequestMapping(value = "saveMenu", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -94,6 +95,7 @@ public class MenuController {
 	 * @param menu
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_MENU_EDIT')")
 	@RequestMapping(value = "deleteMenu", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -107,6 +109,7 @@ public class MenuController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_MENU_EDIT')")
 	@RequestMapping(value = "changeUpperId", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)

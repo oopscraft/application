@@ -47,11 +47,11 @@ public class Board {
 	@Column(name = "BORD_SKIN", length = 1024)
 	String skin;
 	
-	@Column(name = "ROWS_PER_PAGE")
-	int rowsPerPage = 10;
+	@Column(name = "BORD_ROWS")
+	Integer rows;
 	
 	@Formula("(select count(*) from APP_BORD_ATCL_INFO a where a.BORD_ID = BORD_ID)")
-	long articleCount = 0;
+	Long articleCount;
 
 	@Column(name = "RPLY_USE_YN", length = 1)
 	@Convert(converter=BooleanStringConverter.class)
@@ -60,6 +60,12 @@ public class Board {
 	@Column(name = "FILE_USE_YN")
 	@Convert(converter=BooleanStringConverter.class)
 	boolean fileUse = false;
+	
+	@Column(name = "FILE_ALOW_CNT")
+	Integer fileAllowCount;
+	
+	@Column(name = "FILE_ALOW_SIZE")
+	Integer fileAllowSize;
 	
 	@Column(name = "CATE_USE_YN")
 	@Convert(converter=BooleanStringConverter.class)
@@ -71,7 +77,7 @@ public class Board {
 		cascade = CascadeType.ALL, 
 		orphanRemoval = true
 	)
-	@OrderBy("sequence")
+	@OrderBy("displayNo")
 	List<BoardCategory> categories = new ArrayList<BoardCategory>();
 	
 	@Column(name = "ACES_PLCY")
@@ -80,7 +86,7 @@ public class Board {
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_BORD_AUTH_ACES", 
+		name = "APP_BORD_AUTH_ACES_MAP", 
 		joinColumns = @JoinColumn(name = "BORD_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
@@ -88,13 +94,13 @@ public class Board {
 	)
 	List<Authority> accessAuthorities = new ArrayList<Authority>();
 
-	@Column(name = "PLCY_READ")
+	@Column(name = "READ_PLCY")
 	@Enumerated(EnumType.STRING)
 	SecurityPolicy readPolicy = SecurityPolicy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_BORD_AUTH_READ", 
+		name = "APP_BORD_AUTH_READ_MAP", 
 		joinColumns = @JoinColumn(name = "BORD_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
@@ -102,13 +108,13 @@ public class Board {
 	)
 	List<Authority> readAuthorities = new ArrayList<Authority>();
 	
-	@Column(name = "PLCY_WRIT")
+	@Column(name = "WRIT_PLCY")
 	@Enumerated(EnumType.STRING)
 	SecurityPolicy writePolicy = SecurityPolicy.ANONYMOUS;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_BORD_AUTH_WRIT", 
+		name = "APP_BORD_AUTH_WRIT_MAP", 
 		joinColumns = @JoinColumn(name = "BORD_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),
@@ -121,7 +127,7 @@ public class Board {
 	public Board(String id) {
 		this.id = id;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -130,20 +136,20 @@ public class Board {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getIcon() {
 		return icon;
 	}
 
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {
@@ -161,13 +167,69 @@ public class Board {
 	public void setSkin(String skin) {
 		this.skin = skin;
 	}
-	
-	public long getArticleCount() {
+
+	public Integer getRows() {
+		return rows;
+	}
+
+	public void setRows(Integer rows) {
+		this.rows = rows;
+	}
+
+	public Long getArticleCount() {
 		return articleCount;
 	}
 
-	public void setArticleCount(long articleCount) {
+	public void setArticleCount(Long articleCount) {
 		this.articleCount = articleCount;
+	}
+
+	public boolean isReplyUse() {
+		return replyUse;
+	}
+
+	public void setReplyUse(boolean replyUse) {
+		this.replyUse = replyUse;
+	}
+
+	public boolean isFileUse() {
+		return fileUse;
+	}
+
+	public void setFileUse(boolean fileUse) {
+		this.fileUse = fileUse;
+	}
+
+	public Integer getFileAllowCount() {
+		return fileAllowCount;
+	}
+
+	public void setFileAllowCount(Integer fileAllowCount) {
+		this.fileAllowCount = fileAllowCount;
+	}
+
+	public Integer getFileAllowSize() {
+		return fileAllowSize;
+	}
+
+	public void setFileAllowSize(Integer fileAllowSize) {
+		this.fileAllowSize = fileAllowSize;
+	}
+
+	public boolean isCategoryUse() {
+		return categoryUse;
+	}
+
+	public void setCategoryUse(boolean categoryUse) {
+		this.categoryUse = categoryUse;
+	}
+
+	public List<BoardCategory> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<BoardCategory> categories) {
+		this.categories = categories;
 	}
 
 	public SecurityPolicy getAccessPolicy() {
@@ -190,16 +252,16 @@ public class Board {
 		return readPolicy;
 	}
 
+	public void setReadPolicy(SecurityPolicy readPolicy) {
+		this.readPolicy = readPolicy;
+	}
+
 	public List<Authority> getReadAuthorities() {
 		return readAuthorities;
 	}
 
 	public void setReadAuthorities(List<Authority> readAuthorities) {
 		this.readAuthorities = readAuthorities;
-	}
-
-	public void setReadPolicy(SecurityPolicy readPolicy) {
-		this.readPolicy = readPolicy;
 	}
 
 	public SecurityPolicy getWritePolicy() {
@@ -209,53 +271,13 @@ public class Board {
 	public void setWritePolicy(SecurityPolicy writePolicy) {
 		this.writePolicy = writePolicy;
 	}
-	
+
 	public List<Authority> getWriteAuthorities() {
 		return writeAuthorities;
 	}
 
 	public void setWriteAuthorities(List<Authority> writeAuthorities) {
 		this.writeAuthorities = writeAuthorities;
-	}
-
-	public int getRowsPerPage() {
-		return rowsPerPage;
-	}
-
-	public void setRowsPerPage(int rowsPerPage) {
-		this.rowsPerPage = rowsPerPage;
-	}
-
-	public boolean isCategoryUse() {
-		return categoryUse;
-	}
-
-	public void setCategoryUse(boolean categoryUse) {
-		this.categoryUse = categoryUse;
-	}
-
-	public boolean isReplyUse() {
-		return replyUse;
-	}
-
-	public void setReplyUse(boolean replyUse) {
-		this.replyUse = replyUse;
-	}
-
-	public boolean isFileUse() {
-		return fileUse;
-	}
-
-	public void setFileUse(boolean fileUse) {
-		this.fileUse = fileUse;
-	}
-
-	public List<BoardCategory> getCategories() {
-		return categories;
-	}
-
-	public void setCategories(List<BoardCategory> categories) {
-		this.categories = categories;
 	}
 
 }

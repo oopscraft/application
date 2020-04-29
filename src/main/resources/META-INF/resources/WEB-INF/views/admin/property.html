@@ -19,6 +19,11 @@
 		// document ready
 		$(document).ready(function() {
 			
+			// checks authorization
+			if([[${#authorization.expression('hasAuthority("ADMN_PROP_EDIT")')}]] === false){
+				lockDetails();
+			}
+			
 			// creates tab
 			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
 			tabFolder.selectTab(0);
@@ -67,7 +72,7 @@
 		 * Disables detail
 		 */
 		function disableDetail(disable){
-			property.setDisable(disable);
+			property.setDisableAll(disable);
 			$('#deletePropertyButton').prop('disabled', disable);
 			$('#savePropertyButton').prop('disabled', disable);
 		}
@@ -95,6 +100,13 @@
 		 */ 
 		function resetDetail() {
 			property.reset();
+		}
+		
+		/**
+		 * Lock details
+		 */
+		function lockDetails(){
+			property.setReadonlyAll(true);
 		}
 		
 		/**
@@ -286,9 +298,9 @@
 							<select is="duice-select" data-duice-bind="search,key" style="width:125px;">
 								<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
 								<option value="id" data-th-text="#{application.property.id}">ID</option>
-								<option value="name" data-th-text="#{application.property.name}">Name</option>
+								<option value="value" data-th-text="#{application.property.value}">Value</option>
 							</select>
-							<input is="duice-input-text" type="text" data-duice-bind="search,value" style="width:250px;"/>
+							<input is="duice-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 						</div>
 						<div class="app-col right">
 							<button class="button" onclick="getProperties(1);">
@@ -308,20 +320,21 @@
 								<col style="width:60%"/>
 								<thead>
 									<tr>
-										<th data-th-text="#{application.global.no}">No</th>
-										<th data-th-text="#{application.property.id}">Property ID</th>
-										<th data-th-text="#{application.property.name}">Property Name</th>
+										<th data-th-text="#{application.global.no}" class="text-center">No</th>
+										<th data-th-text="#{application.property.id}">ID</th>
+										<th data-th-text="#{application.property.name}">Name</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr>
 										<td class="text-center">
-											<span is="duice-scriptlet" data-duice-bind="search">
+											<small is="duice-scriptlet" data-duice-bind="search" data-duice-value="
 												return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
-											</span>
+											">
+											</small>
 										</td>
 										<td>
-											<span is="duice-span" data-duice-bind="property,id"></span>
+											<span is="duice-span" data-duice-bind="property,id" class="id [@duice[$context.property.get('systemEmbedded')===true?'embd':'']]"></span>
 										</td>
 										<td><span is="duice-span" data-duice-bind="property,name"></span></td>
 									</tr>
@@ -337,13 +350,13 @@
 								Rows
 							</small>
 						</div>
-						<div class="app-col">
+						<div class="app-col center">
 							<ul is="duice-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
-								<li onclick="getProperties();"></li>
+								<li data-page="[@duice[$context.page]]" onclick="getProperties(this.dataset.page);"></li>
 							</ul>
 						</div>
 						<div class="app-col right">
-							<button class="button" onclick="addProperty();">
+							<button class="button" onclick="addProperty();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_PROP_EDIT'')')}?'lock'">
 								<img th:src="@{/static/image/icon_add.png}" class="icon"/>
 								<span data-th-text="#{application.global.add}"></span>
 							</button>
@@ -382,29 +395,29 @@
 										<th>
 											<span data-th-text="#{application.property.id}" class="mand">Property ID</span>
 										</th>
-										<td><input is="duice-input-text" type="text" data-duice-bind="property,id" autocomplete="nope"/></td>
+										<td><input is="duice-input" type="text" data-duice-bind="property,id" autocomplete="nope" class="id"/></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.property.name}">Property Name</th>
-										<td><input is="duice-input-text" type="text" data-duice-bind="property,name"/></td>
+										<th data-th-text="#{application.property.name}">Name</th>
+										<td><input is="duice-input" type="text" data-duice-bind="property,name"/></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.property.value}">Property Name</th>
-										<td><textarea is="duice-textarea" data-duice-bind="property,value" style="height:6rem;"></textarea></td>
+										<th data-th-text="#{application.property.value}">Value</th>
+										<td><textarea is="duice-textarea" data-duice-bind="property,value" style="height:100px;"></textarea></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.property.description}">Property Description</th>
-										<td><textarea is="duice-textarea" data-duice-bind="property,description" style="height:6rem;"></textarea></td>
+										<th data-th-text="#{application.property.description}">Description</th>
+										<td><textarea is="duice-textarea" data-duice-bind="property,description" style="height:200px;"></textarea></td>
 									</tr>
 								</tbody>
 							</table>
-							<div class="app-row">
+							<div class="app-row action">
 								<div class="app-col right">
-									<button id="deleteUserButton" class="button large" onclick="deleteProperty();">
+									<button id="deleteUserButton" class="button large" onclick="deleteProperty();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_PROP_EDIT'')')}?'lock'">
 										<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 										<span data-th-text="#{application.global.delete}"></span>
 									</button>
-									<button id="saveUserButton" class="button large" onclick="saveProperty();">
+									<button id="saveUserButton" class="button large" onclick="saveProperty();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_PROP_EDIT'')')}?'lock'">
 										<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 										<span data-th-text="#{application.global.save}"></span>
 									</button>

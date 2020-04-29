@@ -163,7 +163,7 @@
 								<option value="className" data-th-text="#{application.api.className}">Class Name</option>
 								<option value="methodName" data-th-text="#{application.api.methodName}">Method Name</option>
 							</select>
-							<input is="duice-input-text" type="text" data-duice-bind="search,value" style="width:250px;"/>
+							<input is="duice-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 						</div>
 						<div class="app-col right">
 							<button class="button" onclick="getApis(1);">
@@ -195,9 +195,10 @@
 								<tbody>
 									<tr>
 										<td class="text-center">
-											<span is="duice-scriptlet" data-duice-bind="apis">
+											<small is="duice-scriptlet" data-duice-bind="api" data-duice-value="
 												return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
-											</span>
+											">
+											</small>
 										</td>
 										<td>
 											<span is="duice-span" data-duice-bind="api,method"></span>
@@ -224,9 +225,9 @@
 								Rows
 							</small>
 						</div>
-						<div class="app-col">
+						<div class="app-col center">
 							<ul is="duice-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
-								<li onclick="getUsers();"></li>
+								<li data-page="[@duice[$context.page]]" onclick="getApis(this.dataset.page);"></li>
 							</ul>
 						</div>
 						<div class="app-col right">
@@ -298,7 +299,7 @@
 											<span data-th-text="#{application.api.uri}">URI</span>
 										</th>
 										<td>
-											<input is="duice-input-text" type="text" data-duice-bind="api,uri"/>
+											<input is="duice-input" type="text" data-duice-bind="api,uri"/>
 										</td>
 									</tr>
 									<tr>
@@ -322,7 +323,7 @@
 															<span is="duice-span" data-duice-bind="variable,name"></span>
 														</td>
 														<td>
-															<input is="duice-input-text" type="text" data-duice-bind="variable,value"/>
+															<input is="duice-input" type="text" data-duice-bind="variable,value"/>
 														</td>
 													</tr>
 												</tbody>

@@ -73,6 +73,7 @@ public class GroupController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_GROP_EDIT')")
 	@RequestMapping(value = "saveGroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -85,6 +86,7 @@ public class GroupController {
 	 * @param group
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_GROP_EDIT')")
 	@RequestMapping(value = "deleteGroup", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -98,6 +100,7 @@ public class GroupController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_GROP_EDIT')")
 	@RequestMapping(value = "changeUpperId", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)

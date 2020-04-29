@@ -27,7 +27,6 @@ public class PropertyRepositoryTest extends ApplicationTestRunner {
 	public void testSave() throws Exception {
 		Property property = new Property();
 		property.setId(TEST_ID);
-		property.setName(TEST_NAME);
 		property.setValue(TEST_VALUE);
 		property.setDescription(TEST_DESCRIPTION);
 		property = propertyRepository.saveAndFlush(property);

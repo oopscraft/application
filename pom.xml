@@ -42,11 +42,8 @@
 		<org.springframework.spring.version>5.0.1.RELEASE</org.springframework.spring.version>
 		<org.springframework.spring-data-jpa.version>1.9.6.RELEASE</org.springframework.spring-data-jpa.version>
 		<org.springframework.security.version>5.0.9.RELEASE</org.springframework.security.version>
-		<org.apache.tiles.version>3.0.7</org.apache.tiles.version>
-		<org.jasypt.version>1.9.2</org.jasypt.version>
 		<org.springframework.security.oauth.version>2.0.10.RELEASE</org.springframework.security.oauth.version>
 		<org.springframework.batch.version>3.0.9.RELEASE</org.springframework.batch.version>
-		<org.quartz-scheduler.version>1.8.6</org.quartz-scheduler.version>
 	</properties>
 	
 	<repositories>
@@ -471,12 +468,17 @@
 		<dependency>
 		    <groupId>org.thymeleaf</groupId>
 		    <artifactId>thymeleaf</artifactId>
-		    <version>3.0.7.RELEASE</version>
+		    <version>3.0.8.RELEASE</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.thymeleaf</groupId>
-		    <artifactId>thymeleaf-spring4</artifactId>
-		    <version>3.0.7.RELEASE</version>
+		    <artifactId>thymeleaf-spring5</artifactId>
+		    <version>3.0.8.RELEASE</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.thymeleaf.extras</groupId>
+		    <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+		    <version>3.0.4.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>nz.net.ultraq.thymeleaf</groupId>
@@ -488,12 +490,12 @@
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt</artifactId>
-			<version>${org.jasypt.version}</version>
+			<version>1.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-spring3</artifactId>
-			<version>${org.jasypt.version}</version>
+			<version>1.9.2</version>
 		</dependency>
 		
 	    <!-- spring data jpa -->
@@ -597,7 +599,7 @@
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
-			<version>${org.quartz-scheduler.version}</version>
+			<version>1.8.6</version>
 		</dependency>
 		
 		<!-- lucene -->

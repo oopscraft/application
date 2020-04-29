@@ -82,12 +82,12 @@ public class BoardCategory {
 	@Id
 	@Column(name = "CATE_ID", length = 32)
 	String id;
-	
-	@Column(name = "CATE_SEQ")
-	int sequence;
 
 	@Column(name = "CATE_NAME", length = 1024)
 	String name;
+	
+	@Column(name = "DISP_NO")
+	Integer displayNo;
 	
 	public String getBoardId() {
 		return boardId;
@@ -113,13 +113,12 @@ public class BoardCategory {
 		this.name = name;
 	}
 
-	public int getSequence() {
-		return sequence;
+	public Integer getDisplayNo() {
+		return displayNo;
 	}
 
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
+	public void setDisplayNo(Integer displayNo) {
+		this.displayNo = displayNo;
 	}
-
 	
 }

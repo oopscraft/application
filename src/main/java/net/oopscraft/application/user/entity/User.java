@@ -64,7 +64,7 @@ public class User extends SystemEntity {
 	@Lob
 	String profile;
 	
-	@Column(name = "USER_LANG")
+	@Column(name = "USER_LANG", length = 32)
 	String language;
 
 	@Column(name = "JOIN_DATE")

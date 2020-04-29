@@ -14,10 +14,16 @@
 		const codes = new duice.List();
 		const code = new duice.Map();
 		const codeItems = new duice.List();
+		const codeEntities = new duice.List();
 		var isNew = false;
 
 		// document ready
 		$(document).ready(function() {
+			
+			// checks authorization
+			if([[${#authorization.expression('hasAuthority("ADMN_CODE_EDIT")')}]] === false){
+				lockDetails();
+			}
 			
 			// creates tab
 			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
@@ -67,7 +73,7 @@
 		 * Disables detail
 		 */
 		function disableDetail(disable){
-			code.setDisable(disable);
+			code.setDisableAll(disable);
 			$('#detailDiv').find('button').each(function(index, element){
 				$(element).prop('disabled', disable);
 			});
@@ -79,6 +85,7 @@
 		function isDetailChanged() {
 			if(code.isDirty()
 			|| codeItems.isDirty()
+			|| codeEntities.isDirty()
 			){
 				return true;
 			}else{
@@ -92,6 +99,7 @@
 		function initializeDetail() {
 			code.fromJson({});
 			codeItems.fromJson([]);
+			codeEntities.fromJson([]);
 		}
 		
 		/**
@@ -100,6 +108,16 @@
 		function resetDetail() {
 			code.reset();
 			codeItems.reset();
+			codeEntities.reset();
+		}
+		
+		/**
+		 * Lock details
+		 */
+		function lockDetails(){
+			code.setReadonlyAll(true);
+			codeItems.setReadonlyAll(true);
+			codeEntities.setReadonlyAll(true);
 		}
 		
 		/**
@@ -141,6 +159,7 @@
 			.done(function(data, textStatus, jqXHR) {
 				code.fromJson(data);
 				codeItems.fromJson(data.items);
+				codeEntities.fromJson(data.entities);
 				disableDetail(false);
 				code.setReadonly('id', true);
 				isNew = false;
@@ -216,6 +235,7 @@
 			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.code})}]]")){
 				var data = code.toJson();
 				data.items = codeItems.toJson();
+				data.entities = codeEntities.toJson();
 				$.ajax({
 					 url: 'code/saveCode'
 					,type: 'POST'
@@ -284,6 +304,24 @@
 		function removeCodeItem(index) {
 			codeItems.removeRow(index);
 		}
+		
+		/**
+		 * Adds code entity
+		 */
+		function addCodeEntity() {
+			var codeEntity = new duice.Map({
+				codeId: code.get('id')
+			});
+			codeEntities.addRow(codeEntity);
+		}
+		
+		/**
+		 * Removes code entity
+		 */
+		function removeCodeEntity(index){
+			codeEntities.removeRow(index);
+		}
+		
 	</script>
 	<div class="app-row">
 		<div class="app-col" style="width:50%;">
@@ -308,7 +346,7 @@
 								<option value="id" data-th-text="#{application.code.id}">ID</option>
 								<option value="name" data-th-text="#{application.code.name}">Name</option>
 							</select>
-							<input is="duice-input-text" type="text" data-duice-bind="search,value" style="width:250px;"/>
+							<input is="duice-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 						</div>
 						<div class="app-col right">
 							<button class="button" onclick="getCodes(1);">
@@ -323,25 +361,42 @@
 								data-duice-bind="codes,code" 
 								data-duice-selectable="true"
 								style="width:100%;">
-								<col style="width:70px;"/>
-								<col style="width:35%;"/>
+								<col style="width:10%;"/>
+								<col/>
+								<col/>
+								<col/>
 								<col/>
 								<thead>
 									<tr>
-										<th data-th-text="#{application.global.no}">No</th>
-										<th data-th-text="#{application.code.id}">ID</th>
-										<th data-th-text="#{application.code.name}">Name</th>
+										<th data-th-text="#{application.global.no}" class="text-center"></th>
+										<th data-th-text="#{application.code.id}"></th>
+										<th data-th-text="#{application.code.name}"></th>
+										<th data-th-text="#{application.code.item}" class="text-center"></th>
+										<th data-th-text="#{application.code.entity}" class="text-center"></th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr>
 										<td class="text-center">
-											<span is="duice-scriptlet" data-duice-bind="search">
+											<small is="duice-scriptlet" data-duice-bind="search" data-duice-value="
 												return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
-											</span>
+											">
+											</small>
 										</td>
-										<td><span is="duice-span" data-duice-bind="code,id"></span></td>
+										<td><span is="duice-span" data-duice-bind="code,id" class="id [@duice[$context.code.get('systemEmbedded') === true ? 'embd' : '']]"></span></td>
 										<td><span is="duice-span" data-duice-bind="code,name"></span></td>
+										<td class="text-center">
+											<small is="duice-scriptlet" data-duice-bind="code" data-duice-value="
+												return $context.code.get('items').length;
+											">
+											</small>
+										</td>
+										<td class="text-center">
+											<small is="duice-scriptlet" data-duice-bind="code" data-duice-value="
+												return $context.code.get('entities').length;
+											">
+											</small>
+										</td>
 									</tr>
 								</tbody>
 							</table>
@@ -355,13 +410,13 @@
 								Rows
 							</small>
 						</div>
-						<div class="app-col">
+						<div class="app-col center">
 							<ul is="duice-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
-								<li onclick="getCodes();"></li>
+								<li data-page="[@duice[$context.page]]" onclick="getCodes(this.dataset.page);"></li>
 							</ul>
 						</div>
 						<div class="app-col right">
-							<button class="button" onclick="addCode();">
+							<button class="button" onclick="addCode();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_CODE_EDIT'')')}?'lock'">
 								<img th:src="@{/static/image/icon_add.png}" class="icon"/>
 								<span data-th-text="#{application.global.add}"></span>
 							</button>
@@ -398,69 +453,109 @@
 								<tbody>
 									<tr>
 										<th><span data-th-text="#{application.code.id}" class="mand">Code ID</span></th>
-										<td><input is="duice-input-text" type="text" data-duice-bind="code,id" autocomplete="nope"/></td>
+										<td><input is="duice-input" type="text" data-duice-bind="code,id" autocomplete="nope" class="id"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.code.name}">Name</th>
-										<td><input is="duice-input-text" type="text" data-duice-bind="code,name"/></td>
+										<td><input is="duice-input" type="text" data-duice-bind="code,name"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.code.description}">Description</th>
-										<td><textarea is="duice-textarea" data-duice-bind="code,description" style="height:6rem;"></textarea></td>
+										<td><textarea is="duice-textarea" data-duice-bind="code,description" style="height:200px;"></textarea></td>
 									</tr>
 									<tr>
 										<th>
-											<img class="icon" th:src="@{/static/image/icon_codeItem.png}"/>
+											<img class="icon" th:src="@{/static/image/icon_item.png}"/>
 											<br/>
 											<span data-th-text="#{application.code.item}">Code Item</span>
 										</th>
 										<td>
-											<table is="duice-table" 
-												data-duice-bind="codeItems,item" 
-												data-duice-editable="true"
-												style="width:100%;">
-												<col style="width:75px;"/>
-												<col style="width:35%;"/>
-												<col/>
-												<col style="width:5%;"/>
-												<thead>
-													<tr>
-														<th data-th-text="#{application.code.item.sequence}">Sequence</th>
-														<th data-th-text="#{application.code.item.id}">Item ID</th>
-														<th data-th-text="#{application.code.item.name}">Item Name</th>
-														<th class="text-center">
-															<button class="button small" onclick="addCodeItem();">
-																+
-															</button>
-														</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td class="text-center">
-															<span is="duice-span" data-duice-bind="item,sequence"></span>
-														</td>
-														<td><input is="duice-input-text" type="text" data-duice-bind="item,id"/></td>
-														<td><input is="duice-input-text" type="text" data-duice-bind="item,name"/></td>
-														<td class="text-center">
-															<button class="button small" data-index="[@duice[$context.index]]" onclick="removeCodeItem(this.dataset.index);">
-																-
-															</button>
-														</td>
-													</tr>
-												</tbody>
-											</table>
+											<div style="width:100%; max-height:177px; overflow-y:scroll;">
+												<table is="duice-table" 
+													data-duice-bind="codeItems,item" 
+													data-duice-editable="true"
+													style="width:100%;">
+														<col style="width:15%;"/>
+														<col style="width:30%;"/>
+														<col style="width:50%;"/>
+														<col style="width:5%;"/>
+													<thead>
+														<tr>
+															<th data-th-text="#{application.global.no}" class="text-center"></th>
+															<th data-th-text="#{application.code.item.id}"></th>
+															<th data-th-text="#{application.code.item.name}"></th>
+															<th class="text-center">
+																<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addCodeItem();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_CODE_EDIT'')')}?'lock'"/>
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td class="text-center">
+																<small is="duice-scriptlet" data-duice-bind="item" data-duice-value="return $context.index+1;"></small>
+															</td>
+															<td><input is="duice-input" type="text" data-duice-bind="item,id"/></td>
+															<td><input is="duice-input" type="text" data-duice-bind="item,name"/></td>
+															<td class="text-center">
+																<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeCodeItem(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_CODE_EDIT'')')}?'lock'"/>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<img class="icon" th:src="@{/static/image/icon_entity.png}"/>
+											<br/>
+											<span data-th-text="#{application.code.entity}">Code Entity</span>
+										</th>
+										<td>
+											<div style="width:100%; max-height:177px; overflow-y:scroll;">
+												<table is="duice-table" 
+													data-duice-bind="codeEntities,entity" 
+													data-duice-editable="true"
+													style="width:100%;">
+													<col style="width:15%;"/>
+													<col style="width:30%;"/>
+													<col style="width:50%;"/>
+													<col style="width:5%;"/>
+													<thead>
+														<tr>
+															<th data-th-text="#{application.global.no}" class="text-center"></th>
+															<th data-th-text="#{application.code.entity.tableName}"></th>
+															<th data-th-text="#{application.code.entity.columnName}"></th>
+															<th class="text-center">
+																<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addCodeEntity();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_CODE_EDIT'')')}?'lock'"/>
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td class="text-center">
+																<small is="duice-scriptlet" data-duice-bind="entity" data-duice-value="return $context.index+1;"></small>
+															</td>
+															<td><input is="duice-input" type="text" data-duice-bind="entity,tableName"/></td>
+															<td><input is="duice-input" type="text" data-duice-bind="entity,columnName"/></td>
+															<td class="text-center">
+																<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeCodeEntity(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_CODE_EDIT'')')}?'lock'"/>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
 										</td>
 									</tr>
 								</tbody>
 							</table>
-							<div class="app-row">
+							<div class="app-row action">
 								<div class="app-col right">
-									<button id="deleteUserButton" class="button large" onclick="deleteCode();">
+									<button id="deleteUserButton" class="button large" onclick="deleteCode();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_CODE_EDIT'')')}?'lock'">
 										<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 										<span data-th-text="#{application.global.delete}"></span>
 									</button>
-									<button id="saveUserButton" class="button large" onclick="saveCode();">
+									<button id="saveUserButton" class="button large" onclick="saveCode();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_CODE_EDIT'')')}?'lock'">
 										<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 										<span data-th-text="#{application.global.save}"></span>
 									</button>

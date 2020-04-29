@@ -1,6 +1,6 @@
 package net.oopscraft.application.message;
 
-public class MessageException extends Throwable {
+public class MessageException extends Exception {
 
 	private static final long serialVersionUID = 668103176640687919L;
 	

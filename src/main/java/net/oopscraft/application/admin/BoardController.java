@@ -79,6 +79,7 @@ public class BoardController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_BORD_EDIT')")
 	@RequestMapping(value = "saveBoard", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -91,6 +92,7 @@ public class BoardController {
 	 * @param board
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_BORD_EDIT')")
 	@RequestMapping(value = "deleteBoard", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)

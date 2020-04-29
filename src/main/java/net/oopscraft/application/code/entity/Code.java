@@ -36,8 +36,17 @@ public class Code extends SystemEntity {
 		cascade = CascadeType.ALL, 
 		orphanRemoval = true
 	)
-	@OrderBy("sequence")
+	@OrderBy("displayNo")
 	List<CodeItem> items = new ArrayList<CodeItem>();
+	
+	@OneToMany(
+		fetch = FetchType.LAZY, 
+		mappedBy = "codeId", 
+		cascade = CascadeType.ALL, 
+		orphanRemoval = true
+	)
+	@OrderBy("tableName, columnName")
+	List<CodeEntity> entities = new ArrayList<CodeEntity>();
 	
 	public Code() {}
 	
@@ -89,6 +98,14 @@ public class Code extends SystemEntity {
 
 	public void setItems(List<CodeItem> items) {
 		this.items = items;
+	}
+
+	public List<CodeEntity> getEntities() {
+		return entities;
+	}
+
+	public void setEntities(List<CodeEntity> entities) {
+		this.entities = entities;
 	}
 
 }

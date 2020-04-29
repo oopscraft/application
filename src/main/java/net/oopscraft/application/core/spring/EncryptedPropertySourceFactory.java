@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
@@ -15,7 +14,7 @@ import net.oopscraft.application.core.PasswordBasedEncryptor;
 public class EncryptedPropertySourceFactory implements org.springframework.core.io.support.PropertySourceFactory {
 
 	@Override
-	public PropertySource<?> createPropertySource(String name, EncodedResource resource) throws IOException {
+	public org.springframework.core.env.PropertySource<?> createPropertySource(String name, EncodedResource resource) throws IOException {
 		try {
 			Properties properties = PropertiesLoaderUtils.loadProperties(resource);
 			PasswordBasedEncryptor pbEncryptor = new PasswordBasedEncryptor();

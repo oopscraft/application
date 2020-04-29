@@ -10,6 +10,10 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +35,10 @@ public class MenuService {
 	 * @throws Exception
 	 */
 	public List<Menu> getMenus(final Menu menu, Pagination pagination) throws Exception {
+		List<Order> orders = new ArrayList<Order>();
+		orders.add(new Order(Direction.ASC, "upperId"));
+		orders.add(new Order(Direction.ASC, "displayNo"));
+		PageRequest pageRequest = pagination.toPageRequest(new Sort(orders));
 		Page<Menu> menusPage = menuRepository.findAll(new Specification<Menu>() {
 			@Override
 			public Predicate toPredicate(Root<Menu> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -45,7 +53,7 @@ public class MenuService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pagination.toPageRequest());
+		}, pageRequest);
 		pagination.setTotalCount(menusPage.getTotalElements());
 		return menusPage.getContent();
 	}

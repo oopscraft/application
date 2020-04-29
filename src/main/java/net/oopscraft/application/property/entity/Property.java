@@ -15,10 +15,10 @@ public class Property extends SystemEntity {
 	@Id
 	@Column(name = "PROP_ID", length = 32)
 	String id;
-
+	
 	@Column(name = "PROP_NAME", length = 1024)
 	String name;
-
+	
 	@Column(name = "PROP_VAL", length = Integer.MAX_VALUE)
 	@Lob
 	String value;

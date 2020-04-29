@@ -25,6 +25,11 @@
 	// document ready
 	$(document).ready(function() {
 		
+		// checks authorization
+		if([[${#authorization.expression('hasAuthority("ADMN_USER_EDIT")')}]] === false){
+			lockDetails();
+		}
+		
 		// creates tab
 		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
 		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
@@ -82,7 +87,7 @@
 	 * Disables detail
 	 */
 	function disableDetail(disable){
-		user.setDisable(disable);
+		user.setDisableAll(disable);
 		$('#detailDiv').find('button').each(function(index, element){
 			$(element).prop('disabled', disable);
 		});
@@ -122,6 +127,16 @@
 		userGroups.reset();
 		userRoles.reset();
 		userAuthorities.reset();
+	}
+
+	/**
+	 * Lock details
+	 */
+	function lockDetails(){
+		user.setReadonlyAll(true);
+		userGroups.setReadonlyAll(true);
+		userRoles.setReadonlyAll(true);
+		userAuthorities.setReadonlyAll(true);
 	}
 	
 	/**
@@ -440,7 +455,7 @@
 								<option value="name" data-th-text="#{application.user.name}">Name</option>
 								<option value="email" data-th-text="#{application.user.email}">Email</option>
 							</select>
-							<input is="duice-input-text" type="text" data-duice-bind="search,value" style="width:250px;"/>
+							<input is="duice-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 							&nbsp;
 							<span data-th-text="#{application.user.status}">Status</span>
 							<select is="duice-select" data-duice-bind="search,status" style="width:125px;">
@@ -461,7 +476,7 @@
 								data-duice-bind="users,user" 
 								data-duice-selectable="true"
 								style="width:100%;">
-								<col style="width:50px;"/>					
+								<col style="width:10%;"/>
 								<col/>
 								<col/>
 								<col/>
@@ -469,7 +484,7 @@
 								<col style="width:110px;"/>
 								<thead>
 									<tr>
-										<th data-th-text="#{application.global.no}">No</th>
+										<th data-th-text="#{application.global.no}" class="text-center">No</th>
 										<th data-th-text="#{application.user.id}">ID</th>
 										<th data-th-text="#{application.user.email}">Email</th>
 										<th data-th-text="#{application.user.name}">Name</th>
@@ -480,13 +495,14 @@
 								<tbody>
 									<tr>
 										<td class="text-center">
-											<span is="duice-scriptlet" data-duice-bind="users">
+											<small is="duice-scriptlet" data-duice-bind="users" data-duice-value="
 												return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
-											</span>
+											">
+											</small>
 										</td>
 										<td>
 											<img is="duice-img" data-duice-bind="user,photo" th:src="@{/static/image/icon_user.png}" class="icon small"/>
-											<span is="duice-span" data-duice-bind="user,id" class="[@duice[$context.user.get('systemEmbedded') === true ? 'embd' : '']]"></span>
+											<span is="duice-span" data-duice-bind="user,id" class="id [@duice[$context.user.get('systemEmbedded') === true ? 'embd' : '']]"></span>
 										</td>
 										<td><span is="duice-span" data-duice-bind="user,email"></span></td>
 										<td><span is="duice-span" data-duice-bind="user,name"></span></td>
@@ -509,13 +525,13 @@
 								Rows
 							</small>
 						</div>
-						<div class="app-col">
+						<div class="app-col center">
 							<ul is="duice-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
-								<li onclick="getUsers();"></li>
+								<li data-page="[@duice[$context.page]]" onclick="getUsers(this.dataset.page);"></li>
 							</ul>
 						</div>
 						<div class="app-col right">
-							<button class="button" onclick="addUser();">
+							<button class="button" onclick="addUser();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
 								<img th:src="@{/static/image/icon_add.png}" class="icon"/>
 								<span data-th-text="#{application.global.add}"></span>
 							</button>
@@ -556,12 +572,12 @@
 								<tbody>
 									<tr>
 										<th><span data-th-text="#{application.user.id}" class="mand">ID</span></th>
-										<td><input id="userId" is="duice-input-text" type="text" data-duice-bind="user,id" autocomplete="nope"/></td>
+										<td><input id="userId" is="duice-input" type="text" class="id" data-duice-bind="user,id" autocomplete="nope"/></td>
 									</tr>
 									<tr>
 										<th><span data-th-text="#{application.user.email}" class="mand">Email</span></th>
 										<td>
-											<input is="duice-input-text" type="text" data-duice-bind="user,email"/>
+											<input is="duice-input" type="text" data-duice-bind="user,email"/>
 										</td>
 									</tr>
 									<tr>
@@ -575,7 +591,7 @@
 													</select>
 												</div>
 												<div class="app-col" style="width:75%;">
-													<input is="duice-input-text" type="text" data-duice-bind="user,mobileNumber"/>
+													<input is="duice-input" type="text" data-duice-bind="user,mobileNumber"/>
 												</div>
 											</div>
 										</td>
@@ -583,19 +599,19 @@
 									<tr id="passwordTr">
 										<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
 										<td>
-											<input is="duice-input-password" type="password" data-duice-bind="user,password"/>
+											<input is="duice-input" type="password" data-duice-bind="user,password"/>
 										</td>
 									</tr>
 									<tr id="passwordConfirmTr">
 										<th><span data-th-text="#{application.user.passwordConfirm}" class="mand">Password(Confirm)</span></th>
 										<td>
-											<input is="duice-input-password" type="password" data-duice-bind="user,passwordConfirm"/>
+											<input is="duice-input" type="password" data-duice-bind="user,passwordConfirm"/>
 										</td>
 									</tr>
 									<tr id="changePasswordTr">
 										<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
 										<td>
-											<button id="changePasswordButton" class="button" onclick="openChangePassword();">
+											<button id="changePasswordButton" class="button" onclick="openChangePassword();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
 												<img th:src="@{/static/image/icon_password.png}" class="icon"/>
 												<span data-th-text="#{application.user.changePassword}"></span>
 											</button>
@@ -612,11 +628,11 @@
 									</tr>
 									<tr>
 										<th><span data-th-text="#{application.user.name}" class="mand">Name</span></th>
-										<td><input is="duice-input-text" type="text" data-duice-bind="user,name"/></td>
+										<td><input is="duice-input" type="text" data-duice-bind="user,name"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.user.nickname}">Nickname</th>
-										<td><input is="duice-input-text" type="text" data-duice-bind="user,nickname"/></td>
+										<td><input is="duice-input" type="text" data-duice-bind="user,nickname"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.user.photo}">Photo</th>
@@ -624,7 +640,7 @@
 									</tr>
 									<tr>
 										<th data-th-text="#{application.user.profile}">Profile</th>
-										<td><textarea is="duice-textarea" data-duice-bind="user,profile"></textarea></td>
+										<td><textarea is="duice-textarea" data-duice-bind="user,profile" style="height:100px;"></textarea></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.user.language}">Locale</th>
@@ -641,7 +657,7 @@
 									</tr>
 									<tr>
 										<th data-th-text="#{application.user.closeDate}">Close Date</th>
-										<td><input is="duice-input-date" type="datetime-local" data-duice-bind="user,closeDate"/></td>
+										<td><input is="duice-input" type="datetime-local" data-duice-bind="user,closeDate"/></td>
 									</tr>
 									<tr>
 										<th>
@@ -650,42 +666,40 @@
 											<span data-th-text="#{application.user.groups}"></span>
 										</th>
 										<td>
-											<table is="duice-table" 
-											data-duice-bind="userGroups,group" style="width:100%;">
-												<col style="width:50px;"/>
-												<col style="width:35%;"/>
-												<col/>
-												<col style="width:5%;"/>
-												<thead>
-													<tr>
-														<th data-th-text="#{application.global.no}">No</th>
-														<th data-th-text="#{application.group.id}">ID</th>
-														<th data-th-text="#{application.group.name}">Name</th>
-														<th class="text-center">
-															<button class="button" onclick="javascript:addUserGroup();">
-																<img th:src="@{/static/image/icon_add.png}" class="icon"/>
-															</button>
-														</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td class="text-center">
-															<span is="duice-scriptlet" data-duice-bind="group">return $context.index+1;</span>
-														</td>
-														<td>
-															<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
-															<span is="duice-span" data-duice-bind="group,id"></span>
-														</td>
-														<td><span is="duice-span" data-duice-bind="group,name"></span></td>
-														<td class="text-center">
-															<button class="button" data-index="[@duice[$context.index]]" onclick="javascript:removeUserGroup(this.dataset.index);">
-																<img th:src="@{/static/image/icon_remove.png}" class="icon"/>
-															</button>
-														</td>
-													</tr>
-												</tbody>
-											</table>
+											<div style="width:100%; max-height:177px; overflow-y:scroll;">
+												<table is="duice-table" 
+												data-duice-bind="userGroups,group" style="width:100%;">
+													<col style="width:15%;"/>
+													<col style="width:30%;"/>
+													<col/>
+													<col style="width:5%;"/>
+													<thead>
+														<tr>
+															<th data-th-text="#{application.global.no}" class="text-center"></th>
+															<th data-th-text="#{application.group.id}"></th>
+															<th data-th-text="#{application.group.name}"></th>
+															<th class="text-center">
+																<img class="icon small button" th:src="@{/static/image/icon_add.png}" onclick="addUserGroup();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td class="text-center">
+																<small is="duice-scriptlet" data-duice-bind="group" data-duice-value="return $context.index+1;"></small>
+															</td>
+															<td>
+																<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
+																<span is="duice-span" data-duice-bind="group,id"></span>
+															</td>
+															<td><span is="duice-span" data-duice-bind="group,name"></span></td>
+															<td class="text-center">
+																<img class="icon small button" th:src="@{/static/image/icon_remove.png}" data-index="[@duice[$context.index]]" onclick="removeUserGroup(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
 										</td>
 									</tr>
 									<tr>
@@ -695,39 +709,41 @@
 											<span data-th-text="#{application.user.roles}"></span>
 										</th>
 										<td>
-											<table is="duice-table" 
-											data-duice-bind="userRoles,role" 
-											style="width:100%;">
-												<col style="width:50px;"/>
-												<col style="width:35%;"/>
-												<col/>
-												<col style="width:5%;"/>
-												<thead>
-													<tr>
-														<th data-th-text="#{application.global.no}">No</th>
-														<th data-th-text="#{application.role.id}">ID</th>
-														<th data-th-text="#{application.role.name}">Name</th>
-														<th class="text-center">
-															<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addUserRole();">
-														</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td class="text-center">
-															<span is="duice-scriptlet" data-duice-bind="role">return $context.index+1;</span>
-														</td>
-														<td>
-															<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
-															<span is="duice-span" data-duice-bind="role,id"></span>
-														</td>
-														<td><span is="duice-span" data-duice-bind="role,name"></span></td>
-														<td class="text-center">
-															<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeUserRole(this.dataset.index);">
-														</td>
-													</tr>
-												</tbody>
-											</table>
+											<div style="width:100%; max-height:177px; overflow-y:scroll;">
+												<table is="duice-table" 
+												data-duice-bind="userRoles,role" 
+												style="width:100%;">
+													<col style="width:15%;"/>
+													<col style="width:30%;"/>
+													<col/>
+													<col style="width:5%;"/>
+													<thead>
+														<tr>
+															<th data-th-text="#{application.global.no}" class="text-center"></th>
+															<th data-th-text="#{application.role.id}">ID</th>
+															<th data-th-text="#{application.role.name}">Name</th>
+															<th class="text-center">
+																<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addUserRole();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td class="text-center">
+																<small is="duice-scriptlet" data-duice-bind="role" data-duice-value="return $context.index+1;"></small>
+															</td>
+															<td>
+																<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
+																<span is="duice-span" data-duice-bind="role,id"></span>
+															</td>
+															<td><span is="duice-span" data-duice-bind="role,name"></span></td>
+															<td class="text-center">
+																<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeUserRole(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
 										</td>
 									</tr>
 									<tr>
@@ -737,50 +753,52 @@
 											<span data-th-text="#{application.user.authorities}"></span>
 										</th>
 										<td>
-											<table is="duice-table" 
-												data-duice-bind="userAuthorities,authority" 
-												style="width:100%;">
-												<col style="width:50px;"/>
-												<col style="width:35%;"/>
-												<col/>
-												<col style="width:5%;"/>
-												<thead>
-													<tr>
-														<th data-th-text="#{application.global.no}">No</th>
-														<th data-th-text="#{application.authority.id}">ID</th>
-														<th data-th-text="#{application.authority.name}">Name</th>
-														<th class="text-center">
-															<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addUserAuthority();"/>
-														</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td class="text-center">
-															<span is="duice-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
-														</td>
-														<td>
-															<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
-															<span is="duice-span" data-duice-bind="authority,id"></span>
-														</td>
-														<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
-														<td class="text-center">
-															<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeUserAuthority(this.dataset.index);"/>
-														</td>
-													</tr>
-												</tbody>
-											</table>
+											<div style="width:100%; max-height:177px; overflow-y:scroll;">
+												<table is="duice-table" 
+													data-duice-bind="userAuthorities,authority" 
+													style="width:100%;">
+													<col style="width:15%;"/>
+													<col style="width:30%;"/>
+													<col/>
+													<col style="width:5%;"/>
+													<thead>
+														<tr>
+															<th data-th-text="#{application.global.no}" class="text-center"></th>
+															<th data-th-text="#{application.authority.id}"></th>
+															<th data-th-text="#{application.authority.name}"></th>
+															<th class="text-center">
+																<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addUserAuthority();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td class="text-center">
+																<small is="duice-scriptlet" data-duice-bind="authority" data-duice-value="return $context.index+1;"></small>
+															</td>
+															<td>
+																<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+																<span is="duice-span" data-duice-bind="authority,id"></span>
+															</td>
+															<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
+															<td class="text-center">
+																<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeUserAuthority(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
 										</td>
 									</tr>
 								</tbody>
 							</table>
 							<div class="app-row action">
 								<div class="app-col right">
-									<button class="button" onclick="deleteUser();">
+									<button class="button" onclick="deleteUser();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
 										<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 										<span data-th-text="#{application.global.delete}"></span>
 									</button>
-									<button class="button" onclick="saveUser();">
+									<button class="button" onclick="saveUser();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
 										<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 										<span data-th-text="#{application.global.save}"></span>
 									</button>
@@ -796,41 +814,37 @@
 					<!-- ====================================================== -->
 					<div id="tabContent2" class="app-row">
 						<div class="app-col">
-							<table is="duice-table" 
-								data-duice-bind="userAvailableAuthorities,authority" 
-								style="width:100%;">
-								<col/>
-								<col/>
-								<col/>
-								<col/>
-								<thead>
-									<tr>
-										<th data-th-text="#{application.global.no}">No</th>
-										<th data-th-text="#{application.authority.id}">ID</th>
-										<th data-th-text="#{application.authority.name}">Name</th>
-										<th data-th-text="#{application.authority.holder}">Holder</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>
-											<span is="duice-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
-										</td>
-										<td>
-											<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
-											<span is="duice-span" data-duice-bind="authority,id"></span>
-										</td>
-										<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
-										<td>
-											<span is="duice-scriptlet" data-duice-bind="authority">
-												<![CDATA[
-												return JSON.stringify($context.authority.get('holder'));
-												]]>
-											</span>
-										</td>
-									</tr>
-								</tbody>
-							</table>
+							<div style="width:100%; max-height:800px; overflow-y:scroll; border:solid 1px #dee2e6;">
+								<table is="duice-table" 
+									data-duice-bind="userAvailableAuthorities,authority" 
+									style="width:100%; border:none;">
+									<col style="width:10%;"/>
+									<col/>
+									<col/>
+									<col/>
+									<thead>
+										<tr>
+											<th data-th-text="#{application.global.no}" class="text-center">No</th>
+											<th data-th-text="#{application.authority.id}">ID</th>
+											<th data-th-text="#{application.authority.name}">Name</th>
+											<th data-th-text="#{application.authority.holder}">Holder</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td class="text-center">
+												<small is="duice-scriptlet" data-duice-bind="authority" data-duice-value="return $context.index+1;"></small>
+											</td>
+											<td>
+												<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+												<span is="duice-span" data-duice-bind="authority,id"></span>
+											</td>
+											<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
+											<td><span is="duice-span" data-duice-bind="authority,holder"></span></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 					<!-- ====================================================== -->
@@ -850,7 +864,7 @@
 	<script>
 	var changePassword = new duice.Map();
 	</script>
-	<dialog id="changePasswordDialog" style="width:400px;">
+	<dialog is="duice-dialog" id="changePasswordDialog" style="width:400px;">
 		<div class="app-row">
 			<div class="app-col">
 				<h2>
@@ -868,13 +882,13 @@
 						<tr>
 							<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
 							<td>
-								<input is="duice-input-text" type="password" data-duice-bind="changePassword,password"/>
+								<input is="duice-input" type="password" data-duice-bind="changePassword,password"/>
 							</td>
 						</tr>
 						<tr>
 							<th><span data-th-text="#{application.user.passwordConfirm}" class="mand">Password(Confirm)</span></th>
 							<td>
-								<input is="duice-input-text" type="password" data-duice-bind="changePassword,passwordConfirm"/>
+								<input is="duice-input" type="password" data-duice-bind="changePassword,passwordConfirm"/>
 							</td>
 						</tr>
 					</tbody>

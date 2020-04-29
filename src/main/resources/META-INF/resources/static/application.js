@@ -24,7 +24,12 @@ $(document).ajaxError(function(event, jqXHR, settings, thrownError){
 	}
 	if(jqXHR.readyState > 0){
 		console.error(event, jqXHR, settings, thrownError);
-		new duice.Alert(jqXHR.responseText).open();
+		try {
+			var response = JSON.parse(jqXHR.responseText);
+			new duice.Alert(response.message).open();
+		}catch(e){
+			new duice.Alert(jqXHR.responseText).open();
+		}
 	}
 });
 // Checks

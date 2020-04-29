@@ -42,9 +42,11 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
+import org.thymeleaf.spring5.ISpringTemplateEngine;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import net.oopscraft.application.api.WebSocketHandler;
@@ -261,45 +263,6 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
 				.permitAll();
-
-    		
-    		
-    		
-    		
-//    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//    		if(securityPolicy != SecurityPolicy.ANONYMOUS) {
-//	    		http
-//	    		.antMatcher("/**")
-//		    		.authorizeRequests()
-//		    		.anyRequest()
-//		    		.authenticated()
-//		    		.and()
-//	    		.sessionManagement()
-//	    			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//	    			.and()
-//	    		.csrf()
-//	    			.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//	    			.and()
-//		    	.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class)
-//	    		.formLogin()
-//					.loginPage("/user/login")
-//					.loginProcessingUrl("/user/doLogin")
-//					.usernameParameter("id")
-//					.passwordParameter("password")
-//					.successHandler(authenticationHandler)
-//					.failureHandler(authenticationHandler)
-//					.permitAll()
-//					.and()
-//			    	.authenticationProvider(authenticationProvider)
-//				.logout()
-//					.logoutUrl("/user/logout")
-//					.logoutSuccessHandler(authenticationHandler)
-//					.logoutSuccessUrl("/user/login")
-//					.invalidateHttpSession(true)
-//					.deleteCookies("JSESSIONID")
-//					.permitAll();
-//				;
-//    		}
         }
     }
 
@@ -350,7 +313,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     @DependsOn({"templateEngine"})
     public ViewResolver thymeleafViewResolver() {
         viewResolver = new ThymeleafViewResolver();
-        viewResolver.setTemplateEngine(templateEngine);
+        viewResolver.setTemplateEngine((ISpringTemplateEngine)templateEngine);
         viewResolver.setCharacterEncoding("UTF-8");
         viewResolver.setViewNames(new String[]{"*.html"});
         viewResolver.setOrder(1);
@@ -363,6 +326,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
         templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
         templateEngine.addDialect(new LayoutDialect());
+        templateEngine.addDialect(new SpringSecurityDialect());
         return templateEngine;
     }
 	
@@ -393,7 +357,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 	@Bean
 	public CommonsMultipartResolver multipartResolver() throws Exception {
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-		multipartResolver.setMaxUploadSizePerFile(10485760);	// limits 10MB
+		multipartResolver.setMaxUploadSizePerFile(1024*1024*1024);	// limits 1Gb
 		return multipartResolver;
 	}
 

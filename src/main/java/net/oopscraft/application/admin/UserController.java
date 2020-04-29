@@ -88,6 +88,7 @@ public class UserController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_USER_EDIT')")
 	@RequestMapping(value = "saveUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -100,6 +101,7 @@ public class UserController {
 	 * @param user
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_USER_EDIT')")
 	@RequestMapping(value = "deleteUser", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -112,6 +114,7 @@ public class UserController {
 	 * @param payload
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_USER_EDIT')")
 	@RequestMapping(value = "changePassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)

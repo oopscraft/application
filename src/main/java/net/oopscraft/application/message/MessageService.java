@@ -10,11 +10,16 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.message.entity.Message;
+import net.oopscraft.application.message.entity.MessageLanguage;
 
 @Service
 public class MessageService {
@@ -30,6 +35,9 @@ public class MessageService {
 	 * @throws Exception
 	 */
 	public List<Message> getMessages(final Message message, Pagination pagination) throws Exception {
+		List<Order> orders = new ArrayList<Order>();
+		orders.add(new Order(Direction.ASC, "id"));
+		PageRequest pageRequest = pagination.toPageRequest(new Sort(orders));
 		Page<Message> messagesPage = messageRepository.findAll(new  Specification<Message>() {
 			@Override
 			public Predicate toPredicate(Root<Message> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -44,7 +52,7 @@ public class MessageService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pagination.toPageRequest());
+		}, pageRequest);
 		pagination.setTotalCount(messagesPage.getTotalElements());
 		return messagesPage.getContent();
 	}
@@ -81,8 +89,11 @@ public class MessageService {
 			one = new Message(message.getId());
 		}
 		one.setName(message.getName());
-		one.setValue(message.getValue());
 		one.setDescription(message.getDescription());
+		one.getLanguages().clear();
+		for(MessageLanguage language : message.getLanguages()) {
+			one.getLanguages().add(language);
+		}
 		return messageRepository.save(one);
 	}
 	
@@ -94,76 +105,20 @@ public class MessageService {
 	public void deleteMessage(Message message) throws Exception {
 		messageRepository.delete(message);
 	}
+	
+	/**
+	 * getMessageLanguage
+	 * @param messageId
+	 * @param languageId
+	 * @return
+	 * @throws Exception
+	 */
+	public MessageLanguage getMessageLanguage(String messageId, String languageId) throws Exception {
+		Message message = getMessage(messageId);
+		if(message != null) {
+			return message.getLanguage(languageId);
+		}
+		return null;
+	}
 
-//	/**
-//	 * Gets messages
-//	 * @param searchType
-//	 * @param searchValue
-//	 * @param pagination
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	public List<Message> getMessages(pagination pagination, MessageSearchType searchType, String searchValue) throws Exception {
-//		Pageable pageable = pagination.toPageable();
-//		Page<Message> messagesPage = null;
-//		if(searchType == null) {
-//			messagesPage = messageRepository.findAll(pageable);
-//		}else {
-//			switch(searchType) {
-//				case ID :
-//					messagesPage = messageRepository.findByIdContaining(searchValue, pageable);
-//				break;
-//				case NAME :
-//					messagesPage = messageRepository.findByNameContaining(searchValue, pageable);
-//				break;
-//			}
-//		}
-//		if (pagination.isEnableTotalCount() == true) {
-//			pagination.setTotalCount(messagesPage.getTotalElements());
-//		}
-//		List<Message> messages = messagesPage.getContent();
-//		return messages;
-//	}
-//	
-//	/**
-//	 * Gets detail of message
-//	 * 
-//	 * @param id
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	public Message getMessage(String id) throws Exception {
-//		Message Message = messageRepository.findOne(id);
-//		return Message;
-//	}
-//	
-//	/**
-//	 * Saves message
-//	 * 
-//	 * @param message
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	public void saveMessage(Message message) throws Exception {
-//		Message one = messageRepository.findOne(message.getId());
-//		if(one == null) {
-//			one = new Message();
-//			one.setId(message.getId());
-//		}
-//		one.setName(message.getName());
-//		one.setValue(message.getValue());
-//		one.setDescription(message.getDescription());
-//		messageRepository.save(one);
-//	}
-//	
-//	/**
-//	 * Removes message
-//	 * @param id
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	public void deleteMessage(String id) throws Exception {
-//		Message message = messageRepository.getOne(id);
-//		messageRepository.delete(message);
-//	}
 }

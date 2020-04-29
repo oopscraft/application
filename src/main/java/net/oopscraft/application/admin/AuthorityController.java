@@ -77,6 +77,7 @@ public class AuthorityController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_AUTH_EDIT')")
 	@RequestMapping(value = "saveAuthority", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -89,6 +90,7 @@ public class AuthorityController {
 	 * @param authority
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_AUTH_EDIT')")
 	@RequestMapping(value = "deleteAuthority", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)

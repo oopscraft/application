@@ -78,6 +78,7 @@ public class PropertyController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_PROP_EDIT')")
 	@RequestMapping(value = "saveProperty", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -90,6 +91,7 @@ public class PropertyController {
 	 * @param property
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_PROP_EDIT')")
 	@RequestMapping(value = "deleteProperty", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)

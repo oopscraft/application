@@ -19,6 +19,11 @@
 		
 		// document ready
 		$(document).ready(function() {
+
+			// checks authorization
+			if([[${#authorization.expression('hasAuthority("ADMN_ROLE_EDIT")')}]] === false){
+				lockDetails();
+			}
 			
 			// creates tab
 			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
@@ -58,7 +63,7 @@
 		 * Disables detail
 		 */
 		function disableDetail(disable){
-			role.setDisable(disable);
+			role.setDisableAll(disable);
 			$('#detailDiv').find('button').each(function(index, element){
 				$(element).prop('disabled', disable);
 			});
@@ -91,6 +96,14 @@
 		function resetDetail() {
 			role.reset();
 			roleAuthorities.reset();
+		}
+		
+		/**
+		 * Lock details
+		 */
+		function lockDetails(){
+			role.setReadonlyAll(true);
+			roleAuthorities.setReadonlyAll(true);
 		}
 		
 		/**
@@ -277,7 +290,7 @@
 								<option value="id" data-th-text="#{application.role.id}">Role ID</option>
 								<option value="name" data-th-text="#{application.role.name}">Role Name</option>
 							</select>
-							<input is="duice-input-text" type="text" data-duice-bind="search,value" style="width:250px;"/>
+							<input is="duice-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 						</div>
 						<div class="app-col right">
 							<button class="button" onclick="getRoles(1);">
@@ -292,28 +305,37 @@
 								data-duice-bind="roles,role" 
 								data-duice-selectable="true"
 								style="width:100%;">
-								<col style="width:70px;"/>					
+								<col style="width:10%;"/>					
+								<col/>
 								<col/>
 								<col/>
 								<thead>
 									<tr>
-										<th data-th-text="#{application.global.no}">No</th>
-										<th data-th-text="#{application.role.id}">Role ID</th>
-										<th data-th-text="#{application.role.name}">Role Name</th>
+										<th data-th-text="#{application.global.no}" class="text-center"></th>
+										<th data-th-text="#{application.role.id}"></th>
+										<th data-th-text="#{application.role.name}"></th>
+										<th data-th-text="#{application.role.authorities}" class="text-center"></th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr>
 										<td class="text-center">
-											<span is="duice-scriptlet" data-duice-bind="search">
+											<small is="duice-scriptlet" data-duice-bind="search" data-duice-value="
 												return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
-											</span>
+											">
+											</small>
 										</td>
 										<td>
 											<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
-											<span is="duice-span" data-duice-bind="role,id" class="[@duice[$context.role.get('systemEmbedded')===true?'embd':'']]"></span>
+											<span is="duice-span" data-duice-bind="role,id" class="id [@duice[$context.role.get('systemEmbedded')===true?'embd':'']]"></span>
 										</td>
 										<td><span is="duice-span" data-duice-bind="role,name"></span></td>
+										<td class="text-center">
+											<small is="duice-scriptlet" data-duice-bind="role" data-duice-value="
+												return $context.role.get('authorities').length;
+											">
+											</small>
+										</td>
 									</tr>
 								</tbody>
 							</table>
@@ -327,13 +349,13 @@
 								Rows
 							</small>
 						</div>
-						<div class="app-col">
+						<div class="app-col center">
 							<ul is="duice-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
-								<li onclick="getUsers();"></li>
+								<li data-page="[@duice[$context.page]]" onclick="getRoles(this.dataset.page);"></li>
 							</ul>
 						</div>
 						<div class="app-col right">
-							<button class="button" onclick="addRole();">
+							<button class="button" onclick="addRole();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_ROLE_EDIT'')')}?'lock'">
 								<img th:src="@{/static/image/icon_add.png}" class="icon"/>
 								<span data-th-text="#{application.global.add}"></span>
 							</button>
@@ -369,22 +391,22 @@
 								<col/>
 								<tbody>
 									<tr>
-										<th><span data-th-text="#{application.role.id}" class="mand">Role ID</span></th>
-										<td><input is="duice-input-text" type="text" data-duice-bind="role,id" autocomplete="nope"/></td>
+										<th><span data-th-text="#{application.role.id}" class="mand"></span></th>
+										<td><input is="duice-input" type="text" class="id" data-duice-bind="role,id" autocomplete="nope"/></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.role.icon}">Role Icon</th>
+										<th data-th-text="#{application.role.icon}"></th>
 										<td>
 											<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}"/>
 										</td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.role.name}">Role Name</th>
-										<td><input is="duice-input-text" type="text" data-duice-bind="role,name"/></td>
+										<th data-th-text="#{application.role.name}"></th>
+										<td><input is="duice-input" type="text" data-duice-bind="role,name"/></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.role.description}">Role Description</th>
-										<td><textarea is="duice-textarea" data-duice-bind="role,description"></textarea></td>
+										<th data-th-text="#{application.role.description}"></th>
+										<td><textarea is="duice-textarea" data-duice-bind="role,description" style="height:200px;"></textarea></td>
 									</tr>
 									<tr>
 										<th>
@@ -393,54 +415,52 @@
 											<span data-th-text="#{application.role.authorities}"></span>
 										</th>
 										<td>
-											<table is="duice-table" 
-												data-duice-bind="roleAuthorities,authority" 
-												style="width:100%;">
-												<col style="width:50px;"/>
-												<col style="width:35%;"/>
-												<col/>
-												<col style="width:5%;"/>
-												<thead>
-													<tr>
-														<th data-th-text="#{application.global.no}">No</th>
-														<th data-th-text="#{application.role.id}">Authority ID</th>
-														<th data-th-text="#{application.role.name}">Authority Name</th>
-														<th class="text-center">
-															<button class="button small" onclick="addRoleAuthority();">
-																+
-															</button>
-														</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td class="text-center">
-															<span is="duice-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
-														</td>
-														<td>
-															<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
-															<span is="duice-span" data-duice-bind="authority,id"></span>
-														</td>
-														<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
-														<td class="text-center">
-															<button class="button small" data-index="[@duice[$context.index]]" onclick="removeRoleAuthority(this.dataset.index);">
-																-
-															</button>
-														</td>
-													</tr>
-												</tbody>
-											</table>
+											<div style="width:100%; max-height:525px; overflow-y:scroll;">
+												<table is="duice-table" 
+													data-duice-bind="roleAuthorities,authority" 
+													style="width:100%;">
+													<col style="width:15%;"/>
+													<col style="width:30%;"/>
+													<col style="width:50%;"/>
+													<col style="width:5%;"/>
+													<thead>
+														<tr>
+															<th data-th-text="#{application.global.no}" class="text-center"></th>
+															<th data-th-text="#{application.role.id}"></th>
+															<th data-th-text="#{application.role.name}"></th>
+															<th class="text-center">
+																<img class="icon small button" th:src="@{/static/image/icon_add.png}" onclick="addRoleAuthority();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_ROLE_EDIT'')')}?'lock'"/>
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td class="text-center">
+																<small is="duice-scriptlet" data-duice-bind="authority" data-duice-value="return $context.index+1;"></small>
+															</td>
+															<td>
+																<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+																<span is="duice-span" data-duice-bind="authority,id"></span>
+															</td>
+															<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
+															<td class="text-center">
+																<img class="icon small button" th:src="@{/static/image/icon_remove.png}" data-index="[@duice[$context.index]]" onclick="removeRoleAuthority(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_ROLE_EDIT'')')}?'lock'"/>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
 										</td>
 									</tr>
 								</tbody>
 							</table>
-							<div class="app-row">
+							<div class="app-row action">
 								<div class="app-col right">
-									<button id="deleteUserButton" class="button large" onclick="deleteRole();">
+									<button id="deleteUserButton" class="button large" onclick="deleteRole();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_ROLE_EDIT'')')}?'lock'">
 										<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 										<span data-th-text="#{application.global.delete}"></span>
 									</button>
-									<button id="saveUserButton" class="button large" onclick="saveRole();">
+									<button id="saveUserButton" class="button large" onclick="saveRole();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_ROLE_EDIT'')')}?'lock'">
 										<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 										<span data-th-text="#{application.global.save}"></span>
 									</button>

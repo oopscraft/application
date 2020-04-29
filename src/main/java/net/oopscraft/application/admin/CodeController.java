@@ -79,6 +79,7 @@ public class CodeController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_CODE_EDIT')")
 	@RequestMapping(value = "saveCode", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -91,6 +92,7 @@ public class CodeController {
 	 * @param code
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_CODE_EDIT')")
 	@RequestMapping(value = "deleteCode", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)

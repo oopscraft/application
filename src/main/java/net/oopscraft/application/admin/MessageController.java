@@ -77,6 +77,7 @@ public class MessageController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_MESG_EDIT')")
 	@RequestMapping(value = "saveMessage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
@@ -89,6 +90,7 @@ public class MessageController {
 	 * @param message
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasAuthority('ADMN_MESG_EDIT')")
 	@RequestMapping(value = "deleteMessage", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)

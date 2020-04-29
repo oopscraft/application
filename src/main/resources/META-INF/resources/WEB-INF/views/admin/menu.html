@@ -17,6 +17,11 @@
 	// document ready
 	$(document).ready(function() {
 		
+		// checks authorization
+		if([[${#authorization.expression('hasAuthority("ADMN_MENU_EDIT")')}]] === false){
+			lockDetails();
+		}
+		
 		// creates tab
 		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
 		tabFolder.selectTab(0);
@@ -136,6 +141,14 @@
 		menuDisplayAuthorities.reset();
 	}
 
+	/**
+	 * Lock details
+	 */
+	function lockDetails(){
+		menu.setReadonlyAll(true);
+		menuDisplayAuthorities.setReadonlyAll(true);
+	}
+	
 	/**
 	 * Gets menus
 	 * Retrieves list of menu from serer API.
@@ -323,6 +336,14 @@
 	function removeMenuDisplayAuthority(index) {
 		menuDisplayAuthorities.removeRow(index);
 	}
+
+	/**
+	 * Opens menu
+	 */
+	function openMenu(){
+		window.open(menu.get('linkUrl'));
+	}
+
 	</script>
 	<div class="app-row">
 		<div class="app-col" style="width:50%;">
@@ -365,7 +386,7 @@
 							</small>
 						</div>
 						<div class="app-col right">
-							<button class="button" onclick="addMenu();">
+							<button class="button" onclick="addMenu();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MENU_EDIT'')')}?'lock'">
 								<img th:src="@{/static/image/icon_add.png}" class="icon"/>
 								<span data-th-text="#{application.global.add}"></span>
 							</button>
@@ -402,12 +423,31 @@
 								<tbody>
 									<tr>
 										<th><span data-th-text="#{application.menu.id}" class="mand">Menu ID</span></th>
-										<td><input is="duice-input-text" type="text" data-duice-bind="menu,id"/></td>
+										<td><input is="duice-input" type="text" data-duice-bind="menu,id" class="id"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.menu.upperId}">Upper Menu</th>
 										<td>
-											<span is="duice-span" data-duice-bind="menu,upperId"></span>
+											<small is="duice-scriptlet" data-duice-bind="menu" data-duice-value="
+												var breadCrumb = new Array();
+												var upperId = menu.get('upperId');
+												var run = true;
+												while(run){
+													var upperExist = false;
+													for(var i = 0, size = menus.getRowCount(); i < size; i ++ ){
+														var row = menus.getRow(i);
+														if(row.get('id') === upperId){
+															breadCrumb.push(row.get('name'));
+															upperId = row.get('upperId');
+															upperExist = true;
+															break;
+														}
+													}
+													run = upperExist;
+												}
+												breadCrumb.reverse();
+												return '/ ' + breadCrumb.join(' / ');
+											"></small>
 											<button class="button small" onclick="openUpperMenuDialog();">
 												<img th:src="@{/static/image/icon_change.png}" class="icon"/>
 												<span data-th-text="#{application.global.change}">Change</span>
@@ -422,15 +462,15 @@
 									</tr>
 									<tr>
 										<th data-th-text="#{application.menu.name}">Menu Name</th>
-										<td><input is="duice-input-text" type="text" data-duice-bind="menu,name"/></td>
+										<td><input is="duice-input" type="text" data-duice-bind="menu,name"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.menu.description}">Description</th>
-										<td><textarea is="duice-textarea" data-duice-bind="menu,description" style="height:6rem;"></textarea></td>
+										<td><textarea is="duice-textarea" data-duice-bind="menu,description" style="height:200px;"></textarea></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.menu.linkUrl}">Link URL</th>
-										<td><input is="duice-input-text" type="text" data-duice-bind="menu,linkUrl"/></td>
+										<td><input is="duice-input" type="text" data-duice-bind="menu,linkUrl"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.menu.linkTarget}">Link Target</th>
@@ -490,13 +530,19 @@
 									</tr>
 								</tbody>
 							</table>
-							<div class="app-row">
+							<div class="app-row action">
+								<div class="app-col">
+									<button class="button large" onclick="openMenu();">
+										<img th:src="@{/static/image/icon_open.png}" class="icon"/>
+										<span data-th-text="#{application.global.open}"></span>
+									</button>
+								</div>
 								<div class="app-col right">
-									<button id="deleteUserButton" class="button large" onclick="deleteMenu();">
+									<button id="deleteUserButton" class="button large" onclick="deleteMenu();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MENU_EDIT'')')}?'lock'">
 										<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 										<span data-th-text="#{application.global.delete}"></span>
 									</button>
-									<button id="saveUserButton" class="button large" onclick="saveMenu();">
+									<button id="saveUserButton" class="button large" onclick="saveMenu();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MENU_EDIT'')')}?'lock'">
 										<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 										<span data-th-text="#{application.global.save}"></span>
 									</button>
@@ -543,7 +589,7 @@
 			}
 		});
 	</script>
-	<dialog id="upperMenuDialog" style="width:600px;">
+	<dialog is="duice-dialog" id="upperMenuDialog" style="width:600px;">
 		<div class="app-row">
 			<div class="app-col">
 				<img class="icon" th:src="@{/static/image/icon_menu.png}"/>
@@ -566,7 +612,7 @@
 								<span is="duice-span" data-duice-bind="menu,name" style="font-weight:bold;"></span>
 							</div>
 							<div class="app-col text-right">
-								<input is="duice-input-checkbox" type="checkbox" data-duice-bind="menu,__checked"/>
+								<input is="duice-input" type="checkbox" data-duice-bind="menu,__checked"/>
 							</div>
 						</div>
 					</li>
@@ -577,7 +623,8 @@
 			<div class="app-col right">
 				<button class="button" onclick="changeUpperMenu();">
 					<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
-					Ok
+					<span data-th-text="#{application.global.confirm}">
+					</span>
 				</button>
 			</div>
 		</div>

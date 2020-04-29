@@ -3,6 +3,7 @@ package net.oopscraft.application;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -70,6 +73,9 @@ public class ApplicationWebController {
 	@Autowired
 	LocaleResolver localeResolver;
 	
+	@Autowired
+    MessageSource messageSource;
+	
 	/**
 	 * index
 	 * @return
@@ -82,6 +88,36 @@ public class ApplicationWebController {
 	}
 	
 	/**
+	 * createDefaultErrorMessage
+	 * @param request
+	 * @param exception
+	 * @return
+	 * @throws Exception
+	 */
+	private ValueMap createDefaultErrorMessage(HttpServletRequest request, Exception exception) throws Exception {
+		ValueMap errorMessage = new ValueMap();
+		errorMessage.set("uri", request.getRequestURI());
+		errorMessage.set("method", request.getMethod());
+		errorMessage.set("timestamp", new Date());
+		errorMessage.set("exception", exception.getClass().getSimpleName());
+		errorMessage.set("message", ExceptionUtils.getRootCauseMessage(exception));
+		return errorMessage;
+	}
+	
+	/**
+	 * responseErrorMessage
+	 * @param response
+	 * @param errorMessage
+	 * @param status
+	 * @throws Exception
+	 */
+	private void responseErrorMessage(HttpServletResponse response, ValueMap errorMessage, int status) throws Exception {
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(JsonConverter.toJson(errorMessage));
+		response.setStatus(status);
+	}
+	
+	/**
 	 * Default exception handler
 	 * @param request
 	 * @param response
@@ -90,29 +126,46 @@ public class ApplicationWebController {
 	 */
 	@ExceptionHandler(Exception.class)
 	public void handleException(HttpServletRequest request, HttpServletResponse response, Exception exception) throws Exception {
-		LOGGER.error(exception.getMessage());
+		ValueMap errorMessage = createDefaultErrorMessage(request, exception);
+		errorMessage.setString("message", messageSource.getMessage("application.global.exception.Exception", null, localeResolver.resolveLocale(request)));
 		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
-			ValueMap responseMap = new ValueMap();
-			responseMap.set("exception", exception.getClass().getName());
-			responseMap.set("message", exception.getMessage());
-			responseMap.set("stackTrace", ExceptionUtils.getRootCauseMessage(exception));
-	    	response.getWriter().write(JsonConverter.toJson(responseMap));
-	    	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			responseErrorMessage(response, errorMessage, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}else {
 			throw exception;
 		}
 	}
 	
-	@ExceptionHandler(MessageException.class)
-	public void handleMessageException(HttpServletRequest request, HttpServletResponse response, Exception exception) throws Exception {
-		LOGGER.error(exception.getMessage());
+	/**
+	 * Handling Authorization Error
+	 * @param request
+	 * @param response
+	 * @param exception
+	 * @throws Exception
+	 */
+	@ExceptionHandler(AccessDeniedException.class)
+	public void handleAccessDeniedException(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception) throws Exception {
+		ValueMap errorMessage = createDefaultErrorMessage(request, exception);
+		errorMessage.setString("message", messageSource.getMessage("application.global.exception.AccessDeniedException", null, localeResolver.resolveLocale(request)));
 		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
-			ValueMap responseMap = new ValueMap();
-			responseMap.set("exception", exception.getClass().getName());
-			responseMap.set("message", exception.getMessage());
-			responseMap.set("stackTrace", ExceptionUtils.getRootCauseMessage(exception));
-	    	response.getWriter().write(JsonConverter.toJson(responseMap));
-	    	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			responseErrorMessage(response, errorMessage, HttpServletResponse.SC_FORBIDDEN);
+		}else {
+			throw exception;
+		}
+	}
+	
+	/**
+	 * Handling Business Message Exception
+	 * @param request
+	 * @param response
+	 * @param exception
+	 * @throws Exception
+	 */
+	@ExceptionHandler(MessageException.class)
+	public void handleMessageException(HttpServletRequest request, HttpServletResponse response, MessageException exception) throws Exception {
+		ValueMap errorMessage = createDefaultErrorMessage(request, exception);
+		// TODO get custom message
+		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
+			responseErrorMessage(response, errorMessage, HttpServletResponse.SC_BAD_REQUEST);
 		}else {
 			throw exception;
 		}
@@ -222,62 +275,4 @@ public class ApplicationWebController {
 		return modelAndView;
 	}
 	
-
-
-
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-//    @ModelAttribute("__configuration")
-//    public Map<String,String> getConfiguration() throws Exception {
-//    	return ApplicationContainer.getApplication().getConfiguration();
-//    }
-	
-//	@ModelAttribute("__user")
-//	public User getUser() throws Exception {
-//		SecurityContext securityContext = SecurityContextHolder.getContext();
-//		Authentication authentication = securityContext.getAuthentication();
-//		
-//		// Anonymous user
-//		if(authentication instanceof AnonymousAuthenticationToken) {
-//			return new User();
-//		}
-//
-//		// Login user
-//		if(authentication.getPrincipal() instanceof UserDetails) {
-//			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//			return userDetails.getUser();
-//		}
-//		
-//		// JUNIT Mock Test user
-//		if(authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.User) {
-//			org.springframework.security.core.userdetails.User springUser = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-//			User user = new User();
-//			user.setId(springUser.getUsername());
-//			for(GrantedAuthority grantedAuthority : springUser.getAuthorities()) {
-//				grantedAuthority.getAuthority();
-//				Authority authority = new Authority();
-//				authority.setId(grantedAuthority.getAuthority());
-//				user.addAuthority(authority);
-//			}
-//			return user;
-//		}
-//
-//		// return null user
-//		return new User();
-//	}
-
 }

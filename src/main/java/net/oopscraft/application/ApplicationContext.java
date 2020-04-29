@@ -46,6 +46,7 @@ import net.oopscraft.application.core.mybatis.CamelCaseValueMap;
 import net.oopscraft.application.core.mybatis.PageRowBoundsInterceptor;
 import net.oopscraft.application.core.mybatis.YesNoBooleanTypeHandler;
 import net.oopscraft.application.core.spring.EncryptedPropertySourceFactory;
+import net.oopscraft.application.message.MessageSource;
 
 /**
  * Application Context Configuration
@@ -233,8 +234,8 @@ public class ApplicationContext {
 	 * @throws Exception
 	 */
 	@Bean
-	public ReloadableResourceBundleMessageSource messageSource() throws Exception {
-		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+	public MessageSource messageSource() throws Exception {
+		MessageSource messageSource = new MessageSource();
 		messageSource.setBasename("classpath:net/oopscraft/application/message");
 		messageSource.setFallbackToSystemLocale(false);
 		messageSource.setDefaultEncoding("UTF-8");

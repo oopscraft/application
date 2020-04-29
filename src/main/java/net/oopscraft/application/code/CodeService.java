@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.code.entity.Code;
+import net.oopscraft.application.code.entity.CodeEntity;
 import net.oopscraft.application.code.entity.CodeItem;
 import net.oopscraft.application.core.Pagination;
 
@@ -85,10 +86,16 @@ public class CodeService {
 		
 		// resets code items
 		one.getItems().clear();
-		int sequence = 1;
+		int itemDisplayNo = 1;
 		for (CodeItem item : code.getItems()) {
-			item.setSequence(sequence ++);
+			item.setDisplayNo(itemDisplayNo ++);
 			one.getItems().add(item);
+		}
+		
+		// resets code entities
+		one.getEntities().clear();
+		for(CodeEntity entity : code.getEntities()) {
+			one.getEntities().add(entity);
 		}
 		
 		// save code entity
