@@ -76,17 +76,17 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigurer {
 	
+    static AuthenticationProvider authenticationProvider;
+    static AuthenticationHandler authenticationHandler;
+    static AuthenticationFilter authenticationFilter;
+	
+    static ThymeleafViewResolver viewResolver;
+    static 	SpringResourceTemplateResolver templateResolver;
+    static 	TemplateEngine templateEngine;
+
     @Value("${application.securityPolicy:AUTHENTICATED}")
     private SecurityPolicy securityPolicy;
     
-    AuthenticationProvider authenticationProvider;
-    AuthenticationHandler authenticationHandler;
-    AuthenticationFilter authenticationFilter;
-	
-	ThymeleafViewResolver viewResolver;
-	SpringResourceTemplateResolver templateResolver;
-	TemplateEngine templateEngine;
-	
 	@Autowired
 	WebSocketHandler webSocketHandler;
 	
@@ -382,5 +382,9 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 				.paths(PathSelectors.ant("/api/**/*"))
 				.build();                                          
 	}
+	
+	
+	
 
+	
 }

@@ -12,6 +12,7 @@ import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 
@@ -22,9 +23,11 @@ public class Message extends SystemEntity {
 
 	@Id
 	@Column(name = "MESG_ID", length = 32)
+	@NotNull
 	String id;
 
 	@Column(name = "MESG_NAME", length = 1024)
+	@NotNull
 	String name;
 	
 	@Column(name = "MESG_DESC", length = Integer.MAX_VALUE)

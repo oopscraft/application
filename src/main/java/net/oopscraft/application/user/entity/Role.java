@@ -13,6 +13,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 
@@ -22,9 +23,11 @@ public class Role extends SystemEntity {
 
 	@Id
 	@Column(name = "ROLE_ID", length = 32)
+	@NotNull
 	String id;
 
 	@Column(name = "ROLE_NAME", length = 1024)
+	@NotNull
 	String name;
 	
 	@Column(name = "ROLE_ICON", length = Integer.MAX_VALUE)

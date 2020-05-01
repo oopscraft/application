@@ -20,7 +20,7 @@
 		$(document).ready(function() {
 			
 			// checks authorization
-			if([[${#authorization.expression('hasAuthority("ADMN_PROP_EDIT")')}]] === false){
+			if([[${!#authorization.expression('hasAuthority("ADMN_PROP_EDIT")')}]]){
 				lockDetails();
 			}
 			
@@ -61,9 +61,8 @@
 		// checks properties change
 		property.onBeforeChange(async function(name,value){
 			if(name === 'id'){
-				if(isDuplicateProperty(value)){
-					await duice.alert('[[#{application.message.alreadyRegisteredItem(#{application.property.id})}]]');
-					return false;
+				if(await isDuplicateProperty(value)){
+					property.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.property.id})}]]');
 				}
 			}
 		});
@@ -172,19 +171,20 @@
 		 * Returns duplicate property
 		 */
 		function isDuplicateProperty(id){
-			var duplicateProperty = false;
-			$.ajax({
-				 url: 'property/getProperty'
-				,type: 'GET'
-				,data: {id:id}
-				,async: false
-			})
-			.done(function(data, textStatus, jqXHR) {
-				if(data && data.id === id){
-					duplicateProperty = true;
-				}
+			return new Promise(function(resolve, reject){
+				$.ajax({
+					 url: 'property/getProperty'
+					,type: 'GET'
+					,data: {id:id}
+				})
+				.done(function(data, textStatus, jqXHR) {
+					if(data && data.id === id){
+						resolve(true);
+					}else{
+						resolve(false);
+					}
+				});
 			});
-			return duplicateProperty;
 		}
 		
 		/**
@@ -210,7 +210,7 @@
 			
 			// checks new property is existed
 			if(isNew){
-				if(isDuplicateProperty(property.get('id'))){
+				if(await isDuplicateProperty(property.get('id'))){
 					property.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.property.id})}]]');
 					return false;
 				}
@@ -393,12 +393,12 @@
 								<tbody>
 									<tr>
 										<th>
-											<span data-th-text="#{application.property.id}" class="mand">Property ID</span>
+											<span data-th-text="#{application.property.id}" class="mand">ID</span>
 										</th>
 										<td><input is="duice-input" type="text" data-duice-bind="property,id" autocomplete="nope" class="id"/></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.property.name}">Name</th>
+										<th data-th-text="#{application.property.name}" class="mand">Name</th>
 										<td><input is="duice-input" type="text" data-duice-bind="property,name"/></td>
 									</tr>
 									<tr>

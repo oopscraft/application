@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 
@@ -22,25 +23,27 @@ public class Group extends SystemEntity {
 
 	@Id
 	@Column(name = "GROP_ID", length = 32)
+	@NotNull
 	String id;
+
+	@Column(name = "GROP_NAME", length = 1024)
+	@NotNull
+	String name;
 
 	@Column(name = "UPER_GROP_ID", length = 32)
 	String upperId;
-
-	@Column(name = "GROP_NAME", length = 1024)
-	String name;
 	
-	@Column(name = "GROP_ICON")
+	@Column(name = "GROP_ICON", length = Integer.MAX_VALUE)
 	@Lob
 	String icon;
 
-	@Column(name = "GROP_DESC")
+	@Column(name = "GROP_DESC", length = Integer.MAX_VALUE)
 	@Lob
 	String description;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_GROP_ROLE", 
+		name = "APP_GROP_ROLE_MAP", 
 		joinColumns = @JoinColumn(name = "GROP_ID"), 
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "ROLE_ID"), 
@@ -50,7 +53,7 @@ public class Group extends SystemEntity {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name = "APP_GROP_AUTH",
+		name = "APP_GROP_AUTH_MAP",
 		joinColumns = @JoinColumn(name = "GROP_ID"),
 		foreignKey = @ForeignKey(name = "none"),
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"),

@@ -16,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,10 +29,27 @@ public class User extends SystemEntity {
 	
 	@Id
 	@Column(name = "USER_ID", length = 32)
+	@NotNull
 	String id;
 	
 	@Column(name = "USER_EMAL")
+	@NotNull
 	String email;
+	
+	public enum Status {
+		ACTIVE, SUSPENDED, CLOSED
+	}
+	@Column(name = "USER_STAT")
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	Status status;
+
+	@Column(name = "USER_NAME", length = 1024)
+	@NotNull
+	String name;
+	
+	@Column(name = "USER_NICK", length = 1024)
+	String nickname;
 
 	@Column(name = "USER_MOBL_CTRY")
 	String mobileCountry;
@@ -42,20 +60,7 @@ public class User extends SystemEntity {
 	@JsonIgnore
 	@Column(name = "USER_PASS", length = 255)
 	String password;
-
-	public enum Status {
-		ACTIVE, SUSPENDED, CLOSED
-	}
-	@Column(name = "USER_STAT")
-	@Enumerated(EnumType.STRING)
-	Status status;
-
-	@Column(name = "USER_NAME", length = 1024)
-	String name;
 	
-	@Column(name = "USER_NICK", length = 1024)
-	String nickname;
-
 	@Column(name = "USER_PHOT", length = Integer.MAX_VALUE)
 	@Lob
 	String photo;

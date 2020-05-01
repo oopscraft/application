@@ -103,13 +103,17 @@ public class UserService {
 		one.setName(user.getName());
 		one.setNickname(user.getNickname());
 		one.setStatus(user.getStatus());
+		if(user.getStatus() == User.Status.CLOSED) {
+			one.setCloseDate(new Date());
+		}else {
+			one.setCloseDate(null);
+		}
 		one.setEmail(user.getEmail());
 		one.setMobileCountry(user.getMobileCountry());
 		one.setMobileNumber(user.getMobileNumber());
 		one.setPhoto(user.getPhoto());
 		one.setProfile(user.getProfile());
 		one.setLanguage(user.getLanguage());
-		one.setCloseDate(user.getCloseDate());
 		one.setGroups(user.getGroups());
 		one.setRoles(user.getRoles());
 		one.setAuthorities(user.getAuthorities());

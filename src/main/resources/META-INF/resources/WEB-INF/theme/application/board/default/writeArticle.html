@@ -62,7 +62,7 @@
 								<small>
 									<img th:src="@{/static/image/icon_file.png}" class="icon small"/>
 									<span is="duice-span" data-duice-bind="articleFile,name" style="font-weight:bold;"></span>
-									(<span is="duice-span" data-duice-bind="articleFile,size" data-duice-format="number,0"></span>byte )
+									(<span is="duice-span" data-duice-bind="articleFile,size" data-duice-mask="number,0"></span>byte )
 									<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeArticleFile(this.dataset.index);"/>
 								</small>
 							</li>

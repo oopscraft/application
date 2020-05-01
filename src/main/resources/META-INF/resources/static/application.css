@@ -181,7 +181,8 @@ a:hover {
  	height: 16px;
 }
 .icon.button {
-	padding: 0px;
+	padding: 2px;
+    border-radius: 2px;
 }
 .link {
 	font-weight: bold;

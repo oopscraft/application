@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 
@@ -14,9 +15,11 @@ public class Property extends SystemEntity {
 
 	@Id
 	@Column(name = "PROP_ID", length = 32)
+	@NotNull
 	String id;
 	
 	@Column(name = "PROP_NAME", length = 1024)
+	@NotNull
 	String name;
 	
 	@Column(name = "PROP_VAL", length = Integer.MAX_VALUE)

@@ -44,7 +44,7 @@
 				
 				<span is="duice-span" data-duice-bind="article,authorName"></span>
 				<small>
-					<span is="duice-span" data-duice-bind="article,registerDate" data-duice-format="date,yyyy-MM-dd HH:mm:ss"></span>
+					<span is="duice-span" data-duice-bind="article,registerDate" data-duice-mask="date,yyyy-MM-dd HH:mm:ss"></span>
 				</small>
 			</div>
 			<div class="app-col right" style="width:50%;">
@@ -53,7 +53,7 @@
 						<small>
 							<img th:src="@{/static/image/icon_file.png}" class="icon small"/>
 							<span is="duice-span" data-duice-bind="articleFile,name" data-id="[@duice[$context.articleFile.get('id')]]" onclick="downloadArticleFile(this.dataset.id);" style="font-weight:bold; text-decoration:underline;" class="link"></span>
-							(<span is="duice-span" data-duice-bind="articleFile,size" data-duice-format="number,0"></span>byte )
+							(<span is="duice-span" data-duice-bind="articleFile,size" data-duice-mask="number,0"></span>byte )
 						</small>
 					</li>
 				</ul>

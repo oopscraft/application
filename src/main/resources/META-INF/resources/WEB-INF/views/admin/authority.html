@@ -20,7 +20,7 @@
 		$(document).ready(function() {
 			
 			// checks authorization
-			if([[${#authorization.expression('hasAuthority("ADMN_AUTH_EDIT")')}]] === false){
+			if([[${!#authorization.expression('hasAuthority("ADMN_AUTH_EDIT")')}]]){
 				lockDetails();
 			}
 			
@@ -56,6 +56,15 @@
 		// event listener for select row
 		authorities.onAfterSelectRow(function(selectedRow){
 			getAuthority(selectedRow.get('id'));
+		});
+		
+		// checks properties change
+		authority.onBeforeChange(async function(name,value){
+			if(name === 'id'){
+				if(await isDuplicateAuthority(value)){
+					authority.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.authority.id})}]]');
+				}
+			}
 		});
 		
 		/**
@@ -153,14 +162,35 @@
 		function addAuthority() {
 			initializeDetail();
 			disableDetail(false);
-			authority.setReadonly('id',false);
 			isNew = true;
+			authority.setReadonly('id',false);
+			authority.setFocus('id');
+		}
+		
+		/**
+		 * Returns duplicate authority
+		 */
+		function isDuplicateAuthority(id){
+			return new Promise(function(resolve, reject){
+				$.ajax({
+					 url: 'authority/getAuthority'
+					,type: 'GET'
+					,data: {id:id}
+				})
+				.done(function(data, textStatus, jqXHR) {
+					if(data && data.id === id){
+						resolve(true);
+					}else{
+						resolve(false)
+					}
+				});
+			});
 		}
 		
 		/**
 		 * Saves authority
 		 */
-		function saveAuthority(){
+		async function saveAuthority(){
 			
 			// checks changes
 			if(isNew === false && isDetailChanged() === false) {
@@ -176,6 +206,12 @@
 			if(!duice.isIdFormat(authority.get('id'))){
 				authority.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
 				return false;
+			}
+			if(isNew){
+				if(await isDuplicateAuthority(authority.get('id'))){
+					authority.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.authority.id})}]]');
+					return false;
+				}
 			}
 			
 			// checks user name
@@ -359,12 +395,12 @@
 										<td><input is="duice-input" type="text" data-duice-bind="authority,id" autocomplete="nope" class="id"/></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.authority.icon}"></th>
-										<td><img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}"/></td>
+										<th data-th-text="#{application.authority.name}" class="mand"></th>
+										<td><input is="duice-input" type="text" data-duice-bind="authority,name"/></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.authority.name}"></th>
-										<td><input is="duice-input" type="text" data-duice-bind="authority,name"/></td>
+										<th data-th-text="#{application.authority.icon}"></th>
+										<td><img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.authority.description}"></th>

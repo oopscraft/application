@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.security.entity.SecurityPolicy;
@@ -26,13 +27,15 @@ public class Menu extends SystemEntity {
 	
 	@Id
 	@Column(name = "MENU_ID", length = 32)
+	@NotNull
 	String id;
 
+	@Column(name = "MENU_NAME", length = 1024)
+	@NotNull
+	String name;
+	
 	@Column(name = "UPER_MENU_ID", length = 32)
 	String upperId;
-
-	@Column(name = "MENU_NAME", length = 1024)
-	String name;
 	
 	@Column(name = "MENU_ICON", length = Integer.MAX_VALUE)
 	@Lob

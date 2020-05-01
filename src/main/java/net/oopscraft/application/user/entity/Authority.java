@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 
@@ -15,9 +16,11 @@ public class Authority extends SystemEntity {
 
 	@Id
 	@Column(name = "AUTH_ID", length=32)
+	@NotNull
 	String id;
 
 	@Column(name = "AUTH_NAME", length = 1024)
+	@NotNull
 	String name;
 	
 	@Column(name = "AUTH_ICON", length = Integer.MAX_VALUE)

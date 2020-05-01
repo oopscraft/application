@@ -24,6 +24,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -148,6 +151,29 @@ public class ApplicationWebController {
 		errorMessage.setString("message", messageSource.getMessage("application.global.exception.AccessDeniedException", null, localeResolver.resolveLocale(request)));
 		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
 			responseErrorMessage(response, errorMessage, HttpServletResponse.SC_FORBIDDEN);
+		}else {
+			throw exception;
+		}
+	}
+	
+	/**
+	 * MethodArgumentNotValidException
+	 * @param request
+	 * @param response
+	 * @param exception
+	 * @throws Exception
+	 */
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public void handleMethodArgumentNotValidException(HttpServletRequest request, HttpServletResponse response, MethodArgumentNotValidException exception) throws Exception {
+		ValueMap errorMessage = createDefaultErrorMessage(request, exception);
+		StringBuffer message = new StringBuffer();
+		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
+			for(FieldError error : exception.getBindingResult().getFieldErrors()) {
+				message.append(String.format("[%s.%s] %s", error.getObjectName(), error.getField(), error.getDefaultMessage()));
+				break;
+			}
+			errorMessage.setString("message", message);
+			responseErrorMessage(response, errorMessage, HttpServletResponse.SC_BAD_REQUEST);
 		}else {
 			throw exception;
 		}

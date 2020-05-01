@@ -83,9 +83,8 @@
 	// checks user properties change
 	menu.onBeforeChange(async function(name,value){
 		if(name === 'id'){
-			if(isDuplicateMenu(value)){
-				await duice.alert('[[#{application.global.alreadyRegisteredItem(#{application.menu.id})}]]');
-				return false;
+			if(await isDuplicateMenu(value)){
+				menu.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.menu.id})}]]');
 			}
 		}
 	});
@@ -207,22 +206,31 @@
 	}
 	
 	/**
+	 * Adds menu as child node
+	 */
+	function addChildMenu(id) {
+		addMenu();
+		menu.set('upperId', id);
+	}
+	
+	/**
 	 * Returns duplicate menu
 	 */
 	function isDuplicateMenu(id){
-		var duplicateMenu = false;
-		$.ajax({
-			 url: 'menu/getMenu'
-			,type: 'GET'
-			,data: {id:id}
-			,async: false
-		})
-		.done(function(data, textStatus, jqXHR) {
-			if(data && data.id === id){
-				duplicateMenu = true;
-			}
+		return new Promise(function(resolve,reject){
+			$.ajax({
+				 url: 'menu/getMenu'
+				,type: 'GET'
+				,data: {id:id}
+			})
+			.done(function(data, textStatus, jqXHR) {
+				if(data && data.id === id){
+					resolve(true);
+				}else{
+					resolve(false);
+				}
+			});
 		});
-		return duplicateMenu;
 	}
 	
 	/**
@@ -248,7 +256,7 @@
 		
 		// checks new menu is existed
 		if(isNew){
-			if(isDuplicateMenu(menu.get('id'))){
+			if(await isDuplicateMenu(menu.get('id'))){
 				menu.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.menu.id})}]]');
 				return false;
 			}
@@ -366,12 +374,17 @@
 							data-duice-selectable="true"
 							data-duice-bind="menus,menu" 
 							data-duice-hierarchy="id,upperId"
-							data-duice-editable="true"
+							th:data-duice-editable="${#authorization.expression('hasAuthority(''ADMN_MENU_EDIT'')')}?'true':'false'"
 							data-duice-foldable="true">
 								<li>
-									<div style="border-bottom:dotted 1px #ccc;">
-										<img is="duice-img" data-duice-bind="menu,icon" th:src="@{/static/image/icon_menu.png}" class="icon small"/>
-										<span is="duice-span" data-duice-bind="menu,name" style="font-weight:bold;"></span>
+									<div class="app-row" style="border-bottom:dotted 1px #ccc;">
+										<div class="app-col">
+											<img is="duice-img" data-duice-bind="menu,icon" th:src="@{/static/image/icon_menu.png}" class="icon small"/>
+											<span is="duice-span" data-duice-bind="menu,name" class="id [@duice[$context.menu.get('systemEmbedded') === true ? 'embd' : '']]"></span>
+										</div>
+										<div class="app-col right">
+											<img th:src="@{/static/image/icon_add.png}" class="icon small button" data-id="[@duice[$context.menu.get('id')]]" onclick="addChildMenu(this.dataset.id); event.stopPropagation();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MENU_EDIT'')')}?'lock'"/>
+										</div>
 									</div>
 								</li>
 							</ul>
@@ -422,8 +435,12 @@
 								<col/>
 								<tbody>
 									<tr>
-										<th><span data-th-text="#{application.menu.id}" class="mand">Menu ID</span></th>
-										<td><input is="duice-input" type="text" data-duice-bind="menu,id" class="id"/></td>
+										<th><span data-th-text="#{application.menu.id}" class="mand">ID</span></th>
+										<td><input is="duice-input" type="text" data-duice-bind="menu,id" class="id" pattern="^[a-zA-Z0-9_-]{1,32}$"/></td>
+									</tr>
+									<tr>
+										<th data-th-text="#{application.menu.name}" class="mand">Name</th>
+										<td><input is="duice-input" type="text" data-duice-bind="menu,name"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.menu.upperId}">Upper Menu</th>
@@ -448,7 +465,7 @@
 												breadCrumb.reverse();
 												return '/ ' + breadCrumb.join(' / ');
 											"></small>
-											<button class="button small" onclick="openUpperMenuDialog();">
+											<button class="button small" onclick="openUpperMenuDialog();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MENU_EDIT'')')}?'lock'">
 												<img th:src="@{/static/image/icon_change.png}" class="icon"/>
 												<span data-th-text="#{application.global.change}">Change</span>
 											</button>
@@ -459,10 +476,6 @@
 										<td>
 											<img is="duice-img" data-duice-bind="menu,icon" th:src="@{/static/image/icon_menu.png}"/>
 										</td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.menu.name}">Menu Name</th>
-										<td><input is="duice-input" type="text" data-duice-bind="menu,name"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.menu.description}">Description</th>
@@ -498,20 +511,18 @@
 												<col style="width:5%;"/>
 												<thead>
 													<tr>
-														<th data-th-text="#{application.global.no}">No</th>
+														<th data-th-text="#{application.global.no}" class="text-center">No</th>
 														<th data-th-text="#{application.authority.id}">ID</th>
 														<th data-th-text="#{application.authority.name}">Name</th>
 														<th class="text-center">
-															<button class="button small" onclick="addMenuDisplayAuthority();">
-																+
-															</button>
+															<img class="icon small button" th:src="@{/static/image/icon_add.png}" onclick="addMenuDisplayAuthority();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MENU_EDIT'')')}?'lock'"/>
 														</th>
 													</tr>
 												</thead>
 												<tbody>
 													<tr>
 														<td class="text-center">
-															<span is="duice-scriptlet" data-duice-bind="authority">return $context.index+1;</span>
+															<small is="duice-scriptlet" data-duice-bind="authority" data-duice-value="return $context.index+1;"></small>
 														</td>
 														<td>
 															<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
@@ -519,9 +530,7 @@
 														</td>
 														<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
 														<td class="text-center">
-															<button class="button small" data-index="[@duice[$context.index]]" onclick="removeMenuDisplayAuthority(this.dataset.index);">
-																-
-															</button>
+															<img class="icon small button" th:src="@{/static/image/icon_add.png}" data-index="[@duice[$context.index]]" onclick="removeMenuDisplayAuthority(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MENU_EDIT'')')}?'lock'"/>
 														</td>
 													</tr>
 												</tbody>

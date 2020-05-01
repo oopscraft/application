@@ -463,7 +463,7 @@
 										<td><span is="duice-span" data-duice-bind="board,name"></span></td>
 										<td class="text-center">
 											<small>
-												<span is="duice-span" data-duice-bind="board,articleCount" data-duice-format="number,0"></span>
+												<span is="duice-span" data-duice-bind="board,articleCount" data-duice-mask="number,0"></span>
 											</small>
 										</td>
 									</tr>
@@ -550,7 +550,7 @@
 										<th><span data-th-text="#{application.board.rows}"></span></th>
 										<td>
 											<small>
-												<input is="duice-input" type="number" data-duice-bind="board,rows" data-duice-format="number,0" style="width:100px; font-weight:bold;"/>
+												<input is="duice-input" type="number" data-duice-bind="board,rows" data-duice-mask="number,0" style="width:100px; font-weight:bold;"/>
 												Rows
 											</small>
 										</td>
@@ -569,7 +569,7 @@
 										<th><span data-th-text="#{application.board.fileAllowCount}"></span></th>
 										<td>
 											<small>
-												<input is="duice-input" type="number" data-duice-bind="board,fileAllowCount" data-duice-format="number,0" style="width:100px; font-weight:bold;"/>
+												<input is="duice-input" type="number" data-duice-bind="board,fileAllowCount" data-duice-mask="number,0" style="width:100px; font-weight:bold;"/>
 												Files
 											</small>
 										</td>
@@ -578,7 +578,7 @@
 										<th><span data-th-text="#{application.board.fileAllowSize}"></span></th>
 										<td>
 											<small>
-												<input is="duice-input" type="number" data-duice-bind="board,fileAllowSize" data-duice-format="number,0" style="width:100px; font-weight:bold;"/>
+												<input is="duice-input" type="number" data-duice-bind="board,fileAllowSize" data-duice-mask="number,0" style="width:100px; font-weight:bold;"/>
 												Mbytes
 											</small>
 										</td>

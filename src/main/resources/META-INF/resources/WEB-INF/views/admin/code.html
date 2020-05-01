@@ -21,7 +21,7 @@
 		$(document).ready(function() {
 			
 			// checks authorization
-			if([[${#authorization.expression('hasAuthority("ADMN_CODE_EDIT")')}]] === false){
+			if([[${!#authorization.expression('hasAuthority("ADMN_CODE_EDIT")')}]]){
 				lockDetails();
 			}
 			
@@ -62,9 +62,8 @@
 		// checks user properties change
 		code.onBeforeChange(async function(name,value){
 			if(name === 'id'){
-				if(isDuplicateCode(value)){
-					await duice.alert('[[#{application.global.alreadyRegisteredItem(#{application.code.id})}]]');
-					return false;
+				if(await isDuplicateCode(value)){
+					code.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.code.id})}]]');
 				}
 			}
 		});
@@ -181,19 +180,20 @@
 		 * Returns duplicate code
 		 */
 		function isDuplicateCode(id){
-			var duplicateCode = false;
-			$.ajax({
-				 url: 'code/getCode'
-				,type: 'GET'
-				,data: {id:id}
-				,async: false
-			})
-			.done(function(data, textStatus, jqXHR) {
-				if(data && data.id === id){
-					duplicateCode = true;
-				}
+			return new Promise(function(resolve, reject){
+				$.ajax({
+					 url: 'code/getCode'
+					,type: 'GET'
+					,data: {id:id}
+				})
+				.done(function(data, textStatus, jqXHR) {
+					if(data && data.id === id){
+						resolve(true);
+					}else{
+						resolve(false);
+					}
+				});
 			});
-			return duplicateCode;
 		}
 		
 		/**
@@ -216,10 +216,8 @@
 				code.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
 				return false;
 			}
-			
-			// checks new code is existed
 			if(isNew){
-				if(isDuplicateCode(code.get('id'))){
+				if(await isDuplicateCode(code.get('id'))){
 					code.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.code.id})}]]');
 					return false;
 				}
@@ -274,12 +272,12 @@
 				$.ajax({
 					 url: 'code/deleteCode'
 					,type: 'DELETE'
-					,data: JSON.stringify(user.toJson())
+					,data: JSON.stringify(code.toJson())
 					,contentType: 'application/json;charset=UTF-8'
 					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.global.deleteComplete(#{application.global.user})}]]")
+						new duice.Alert("[[#{application.global.deleteComplete(#{application.code})}]]")
 						.onAfterClose(async function(){
-							await getUsers();
+							await getCodes();
 							initializeDetail();
 							disableDetail(true);
 						}).open();
@@ -456,7 +454,7 @@
 										<td><input is="duice-input" type="text" data-duice-bind="code,id" autocomplete="nope" class="id"/></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.code.name}">Name</th>
+										<th data-th-text="#{application.code.name}" class="mand">Name</th>
 										<td><input is="duice-input" type="text" data-duice-bind="code,name"/></td>
 									</tr>
 									<tr>

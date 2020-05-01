@@ -20,7 +20,7 @@
 	$(document).ready(function() {
 		
 		// checks authorization
-		if([[${#authorization.expression('hasAuthority("ADMN_GROP_EDIT")')}]] === false){
+		if([[${!#authorization.expression('hasAuthority("ADMN_GROP_EDIT")')}]]){
 			lockDetails();
 		}
 		
@@ -61,9 +61,7 @@
 	
 	// event listner for before move row
 	groups.onBeforeMoveRow(async function(sourceRow,targetRow){
-		console.log('groups.onBeforeMoveRow', sourceRow.toJson(), targetRow && targetRow.toJson());
-		return await new duice.Confirm("[[#{application.global.changePositionConfirm(#{application.group})}]]")
-		.open();
+		return await duice.confirm("[[#{application.global.changeConfirm(#{application.group.upperId})}]]");
 	});
 	
 	// event listner for after move row
@@ -76,20 +74,27 @@
 			,type: 'POST'
 			,data: JSON.stringify(group.toJson())
 			,contentType: 'application/json;charset=UTF-8'
-			,success: function(data, textStatus, jqXHR) {
-				new duice.Alert('[[#{application.global.changePositionComplete(#{application.group})}]]')
-				.onAfterClose(async function(){
-					await getGroups();
-					groups.forEach(function(row,index){
-						if(row.get('id') === id){
-							clearDetail();
-							groups.selectRow(index);
-							return true;
-						}
-					});
-				}).open();
+			,success: async function(data, textStatus, jqXHR) {
+				await duice.alert('[[#{application.global.changeComplete(#{application.group.upperId})}]]');
+				await getGroups();
+				groups.forEach(function(row,index){
+					if(row.get('id') === id){
+						clearDetail();
+						groups.selectRow(index);
+						return true;
+					}
+				});
 	   	 	}
 		});	
+	});
+	
+	// checks user properties change
+	group.onBeforeChange(async function(name,value){
+		if(name === 'id'){
+			if(await isDuplicateGroup(value)){
+				group.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.group.id})}]]');
+			}
+		}
 	});
 	
 	/**
@@ -208,6 +213,15 @@
 		disableDetail(false);
 		group.setReadonly('id',false);
 		isNew = true;
+		group.setFocus('id');
+	}
+	
+	/**
+	 * Adds group as child node
+	 */
+	function addChildGroup(id) {
+		addGroup();
+		group.set('upperId', id);
 	}
 	
 	/**
@@ -255,13 +269,33 @@
 	}
 	
 	/**
+	 * Returns duplicate
+	 */
+	function isDuplicateGroup(id){
+		return new Promise(function(resolve,reject){
+			$.ajax({
+				 url: 'group/getGroup'
+				,type: 'GET'
+				,data: {id:id}
+			})
+			.done(function(data, textStatus, jqXHR) {
+				if(data && data.id === id){
+					resolve(true);
+				}else{
+					resolve(false);
+				}
+			});
+		});
+	}
+	
+	/**
 	 * Saves group
 	 */
-	function saveGroup(){
+	async function saveGroup(){
 		
 		// checks changes
 		if(isNew === false && isDetailChanged() === false) {
-			new duice.Alert("[[#{application.global.changeNotFound}]]").open();
+			duice.alert("[[#{application.global.changeNotFound}]]").open();
 			return;
 		}
 		
@@ -274,6 +308,13 @@
 			group.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
 			return false;
 		}
+		if(isNew){
+			if(await isDuplicateGroup(group.get('id'))) {
+				group.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.group.id})}]]');
+				return false;
+			}
+		}
+		
 		// checks group name
 		if(duice.isEmpty(group.get('name'))){
 			group.setFocus('name', '[[#{application.global.enterItem(#{application.group.name})}]]');
@@ -402,12 +443,17 @@
 							data-duice-bind="groups,group" 
 							data-duice-selectable="true"
 							data-duice-hierarchy="id,upperId"
-							data-duice-editable="true"
+							th:data-duice-editable="${#authorization.expression('hasAuthority(''ADMN_GROP_EDIT'')')}?'true':'false'"
 							data-duice-foldable="true">
 								<li>
-									<div style="border-bottom:dotted 1px #ccc;">
-										<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
-										<span is="duice-span" data-duice-bind="group,name" style="font-weight:bold;" class="[@duice[$context.group.get('systemEmbedded') === true ? 'embd' : '']]"></span>
+									<div class="app-row" style="border-bottom:dotted 1px #ccc;">
+										<div class="app-col">
+											<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
+											<span is="duice-span" data-duice-bind="group,name" class="id [@duice[$context.group.get('systemEmbedded') === true ? 'embd' : '']]"></span>
+										</div>
+										<div class="app-col right">
+											<img th:src="@{/static/image/icon_add.png}" class="icon small button" data-id="[@duice[$context.group.get('id')]]" onclick="addChildGroup(this.dataset.id); event.stopPropagation();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_GROP_EDIT'')')}?'lock'"/>
+										</div>
 									</div>
 								</li>
 							</ul>
@@ -463,7 +509,11 @@
 								<tbody>
 									<tr>
 										<th><span data-th-text="#{application.group.id}" class="mand">Group ID</span></th>
-										<td><input is="duice-input" type="text" data-duice-bind="group,id" class="id"/></td>
+										<td><input is="duice-input" type="text" data-duice-bind="group,id" pattern="^[a-zA-Z0-9_-]{1,32}$" class="id"/></td>
+									</tr>
+									<tr>
+										<th data-th-text="#{application.group.name}" class="mand">Name</th>
+										<td><input is="duice-input" type="text" data-duice-bind="group,name"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.group.upperId}">Upper Group</th>
@@ -497,10 +547,6 @@
 									<tr>
 										<th data-th-text="#{application.group.icon}">Icon</th>
 										<td><img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}"/></td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.group.name}">Name</th>
-										<td><input is="duice-input" type="text" data-duice-bind="group,name"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.group.description}">Description</th>
@@ -621,7 +667,7 @@
 							<div style="width:100%; max-height:800px; overflow-y:scroll; border:solid 1px #dee2e6;">
 								<table is="duice-table" 
 									data-duice-bind="groupAvailableAuthorities,authority" 
-									style="width:100%;">
+									style="width:100%; border:none;">
 									<col style="width:10%;"/>
 									<col/>
 									<col/>

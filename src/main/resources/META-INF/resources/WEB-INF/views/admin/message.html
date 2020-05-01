@@ -22,7 +22,7 @@
 	$(document).ready(function() {
 		
 		// checks authorization
-		if([[${#authorization.expression('hasAuthority("ADMN_MESG_EDIT")')}]] === false){
+		if([[${!#authorization.expression('hasAuthority("ADMN_MESG_EDIT")')}]]){
 			lockDetails();
 		}
 
@@ -63,9 +63,8 @@
 	// checks messages change
 	message.onBeforeChange(async function(name,value){
 		if(name === 'id'){
-			if(isDuplicateMessage(value)){
-				await duice.alert('[[#{application.global.alreadyRegisteredItem(#{application.message.id})}]]');
-				return false;
+			if(await isDuplicateMessage(value)){
+				message.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.message.id})}]]');
 			}
 		}
 	});
@@ -181,19 +180,20 @@
 	 * Returns duplicate message
 	 */
 	function isDuplicateMessage(id){
-		var duplicateMessage = false;
-		$.ajax({
-			 url: 'message/getMessage'
-			,type: 'GET'
-			,data: { id:id }
-			,async: false
-		})
-		.done(function(data, textStatus, jqXHR) {
-			if(data && (data.id === id && data.language === language)){
-				duplicateMessage = true;
-			}
+		return new Promise(function(resolve, reject){
+			$.ajax({
+				 url: 'message/getMessage'
+				,type: 'GET'
+				,data: { id:id }
+			})
+			.done(function(data, textStatus, jqXHR) {
+				if(data && data.id === id){
+					resolve(true);
+				}else{
+					resolve(false);
+				}
+			});
 		});
-		return duplicateMessage;
 	}
 	
 	/**
@@ -208,18 +208,24 @@
 		}
 		
 		// checks id
-		if(!message.has('id')){
+		if(duice.isEmpty(message.get('id'))){
 			message.setFocus('id', '[[#{application.global.enterItem(#{application.message.id})}]]');
 			return false;
 		}
 		if(!duice.isIdFormat(message.get('id'))){
-			user.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
+			message.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
+			return false;
+		}
+		
+		// checks name
+		if(duice.isEmpty(message.get('name'))){
+			message.setFocus('name', '[[#{application.global.enterItem(#{application.message.name})}]]');
 			return false;
 		}
 		
 		// checks new message is existed
 		if(isNew){
-			if(isDuplicateMessage(message.get('id'))){
+			if(await isDuplicateMessage(message.get('id'))){
 				message.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.message.id})}]]');
 				return false;
 			}
@@ -424,7 +430,7 @@
 										<td><input is="duice-input" type="text" data-duice-bind="message,id" autocomplete="nope" class="id"/></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.message.name}">Name</th>
+										<th data-th-text="#{application.message.name}" class="mand">Name</th>
 										<td><input is="duice-input" type="text" data-duice-bind="message,name"/></td>
 									</tr>
 									<tr>

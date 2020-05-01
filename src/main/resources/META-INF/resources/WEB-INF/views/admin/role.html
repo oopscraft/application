@@ -21,7 +21,7 @@
 		$(document).ready(function() {
 
 			// checks authorization
-			if([[${#authorization.expression('hasAuthority("ADMN_ROLE_EDIT")')}]] === false){
+			if([[${!#authorization.expression('hasAuthority("ADMN_ROLE_EDIT")')}]]){
 				lockDetails();
 			}
 			
@@ -57,6 +57,15 @@
 		// event listener for select row
 		roles.onAfterSelectRow(function(selectedRow){
 			getRole(selectedRow.get('id'));
+		});
+		
+		// checks role properties change
+		role.onBeforeChange(async function(name,value){
+			if(name === 'id'){
+				if(await isDuplicateRole(value)){
+					role.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.role.id})}]]');
+				}
+			}
 		});
 		
 		/**
@@ -157,14 +166,35 @@
 		function addRole() {
 			initializeDetail();
 			disableDetail(false);
-			role.setReadonly('id',false);
 			isNew = true;
+			role.setReadonly('id',false);
+			role.setFocus('id');
+		}
+		
+		/**
+		 * Returns duplicate role
+		 */
+		function isDuplicateRole(id){
+			return new Promise(function(resolve, reject){
+				$.ajax({
+					 url: 'role/getRole'
+					,type: 'GET'
+					,data: {id:id}
+				})
+				.done(function(data, textStatus, jqXHR) {
+					if(data && data.id === id){
+						resolve(true);
+					}else{
+						resolve(false);
+					}
+				});
+			});
 		}
 		
 		/**
 		 * Saves role
 		 */
-		function saveRole(){
+		async function saveRole(){
 			
 			// checks changes
 			if(isNew === false && isDetailChanged() === false) {
@@ -174,17 +204,23 @@
 			
 			// checks id
 			if(duice.isEmpty(role.get('id'))){
-				user.setFocus('id', '[[#{application.global.enterItem(#{application.role.id})}]]');
+				role.setFocus('id', '[[#{application.global.enterItem(#{application.role.id})}]]');
 				return false;
 			}
 			if(!duice.isIdFormat(role.get('id'))){
-				user.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
+				role.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
 				return false;
+			}
+			if(isNew){
+				if(await isDuplicateRole(role.get('id'))){
+					role.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.role.id})}]]');
+					return false;
+				}
 			}
 			
 			// checks user name
 			if(duice.isEmpty(role.get('name'))){
-				user.setFocus('name', '[[#{application.global.enterItem(#{application.role.name})}]]');
+				role.setFocus('name', '[[#{application.global.enterItem(#{application.role.name})}]]');
 				return false;
 			}
 			
@@ -392,17 +428,17 @@
 								<tbody>
 									<tr>
 										<th><span data-th-text="#{application.role.id}" class="mand"></span></th>
-										<td><input is="duice-input" type="text" class="id" data-duice-bind="role,id" autocomplete="nope"/></td>
+										<td><input is="duice-input" type="text" class="id" data-duice-bind="role,id" pattern="^[a-zA-Z0-9_-]{1,32}$" autocomplete="nope"/></td>
+									</tr>
+									<tr>
+										<th data-th-text="#{application.role.name}" class="mand"></th>
+										<td><input is="duice-input" type="text" data-duice-bind="role,name"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.role.icon}"></th>
 										<td>
 											<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}"/>
 										</td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.role.name}"></th>
-										<td><input is="duice-input" type="text" data-duice-bind="role,name"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.role.description}"></th>

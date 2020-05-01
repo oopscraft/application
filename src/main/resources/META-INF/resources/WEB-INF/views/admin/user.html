@@ -26,7 +26,7 @@
 	$(document).ready(function() {
 		
 		// checks authorization
-		if([[${#authorization.expression('hasAuthority("ADMN_USER_EDIT")')}]] === false){
+		if([[${!#authorization.expression('hasAuthority("ADMN_USER_EDIT")')}]]){
 			lockDetails();
 		}
 		
@@ -76,9 +76,8 @@
 	// checks user properties change
 	user.onBeforeChange(async function(name,value){
 		if(name === 'id'){
-			if(isDuplicateUser(value)){
-				await duice.alert('[[#{application.global.alreadyRegisteredItem(#{application.user.id})}]]');
-				return false;
+			if(await isDuplicateUser(value)){
+				user.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.user.id})}]]');
 			}
 		}
 	});
@@ -213,30 +212,31 @@
 	function addUser() {
 		initializeDetail();
 		disableDetail(false);
+		isNew = true;
 		user.setReadonly('id',false);
+		user.setFocus('id');
 		$('#passwordTr').show();
 		$('#passwordConfirmTr').show();
-		isNew = true;
-		user.setFocus('id');
 	}
 	
 	/**
 	 * Returns duplicate user
 	 */
 	function isDuplicateUser(id){
-		var duplicateUser = false;
-		$.ajax({
-			 url: 'user/getUser'
-			,type: 'GET'
-			,data: {id:id}
-			,async: false
-		})
-		.done(function(data, textStatus, jqXHR) {
-			if(data && data.id === id){
-				duplicateUser = true;
-			}
+		return new Promise(function(resolve, reject){
+			$.ajax({
+				 url: 'user/getUser'
+				,type: 'GET'
+				,data: {id:id}
+			})
+			.done(function(data, textStatus, jqXHR) {
+				if(data && data.id === id){
+					resolve(true);
+				}else{
+					resolve(false)
+				}
+			});
 		});
-		return duplicateUser;
 	}
 	
 	/**
@@ -246,10 +246,10 @@
 		
 		// checks changes
 		if(isNew === false && isDetailChanged() === false) {
-			await duice.alert("[[#{application.global.changeNotFound}]]");
+			duice.alert("[[#{application.global.changeNotFound}]]").open();
 			return false;
 		}
-		
+
 		// checks id
 		if(duice.isEmpty(user.get('id'))){
 			user.setFocus('id', '[[#{application.global.enterItem(#{application.user.id})}]]');
@@ -259,10 +259,8 @@
 			user.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
 			return false;
 		}
-		
-		// checks new user is existed
 		if(isNew){
-			if(isDuplicateUser(user.get('id'))){
+			if(await isDuplicateUser(user.get('id'))){
 				user.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.user.id})}]]');
 				return false;
 			}
@@ -277,8 +275,11 @@
 			user.setFocus('email', '[[#{application.global.notValidItemFormat(#{application.user.email})}]]');
 			return false;
 		}
-		// checks password and password confirm, in case of new
+		
+		// new
 		if(isNew) {
+			
+			// password
 			if(duice.isEmpty(user.get('password'))){
 				user.setFocus('password', '[[#{application.global.enterItem(#{application.user.password})}]]');
 				return false;
@@ -287,6 +288,8 @@
 				user.setFocus('password', '[[#{application.global.notValidPassowrdFormat}]]');
 				return false;
 			}
+			
+			// passwordConfirm
 			if(duice.isEmpty(user.get('passwordConfirm'))){
 				user.setFocus('passwordConfirm', '[[#{application.global.enterItem(#{application.user.passwordConfirm})}]]');
 				return false;
@@ -296,12 +299,14 @@
 				return false;
 			}
 		}
-		// checks user status
+		
+		// status
 		if(duice.isEmpty(user.get('status'))){
 			user.setFocus('status', '[[#{application.global.enterItem(#{application.user.status})}]]');
 			return false;
 		}
-		// checks user name
+		
+		// name
 		if(duice.isEmpty(user.get('name'))){
 			user.setFocus('name', '[[#{application.global.enterItem(#{application.user.name})}]]');
 			return false;
@@ -355,12 +360,12 @@
 				,contentType: 'application/json;charset=UTF-8'
 			})
 			.done(function(data, textStatus, jqXHR) {
-					new duice.Alert("[[#{application.global.deleteComplete(#{application.user})}]]")
-					.onAfterClose(async function(){
-						await getUsers();
-						initializeDetail();
-						disableDetail(true);
-					}).open();
+				new duice.Alert("[[#{application.global.deleteComplete(#{application.user})}]]")
+				.onAfterClose(async function(){
+					await getUsers();
+					initializeDetail();
+					disableDetail(true);
+				}).open();
 			});
 		}).open();
 	}
@@ -572,28 +577,12 @@
 								<tbody>
 									<tr>
 										<th><span data-th-text="#{application.user.id}" class="mand">ID</span></th>
-										<td><input id="userId" is="duice-input" type="text" class="id" data-duice-bind="user,id" autocomplete="nope"/></td>
+										<td><input id="userId" is="duice-input" type="text" class="id" data-duice-bind="user,id" pattern="^[a-zA-Z0-9_-]{1,32}$" autocomplete="nope"/></td>
 									</tr>
 									<tr>
 										<th><span data-th-text="#{application.user.email}" class="mand">Email</span></th>
 										<td>
 											<input is="duice-input" type="text" data-duice-bind="user,email"/>
-										</td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.user.mobile}">Mobile</th>
-										<td>
-											<div class="app-row">
-												<div class="app-col" style="width:25%;">
-													<select is="duice-select" data-duice-bind="user,mobileCountry">
-														<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
-														<option th:each="country:${__countries}" th:value="${country.country}" th:text="${country.displayCountry}"></option>
-													</select>
-												</div>
-												<div class="app-col" style="width:75%;">
-													<input is="duice-input" type="text" data-duice-bind="user,mobileNumber"/>
-												</div>
-											</div>
 										</td>
 									</tr>
 									<tr id="passwordTr">
@@ -635,6 +624,22 @@
 										<td><input is="duice-input" type="text" data-duice-bind="user,nickname"/></td>
 									</tr>
 									<tr>
+										<th data-th-text="#{application.user.mobile}">Mobile</th>
+										<td>
+											<div class="app-row">
+												<div class="app-col" style="width:25%;">
+													<select is="duice-select" data-duice-bind="user,mobileCountry">
+														<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
+														<option th:each="country:${__countries}" th:value="${country.country}" th:text="${country.displayCountry}"></option>
+													</select>
+												</div>
+												<div class="app-col" style="width:75%;">
+													<input is="duice-input" type="text" data-duice-bind="user,mobileNumber"/>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
 										<th data-th-text="#{application.user.photo}">Photo</th>
 										<td><img is="duice-img" data-duice-bind="user,photo" th:src="@{/static/image/icon_user.png}" style="max-height:64px;"/></td>
 									</tr>
@@ -653,11 +658,18 @@
 									</tr>
 									<tr>
 										<th data-th-text="#{application.user.joinDate}">Join Date</th>
-										<td><span is="duice-span" data-duice-bind="user,joinDate" data-duice-format="date,yyyy-MM-dd HH:mm:ss"></span></td>
+										<td>
+											<small style="font-weight:bold;">
+												<span is="duice-span" data-duice-bind="user,joinDate" data-duice-mask="date,yyyy-MM-dd HH:mm:ss"></span>
+											</small>
+										</td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.user.closeDate}">Close Date</th>
-										<td><input is="duice-input" type="datetime-local" data-duice-bind="user,closeDate"/></td>
+										<td>
+											<small style="font-weight:bold;">
+												<span is="duice-span" data-duice-bind="user,closeDate" data-duice-mask="date,yyyy-MM-dd HH:mm:ss"></span>
+											</small>
 									</tr>
 									<tr>
 										<th>

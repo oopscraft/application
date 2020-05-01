@@ -3,6 +3,7 @@ package net.oopscraft.application.admin;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -76,8 +77,8 @@ public class GroupController {
 	@PreAuthorize("hasAuthority('ADMN_GROP_EDIT')")
 	@RequestMapping(value = "saveGroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
-	public Group saveGroup(@RequestBody Group group) throws Exception {
+	@Transactional
+	public Group saveGroup(@RequestBody @Valid Group group) throws Exception {
 		return groupService.saveGroup(group);
 	}
 	
@@ -89,7 +90,7 @@ public class GroupController {
 	@PreAuthorize("hasAuthority('ADMN_GROP_EDIT')")
 	@RequestMapping(value = "deleteGroup", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional
 	public void deleteGroup(@RequestBody Group group) throws Exception {
 		groupService.deleteGroup(group);
 	}
@@ -103,7 +104,7 @@ public class GroupController {
 	@PreAuthorize("hasAuthority('ADMN_GROP_EDIT')")
 	@RequestMapping(value = "changeUpperId", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional
 	public Group changeUpperId(@RequestBody Group group) throws Exception {
 		return groupService.changeUpperId(group.getId(), group.getUpperId());
 	}

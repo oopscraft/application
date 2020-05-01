@@ -25,7 +25,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -80,9 +79,10 @@ public class ApplicationContext {
 	@Autowired
 	private Environment environment;
 	
-	DataSource dataSource;
-	LocalContainerEntityManagerFactoryBean entityManagerFactory;
-	SqlSessionFactoryBean sqlSessionFactoryBean;
+	static 	DataSource dataSource;
+	static 	LocalContainerEntityManagerFactoryBean entityManagerFactory;
+	static SqlSessionFactoryBean sqlSessionFactoryBean;
+	static MessageSource messageSource;
 
 	/**
 	 * Creates dataSource for database connection pool(DBCP)
@@ -235,7 +235,7 @@ public class ApplicationContext {
 	 */
 	@Bean
 	public MessageSource messageSource() throws Exception {
-		MessageSource messageSource = new MessageSource();
+		messageSource = new MessageSource();
 		messageSource.setBasename("classpath:net/oopscraft/application/message");
 		messageSource.setFallbackToSystemLocale(false);
 		messageSource.setDefaultEncoding("UTF-8");
@@ -250,5 +250,5 @@ public class ApplicationContext {
 		localeResolver.setDefaultLocale(Locale.ENGLISH);
 		return localeResolver;
 	}
-	
+
 }

@@ -62,11 +62,13 @@
 			</div>
 			<div class="app-col right middle">
 				<img th:src="${__user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
-				<span data-th-text="${__user.name}"></span>
-				&nbsp;
+				<span data-th-text="${__user.name}" style="font-weight:bold;"></span>
+				&nbsp;&nbsp;&nbsp;
+				<img class="icon" th:src="@{/static/image/icon_logout.png}"/>
 				<span data-th-text="#{application.global.logout}" onclick="__logout();" class="link"></span>
-				&nbsp;
-				<select class="duice-select" onchange="__changeLanguage(this.value);" style="width:150px;">
+				&nbsp;&nbsp;&nbsp;
+				<img class="icon" th:src="@{/static/image/icon_language.png}"/>
+				<select class="duice-select" onchange="__changeLanguage(this.value);" style="width:100px;">
 					<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
 				</select>
 			</div>
@@ -290,7 +292,7 @@
 										beginAtZero: true,
 										suggestedMax: yMax,
 									    userCallback: function(value, index, values) {
-									        return new duice.NumberFormat(0).encode(value) + ' m';
+									        return new duice.NumberMask(0).encode(value) + ' m';
 									    }
 									}
 								}],
@@ -365,7 +367,7 @@
 										beginAtZero: true,
 										suggestedMax: yMax,
 									    userCallback: function(value, index, values) {
-									        return new duice.NumberFormat(0).encode(value);
+									        return new duice.NumberMask(0).encode(value);
 									    }
 									}
 								}],
@@ -440,7 +442,7 @@
 										beginAtZero: true,
 										suggestedMax: yMax,
 									    userCallback: function(value, index, values) {
-									        return new duice.NumberFormat(0).encode(value);
+									        return new duice.NumberMask(0).encode(value);
 									    }
 									}
 								}],
