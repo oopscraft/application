@@ -9,7 +9,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
-import net.oopscraft.application.article.entity.Article;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import net.oopscraft.application.core.jpa.BooleanStringConverter;
 
 @Entity
@@ -17,9 +18,11 @@ import net.oopscraft.application.core.jpa.BooleanStringConverter;
 public class BoardArticle extends Article {
 
 	@Column(name = "BORD_ID", length = 32)
+	@JsonView(ArticleView.List.class)
 	String boardId;
 	
 	@Column(name = "CATE_ID", length = 32)
+	@JsonView(ArticleView.List.class)
 	String categoryId;
 	
 	@Formula("(select a.CATE_NAME from APP_BORD_CATE_INFO a where a.CATE_ID = CATE_ID)")

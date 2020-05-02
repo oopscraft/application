@@ -24,9 +24,8 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.article.ArticleReplyRepository;
-import net.oopscraft.application.article.entity.ArticleFile;
-import net.oopscraft.application.article.entity.ArticleReply;
+import net.oopscraft.application.board.entity.ArticleFile;
+import net.oopscraft.application.board.entity.ArticleReply;
 import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.board.entity.BoardArticle;
 import net.oopscraft.application.board.entity.BoardCategory;

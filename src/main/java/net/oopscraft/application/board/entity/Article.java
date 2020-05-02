@@ -1,4 +1,4 @@
-package net.oopscraft.application.article.entity;
+package net.oopscraft.application.board.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +36,17 @@ public abstract class Article extends SystemEntity {
 	
 	@Column(name="USER_ID", length=32)
 	String userId;
+
+	@Formula("(select count(*) from APP_ATCL_FILE_INFO a where a.ATCL_ID = ATCL_ID)")
+	int fileCount;
+	
+	@OneToMany(
+		fetch = FetchType.LAZY, 
+		mappedBy = "articleId",
+		cascade = CascadeType.ALL, 
+		orphanRemoval = true
+	)
+	List<ArticleFile> files = new ArrayList<ArticleFile>();
 	
 	@Formula("(select count(*) from APP_ATCL_RPLY_INFO a where a.ATCL_ID = ATCL_ID)")
 	int replyCount;
@@ -46,7 +57,7 @@ public abstract class Article extends SystemEntity {
 		cascade = CascadeType.ALL, 
 		orphanRemoval = true
 	)
-	List<ArticleFile> files=new ArrayList<ArticleFile>();
+	List<ArticleReply> replies = new ArrayList<ArticleReply>();
 	
 	public Article() {}
 	
@@ -121,6 +132,22 @@ public abstract class Article extends SystemEntity {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public int getFileCount() {
+		return fileCount;
+	}
+
+	public void setFileCount(int fileCount) {
+		this.fileCount = fileCount;
+	}
+
+	public List<ArticleReply> getReplies() {
+		return replies;
+	}
+
+	public void setReplies(List<ArticleReply> replies) {
+		this.replies = replies;
 	}
 
 	public int getReplyCount() {

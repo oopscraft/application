@@ -1,4 +1,4 @@
-package net.oopscraft.application.article.entity;
+package net.oopscraft.application.board.entity;
 
 import java.io.Serializable;
 import java.util.Date;

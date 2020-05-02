@@ -19,6 +19,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Formula;
 
@@ -32,13 +33,15 @@ public class Board {
 
 	@Id
 	@Column(name = "BORD_ID", length = 32)
+	@NotNull
 	String id;
+
+	@Column(name = "BORD_NAME", length = 1024)
+	@NotNull
+	String name;
 	
 	@Column(name = "BORD_ICON", length = Integer.MAX_VALUE)
 	String icon;
-
-	@Column(name = "BORD_NAME", length = 1024)
-	String name;
 	
 	@Column(name = "BORD_DESC", length = Integer.MAX_VALUE)
 	@Lob
