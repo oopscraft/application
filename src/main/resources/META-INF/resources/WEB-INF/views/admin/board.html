@@ -22,6 +22,11 @@
 	// document ready
 	$(document).ready(function() {
 		
+		// checks authorization
+		if([[${!#authorization.expression('hasAuthority("ADMN_BORD_EDIT")')}]]){
+			lockDetails();
+		}
+		
 		// creates tab
 		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
 		tabFolder.selectTab(0);
@@ -59,9 +64,8 @@
 	// checks board properties change
 	board.onBeforeChange(async function(name,value){
 		if(name === 'id'){
-			if(isDuplicateBoard(value)){
-				await duice.alert('[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
-				return false;
+			if(await isDuplicateBoard(value)){
+				board.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
 			}
 		}
 	});
@@ -128,6 +132,17 @@
 		boardAccessAuthorities.reset();
 		boardReadAuthorities.reset();
 		boardWriteAuthorities.reset();
+	}
+	
+	/**
+	 * Lock details
+	 */
+	function lockDetails(){
+		board.setReadonlyAll(true);
+		boardCategories.setReadonlyAll(true);
+		boardAccessAuthorities.setReadonlyAll(true);
+		boardReadAuthorities.setReadonlyAll(true);
+		boardWriteAuthorities.setReadonlyAll(true);
 	}
 	
 	/**
@@ -202,19 +217,20 @@
 	 * Returns duplicate board
 	 */
 	function isDuplicateBoard(id){
-		var duplicateBoard = false;
-		$.ajax({
-			 url: 'board/getBoard'
-			,type: 'GET'
-			,data: {id:id}
-			,async: false
-		})
-		.done(function(data, textStatus, jqXHR) {
-			if(data && data.id === id){
-				duplicateBoard = true;
-			}
+		return new Promise(function(resolve, reject){
+			$.ajax({
+				 url: 'board/getBoard'
+				,type: 'GET'
+				,data: {id:id}
+			})
+			.done(function(data, textStatus, jqXHR) {
+				if(data && data.id === id){
+					resolve(true);
+				}else{
+					resolve(false);
+				}
+			});
 		});
-		return duplicateBoard;
 	}
 	
 	/**
@@ -240,7 +256,7 @@
 		
 		// checks new board is existed
 		if(isNew){
-			if(isDuplicateBoard(board.get('id'))){
+			if(await isDuplicateBoard(board.get('id'))){
 				board.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
 				return false;
 			}
@@ -480,7 +496,7 @@
 							</small>
 						</div>
 						<div class="app-col center">
-							<ul is="duice-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+							<ul is="duice-widget-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
 								<li data-page="[@duice[$context.page]]" onclick="getBoards(this.dataset.page);"></li>
 							</ul>
 						</div>
@@ -522,17 +538,17 @@
 								<tbody>
 									<tr>
 										<th><span data-th-text="#{application.board.id}" class="mand"></span></th>
-										<td><input is="duice-input" type="text" data-duice-bind="board,id" autocomplete="nope" class="id"/></td>
+										<td><input is="duice-input" type="text" data-duice-bind="board,id" pattern="^[a-zA-Z0-9_-]{1,32}$" autocomplete="nope" class="id"/></td>
+									</tr>
+									<tr>
+										<th data-th-text="#{application.board.name}" class="mand"></th>
+										<td><input is="duice-input" type="text" data-duice-bind="board,name"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.board.icon}"></th>
 										<td>
 											<img is="duice-img" data-duice-bind="board,icon" th:src="@{/static/image/icon_board.png}"/>
 										</td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.board.name}"></th>
-										<td><input is="duice-input" type="text" data-duice-bind="board,name"/></td>
 									</tr>
 									<tr>
 										<th><span data-th-text="#{application.board.description}"></span></th>
@@ -543,7 +559,9 @@
 									<tr>
 										<th><span data-th-text="#{application.board.skin}"></span></th>
 										<td>
-											<input is="duice-input" type="text" data-duice-bind="board,skin"/>
+											<select is="duice-select" data-duice-bind="board,skin">
+												<option value="default">default</option>
+											</select>
 										</td>
 									</tr>
 									<tr>

@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.ValueMap;
 
-@Component
+@Service
 public class LocaleService {
 
 	/**

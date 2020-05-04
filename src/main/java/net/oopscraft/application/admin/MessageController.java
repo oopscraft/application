@@ -18,16 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.message.Message;
 import net.oopscraft.application.message.MessageService;
-import net.oopscraft.application.message.entity.Message;
 
 @PreAuthorize("hasAuthority('ADMN_MESG')")
 @Controller
 @RequestMapping("/admin/message")
 public class MessageController {
-
-	@Autowired
-	HttpServletResponse response;
 
 	@Autowired
 	MessageService messageService;
@@ -52,7 +49,7 @@ public class MessageController {
 	 */
 	@RequestMapping(value = "getMessages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Message> getMessages(@ModelAttribute Message message, @ModelAttribute Pagination pagination) throws Exception {
+	public List<Message> getMessages(@ModelAttribute Message message, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Message> messages = messageService.getMessages(message, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

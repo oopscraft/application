@@ -7,8 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import net.oopscraft.application.user.entity.User;
-
 @Repository
 public interface UserRepository extends JpaRepository<User, String>,JpaSpecificationExecutor<User> {
 

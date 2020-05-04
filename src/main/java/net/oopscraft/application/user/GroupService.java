@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.jpa.SystemEmbeddedException;
-import net.oopscraft.application.user.entity.Group;
 
 @Service
 public class GroupService {

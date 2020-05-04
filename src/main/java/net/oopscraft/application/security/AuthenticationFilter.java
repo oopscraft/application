@@ -20,8 +20,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
-import net.oopscraft.application.security.entity.UserDetails;
-import net.oopscraft.application.util.StringUtility;
+import net.oopscraft.application.utility.StringUtility;
 
 public class AuthenticationFilter extends GenericFilterBean   {
 	

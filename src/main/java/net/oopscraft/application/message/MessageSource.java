@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.lang.Nullable;
 
-import net.oopscraft.application.message.entity.MessageLanguage;
-
 public class MessageSource extends ReloadableResourceBundleMessageSource {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageSource.class);

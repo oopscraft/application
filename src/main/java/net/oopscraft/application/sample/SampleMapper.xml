@@ -5,7 +5,7 @@
   
 <mapper namespace="net.oopscraft.application.sample.SampleMapper">
 
-    <resultMap id="sample" type="net.oopscraft.application.sample.entity.Sample">
+    <resultMap id="sample" type="net.oopscraft.application.sample.Sample">
     	<result column="KEY_1" property="key1"/>
     	<result column="KEY_2" property="key2"/>
     	<result column="VAL_CHAR" property="valueChar"/>

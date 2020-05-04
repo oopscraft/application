@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.Pagination;
-import net.oopscraft.application.property.entity.Property;
 
 @Service
 public class PropertyService {

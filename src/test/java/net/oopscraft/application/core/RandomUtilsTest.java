@@ -2,7 +2,7 @@ package net.oopscraft.application.core;
 
 import org.junit.Test;
 
-import net.oopscraft.application.util.EncodeUtility;
+import net.oopscraft.application.utility.EncodeUtility;
 
 public class RandomUtilsTest {
 	

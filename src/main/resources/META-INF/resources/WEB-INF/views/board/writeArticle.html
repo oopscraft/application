@@ -9,9 +9,46 @@
 	// document ready
 	$(document).ready(function() {
 		if(duice.parseQueryString().id){
-			getArticle();	
+			getArticle();
+		}else{
+			changeContentsFormat(null);
 		}
 	});
+	
+	// event handler on article changed.
+	article.onAfterChange(function(name,value){
+		if(name === 'format'){
+			changeContentsFormat(value);
+		}
+	});
+	
+	/**
+	 * Changes contents division
+	 */
+	function changeContentsFormat(format){
+		var contentsDiv = document.getElementById('contentsDiv');
+		$(contentsDiv).empty();
+		var height = contentsDiv.dataset.height ? parseInt(contentsDiv.dataset.height) : 600;
+		console.log(height);
+		if(format === 'HTML'){
+			var element = document.createElement('div');
+			contentsDiv.appendChild(element);
+			var ckeditor = new duice.integrate.Ckeditor(element, {height:height});
+			ckeditor.bind(article, 'contents');
+		}else if(format === 'MARKDOWN'){
+			var element = document.createElement('div');
+			contentsDiv.appendChild(element);
+			var simplemde = new duice.integrate.Simplemde(element, null);
+			simplemde.bind(article, 'contents');
+		}else{
+			var element = document.createElement('textarea');
+			element.style.height = height + 'px';
+			element.style.padding = '1rem';
+			contentsDiv.appendChild(element);
+			var textarea = new duice.Textarea(element);
+			textarea.bind(article, 'contents');
+		}
+	}
 	
 	/**
 	 * Getting articles
@@ -22,6 +59,7 @@
 			,type: 'GET'
 		})
 		.done(function(data, textStatus, jqXHR) {
+			changeContentsFormat(data.format);
 			article.fromJson(data);
 			articleFiles.fromJson(data.files);
 	   	});
@@ -76,7 +114,7 @@
 	async function saveArticle(){
 		
 		// checks title
-		if(!article.has('title')){
+		if(duice.isEmpty(article.get('title'))){
 			duice.alert('[[#{application.global.enterItem(#{application.board.article.title})}]]');
 			return false;
 		}

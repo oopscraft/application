@@ -6,6 +6,7 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-fragment_3_1.xsd"
 	metadata-complete="false">
 	
+	<!-- 
     <error-page>
 		<error-code>404</error-code>
 		<location>/error/error404.html</location>
@@ -14,8 +15,9 @@
 		<error-code>403</error-code>
 		<location>/error/error403.html</location>
     </error-page>
+     -->
     <error-page>
-    	<location>/error/error.html</location>
+    	<location>/error</location>
 	</error-page>
 
 </web-fragment>

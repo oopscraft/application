@@ -18,17 +18,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.property.Property;
 import net.oopscraft.application.property.PropertyService;
-import net.oopscraft.application.property.entity.Property;
 
 
 @PreAuthorize("hasAuthority('ADMN_PROP')")
 @Controller
 @RequestMapping("/admin/property")
 public class PropertyController {
-
-	@Autowired
-	HttpServletResponse response;
 
 	@Autowired
 	PropertyService propertyService;
@@ -53,7 +50,7 @@ public class PropertyController {
 	 */
 	@RequestMapping(value = "getProperties", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Property> getProperties(@ModelAttribute Property property, @ModelAttribute Pagination pagination) throws Exception {
+	public List<Property> getProperties(@ModelAttribute Property property, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Property> properties = propertyService.getProperties(property, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

@@ -18,18 +18,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.menu.Menu;
 import net.oopscraft.application.menu.MenuService;
-import net.oopscraft.application.menu.entity.Menu;
-import net.oopscraft.application.security.entity.SecurityPolicy;
+import net.oopscraft.application.security.SecurityPolicy;
 
 
 @PreAuthorize("hasAuthority('ADMN_MENU')")
 @Controller
 @RequestMapping("/admin/menu")
 public class MenuController {
-
-	@Autowired
-	HttpServletResponse response;
 
 	@Autowired
 	MenuService menuService;
@@ -57,7 +54,7 @@ public class MenuController {
 	 */
 	@RequestMapping(value = "getMenus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Menu> getMenus(@ModelAttribute Menu menu, @ModelAttribute Pagination pagination) throws Exception {
+	public List<Menu> getMenus(@ModelAttribute Menu menu, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Menu> menus = menuService.getMenus(menu, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

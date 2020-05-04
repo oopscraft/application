@@ -74,8 +74,20 @@
 					</td>
 				</tr>
 				<tr>
+					<th>
+						<span data-th-text="#{application.board.article.format}">Format</span>
+					</th>
+					<td>
+						<select is="duice-select" data-duice-bind="article,format" style="width:150px; font-weight:bold;">
+							<option value> - </option>
+							<option value="MARKDOWN">MARKDOWN</option>
+							<option value="HTML">HTML</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
 					<td colspan="2">
-						<textarea is="duice-ckeditor" data-duice-bind="article,contents" data-duice-config="{'height':600}"></textarea>
+						<div id="contentsDiv" data-height="600"></div>
 					</td>
 				</tr>
 			</tbody>

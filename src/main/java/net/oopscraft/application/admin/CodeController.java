@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import net.oopscraft.application.code.Code;
 import net.oopscraft.application.code.CodeService;
-import net.oopscraft.application.code.entity.Code;
 import net.oopscraft.application.core.Pagination;
 
 
@@ -26,9 +26,6 @@ import net.oopscraft.application.core.Pagination;
 @Controller
 @RequestMapping("/admin/code")
 public class CodeController {
-
-	@Autowired
-	HttpServletResponse response;
 
 	@Autowired
 	CodeService codeService;
@@ -54,7 +51,7 @@ public class CodeController {
 	 */
 	@RequestMapping(value = "getCodes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Code> getCodes(@ModelAttribute Code code, @ModelAttribute Pagination pagination) throws Exception {
+	public List<Code> getCodes(@ModelAttribute Code code, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Code> codes = codeService.getCodes(code, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

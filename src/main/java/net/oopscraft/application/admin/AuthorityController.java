@@ -18,17 +18,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.AuthorityService;
-import net.oopscraft.application.user.entity.Authority;
 
 @PreAuthorize("hasAuthority('ADMN_AUTH')")
 @Controller
 @RequestMapping("/admin/authority")
 public class AuthorityController {
 
-	@Autowired
-	HttpServletResponse response;
-	
 	@Autowired
 	AuthorityService authorityService;
 	
@@ -52,7 +49,7 @@ public class AuthorityController {
 	 */
 	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Authority> getAuthorities(@ModelAttribute Authority authority, @ModelAttribute Pagination pagination) throws Exception {
+	public List<Authority> getAuthorities(@ModelAttribute Authority authority, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Authority> authorities = authorityService.getAuthorities(authority, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

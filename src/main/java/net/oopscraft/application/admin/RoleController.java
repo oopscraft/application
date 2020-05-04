@@ -18,16 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.user.Role;
 import net.oopscraft.application.user.RoleService;
-import net.oopscraft.application.user.entity.Role;
 
 @PreAuthorize("hasAuthority('ADMN_ROLE')")
 @Controller
 @RequestMapping("/admin/role")
 public class RoleController {
-	
-	@Autowired
-	HttpServletResponse response;
 	
 	@Autowired
 	RoleService roleService;
@@ -52,7 +49,7 @@ public class RoleController {
 	 */
 	@RequestMapping(value = "getRoles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Role> getRoles(@ModelAttribute Role role, @ModelAttribute Pagination pagination) throws Exception {
+	public List<Role> getRoles(@ModelAttribute Role role, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Role> roles = roleService.getRoles(role, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

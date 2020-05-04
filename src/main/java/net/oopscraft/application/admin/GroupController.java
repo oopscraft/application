@@ -19,18 +19,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.user.Authority;
+import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
-import net.oopscraft.application.user.entity.Authority;
-import net.oopscraft.application.user.entity.Group;
 
 @PreAuthorize("hasAuthority('ADMN_GROP')")
 @Controller
 @RequestMapping("/admin/group")
 public class GroupController {
-	
-	@Autowired
-	HttpServletResponse response;
-	
+
 	@Autowired
 	GroupService groupService;
 	
@@ -49,7 +46,7 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "getGroups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Group> getGroups(@ModelAttribute Group group,@ModelAttribute Pagination pagination) throws Exception {
+	public List<Group> getGroups(@ModelAttribute Group group,@ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Group> groups = groupService.getGroups(group, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

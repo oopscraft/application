@@ -15,7 +15,7 @@ import javax.sound.sampled.Clip;
 
 import org.junit.Test;
 
-import net.oopscraft.application.util.captcha.Captcha;
+import net.oopscraft.application.utility.captcha.Captcha;
 
 /**
  * @author chomookun@gmail.com

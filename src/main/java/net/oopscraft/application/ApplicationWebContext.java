@@ -49,12 +49,12 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import net.oopscraft.application.api.WebSocketHandler;
+import net.oopscraft.application.api.ApiWebSocketHandler;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.security.AuthenticationFilter;
 import net.oopscraft.application.security.AuthenticationHandler;
 import net.oopscraft.application.security.AuthenticationProvider;
-import net.oopscraft.application.security.entity.SecurityPolicy;
+import net.oopscraft.application.security.SecurityPolicy;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -88,7 +88,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     private SecurityPolicy securityPolicy;
     
 	@Autowired
-	WebSocketHandler webSocketHandler;
+	ApiWebSocketHandler apiWebSocketHandler;
 	
 	/**
 	 * Enables DefaultServletHandlerConfigurer
@@ -371,7 +371,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 	
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(webSocketHandler, "/api/webSocket");
+		registry.addHandler(apiWebSocketHandler, "/api/webSocket");
 	}
 	
 	@Bean

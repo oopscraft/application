@@ -27,17 +27,14 @@ import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.ValueMap;
+import net.oopscraft.application.user.Authority;
+import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
-import net.oopscraft.application.user.entity.Authority;
-import net.oopscraft.application.user.entity.User;
 
 @PreAuthorize("hasAuthority('ADMN_USER')")
 @Controller
 @RequestMapping("/admin/user")
 public class UserController {
-	
-	@Autowired
-	HttpServletResponse response;
 	
 	@Autowired
 	UserService userService;
@@ -63,7 +60,7 @@ public class UserController {
 	 */
 	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<User> getUsers(@ModelAttribute User user,@ModelAttribute Pagination pagination) throws Exception {
+	public List<User> getUsers(@ModelAttribute User user,@ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<User> users = userService.getUsers(user, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

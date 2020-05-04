@@ -2,7 +2,6 @@ package net.oopscraft.application.admin;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,23 +17,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.AuthorityService;
+import net.oopscraft.application.user.Group;
 import net.oopscraft.application.user.GroupService;
+import net.oopscraft.application.user.Role;
 import net.oopscraft.application.user.RoleService;
-import net.oopscraft.application.user.entity.Authority;
-import net.oopscraft.application.user.entity.Group;
-import net.oopscraft.application.user.entity.Role;
 
 @PreAuthorize("hasAuthority('ADMN')")
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-	
-	@Autowired
-	HttpServletRequest request;
-	
-	@Autowired
-	HttpServletResponse response;
 	
 	@Autowired
 	GroupService groupService;
@@ -80,7 +73,7 @@ public class AdminController {
 	 */
 	@RequestMapping(value = "getGroups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Group> getGroups(@ModelAttribute Group group, @ModelAttribute Pagination pagination) throws Exception {
+	public List<Group> getGroups(@ModelAttribute Group group, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Group> groups = groupService.getGroups(group,pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
@@ -96,7 +89,7 @@ public class AdminController {
 	 */
 	@RequestMapping(value = "getRoles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Role> getUsers(@ModelAttribute Role role, @ModelAttribute Pagination pagination) throws Exception {
+	public List<Role> getUsers(@ModelAttribute Role role, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Role> roles = roleService.getRoles(role,pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
@@ -112,7 +105,7 @@ public class AdminController {
 	 */
 	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Authority> getAuthorities(@ModelAttribute Authority authority, @ModelAttribute Pagination pagination) throws Exception {
+	public List<Authority> getAuthorities(@ModelAttribute Authority authority, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Authority> authorities = authorityService.getAuthorities(authority, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE,  pagination.getContentRange());

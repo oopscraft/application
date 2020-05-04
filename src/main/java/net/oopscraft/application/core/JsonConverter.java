@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -15,6 +16,7 @@ public class JsonConverter {
 		objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
 		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		objectMapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
 	}
 	
 	public static ObjectMapper getObjectMapper() {

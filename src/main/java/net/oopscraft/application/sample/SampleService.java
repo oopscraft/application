@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.TextTable;
 import net.oopscraft.application.core.mybatis.PageRowBounds;
-import net.oopscraft.application.sample.entity.Sample;
 
 @Service
 public class SampleService {

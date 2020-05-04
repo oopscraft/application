@@ -17,18 +17,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import net.oopscraft.application.board.Board;
 import net.oopscraft.application.board.BoardService;
-import net.oopscraft.application.board.entity.Board;
 import net.oopscraft.application.core.Pagination;
-import net.oopscraft.application.security.entity.SecurityPolicy;
+import net.oopscraft.application.security.SecurityPolicy;
 
 @PreAuthorize("hasAuthority('ADMN_BORD')")
 @Controller
 @RequestMapping("/admin/board")
 public class BoardController {
-	
-	@Autowired
-	HttpServletResponse response;
 	
 	@Autowired
 	BoardService boardService;
@@ -54,7 +51,7 @@ public class BoardController {
 	 */
 	@RequestMapping(value = "getBoards", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Board> getBoards(@ModelAttribute Board board, @ModelAttribute Pagination pagination) throws Exception {
+	public List<Board> getBoards(@ModelAttribute Board board, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Board> boards = boardService.getBoards(board, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

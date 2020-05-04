@@ -17,16 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.api.WebSocketHandler;
+import net.oopscraft.application.api.ApiWebSocketHandler;
 import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.process.ProcessExecutor;
 import net.oopscraft.application.core.process.ProcessStreamHandler;
-import net.oopscraft.application.monitor.entity.Monitor;
-import net.oopscraft.application.monitor.entity.Monitor.ClassLoadingKey;
-import net.oopscraft.application.monitor.entity.Monitor.MemoryKey;
-import net.oopscraft.application.monitor.entity.Monitor.OperatingSystemKey;
-import net.oopscraft.application.monitor.entity.Monitor.ThreadInfoKey;
+import net.oopscraft.application.monitor.Monitor.ClassLoadingKey;
+import net.oopscraft.application.monitor.Monitor.MemoryKey;
+import net.oopscraft.application.monitor.Monitor.OperatingSystemKey;
+import net.oopscraft.application.monitor.Monitor.ThreadInfoKey;
 
 @Service
 public class MonitorService {
@@ -37,7 +36,7 @@ public class MonitorService {
 	private List<Monitor> monitors = new CopyOnWriteArrayList<Monitor>();
 	
 	@Autowired
-	WebSocketHandler webSocketHandler;
+	ApiWebSocketHandler webSocketHandler;
 	
 	/**
 	 * Scheduled collecting monitor info

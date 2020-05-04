@@ -18,8 +18,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.Pagination;
-import net.oopscraft.application.message.entity.Message;
-import net.oopscraft.application.message.entity.MessageLanguage;
 
 @Service
 public class MessageService {

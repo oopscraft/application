@@ -24,8 +24,27 @@
 			,type: 'GET'
 		})
 		.done(function(data, textStatus, jqXHR) {
+			
+			// converts format
+			var format = data.format;
+			switch(format){
+			case 'MARKDOWN':
+				var simplemde = new duice.integrate.Simplemde(document.createElement('div'), null);
+				data.contents = simplemde.renderMarkdown(data.contents);
+				document.getElementById('contentsDiv').style.whiteSpace = 'normal';
+			break;
+			case 'HTML':
+				
+			break;
+			default:
+				data.contents = duice.escapeHtml(data.contents);
+				document.getElementById('contentsDiv').style.whiteSpace = 'normal';
+			break;
+			}
+			
 			article.fromJson(data);
 			articleFiles.fromJson(data.files);
+			articleReplies.fromJson(data.replies);
 	   	});
 	}
 	

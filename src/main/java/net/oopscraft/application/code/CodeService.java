@@ -13,9 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.oopscraft.application.code.entity.Code;
-import net.oopscraft.application.code.entity.CodeEntity;
-import net.oopscraft.application.code.entity.CodeItem;
 import net.oopscraft.application.core.Pagination;
 
 @Service

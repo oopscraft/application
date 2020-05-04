@@ -7,8 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
-import net.oopscraft.application.sample.entity.Sample;
-
 @Mapper
 public interface SampleMapper {
 	
