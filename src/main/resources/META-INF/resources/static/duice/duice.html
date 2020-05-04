@@ -9,10 +9,6 @@
 <script src="polyfill/classList.js"></script>
 <script src="duice.js"></script>
 <link rel="stylesheet" type="text/css" href="duice.css">
-<!-- ckeditor -->
-<script src="integrate/ckeditor/ckeditor.js"></script>
-<script src="integrate/duice-ckeditor.js"></script>
-
 <script>
 /**
  * loads framework
@@ -517,7 +513,7 @@ button {
 		<div class="chapter__bodyDiv">
 			<div class="chapter__bodyDiv-dataDiv">
 				<h3>duice.Map <small>(var user)</small></h3>
-				<textarea id="userTextarea" class="code" style="height:900px;"></textarea>
+				<textarea id="userTextarea" class="code" style="height:600px;"></textarea>
 			</div>
 			<div class="chapter__bodyDiv-uiDiv">
 				<h3>duice.ui.MapUIElement <small>(binding to user)</small></h3>
@@ -577,15 +573,6 @@ button {
 							<td>hireDate</td>
 							<td align="center"><span is="duice-span" data-duice-bind="user,hireDate" data-duice-mask="date,yyyy.MM.dd HH:mm:ss"></span></td>
 							<td class="code">&lt;span is="duice-span" data-duice-bind="user,hireDate" data-duice-mask="date,yyyy.MM.dd HH:mm:ss" ...</td class="code">
-						</tr>
-						<!-- ================================================================ -->
-						<!-- duice-div				   										  -->
-						<!-- ================================================================ -->
-						<tr>
-							<th>duice-div</th>
-							<td>profile</td>
-							<td><div is="duice-div" data-duice-bind="user,profile"></div></td>
-							<td class="code">&lt;div is="duice-div" data-duice-bind="user,profile" ...</td class="code">
 						</tr>
 						<!-- ================================================================ -->
 						<!-- duice-input[type=text]		   									  -->
@@ -731,6 +718,15 @@ button {
 							<td class="code">&lt;textarea is="duice-textarea" ...</td class="code">
 						</tr>
 						<!-- ================================================================ -->
+						<!-- duice-div				   										  -->
+						<!-- ================================================================ -->
+						<tr>
+							<th>duice-div</th>
+							<td>profile</td>
+							<td><div is="duice-div" data-duice-bind="user,profile"></div></td>
+							<td class="code">&lt;div is="duice-div" data-duice-bind="user,profile" ...</td class="code">
+						</tr>
+						<!-- ================================================================ -->
 						<!-- duice-img						   								  -->
 						<!-- ================================================================ -->
 						<tr>
@@ -738,19 +734,6 @@ button {
 							<td>image</td>
 							<td><img is="duice-img" data-duice-bind="user,image"/></td>
 							<td class="code">&lt;img is="duice-img" data-duice-bind="user,image" ...</td>
-						</tr>
-						<!-- ================================================================ -->
-						<!-- duice-pagination				   								  -->
-						<!-- ================================================================ -->
-						<tr>
-							<th>duice-pagination</th>
-							<td>page,rows,totalCount</td>
-							<td>
-								<ul is="duice-pagination" data-duice-bind="user,page,rows,totalCount" data-duice-size="5" class="pagination">
-									<li data-page="[@duice[$context.page]]" onclick="alert(this.dataset.page);user.set('page',this.dataset.page);" class="page-item page-link"></li>
-								</ul>
-							</td>
-							<td class="code">&lt;img is="duice-img" data-duice-bind="user,image" ...</td class="code">
 						</tr>
 					</tbody>
 				</table>
@@ -1560,28 +1543,5 @@ button {
 			</script>
 		</div>
 	</section>
-	<!-- ================================================================ -->
-	<!-- duice.plugin.Ckeditor											  -->
-	<!-- ================================================================ -->
-	<section class="chapter">
-		<div class="chapter__headerDiv">
-			<h2>Plugin CkEditor 
-				<small>(https://ckeditor.com/ckeditor-4)</small>
-			</h2>
-		</div>
-		<div class="chapter__bodyDiv">
-			<div style="width:33%;">
-				<textarea is="duice-ckeditor" data-duice-bind="user,profile" data-duice-config="{'height':300}"></textarea>
-			</div>
-			<div style="width:33%;">
-				<div is="duice-div" data-duice-bind="user,profile" style="height:100%;"></div>
-			</div>
-			<div style="width:33%;">
-				<textarea is="duice-textarea" data-duice-bind="user,profile" class="form-control" style="height:100%;"></textarea>
-			</div>
-		</div>
-	</section>
-
-
 </body>
 </html>

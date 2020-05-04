@@ -23,7 +23,7 @@ namespace duice {
     /**
      * Adds class
      */
-    function addClass(element:HTMLElement, className:string):void {
+    export function addClass(element:HTMLElement, className:string):void {
 		if(Configuration.cssEnable) {
             element.classList.add(className);
         }
@@ -330,7 +330,7 @@ namespace duice {
      * @param $context
      * @return converted HTML element
      */
-    function executeExpression(element:HTMLElement, $context:any):any {
+    export function executeExpression(element:HTMLElement, $context:any):any {
         var string = element.outerHTML;
         string = string.replace(/\[@duice\[([\s\S]*?)\]\]/mgi,function(match, command){
             try {
@@ -360,7 +360,7 @@ namespace duice {
      * @param value
      * @return escaped string value
      */
-    export function escapeHTML(value:string):string {
+    export function escapeHtml(value:string):string {
         
         // checks value is valid.
         if(!value || typeof value !== 'string'){
@@ -430,7 +430,7 @@ namespace duice {
      * Sets element position to be centered
      * @param element
      */
-    function setPositionCentered(element:HTMLElement):void {
+    export function setPositionCentered(element:HTMLElement):void {
         var win = getCurrentWindow();
         var computedStyle = win.getComputedStyle(element);
         var computedWidth = parseInt(computedStyle.getPropertyValue('width').replace(/px/gi, ''));
@@ -446,7 +446,7 @@ namespace duice {
      * Returns position info of specified element
      * @param element
      */
-    function getElementPosition(element:any) {
+    export function getElementPosition(element:any) {
         var pos:any = ('absolute relative').indexOf(getComputedStyle(element).position) == -1;
         var rect1:any = {top: element.offsetTop * pos, left: element.offsetLeft * pos};
         var rect2:any = element.offsetParent ? getElementPosition(element.offsetParent) : {top:0,left:0};
@@ -1530,10 +1530,12 @@ namespace duice {
             if(this.notifyEnable && this.hasChanged()){
                 this.clearUnavailableObservers();
                 for(var i = 0, size = this.observers.length; i < size; i++){
-                    try {
-                        this.observers[i].update(this, obj);
-                    }catch(e){
-                        console.error(e, this.observers[i]);
+                    if(this.observers[i] !== obj){
+                        try {
+                            this.observers[i].update(this, obj);
+                        }catch(e){
+                            console.error(e, this.observers[i]);
+                        }
                     }
                 }
                 this.clearChanged();
@@ -2822,6 +2824,9 @@ namespace duice {
             super(input);
             addClass(this.input, 'duice-input-number');
             this.input.setAttribute('type','text');
+
+            // default mask
+            this.mask = new NumberMask(0);
         }
         setMask(scale:number){
             this.mask = new NumberMask(scale);
@@ -3653,126 +3658,6 @@ namespace duice {
             this.notifyObservers(this);
         }
     }
-
-    /**
-     * duice.PaginationFactory
-     */
-    export class PaginationFactory extends MapComponentFactory {
-        getComponent(element:HTMLUListElement):Pagination {
-            var pagination = new Pagination(element);
-            if(element.dataset.duiceSize){
-                pagination.setSize(Number(element.dataset.duiceSize));
-            }
-            var bind = element.dataset.duiceBind.split(',');
-            pagination.bind(this.getContextProperty(bind[0]), bind[1], bind[2], bind[3]);
-            return pagination;
-        }
-    }
-
-    /**
-     * duice.Pagination
-     */
-    export class Pagination extends MapComponent {
-        ul:HTMLUListElement;
-        li:HTMLLIElement;
-        lis:Array<HTMLLIElement> = new Array<HTMLLIElement>();
-        pageName:string;
-        rowsName:string;
-        totalCountName:string;
-        size:number = 1;
-        page:number = 1;
-        constructor(ul:HTMLUListElement) {
-            super(ul);
-            this.ul = ul;
-            addClass(this.ul, 'duice-ul');
-            
-            // clones li
-            var li = this.ul.querySelector('li');
-            this.li = <HTMLLIElement>li.cloneNode(true);
-            li.parentNode.removeChild(li);
-        }
-        bind(map:duice.Map, pageName:string, rowsName:string, totalCountName:string):void {
-            this.pageName = pageName;
-            this.rowsName = rowsName;
-            this.totalCountName = totalCountName;
-            super.bind(map,pageName);
-        }
-        setSize(size:number):void{
-            this.size = size;
-        }
-        setEnable(enable:boolean):void {
-            return;
-        }
-        update(map:duice.Map, obj:object):void {
-            this.page = Number(defaultIfEmpty(map.get(this.pageName),1));
-            var rows = Number(defaultIfEmpty(map.get(this.rowsName),1));
-            var totalCount = Number(defaultIfEmpty(map.get(this.totalCountName),1));
-            var totalPage = Math.max(Math.ceil(totalCount/rows),1);
-            var startPage = Math.floor((this.page-1)/this.size)*this.size + 1;
-            var endPage = Math.min(startPage+this.size-1, totalPage);
-            var _this = this;
-            
-            // clear lis
-            for(var i = this.lis.length-1; i >= 0; i --){
-                this.lis[i].parentNode.removeChild(this.lis[i]);
-            }
-            this.lis.length = 0;
-            
-            // creates previous item
-            const prevPage = startPage - 1;
-            var prevLi = this.createPageItem(prevPage,'');
-            prevLi.style.cursor = 'pointer';
-            prevLi.classList.add('duice-pagination__li--prev');
-            this.ul.appendChild(prevLi);
-            this.lis.push(prevLi);
-            if(prevPage < 1){
-                prevLi.onclick = null;
-                prevLi.style.pointerEvents = 'none';
-                prevLi.style.opacity = '0.5';
-            }
-            
-            // creates page items
-            for(var i = startPage; i <= endPage; i ++ ){
-                const page = i;
-                var li = this.createPageItem(page, String(page));
-                li.style.cursor = 'pointer';
-                this.ul.appendChild(li);
-                this.lis.push(li);
-                if(page === this.page){
-                    li.classList.add('duice-pagination__li--current');
-                    li.onclick = null;
-                    li.style.pointerEvents = 'none';
-                }
-            }
-            
-            // creates next item
-            const nextPage = endPage + 1;
-            var nextLi = this.createPageItem(nextPage,'');
-            nextLi.style.cursor = 'pointer';
-            nextLi.classList.add('duice-pagination__li--next');
-            this.ul.appendChild(nextLi);
-            this.lis.push(nextLi);
-            if(nextPage > totalPage){
-                nextLi.onclick = null;
-                nextLi.style.pointerEvents = 'none';
-                nextLi.style.opacity = '0.5';
-            }
-        }
-        getValue():any {
-            return this.page;
-        } 
-        createPageItem(page:number, text:string):HTMLLIElement {
-            var li:HTMLLIElement = <HTMLLIElement>this.li.cloneNode(true);
-            li.classList.add('duice-pagination__li');
-            var _this = this;
-            var $context:any = {};
-            $context['page'] = Number(page);
-            $context['text'] = String(text);
-            li = executeExpression(li, $context);
-            li.appendChild(document.createTextNode(text));
-            return li;
-        }
-    }
     
     /**
      * duice.TableFactory
@@ -4442,15 +4327,10 @@ namespace duice {
             }
         }
     }
-    
-    /**
-     * Adds components
-     */
-    // list element
+
+    // Adds components
     ComponentDefinitionRegistry.add(new ComponentDefinition('table[is="duice-table"]', duice.TableFactory));
     ComponentDefinitionRegistry.add(new ComponentDefinition('ul[is="duice-ul"]', duice.UlFactory));
-
-    // map element
     ComponentDefinitionRegistry.add(new ComponentDefinition('span[is="duice-span"]', duice.SpanFactory));
     ComponentDefinitionRegistry.add(new ComponentDefinition('div[is="duice-div"]', duice.DivFactory));
     ComponentDefinitionRegistry.add(new ComponentDefinition('input[is="duice-input"]', duice.InputFactory));
@@ -4458,10 +4338,8 @@ namespace duice {
     ComponentDefinitionRegistry.add(new ComponentDefinition('textarea[is="duice-textarea"]', duice.TextareaFactory));
     ComponentDefinitionRegistry.add(new ComponentDefinition('img[is="duice-img"]', duice.ImgFactory));
     ComponentDefinitionRegistry.add(new ComponentDefinition('*[is="duice-scriptlet"]', duice.ScriptletFactory));
-    ComponentDefinitionRegistry.add(new ComponentDefinition('ul[is="duice-pagination"]', duice.PaginationFactory));
-
+  
 }
-
 
 /**
  * DOMContentLoaded event process
