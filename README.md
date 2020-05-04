@@ -15,7 +15,6 @@ user@host> build.sh
 ## Demo Site
 
 URL: http://application.oopscraft.net/admin
-
 User/Password : test/test
 
 
