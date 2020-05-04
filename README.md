@@ -1,7 +1,7 @@
 # Platform for Standalone Application Development
 
 ## Demo Site
-URL: http://application.oopscraft.net/admin
+URL: [go](http://application.oopscraft.net/admin){:target="_blank"}
 
 User/Password : test/test
 
