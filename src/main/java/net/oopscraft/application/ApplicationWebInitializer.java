@@ -23,9 +23,9 @@ import org.springframework.web.servlet.DispatcherServlet;
  * @version 0.0.1
  * @see    
  */
-public class ApplicationWebXml implements ServletContainerInitializer {
+public class ApplicationWebInitializer implements ServletContainerInitializer {
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(ApplicationWebXml.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ApplicationWebInitializer.class);
 
 	@Override
 	public void onStartup(Set<Class<?>> c, ServletContext servletContext) throws ServletException {

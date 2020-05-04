@@ -27,14 +27,6 @@
 			user.setFocus('id');
 		});
 		
-		// handle global key press event
-		$(document).keypress(function(e){
-			if (e.keyCode == 13){
-				$('#loginButton').focus();
-				$('#loginButton').click();
-			}
-		});
-		
 		// defines variables 
 		const user = new duice.Map({
 			id:null,
@@ -45,6 +37,7 @@
 		 * Requests login
 		 */
 		function doLogin(){
+			console.log('##### doLogin');
 			
 			// checks input id
 			if(duice.isEmpty(user.get('id'))){
