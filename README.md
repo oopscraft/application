@@ -1,5 +1,4 @@
-# application
-Application Structure and Library
+# Platform for Standalone Application Development
 
 ## Demo Site
 URL: http://application.oopscraft.net/admin
@@ -30,4 +29,8 @@ user@host> ./application.sh stop
 user@host> ./application.sh log
 ```
 
+## Licence
+Anyone can use it freely. Modify the source or allow re-creation. However, you must state that you have the original creator. However, we can not grant patents or licenses for reproductives. (Modifications or reproductions must be shared with the public.)
+
+Licence: LGPL(GNU Lesser General Public License version 3) Copyright (C) 2017 duice.oopscraft.net Contact chomookun@gmail.com
 
