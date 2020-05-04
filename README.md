@@ -10,21 +10,26 @@ First, download the source code from the git hub repository.
 And then, executes build shell script. **__(build.sh)__**
 
 ```bash
-// clones source from github
+# clones source from github
 user@host> git clone https://github.com/oopscraft/application.git
 
-// maven build
+# maven build
 user@host> build.sh
 ```
+
 ## Start and Stop Applition
+After moving to the installation directory, execute the following command.
 
 ```bash
 # start
 user@host> ./application.sh start
+
 # status
 user@host> ./application.sh status
+
 # stop
 user@host> ./application.sh stop
+
 # view log
 user@host> ./application.sh log
 ```
