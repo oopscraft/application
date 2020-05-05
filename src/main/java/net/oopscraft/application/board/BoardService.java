@@ -14,9 +14,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.Pagination;
-import net.oopscraft.application.security.SecurityPolicy;
-import net.oopscraft.application.security.UserDetails;
-import net.oopscraft.application.user.Authority;
 
 @Service
 public class BoardService {
