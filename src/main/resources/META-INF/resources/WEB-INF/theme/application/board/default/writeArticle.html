@@ -37,11 +37,24 @@
 							<div class="app-col">
 								<input is="duice-input" type="text" data-duice-bind="article,title"/>
 							</div>
-
 						</div>
 					</td>
 				</tr>
 				<tr>
+					<th>
+						<span data-th-text="#{application.board.article.author}" class="mand">Author</span>
+					</th>
+					<td>
+						<div class="app-row">
+							<div class="app-col">
+								<input is="duice-input" type="text" data-duice-bind="article,author" style="width:150px;"/>
+								패스워드
+								<input is="duice-input" type="password" data-duice-bind="article,password" style="width:150px;"/>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr th:if="${board.categoryUse}">
 					<th>
 						<span data-th-text="#{application.board.article.category}">Category</span>
 					</th>

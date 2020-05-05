@@ -19,7 +19,7 @@
 <div class="app-row search">
 	<div class="app-col">
 		<img class="icon" th:src="@{/static/image/icon_search.png}"/>
-		<select is="duice-select" data-duice-bind="search,categoryId" onchange="getArticlesByCategory(this.value);" style="width:200px;">
+		<select th:if="${board.categoryUse}" is="duice-select" data-duice-bind="search,categoryId" onchange="getArticlesByCategory(this.value);" style="width:200px;">
 			<option value data-th-text="'- '+#{application.board.category}+' -'"></option>
 			<option th:each="category:${board.categories}" th:value="${category.id}" th:text="${category.name}"></option>
 		</select>
@@ -49,31 +49,29 @@
 		<table is="duice-table" 
 		data-duice-bind="articles,article" 
 		style="width:100%;">
-			<col style="width:5%;"/>					
-			<col style="width:10%;"/>
+			<col style="width:7%;"/>					
+			<col th:if="${board.categoryUse}" style="width:12%;"/>
 			<col/>
-			<col style="width:10%;"/>
 			<col style="width:10%;"/>
 			<col style="width:10%;"/>
 			<thead>
 				<tr>
 					<th data-th-text="#{application.global.no}" class="text-center">No</th>
-					<th data-th-text="#{application.board.article.category}" class="text-center">Category</th>
+					<th th:if="${board.categoryUse}" data-th-text="#{application.board.article.category}" class="text-center">Category</th>
 					<th data-th-text="#{application.board.article.title}">Title</th>
 					<th data-th-text="#{application.board.article.author}" class="text-center">Author</th>
 					<th data-th-text="#{application.board.article.date}" class="text-center">Date</th>
-					<th data-th-text="#{application.board.article.replyCount}" class="text-center">Reply</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td class="text-center">
-						<small is="duice-scriptlet" data-duice-bind="articles" data-duice-value="
+						<small is="duice-scriptlet" data-duice-bind="article" data-duice-value="
 						return search.get('totalCount') - (search.get('rows')*(search.get('page')-1)) - $context.index;
 						">
 						</small>
 					</td>
-					<td class="text-center">
+					<td th:if="${board.categoryUse}" class="text-center">
 						<span is="duice-span" data-duice-bind="article,categoryName"/></span>
 					</td>
 					<td>
@@ -81,6 +79,13 @@
 						<a data-id="[@duice[$context.article.get('id')]]" href="javascript:void(0);" onclick="javascript:readArticle(this.dataset.id);">
 							<span is="duice-span" data-duice-bind="article,title"></span>
 						</a>
+						<img th:src="@{/static/image/icon_file.png}" class="icon small" style="display:[@duice[$context.article.get('fileCount')>0?'inline-block':'none']];"/>
+						<small is="duice-scriptlet" data-duice-bind="article" data-duice-value="
+						var replyCount = $context.article.get('replyCount');
+						return replyCount > 0 ? '(' + replyCount + ')' : '';
+						" style="font-weight:bold;">
+						</small>
+						<img th:src="@{/static/image/icon_new.png}" class="icon small" style="display:[@duice[new Date().getTime()-$context.article.get('date')<1000*60*60*24?'inline-block':'none']];"/>
 					</td>
 					<td class="text-center">
 						<span is="duice-span" data-duice-bind="article,author"></span>
@@ -88,11 +93,6 @@
 					<td class="text-center">
 						<small>
 							<span is="duice-span" data-duice-bind="article,date" data-duice-mask="date,yyyy-MM-dd HH:mm:ss"></span>
-						</small>
-					</td>
-					<td class="text-center">
-						<small>
-							<span is="duice-span" data-duice-bind="article,replyCount"></span>
 						</small>
 					</td>
 				</tr>

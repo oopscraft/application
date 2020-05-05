@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Formula;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import net.oopscraft.application.core.jpa.BooleanStringConverter;
@@ -45,8 +46,10 @@ public class Article extends SystemEntity {
 	Date date;
 	
 	@Column(name="ATCL_ATHR", length = 1024)
+	@JsonView(List.class)
 	String author;
 	
+	@JsonIgnore
 	@Column(name="ATCL_PASS", length = 1024)
 	String password;
 	
@@ -58,6 +61,7 @@ public class Article extends SystemEntity {
 	
 	@Column(name="ATCL_CNTS", length=Integer.MAX_VALUE)
 	@Lob
+	@JsonView(List.class)
 	String contents;
 	
 	@Column(name = "BORD_ID", length = 32)
@@ -89,6 +93,7 @@ public class Article extends SystemEntity {
 	List<ArticleFile> files = new ArrayList<ArticleFile>();
 	
 	@Formula("(select count(*) from APP_ATCL_RPLY_INFO a where a.ATCL_ID = ATCL_ID)")
+	@JsonView(List.class)
 	int replyCount;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "articleId", cascade = CascadeType.ALL)

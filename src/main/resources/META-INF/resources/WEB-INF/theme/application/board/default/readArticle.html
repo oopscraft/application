@@ -34,14 +34,13 @@
 			<div class="app-col">
 				<h2>
 					<img th:src="@{/static/image/icon_article.png}" class="icon"/>
-					<span is="duice-span" data-duice-bind="article,categoryName" style="font-weight:bold; color:steelblue;"/></span>
+					<span th:if="${board.categoryUse}" is="duice-span" data-duice-bind="article,categoryName" style="font-weight:bold; color:steelblue;"/></span>
 					<span is="duice-span" data-duice-bind="article,title" style="font-weight:bold;"></span>
 				</h2>
 			</div>
 		</div>
 		<div class="app-row">
 			<div class="app-col" style="width:50%;">
-				
 				<span is="duice-span" data-duice-bind="article,authorName"></span>
 				<small>
 					<span is="duice-span" data-duice-bind="article,registerDate" data-duice-mask="date,yyyy-MM-dd HH:mm:ss"></span>
