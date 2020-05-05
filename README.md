@@ -26,7 +26,7 @@
 ## Demo Site
 URL: http://application.oopscraft.net/admin
 
-User/Password : test/test1111!!!!
+User/Password : test/test11!!
 
 ## Download and Build Binary
 First, download the source code from the git hub repository.
