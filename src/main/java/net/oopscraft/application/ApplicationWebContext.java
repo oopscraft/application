@@ -382,9 +382,6 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 				.paths(PathSelectors.ant("/api/**/*"))
 				.build();                                          
 	}
-	
-	
-	
 
 	
 }

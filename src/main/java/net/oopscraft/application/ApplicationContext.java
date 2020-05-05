@@ -9,6 +9,7 @@ import java.util.Vector;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.text.CaseUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
@@ -16,6 +17,8 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.hibernate.cfg.AvailableSettings;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -75,6 +78,8 @@ import net.oopscraft.application.message.MessageSource;
 	,basePackages = "net.oopscraft.application"
 )
 public class ApplicationContext {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContext.class);
 	
 	@Autowired
 	private Environment environment;
@@ -247,7 +252,14 @@ public class ApplicationContext {
 	@Bean
 	public CookieLocaleResolver localeResolver() throws Exception {
 		CookieLocaleResolver localeResolver = new CookieLocaleResolver();
-		localeResolver.setDefaultLocale(Locale.ENGLISH);
+		try {
+			String locales = environment.getProperty("application.locales");
+			String defaultLocale = locales.split(",")[0];
+			localeResolver.setDefaultLocale(LocaleUtils.toLocale(defaultLocale));
+		}catch(Exception ignore) {
+			LOGGER.warn(ignore.getMessage());
+			localeResolver.setDefaultLocale(Locale.getDefault());	
+		}
 		return localeResolver;
 	}
 

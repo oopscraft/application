@@ -6,12 +6,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
+import org.apache.commons.lang3.LocaleUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.ValueMap;
 
 @Service
 public class LocaleService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(LocaleService.class);
+	
+    @Value("${application.locales}")
+    private String locales;
 
 	/**
 	 * Gets available Locale list
@@ -28,9 +37,31 @@ public class LocaleService {
 		return locales;
 	}
 	
-	private static Locale getDefaultLocaleIfNotExist(Locale locale) throws Exception {
+	private List<Locale> getConfiguredLocales() throws Exception {
+		List<Locale> availableLocales = new ArrayList<Locale>();
+		for(String element : this.locales.split(",")) {
+			try {
+				availableLocales.add(LocaleUtils.toLocale(element));
+			}catch(Exception ignore) {
+				LOGGER.warn(ignore.getMessage());
+			}
+		}
+		return availableLocales;
+	}
+	
+	/**
+	 * Returns default locale
+	 * @param locale
+	 * @return
+	 * @throws Exception
+	 */
+	private Locale getDefaultLocaleIfNotExist(Locale locale) throws Exception {
 		if(locale == null) {
-			locale = Locale.getDefault();
+			try {
+				locale = LocaleUtils.toLocale(locales.split(",")[0]);
+			}catch(Exception e) {
+				locale = Locale.getDefault();
+			}
 		}
 		return locale;
 	}
@@ -103,15 +134,18 @@ public class LocaleService {
 		inLocale = getDefaultLocaleIfNotExist(inLocale);
 		List<ValueMap> languages = new ArrayList<ValueMap>();
 		Vector<String> keys = new Vector<String>();
+		List<Locale> configuredLocales = this.getConfiguredLocales();
 		for(Locale locale : getAvailableLocales()) {
-			String language = locale.getLanguage();
-			if(!keys.contains(language)) {
-				keys.add(language);
-				ValueMap languageInfo = new ValueMap();
-				languageInfo.set("language", language);
-				languageInfo.set("displayLanguage", locale.getDisplayLanguage(inLocale));
-				languageInfo.set("displayLanguageByLocale", locale.getDisplayName(locale).replaceAll("\\(.*\\)", "").trim());
-				languages.add(languageInfo);
+			if(configuredLocales.contains(locale)) {
+				String language = locale.getLanguage();
+				if(!keys.contains(language)) {
+					keys.add(language);
+					ValueMap languageInfo = new ValueMap();
+					languageInfo.set("language", language);
+					languageInfo.set("displayLanguage", locale.getDisplayLanguage(inLocale));
+					languageInfo.set("displayLanguageByLocale", locale.getDisplayName(locale).replaceAll("\\(.*\\)", "").trim());
+					languages.add(languageInfo);
+				}
 			}
 		}
 		languages.sort(new Comparator<ValueMap>() {

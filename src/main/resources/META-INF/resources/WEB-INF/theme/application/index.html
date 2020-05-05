@@ -8,16 +8,29 @@
 		</a>
 	</div>
 	<div class="app-col right middle">
-		<img th:src="${__user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
-		<span data-th-text="${__user.name}" style="font-weight:bold;"></span>
-		&nbsp;&nbsp;&nbsp;
-		<img class="icon" th:src="@{/static/image/icon_logout.png}"/>
-		<span data-th-text="#{application.global.logout}" onclick="__logout();" class="link"></span>
-		&nbsp;&nbsp;&nbsp;
-		<img class="icon" th:src="@{/static/image/icon_language.png}"/>
-		<select class="duice-select" onchange="__changeLanguage(this.value);" style="width:100px;">
-			<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
-		</select>
+		<span sec:authorize="isAnonymous()">
+			<span onclick="__login();" class="link">
+				<img class="icon" th:src="@{/static/image/icon_login.png}"/>
+				<span data-th-text="#{application.global.login}"></span>
+			</span>
+		</span>
+		<span sec:authorize="isAuthenticated()">
+			<span>		
+				<img th:src="${__user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
+				<span data-th-text="${__user.name}" style="font-weight:bold;"></span>
+			</span>
+			&nbsp;&nbsp;&nbsp;
+			<span onclick="__logout();" class="link">
+				<img class="icon" th:src="@{/static/image/icon_logout.png}"/>
+				<span data-th-text="#{application.global.logout}"></span>
+			</span>
+		</span>
+		<span style="margin-left:1rem;">
+			<img class="icon" th:src="@{/static/image/icon_language.png}"/>
+			<select class="duice-select" onchange="__changeLanguage(this.value);" style="width:100px;">
+				<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
+			</select>
+		</span>
 	</div>
 </div>
 <!-- ================================================== -->

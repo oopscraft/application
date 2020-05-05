@@ -1,9 +1,10 @@
-<div class="app-row" style="width:300px;">
+<div class="app-row" style="width:300px; margin-bottom:200px;">
 	<div class="app-col">
 		<img th:src="@{/static/image/application.png}"/>
-		<input is="duice-input" type="text" data-duice-bind="user,id"/>
-		<input is="duice-input-password" type="password" data-duice-bind="user,password"/>
-		<button id="loginButton" class="button" onclick="doLogin();" style="width:100%;">
+		<input is="duice-input" type="text" data-duice-bind="user,id" style="margin:1px;"/>
+		<input is="duice-input" type="password" data-duice-bind="user,password" style="margin:1px;"/>
+		<button id="loginButton" class="button" onclick="doLogin();" style="width:100%; margin:1px;">
+			<img class="icon" th:src="@{/static/image/icon_login.png}"/>
 			<span data-th-text="#{application.global.login}"></span>
 		</button>
 		<div id="messageDiv"></div>

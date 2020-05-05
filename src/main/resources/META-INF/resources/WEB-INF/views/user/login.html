@@ -4,11 +4,11 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=2048,initial-scale=1">
     	<title>Application</title>
-		<link rel="stylesheet" type="text/css" th:href="@{/static/polyfill/normalize.css}">
-		<script th:src="@{/static/polyfill/dataset.js}"></script>
-		<script th:src="@{/static/polyfill/classList.js}"></script>
-		<script th:src="@{/static/duice.js}"></script>
-		<link rel="stylesheet" type="text/css" th:href="@{/static/duice.css}">
+		<link rel="stylesheet" type="text/css" th:href="@{/static/duice/polyfill/normalize.css}">
+		<script th:src="@{/static/duice/polyfill/dataset.js}"></script>
+		<script th:src="@{/static/duice/polyfill/classList.js}"></script>
+		<script th:src="@{/static/duice/duice.js}"></script>
+		<link rel="stylesheet" type="text/css" th:href="@{/static/duice/duice.css}">
 		<script th:src="@{/static/jquery.js}"></script>
 		<link rel="stylesheet" type="text/css" th:href="@{/static/application.css}">
 		<script th:src="@{/static/application.js}"></script>
@@ -27,14 +27,6 @@
 			user.setFocus('id');
 		});
 		
-		// handle global key press event
-		$(document).keypress(function(e){
-			if (e.keyCode == 13){
-				$('#loginButton').focus();
-				$('#loginButton').click();
-			}
-		});
-		
 		// defines variables 
 		const user = new duice.Map({
 			id:null,
@@ -48,14 +40,14 @@
 			
 			// checks input id
 			if(duice.isEmpty(user.get('id'))){
-				printMessage('아이디 입력해라\n\ndkdkdkdkdkd');
+				printMessage('[[#{application.global.enterItem(#{application.user.id})}]]');
 				user.setFocus('id');
 				return false;
 			}
 			
 			// checks input password
 			if(duice.isEmpty(user.get('password'))){
-				printMessage('패스워드 입력해라');
+				printMessage('[[#{application.global.enterItem(#{application.user.password})}]]');
 				user.setFocus('password');
 				return false;
 			}
