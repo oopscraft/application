@@ -24,7 +24,7 @@ public class Error {
 	@Column(name = "EXCP", length = 32)
 	String exception;
 	
-	@Column(name = "MESG", length = 32)
+	@Column(name = "MESG", length = 4000)
 	String message;
 
 	@JsonIgnore

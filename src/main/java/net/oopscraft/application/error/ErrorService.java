@@ -2,7 +2,6 @@ package net.oopscraft.application.error;
 
 import java.util.Date;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +61,7 @@ public class ErrorService {
 		try {
 			errorRepository.saveAndFlush(error);
 		}catch(Exception ignore) {
-			LOGGER.warn(ignore.getMessage());
+			LOGGER.warn(ignore.getMessage(), ignore);
 		}
 	}
 	
