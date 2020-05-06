@@ -37,6 +37,11 @@ public class LocaleService {
 		return locales;
 	}
 	
+	/**
+	 * Returns configured locale
+	 * @return
+	 * @throws Exception
+	 */
 	private List<Locale> getConfiguredLocales() throws Exception {
 		List<Locale> availableLocales = new ArrayList<Locale>();
 		for(String element : this.locales.split(",")) {

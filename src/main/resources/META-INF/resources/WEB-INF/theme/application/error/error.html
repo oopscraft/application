@@ -1,1 +1,16 @@
-ERROR FDKSAJFDKLSAFJDKLSA
+<style>
+#messageDiv {
+	white-space: pre-line;
+	font-weight: bold;
+	text-align: center;
+}
+</style>
+<body style="display:flex; justify-content:center; align-items:center;">
+	<div class="app-row">
+	   	<div class="app-col text-center">
+			<img class="icon" th:src="@{/static/image/icon_error.png}"/>
+			<div id="messageDiv" th:text="${error.message}" style="white-space:pre-line; margin:1rem">
+			</div>
+		</div>
+	</div>
+</body>

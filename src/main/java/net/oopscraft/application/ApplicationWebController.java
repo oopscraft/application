@@ -60,17 +60,6 @@ public class ApplicationWebController {
     MessageSource messageSource;
 	
 	/**
-	 * index
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(method=RequestMethod.GET)
-	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("index.html");
-		return modelAndView;
-	}
-	
-	/**
 	 * Returns locale list
 	 * @return
 	 * @throws Exception
@@ -78,18 +67,6 @@ public class ApplicationWebController {
 	@ModelAttribute("__locales")
 	public List<ValueMap> getLocales(HttpServletRequest request) throws Exception {
 		return localeService.getLocales(localeResolver.resolveLocale(request));
-	}
-	
-	@ModelAttribute("__user")
-	public User getUser() throws Exception {
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		Authentication authentication = securityContext.getAuthentication();
-		if(authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-			return userService.getUser(userDetails.getUsername());
-		}else {
-			return new User();
-		}
 	}
 	
 	/**
@@ -110,6 +87,47 @@ public class ApplicationWebController {
 	@ModelAttribute("__languages")
 	public List<ValueMap> getLanguages(HttpServletRequest request) throws Exception {
 		return localeService.getLanguages(localeResolver.resolveLocale(request));
+	}
+	
+	@ModelAttribute("__user")
+	public User getUser() throws Exception {
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		Authentication authentication = securityContext.getAuthentication();
+		if(authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			return userService.getUser(userDetails.getUsername());
+		}else {
+			return new User();
+		}
+	}
+	
+	/**
+	 * index
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(method=RequestMethod.GET)
+	public ModelAndView index() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("index.html");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "public/**", method = RequestMethod.GET)
+	public String forwardPublic(HttpServletRequest request) throws Exception {
+		String resource = request.getRequestURI();
+		String resourceForward = String.format("forward:/WEB-INF/theme/%s%s", environment.getProperty("application.theme"), resource);
+		return resourceForward;
+	}
+	
+	/**
+	 * Login page
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "login", method = RequestMethod.GET)
+	public ModelAndView login() throws Exception {
+		ModelAndView modelAndView = new ModelAndView("login.html");
+		return modelAndView;
 	}
 	
 	/**
@@ -154,24 +172,6 @@ public class ApplicationWebController {
         	if(os != null) try { os.close(); }catch(Exception ignore) {}
         }
 		return imageBytes;
-	}
-	
-	@RequestMapping(value = "public/**", method = RequestMethod.GET)
-	public String forwardPublic(HttpServletRequest request) throws Exception {
-		String resource = request.getRequestURI();
-		String resourceForward = String.format("forward:/WEB-INF/theme/%s%s", environment.getProperty("application.theme"), resource);
-		return resourceForward;
-	}
-	
-	/**
-	 * Login page
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "login", method = RequestMethod.GET)
-	public ModelAndView login() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("login.html");
-		return modelAndView;
 	}
 	
 }

@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
-
-	<body>
-		<span th:text="${statusCode}"></span>
-		<hr/>
-		<span th:text="${message}"></span>
-		
-		<th:block th:include="|../theme/application/error/error.html|"></th:block>
-	
-	</body>
-
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=2048,initial-scale=1">
+    	<title>Application</title>
+		<link rel="stylesheet" type="text/css" th:href="@{/static/duice/polyfill/normalize.css}">
+		<script th:src="@{/static/duice/polyfill/dataset.js}"></script>
+		<script th:src="@{/static/duice/polyfill/classList.js}"></script>
+		<link rel="stylesheet" type="text/css" th:href="@{/static/application.css}">
+		<script th:src="@{/static/application.js}"></script>
+	</head>
+	<th:block th:include="|../theme/application/error/error.html|"></th:block>
 </html>
 
 

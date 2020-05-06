@@ -1,14 +1,13 @@
 package net.oopscraft.application.error;
 
-import java.util.Date;
-
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.FieldError;
@@ -21,7 +20,6 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.JsonConverter;
-import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.message.MessageException;
 
 @Controller
@@ -30,40 +28,13 @@ import net.oopscraft.application.message.MessageException;
 public class ErrorController {
 	
 	@Autowired
+	ErrorService errorService;
+	
+	@Autowired
 	LocaleResolver localeResolver;
 	
 	@Autowired
     MessageSource messageSource;
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView index(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelAndView modelAndView = new ModelAndView("error/error.html");
-		int statusCode = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) == null ? 0 
-						: Integer.parseInt(request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE).toString());
-		modelAndView.addObject("statusCode", statusCode);
-		String message = request.getAttribute(RequestDispatcher.ERROR_MESSAGE) == null	? ""
-						: request.getAttribute(RequestDispatcher.ERROR_MESSAGE).toString();
-		modelAndView.addObject("message", message);
-		return modelAndView;
-	}
-	
-	
-	/**
-	 * createDefaultErrorMessage
-	 * @param request
-	 * @param exception
-	 * @return
-	 * @throws Exception
-	 */
-	private ValueMap createDefaultErrorMessage(HttpServletRequest request, Exception exception) throws Exception {
-		ValueMap errorMessage = new ValueMap();
-		errorMessage.set("uri", request.getRequestURI());
-		errorMessage.set("method", request.getMethod());
-		errorMessage.set("timestamp", new Date());
-		errorMessage.set("exception", exception.getClass().getSimpleName());
-		errorMessage.set("message", ExceptionUtils.getRootCauseMessage(exception));
-		return errorMessage;
-	}
 	
 	/**
 	 * responseErrorMessage
@@ -72,12 +43,41 @@ public class ErrorController {
 	 * @param status
 	 * @throws Exception
 	 */
-	private void responseErrorMessage(HttpServletResponse response, ValueMap errorMessage, int status) throws Exception {
-		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write(JsonConverter.toJson(errorMessage));
-		response.setStatus(status);
+	private ModelAndView responseError(HttpServletRequest request, HttpServletResponse response, Error error) throws Exception {
+		errorService.saveError(error);
+		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))
+		|| error.getUri().startsWith("/api/")
+		){
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(JsonConverter.toJson(error));
+			response.setStatus(error.getStatusCode());
+			return null;
+		}else {
+			ModelAndView modelAndView = new ModelAndView("error/error.html");
+			modelAndView.addObject("error", error);
+			modelAndView.setStatus(HttpStatus.valueOf(error.getStatusCode()));
+			return modelAndView;
+		}
 	}
 	
+	/**
+	 * error index
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView index(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		int statusCode = Integer.parseInt(request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE).toString());
+		String message = statusCode + " " + HttpStatus.valueOf(statusCode).getReasonPhrase();
+		Error error = errorService.createError(new ServletException(message), request);
+		error.setStatusCode(statusCode);
+		if(request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI) != null) {
+			error.setUri(request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI).toString());
+		}
+		return responseError(request, response, error);
+	}
+
 	/**
 	 * 500 - Default exception handler
 	 * @param request
@@ -86,14 +86,11 @@ public class ErrorController {
 	 * @throws Exception
 	 */
 	@ExceptionHandler(Exception.class)
-	public void handleException(HttpServletRequest request, HttpServletResponse response, Exception exception) throws Exception {
-		ValueMap errorMessage = createDefaultErrorMessage(request, exception);
-		errorMessage.setString("message", messageSource.getMessage("application.global.exception.Exception", null, localeResolver.resolveLocale(request)));
-		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
-			responseErrorMessage(response, errorMessage, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		}else {
-			throw exception;
-		}
+	public ModelAndView handleException(HttpServletRequest request, HttpServletResponse response, Exception exception) throws Exception {
+		Error error = errorService.createError(exception, request);
+		error.setMessage(messageSource.getMessage("application.global.exception.Exception", null, localeResolver.resolveLocale(request)));
+		error.setStatusCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		return responseError(request, response, error);
 	}
 	
 	/**
@@ -104,14 +101,11 @@ public class ErrorController {
 	 * @throws Exception
 	 */
 	@ExceptionHandler(AccessDeniedException.class)
-	public void handleAccessDeniedException(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception) throws Exception {
-		ValueMap errorMessage = createDefaultErrorMessage(request, exception);
-		errorMessage.setString("message", messageSource.getMessage("application.global.exception.AccessDeniedException", null, localeResolver.resolveLocale(request)));
-		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
-			responseErrorMessage(response, errorMessage, HttpServletResponse.SC_FORBIDDEN);
-		}else {
-			throw exception;
-		}
+	public ModelAndView handleAccessDeniedException(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception) throws Exception {
+		Error error = errorService.createError(exception, request);
+		error.setMessage(messageSource.getMessage("application.global.exception.AccessDeniedException", null, localeResolver.resolveLocale(request)));
+		error.setStatusCode(HttpServletResponse.SC_FORBIDDEN);
+		return responseError(request, response, error);
 	}
 
 	/**
@@ -122,19 +116,16 @@ public class ErrorController {
 	 * @throws Exception
 	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public void handleMethodArgumentNotValidException(HttpServletRequest request, HttpServletResponse response, MethodArgumentNotValidException exception) throws Exception {
-		ValueMap errorMessage = createDefaultErrorMessage(request, exception);
+	public ModelAndView handleMethodArgumentNotValidException(HttpServletRequest request, HttpServletResponse response, MethodArgumentNotValidException exception) throws Exception {
+		Error error = errorService.createError(exception, request);
 		StringBuffer message = new StringBuffer();
-		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
-			for(FieldError error : exception.getBindingResult().getFieldErrors()) {
-				message.append(String.format("[%s.%s] %s", error.getObjectName(), error.getField(), error.getDefaultMessage()));
-				break;
-			}
-			errorMessage.setString("message", message);
-			responseErrorMessage(response, errorMessage, HttpServletResponse.SC_BAD_REQUEST);
-		}else {
-			throw exception;
+		for(FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
+			message.append(String.format("[%s.%s] %s", fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage()));
+			break;
 		}
+		error.setMessage(message.toString());
+		error.setStatusCode(HttpServletResponse.SC_BAD_REQUEST);
+		return responseError(request, response, error);
 	}
 	
 	/**
@@ -145,14 +136,11 @@ public class ErrorController {
 	 * @throws Exception
 	 */
 	@ExceptionHandler(MessageException.class)
-	public void handleMessageException(HttpServletRequest request, HttpServletResponse response, MessageException exception) throws Exception {
-		ValueMap errorMessage = createDefaultErrorMessage(request, exception);
+	public ModelAndView handleMessageException(HttpServletRequest request, HttpServletResponse response, MessageException exception) throws Exception {
+		Error error = errorService.createError(exception, request);
+		error.setStatusCode(HttpServletResponse.SC_BAD_REQUEST);
 		// TODO get custom message
-		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
-			responseErrorMessage(response, errorMessage, HttpServletResponse.SC_BAD_REQUEST);
-		}else {
-			throw exception;
-		}
+		return responseError(request, response, error);
 	}
 
 }

@@ -92,9 +92,7 @@ public class BoardRestController {
 	 */
 	//@PreAuthorize("this.hasAccessAuthority(#boardId)")
 	@RequestMapping(value="{boardId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Board getBoard(
-		@PathVariable("boardId")String boardId
-	) throws Exception {
+	public Board getBoard(@PathVariable("boardId")String boardId) throws Exception {
 		return boardService.getBoard(boardId);
 	}
 	
