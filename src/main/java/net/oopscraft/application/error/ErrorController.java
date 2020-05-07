@@ -45,7 +45,6 @@ public class ErrorController {
 	 * @throws Exception
 	 */
 	private ModelAndView responseError(HttpServletRequest request, HttpServletResponse response, Error error) throws Exception {
-		errorService.saveError(error);
 		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))
 		|| error.getUri().startsWith("/api/")
 		){
@@ -91,6 +90,7 @@ public class ErrorController {
 		Error error = errorService.createError(exception, request);
 		error.setMessage(messageSource.getMessage("application.global.exception.Exception", null, localeResolver.resolveLocale(request)));
 		error.setStatusCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		errorService.saveError(error);
 		return responseError(request, response, error);
 	}
 	
