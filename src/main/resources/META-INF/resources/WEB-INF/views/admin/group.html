@@ -14,35 +14,12 @@
 	const groupRoles = new duice.List();
 	const groupAuthorities = new duice.List();
 	const groupAvailableAuthorities = new duice.List();
+	groups.setReadonlyAll(true);
+	groupRoles.setReadonlyAll(true);
+	groupAuthorities.setReadonlyAll(true);
+	groupAvailableAuthorities.setReadonlyAll(true);
 	var isNew = false;
 	
-	// document ready
-	$(document).ready(function() {
-		
-		// checks authorization
-		if([[${!#authorization.expression('hasAuthority("ADMN_GROP_EDIT")')}]]){
-			lockDetails();
-		}
-		
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
-		tabFolder.onAfterSelectTab(function(selectedTab){
-			if(group.get('id')){
-				// tabButton2
-				if(selectedTab.getButton() === document.getElementById('tabButton2')){
-					getGroupAvailableAuthorities(group.get('id'));
-				}
-			}
-		});
-		tabFolder.selectTab(0);
-		
-		// gets groups
-	    getGroups();
-	    disableDetail(true);
-	});
-
-
 	// adds index changed event listener
 	groups.onBeforeSelectRow(async function(index){
 		if(isDetailChanged()){
@@ -95,6 +72,32 @@
 				group.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.group.id})}]]');
 			}
 		}
+	});
+	
+	// document ready
+	$(document).ready(function() {
+		
+		// checks authorization
+		if([[${!#authorization.expression('hasAuthority("ADMN_GROP_EDIT")')}]]){
+			lockDetails();
+		}
+		
+		// creates tab
+		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
+		tabFolder.onAfterSelectTab(function(selectedTab){
+			if(group.get('id')){
+				// tabButton2
+				if(selectedTab.getButton() === document.getElementById('tabButton2')){
+					getGroupAvailableAuthorities(group.get('id'));
+				}
+			}
+		});
+		tabFolder.selectTab(0);
+		
+		// gets groups
+	    getGroups();
+	    disableDetail(true);
 	});
 	
 	/**

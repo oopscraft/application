@@ -23,7 +23,9 @@
 		<script th:src="@{/static/moment.js}"></script>
 		<script th:src="@{/static/chartjs/Chart.js}"></script>
 		<script>
-		const __menus = new duice.List([
+		const __menus = new duice.List();
+		__menus.setReadonly('icon', true);
+		__menus.fromJson([
 			{ name:'[[#{application.user}]]', icon:'[[@{/static/image/icon_user.png}]]', linkUrl:'[[@{/admin/user}]]' },
 			{ name:'[[#{application.group}]]', icon:'[[@{/static/image/icon_group.png}]]', linkUrl:'[[@{/admin/group}]]' },
 			{ name:'[[#{application.role}]]', icon:'[[@{/static/image/icon_role.png}]]', linkUrl:'[[@{/admin/role}]]' },

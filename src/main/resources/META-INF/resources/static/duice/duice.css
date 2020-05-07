@@ -703,6 +703,12 @@
 	vertical-align: middle;
 	cursor: pointer;
 }
+.duice-img--disable {
+	opacity: 0.8;
+}
+.duice-img--readonly {
+	pointer-events: none;
+}
 .duice-img__menuDiv {
 	margin: 0px;
 	padding: 0px;

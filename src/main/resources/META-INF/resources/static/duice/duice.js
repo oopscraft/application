@@ -437,7 +437,7 @@ var duice;
         var computedLeft = Math.max(0, win.innerWidth / 2 - computedWidth / 2) + win.scrollX;
         var computedTop = Math.max(0, win.innerHeight / 2 - computedHeight / 2) + win.scrollY;
         computedTop = computedTop - 100;
-        computedTop = Math.max(10,computedTop);
+        computedTop = Math.max(10, computedTop);
         element.style.left = computedLeft + 'px';
         element.style.top = computedTop + 'px';
     }
@@ -1926,6 +1926,8 @@ var duice;
          */
         addRow(map) {
             map.disableAll = this.disableAll;
+            map.disable = clone(this.disable);
+            map.readonlyAll = this.readonlyAll;
             map.readonly = clone(this.readonly);
             map.onBeforeChange(this.eventListener.onBeforeChangeRow);
             map.onAfterChange(this.eventListener.onAfterChangeRow);
@@ -1941,6 +1943,8 @@ var duice;
         insertRow(index, map) {
             if (0 <= index && index < this.data.length) {
                 map.disableAll = this.disableAll;
+                map.disable = clone(this.disable);
+                map.readonlyAll = this.readonlyAll;
                 map.readonly = clone(this.readonly);
                 map.onBeforeChange(this.eventListener.onBeforeChangeRow);
                 map.onAfterChange(this.eventListener.onAfterChangeRow);
@@ -2252,7 +2256,6 @@ var duice;
             addClass(element, 'duice-scriptlet');
             this.expression = element.dataset.duiceValue;
         }
-        ;
         bind(context) {
             this.context = context;
             for (var name in this.context) {
@@ -3181,6 +3184,9 @@ var duice;
             var _this = this;
             // listener for contextmenu event
             this.img.addEventListener('click', function (event) {
+                if (_this.disable || _this.readonly) {
+                    return false;
+                }
                 var imgPosition = getElementPosition(this);
                 _this.openMenuDiv(imgPosition.top, imgPosition.left);
             });
@@ -3196,6 +3202,18 @@ var duice;
             this.img.src = this.value;
             this.disable = map.isDisable(this.getName());
             this.readonly = map.isReadonly(this.getName());
+            if (this.disable) {
+                this.img.classList.add('duice-img--disable');
+            }
+            else {
+                this.img.classList.remove('duice-img--disable');
+            }
+            if (this.readonly) {
+                this.img.classList.add('duice-img--readonly');
+            }
+            else {
+                this.img.classList.remove('duice-img--readonly');
+            }
         }
         /**
          * Return value of image element

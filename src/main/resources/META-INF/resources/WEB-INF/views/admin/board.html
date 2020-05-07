@@ -18,24 +18,12 @@
 	const boardAccessAuthorities = new duice.List();
 	const boardReadAuthorities = new duice.List();
 	const boardWriteAuthorities = new duice.List();
-	
-	// document ready
-	$(document).ready(function() {
-		
-		// checks authorization
-		if([[${!#authorization.expression('hasAuthority("ADMN_BORD_EDIT")')}]]){
-			lockDetails();
-		}
-		
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.selectTab(0);
-		
-		// gets boards
-		getBoards();
-	    disableDetail(true);
-	});
-	
+	boards.setReadonlyAll(true);
+	boardAccessAuthorities.setReadonlyAll(true);
+	boardReadAuthorities.setReadonlyAll(true);
+	boardWriteAuthorities.setReadonlyAll(true);
+	var isNew = false;
+
 	// handle when search option is changed.
 	search.onAfterChange(function(name, value){
 		// if select all option, reset value. 
@@ -74,6 +62,24 @@
 	board.onAfterChange(function(){
 		handleVisible(this);
 	});
+	
+	// document ready
+	$(document).ready(function() {
+		
+		// checks authorization
+		if([[${!#authorization.expression('hasAuthority("ADMN_BORD_EDIT")')}]]){
+			lockDetails();
+		}
+		
+		// creates tab
+		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+		tabFolder.selectTab(0);
+		
+		// gets boards
+		getBoards();
+	    disableDetail(true);
+	});
+	
 
 	/**
 	 * Handles visible

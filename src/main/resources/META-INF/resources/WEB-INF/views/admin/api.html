@@ -18,19 +18,6 @@
 	const apiParameters = new duice.List();
 	const apiPayload = new duice.Map();
 
-	// document ready
-	$(document).ready(function() {
-		
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
-		tabFolder.selectTab(0);
-
-		// gets apis		
-		getApis();
-	    disableDetail(true);
-	});
-	
 	// handle when search option is changed.
 	search.onAfterChange(function(name, value){
 		// if select all option, reset value. 
@@ -48,6 +35,19 @@
 		$('#response').empty();
 		disableDetail(false);
 		tabFolder.selectTab(0);
+	});
+	
+	// document ready
+	$(document).ready(function() {
+		
+		// creates tab
+		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
+		tabFolder.selectTab(0);
+
+		// gets apis		
+		getApis();
+	    disableDetail(true);
 	});
 	
 	/**

@@ -21,16 +21,16 @@
 		}
 		</style>
 		<script>
-		// document ready
-		$(document).ready(function() {
-			$('#autocomplete').hide();
-			user.setFocus('id');
-		});
-		
 		// defines variables 
 		const user = new duice.Map({
 			id:null,
 			password:null
+		});
+		
+		// document ready
+		$(document).ready(function() {
+			$('#autocomplete').hide();
+			user.setFocus('id');
 		});
 
 		/**

@@ -12,24 +12,9 @@
 	const menus = new duice.List();
 	const menu = new duice.Map();
 	const menuDisplayAuthorities = new duice.List();
+	menus.setReadonlyAll(true);
+	menuDisplayAuthorities.setReadonlyAll(true);
 	var isNew = false;
-	
-	// document ready
-	$(document).ready(function() {
-		
-		// checks authorization
-		if([[${#authorization.expression('hasAuthority("ADMN_MENU_EDIT")')}]] === false){
-			lockDetails();
-		}
-		
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.selectTab(0);
-		
-		// gets menues
-	    getMenus();
-	    disableDetail(true);
-	});
 	
 	// adds index changed event listener
 	menus.onBeforeSelectRow(async function(index){
@@ -93,7 +78,24 @@
 	menu.onAfterChange(function(){
 		handleVisible(this);
 	});
-
+	
+	// document ready
+	$(document).ready(function() {
+		
+		// checks authorization
+		if([[${#authorization.expression('hasAuthority("ADMN_MENU_EDIT")')}]] === false){
+			lockDetails();
+		}
+		
+		// creates tab
+		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+		tabFolder.selectTab(0);
+		
+		// gets menues
+	    getMenus();
+	    disableDetail(true);
+	});
+	
 	/**
 	 * Handles visible
 	 */

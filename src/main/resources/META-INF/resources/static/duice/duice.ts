@@ -437,7 +437,8 @@ namespace duice {
         var computedHeight = parseInt(computedStyle.getPropertyValue('height').replace(/px/gi, ''));
         var computedLeft = Math.max(0,win.innerWidth/2 - computedWidth/2) + win.scrollX;
         var computedTop = Math.max(0,win.innerHeight/2 - computedHeight/2) + win.scrollY;
-        computedTop = computedTop - computedHeight/2;
+        computedTop = computedTop - 100;
+        computedTop = Math.max(10,computedTop);
         element.style.left = computedLeft + 'px';
         element.style.top = computedTop + 'px';
     }
@@ -1604,15 +1605,11 @@ namespace duice {
      * extends from Observable and implements Observer interface.
      */
     export abstract class DataObject extends Observable implements Observer {
-
         available:boolean = true;
-        
         disable:any = new Object();
         disableAll:boolean = false;
-
         readonly:any = new Object();
         readonlyAll:boolean = false;
-
         visible:boolean = true;
 
         /**
@@ -2152,6 +2149,8 @@ namespace duice {
          */
         addRow(map:Map):void {
             map.disableAll = this.disableAll;
+            map.disable = clone(this.disable);
+            map.readonlyAll = this.readonlyAll;
             map.readonly = clone(this.readonly);
             map.onBeforeChange(this.eventListener.onBeforeChangeRow);
             map.onAfterChange(this.eventListener.onAfterChangeRow);
@@ -2168,6 +2167,8 @@ namespace duice {
         insertRow(index:number, map:Map):void {
             if(0 <= index && index < this.data.length) {
                 map.disableAll = this.disableAll;
+                map.disable = clone(this.disable);
+                map.readonlyAll = this.readonlyAll;
                 map.readonly = clone(this.readonly);
                 map.onBeforeChange(this.eventListener.onBeforeChangeRow);
                 map.onAfterChange(this.eventListener.onAfterChangeRow);
@@ -2499,7 +2500,7 @@ namespace duice {
      */
     export class Scriptlet extends MapComponent {
         expression:string;
-        context:any;;
+        context:any;
         constructor(element:HTMLElement){
             super(element);
             addClass(element, 'duice-scriptlet');
@@ -3491,6 +3492,9 @@ namespace duice {
 
             // listener for contextmenu event
             this.img.addEventListener('click', function(event){
+                if(_this.disable || _this.readonly){
+                    return false;
+                }
                 var imgPosition = getElementPosition(this);
                 _this.openMenuDiv(imgPosition.top,imgPosition.left);
             });
@@ -3507,6 +3511,16 @@ namespace duice {
             this.img.src = this.value;
             this.disable = map.isDisable(this.getName());
             this.readonly = map.isReadonly(this.getName());
+            if(this.disable){
+                this.img.classList.add('duice-img--disable');
+            }else{
+                this.img.classList.remove('duice-img--disable');
+            }
+            if(this.readonly){
+                this.img.classList.add('duice-img--readonly');
+            }else{
+                this.img.classList.remove('duice-img--readonly');
+            }
         }
         
         /**

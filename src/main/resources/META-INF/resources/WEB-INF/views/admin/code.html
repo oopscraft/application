@@ -17,23 +17,6 @@
 		const codeEntities = new duice.List();
 		var isNew = false;
 
-		// document ready
-		$(document).ready(function() {
-			
-			// checks authorization
-			if([[${!#authorization.expression('hasAuthority("ADMN_CODE_EDIT")')}]]){
-				lockDetails();
-			}
-			
-			// creates tab
-			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-			tabFolder.selectTab(0);
-			
-			// gets codes
-			getCodes();
-		    disableDetail(true);
-		});
-		
 		// handle when search option is changed.
 		search.onAfterChange(function(name, value){
 			// if select all option, reset value. 
@@ -66,6 +49,23 @@
 					code.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.code.id})}]]');
 				}
 			}
+		});
+		
+		// document ready
+		$(document).ready(function() {
+			
+			// checks authorization
+			if([[${!#authorization.expression('hasAuthority("ADMN_CODE_EDIT")')}]]){
+				lockDetails();
+			}
+			
+			// creates tab
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+			tabFolder.selectTab(0);
+			
+			// gets codes
+			getCodes();
+		    disableDetail(true);
 		});
 		
 		/**

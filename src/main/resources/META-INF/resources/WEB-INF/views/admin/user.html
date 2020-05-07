@@ -13,40 +13,17 @@
 	});
 	const tabFolder = new duice.TabFolder();
 	const users = new duice.List();
-	users.setReadonly('photo',true);
-	users.setReadonly('status',true);
 	const user = new duice.Map();
 	const userGroups = new duice.List();
 	const userRoles = new duice.List();
 	const userAuthorities = new duice.List();
 	const userAvailableAuthorities = new duice.List();
+	users.setReadonlyAll(true);
+	userGroups.setReadonlyAll(true);
+	userRoles.setReadonlyAll(true);
+	userAuthorities.setReadonlyAll(true);
+	userAvailableAuthorities.setReadonlyAll(true);
 	var isNew = false;
-	
-	// document ready
-	$(document).ready(function() {
-		
-		// checks authorization
-		if([[${!#authorization.expression('hasAuthority("ADMN_USER_EDIT")')}]]){
-			lockDetails();
-		}
-		
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
-		tabFolder.onAfterSelectTab(function(selectedTab){
-			if(user.get('id')){
-				// tabButton2
-				if(selectedTab.getButton() === document.getElementById('tabButton2')){
-					getUserAvailableAuthorities(user.get('id'));
-				}
-			}
-		});
-		tabFolder.selectTab(0);
-
-		// gets users
-	    getUsers();
-	    disableDetail(true);
-	});
 	
 	// handle when search option is changed.
 	search.onAfterChange(function(name, value){
@@ -80,6 +57,32 @@
 				user.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.user.id})}]]');
 			}
 		}
+	});
+	
+	// document ready
+	$(document).ready(function() {
+		
+		// checks authorization
+		if([[${!#authorization.expression('hasAuthority("ADMN_USER_EDIT")')}]]){
+			lockDetails();
+		}
+		
+		// creates tab
+		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
+		tabFolder.onAfterSelectTab(function(selectedTab){
+			if(user.get('id')){
+				// tabButton2
+				if(selectedTab.getButton() === document.getElementById('tabButton2')){
+					getUserAvailableAuthorities(user.get('id'));
+				}
+			}
+		});
+		tabFolder.selectTab(0);
+
+		// gets users
+	    getUsers();
+	    disableDetail(true);
 	});
 	
 	/**

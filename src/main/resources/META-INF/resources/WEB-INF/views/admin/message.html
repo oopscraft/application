@@ -13,28 +13,10 @@
 	});
 	const tabFolder = new duice.TabFolder();
 	const messages = new duice.List();
-	messages.setReadonly('language',true);
 	const message = new duice.Map();
 	const messageLanguages = new duice.List();
 	var isNew = false;
-	
-	// document ready
-	$(document).ready(function() {
-		
-		// checks authorization
-		if([[${!#authorization.expression('hasAuthority("ADMN_MESG_EDIT")')}]]){
-			lockDetails();
-		}
 
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.selectTab(0);
-		
-		// gets messages
-		getMessages();
-	    disableDetail(true);
-	});
-	
 	// handle when search option is changed.
 	search.onAfterChange(function(name, value){
 		// if select all option, reset value. 
@@ -67,6 +49,23 @@
 				message.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.message.id})}]]');
 			}
 		}
+	});
+	
+	// document ready
+	$(document).ready(function() {
+		
+		// checks authorization
+		if([[${!#authorization.expression('hasAuthority("ADMN_MESG_EDIT")')}]]){
+			lockDetails();
+		}
+
+		// creates tab
+		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+		tabFolder.selectTab(0);
+		
+		// gets messages
+		getMessages();
+	    disableDetail(true);
 	});
 	
 	/**
