@@ -36,11 +36,11 @@ public class AuthorityService {
 			public Predicate toPredicate(Root<Authority> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
 				if(authority.getId() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), authority.getId() + '%'));
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), '%' + authority.getId() + '%'));
 					predicates.add(predicate);
 				}
 				if(authority.getName() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), authority.getName() + '%'));
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), '%' + authority.getName() + '%'));
 					predicates.add(predicate);
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	

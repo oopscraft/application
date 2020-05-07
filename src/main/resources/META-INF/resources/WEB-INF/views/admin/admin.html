@@ -565,7 +565,7 @@
 		<!-- ====================================================== -->
 		<!-- START: Groups Dialog									-->
 		<!-- ====================================================== -->
-		<dialog is="duice-dialog" id="__groupDialog" style="width:600px;">
+		<dialog is="duice-dialog" id="__groupDialog" style="width:800px;">
 			<div class="app-row title">
 				<div class="app-col bottom">
 					<h2>
@@ -639,7 +639,7 @@
         		this.groups.onAfterSelectRow(function(group){
        				
        				// check disabled
-       				if(group.isDisable() === true){
+       				if(group.isDisable('id') === true){
        					return;
        				}
        				
@@ -691,7 +691,7 @@
 								// excepts disableds list
 								_this.disabledGroups.forEach(function(item){
 									if(item.id === id){
-										group.setDisable(true);
+										group.setDisableAll(true);
 									}
 								});
 							});
@@ -722,7 +722,7 @@
 		<!-- ====================================================== -->
 		<!-- START: Roles Dialog									-->
 		<!-- ====================================================== -->
-		<dialog is="duice-dialog" id="__roleDialog" style="width:600px;">
+		<dialog is="duice-dialog" id="__roleDialog" style="width:800px;">
 			<div class="app-row title">
 				<div class="app-col bottom">
 					<h2>
@@ -760,8 +760,8 @@
 						<col style="width:50%;"/>
 						<thead>
 							<tr>
-								<th>-</th>
-								<th data-th-text="#{application.global.no}">No</th>
+								<th class="text-center">-</th>
+								<th data-th-text="#{application.global.no}" class="text-center">No</th>
 								<th data-th-text="#{application.role.id}">ID</th>
 								<th data-th-text="#{application.role.name}">Name</th>
 							</tr>
@@ -799,10 +799,10 @@
 						<col style="width:5%;"/>
 						<thead>
 							<tr>
-								<th data-th-text="#{application.global.no}">No</th>
+								<th data-th-text="#{application.global.no}" class="text-center">No</th>
 								<th data-th-text="#{application.role.id}">ID</th>
 								<th data-th-text="#{application.role.name}">Name</th>
-								<th>-</th>
+								<th class="text-center">-</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -813,7 +813,7 @@
 									<span is="duice-span" data-duice-bind="role,id"></span>
 								</td>
 								<td><span is="duice-span" data-duice-bind="role,name"></span></td>
-								<td>
+								<td class="text-center">
 									<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="__roleDialog.selectedRoles.removeRow(this.dataset.index);"/>
 								</td>
 							</tr>
@@ -838,7 +838,7 @@
         	dialog: new duice.Dialog(document.getElementById('__roleDialog')),
         	search: new duice.Map({
         		page: 1,
-        		rows: 5,
+        		rows: 10,
         		totalCount: -1
         	}),
         	roles: new duice.List(),
@@ -860,6 +860,7 @@
 				this.disabledRoles = option.disabledRoles || [];
 				this.dialog.onAfterConfirm(option.onAfterConfirm || new function(){});
         		this.selectedRoles.fromJson([]);
+        		this.search.reset();
         		
         		// add index change event listener
         		var _this = this;
@@ -868,7 +869,7 @@
     				var id = role.get('id');
     				
     				// check disabled
-    				if(role.isDisable() === true){
+    				if(role.isDisable('id') === true){
     					return;
     				}
 
@@ -899,11 +900,15 @@
         	getRoles(page) {
         		var _this = this;
         		return new Promise(function(resolve,reject){
-	        		page && _this.search.set('page', page);
-					var data = _this.search.toJson();
-					if(_this.search.get('key')){
-						data[_this.search.get('key')] = _this.search.get('value');
+					if(page){
+            			_this.search.set('page', page);
 					}
+    				var data = {};
+    				if(_this.search.get('key')){
+    					data[_this.search.get('key')] = _this.search.get('value');
+    				}
+    				data.page = _this.search.get('page');
+    				data.rows = _this.search.get('rows');
 					$.ajax({
 						 url: '[[@{/admin/getRoles}]]'
 						,type: 'GET'
@@ -919,7 +924,7 @@
 								// checks disabled	
 								_this.disabledRoles.forEach(function(obj){
 									if(obj.id === id){
-										role.setDisable(true);
+										role.setDisableAll(true);
 										role.set('__checked', true);
 										return false;
 									}
@@ -954,7 +959,7 @@
 		<!-- ====================================================== -->
 		<!-- START: Authorities Dialog								-->
 		<!-- ====================================================== -->
-		<dialog is="duice-dialog" id="__authorityDialog" style="width:600px;">
+		<dialog is="duice-dialog" id="__authorityDialog" style="width:800px;">
 			<div class="app-row title">
 				<div class="app-col bottom">
 					<h2>
@@ -992,8 +997,8 @@
 						<col style="width:50%;"/>
 						<thead>
 							<tr>
-								<th>-</th>
-								<th data-th-text="#{application.global.no}">No</th>
+								<th class="text-center">-</th>
+								<th data-th-text="#{application.global.no}" class="text-center">No</th>
 								<th data-th-text="#{application.authority.id}">ID</th>
 								<th data-th-text="#{application.authority.name}">Name</th>
 							</tr>
@@ -1015,7 +1020,7 @@
 			<div class="app-row">
 				<div class="app-col center">
 					<ul is="duice-widget-pagination" data-duice-bind="__authorityDialog.search,page,rows,totalCount" data-duice-size="5">
-						<li onclick="__authorityDialog.getAuthorities();"></li>
+						<li data-page="[@duice[$context.page]]" onclick="__authorityDialog.getAuthorities(this.dataset.page);"></li>
 					</ul>
 				</div>
 			</div>
@@ -1030,10 +1035,10 @@
 						<col style="width:5%;"/>
 						<thead>
 							<tr>
-								<th data-th-text="#{application.global.no}">No</th>
+								<th data-th-text="#{application.global.no}" class="text-center">No</th>
 								<th data-th-text="#{application.authority.id}">Authority ID</th>
 								<th data-th-text="#{application.authority.name}">Authority Name</th>
-								<th>-</th>
+								<th class="text-center">-</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -1066,7 +1071,7 @@
            	dialog: new duice.Dialog(document.getElementById('__authorityDialog')),
            	search: new duice.Map({
            		page: 1,
-           		rows: 5,
+           		rows: 10,
            		totalCount: -1
            	}),
            	authorities: new duice.List(),
@@ -1088,6 +1093,7 @@
    				this.disabledAuthorities = option.disabledAuthorities || [];
    				this.dialog.onAfterConfirm(option.onAfterConfirm || new function(){});
            		this.selectedAuthorities.fromJson([]);
+           		this.search.reset();
            		
            		// add index change event listener
            		var _this = this;
@@ -1095,9 +1101,9 @@
            		this.authorities.onAfterSelectRow(function(authority){
        				var id = authority.get('id');
        				
-       				// check disabled
-       				if(authority.isDisable() === true){
-       					return;
+       				// checkes disabled
+       				if(authority.isDisable('id') === true){
+       					return false;
        				}
 
        				// toggles __selected
@@ -1127,11 +1133,15 @@
            	getAuthorities(page) {
    				var _this = this;
 				return new Promise(function(resolve,reject){
-            		_this.page && _this.search.set('page', page);
-    				var data = _this.search.toJson();
+					if(page){
+            			_this.search.set('page', page);
+					}
+    				var data = {};
     				if(_this.search.get('key')){
     					data[_this.search.get('key')] = _this.search.get('value');
     				}
+    				data.page = _this.search.get('page');
+    				data.rows = _this.search.get('rows');
     				$.ajax({
     					 url: '[[@{/admin/getAuthorities}]]'
     					,type: 'GET'
@@ -1147,7 +1157,7 @@
     							// checks disabled	
     							_this.disabledAuthorities.forEach(function(obj){
     								if(obj.id === id){
-    									authority.setDisable(true);
+    									authority.setDisableAll(true);
     									authority.set('__checked', true);
     									return false;
     								}

@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 
 @Service
 public class BoardService {
@@ -113,7 +114,11 @@ public class BoardService {
 	 * @throws Exception
 	 */
 	public void deleteBoard(Board board) throws Exception {
-		boardRepository.delete(board);
+		Board one = boardRepository.findOne(board.getId());
+		if(one.isSystemEmbedded()) {
+			throw new SystemEmbeddedException();
+		}
+		boardRepository.delete(one);
 	}	
 
 }

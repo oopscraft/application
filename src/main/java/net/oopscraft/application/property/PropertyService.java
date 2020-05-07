@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 
 @Service
 public class PropertyService {
@@ -34,11 +35,11 @@ public class PropertyService {
 			public Predicate toPredicate(Root<Property> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
 				if(property.getId() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), property.getId() + '%'));
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), '%' + property.getId() + '%'));
 					predicates.add(predicate);
 				}
 				if(property.getName() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), property.getName() + '%'));
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), '%' + property.getName() + '%'));
 					predicates.add(predicate);
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
@@ -81,7 +82,11 @@ public class PropertyService {
 	 * @throws Exception
 	 */
 	public void deleteProperty(Property property) throws Exception {
-		propertyRepository.delete(property);
+		Property one = propertyRepository.findOne(property.getId());
+		if(one.isSystemEmbedded()) {
+			throw new SystemEmbeddedException();
+		}
+		propertyRepository.delete(one);
 	}
 
 }

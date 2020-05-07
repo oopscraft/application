@@ -35,11 +35,11 @@ public class RoleService {
 			public Predicate toPredicate(Root<Role> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
 				if(role.getId() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), role.getId() + '%'));
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), '%' + role.getId() + '%'));
 					predicates.add(predicate);
 				}
 				if(role.getName() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), role.getName() + '%'));
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), '%' + role.getName() + '%'));
 					predicates.add(predicate);
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	

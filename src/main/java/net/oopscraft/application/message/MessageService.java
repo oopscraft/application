@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 
 @Service
 public class MessageService {
@@ -101,7 +102,11 @@ public class MessageService {
 	 * @throws Exception
 	 */
 	public void deleteMessage(Message message) throws Exception {
-		messageRepository.delete(message);
+		Message one = messageRepository.findOne(message.getId());
+		if(one.isSystemEmbedded()) {
+			throw new SystemEmbeddedException();
+		}
+		messageRepository.delete(one);
 	}
 	
 	/**

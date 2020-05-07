@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 
 @Service
 public class CodeService {
@@ -34,11 +35,11 @@ public class CodeService {
 			public Predicate toPredicate(Root<Code> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
 				if(code.getId() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), code.getId() + '%'));
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), '%' + code.getId() + '%'));
 					predicates.add(predicate);
 				}
 				if(code.getName() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), code.getName() + '%'));
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), '%' + code.getName() + '%'));
 					predicates.add(predicate);
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
@@ -105,7 +106,11 @@ public class CodeService {
 	 * @throws Exception
 	 */
 	public void deleteCode(Code code) throws Exception {
-		codeRepository.delete(code);
+		Code one = codeRepository.findOne(code.getId());
+		if(one.isSystemEmbedded()) {
+			throw new SystemEmbeddedException();
+		}
+		codeRepository.delete(one);
 	}
 
 }

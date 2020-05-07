@@ -577,8 +577,7 @@
 		upperMenus.onAfterSelectRow(function(row){
 			
 			// skip row is disabled.
-			console.log(row.isDisable());
-			if(row.isDisable()){
+			if(row.isDisable('id')){
 				return;				
 			}
 			
@@ -665,7 +664,7 @@
 					}
 					// sets diable self
 					if(row.get('id') === id){
-						row.setDisable(true);
+						row.setDisableAll(true);
 					}
 				});
 				
@@ -673,7 +672,7 @@
 				function disabledChildMenu(menu){
 					upperMenus.forEach(function(row){
 						if(row.get('upperId') === menu.get('id')){
-							row.setDisable(true);
+							row.setDisableAll(true);
 							disabledChildMenu(row);
 						}
 					});

@@ -436,7 +436,8 @@ var duice;
         var computedHeight = parseInt(computedStyle.getPropertyValue('height').replace(/px/gi, ''));
         var computedLeft = Math.max(0, win.innerWidth / 2 - computedWidth / 2) + win.scrollX;
         var computedTop = Math.max(0, win.innerHeight / 2 - computedHeight / 2) + win.scrollY;
-        computedTop = computedTop - computedHeight / 2;
+        computedTop = computedTop - 100;
+        computedTop = Math.max(10,computedTop);
         element.style.left = computedLeft + 'px';
         element.style.top = computedTop + 'px';
     }

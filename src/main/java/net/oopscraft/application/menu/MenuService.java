@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 
 
 @Service
@@ -43,11 +44,11 @@ public class MenuService {
 			public Predicate toPredicate(Root<Menu> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
 				if(menu.getId() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), menu.getId() + '%'));
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), '%' + menu.getId() + '%'));
 					predicates.add(predicate);
 				}
 				if(menu.getName() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), menu.getName() + '%'));
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), '%' + menu.getName() + '%'));
 					predicates.add(predicate);
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
@@ -104,7 +105,11 @@ public class MenuService {
 	 * @throws Exception
 	 */
 	public void deleteMenu(Menu menu) throws Exception {
-		menuRepository.delete(menu);
+		Menu one = menuRepository.findOne(menu.getId());
+		if(one.isSystemEmbedded()) {
+			throw new SystemEmbeddedException();
+		}
+		menuRepository.delete(one);
 	}
 
 	/**
