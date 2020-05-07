@@ -187,6 +187,7 @@
 			user.setReadonly('id', true);
 			$('#passwordTr').hide();
 			$('#passwordConfirmTr').hide();
+			$('#changePasswordTr').show();
 			isNew = false;
 			tabFolder.selectTab(0);
 		});
@@ -217,6 +218,7 @@
 		user.setFocus('id');
 		$('#passwordTr').show();
 		$('#passwordConfirmTr').show();
+		$('#changePasswordTr').hide();
 	}
 	
 	/**
