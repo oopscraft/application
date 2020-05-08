@@ -8,15 +8,26 @@
  */
 package net.oopscraft.application.user;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.xml.bind.DatatypeConverter;
 
+import org.imgscalr.Scalr;
+import org.imgscalr.Scalr.Method;
+import org.imgscalr.Scalr.Mode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,6 +40,8 @@ import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 
 @Service
 public class UserService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 	
 	@Autowired
 	UserRepository userRepository;
@@ -116,6 +129,32 @@ public class UserService {
 		one.setGroups(user.getGroups());
 		one.setRoles(user.getRoles());
 		one.setAuthorities(user.getAuthorities());
+		
+		// creates thumb nail
+		ByteArrayInputStream bais = null;
+		ByteArrayOutputStream baos = null;
+		try {
+			String photoDataUrl = one.getPhoto();
+			String encodingPrefix = "base64,";
+			int contentStartIndex = photoDataUrl.indexOf(encodingPrefix) + encodingPrefix.length();
+			byte[] imageData = DatatypeConverter.parseBase64Binary(photoDataUrl.substring(contentStartIndex));
+			bais = new ByteArrayInputStream(imageData);
+			baos = new ByteArrayOutputStream();
+			BufferedImage image = ImageIO.read(bais);
+			BufferedImage thumbImg = Scalr.resize(image, Method.ULTRA_QUALITY, Mode.AUTOMATIC, 32, 32);
+			ImageIO.write(thumbImg, "PNG", baos);
+			byte[] encodeBase64 = Base64.getEncoder().encode(baos.toByteArray());
+			String base64Encoded = new String(encodeBase64);
+			String thumbnailDataUrl = "data:image/png;base64,"+base64Encoded;
+			one.setThumbnail(thumbnailDataUrl);
+		}catch(Exception ignore) {
+			LOGGER.warn(ignore.getMessage());
+		}finally {
+			if(bais != null) try { bais.close(); }catch(Exception ignore){}
+			if(baos != null) try { baos.close(); }catch(Exception ignore){}
+		}
+
+		// save and return
 		return userRepository.save(one);
 	}
 	

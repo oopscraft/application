@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.user.Authority;
@@ -60,6 +62,7 @@ public class UserController {
 	 */
 	@RequestMapping(value = "getUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
+	@JsonView(List.class)
 	public List<User> getUsers(@ModelAttribute User user,@ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<User> users = userService.getUsers(user, pagination);

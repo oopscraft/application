@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -20,6 +21,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 
@@ -30,10 +32,12 @@ public class User extends SystemEntity {
 	@Id
 	@Column(name = "USER_ID", length = 32)
 	@NotNull
+	@JsonView(List.class)
 	String id;
 	
 	@Column(name = "USER_EMAL")
 	@NotNull
+	@JsonView(List.class)
 	String email;
 	
 	public enum Status {
@@ -42,19 +46,24 @@ public class User extends SystemEntity {
 	@Column(name = "USER_STAT")
 	@Enumerated(EnumType.STRING)
 	@NotNull
+	@JsonView(List.class)
 	Status status;
 
 	@Column(name = "USER_NAME", length = 1024)
 	@NotNull
+	@JsonView(List.class)
 	String name;
 	
 	@Column(name = "USER_NICK", length = 1024)
+	@JsonView(List.class)
 	String nickname;
 
 	@Column(name = "USER_MOBL_CTRY")
+	@JsonView(List.class)
 	String mobileCountry;
 	
 	@Column(name = "USER_MOBL_NO")
+	@JsonView(List.class)
 	String mobileNumber;
 
 	@JsonIgnore
@@ -63,19 +72,28 @@ public class User extends SystemEntity {
 	
 	@Column(name = "USER_PHOT", length = Integer.MAX_VALUE)
 	@Lob
+	@Basic(fetch = FetchType.LAZY)
 	String photo;
+	
+	@Column(name = "USER_THUM", length = Integer.MAX_VALUE)
+	@Lob
+	@JsonView(List.class)
+	String thumbnail;
 
 	@Column(name = "USER_PRFL", length = Integer.MAX_VALUE)
 	@Lob
 	String profile;
 	
 	@Column(name = "USER_LANG", length = 32)
+	@JsonView(List.class)
 	String language;
 
 	@Column(name = "JOIN_DATE")
+	@JsonView(List.class)
 	Date joinDate;
 	
 	@Column(name = "CLOS_DATE")
+	@JsonView(List.class)
 	Date closeDate;
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -222,6 +240,14 @@ public class User extends SystemEntity {
 
 	public void setPhoto(String photo) {
 		this.photo = photo;
+	}
+
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 
 	public String getProfile() {

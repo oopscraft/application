@@ -33,6 +33,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.transaction.ChainedTransactionManager;
+import org.springframework.instrument.classloading.LoadTimeWeaver;
+import org.springframework.instrument.classloading.SimpleLoadTimeWeaver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -164,8 +166,8 @@ public class ApplicationContext {
         
         // return
         return entityManagerFactory;
-	}
-	
+	}	
+
 	/**
 	 * Creates MYBIATIS SqlSessionFactory bean.
 	 * @return
