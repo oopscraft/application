@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.core.IdGenerator;
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 
@@ -84,9 +85,9 @@ public class MenuService {
 	 * @throws Exception
 	 */
 	public Menu saveMenu(Menu menu) throws Exception {
-		Menu one = menuRepository.findOne(menu.getId());
-		if(one == null) {
-			one = new Menu(menu.getId());
+		Menu one = null;
+		if(menu.getId() == null || (one = menuRepository.findOne(menu.getId())) == null) {
+			one = new Menu(IdGenerator.uuid());
 		}
 		one.setUpperId(menu.getUpperId());
 		one.setName(menu.getName());

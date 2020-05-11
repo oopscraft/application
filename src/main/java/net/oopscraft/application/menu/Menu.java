@@ -27,7 +27,6 @@ public class Menu extends SystemEntity {
 	
 	@Id
 	@Column(name = "MENU_ID", length = 32)
-	@NotNull
 	String id;
 
 	@Column(name = "MENU_NAME", length = 1024)

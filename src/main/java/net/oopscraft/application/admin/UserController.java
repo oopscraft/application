@@ -11,6 +11,7 @@ package net.oopscraft.application.admin;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.ValueMap;
+import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
@@ -83,6 +85,19 @@ public class UserController {
 	}
 	
 	/**
+	 * Return user by email
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "getUserByEmail", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public User getUserByEmail(@ModelAttribute User user) throws Exception {
+		return userService.getUserByEmail(user.getEmail());
+	}
+	
+	
+	/**
 	 * Saves specified user.
 	 * @param user
 	 * @return
@@ -91,8 +106,8 @@ public class UserController {
 	@PreAuthorize("hasAuthority('ADMN_USER_EDIT')")
 	@RequestMapping(value = "saveUser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
-	public User saveUser(@RequestBody User user) throws Exception {
+	@Transactional
+	public User saveUser(@RequestBody @Valid User user) throws Exception {
 		return userService.saveUser(user);
 	}
 	

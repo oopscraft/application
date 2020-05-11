@@ -2,444 +2,450 @@
 <html layout:decorate="~{admin/admin.html}">
 <div layout:fragment="content">
 	<script>
-	// defines variables
-	const search = new duice.Map({
-		key: null,
-		value: null,
-		status: null,
-		page: 1,
-		rows: 20,
-		totalCount: -1
-	});
-	const tabFolder = new duice.TabFolder();
-	const users = new duice.List();
-	const user = new duice.Map();
-	const userGroups = new duice.List();
-	const userRoles = new duice.List();
-	const userAuthorities = new duice.List();
-	const userAvailableAuthorities = new duice.List();
-	users.setReadonlyAll(true);
-	userGroups.setReadonlyAll(true);
-	userRoles.setReadonlyAll(true);
-	userAuthorities.setReadonlyAll(true);
-	userAvailableAuthorities.setReadonlyAll(true);
-	var isNew = false;
+		// defines variables
+		const search = new duice.Map({
+			key: null,
+			value: null,
+			status: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		const tabFolder = new duice.TabFolder();
+		const users = new duice.List();
+		const user = new duice.Map();
+		const userGroups = new duice.List();
+		const userRoles = new duice.List();
+		const userAuthorities = new duice.List();
+		const userAvailableAuthorities = new duice.List();
+		users.setReadonlyAll(true);
+		userGroups.setReadonlyAll(true);
+		userRoles.setReadonlyAll(true);
+		userAuthorities.setReadonlyAll(true);
+		userAvailableAuthorities.setReadonlyAll(true);
+		var isNew = false;
+		
+		// handle when search option is changed.
+		search.onAfterChange(function(name, value){
+			// if select all option, reset value. 
+			if(name === 'key' && !value){
+				search.set('value',null);				
+			}
+		});
+		
+		// checks when select row is changed.
+		users.onBeforeSelectRow(async function(selectedRow){
+			if(isDetailChanged()){
+				if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
+					resetDetail();
+					return true;
+				}else{
+					return false;
+				}
+			}
+		});
+		
+		// event listener for select row
+		users.onAfterSelectRow(function(selectedRow){
+			getUser(selectedRow.get('id'));
+		});
+		
+		// checks user properties change
+		user.onBeforeChange(async function(name,value){
+			if(name === 'email'){
+				try{
+					await validateUserEmail(value);
+				}catch(e){
+					await duice.alert( e);
+					user.setFocus('email');
+				}
+			}
+		});
+		
+		// document ready
+		$(document).ready(function() {
+			
+			// checks authorization
+			if([[${!#authorization.expression('hasAuthority("ADMN_USER_EDIT")')}]]){
+				lockDetails();
+			}
+			
+			// creates tab
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
+			tabFolder.onAfterSelectTab(function(selectedTab){
+				if(user.get('id')){
+					// tabButton2
+					if(selectedTab.getButton() === document.getElementById('tabButton2')){
+						getUserAvailableAuthorities(user.get('id'));
+					}
+				}
+			});
+			tabFolder.selectTab(0);
 	
-	// handle when search option is changed.
-	search.onAfterChange(function(name, value){
-		// if select all option, reset value. 
-		if(name === 'key' && !value){
-			search.set('value',null);				
+			// gets users
+		    getUsers();
+		    disableDetail(true);
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			user.setDisableAll(disable);
+			$('#detailDiv').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
 		}
-	});
-	
-	// checks when select row is changed.
-	users.onBeforeSelectRow(async function(selectedRow){
-		if(isDetailChanged()){
-			if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
-				resetDetail();
+		
+		/**
+		 * Returns detail changed.
+		 */
+		function isDetailChanged() {
+			if(user.isDirty()
+			|| userGroups.isDirty()
+			|| userRoles.isDirty()
+			|| userAuthorities.isDirty()
+			){
 				return true;
 			}else{
 				return false;
 			}
 		}
-	});
-	
-	// event listener for select row
-	users.onAfterSelectRow(function(selectedRow){
-		getUser(selectedRow.get('id'));
-	});
-	
-	// checks user properties change
-	user.onBeforeChange(async function(name,value){
-		if(name === 'id'){
-			if(await isDuplicateUser(value)){
-				user.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.user.id})}]]');
-			}
-		}
-	});
-	
-	// document ready
-	$(document).ready(function() {
 		
-		// checks authorization
-		if([[${!#authorization.expression('hasAuthority("ADMN_USER_EDIT")')}]]){
-			lockDetails();
+		/**
+		 * Initializes detail
+		 */
+		function initializeDetail() {
+			user.fromJson({});
+			userGroups.fromJson([]);
+			userRoles.fromJson([]);
+			userAuthorities.fromJson([]);
+			userAvailableAuthorities.fromJson([]);
 		}
 		
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
-		tabFolder.onAfterSelectTab(function(selectedTab){
-			if(user.get('id')){
-				// tabButton2
-				if(selectedTab.getButton() === document.getElementById('tabButton2')){
-					getUserAvailableAuthorities(user.get('id'));
+		/**
+		 * Resets detail
+		 */ 
+		function resetDetail() {
+			user.reset();
+			userGroups.reset();
+			userRoles.reset();
+			userAuthorities.reset();
+		}
+	
+		/**
+		 * Lock details
+		 */
+		function lockDetails(){
+			user.setReadonlyAll(true);
+			userGroups.setReadonlyAll(true);
+			userRoles.setReadonlyAll(true);
+			userAuthorities.setReadonlyAll(true);
+		}
+		
+		/**
+		 * Gets users
+		 */
+		function getUsers(page) {
+			return new Promise(function(resolve,reject){
+				if(page){
+					search.set('page',page);
 				}
-			}
-		});
-		tabFolder.selectTab(0);
-
-		// gets users
-	    getUsers();
-	    disableDetail(true);
-	});
-	
-	/**
-	 * Disables detail
-	 */
-	function disableDetail(disable){
-		user.setDisableAll(disable);
-		$('#detailDiv').find('button').each(function(index, element){
-			$(element).prop('disabled', disable);
-		});
-	}
-	
-	/**
-	 * Returns detail changed.
-	 */
-	function isDetailChanged() {
-		if(user.isDirty()
-		|| userGroups.isDirty()
-		|| userRoles.isDirty()
-		|| userAuthorities.isDirty()
-		){
-			return true;
-		}else{
-			return false;
+				var data = {};
+				if(search.get('key')){
+					data[search.get('key')] = search.get('value');
+				}
+				if(search.get('status')){
+					data.status = search.get('status');
+				}
+				data.page = search.get('page');
+				data.rows = search.get('rows');
+				$.ajax({
+					 url: 'user/getUsers'
+					,type: 'GET'
+					,data: data
+				})
+				.done(function(data, textStatus, jqXHR) {
+					users.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					resolve(true);
+			   	});
+			});
 		}
-	}
-	
-	/**
-	 * Initializes detail
-	 */
-	function initializeDetail() {
-		user.fromJson({});
-		userGroups.fromJson([]);
-		userRoles.fromJson([]);
-		userAuthorities.fromJson([]);
-		userAvailableAuthorities.fromJson([]);
-	}
-	
-	/**
-	 * Resets detail
-	 */ 
-	function resetDetail() {
-		user.reset();
-		userGroups.reset();
-		userRoles.reset();
-		userAuthorities.reset();
-	}
-
-	/**
-	 * Lock details
-	 */
-	function lockDetails(){
-		user.setReadonlyAll(true);
-		userGroups.setReadonlyAll(true);
-		userRoles.setReadonlyAll(true);
-		userAuthorities.setReadonlyAll(true);
-	}
-	
-	/**
-	 * Gets users
-	 */
-	function getUsers(page) {
-		return new Promise(function(resolve,reject){
-			if(page){
-				search.set('page',page);
-			}
-			var data = {};
-			if(search.get('key')){
-				data[search.get('key')] = search.get('value');
-			}
-			if(search.get('status')){
-				data.status = search.get('status');
-			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
-			$.ajax({
-				 url: 'user/getUsers'
-				,type: 'GET'
-				,data: data
-			})
-			.done(function(data, textStatus, jqXHR) {
-				users.fromJson(data);
-				search.set('totalCount', __parseTotalCount(jqXHR));
-				resolve(true);
-		   	});
-		});
-	}
-	
-	/**
-	 * Gets specified user
-	 */
-	function getUser(id){
-		initializeDetail();
-		$.ajax({
-			 url: 'user/getUser'
-			,type: 'GET'
-			,data: {id:id}
-		})
-		.done(function(data, textStatus, jqXHR) {
-			user.fromJson(data);
-			userGroups.fromJson(data.groups);
-			userRoles.fromJson(data.roles);
-			userAuthorities.fromJson(data.authorities);
-			disableDetail(false);
-			user.setReadonly('id', true);
-			$('#passwordTr').hide();
-			$('#passwordConfirmTr').hide();
-			$('#changePasswordTr').show();
-			isNew = false;
-			tabFolder.selectTab(0);
-		});
-	}
-	
-	/**
-	 * Gets user available authorities
-	 */
-	function getUserAvailableAuthorities(id){
-		$.ajax({
-			 url: 'user/getAvailableAuthorities'
-			,type: 'GET'
-			,data: {id:id}
-		})
-		.done(function(data, textStatus, jqXHR) {
-			userAvailableAuthorities.fromJson(data);
-		});
-	}
-	
-	/**
-	 * Adds user
-	 */
-	function addUser() {
-		initializeDetail();
-		disableDetail(false);
-		isNew = true;
-		user.setReadonly('id',false);
-		user.setFocus('id');
-		$('#passwordTr').show();
-		$('#passwordConfirmTr').show();
-		$('#changePasswordTr').hide();
-	}
-	
-	/**
-	 * Returns duplicate user
-	 */
-	function isDuplicateUser(id){
-		return new Promise(function(resolve, reject){
+		
+		/**
+		 * Gets specified user
+		 */
+		function getUser(id){
+			initializeDetail();
 			$.ajax({
 				 url: 'user/getUser'
 				,type: 'GET'
 				,data: {id:id}
 			})
 			.done(function(data, textStatus, jqXHR) {
-				if(data && data.id === id){
-					resolve(true);
-				}else{
-					resolve(false)
-				}
+				user.fromJson(data);
+				userGroups.fromJson(data.groups);
+				userRoles.fromJson(data.roles);
+				userAuthorities.fromJson(data.authorities);
+				disableDetail(false);
+				user.setReadonly('id', true);
+				$('#passwordTr').hide();
+				$('#passwordConfirmTr').hide();
+				$('#changePasswordTr').show();
+				isNew = false;
+				tabFolder.selectTab(0);
 			});
-		});
-	}
-	
-	/**
-	 * Saves user
-	 */
-	async function saveUser(){
-		
-		// checks changes
-		if(isNew === false && isDetailChanged() === false) {
-			duice.alert("[[#{application.global.changeNotFound}]]").open();
-			return false;
-		}
-
-		// checks id
-		if(duice.isEmpty(user.get('id'))){
-			user.setFocus('id', '[[#{application.global.enterItem(#{application.user.id})}]]');
-			return false;
-		}
-		if(!duice.isIdFormat(user.get('id'))){
-			user.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
-			return false;
-		}
-		if(isNew){
-			if(await isDuplicateUser(user.get('id'))){
-				user.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.user.id})}]]');
-				return false;
-			}
 		}
 		
-		// checks email
-		if(duice.isEmpty(user.get('email'))){
-			user.setFocus('email', '[[#{application.global.enterItem(#{application.user.email})}]]');
-			return false;
-		}
-		if(!duice.isEmailFormat(user.get('email'))){
-			user.setFocus('email', '[[#{application.global.notValidItemFormat(#{application.user.email})}]]');
-			return false;
-		}
-		
-		// new
-		if(isNew) {
-			
-			// password
-			if(duice.isEmpty(user.get('password'))){
-				user.setFocus('password', '[[#{application.global.enterItem(#{application.user.password})}]]');
-				return false;
-			}
-			if(!duice.isPasswordFormat(user.get('password'))){
-				user.setFocus('password', '[[#{application.global.notValidPassowrdFormat}]]');
-				return false;
-			}
-			
-			// passwordConfirm
-			if(duice.isEmpty(user.get('passwordConfirm'))){
-				user.setFocus('passwordConfirm', '[[#{application.global.enterItem(#{application.user.passwordConfirm})}]]');
-				return false;
-			}
-			if(user.get('passwordConfirm') !== user.get('password')){
-				user.setFocus('passwordConfirm', '[[#{application.global.itemNotMatch(#{application.user.passwordConfirm})}]]');
-				return false;
-			}
+		/**
+		 * Adds user
+		 */
+		function addUser() {
+			initializeDetail();
+			disableDetail(false);
+			isNew = true;
+			user.setReadonly('id',false);
+			user.setFocus('id');
+			$('#passwordTr').show();
+			$('#passwordConfirmTr').show();
+			$('#changePasswordTr').hide();
 		}
 		
-		// status
-		if(duice.isEmpty(user.get('status'))){
-			user.setFocus('status', '[[#{application.global.enterItem(#{application.user.status})}]]');
-			return false;
-		}
-		
-		// name
-		if(duice.isEmpty(user.get('name'))){
-			user.setFocus('name', '[[#{application.global.enterItem(#{application.user.name})}]]');
-			return false;
-		}
-
-		// enters save process
-		if(await duice.confirm("[[#{application.global.saveConfirm(#{application.user})}]]")){
-			var data = user.toJson();
-			data.groups = userGroups.toJson();
-			data.roles = userRoles.toJson();
-			data.authorities = userAuthorities.toJson();
-			$.ajax({
-				 url: 'user/saveUser'
-				,type: 'POST'
-				,data: JSON.stringify(data)
-				,contentType: 'application/json;charset=UTF-8'
-			})
-			.done(function(data, textStatus, jqXHR) {
-				new duice.Alert('[[#{application.global.saveComplete(#{application.user})}]]')
-				.onAfterClose(async function(){
-					await getUsers();
-					
-					// refresh list and details
-					var index = users.indexOf(function(row){
-						if(row.get('id') === user.get('id')){
-							return true;
+		/**
+		 * validateUserEmail
+		 */
+		function validateUserEmail(email){
+			return new Promise(function(resolve,reject){
+				if(duice.isEmpty(email)){
+					return reject('[[#{application.global.enterItem(#{application.user.email})}]]');
+				}
+				if(!duice.isEmailFormat(email)){
+					return reject('[[#{application.global.notValidItemFormat(#{application.user.email})}]]');
+				}
+				if(isNew){
+					$.ajax({
+						 url: 'user/getUserByEmail'
+						,type: 'GET'
+						,data: {email:email}
+					})
+					.done(function(data, textStatus, jqXHR) {
+						if(data && data.email === email){
+							reject('[[#{application.global.alreadyRegisteredItem(#{application.user.email})}]]');
+						}else{
+							resolve(true);
 						}
 					});
-					if(index > -1){
-						initializeDetail();
-						users.selectRow(index);
-					}else{
-						getUser(user.get('id'));
-					}
-				})
-				.open();
+				}else{
+					resolve(true);
+				}
 			});
 		}
-	}
+		
+		/**
+		 * Saves user
+		 */
+		async function saveUser(){
+			
+			// checks changes
+			if(isNew === false && isDetailChanged() === false) {
+				duice.alert("[[#{application.global.changeNotFound}]]");
+				return false;
+			}
 	
-	/**
-	 * Deletes user
-	 */
-	function deleteUser(){
-		new duice.Confirm("[[#{application.global.deleteConfirm(#{application.user})}]]")
-		.onAfterConfirm(function(){
-			$.ajax({
-				 url: 'user/deleteUser'
-				,type: 'DELETE'
-				,data: JSON.stringify(user.toJson())
-				,contentType: 'application/json;charset=UTF-8'
+			// checks email
+			try{
+				await validateUserEmail(user.get('email'));
+			}catch(e){
+				await duice.alert( e);
+				user.setFocus('email');
+				return false;
+			}
+			
+			// new
+			if(isNew) {
+				
+				// password
+				if(duice.isEmpty(user.get('password'))){
+					await duice.alert('[[#{application.global.enterItem(#{application.user.password})}]]');
+					user.setFocus('password');
+					return false;
+				}
+				if(!duice.isPasswordFormat(user.get('password'))){
+					await duice.alert('[[#{application.global.notValidPassowrdFormat}]]');
+					user.setFocus('password');
+					return false;
+				}
+				
+				// passwordConfirm
+				if(duice.isEmpty(user.get('passwordConfirm'))){
+					await duice.alert('[[#{application.global.enterItem(#{application.user.passwordConfirm})}]]');
+					user.setFocus('passwordConfirm');
+					return false;
+				}
+				if(user.get('passwordConfirm') !== user.get('password')){
+					await duice.alert('[[#{application.global.itemNotMatch(#{application.user.passwordConfirm})}]]');
+					user.setFocus('passwordConfirm');
+					return false;
+				}
+			}
+			
+			// status
+			if(duice.isEmpty(user.get('status'))){
+				await duice.alert('[[#{application.global.enterItem(#{application.user.status})}]]');
+				user.setFocus('status');
+				return false;
+			}
+			
+			// name
+			if(duice.isEmpty(user.get('name'))){
+				await duice.alert('[[#{application.global.enterItem(#{application.user.name})}]]');
+				user.setFocus('name');
+				return false;
+			}
+	
+			// enters save process
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.user})}]]")){
+				var data = user.toJson();
+				data.groups = userGroups.toJson();
+				data.roles = userRoles.toJson();
+				data.authorities = userAuthorities.toJson();
+				$.ajax({
+					 url: 'user/saveUser'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					var id = data.id;
+					duice.alert('[[#{application.global.saveComplete(#{application.user})}]]')
+					.then(async function(){
+						await getUsers();
+
+						// refresh list and details
+						var index = users.indexOf(function(row){
+							if(row.get('id') === id){
+								return true;
+							}
+						});
+						if(index > -1){
+							initializeDetail();
+							users.selectRow(index);
+						}else{
+							getUser(id);
+						}
+					});
+				});
+			}
+		}
+		
+		/**
+		 * Deletes user
+		 */
+		async function deleteUser(){
+			if(await duice.confirm("[[#{application.global.deleteConfirm(#{application.user})}]]")){
+				$.ajax({
+						url: 'user/deleteUser'
+					,type: 'DELETE'
+					,data: JSON.stringify(user.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					duice.alert("[[#{application.global.deleteComplete(#{application.user})}]]")
+					.then(async function(){
+						await getUsers();
+						initializeDetail();
+						disableDetail(true);
+					});
+				});
+			}
+		}
+		
+		/**
+		 * Adds user group
+		 */
+		function addUserGroup() {
+			__groupDialog.open({
+				checkedGroups: userGroups.toJson(),
+				disabledGroups: userGroups.toJson()
 			})
-			.done(function(data, textStatus, jqXHR) {
-				new duice.Alert("[[#{application.global.deleteComplete(#{application.user})}]]")
-				.onAfterClose(async function(){
-					await getUsers();
-					initializeDetail();
-					disableDetail(true);
-				}).open();
+			.then(function(returnGroups){
+				if(returnGroups){
+					returnGroups.forEach(function(group){
+						userGroups.addRow(new duice.Map(group));
+					});
+				}
 			});
-		}).open();
-	}
-	
-	/**
-	 * Adds user group
-	 */
-	function addUserGroup() {
-		__groupDialog.open({
-			checkedGroups: userGroups.toJson(),
-			disabledGroups: userGroups.toJson(),
-			onAfterConfirm: function(returnGroups){
-				returnGroups.forEach(function(group){
-					userGroups.addRow(new duice.Map(group));
-				});
-			}
-		});
-	}
-	
-	/**
-	 * Removes user group
-	 */
-	function removeUserGroup(index) {
-		userGroups.removeRow(index);
-	}
-	
-	/**
-	 * Adds user role
-	 */
-	function addUserRole() {
-		__roleDialog.open({
-			checkedRoles: userRoles.toJson(),
-			disabledRoles: userRoles.toJson(),
-			onAfterConfirm: function(selectedRoles){
-				selectedRoles.forEach(function(item){
-					userRoles.addRow(new duice.Map(item));
-				});
-			}
-		});
-	}
-	
-	/**
-	 * Removes user role
-	 */
-	function removeUserRole(index) {
-		userRoles.removeRow(index);
-	}
-	
-	/**
-	 * Adds user authority
-	 */
-	function addUserAuthority() {
-		__authorityDialog.open({
-			checkedAuthorities: userAuthorities.toJson(),
-			disabledAuthorities: userAuthorities.toJson(),
-			onAfterConfirm: function(selectedAuthorities){
+		}
+		
+		/**
+		 * Removes user group
+		 */
+		function removeUserGroup(index) {
+			userGroups.removeRow(index);
+		}
+		
+		/**
+		 * Adds user role
+		 */
+		function addUserRole() {
+			__roleDialog.open({
+				checkedRoles: userRoles.toJson(),
+				disabledRoles: userRoles.toJson(),
+			})
+			.then(function(selectedRoles){
+				if(selectedRoles){
+					selectedRoles.forEach(function(item){
+						userRoles.addRow(new duice.Map(item));
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes user role
+		 */
+		function removeUserRole(index) {
+			userRoles.removeRow(index);
+		}
+		
+		/**
+		 * Adds user authority
+		 */
+		function addUserAuthority() {
+			__authorityDialog.open({
+				checkedAuthorities: userAuthorities.toJson(),
+				disabledAuthorities: userAuthorities.toJson()
+			})
+			.then(function(selectedAuthorities){
 				selectedAuthorities.forEach(function(item){
 					userAuthorities.addRow(new duice.Map(item));
 				});
-			}
-		});
-	}
-	
-	/**
-	 * Removes user authority
-	 */
-	function removeUserAuthority(index) {
-		userAuthorities.removeRow(index);
-	}
+			});
+		}
+		
+		/**
+		 * Removes user authority
+		 */
+		function removeUserAuthority(index) {
+			userAuthorities.removeRow(index);
+		}
+		
+		
+		/**
+		 * Gets user available authorities
+		 */
+		function getUserAvailableAuthorities(id){
+			$.ajax({
+				 url: 'user/getAvailableAuthorities'
+				,type: 'GET'
+				,data: {id:id}
+			})
+			.done(function(data, textStatus, jqXHR) {
+				userAvailableAuthorities.fromJson(data);
+			});
+		}
 	</script>
 	<div class="app-row">
 		<div class="app-col" style="width:50%;">
@@ -461,9 +467,9 @@
 							<img class="icon" th:src="@{/static/image/icon_search.png}"/>
 							<select is="duice-select" data-duice-bind="search,key" style="width:125px;">
 								<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
-								<option value="id" data-th-text="#{application.user.id}">ID</option>
-								<option value="name" data-th-text="#{application.user.name}">Name</option>
 								<option value="email" data-th-text="#{application.user.email}">Email</option>
+								<option value="name" data-th-text="#{application.user.name}">Name</option>
+								<option value="nickname" data-th-text="#{application.user.nickname}">Nickname</option>
 							</select>
 							<input is="duice-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
 							&nbsp;
@@ -490,12 +496,10 @@
 								<col/>
 								<col/>
 								<col/>
-								<col/>
 								<col style="width:110px;"/>
 								<thead>
 									<tr>
 										<th data-th-text="#{application.global.no}" class="text-center">No</th>
-										<th data-th-text="#{application.user.id}">ID</th>
 										<th data-th-text="#{application.user.email}">Email</th>
 										<th data-th-text="#{application.user.name}">Name</th>
 										<th data-th-text="#{application.user.nickname}">Nickname</th>
@@ -512,10 +516,11 @@
 										</td>
 										<td>
 											<img is="duice-img" data-duice-bind="user,thumbnail" th:src="@{/static/image/icon_user.png}" class="icon small"/>
-											<span is="duice-span" data-duice-bind="user,id" class="id [@duice[$context.user.get('systemEmbedded') === true ? 'embd' : '']]"></span>
+											<span is="duice-span" data-duice-bind="user,email" class="id [@duice[$context.user.get('systemEmbedded')===true?'embd':'']]"></span>
 										</td>
-										<td><span is="duice-span" data-duice-bind="user,email"></span></td>
-										<td><span is="duice-span" data-duice-bind="user,name"></span></td>
+										<td>
+											<span is="duice-span" data-duice-bind="user,name"></span>
+										</td>
 										<td><span is="duice-span" data-duice-bind="user,nickname"></span></td>
 										<td class="text-center">
 											<select is="duice-select" data-duice-bind="user,status">
@@ -581,13 +586,9 @@
 								<col/>
 								<tbody>
 									<tr>
-										<th><span data-th-text="#{application.user.id}" class="mand">ID</span></th>
-										<td><input id="userId" is="duice-input" type="text" class="id" data-duice-bind="user,id" pattern="^[a-zA-Z0-9_-]{1,32}$" autocomplete="nope"/></td>
-									</tr>
-									<tr>
 										<th><span data-th-text="#{application.user.email}" class="mand">Email</span></th>
 										<td>
-											<input is="duice-input" type="text" data-duice-bind="user,email"/>
+											<input is="duice-input" type="text" data-duice-bind="user,email" class="id"/>
 										</td>
 									</tr>
 									<tr id="passwordTr">
@@ -939,7 +940,7 @@
 	/**
 	 * Confirms change password
 	 */
-	function confirmChangePassword() {
+	async function confirmChangePassword() {
 		// checks password and password confirm, in case of new
 		if(duice.isEmpty(changePassword.get('password'))){
 			changePassword.setFocus('password', '[[#{application.global.enterItem(#{application.user.password})}]]');
@@ -958,8 +959,7 @@
 			return false;
 		}
 		
-		new duice.Confirm("[[#{application.global.saveConfirm(#{application.user.password})}]]")
-		.onAfterConfirm(function(){
+		if(await duice.confirm("[[#{application.global.saveConfirm(#{application.user.password})}]]")){
 			var data = user.toJson();
 			data.groups = userGroups.toJson();
 			data.roles = userRoles.toJson();
@@ -969,14 +969,12 @@
 				,type: 'POST'
 				,data: JSON.stringify(changePassword.toJson())
 				,contentType: 'application/json;charset=UTF-8'
-				,success: function(data, textStatus, jqXHR) {
-					new duice.Alert('[[#{application.global.saveComplete(#{application.user.password})}]]')
-					.onAfterClose(function(){
-						changePasswordDialog.close();
-					}).open();
+				,success: async function(data, textStatus, jqXHR) {
+					await duice.alert('[[#{application.global.saveComplete(#{application.user.password})}]]');
+					changePasswordDialog.close();
 		   	 	}
 			});	
-		}).open();
+		}
 	}
 	</script>
 	<!-- ====================================================== -->

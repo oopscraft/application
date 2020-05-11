@@ -3,6 +3,7 @@ package net.oopscraft.application.admin;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -83,7 +84,7 @@ public class MenuController {
 	@RequestMapping(value = "saveMenu", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public Menu saveMenu(@RequestBody Menu menu) throws Exception {
+	public Menu saveMenu(@RequestBody @Valid Menu menu) throws Exception {
 		return menuService.saveMenu(menu);
 	}
 	

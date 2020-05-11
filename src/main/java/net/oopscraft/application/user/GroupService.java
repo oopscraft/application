@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.core.IdGenerator;
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 
@@ -67,9 +68,9 @@ public class GroupService {
 	 * @throws Exception
 	 */
 	public Group saveGroup(Group group) throws Exception {
-		Group one = groupRepository.findOne(group.getId());
-		if(one == null) {
-			one = new Group(group.getId());
+		Group one = null;
+		if(group.getId() == null || (one = groupRepository.findOne(group.getId())) == null) {
+			one = new Group(IdGenerator.uuid());
 		}
 		one.setUpperId(group.getUpperId());
 		one.setName(group.getName());

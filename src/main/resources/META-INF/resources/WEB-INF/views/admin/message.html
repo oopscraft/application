@@ -2,306 +2,315 @@
 <html layout:decorate="~{admin/admin.html}">
 <div layout:fragment="content">
 	<script>
-	// defines variables
-	var search = new duice.Map({
-		key: null,
-		value: null,
-		status: null,
-		page: 1,
-		rows: 20,
-		totalCount: -1
-	});
-	const tabFolder = new duice.TabFolder();
-	const messages = new duice.List();
-	const message = new duice.Map();
-	const messageLanguages = new duice.List();
-	var isNew = false;
-
-	// handle when search option is changed.
-	search.onAfterChange(function(name, value){
-		// if select all option, reset value. 
-		if(name === 'key' && !value){
-			search.set('value',null);				
-		}
-	});
+		// defines variables
+		var search = new duice.Map({
+			key: null,
+			value: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		const tabFolder = new duice.TabFolder();
+		const messages = new duice.List();
+		const message = new duice.Map();
+		const messageLanguages = new duice.List();
+		var isNew = false;
 	
-	// checks when select row is changed.
-	messages.onBeforeSelectRow(async function(selectedRow){
-		if(isDetailChanged()){
-			if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
-				resetDetail();
+		// handle when search option is changed.
+		search.onAfterChange(function(name, value){
+			// if select all option, reset value. 
+			if(name === 'key' && !value){
+				search.set('value',null);				
+			}
+		});
+		
+		// checks when select row is changed.
+		messages.onBeforeSelectRow(async function(selectedRow){
+			if(isDetailChanged()){
+				if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
+					resetDetail();
+					return true;
+				}else{
+					return false;
+				}
+			}
+		});
+		
+		// event listener for select row
+		messages.onAfterSelectRow(function(selectedRow){
+			getMessage(selectedRow.get('id'));
+		});
+		
+		// checks messages change
+		message.onBeforeChange(async function(name,value){
+			if(name === 'id'){
+				try{
+					await validateMessageId(value);
+				}catch(e){
+					await duice.alert( e);
+					message.setFocus('id');
+				}
+			}
+		});
+		
+		// document ready
+		$(document).ready(function() {
+			
+			// checks authorization
+			if([[${!#authorization.expression('hasAuthority("ADMN_MESG_EDIT")')}]]){
+				lockDetails();
+			}
+	
+			// creates tab
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+			tabFolder.selectTab(0);
+			
+			// gets messages
+			getMessages();
+		    disableDetail(true);
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			message.setDisableAll(disable);
+			$('#detailDiv').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
+		}
+		
+		/**
+		 * Returns detail changed.
+		 */
+		function isDetailChanged() {
+			if(message.isDirty() 
+			|| messageLanguages.isDirty()){
 				return true;
 			}else{
 				return false;
 			}
 		}
-	});
 	
-	// event listener for select row
-	messages.onAfterSelectRow(function(selectedRow){
-		getMessage(selectedRow.get('id'), selectedRow.get('language'));
-	});
-	
-	// checks messages change
-	message.onBeforeChange(async function(name,value){
-		if(name === 'id'){
-			if(await isDuplicateMessage(value)){
-				message.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.message.id})}]]');
-			}
+		/**
+		 * Initializes detail
+		 */
+		function initializeDetail() {
+			message.fromJson({});
+			messageLanguages.fromJson([]);
 		}
-	});
-	
-	// document ready
-	$(document).ready(function() {
 		
-		// checks authorization
-		if([[${!#authorization.expression('hasAuthority("ADMN_MESG_EDIT")')}]]){
-			lockDetails();
+		/**
+		 * Resets detail
+		 */ 
+		function resetDetail() {
+			message.reset();
+			messageLanguages.reset();
 		}
-
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.selectTab(0);
 		
-		// gets messages
-		getMessages();
-	    disableDetail(true);
-	});
-	
-	/**
-	 * Disables detail
-	 */
-	function disableDetail(disable){
-		message.setDisableAll(disable);
-		$('#detailDiv').find('button').each(function(index, element){
-			$(element).prop('disabled', disable);
-		});
-	}
-	
-	/**
-	 * Returns detail changed.
-	 */
-	function isDetailChanged() {
-		if(message.isDirty() 
-		|| messageLanguages.isDirty()){
-			return true;
-		}else{
-			return false;
+		/**
+		 * Lock details
+		 */
+		function lockDetails(){
+			message.setReadonlyAll(true);
+			messageLanguages.setReadonlyAll(true);
 		}
-	}
-
-	/**
-	 * Initializes detail
-	 */
-	function initializeDetail() {
-		message.fromJson({});
-		messageLanguages.fromJson([]);
-	}
-	
-	/**
-	 * Resets detail
-	 */ 
-	function resetDetail() {
-		message.reset();
-		messageLanguages.reset();
-	}
-	
-	/**
-	 * Lock details
-	 */
-	function lockDetails(){
-		message.setReadonlyAll(true);
-		messageLanguages.setReadonlyAll(true);
-	}
-	
-	/**
-	 * Gets messages
-	 */
-	function getMessages(page) {
-		return new Promise(function(resolve,reject){
-			if(page){
-				search.set('page',page);
-			}
-			var data = {};
-			if(search.get('key')){
-				data[search.get('key')] = search.get('value');
-			}
-			if(search.get('status')){
-				data.status = search.get('status');
-			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
-			$.ajax({
-				 url: 'message/getMessages'
-				,type: 'GET'
-				,data: data
-			})
-			.done(function(data, textStatus, jqXHR) {
-				messages.fromJson(data);
-				search.set('totalCount', __parseTotalCount(jqXHR));
-				resolve(true);
-		   	});
-		});
-	}
-	
-	/**
-	 * Gets specified message
-	 */
-	function getMessage(id, language){
-		$.ajax({
-			 url: 'message/getMessage'
-			,type: 'GET'
-			,data: { id:id, language:language }
-		})
-		.done(function(data, textStatus, jqXHR) {
-			message.fromJson(data);
-			messageLanguages.fromJson(data.languages);
-			disableDetail(false);
-			message.setReadonly('id', true);
-			message.setReadonly('language', true);
-			isNew = false;
-		});
-	}
-	
-	/**
-	 * Adds message
-	 */
-	function addMessage() {
-		initializeDetail();
-		disableDetail(false);
-		message.setReadonly('id',false);
-		message.setReadonly('language',false);
-		isNew = true;
-		message.setFocus('id');
-	}
-	
-	/**
-	 * Returns duplicate message
-	 */
-	function isDuplicateMessage(id){
-		return new Promise(function(resolve, reject){
+		
+		/**
+		 * Gets messages
+		 */
+		function getMessages(page) {
+			return new Promise(function(resolve,reject){
+				if(page){
+					search.set('page',page);
+				}
+				var data = {};
+				if(search.get('key')){
+					data[search.get('key')] = search.get('value');
+				}
+				data.page = search.get('page');
+				data.rows = search.get('rows');
+				$.ajax({
+					 url: 'message/getMessages'
+					,type: 'GET'
+					,data: data
+				})
+				.done(function(data, textStatus, jqXHR) {
+					messages.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					resolve(true);
+			   	});
+			});
+		}
+		
+		/**
+		 * Gets specified message
+		 */
+		function getMessage(id){
 			$.ajax({
 				 url: 'message/getMessage'
 				,type: 'GET'
 				,data: { id:id }
 			})
 			.done(function(data, textStatus, jqXHR) {
-				if(data && data.id === id){
-					resolve(true);
-				}else{
-					resolve(false);
-				}
+				message.fromJson(data);
+				messageLanguages.fromJson(data.languages);
+				disableDetail(false);
+				message.setReadonly('id', true);
+				message.setReadonly('language', true);
+				isNew = false;
 			});
-		});
-	}
-	
-	/**
-	 * Saves message
-	 */
-	async function saveMessage(){
-		
-		// checks changes
-		if(isNew === false && isDetailChanged() === false) {
-			await duice.alert("[[#{application.global.changeNotFound}]]");
-			return false;
 		}
 		
-		// checks id
-		if(duice.isEmpty(message.get('id'))){
-			message.setFocus('id', '[[#{application.global.enterItem(#{application.message.id})}]]');
-			return false;
-		}
-		if(!duice.isIdFormat(message.get('id'))){
-			message.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
-			return false;
-		}
-		
-		// checks name
-		if(duice.isEmpty(message.get('name'))){
-			message.setFocus('name', '[[#{application.global.enterItem(#{application.message.name})}]]');
-			return false;
-		}
-		
-		// checks new message is existed
-		if(isNew){
-			if(await isDuplicateMessage(message.get('id'))){
-				message.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.message.id})}]]');
-				return false;
-			}
+		/**
+		 * Adds message
+		 */
+		function addMessage() {
+			initializeDetail();
+			disableDetail(false);
+			message.setReadonly('id',false);
+			message.setReadonly('language',false);
+			isNew = true;
+			message.setFocus('id');
 		}
 
-		// enters save process
-		if(await duice.confirm("[[#{application.global.saveConfirm(#{application.message})}]]")){
-			var data = message.toJson();
-			data.languages = messageLanguages.toJson();
-			$.ajax({
-				 url: 'message/saveMessage'
-				,type: 'POST'
-				,data: JSON.stringify(data)
-				,contentType: 'application/json;charset=UTF-8'
-			})
-			.done(function(data, textStatus, jqXHR) {
-				new duice.Alert('[[#{application.global.saveComplete(#{application.message})}]]')
-				.onAfterClose(async function(){
-					await getMessages();
-					
-					// refresh list and details
-					var index = messages.indexOf(function(row){
-						if(row.get('id') === message.get('id')){
-							return true;
+		/**
+		 * Validates message id
+		 * @param id
+		 */
+		function validateMessageId(id) {
+			return new Promise(function(resolve,reject){
+				if(duice.isEmpty(id)){
+					return reject('[[#{application.global.enterItem(#{application.message.id})}]]');
+				}
+				if(!duice.isIdFormat(id)){
+					return reject('[[#{application.global.notValidItemFormat(#{application.message.id})}]]');
+				}
+				if(isNew){
+					$.ajax({
+						 url: 'message/getMessage'
+						,type: 'GET'
+						,data: {id:id}
+					})
+					.done(function(data, textStatus, jqXHR) {
+						if(data && data.id === id){
+							reject('[[#{application.global.alreadyRegisteredItem(#{application.message.id})}]]');
+						}else{
+							resolve(true);
 						}
 					});
-					if(index > -1){
-						initializeDetail();
-						messages.selectRow(index);
-					}else{
-						getMessage(message.get('id'));
-					}
-				})
-				.open();
+				}else{
+					resolve(true);
+				}
 			});
 		}
-	}
-
-	/**
-	 * Deletes message
-	 */
-	function deleteMessage(){
-		new duice.Confirm("[[#{application.global.deleteConfirm(#{application.message})}]]")
-		.onAfterConfirm(function(){
-			$.ajax({
-				 url: 'message/deleteMessage'
-				,type: 'DELETE'
-				,data: JSON.stringify(message.toJson())
-				,contentType: 'application/json;charset=UTF-8'
-			})
-			.done(function(data, textStatus, jqXHR) {
-					new duice.Alert("[[#{application.global.deleteComplete(#{application.message})}]]")
-					.onAfterClose(async function(){
-						await getMessages();
-						initializeDetail();
-						disableDetail(true);
-					}).open();
+		
+		/**
+		 * Saves message
+		 */
+		async function saveMessage(){
+			
+			// checks changes
+			if(isNew === false && isDetailChanged() === false) {
+				await duice.alert("[[#{application.global.changeNotFound}]]");
+				return false;
+			}
+			
+			// checks id
+			try{
+				await validateMessageId(message.get('id'));
+			}catch(e){
+				await duice.alert(e);
+				message.setFocus('id');
+				return false;
+			}
+			
+			// checks name
+			if(duice.isEmpty(message.get('name'))){
+				message.setFocus('name', '[[#{application.global.enterItem(#{application.message.name})}]]');
+				return false;
+			}
+			
+			// enters save process
+			duice.confirm("[[#{application.global.saveConfirm(#{application.message})}]]")
+			.then(function(result){
+				if(result){
+					var data = message.toJson();
+					data.languages = messageLanguages.toJson();
+					$.ajax({
+						 url: 'message/saveMessage'
+						,type: 'POST'
+						,data: JSON.stringify(data)
+						,contentType: 'application/json;charset=UTF-8'
+					})
+					.done(function(data, textStatus, jqXHR) {
+						var id = data.id;
+						duice.alert('[[#{application.global.saveComplete(#{application.message})}]]')
+						.then(function(){
+							getMessages()
+							.then(function(){
+								// refresh list and details
+								var index = messages.indexOf(function(row){
+									if(row.get('id') === id){
+										return true;
+									}
+								});
+								if(index > -1){
+									initializeDetail();
+									messages.selectRow(index);
+								}else{
+									getMessage(id);
+								}
+							});
+						})
+					});
+				}
 			});
-		}).open();
-	}
+		}
 	
-	/**
-	 * Adds message language
-	 */
-	function addMessageLanguage() {
-		var messageLanguage = new duice.Map({
-			messageId: message.get('id')
-		});
-		messageLanguages.addRow(messageLanguage);
-	}
-	
-	/**
-	 * Removes message language
-	 */
-	function removeMessageLanguage(index) {
-		messageLanguages.removeRow(index);
-	}
+		/**
+		 * Deletes message
+		 */
+		function deleteMessage(){
+			duice.confirm("[[#{application.global.deleteConfirm(#{application.message})}]]")
+			.then(function(result){
+				if(result){
+					$.ajax({
+						 url: 'message/deleteMessage'
+						,type: 'DELETE'
+						,data: JSON.stringify(message.toJson())
+						,contentType: 'application/json;charset=UTF-8'
+					})
+					.done(function(data, textStatus, jqXHR) {
+						duice.alert("[[#{application.global.deleteComplete(#{application.message})}]]")
+						.then(function(){
+							getMessages()
+							.then(function(){
+								initializeDetail();
+								disableDetail(true);	
+							});
+						});
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Adds message language
+		 */
+		function addMessageLanguage() {
+			var messageLanguage = new duice.Map({
+				messageId: message.get('id')
+			});
+			messageLanguages.addRow(messageLanguage);
+		}
+		
+		/**
+		 * Removes message language
+		 */
+		function removeMessageLanguage(index) {
+			messageLanguages.removeRow(index);
+		}
 	</script>
 	<div class="app-row">
 		<div class="app-col" style="width:50%;">

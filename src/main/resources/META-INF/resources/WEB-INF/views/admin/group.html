@@ -2,263 +2,243 @@
 <html layout:decorate="~{admin/admin.html}">
 <div layout:fragment="content">
 	<script>
-	// defines variables 
-	const search = new duice.Map({
-		page: 1,
-		rows: 1000,
-		totalCount: -1
-	});
-	const tabFolder = new duice.TabFolder();
-	const groups = new duice.List();
-	const group = new duice.Map();
-	const groupRoles = new duice.List();
-	const groupAuthorities = new duice.List();
-	const groupAvailableAuthorities = new duice.List();
-	groups.setReadonlyAll(true);
-	groupRoles.setReadonlyAll(true);
-	groupAuthorities.setReadonlyAll(true);
-	groupAvailableAuthorities.setReadonlyAll(true);
-	var isNew = false;
-	
-	// adds index changed event listener
-	groups.onBeforeSelectRow(async function(index){
-		if(isDetailChanged()){
-			return await new duice.Confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")
-			.onAfterConfirm(function(){
-				resetDetail();
-			})
-			.open();
-		}
-	});
-	
-	// event listener for select row
-	groups.onAfterSelectRow(function(selectedRow){
-		getGroup(selectedRow.get('id'));	
-	});
-	
-	// event listner for before move row
-	groups.onBeforeMoveRow(async function(sourceRow,targetRow){
-		return await duice.confirm("[[#{application.global.changeConfirm(#{application.group.upperId})}]]");
-	});
-	
-	// event listner for after move row
-	groups.onAfterMoveRow(async function(sourceRow,targetRow){
-		console.log('groups.onAfterMoveRow', sourceRow.toJson(), targetRow && targetRow.toJson());
-		var group = sourceRow;
-		var id = group.get('id');
-		$.ajax({
-			 url: 'group/changeUpperId'
-			,type: 'POST'
-			,data: JSON.stringify(group.toJson())
-			,contentType: 'application/json;charset=UTF-8'
-			,success: async function(data, textStatus, jqXHR) {
-				await duice.alert('[[#{application.global.changeComplete(#{application.group.upperId})}]]');
-				await getGroups();
-				groups.forEach(function(row,index){
-					if(row.get('id') === id){
-						clearDetail();
-						groups.selectRow(index);
-						return true;
-					}
-				});
-	   	 	}
-		});	
-	});
-	
-	// checks user properties change
-	group.onBeforeChange(async function(name,value){
-		if(name === 'id'){
-			if(await isDuplicateGroup(value)){
-				group.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.group.id})}]]');
-			}
-		}
-	});
-	
-	// document ready
-	$(document).ready(function() {
-		
-		// checks authorization
-		if([[${!#authorization.expression('hasAuthority("ADMN_GROP_EDIT")')}]]){
-			lockDetails();
-		}
-		
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
-		tabFolder.onAfterSelectTab(function(selectedTab){
-			if(group.get('id')){
-				// tabButton2
-				if(selectedTab.getButton() === document.getElementById('tabButton2')){
-					getGroupAvailableAuthorities(group.get('id'));
-				}
-			}
+		// defines variables 
+		const search = new duice.Map({
+			page: 1,
+			rows: 1000,
+			totalCount: -1
 		});
-		tabFolder.selectTab(0);
-		
-		// gets groups
-	    getGroups();
-	    disableDetail(true);
-	});
-	
-	/**
-	 * Disables detail
-	 */
-	function disableDetail(disable){
-		group.setDisableAll(disable);
-		$('#detailDiv').find('button').each(function(index, element){
-			$(element).prop('disabled', disable);
-		});
-	}
-	
-	/**
-	 * Returns detail changed.
-	 */
-	function isDetailChanged() {
-		if(group.isDirty()
-		|| groupRoles.isDirty()
-		|| groupAuthorities.isDirty()
-		){
-			return true;
-		}else{
-			return false;
-		}
-	}
-	
-	/**
-	 * Clears detail
-	 */
-	function clearDetail() {
-		group.fromJson({});
-		groupRoles.fromJson([]);
-		groupAuthorities.fromJson([]);
-		groupAvailableAuthorities.fromJson([]);
-	}
-	
-	/**
-	 * Resets detail
-	 */
-	function resetDetail(){
-		group.reset();
-		groupRoles.reset();
-		groupAuthorities.reset();
-	}
-	
-	/**
-	 * Lock details
-	 */
-	function lockDetails(){
-		group.setReadonlyAll(true);
+		const tabFolder = new duice.TabFolder();
+		const groups = new duice.List();
+		const group = new duice.Map();
+		const groupRoles = new duice.List();
+		const groupAuthorities = new duice.List();
+		const groupAvailableAuthorities = new duice.List();
+		groups.setReadonlyAll(true);
 		groupRoles.setReadonlyAll(true);
 		groupAuthorities.setReadonlyAll(true);
-	}
-
-	/**
-	 * Gets groups
-	 * Retrieves list of group from serer API.
-	 */
-	function getGroups() {
-		return new Promise(function(resolve,reject){
-			var data = {};
-			data.page = search.get('page');
-			data.rows = search.get('rows');
+		groupAvailableAuthorities.setReadonlyAll(true);
+		var isNew = false;
+		
+		// adds index changed event listener
+		groups.onBeforeSelectRow(async function(index){
+			if(isDetailChanged()){
+				if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
+					resetDetail();
+					return true;
+				}else{
+					return false;
+				}
+			}
+		});
+		
+		// event listener for select row
+		groups.onAfterSelectRow(function(selectedRow){
+			getGroup(selectedRow.get('id'));	
+		});
+		
+		// event listner for before move row
+		groups.onBeforeMoveRow(async function(sourceRow,targetRow){
+			return await duice.confirm("[[#{application.global.changeConfirm(#{application.group.upperId})}]]");
+		});
+		
+		// event listner for after move row
+		groups.onAfterMoveRow(async function(sourceRow,targetRow){
+			var group = sourceRow;
+			var id = group.get('id');
 			$.ajax({
-				 url: 'group/getGroups'
-				,type: 'GET'
-				,data: data
-				,success: function(data, textStatus, jqXHR) {
-					groups.fromJson(data);
-					search.set('totalCount', __parseTotalCount(jqXHR));
-					resolve(true);
-		   	 	}
+				 url: 'group/changeUpperId'
+				,type: 'POST'
+				,data: JSON.stringify(group.toJson())
+				,contentType: 'application/json;charset=UTF-8'
+			})
+			.done(function(data, textStatus, jqXHR) {
+				duice.alert('[[#{application.global.changeComplete(#{application.group.upperId})}]]')
+				.then(async function(){
+					await getGroups();
+					groups.forEach(function(row,index){
+						if(row.get('id') === id){
+							clearDetail();
+							groups.selectRow(index);
+							return false;
+						}
+					});
+				});
 			});	
 		});
-	}
-	
-	/**
-	 * Gets specified group
-	 */
-	function getGroup(id){
-		$.ajax({
-			 url: 'group/getGroup'
-			,type: 'GET'
-			,data: {id:id}
-		})
-		.done(function(data, textStatus, jqXHR) {
-			group.fromJson(data);
-			groupRoles.fromJson(data.roles);
-			groupAuthorities.fromJson(data.authorities);
-			disableDetail(false);
-			group.setReadonly('id', true);
-			isNew = false;
-			tabFolder.selectTab(0);
-		});	
-	}
-
-	/**
-	 * Gets group available authorities
-	 */
-	function getGroupAvailableAuthorities(id){
-		$.ajax({
-			 url: 'group/getAvailableAuthorities'
-			,type: 'GET'
-			,data: {id:id}
-		})
-		.done(function(data, textStatus, jqXHR) {
-			groupAvailableAuthorities.fromJson(data);
-		});
-	}
-	
-	/**
-	 * Adds group
-	 */
-	function addGroup() {
-		clearDetail();
-		disableDetail(false);
-		group.setReadonly('id',false);
-		isNew = true;
-		group.setFocus('id');
-	}
-	
-	/**
-	 * Adds group as child node
-	 */
-	function addChildGroup(id) {
-		addGroup();
-		group.set('upperId', id);
-	}
-	
-	/**
-	 * Change upper id
-	 */
-	function changeUpperId(){
 		
-		// creates disabled list(self and child nodes)
-		var disabledGroups = new duice.List();
-
-		// finds child group recursively.
-		var childGroups = new duice.List();
-		function getChildGroup(group){
-			groups.forEach(function(row){
-				if(row.get('upperId') === group.get('id')){
-					childGroups.addRow(row);
-					getChildGroup(row);
+		// document ready
+		$(document).ready(function() {
+			
+			// checks authorization
+			if([[${!#authorization.expression('hasAuthority("ADMN_GROP_EDIT")')}]]){
+				lockDetails();
+			}
+			
+			// creates tab
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
+			tabFolder.onAfterSelectTab(function(selectedTab){
+				if(group.get('id')){
+					// tabButton2
+					if(selectedTab.getButton() === document.getElementById('tabButton2')){
+						getGroupAvailableAuthorities(group.get('id'));
+					}
 				}
 			});
-		}
-		getChildGroup(group);
-		
-		// sets disabled groups (self and child nodes)
-		disabledGroups.addRow(group);
-		childGroups.forEach(function(row){
-			disabledGroups.addRow(row);
+			tabFolder.selectTab(0);
+			
+			// gets groups
+		    getGroups();
+		    disableDetail(true);
 		});
 		
-		// opens global group select select dialog
-		__groupDialog.open({
-			singleSelect:true,
-			checkedGroups: [{id:group.get('upperId')}],
-			disabledGroups: disabledGroups.toJson(),
-			onAfterConfirm: function(returnGroups){
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			group.setDisableAll(disable);
+			$('#detailDiv').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
+		}
+		
+		/**
+		 * Returns detail changed.
+		 */
+		function isDetailChanged() {
+			if(group.isDirty()
+			|| groupRoles.isDirty()
+			|| groupAuthorities.isDirty()
+			){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		/**
+		 * Clears detail
+		 */
+		function clearDetail() {
+			group.fromJson({});
+			groupRoles.fromJson([]);
+			groupAuthorities.fromJson([]);
+			groupAvailableAuthorities.fromJson([]);
+		}
+		
+		/**
+		 * Resets detail
+		 */
+		function resetDetail(){
+			group.reset();
+			groupRoles.reset();
+			groupAuthorities.reset();
+		}
+		
+		/**
+		 * Lock details
+		 */
+		function lockDetails(){
+			group.setReadonlyAll(true);
+			groupRoles.setReadonlyAll(true);
+			groupAuthorities.setReadonlyAll(true);
+		}
+	
+		/**
+		 * Gets groups
+		 * Retrieves list of group from serer API.
+		 */
+		function getGroups() {
+			return new Promise(function(resolve,reject){
+				var data = {};
+				data.page = search.get('page');
+				data.rows = search.get('rows');
+				$.ajax({
+					 url: 'group/getGroups'
+					,type: 'GET'
+					,data: data
+					,success: function(data, textStatus, jqXHR) {
+						groups.fromJson(data);
+						search.set('totalCount', __parseTotalCount(jqXHR));
+						resolve(true);
+			   	 	}
+				});	
+			});
+		}
+		
+		/**
+		 * Gets specified group
+		 */
+		function getGroup(id){
+			$.ajax({
+				 url: 'group/getGroup'
+				,type: 'GET'
+				,data: {id:id}
+			})
+			.done(function(data, textStatus, jqXHR) {
+				group.fromJson(data);
+				groupRoles.fromJson(data.roles);
+				groupAuthorities.fromJson(data.authorities);
+				disableDetail(false);
+				group.setReadonly('id', true);
+				isNew = false;
+				tabFolder.selectTab(0);
+			});	
+		}
+		
+		/**
+		 * Adds group
+		 */
+		function addGroup() {
+			clearDetail();
+			disableDetail(false);
+			group.setReadonly('id',false);
+			isNew = true;
+			group.setFocus('name');
+		}
+		
+		/**
+		 * Adds group as child node
+		 */
+		function addChildGroup(id) {
+			addGroup();
+			group.set('upperId', id);
+		}
+		
+		/**
+		 * Change upper id
+		 */
+		function changeUpperId(){
+			
+			// creates disabled list(self and child nodes)
+			var disabledGroups = new duice.List();
+	
+			// finds child group recursively.
+			var childGroups = new duice.List();
+			function getChildGroup(group){
+				groups.forEach(function(row){
+					if(row.get('upperId') === group.get('id')){
+						childGroups.addRow(row);
+						getChildGroup(row);
+					}
+				});
+			}
+			getChildGroup(group);
+			
+			// sets disabled groups (self and child nodes)
+			disabledGroups.addRow(group);
+			childGroups.forEach(function(row){
+				disabledGroups.addRow(row);
+			});
+			
+			// opens global group select select dialog
+			__groupDialog.open({
+				singleSelect:true,
+				checkedGroups: [{id:group.get('upperId')}],
+				disabledGroups: disabledGroups.toJson(),
+			})
+			.then(function(returnGroups){
 				var upperGroup = returnGroups[0];
 				var upperId = null;
 				if(upperGroup){
@@ -267,163 +247,147 @@
 				
 				// updates upperId
 				group.set('upperId', upperId);
+			});
+		}
+		
+		/**
+		 * Saves group
+		 */
+		async function saveGroup(){
+			
+			// checks changes
+			if(isNew === false && isDetailChanged() === false) {
+				await duice.alert("[[#{application.global.changeNotFound}]]");
+				return false;
 			}
-		});
-	}
-	
-	/**
-	 * Returns duplicate
-	 */
-	function isDuplicateGroup(id){
-		return new Promise(function(resolve,reject){
+
+			// checks group name
+			if(duice.isEmpty(group.get('name'))){
+				await duice.alert('[[#{application.global.enterItem(#{application.group.name})}]]');
+				group.setFocus('name');
+				return false;
+			}
+						
+			// fires confirm message
+			duice.confirm("[[#{application.global.saveConfirm(#{application.group})}]]")
+			.then(function(result){
+				if(result){
+					var data = group.toJson();
+					data.roles = groupRoles.toJson();
+					data.authorities = groupAuthorities.toJson();
+					$.ajax({
+						 url: 'group/saveGroup'
+						,type: 'POST'
+						,data: JSON.stringify(data)
+						,contentType: 'application/json;charset=UTF-8'
+					})
+					.done(function(data, textStatus, jqXHR) {
+						var id = data.id;
+						duice.alert('[[#{application.global.saveComplete(#{application.group})}]]')
+						.then(async function(){
+							getGroups()
+							.then(function(){
+								// refresh list and details
+								var index = groups.indexOf(function(row){
+									if(row.get('id') === id){
+										return true;
+									}
+								});
+								if(index > -1){
+									clearDetail();
+									groups.selectRow(index);
+								}else{
+									getGroup(id);
+								}
+							});
+						});
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Deletes group
+		 */
+		async function deleteGroup(){
+			if(await duice.confirm("[[#{application.global.deleteConfirm(#{application.group})}]]")){
+				$.ajax({
+					 url: 'group/deleteGroup'
+					,type: 'DELETE'
+					,data: JSON.stringify(group.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					duice.alert("[[#{application.global.deleteComplete(#{application.group})}]]")
+					.then(async function(){
+						await getGroups();
+						clearDetail();
+						disableDetail(true);
+					});
+				});
+			}
+		}
+		
+		/**
+		 * Adds group role
+		 */
+		function addGroupRole() {
+			__roleDialog.open({
+				checkedRoles: groupRoles.toJson(),
+				disabledRoles: groupRoles.toJson()
+			})
+			.then(function(selectedRoles){
+				if(selectedRoles){
+					selectedRoles.forEach(function(item){
+						groupRoles.addRow(new duice.Map(item));
+					});
+				}
+			});
+		}
+		
+		/**
+		 * Removes group role
+		 */
+		function removeGroupRole(index) {
+			groupRoles.removeRow(index);
+		}
+		
+		/**
+		 * Adds group authority
+		 */
+		function addGroupAuthority() {
+			__authorityDialog.open({
+				checkedAuthorities: groupAuthorities.toJson(),
+				disabledAuthorities: groupAuthorities.toJson()
+			})
+			.then(function(selectedAuthorities){
+				selectedAuthorities.forEach(function(item){
+					groupAuthorities.addRow(new duice.Map(item));
+				});
+			});
+		}
+		
+		/**
+		 * Removes authority
+		 */
+		function removeGroupAuthority(index) {
+			groupAuthorities.removeRow(index);
+		}
+		
+		
+		/**
+		 * Gets group available authorities
+		 */
+		function getGroupAvailableAuthorities(id){
 			$.ajax({
-				 url: 'group/getGroup'
+				 url: 'group/getAvailableAuthorities'
 				,type: 'GET'
 				,data: {id:id}
 			})
 			.done(function(data, textStatus, jqXHR) {
-				if(data && data.id === id){
-					resolve(true);
-				}else{
-					resolve(false);
-				}
+				groupAvailableAuthorities.fromJson(data);
 			});
-		});
-	}
-	
-	/**
-	 * Saves group
-	 */
-	async function saveGroup(){
-		
-		// checks changes
-		if(isNew === false && isDetailChanged() === false) {
-			duice.alert("[[#{application.global.changeNotFound}]]").open();
-			return;
 		}
-		
-		// check group id
-		if(duice.isEmpty(group.get('id'))){
-			group.setFocus('id', '[[#{application.global.enterItem(#{application.group.id})}]]');
-			return false;
-		}
-		if(!duice.isIdFormat(group.get('id'))){
-			group.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
-			return false;
-		}
-		if(isNew){
-			if(await isDuplicateGroup(group.get('id'))) {
-				group.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.group.id})}]]');
-				return false;
-			}
-		}
-		
-		// checks group name
-		if(duice.isEmpty(group.get('name'))){
-			group.setFocus('name', '[[#{application.global.enterItem(#{application.group.name})}]]');
-			return false;
-		}
-					
-		// fires confirm message
-		new duice.Confirm("[[#{application.global.saveConfirm(#{application.group})}]]")
-		.onAfterConfirm(function(){
-			var data = group.toJson();
-			data.roles = groupRoles.toJson();
-			data.authorities = groupAuthorities.toJson();
-			$.ajax({
-				 url: 'group/saveGroup'
-				,type: 'POST'
-				,data: JSON.stringify(data)
-				,contentType: 'application/json;charset=UTF-8'
-				,success: function(data, textStatus, jqXHR) {
-					new duice.Alert('[[#{application.global.saveComplete(#{application.group})}]]')
-					.onAfterClose(async function(){
-						await getGroups();
-						
-						// refresh list and details
-						var index = groups.indexOf(function(row){
-							if(row.get('id') === group.get('id')){
-								return true;
-							}
-						});
-						if(index > -1){
-							clearDetail();
-							groups.selectRow(index);
-						}else{
-							getGroup(group.get('id'));
-						}
-					}).open();
-		   	 	}
-			});	
-		}).open();
-	}
-	
-	/**
-	 * Deletes group
-	 */
-	function deleteGroup(){
-		new duice.Confirm("[[#{application.global.deleteConfirm(#{application.group})}]]")
-		.onAfterConfirm(function(){
-			$.ajax({
-				 url: 'group/deleteGroup'
-				,type: 'DELETE'
-				,data: JSON.stringify(group.toJson())
-				,contentType: 'application/json;charset=UTF-8'
-				,success: function(data, textStatus, jqXHR) {
-					new duice.Alert("[[#{application.global.deleteComplete(#{application.group})}]]")
-					.onAfterClose(async function(){
-						await getGroups();
-						clearDetail();
-						disableDetail(true);
-					}).open();
-		   	 	}
-			});
-		}).open();
-	}
-	
-	/**
-	 * Adds group role
-	 */
-	function addGroupRole() {
-		__roleDialog.open({
-			checkedRoles: groupRoles.toJson(),
-			disabledRoles: groupRoles.toJson(),
-			onAfterConfirm: function(selectedRoles){
-				selectedRoles.forEach(function(item){
-					groupRoles.addRow(new duice.Map(item));
-				});
-			}
-		});
-	}
-	
-	/**
-	 * Removes group role
-	 */
-	function removeGroupRole(index) {
-		groupRoles.removeRow(index);
-	}
-	
-	/**
-	 * Adds group authority
-	 */
-	function addGroupAuthority() {
-		__authorityDialog.open({
-			checkedAuthorities: groupAuthorities.toJson(),
-			disabledAuthorities: groupAuthorities.toJson(),
-			onAfterConfirm: function(selectedAuthorities){
-				selectedAuthorities.forEach(function(item){
-					groupAuthorities.addRow(new duice.Map(item));
-				});
-			}
-		});
-	}
-	
-	/**
-	 * Removes authority
-	 */
-	function removeGroupAuthority(index) {
-		groupAuthorities.removeRow(index);
-	}
 	</script>
 	<div class="app-row">
 		<div class="app-col" style="width:50%;">
@@ -511,10 +475,6 @@
 								<col/>
 								<tbody>
 									<tr>
-										<th><span data-th-text="#{application.group.id}" class="mand">Group ID</span></th>
-										<td><input is="duice-input" type="text" data-duice-bind="group,id" pattern="^[a-zA-Z0-9_-]{1,32}$" class="id"/></td>
-									</tr>
-									<tr>
 										<th data-th-text="#{application.group.name}" class="mand">Name</th>
 										<td><input is="duice-input" type="text" data-duice-bind="group,name"/></td>
 									</tr>
@@ -553,7 +513,7 @@
 									</tr>
 									<tr>
 										<th data-th-text="#{application.group.description}">Description</th>
-										<td><textarea is="duice-textarea" data-duice-bind="group,description" style="height:200px;"></textarea></td>
+										<td><textarea is="duice-textarea" data-duice-bind="group,description" style="height:100px;"></textarea></td>
 									</tr>
 									<tr>
 										<th>

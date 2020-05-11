@@ -30,11 +30,12 @@
 		// checks when select row is changed.
 		roles.onBeforeSelectRow(async function(selectedRow){
 			if(isDetailChanged()){
-				return await new duice.Confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")
-				.onAfterConfirm(function(){
+				if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
 					resetDetail();
-				})
-				.open();
+					return true;
+				}else{
+					return true;
+				}
 			}
 		});
 		
@@ -46,8 +47,11 @@
 		// checks role properties change
 		role.onBeforeChange(async function(name,value){
 			if(name === 'id'){
-				if(await isDuplicateRole(value)){
-					role.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.role.id})}]]');
+				try{
+					await validateRoleId(value);
+				}catch(e){
+					await duice.alert( e);
+					role.setFocus('id');
 				}
 			}
 		});
@@ -72,6 +76,7 @@
 
 		/**
 		 * Disables detail
+		 * @param disable
 		 */
 		function disableDetail(disable){
 			role.setDisableAll(disable);
@@ -119,6 +124,7 @@
 		
 		/**
 		 * Gets roles
+		 * @param page
 		 */
 		function getRoles(page) {
 			return new Promise(function(resolve,reject){
@@ -135,12 +141,12 @@
 					 url: 'role/getRoles'
 					,type: 'GET'
 					,data: data
-					,success: function(data, textStatus, jqXHR) {
-						roles.fromJson(data);
-						search.set('totalCount', __parseTotalCount(jqXHR));
-						resolve(true);
-			   	 	}
-				});
+				})
+				.done(function(data, textStatus, jqXHR) {
+					roles.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					resolve(true);
+		   	 	});
 			});
 		}
 		
@@ -174,23 +180,34 @@
 		}
 		
 		/**
-		 * Returns duplicate role
+		 * Validates role id
+		 * @param id
 		 */
-		function isDuplicateRole(id){
-			return new Promise(function(resolve, reject){
-				$.ajax({
-					 url: 'role/getRole'
-					,type: 'GET'
-					,data: {id:id}
-				})
-				.done(function(data, textStatus, jqXHR) {
-					if(data && data.id === id){
-						resolve(true);
-					}else{
-						resolve(false);
-					}
-				});
-			});
+		function validateRoleId(id){
+			return new Promise(function(resolve,reject){
+				if(duice.isEmpty(id)){
+					return reject('[[#{application.global.enterItem(#{application.role.id})}]]');
+				}
+				if(!duice.isIdFormat(id)){
+					return reject('[[#{application.global.notValidItemFormat(#{application.role.id})}]]');
+				}
+				if(isNew){
+					$.ajax({
+						 url: 'role/getRole'
+						,type: 'GET'
+						,data: {id:id}
+					})
+					.done(function(data, textStatus, jqXHR){
+						if(data && data.id === id){
+							reject('[[#{application.global.alreadyRegisteredItem(#{application.role.id})}]]');
+						}else{
+							resolve(true);
+						}
+					});
+				}else{
+					resolve(true);
+				}
+			})
 		}
 		
 		/**
@@ -200,87 +217,88 @@
 			
 			// checks changes
 			if(isNew === false && isDetailChanged() === false) {
-				new duice.Alert("[[#{application.global.changeNotFound}]]").open();
-				return;
-			}
-			
-			// checks id
-			if(duice.isEmpty(role.get('id'))){
-				role.setFocus('id', '[[#{application.global.enterItem(#{application.role.id})}]]');
+				duice.alert("[[#{application.global.changeNotFound}]]");
 				return false;
 			}
-			if(!duice.isIdFormat(role.get('id'))){
-				role.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
+			
+			// checks email
+			try{
+				await validateRoleId(role.get('id'));
+			}catch(e){
+				await duice.alert( e);
+				role.setFocus('email');
 				return false;
 			}
-			if(isNew){
-				if(await isDuplicateRole(role.get('id'))){
-					role.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.role.id})}]]');
-					return false;
-				}
-			}
 			
-			// checks user name
+			// name
 			if(duice.isEmpty(role.get('name'))){
-				role.setFocus('name', '[[#{application.global.enterItem(#{application.role.name})}]]');
+				await duice.alert('[[#{application.global.enterItem(#{application.role.name})}]]');
+				user.setFocus('name');
 				return false;
 			}
 			
 			// enters save process
-			new duice.Confirm("[[#{application.global.saveConfirm(#{application.role})}]]")
-			.onAfterConfirm(function(){
-				var data = role.toJson();
-				data.authorities = roleAuthorities.toJson();
-				$.ajax({
-					 url: 'role/saveRole'
-					,type: 'POST'
-					,data: JSON.stringify(data)
-					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert('[[#{application.global.saveComplete(#{application.role})}]]')
-						.onAfterClose(async function(){
-							await getRoles();
-							
-							// refresh list and details
-							var index = roles.indexOf(function(row){
-								if(row.get('id') === role.get('id')){
-									return true;
+			duice.confirm("[[#{application.global.saveConfirm(#{application.role})}]]")
+			.then(function(result){
+				if(result){
+					var data = role.toJson();
+					data.authorities = roleAuthorities.toJson();
+					$.ajax({
+						 url: 'role/saveRole'
+						,type: 'POST'
+						,data: JSON.stringify(data)
+						,contentType: 'application/json;charset=UTF-8'
+					})
+					.done(function(data,textStatus,jqXHR){
+						var id = data.id;
+						duice.alert('[[#{application.global.saveComplete(#{application.role})}]]')
+						.then(function(){
+							getRoles()
+							.then(function(){
+								// refresh list and details
+								var index = roles.indexOf(function(row){
+									if(row.get('id') === id){
+										return true;
+									}
+								});
+								if(index > -1){
+									initializeDetail();
+									roles.selectRow(index);
+								}else{
+									getRole(id);
 								}
 							});
-							if(index > -1){
-								initializeDetail();
-								roles.selectRow(index);
-							}else{
-								getRole(role.get('id'));
-							}
-						}).open();
-			   	 	}
-				});	
-			}).open();
+						});
+					});
+				}
+			});
 		}
 		
 		/**
 		 * Deletes role
 		 */
 		function deleteRole(){
-			new duice.Confirm("[[#{application.global.deleteConfirm(#{application.role})}]]")
-			.onAfterConfirm(function(){
-				$.ajax({
-					 url: 'role/deleteRole'
-					,type: 'DELETE'
-					,data: JSON.stringify(role.toJson())
-					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.global.deleteComplete(#{application.role})}]]")
-						.onAfterClose(async function(){
-							await getRoles();
-							initializeDetail();
-							disableDetail(true);
-						}).open();
-			   	 	}
-				});
-			}).open();
-		
+			duice.confirm("[[#{application.global.deleteConfirm(#{application.role})}]]")
+			.then(function(result){
+				if(result){
+					$.ajax({
+						 url: 'role/deleteRole'
+						,type: 'DELETE'
+						,data: JSON.stringify(role.toJson())
+						,contentType: 'application/json;charset=UTF-8'
+					})
+					.done(function(data, textStatus, jqXHR){
+						duice.alert("[[#{application.global.deleteComplete(#{application.role})}]]")
+						.then(function(){
+							getRoles()
+							.then(function(){
+								initializeDetail();
+								disableDetail(true);
+							});
+						});
+					});
+				}
+			});
 		}
 		
 		/**
@@ -288,8 +306,11 @@
 		 */
 		function addRoleAuthority() {
 			__authorityDialog.open({
-				disabledAuthorities: roleAuthorities.toJson(),
-				onAfterConfirm: function(selectedAuthorities){
+				checkedAuthorities: roleAuthorities.toJson(),
+				disabledAuthorities: roleAuthorities.toJson()
+			})
+			.then(function(selectedAuthorities){
+				if(selectedAuthorities){
 					selectedAuthorities.forEach(function(item){
 						roleAuthorities.addRow(new duice.Map(item));
 					});
@@ -444,7 +465,7 @@
 									</tr>
 									<tr>
 										<th data-th-text="#{application.role.description}"></th>
-										<td><textarea is="duice-textarea" data-duice-bind="role,description" style="height:200px;"></textarea></td>
+										<td><textarea is="duice-textarea" data-duice-bind="role,description" style="height:100px;"></textarea></td>
 									</tr>
 									<tr>
 										<th>

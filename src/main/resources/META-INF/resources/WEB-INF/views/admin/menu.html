@@ -19,11 +19,12 @@
 	// adds index changed event listener
 	menus.onBeforeSelectRow(async function(index){
 		if(isDetailChanged()){
-			return await new duice.Confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")
-			.onAfterConfirm(function(){
+			if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
 				resetDetail();
-			})
-			.open();
+				return true;
+			}else{
+				return false;
+			}
 		}
 	});
 	
@@ -34,9 +35,7 @@
 	
 	// event listner for before move row
 	menus.onBeforeMoveRow(async function(sourceRow,targetRow){
-		console.log('menus.onBeforeMoveRow', sourceRow.toJson(), targetRow && targetRow.toJson());
-		return await new duice.Confirm("[[#{application.global.changePositionConfirm(#{application.menu})}]]")
-		.open();
+		return await duice.confirm("[[#{application.global.changeConfirm(#{application.menu.upperId})}]]");
 	});
 	
 	// event listner for after move row
@@ -49,29 +48,20 @@
 			,type: 'POST'
 			,data: JSON.stringify(group.toJson())
 			,contentType: 'application/json;charset=UTF-8'
-			,success: function(data, textStatus, jqXHR) {
-				new duice.Alert('[[#{application.global.changePositionComplete(#{application.menu})}]]')
-				.onAfterClose(async function(){
-					await getMenus();
-					menus.forEach(function(row,index){
-						if(row.get('id') === id){
-							initializeDetail();
-							menus.selectRow(index);
-							return true;
-						}
-					});
-				}).open();
-	   	 	}
-		});	
-	});
-	
-	// checks user properties change
-	menu.onBeforeChange(async function(name,value){
-		if(name === 'id'){
-			if(await isDuplicateMenu(value)){
-				menu.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.menu.id})}]]');
-			}
-		}
+		})
+		.done(function(data, textStatus, jqXHR) {
+			duice.alert('[[#{application.global.changeComplete(#{application.menu.upperId})}]]')
+			.then(async function(){
+				await getMenus();
+				menus.forEach(function(row,index){
+					if(row.get('id') === id){
+						initializeDetail();
+						menus.selectRow(index);
+						return false;
+					}
+				});
+			});
+		});
 	});
 	
 	// listens menu changes
@@ -190,7 +180,6 @@
 			menu.fromJson(data);
 			menuDisplayAuthorities.fromJson(data.displayAuthorities);
 			disableDetail(false);
-			menu.setReadonly('id', true);
 			isNew = false;
 			handleVisible(menu);
 		});
@@ -202,9 +191,9 @@
 	function addMenu() {
 		initializeDetail();
 		disableDetail(false);
-		menu.setReadonly('id',false);
+		menu.setReadonly('name',false);
+		menu.setFocus('name');
 		isNew = true;
-		menu.setFocus('id');
 	}
 	
 	/**
@@ -213,26 +202,6 @@
 	function addChildMenu(id) {
 		addMenu();
 		menu.set('upperId', id);
-	}
-	
-	/**
-	 * Returns duplicate menu
-	 */
-	function isDuplicateMenu(id){
-		return new Promise(function(resolve,reject){
-			$.ajax({
-				 url: 'menu/getMenu'
-				,type: 'GET'
-				,data: {id:id}
-			})
-			.done(function(data, textStatus, jqXHR) {
-				if(data && data.id === id){
-					resolve(true);
-				}else{
-					resolve(false);
-				}
-			});
-		});
 	}
 	
 	/**
@@ -246,27 +215,10 @@
 			return false;
 		}
 		
-		// checks id
-		if(duice.isEmpty(menu.get('id'))){
-			menu.setFocus('id', '[[#{application.global.enterItem(#{application.menu.id})}]]');
-			return false;
-		}
-		if(!duice.isIdFormat(menu.get('id'))){
-			menu.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
-			return false;
-		}
-		
-		// checks new menu is existed
-		if(isNew){
-			if(await isDuplicateMenu(menu.get('id'))){
-				menu.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.menu.id})}]]');
-				return false;
-			}
-		}
-		
 		// checks menu name
 		if(duice.isEmpty(menu.get('name'))){
-			menu.setFocus('name', '[[#{application.global.enterItem(#{application.menu.name})}]]');
+			await duice.alert('[[#{application.global.enterItem(#{application.menu.name})}]]');
+			menu.setFocus('name');
 			return false;
 		}
 
@@ -282,13 +234,12 @@
 				,contentType: 'application/json;charset=UTF-8'
 			})
 			.done(function(data, textStatus, jqXHR) {
-				new duice.Alert('[[#{application.global.saveComplete(#{application.menu})}]]')
-				.onAfterClose(async function(){
+				var id = data.id;
+				duice.alert('[[#{application.global.saveComplete(#{application.menu})}]]')
+				.then(async function(){
 					await getMenus();
-					
-					// refresh list and details
 					var index = menus.indexOf(function(row){
-						if(row.get('id') === menu.get('id')){
+						if(row.get('id') === id){
 							return true;
 						}
 					});
@@ -296,10 +247,9 @@
 						initializeDetail();
 						menus.selectRow(index);
 					}else{
-						getMenu(menu.get('id'));
+						getMenu(id);
 					}
-				})
-				.open();
+				});
 			});
 		}
 	}
@@ -307,22 +257,23 @@
 	/**
 	 * Deletes menu
 	 */
-	function deleteMenu(){
-		new duice.Confirm("[[#{application.global.deleteConfirm(#{application.menu})}]]")
-		.onAfterConfirm(function(){
+	async function deleteMenu(){
+		if(await duice.confirm("[[#{application.global.deleteConfirm(#{application.menu})}]]")){
 			$.ajax({
 				 url: 'menu/deleteMenu'
 				,type: 'DELETE'
 				,data: JSON.stringify(menu.toJson())
 				,contentType: 'application/json;charset=UTF-8'
-				,success: function(data, textStatus, jqXHR) {
-					new duice.Alert("[[#{application.global.deleteComplete(#{application.menu})}]]")
-					.onAfterClose(function(){
-						getMenus();
-					}).open();
-		   	 	}
+			})
+			.done(function(data, textStatus, jqXHR) {
+				duice.alert("[[#{application.global.deleteComplete(#{application.menu})}]]")
+				.then(async function(){
+					await getMenus();
+					clearDetail();
+					disableDetail(true);
+				});
 			});
-		}).open();
+		}
 	}
 	
 	/**
@@ -437,10 +388,6 @@
 								<col/>
 								<tbody>
 									<tr>
-										<th><span data-th-text="#{application.menu.id}" class="mand">ID</span></th>
-										<td><input is="duice-input" type="text" data-duice-bind="menu,id" class="id" pattern="^[a-zA-Z0-9_-]{1,32}$"/></td>
-									</tr>
-									<tr>
 										<th data-th-text="#{application.menu.name}" class="mand">Name</th>
 										<td><input is="duice-input" type="text" data-duice-bind="menu,name"/></td>
 									</tr>
@@ -481,7 +428,7 @@
 									</tr>
 									<tr>
 										<th data-th-text="#{application.menu.description}">Description</th>
-										<td><textarea is="duice-textarea" data-duice-bind="menu,description" style="height:200px;"></textarea></td>
+										<td><textarea is="duice-textarea" data-duice-bind="menu,description" style="height:100px;"></textarea></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.menu.linkUrl}">Link URL</th>

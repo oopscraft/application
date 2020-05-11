@@ -608,114 +608,113 @@
 			</div>
 		</dialog>
 		<script>
-		/**
-		 * Global common group select dialog
-		 */
-        const __groupDialog = {
-        	dialog: new duice.Dialog(document.getElementById('__groupDialog')),
-        	groups: new duice.List(),
-        	
-        	// option
-        	singleSelect: false,
-        	checkedGroups: null,
-        	disabledGroups: null,
-
-        	/**
-        	 * Opens group dialog
-        	 * @param option.singleSelect 
-			 * @param option.selectedGroups 
-			 * @param option.disabledGroups 
-			 * @param option.onAfterConfirm
-        	 */
-        	async open(option) {
-        		
-        		// setting options
-        		this.singleSelect = option.singleSelect||false;
-        		this.checkedGroups = option.checkedGroups||[];
-        		this.disabledGroups = option.disabledGroups||[];
-        		this.dialog.onAfterConfirm(option.onAfterConfirm||function(){});
-        		
-        		// defines index change event
-        		var _this = this;
-        		this.groups.setReadonly('__checked', true);
-        		this.groups.onAfterSelectRow(function(group){
-       				
-       				// check disabled
-       				if(group.isDisable('id') === true){
-       					return;
-       				}
-       				
-       				// if singleSelect, desleect all except self index
-       				if(_this.singleSelect === true){
-       					_this.groups.forEach(function(row){
-       						if(row.get('id') !== group.get('id')){
-       							row.set('__checked', false);        							
-       						}
-       					});
-       				}
-
-       				// toggles __checked
-       				var __checked = group.get('__checked');
-       				if(__checked === true){
-       					group.set('__checked', false);
-       				}else{
-       					group.set('__checked', true);
-       				}
-        		});
-        		
-        		// retrieves and open
-        		await this.getGroups(1);
-        		this.dialog.open();
-        	},
-        	
-        	/**
-        	 * Getting groups
-        	 */
-        	getGroups(page) {
-				var _this = this;
-				return new Promise(function(resolve,reject){
-					$.ajax({
-						 url: '[[@{/admin/getGroups}]]'
-						,type: 'GET'
-						,data: {page:page, rows:10000}
-						,success: function(data, textStatus, jqXHR) {
-							_this.groups.fromJson(data);
-							_this.groups.forEach(function(group){
-								var id = group.get('id');
-								
-								// checks __selected value, if it set as selected list.
-								_this.checkedGroups.forEach(function(item){
-									if(item.id === id){
-										group.set('__checked', true);
-									}
+			/**
+			 * Global common group select dialog
+			 */
+	        const __groupDialog = {
+	        	dialog: new duice.Dialog(document.getElementById('__groupDialog')),
+	        	groups: new duice.List(),
+	        	
+	        	// option
+	        	singleSelect: false,
+	        	checkedGroups: null,
+	        	disabledGroups: null,
+	
+	        	/**
+	        	 * Opens group dialog
+	        	 * @param option.singleSelect 
+				 * @param option.selectedGroups 
+				 * @param option.disabledGroups 
+				 * @param option.onAfterConfirm
+	        	 */
+	        	async open(option) {
+	        		
+	        		// setting options
+	        		this.singleSelect = option.singleSelect||false;
+	        		this.checkedGroups = option.checkedGroups||[];
+	        		this.disabledGroups = option.disabledGroups||[];
+	        		
+	        		// defines index change event
+	        		var _this = this;
+	        		this.groups.setReadonly('__checked', true);
+	        		this.groups.onAfterSelectRow(function(group){
+	       				
+	       				// check disabled
+	       				if(group.isDisable('id') === true){
+	       					return;
+	       				}
+	       				
+	       				// if singleSelect, desleect all except self index
+	       				if(_this.singleSelect === true){
+	       					_this.groups.forEach(function(row){
+	       						if(row.get('id') !== group.get('id')){
+	       							row.set('__checked', false);        							
+	       						}
+	       					});
+	       				}
+	
+	       				// toggles __checked
+	       				var __checked = group.get('__checked');
+	       				if(__checked === true){
+	       					group.set('__checked', false);
+	       				}else{
+	       					group.set('__checked', true);
+	       				}
+	        		});
+	        		
+	        		// retrieves and open
+	        		await this.getGroups(1);
+	        		return this.dialog.open();
+	        	},
+	        	
+	        	/**
+	        	 * Getting groups
+	        	 */
+	        	getGroups(page) {
+					var _this = this;
+					return new Promise(function(resolve,reject){
+						$.ajax({
+							 url: '[[@{/admin/getGroups}]]'
+							,type: 'GET'
+							,data: {page:page, rows:10000}
+							,success: function(data, textStatus, jqXHR) {
+								_this.groups.fromJson(data);
+								_this.groups.forEach(function(group){
+									var id = group.get('id');
+									
+									// checks __selected value, if it set as selected list.
+									_this.checkedGroups.forEach(function(item){
+										if(item.id === id){
+											group.set('__checked', true);
+										}
+									});
+									
+									// excepts disableds list
+									_this.disabledGroups.forEach(function(item){
+										if(item.id === id){
+											group.setDisableAll(true);
+										}
+									});
 								});
-								
-								// excepts disableds list
-								_this.disabledGroups.forEach(function(item){
-									if(item.id === id){
-										group.setDisableAll(true);
-									}
-								});
-							});
-							resolve(true);
+								resolve(true);
+							}
+						});
+					});
+	        	},
+	        	
+	        	/**
+	        	 * Executes dialog confirm.
+	        	 */
+	        	confirm() {
+					var checkedGroups = new Array();
+					this.groups.forEach(function(group){
+						if(group.isDisable() === false && group.get('__checked') === true){
+							checkedGroups.push(group.toJson());
 						}
 					});
-				});
-        	},
-        	
-        	/**
-        	 * Executes dialog confirm.
-        	 */
-        	confirm() {
-				var checkedGroups = new Array();
-				this.groups.forEach(function(group){
-					if(group.isDisable() === false && group.get('__checked') === true){
-						checkedGroups.push(group.toJson());
-					}
-				});
-				this.dialog.confirm(checkedGroups);
-        	}
-        }
+					this.dialog.confirm(checkedGroups);
+	        	}
+	        }
 		</script>
 		<!-- ====================================================== -->
 		<!-- END: Groups Dialog										-->
@@ -833,126 +832,124 @@
 			</div>
 		</dialog>
 		<script>
-		/**
-		 * Global common role dialog
-		 */
-        const __roleDialog = {
-        	dialog: new duice.Dialog(document.getElementById('__roleDialog')),
-        	search: new duice.Map({
-        		page: 1,
-        		rows: 10,
-        		totalCount: -1
-        	}),
-        	roles: new duice.List(),
-        	selectedRoles: new duice.List(),
-        	
-        	// option
-        	checkedRoles: null,
-        	disabledRoles: null,
-        	onAfterConfirm: null,
-        	
-        	/**
-        	 * Opens dialogs
-        	 * @param option.checkedRoles:Array
-			 * @param option.disabledRoles:Array
-			 * @param option.onAfterConfirm:Function 
-        	 */
-        	async open(option) {
-				this.checkedRoles = option.checkedRoles || [];
-				this.disabledRoles = option.disabledRoles || [];
-				this.dialog.onAfterConfirm(option.onAfterConfirm || new function(){});
-        		this.selectedRoles.fromJson([]);
-        		this.search.reset();
-        		
-        		// add index change event listener
-        		var _this = this;
-        		this.roles.setReadonly('__checked', true);
-        		this.roles.onAfterSelectRow(function(role){
-    				var id = role.get('id');
-    				
-    				// check disabled
-    				if(role.isDisable('id') === true){
-    					return;
-    				}
-
-    				// toggles __selected
-    				var __checked = role.get('__checked');
-    				if(__checked === true){
-    					role.set('__checked', false);
-    					_this.selectedRoles.forEach(function(row,index){
-    						if(row.get('id') === id){
-    							_this.selectedRoles.removeRow(index);
-    							return false;
-    						}
-    					});
-    				}else{
-    					role.set('__checked', true);
-    					_this.selectedRoles.addRow(new duice.Map(role.toJson()));
-    				}
-        		});
-
-        		// retrieves roles and open
-        		await this.getRoles(1);
-        		this.dialog.open();
-        	},
-
-        	/**
-			 * Getting groups
+			/**
+			 * Global common role dialog
 			 */
-        	getRoles(page) {
-        		var _this = this;
-        		return new Promise(function(resolve,reject){
-					if(page){
-            			_this.search.set('page', page);
-					}
-    				var data = {};
-    				if(_this.search.get('key')){
-    					data[_this.search.get('key')] = _this.search.get('value');
-    				}
-    				data.page = _this.search.get('page');
-    				data.rows = _this.search.get('rows');
-					$.ajax({
-						 url: '[[@{/admin/getRoles}]]'
-						,type: 'GET'
-						,data: data
-						,success: function(data, textStatus, jqXHR) {
-							_this.roles.fromJson(data);
-							_this.search.set('totalCount', __parseTotalCount(jqXHR));
-							
-							// check earch role
-							_this.roles.forEach(function(role){
-								var id = role.get('id');
+	        const __roleDialog = {
+	        	dialog: new duice.Dialog(document.getElementById('__roleDialog')),
+	        	search: new duice.Map({
+	        		page: 1,
+	        		rows: 10,
+	        		totalCount: -1
+	        	}),
+	        	roles: new duice.List(),
+	        	selectedRoles: new duice.List(),
+	        	
+	        	// option
+	        	checkedRoles: null,
+	        	disabledRoles: null,
+	        	
+	        	/**
+	        	 * Opens dialogs
+	        	 * @param option.checkedRoles:Array
+				 * @param option.disabledRoles:Array
+				 * @param option.onAfterConfirm:Function 
+	        	 */
+	        	async open(option) {
+					this.checkedRoles = option.checkedRoles || [];
+					this.disabledRoles = option.disabledRoles || [];
+	        		this.selectedRoles.fromJson([]);
+	        		this.search.reset();
+	        		
+	        		// add index change event listener
+	        		var _this = this;
+	        		this.roles.setReadonly('__checked', true);
+	        		this.roles.onAfterSelectRow(function(role){
+	    				var id = role.get('id');
+	    				
+	    				// check disabled
+	    				if(role.isDisable('id') === true){
+	    					return;
+	    				}
+	
+	    				// toggles __selected
+	    				var __checked = role.get('__checked');
+	    				if(__checked === true){
+	    					role.set('__checked', false);
+	    					_this.selectedRoles.forEach(function(row,index){
+	    						if(row.get('id') === id){
+	    							_this.selectedRoles.removeRow(index);
+	    							return false;
+	    						}
+	    					});
+	    				}else{
+	    					role.set('__checked', true);
+	    					_this.selectedRoles.addRow(new duice.Map(role.toJson()));
+	    				}
+	        		});
+	
+	        		// retrieves roles and open
+	        		await this.getRoles(1);
+	        		return this.dialog.open();
+	        	},
+	
+	        	/**
+				 * Getting groups
+				 */
+	        	getRoles(page) {
+	        		var _this = this;
+	        		return new Promise(function(resolve,reject){
+						if(page){
+	            			_this.search.set('page', page);
+						}
+	    				var data = {};
+	    				if(_this.search.get('key')){
+	    					data[_this.search.get('key')] = _this.search.get('value');
+	    				}
+	    				data.page = _this.search.get('page');
+	    				data.rows = _this.search.get('rows');
+						$.ajax({
+							 url: '[[@{/admin/getRoles}]]'
+							,type: 'GET'
+							,data: data
+							,success: function(data, textStatus, jqXHR) {
+								_this.roles.fromJson(data);
+								_this.search.set('totalCount', __parseTotalCount(jqXHR));
 								
-								// checks disabled	
-								_this.disabledRoles.forEach(function(obj){
-									if(obj.id === id){
-										role.setDisableAll(true);
-										role.set('__checked', true);
-										return false;
-									}
+								// check earch role
+								_this.roles.forEach(function(role){
+									var id = role.get('id');
+									
+									// checks disabled	
+									_this.disabledRoles.forEach(function(obj){
+										if(obj.id === id){
+											role.setDisableAll(true);
+											role.set('__checked', true);
+											return false;
+										}
+									});
+									
+									// checks already selected
+									_this.selectedRoles.forEach(function(map){
+										if(map.get('id') === id){
+											role.set('__checked', true);
+											return false;
+										}
+									});
 								});
-								
-								// checks already selected
-								_this.selectedRoles.forEach(function(map){
-									if(map.get('id') === id){
-										role.set('__checked', true);
-										return false;
-									}
-								});
-							});
-							resolve(true);
-				   	 	}
-					});
-        		});
-        	},
-
-        	/**
-        	 * Executes confirm
-        	 */
-        	confirm() {
-        		this.dialog.confirm(this.selectedRoles.toJson());
-        	}
-        }
+								resolve(true);
+					   	 	}
+						});
+	        		});
+	        	},
+	
+	        	/**
+	        	 * Executes confirm
+	        	 */
+	        	confirm() {
+	        		this.dialog.confirm(this.selectedRoles.toJson());
+	        	}
+	        }
 		</script>
 		<!-- ====================================================== -->
 		<!-- END: Roles Dialog										-->
@@ -1069,123 +1066,121 @@
 			</div>
 		</dialog>
 		<script>
-        var __authorityDialog = {
-           	dialog: new duice.Dialog(document.getElementById('__authorityDialog')),
-           	search: new duice.Map({
-           		page: 1,
-           		rows: 10,
-           		totalCount: -1
-           	}),
-           	authorities: new duice.List(),
-           	selectedAuthorities: new duice.List(),
-           	
-           	// option
-           	checkedAuthorities: null,
-           	disabledAuthorities: null,
-           	onAfterConfirm: null,
-           	
-           	/**
-           	 * Opens dialogs
-           	 * @param option.checkedAuthorities:Array
-   			 * @param option.disabledAuthorities:Array
-   			 * @param option.onAfterConfirm:Function 
-           	 */
-           	async open(option) {
-   				this.checkedAuthorities = option.checkedAuthorities || [];
-   				this.disabledAuthorities = option.disabledAuthorities || [];
-   				this.dialog.onAfterConfirm(option.onAfterConfirm || new function(){});
-           		this.selectedAuthorities.fromJson([]);
-           		this.search.reset();
-           		
-           		// add index change event listener
-           		var _this = this;
-           		this.authorities.setReadonly('__checked', true);
-           		this.authorities.onAfterSelectRow(function(authority){
-       				var id = authority.get('id');
-       				
-       				// checkes disabled
-       				if(authority.isDisable('id') === true){
-       					return false;
-       				}
-
-       				// toggles __selected
-       				var __checked = authority.get('__checked');
-       				if(__checked === true){
-       					authority.set('__checked', false);
-       					_this.selectedAuthorities.forEach(function(row,index){
-       						if(row.get('id') === id){
-       							_this.selectedAuthorities.removeRow(index);
-       							return false;
-       						}
-       					});
-       				}else{
-       					authority.set('__checked', true);
-       					_this.selectedAuthorities.addRow(new duice.Map(authority.toJson()));
-       				}
-           		});
-           		
-           		// retrieves and open
-           		await this.getAuthorities(1);
-           		this.dialog.open();
-           	},
-
-           	/**
-   			 * Getting groups
-   			 */
-           	getAuthorities(page) {
-   				var _this = this;
-				return new Promise(function(resolve,reject){
-					if(page){
-            			_this.search.set('page', page);
-					}
-    				var data = {};
-    				if(_this.search.get('key')){
-    					data[_this.search.get('key')] = _this.search.get('value');
-    				}
-    				data.page = _this.search.get('page');
-    				data.rows = _this.search.get('rows');
-    				$.ajax({
-    					 url: '[[@{/admin/getAuthorities}]]'
-    					,type: 'GET'
-    					,data: data
-    					,success: function(data, textStatus, jqXHR) {
-    						_this.authorities.fromJson(data);
-    						_this.search.set('totalCount', __parseTotalCount(jqXHR));
-    						
-    						// check earch authority
-    						_this.authorities.forEach(function(authority){
-    							var id = authority.get('id');
-    							
-    							// checks disabled	
-    							_this.disabledAuthorities.forEach(function(obj){
-    								if(obj.id === id){
-    									authority.setDisableAll(true);
-    									authority.set('__checked', true);
-    									return false;
-    								}
-    							});
-    							
-    							// checks already selected
-    							_this.selectedAuthorities.forEach(function(map){
-    								if(map.get('id') === id){
-    									authority.set('__checked', true);
-    									return false;
-    								}
-    							});
-    						});
-    						resolve(true);
-    			   	 	}
-    				});
-				});  				
-           	},
-
-           	/**
-           	 * Executes confirm
-           	 */
-           	confirm() {
-           		this.dialog.confirm(this.selectedAuthorities.toJson());
-           	}
-		}
+	        var __authorityDialog = {
+	           	dialog: new duice.Dialog(document.getElementById('__authorityDialog')),
+	           	search: new duice.Map({
+	           		page: 1,
+	           		rows: 10,
+	           		totalCount: -1
+	           	}),
+	           	authorities: new duice.List(),
+	           	selectedAuthorities: new duice.List(),
+	           	
+	           	// option
+	           	checkedAuthorities: null,
+	           	disabledAuthorities: null,
+	           	
+	           	/**
+	           	 * Opens dialogs
+	           	 * @param option.checkedAuthorities:Array
+	   			 * @param option.disabledAuthorities:Array
+	   			 * @param option.onAfterConfirm:Function 
+	           	 */
+	           	async open(option) {
+	   				this.checkedAuthorities = option.checkedAuthorities || [];
+	   				this.disabledAuthorities = option.disabledAuthorities || [];
+	           		this.selectedAuthorities.fromJson([]);
+	           		this.search.reset();
+	           		
+	           		// add index change event listener
+	           		var _this = this;
+	           		this.authorities.setReadonly('__checked', true);
+	           		this.authorities.onAfterSelectRow(function(authority){
+	       				var id = authority.get('id');
+	       				
+	       				// checkes disabled
+	       				if(authority.isDisable('id') === true){
+	       					return false;
+	       				}
+	
+	       				// toggles __selected
+	       				var __checked = authority.get('__checked');
+	       				if(__checked === true){
+	       					authority.set('__checked', false);
+	       					_this.selectedAuthorities.forEach(function(row,index){
+	       						if(row.get('id') === id){
+	       							_this.selectedAuthorities.removeRow(index);
+	       							return false;
+	       						}
+	       					});
+	       				}else{
+	       					authority.set('__checked', true);
+	       					_this.selectedAuthorities.addRow(new duice.Map(authority.toJson()));
+	       				}
+	           		});
+	           		
+	           		// retrieves and open
+	           		await this.getAuthorities(1);
+	           		return this.dialog.open();
+	           	},
+	
+	           	/**
+	   			 * Getting groups
+	   			 */
+	           	getAuthorities(page) {
+	   				var _this = this;
+					return new Promise(function(resolve,reject){
+						if(page){
+	            			_this.search.set('page', page);
+						}
+	    				var data = {};
+	    				if(_this.search.get('key')){
+	    					data[_this.search.get('key')] = _this.search.get('value');
+	    				}
+	    				data.page = _this.search.get('page');
+	    				data.rows = _this.search.get('rows');
+	    				$.ajax({
+	    					 url: '[[@{/admin/getAuthorities}]]'
+	    					,type: 'GET'
+	    					,data: data
+	    					,success: function(data, textStatus, jqXHR) {
+	    						_this.authorities.fromJson(data);
+	    						_this.search.set('totalCount', __parseTotalCount(jqXHR));
+	    						
+	    						// check earch authority
+	    						_this.authorities.forEach(function(authority){
+	    							var id = authority.get('id');
+	    							
+	    							// checks disabled	
+	    							_this.disabledAuthorities.forEach(function(obj){
+	    								if(obj.id === id){
+	    									authority.setDisableAll(true);
+	    									authority.set('__checked', true);
+	    									return false;
+	    								}
+	    							});
+	    							
+	    							// checks already selected
+	    							_this.selectedAuthorities.forEach(function(map){
+	    								if(map.get('id') === id){
+	    									authority.set('__checked', true);
+	    									return false;
+	    								}
+	    							});
+	    						});
+	    						resolve(true);
+	    			   	 	}
+	    				});
+					});  				
+	           	},
+	
+	           	/**
+	           	 * Executes confirm
+	           	 */
+	           	confirm() {
+	           		this.dialog.confirm(this.selectedAuthorities.toJson());
+	           	}
+			}
 		</script>
 		<!-- ====================================================== -->
 		<!-- END: Authorities Dialog								-->

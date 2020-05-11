@@ -37,6 +37,9 @@ var duice;
         }
     }
     duice.addClass = addClass;
+    /**
+     * initialize
+     */
     function initialize() {
         // initializes component
         var $context = typeof self !== 'undefined' ? self :
@@ -754,35 +757,6 @@ var duice;
     }
     duice.Blocker = Blocker;
     /**
-    * duice.Tooltip
-    */
-    class Tooltip {
-        constructor(element, message) {
-            this.element = element;
-            this.message = message;
-            this.div = document.createElement('div');
-            this.div.classList.add('duice-tooltip');
-            this.div.appendChild(document.createTextNode(this.message));
-            this.element.parentNode.insertBefore(this.div, this.element.nextSibling);
-            // adjusting position
-            this.div.style.position = 'absolute';
-            this.div.style.zIndex = String(getCurrentMaxZIndex() + 1);
-            var _this = this;
-            this.div.addEventListener('click', function (event) {
-                _this.destroy();
-            });
-        }
-        /**
-         * Destroy tooltip
-         */
-        destroy() {
-            if (this.element.parentNode.contains(this.div)) {
-                this.element.parentNode.removeChild(this.div);
-            }
-        }
-    }
-    duice.Tooltip = Tooltip;
-    /**
      * duice.Progress
      */
     class Progress {
@@ -816,6 +790,7 @@ var duice;
             var _this = this;
             this.container = document.createElement('div');
             this.container.classList.add('duice-modal');
+            // creates header div
             this.headerDiv = document.createElement('div');
             this.headerDiv.classList.add('duice-modal__headerDiv');
             this.container.appendChild(this.headerDiv);
@@ -867,15 +842,6 @@ var duice;
          */
         removeContent(content) {
             this.bodyDiv.removeChild(content);
-        }
-        /**
-         * Creates button element for modal
-         * @param type
-         */
-        createButton(type) {
-            var button = document.createElement('button');
-            button.classList.add('duice-modal__button--' + type);
-            return button;
         }
         /**
          * Shows modal
@@ -952,7 +918,7 @@ var duice;
                     yield this.eventListener.onAfterClose.call(this, ...args);
                 }
                 // resolves promise
-                this.promiseResolve(false);
+                this.promiseResolve(...args);
             });
         }
         /**
@@ -971,7 +937,7 @@ var duice;
                     yield this.eventListener.onAfterConfirm.call(this, ...args);
                 }
                 // resolves promise
-                this.promiseResolve(true);
+                this.promiseResolve(...args);
             });
         }
         /**
@@ -1032,14 +998,20 @@ var duice;
             super();
             this.message = message;
             var _this = this;
+            // creates icon div
             this.iconDiv = document.createElement('div');
-            this.iconDiv.classList.add('duice-alert__iconDiv');
+            this.iconDiv.classList.add('duice-alert__bodyDiv-iconDiv');
+            // creates message div
             this.messageDiv = document.createElement('div');
-            this.messageDiv.classList.add('duice-alert__messageDiv');
-            this.messageDiv.appendChild(document.createTextNode(this.message));
+            this.messageDiv.classList.add('duice-alert__bodyDiv-messageDiv');
+            this.messageDiv.innerHTML = this.message;
+            // creates button div
             this.buttonDiv = document.createElement('div');
-            this.buttonDiv.classList.add('duice-alert__buttonDiv');
-            this.confirmButton = this.createButton('confirm');
+            this.buttonDiv.classList.add('duice-alert__bodyDiv-buttonDiv');
+            // creates confirm button
+            this.confirmButton = document.createElement('button');
+            this.confirmButton.classList.add('duice-alert__bodyDiv-buttonDiv-button');
+            this.confirmButton.classList.add('duice-alert__bodyDiv-buttonDiv-button--confirm');
             this.confirmButton.addEventListener('click', function (event) {
                 _this.close();
             });
@@ -1061,10 +1033,7 @@ var duice;
      * @param message
      */
     function alert(message) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var alertObj = new duice.Alert(message);
-            yield alertObj.open();
-        });
+        return new duice.Alert(message).open();
     }
     duice.alert = alert;
     /**
@@ -1075,23 +1044,30 @@ var duice;
             super();
             this.message = message;
             var _this = this;
+            // creates icon div
             this.iconDiv = document.createElement('div');
-            this.iconDiv.classList.add('duice-confirm__iconDiv');
+            this.iconDiv.classList.add('duice-confirm__bodyDiv-iconDiv');
+            // creates message div
             this.messageDiv = document.createElement('div');
-            this.messageDiv.classList.add('duice-confirm__messageDiv');
-            this.messageDiv.appendChild(document.createTextNode(this.message));
+            this.messageDiv.classList.add('duice-confirm__bodyDiv-messageDiv');
+            this.messageDiv.innerHTML = this.message;
+            // creates button div
             this.buttonDiv = document.createElement('div');
-            this.buttonDiv.classList.add('duice-confirm__buttonDiv');
+            this.buttonDiv.classList.add('duice-confirm__bodyDiv-buttonDiv');
             // confirm button
-            this.confirmButton = this.createButton('confirm');
+            this.confirmButton = document.createElement('button');
+            this.confirmButton.classList.add('duice-confirm__bodyDiv-buttonDiv-button');
+            this.confirmButton.classList.add('duice-confirm__bodyDiv-buttonDiv-button--confirm');
             this.confirmButton.addEventListener('click', function (event) {
-                _this.confirm();
+                _this.confirm(true);
             });
             this.buttonDiv.appendChild(this.confirmButton);
             // cancel button
-            this.cancelButton = this.createButton('cancel');
+            this.cancelButton = document.createElement('button');
+            this.cancelButton.classList.add('duice-confirm__bodyDiv-buttonDiv-button');
+            this.cancelButton.classList.add('duice-confirm__bodyDiv-buttonDiv-button--cancel');
             this.cancelButton.addEventListener('click', function (event) {
-                _this.close();
+                _this.close(false);
             });
             this.buttonDiv.appendChild(this.cancelButton);
             // appends parts to bodyDiv
@@ -1111,43 +1087,51 @@ var duice;
      * @param message
      */
     function confirm(message) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var confirmObj = new duice.Confirm(message);
-            var result = yield confirmObj.open();
-            return result;
-        });
+        return new duice.Confirm(message).open();
     }
     duice.confirm = confirm;
     /**
      * duice.Prompt
      */
     class Prompt extends Modal {
-        constructor(message) {
+        constructor(message, defaultValue) {
             super();
             this.message = message;
+            this.defaultValue = defaultValue;
             var _this = this;
+            // creates icon div
             this.iconDiv = document.createElement('div');
-            this.iconDiv.classList.add('duice-prompt__iconDiv');
+            this.iconDiv.classList.add('duice-prompt__bodyDiv-iconDiv');
+            // creates message div
             this.messageDiv = document.createElement('div');
-            this.messageDiv.classList.add('duice-prompt__messageDiv');
-            this.messageDiv.appendChild(document.createTextNode(this.message));
+            this.messageDiv.classList.add('duice-prompt__bodyDiv-messageDiv');
+            this.messageDiv.innerHTML = this.message;
+            // creates input div
             this.inputDiv = document.createElement('div');
-            this.inputDiv.classList.add('duice-prompt__inputDiv');
+            this.inputDiv.classList.add('duice-prompt__bodyDiv-inputDiv');
             this.input = document.createElement('input');
-            this.input.classList.add('duice-prompt__inputDiv-input');
+            this.input.classList.add('duice-prompt__bodyDiv-inputDiv-input');
+            if (this.defaultValue) {
+                this.input.value = this.defaultValue;
+            }
             this.inputDiv.appendChild(this.input);
+            // creates button div
             this.buttonDiv = document.createElement('div');
-            this.buttonDiv.classList.add('duice-prompt__buttonDiv');
+            this.buttonDiv.classList.add('duice-prompt__bodyDiv-buttonDiv');
             // confirm button
-            this.confirmButton = this.createButton('confirm');
+            this.confirmButton = document.createElement('button');
+            this.confirmButton.classList.add('duice-prompt__bodyDiv-buttonDiv-button');
+            this.confirmButton.classList.add('duice-prompt__bodyDiv-buttonDiv-button--confirm');
             this.confirmButton.addEventListener('click', function (event) {
-                _this.confirm();
+                _this.confirm(_this.getValue());
             });
             this.buttonDiv.appendChild(this.confirmButton);
             // cancel button
-            this.cancelButton = this.createButton('cancel');
+            this.cancelButton = document.createElement('button');
+            this.cancelButton.classList.add('duice-prompt__bodyDiv-buttonDiv-button');
+            this.cancelButton.classList.add('duice-prompt__bodyDiv-buttonDiv-button--cancel');
             this.cancelButton.addEventListener('click', function (event) {
-                _this.close();
+                _this.close(false);
             });
             this.buttonDiv.appendChild(this.cancelButton);
             // appends parts to bodyDiv
@@ -1171,16 +1155,7 @@ var duice;
      * @param message
      */
     function prompt(message, defaultValue) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var promptObj = new duice.Prompt(message);
-            var result = yield promptObj.open();
-            if (result) {
-                return promptObj.getValue();
-            }
-            else {
-                return defaultValue;
-            }
-        });
+        return new duice.Prompt(message, defaultValue).open();
     }
     duice.prompt = prompt;
     /**
@@ -1199,8 +1174,7 @@ var duice;
             this.addContent(this.dialog);
             // opens dialog
             try {
-                var promise = super.open(...args);
-                return promise;
+                return super.open(...args);
             }
             catch (e) {
                 this.dialog.style.display = 'none';
@@ -1227,10 +1201,7 @@ var duice;
      * @param message
      */
     function dialog(dialog) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var dialogObj = new duice.Dialog(dialog);
-            yield dialogObj.open();
-        });
+        return new duice.Dialog(dialog).open();
     }
     duice.dialog = dialog;
     /**
@@ -1722,13 +1693,13 @@ var duice;
          * Sets focus with message
          * @param name
          */
-        setFocus(name, message) {
+        setFocus(name) {
             for (var i = 0, size = this.observers.length; i < size; i++) {
                 var observer = this.observers[i];
                 if (observer instanceof MapComponent) {
                     var mapUiComponent = this.observers[i];
                     if (observer.getName() === name) {
-                        mapUiComponent.setFocus(message);
+                        mapUiComponent.setFocus();
                         break;
                     }
                 }
@@ -2158,16 +2129,9 @@ var duice;
         }
         /**
          * Sets element focus
-         * @param message
          */
-        setFocus(message) {
+        setFocus() {
             if (this.element.focus) {
-                if (message) {
-                    var tooltip = new Tooltip(this.element, message);
-                    this.element.addEventListener('blur', function (event) {
-                        tooltip.destroy();
-                    }, { once: true });
-                }
                 this.element.focus();
             }
         }

@@ -27,7 +27,7 @@
 		// checks when select row is changed.
 		properties.onBeforeSelectRow(async function(selectedRow){
 			if(isDetailChanged()){
-				if(await duice.confirm("[[#{application.message.changeFound}+'\n'+#{application.message.ignoreChange}]]")){
+				if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
 					resetDetail();
 					return true;
 				}else{
@@ -44,8 +44,11 @@
 		// checks properties change
 		property.onBeforeChange(async function(name,value){
 			if(name === 'id'){
-				if(await isDuplicateProperty(value)){
-					property.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.property.id})}]]');
+				try{
+					await validatePropertyId(value);
+				}catch(e){
+					await duice.alert( e);
+					property.setFocus('id');
 				}
 			}
 		});
@@ -65,7 +68,7 @@
 			// gets properties
 			getProperties();
 		    disableDetail(true);
-		});		
+		});
 	
 		/**
 		 * Disables detail
@@ -166,24 +169,33 @@
 			property.setFocus('id');
 		}
 		
-		
 		/**
-		 * Returns duplicate property
+		 * Validates property id
 		 */
-		function isDuplicateProperty(id){
-			return new Promise(function(resolve, reject){
-				$.ajax({
-					 url: 'property/getProperty'
-					,type: 'GET'
-					,data: {id:id}
-				})
-				.done(function(data, textStatus, jqXHR) {
-					if(data && data.id === id){
-						resolve(true);
-					}else{
-						resolve(false);
-					}
-				});
+		function validatePropertyId(id) {
+			return new Promise(function(resolve,reject){
+				if(duice.isEmpty(id)){
+					return reject('[[#{application.global.enterItem(#{application.property.id})}]]');
+				}
+				if(!duice.isIdFormat(id)){
+					return reject('[[#{application.global.notValidItemFormat(#{application.property.id})}]]');
+				}
+				if(isNew){
+					$.ajax({
+						 url: 'property/getProperty'
+						,type: 'GET'
+						,data: {id:id}
+					})
+					.done(function(data, textStatus, jqXHR) {
+						if(data && data.id === id){
+							reject('[[#{application.global.alreadyRegisteredItem(#{application.property.id})}]]');
+						}else{
+							resolve(true);
+						}
+					});
+				}else{
+					resolve(true);
+				}
 			});
 		}
 		
@@ -194,87 +206,87 @@
 			
 			// checks changes
 			if(isNew === false && isDetailChanged() === false) {
-				await duice.alert("[[#{application.global.changeNotFound}]]");
+				duice.alert("[[#{application.global.changeNotFound}]]");
 				return false;
 			}
 			
 			// checks id
-			if(duice.isEmpty(property.get('id'))){
-				property.setFocus('id', '[[#{application.global.enterItem(#{application.property.id})}]]');
+			try{
+				await validatePropertyId(property.get('id'));
+			}catch(e){
+				await duice.alert( e);
+				property.setFocus('id');
 				return false;
-			}
-			if(!duice.isIdFormat(property.get('id'))){
-				property.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
-				return false;
-			}
-			
-			// checks new property is existed
-			if(isNew){
-				if(await isDuplicateProperty(property.get('id'))){
-					property.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.property.id})}]]');
-					return false;
-				}
 			}
 			
 			// checks property name
 			if(duice.isEmpty(property.get('name'))){
-				property.setFocus('name', '[[#{application.global.enterItem(#{application.property.name})}]]');
+				await duice.alert('[[#{application.global.enterItem(#{application.property.name})}]]');
+				property.setFocus('name');
 				return false;
 			}
 
 			// enters save process
-			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.property})}]]")){
-				var data = property.toJson();
-				$.ajax({
-					 url: 'property/saveProperty'
-					,type: 'POST'
-					,data: JSON.stringify(data)
-					,contentType: 'application/json;charset=UTF-8'
-				})
-				.done(function(data, textStatus, jqXHR) {
-					new duice.Alert('[[#{application.global.saveComplete(#{application.property})}]]')
-					.onAfterClose(async function(){
-						await getProperties();
-						
-						// refresh list and details
-						var index = properties.indexOf(function(row){
-							if(row.get('id') === property.get('id')){
-								return true;
-							}
-						});
-						if(index > -1){
-							initializeDetail();
-							properties.selectRow(index);
-						}else{
-							getProperty(property.get('id'));
-						}
+			duice.confirm("[[#{application.global.saveConfirm(#{application.property})}]]")
+			.then(function(result){
+				if(result){
+					var data = property.toJson();
+					$.ajax({
+						 url: 'property/saveProperty'
+						,type: 'POST'
+						,data: JSON.stringify(data)
+						,contentType: 'application/json;charset=UTF-8'
 					})
-					.open();
-				});
-			}
+					.done(function(data, textStatus, jqXHR) {
+						var id = data.id;
+						duice.alert('[[#{application.global.saveComplete(#{application.property})}]]')
+						.then(function(){
+							getProperties()
+							.then(function(){
+								// refresh list and details
+								var index = properties.indexOf(function(row){
+									if(row.get('id') === id){
+										return true;
+									}
+								});
+								if(index > -1){
+									initializeDetail();
+									properties.selectRow(index);
+								}else{
+									getProperty(id);
+								}
+							});
+						})
+					});
+				}
+			});
 		}
 		
 		/**
 		 * Deletes property
 		 */
 		function deleteProperty(){
-			new duice.Confirm("[[#{application.global.deleteConfirm(#{application.property})}]]")
-			.onAfterConfirm(function(){
-				$.ajax({
-					 url: 'property/deleteProperty'
-					,type: 'DELETE'
-					,data: JSON.stringify(property.toJson())
-					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.global.deleteComplete(#{application.property})}]]")
-						.onAfterClose(async function(){
-							await getProperties();
-							initializeDetail();
-							disableDetail(true);
-						}).open();
-			   	 	}
-				});
-			}).open();
+			duice.confirm("[[#{application.global.deleteConfirm(#{application.property})}]]")
+			.then(function(result){
+				if(result){
+					$.ajax({
+						 url: 'property/deleteProperty'
+						,type: 'DELETE'
+						,data: JSON.stringify(property.toJson())
+						,contentType: 'application/json;charset=UTF-8'
+					})
+					.done(function(data, textStatus, jqXHR){
+						duice.alert("[[#{application.global.deleteComplete(#{application.property})}]]")
+						.then(function(){
+							getProperties()
+							.then(function(){
+								initializeDetail();
+								disableDetail(true);
+							});
+						});
+					});
+				}
+			});
 		}
 	</script>
 	<div class="app-row">
@@ -402,12 +414,12 @@
 										<td><input is="duice-input" type="text" data-duice-bind="property,name"/></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.property.value}">Value</th>
-										<td><textarea is="duice-textarea" data-duice-bind="property,value" style="height:100px;"></textarea></td>
+										<th data-th-text="#{application.property.description}">Description</th>
+										<td><textarea is="duice-textarea" data-duice-bind="property,description" style="height:100px;"></textarea></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.property.description}">Description</th>
-										<td><textarea is="duice-textarea" data-duice-bind="property,description" style="height:200px;"></textarea></td>
+										<th data-th-text="#{application.property.value}">Value</th>
+										<td><textarea is="duice-textarea" data-duice-bind="property,value" style="height:200px;"></textarea></td>
 									</tr>
 								</tbody>
 							</table>

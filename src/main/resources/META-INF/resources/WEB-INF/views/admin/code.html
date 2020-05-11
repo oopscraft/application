@@ -45,8 +45,11 @@
 		// checks user properties change
 		code.onBeforeChange(async function(name,value){
 			if(name === 'id'){
-				if(await isDuplicateCode(value)){
-					code.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.code.id})}]]');
+				try{
+					await validateCodeId(value);
+				}catch(e){
+					await duice.alert( e);
+					code.setFocus('id');
 				}
 			}
 		});
@@ -177,22 +180,33 @@
 		}
 		
 		/**
-		 * Returns duplicate code
+		 * Validates code id
+		 * @param id
 		 */
-		function isDuplicateCode(id){
-			return new Promise(function(resolve, reject){
-				$.ajax({
-					 url: 'code/getCode'
-					,type: 'GET'
-					,data: {id:id}
-				})
-				.done(function(data, textStatus, jqXHR) {
-					if(data && data.id === id){
-						resolve(true);
-					}else{
-						resolve(false);
-					}
-				});
+		function validateCodeId(id) {
+			return new Promise(function(resolve,reject){
+				if(duice.isEmpty(id)){
+					return reject('[[#{application.global.enterItem(#{application.code.id})}]]');
+				}
+				if(!duice.isIdFormat(id)){
+					return reject('[[#{application.global.notValidItemFormat(#{application.code.id})}]]');
+				}
+				if(isNew){
+					$.ajax({
+						 url: 'code/getCode'
+						,type: 'GET'
+						,data: {id:id}
+					})
+					.done(function(data, textStatus, jqXHR) {
+						if(data && data.id === id){
+							reject('[[#{application.global.alreadyRegisteredItem(#{application.code.id})}]]');
+						}else{
+							resolve(true);
+						}
+					});
+				}else{
+					resolve(true);
+				}
 			});
 		}
 		
@@ -208,82 +222,83 @@
 			}
 			
 			// checks id
-			if(duice.isEmpty(code.get('id'))){
-				code.setFocus('id', '[[#{application.global.enterItem(#{application.code.id})}]]');
+			try{
+				await validateCodeId(code.get('id'));
+			}catch(e){
+				await duice.alert(e);
+				code.setFocus('id');
 				return false;
-			}
-			if(!duice.isIdFormat(code.get('id'))){
-				code.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
-				return false;
-			}
-			if(isNew){
-				if(await isDuplicateCode(code.get('id'))){
-					code.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.code.id})}]]');
-					return false;
-				}
 			}
 			
 			// checks code name
 			if(duice.isEmpty(code.get('name'))){
-				code.setFocus('name', '[[#{application.global.enterItem(#{application.code.name})}]]');
+				code.setFocus('name');
 				return false;
 			}
 			
 			// enters save process
-			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.code})}]]")){
-				var data = code.toJson();
-				data.items = codeItems.toJson();
-				data.entities = codeEntities.toJson();
-				$.ajax({
-					 url: 'code/saveCode'
-					,type: 'POST'
-					,data: JSON.stringify(data)
-					,contentType: 'application/json;charset=UTF-8'
-				})
-				.done(function(data, textStatus, jqXHR) {
-					new duice.Alert('[[#{application.global.saveComplete(#{application.code})}]]')
-					.onAfterClose(async function(){
-						await getCodes();
-						
-						// refresh list and details
-						var index = codes.indexOf(function(row){
-							if(row.get('id') === code.get('id')){
-								return true;
-							}
-						});
-						if(index > -1){
-							initializeDetail();
-							codes.selectRow(index);
-						}else{
-							getCode(code.get('id'));
-						}
+			duice.confirm("[[#{application.global.saveConfirm(#{application.code})}]]")
+			.then(function(result){
+				if(result){
+					var data = code.toJson();
+					data.items = codeItems.toJson();
+					data.entities = codeEntities.toJson();
+					$.ajax({
+						 url: 'code/saveCode'
+						,type: 'POST'
+						,data: JSON.stringify(data)
+						,contentType: 'application/json;charset=UTF-8'
 					})
-					.open();
-				});
-			}
+					.done(function(data, textStatus, jqXHR) {
+						var id = data.id;
+						duice.alert('[[#{application.global.saveComplete(#{application.code})}]]')
+						.then(function(){
+							getCodes()
+							.then(function(){
+								// refresh list and details
+								var index = codes.indexOf(function(row){
+									if(row.get('id') === id){
+										return true;
+									}
+								});
+								if(index > -1){
+									initializeDetail();
+									codes.selectRow(index);
+								}else{
+									getCode(id);
+								}
+							});
+						});
+					});
+				}	
+			});
 		}
 		
 		/**
 		 * Deletes code
 		 */
 		function deleteCode(){
-			new duice.Confirm("[[#{application.global.deleteConfirm(#{application.code})}]]")
-			.onAfterConfirm(function(){
-				$.ajax({
-					 url: 'code/deleteCode'
-					,type: 'DELETE'
-					,data: JSON.stringify(code.toJson())
-					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.global.deleteComplete(#{application.code})}]]")
-						.onAfterClose(async function(){
-							await getCodes();
-							initializeDetail();
-							disableDetail(true);
-						}).open();
-			   	 	}
-				});
-			}).open();
+			duice.confirm("[[#{application.global.deleteConfirm(#{application.code})}]]")
+			.then(function(result){
+				if(result){
+					$.ajax({
+						 url: 'code/deleteCode'
+						,type: 'DELETE'
+						,data: JSON.stringify(code.toJson())
+						,contentType: 'application/json;charset=UTF-8'
+					})
+					.done(function(data, textStatus, jqXHR){
+						duice.alert("[[#{application.global.deleteComplete(#{application.code})}]]")
+						.then(function(){
+							getCodes()
+							.then(function(){
+								initializeDetail();
+								disableDetail(true);
+							});
+						});
+					});
+				}
+			});
 		}
 		
 		/**
@@ -459,7 +474,7 @@
 									</tr>
 									<tr>
 										<th data-th-text="#{application.code.description}">Description</th>
-										<td><textarea is="duice-textarea" data-duice-bind="code,description" style="height:200px;"></textarea></td>
+										<td><textarea is="duice-textarea" data-duice-bind="code,description" style="height:100px;"></textarea></td>
 									</tr>
 									<tr>
 										<th>

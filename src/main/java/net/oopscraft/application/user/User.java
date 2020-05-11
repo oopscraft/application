@@ -31,7 +31,6 @@ public class User extends SystemEntity {
 	
 	@Id
 	@Column(name = "USER_ID", length = 32)
-	@NotNull
 	@JsonView(List.class)
 	String id;
 	

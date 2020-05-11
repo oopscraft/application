@@ -23,7 +23,6 @@ public class Group extends SystemEntity {
 
 	@Id
 	@Column(name = "GROP_ID", length = 32)
-	@NotNull
 	String id;
 
 	@Column(name = "GROP_NAME", length = 1024)

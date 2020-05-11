@@ -35,6 +35,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.core.IdGenerator;
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.jpa.SystemEmbeddedException;
 
@@ -66,16 +67,16 @@ public class UserService {
 			@Override
 			public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
-				if(user.getId() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), user.getId() + '%'));
+				if(user.getEmail() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("email").as(String.class), '%' + user.getEmail() + '%'));
 					predicates.add(predicate);
 				}
 				if(user.getName() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), user.getName() + '%'));
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), '%' + user.getName() + '%'));
 					predicates.add(predicate);
 				}
-				if(user.getEmail() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("email").as(String.class), user.getEmail() + '%'));
+				if(user.getNickname() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("nickname").as(String.class), '%' + user.getNickname() + '%'));
 					predicates.add(predicate);
 				}
 				if(user.getStatus() != null) {
@@ -100,15 +101,25 @@ public class UserService {
 	}
 	
 	/**
+	 * Gets user by email
+	 * @param email
+	 * @return
+	 * @throws Exception
+	 */
+	public User getUserByEmail(String email) throws Exception {
+		return userRepository.findByEmail(email);
+	}
+	
+	/**
 	 * Saves user.
 	 * @param user
 	 * @return
 	 * @throws Exception
 	 */
 	public User saveUser(User user) throws Exception {
-		User one = userRepository.findOne(user.getId());
-		if(one == null) {
-			one = new User(user.getId());
+		User one = null;
+		if(user.getId() == null || (one = userRepository.findOne(user.getId())) == null) {
+			one = new User(IdGenerator.uuid());
 			one.setPassword(passwordEncoder.encode(user.getPassword()));
 			one.setJoinDate(new Date());
 		}

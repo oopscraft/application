@@ -8,6 +8,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @MappedSuperclass
 @EntityListeners(SystemEntityListener.class)
@@ -16,22 +17,27 @@ public class SystemEntity {
 	@Column(name="SYS_EMBD_YN")
 	@Convert(converter=BooleanStringConverter.class)
 	@JsonProperty("systemEmbedded")
+	@JsonView(Object.class)
 	boolean systemEmbedded;
 	
 	@Column(name="SYS_INST_DATE")
 	@JsonProperty("systemInsertDate")
+	@JsonView(Object.class)
 	Date systemInsertDate;
 	
 	@Column(name="SYS_INST_USER_ID")
 	@JsonProperty("systemInsertUserId")
+	@JsonView(Object.class)
 	String systemInsertUserId;
 	
 	@Column(name="SYS_UPDT_DATE")
 	@JsonProperty("systemUpdateDate")
+	@JsonView(Object.class)
 	Date systemUpdateDate;
 	
 	@Column(name="SYS_UPDT_USER_ID")
 	@JsonProperty("systemUpdateUserId")
+	@JsonView(Object.class)
 	String systemUpdateUserId;
 	
 	public boolean isSystemEmbedded() {

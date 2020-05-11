@@ -28,11 +28,12 @@
 		// checks when select row is changed.
 		authorities.onBeforeSelectRow(async function(selectedRow){
 			if(isDetailChanged()){
-				return await new duice.Confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")
-				.onAfterConfirm(function(){
+				if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
 					resetDetail();
-				})
-				.open();
+					return true;
+				}else{
+					return false;
+				}
 			}
 		});
 		
@@ -44,8 +45,11 @@
 		// checks properties change
 		authority.onBeforeChange(async function(name,value){
 			if(name === 'id'){
-				if(await isDuplicateAuthority(value)){
-					authority.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.authority.id})}]]');
+				try {
+					await validateAuthorityId(value);
+				}catch(e){
+					await duice.alert(e);
+					authority.setFocus('id');
 				}
 			}
 		});
@@ -169,22 +173,32 @@
 		}
 		
 		/**
-		 * Returns duplicate authority
+		 * Validates group id
 		 */
-		function isDuplicateAuthority(id){
-			return new Promise(function(resolve, reject){
-				$.ajax({
-					 url: 'authority/getAuthority'
-					,type: 'GET'
-					,data: {id:id}
-				})
-				.done(function(data, textStatus, jqXHR) {
-					if(data && data.id === id){
-						resolve(true);
-					}else{
-						resolve(false)
-					}
-				});
+		function validateAuthorityId(id){
+			return new Promise(function(resolve,reject){
+				if(duice.isEmpty(id)){
+					return reject('[[#{application.global.enterItem(#{application.authority.id})}]]');
+				}
+				if(!duice.isIdFormat(id)){
+					return reject('[[#{application.global.notValidItemFormat(#{application.authority.id})}]]');
+				}
+				if(isNew){
+					$.ajax({
+						 url: 'authority/getAuthority'
+						,type: 'GET'
+						,data: {id:id}
+					})
+					.done(function(data, textStatus, jqXHR) {
+						if(data && data.id === id){
+							reject('[[#{application.global.alreadyRegisteredItem(#{application.authority.id})}]]');
+						}else{
+							resolve(true);
+						}
+					});
+				}else{
+					resolve(true);
+				}
 			});
 		}
 		
@@ -195,85 +209,85 @@
 			
 			// checks changes
 			if(isNew === false && isDetailChanged() === false) {
-				new duice.Alert("[[#{application.global.changeNotFound}]]").open();
-				return;
+				duice.alert("[[#{application.global.changeNotFound}]]");
+				return false
 			}
 			
-			// checks id
-			if(duice.isEmpty(authority.get('id'))){
-				authority.setFocus('id', '[[#{application.global.enterItem(#{application.authority.id})}]]');
+			// checks email
+			try{
+				await validateAuthorityId(authority.get('id'));
+			}catch(e){
+				await duice.alert( e);
+				user.setFocus('email');
 				return false;
-			}
-			if(!duice.isIdFormat(authority.get('id'))){
-				authority.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
-				return false;
-			}
-			if(isNew){
-				if(await isDuplicateAuthority(authority.get('id'))){
-					authority.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.authority.id})}]]');
-					return false;
-				}
 			}
 			
 			// checks user name
 			if(duice.isEmpty(authority.get('name'))){
-				authority.setFocus('name', '[[#{application.global.enterItem(#{application.authority.name})}]]');
+				authority.setFocus( '[[#{application.global.enterItem(#{application.authority.name})}]]');
 				return false;
 			}
 			
 			// enters save process
-			new duice.Confirm("[[#{application.global.saveConfirm(#{application.authority})}]]")
-			.onAfterConfirm(function(){
-				var data = authority.toJson();
-				$.ajax({
-					 url: 'authority/saveAuthority'
-					,type: 'POST'
-					,data: JSON.stringify(data)
-					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert('[[#{application.global.saveComplete(#{application.authority})}]]')
-						.onAfterClose(async function(){
-							await getAuthorities();
-							
-							// refresh list and details
-							var index = authorities.indexOf(function(row){
-								if(row.get('id') === authority.get('id')){
-									return true;
+			duice.confirm("[[#{application.global.saveConfirm(#{application.authority})}]]")
+			.then(function(result){
+				if(result){
+					var data = authority.toJson();
+					$.ajax({
+						 url: 'authority/saveAuthority'
+						,type: 'POST'
+						,data: JSON.stringify(data)
+						,contentType: 'application/json;charset=UTF-8'
+					})
+					.done(function(data, textStatus, jqXHR){
+						duice.alert('[[#{application.global.saveComplete(#{application.authority})}]]')
+						.then(function(){
+							getAuthorities()
+							.then(function(result){
+								// refresh list and details
+								var index = authorities.indexOf(function(row){
+									if(row.get('id') === authority.get('id')){
+										return true;
+									}
+								});
+								if(index > -1){
+									initializeDetail();
+									authorities.selectRow(index);
+								}else{
+									getAuthority(authority.get('id'));
 								}
 							});
-							if(index > -1){
-								initializeDetail();
-								authorities.selectRow(index);
-							}else{
-								getAuthority(authority.get('id'));
-							}
-						}).open();
-			   	 	}
-				});	
-			}).open();
+						});
+					});
+				}
+			});
 		}
 		
 		/**
 		 * Deletes authority
 		 */
 		function deleteAuthority(){
-			new duice.Confirm("[[#{application.global.deleteConfirm(#{application.authority})}]]")
-			.onAfterConfirm(function(){
-				$.ajax({
-					 url: 'authority/deleteAuthority'
-					,type: 'DELETE'
-					,data: JSON.stringify(authority.toJson())
-					,contentType: 'application/json;charset=UTF-8'
-					,success: function(data, textStatus, jqXHR) {
-						new duice.Alert("[[#{application.global.deleteComplete(#{application.authority})}]]")
-						.onAfterClose(async function(){
-							await getAuthorities();
-							initializeDetail();
-							disableDetail(true);
-						}).open();
-			   	 	}
-				});
-			}).open();
+			duice.confirm("[[#{application.global.deleteConfirm(#{application.authority})}]]")
+			.then(function(result){
+				if(result){
+					$.ajax({
+						 url: 'authority/deleteAuthority'
+						,type: 'DELETE'
+						,data: JSON.stringify(authority.toJson())
+						,contentType: 'application/json;charset=UTF-8'
+					})
+					.done(function(){
+						duice.alert("[[#{application.global.deleteComplete(#{application.authority})}]]")
+						.then(function(){
+							getAuthorities()
+							.then(function(){
+								initializeDetail();
+								disableDetail(true);
+							});
+						});
+					});
+				}
+			});
 		}
 	</script>
 	<div class="app-row">
@@ -405,7 +419,7 @@
 									</tr>
 									<tr>
 										<th data-th-text="#{application.authority.description}"></th>
-										<td><textarea is="duice-textarea" data-duice-bind="authority,description" style="height:200px;"></textarea></td>
+										<td><textarea is="duice-textarea" data-duice-bind="authority,description" style="height:100px;"></textarea></td>
 									</tr>
 								</tbody>
 							</table>
