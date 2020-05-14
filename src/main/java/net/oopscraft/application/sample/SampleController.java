@@ -50,7 +50,7 @@ public class SampleController {
 	 */
 	@RequestMapping(value = "getSamples", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Sample> getSamples(@ModelAttribute Sample sample, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Sample> getSamples(@ModelAttribute Sample sample, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Sample> samples = sampleService.getSamples(sample, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

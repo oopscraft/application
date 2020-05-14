@@ -10,24 +10,18 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "APP_MESG_LANG_INFO")
-@IdClass(MessageLanguage.Pk.class)
-public class MessageLanguage {
+@Table(name = "APP_MESG_DETL")
+@IdClass(MessageDetail.Pk.class)
+public class MessageDetail {
 	
 	public static class Pk implements Serializable {
 		private static final long serialVersionUID = -8409789656417268895L;
-		String messageId;
 		String id;
+		String language;
 		public Pk() {}
-		public Pk(String messageId, String id) {
-			this.messageId = messageId;
+		public Pk(String id, String language) {
 			this.id = id;
-		}
-		public String getMessageId() {
-			return messageId;
-		}
-		public void setMessageId(String messageId) {
-			this.messageId = messageId;
+			this.language = language;
 		}
 		public String getId() {
 			return id;
@@ -35,12 +29,18 @@ public class MessageLanguage {
 		public void setId(String id) {
 			this.id = id;
 		}
+		public String getLanguage() {
+			return language;
+		}
+		public void setLanguage(String language) {
+			this.language = language;
+		}
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((id == null) ? 0 : id.hashCode());
-			result = prime * result + ((messageId == null) ? 0 : messageId.hashCode());
+			result = prime * result + ((language == null) ? 0 : language.hashCode());
 			return result;
 		}
 		@Override
@@ -57,10 +57,10 @@ public class MessageLanguage {
 					return false;
 			} else if (!id.equals(other.id))
 				return false;
-			if (messageId == null) {
-				if (other.messageId != null)
+			if (language == null) {
+				if (other.language != null)
 					return false;
-			} else if (!messageId.equals(other.messageId))
+			} else if (!language.equals(other.language))
 				return false;
 			return true;
 		}
@@ -68,29 +68,21 @@ public class MessageLanguage {
 
 	@Id
 	@Column(name = "MESG_ID", length = 32)
-	String messageId;
+	String id;
 
 	@Id
-	@Column(name = "LANG_ID", length = 32)
-	String id;
+	@Column(name = "MESG_LANG", length = 32)
+	String language;
 	
-	@Column(name = "LANG_VAL", length = Integer.MAX_VALUE)
+	@Column(name = "MESG_VAL", length = Integer.MAX_VALUE)
 	@Lob
 	String value;
 	
-	public MessageLanguage() {}
+	public MessageDetail() {}
 	
-	public MessageLanguage(String messageId, String id) {
-		this.messageId = messageId;
+	public MessageDetail(String id, String language) {
 		this.id = id;
-	}
-
-	public String getMessageId() {
-		return messageId;
-	}
-
-	public void setMessageId(String messageId) {
-		this.messageId = messageId;
+		this.language = language;
 	}
 
 	public String getId() {
@@ -99,6 +91,14 @@ public class MessageLanguage {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	public String getValue() {

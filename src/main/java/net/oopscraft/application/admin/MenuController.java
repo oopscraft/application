@@ -55,7 +55,7 @@ public class MenuController {
 	 */
 	@RequestMapping(value = "getMenus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Menu> getMenus(@ModelAttribute Menu menu, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Menu> getMenus(@ModelAttribute Menu menu, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Menu> menus = menuService.getMenus(menu, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

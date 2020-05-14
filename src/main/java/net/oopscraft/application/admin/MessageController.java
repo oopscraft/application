@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -49,8 +50,16 @@ public class MessageController {
 	 */
 	@RequestMapping(value = "getMessages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Message> getMessages(@ModelAttribute Message message, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Message> getMessages(
+		 @RequestParam(value="id", required=false) String id
+		,@RequestParam(value="name", required=false) String name
+		,Pagination pagination
+		,HttpServletResponse response
+	) throws Exception {
 		pagination.setEnableTotalCount(true);
+		Message message = new Message();
+		message.setId(id);
+		message.setName(name);
 		List<Message> messages = messageService.getMessages(message, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 		return messages;
@@ -64,8 +73,8 @@ public class MessageController {
 	 */
 	@RequestMapping(value = "getMessage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public Message getMessage(@ModelAttribute Message message) throws Exception {
-		return messageService.getMessage(message.getId());
+	public Message getMessage(@RequestParam(value="id", required=false) String id) throws Exception {
+		return messageService.getMessage(id);
 	}
 
 	/**
@@ -91,8 +100,8 @@ public class MessageController {
 	@RequestMapping(value = "deleteMessage", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteMessage(@RequestBody Message message) throws Exception {
-		messageService.deleteMessage(message);
+	public void deleteMessage(@RequestParam(value="id", required=false) String id) throws Exception {
+		messageService.deleteMessage(new Message(id));
 	}
 
 }

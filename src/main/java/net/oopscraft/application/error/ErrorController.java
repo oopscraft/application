@@ -5,6 +5,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,8 @@ import net.oopscraft.application.message.MessageException;
 @RequestMapping("/error")
 public class ErrorController {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ErrorController.class);
+	
 	@Autowired
 	ErrorService errorService;
 	
@@ -45,6 +49,7 @@ public class ErrorController {
 	 * @throws Exception
 	 */
 	private ModelAndView responseError(HttpServletRequest request, HttpServletResponse response, Error error) throws Exception {
+		LOGGER.warn("{}", JsonConverter.toJson(error));
 		if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))
 		|| error.getUri().startsWith("/api/")
 		){
@@ -87,10 +92,10 @@ public class ErrorController {
 	 */
 	@ExceptionHandler(Exception.class)
 	public ModelAndView handleException(HttpServletRequest request, HttpServletResponse response, Exception exception) throws Exception {
+		LOGGER.error(exception.getMessage(), exception);
 		Error error = errorService.createError(exception, request);
 		error.setMessage(messageSource.getMessage("application.global.exception.Exception", null, localeResolver.resolveLocale(request)));
 		error.setStatusCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		errorService.saveError(error);
 		return responseError(request, response, error);
 	}
 	

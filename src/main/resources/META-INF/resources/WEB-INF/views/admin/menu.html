@@ -147,8 +147,8 @@
 	function getMenus() {
 		return new Promise(function(resolve,reject){
 			var data = {};
-			data.page = search.get('page');
-			data.rows = search.get('rows');
+			data.__page = search.get('page');
+			data.__rows = search.get('rows');
 			$.ajax({
 				 url: 'menu/getMenus'
 				,type: 'GET'
@@ -311,7 +311,7 @@
 			<!-- ====================================================== -->
 			<!-- START:List												-->
 			<!-- ====================================================== -->
-			<div id="listDiv" class="app-row">
+			<div id="listDiv" class="app-row panel">
 				<div class="app-col">
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -368,7 +368,7 @@
 			<!-- ====================================================== -->
 			<!-- START:Start Detail										-->
 			<!-- ====================================================== -->
-			<div id="detailDiv" class="app-row">
+			<div id="detailDiv" class="app-row panel">
 				<div class="app-col">
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -389,7 +389,7 @@
 								<tbody>
 									<tr>
 										<th data-th-text="#{application.menu.name}" class="mand">Name</th>
-										<td><input is="duice-input" type="text" data-duice-bind="menu,name"/></td>
+										<td><input is="duice-input" type="text" data-duice-bind="menu,name" class="id"/></td>
 									</tr>
 									<tr>
 										<th data-th-text="#{application.menu.upperId}">Upper Menu</th>
@@ -444,6 +444,7 @@
 									</tr>
 									<tr>
 										<th>
+											<img class="icon small" th:src="@{/static/image/icon_policy.png}"/>
 											<span data-th-text="#{application.menu.displayPolicy}"></span>
 										</th>
 										<td>

@@ -152,8 +152,8 @@
 		function getGroups() {
 			return new Promise(function(resolve,reject){
 				var data = {};
-				data.page = search.get('page');
-				data.rows = search.get('rows');
+				data.__page = search.get('page');
+				data.__rows = search.get('rows');
 				$.ajax({
 					 url: 'group/getGroups'
 					,type: 'GET'
@@ -394,7 +394,7 @@
 			<!-- ====================================================== -->
 			<!-- START:List												-->
 			<!-- ====================================================== -->
-			<div id="listDiv" class="app-row">
+			<div id="listDiv" class="app-row panel">
 				<div class="app-col">
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -451,7 +451,7 @@
 			<!-- ====================================================== -->
 			<!-- START:Start Detail										-->
 			<!-- ====================================================== -->
-			<div id="detailDiv" class="app-row">
+			<div id="detailDiv" class="app-row panel">
 				<div class="app-col">
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -517,8 +517,7 @@
 									</tr>
 									<tr>
 										<th>
-											<img class="icon" th:src="@{/static/image/icon_role.png}"/>
-											<br/>
+											<img class="icon small" th:src="@{/static/image/icon_role.png}"/>
 											<span data-th-text="#{application.group.roles}"></span>
 										</th>
 										<td>
@@ -561,8 +560,7 @@
 									</tr>
 									<tr>
 										<th>
-											<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
-											<br/>
+											<img class="icon small" th:src="@{/static/image/icon_authority.png}"/>
 											<span data-th-text="#{application.group.authorities}">Own Authority</span>
 										</th>
 										<td>

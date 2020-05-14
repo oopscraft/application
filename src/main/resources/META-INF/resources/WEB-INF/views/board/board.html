@@ -69,8 +69,8 @@
 			if(search.get('categoryId')){
 				data.categoryId = search.get('categoryId');
 			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
+			data.__page = search.get('page');
+			data.__rows = search.get('rows');
 			$.ajax({
 				 url: '[[@{/api/boards}]]/[[${board.id}]]/articles'
 				,type: 'GET'

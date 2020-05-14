@@ -36,31 +36,52 @@ public class Message extends SystemEntity {
 	
 	@OneToMany(
 		fetch = FetchType.LAZY, 
-		mappedBy = "messageId", 
+		mappedBy = "id", 
 		cascade = CascadeType.ALL, 
 		orphanRemoval = true
 	)
-	@OrderBy("id")
-	List<MessageLanguage> languages = new ArrayList<MessageLanguage>();
-	
-	public Message() {}
-	
-	public Message(String id) {
-		this.id = id;
-	}
+	@OrderBy("language")
+	List<MessageDetail> details = new ArrayList<MessageDetail>();
 	
 	/**
 	 * getItem
 	 * @param language
 	 * @return
 	 */
-	public MessageLanguage getLanguage(String id) {
-		for(MessageLanguage item : languages) {
-			if(id.contentEquals(item.getId())){
-				return item;
+	public MessageDetail getDetail(String language) {
+		for(MessageDetail detail : details) {
+			if(language.contentEquals(detail.getLanguage())){
+				return detail;
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * getValue
+	 * @param languageId
+	 * @return
+	 */
+	public String getValue(String language) {
+		MessageDetail detail = getDetail(language);
+		if(detail != null) {
+			return detail.getValue();
+		}else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Message
+	 */
+	public Message() {}
+	
+	/**
+	 * Message
+	 * @param id
+	 */
+	public Message(String id) {
+		this.id = id;
 	}
 
 
@@ -88,12 +109,12 @@ public class Message extends SystemEntity {
 		this.description = description;
 	}
 
-	public List<MessageLanguage> getLanguages() {
-		return languages;
+	public List<MessageDetail> getDetails() {
+		return details;
 	}
 
-	public void setLanguages(List<MessageLanguage> languages) {
-		this.languages = languages;
+	public void setDetails(List<MessageDetail> details) {
+		this.details = details;
 	}
 
 }

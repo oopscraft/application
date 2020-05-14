@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,16 +38,16 @@ public class MessageService {
 		List<Order> orders = new ArrayList<Order>();
 		orders.add(new Order(Direction.ASC, "id"));
 		PageRequest pageRequest = pagination.toPageRequest(new Sort(orders));
-		Page<Message> messagesPage = messageRepository.findAll(new  Specification<Message>() {
+		Page<Message> messagesPage = messageRepository.findAll(new Specification<Message>() {
 			@Override
 			public Predicate toPredicate(Root<Message> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
-				if(message.getId() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), message.getId() + '%'));
+				if(StringUtils.isNotBlank(message.getId())) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("id").as(String.class), '%' + message.getId() + '%'));
 					predicates.add(predicate);
 				}
-				if(message.getName() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), message.getName() + '%'));
+				if(StringUtils.isNotBlank(message.getName())) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), '%' + message.getName() + '%'));
 					predicates.add(predicate);
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
@@ -89,9 +90,9 @@ public class MessageService {
 		}
 		one.setName(message.getName());
 		one.setDescription(message.getDescription());
-		one.getLanguages().clear();
-		for(MessageLanguage language : message.getLanguages()) {
-			one.getLanguages().add(language);
+		one.getDetails().clear();
+		for(MessageDetail detail : message.getDetails()) {
+			one.getDetails().add(detail);
 		}
 		return messageRepository.save(one);
 	}
@@ -107,21 +108,6 @@ public class MessageService {
 			throw new SystemEmbeddedException();
 		}
 		messageRepository.delete(one);
-	}
-	
-	/**
-	 * getMessageLanguage
-	 * @param messageId
-	 * @param languageId
-	 * @return
-	 * @throws Exception
-	 */
-	public MessageLanguage getMessageLanguage(String messageId, String languageId) throws Exception {
-		Message message = getMessage(messageId);
-		if(message != null) {
-			return message.getLanguage(languageId);
-		}
-		return null;
 	}
 
 }

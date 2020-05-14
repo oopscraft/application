@@ -112,6 +112,9 @@ public class ApplicationWebController {
 		return modelAndView;
 	}
 	
+	/**
+	 * public
+	 */
 	@RequestMapping(value = "public/**", method = RequestMethod.GET)
 	public String forwardPublic(HttpServletRequest request) throws Exception {
 		String resource = request.getRequestURI();

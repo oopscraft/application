@@ -134,8 +134,8 @@
 				if(search.get('key')){
 					data[search.get('key')] = search.get('value');
 				}
-				data.page = search.get('page');
-				data.rows = search.get('rows');
+				data.__page = search.get('page');
+				data.__rows = search.get('rows');
 				$.ajax({
 					 url: 'code/getCodes'
 					,type: 'GET'
@@ -341,7 +341,7 @@
 			<!-- ====================================================== -->
 			<!-- START:List												-->
 			<!-- ====================================================== -->
-			<div id="listDiv" class="app-row">
+			<div id="listDiv" class="app-row panel">
 				<div class="app-col">
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -445,7 +445,7 @@
 			<!-- ====================================================== -->
 			<!-- START:Start Detail										-->
 			<!-- ====================================================== -->
-			<div id="detailDiv" class="app-row">
+			<div id="detailDiv" class="app-row panel">
 				<div class="app-col">	
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -478,8 +478,7 @@
 									</tr>
 									<tr>
 										<th>
-											<img class="icon" th:src="@{/static/image/icon_item.png}"/>
-											<br/>
+											<img class="icon small" th:src="@{/static/image/icon_item.png}"/>
 											<span data-th-text="#{application.code.item}">Code Item</span>
 										</th>
 										<td>
@@ -520,8 +519,7 @@
 									</tr>
 									<tr>
 										<th>
-											<img class="icon" th:src="@{/static/image/icon_entity.png}"/>
-											<br/>
+											<img class="icon small" th:src="@{/static/image/icon_entity.png}"/>
 											<span data-th-text="#{application.code.entity}">Code Entity</span>
 										</th>
 										<td>

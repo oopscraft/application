@@ -46,7 +46,7 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "getGroups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Group> getGroups(@ModelAttribute Group group,@ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Group> getGroups(@ModelAttribute Group group,Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Group> groups = groupService.getGroups(group, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

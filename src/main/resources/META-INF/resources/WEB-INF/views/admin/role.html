@@ -135,8 +135,8 @@
 				if(search.get('key')){
 					data[search.get('key')] = search.get('value');
 				}
-				data.page = search.get('page');
-				data.rows = search.get('rows');
+				data.__page = search.get('page');
+				data.__rows = search.get('rows');
 				$.ajax({
 					 url: 'role/getRoles'
 					,type: 'GET'
@@ -331,7 +331,7 @@
 			<!-- ====================================================== -->
 			<!-- START:List												-->
 			<!-- ====================================================== -->
-			<div id="listDiv" class="app-row">
+			<div id="listDiv" class="app-row panel">
 				<div class="app-col">
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -430,7 +430,7 @@
 			<!-- ====================================================== -->
 			<!-- START:Start Detail										-->
 			<!-- ====================================================== -->
-			<div id="detailDiv" class="app-row">
+			<div id="detailDiv" class="app-row panel">
 				<div class="app-col">
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -469,8 +469,7 @@
 									</tr>
 									<tr>
 										<th>
-											<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
-											<br/>
+											<img class="icon small" th:src="@{/static/image/icon_authority.png}"/>
 											<span data-th-text="#{application.role.authorities}"></span>
 										</th>
 										<td>

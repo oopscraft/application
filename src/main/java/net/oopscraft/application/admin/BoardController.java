@@ -51,7 +51,7 @@ public class BoardController {
 	 */
 	@RequestMapping(value = "getBoards", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Board> getBoards(@ModelAttribute Board board, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Board> getBoards(@ModelAttribute Board board, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Board> boards = boardService.getBoards(board, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

@@ -73,7 +73,7 @@ public class AdminController {
 	 */
 	@RequestMapping(value = "getGroups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Group> getGroups(@ModelAttribute Group group, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Group> getGroups(@ModelAttribute Group group, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Group> groups = groupService.getGroups(group,pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
@@ -89,7 +89,7 @@ public class AdminController {
 	 */
 	@RequestMapping(value = "getRoles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Role> getUsers(@ModelAttribute Role role, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Role> getUsers(@ModelAttribute Role role, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Role> roles = roleService.getRoles(role,pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
@@ -105,7 +105,7 @@ public class AdminController {
 	 */
 	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Authority> getAuthorities(@ModelAttribute Authority authority, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Authority> getAuthorities(@ModelAttribute Authority authority, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Authority> authorities = authorityService.getAuthorities(authority, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE,  pagination.getContentRange());

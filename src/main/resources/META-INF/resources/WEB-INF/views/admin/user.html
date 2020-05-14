@@ -159,8 +159,8 @@
 				if(search.get('status')){
 					data.status = search.get('status');
 				}
-				data.page = search.get('page');
-				data.rows = search.get('rows');
+				data.__page = search.get('page');
+				data.__rows = search.get('rows');
 				$.ajax({
 					 url: 'user/getUsers'
 					,type: 'GET'
@@ -207,7 +207,7 @@
 			disableDetail(false);
 			isNew = true;
 			user.setReadonly('id',false);
-			user.setFocus('id');
+			user.setFocus('email');
 			$('#passwordTr').show();
 			$('#passwordConfirmTr').show();
 			$('#changePasswordTr').hide();
@@ -452,7 +452,7 @@
 			<!-- ====================================================== -->
 			<!-- START:List												-->
 			<!-- ====================================================== -->
-			<div id="listDiv" class="app-row">
+			<div id="listDiv" class="app-row panel">
 				<div class="app-col">
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -562,7 +562,7 @@
 			<!-- ====================================================== -->
 			<!-- START:Start Detail										-->
 			<!-- ====================================================== -->
-			<div id="detailDiv" class="app-row">
+			<div id="detailDiv" class="app-row panel">
 				<div class="app-col">
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -679,8 +679,7 @@
 									</tr>
 									<tr>
 										<th>
-											<img class="icon" th:src="@{/static/image/icon_group.png}"/>
-											<br/>
+											<img class="icon small" th:src="@{/static/image/icon_group.png}"/>
 											<span data-th-text="#{application.user.groups}"></span>
 										</th>
 										<td>
@@ -688,13 +687,11 @@
 												<table is="duice-table" 
 												data-duice-bind="userGroups,group" style="width:100%;">
 													<col style="width:15%;"/>
-													<col style="width:30%;"/>
 													<col/>
 													<col style="width:5%;"/>
 													<thead>
 														<tr>
 															<th data-th-text="#{application.global.no}" class="text-center"></th>
-															<th data-th-text="#{application.group.id}"></th>
 															<th data-th-text="#{application.group.name}"></th>
 															<th class="text-center">
 																<img class="icon small button" th:src="@{/static/image/icon_add.png}" onclick="addUserGroup();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
@@ -708,9 +705,8 @@
 															</td>
 															<td>
 																<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
-																<span is="duice-span" data-duice-bind="group,id"></span>
+																<span is="duice-span" data-duice-bind="group,name"></span>
 															</td>
-															<td><span is="duice-span" data-duice-bind="group,name"></span></td>
 															<td class="text-center">
 																<img class="icon small button" th:src="@{/static/image/icon_remove.png}" data-index="[@duice[$context.index]]" onclick="removeUserGroup(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
 															</td>
@@ -722,8 +718,7 @@
 									</tr>
 									<tr>
 										<th>
-											<img class="icon" th:src="@{/static/image/icon_role.png}"/>
-											<br/>
+											<img class="icon small" th:src="@{/static/image/icon_role.png}"/>
 											<span data-th-text="#{application.user.roles}"></span>
 										</th>
 										<td>
@@ -766,8 +761,7 @@
 									</tr>
 									<tr>
 										<th>
-											<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
-											<br/>
+											<img class="icon small" th:src="@{/static/image/icon_authority.png}"/>
 											<span data-th-text="#{application.user.authorities}"></span>
 										</th>
 										<td>

@@ -31,7 +31,7 @@ public class MessageRestController {
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public List<Message> getMessages(@ModelAttribute Message message, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Message> getMessages(@ModelAttribute Message message, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Message> messages = messageService.getMessages(message, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

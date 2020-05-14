@@ -50,7 +50,7 @@ public class PropertyController {
 	 */
 	@RequestMapping(value = "getProperties", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Property> getProperties(@ModelAttribute Property property, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Property> getProperties(@ModelAttribute Property property, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Property> properties = propertyService.getProperties(property, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

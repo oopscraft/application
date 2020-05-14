@@ -10,6 +10,10 @@ body {
 	line-height: 2;
 	color: #495057;
 }
+body {
+	overflow-y: scroll;
+	background-color: #f9f9f9;
+}
 h1 { 
 	color: #111; 
 	font-family: sans-serif; 
@@ -41,8 +45,14 @@ a:hover {
 	margin: 0px;
 	padding: 0px;
 }
+.app-row.panel {
+	border: solid 2px #eee;
+    border-radius: 2px;
+    padding: 1rem;
+    background-color: white;
+}
 .app-row.title {
-	border-bottom: solid 1px #ccc;
+	border-bottom: solid 2px #eee;
 	height: 3rem;
 }
 .app-row.search {
@@ -86,7 +96,7 @@ a:hover {
 	margin: 0px;
 	margin-bottom: -1px;
 	padding: 1px 10px;
-	border:1px solid #adacac;
+	border:1px solid #ccc;
 	border-bottom: none;
 	border-top-left-radius: 2px;
 	border-top-right-radius: 2px;

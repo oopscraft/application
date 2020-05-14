@@ -7,6 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,6 +15,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
 
 
@@ -25,9 +27,6 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	@Autowired
 	UserService userService;
 	
-	@Autowired
-	UserDetailsService userDetailsService;
-	
 	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	/* (non-Javadoc)
@@ -36,21 +35,40 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		
-		// getting user id and password
-		String id = authentication.getName();
+		// user name is email
+		String username = authentication.getName();
 		String password = (String) authentication.getCredentials();
 		
-		// loading user information
-		UserDetails userDetails = userDetailsService.loadUserByUsername(id);
+		// retrieves user data
+		User user = null;
+		try {
+			user = userService.getUserByEmail(username);
+			if(user == null) {
+				throw new UsernameNotFoundException("User not found");
+			}
+		}catch(UsernameNotFoundException e) {
+			throw e;
+		}catch(Exception e) {
+			throw new UsernameNotFoundException(e.getMessage());
+		}
+		
 		
 		// checking password
-		if(userService.isCorrectPassword(id, password) == false) {
-			throw new BadCredentialsException("password is incorrect.");
+		try {
+			if(userService.isCorrectPassword(user.getId(), password) == false) {
+				throw new BadCredentialsException("Password is incorrect.");
+			}
+		}catch(BadCredentialsException e) {
+			throw e;
+		}catch(Exception e) {
+			throw new BadCredentialsException(e.getMessage());
 		}
 
 		// return authentication token.
+		UserDetails userDetails = new UserDetails(user);
 		authentication = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 		return authentication;
+
 	}
 
 	/* (non-Javadoc)

@@ -26,9 +26,9 @@ $(document).ajaxError(function(event, jqXHR, settings, thrownError){
 		console.error(event, jqXHR, settings, thrownError);
 		try {
 			var response = JSON.parse(jqXHR.responseText);
-			duice.alert('<b>' + response.message + '</b>');
+			duice.alert('<span style="font-weight:bold; color:red;">' + response.message + '</span>');
 		}catch(e){
-			duice.alert('<b>' + response.responseText + '</b>');
+			duice.alert('<span style="font-weight:bold; color:red;">' + response.responseText + '</span>');
 		}
 	}
 });

@@ -12,6 +12,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -27,7 +28,7 @@ import net.oopscraft.application.core.jpa.BooleanStringConverter;
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
-@Table(name="APP_ATCL_INFO")
+@Table(name = "APP_ATCL_INFO", indexes = { @Index(name = "IX_APP_ATCL_INFO_1", columnList = "BORD_ID") })
 public class Article extends SystemEntity {
 	
 	@Id
@@ -35,6 +36,22 @@ public class Article extends SystemEntity {
 	@NotNull
 	@JsonView(List.class)
 	String id;
+	
+	@Column(name = "BORD_ID", length = 32)
+	@JsonView(List.class)
+	String boardId;
+	
+	@Column(name = "CATE_ID", length = 32)
+	@JsonView(List.class)
+	String categoryId;
+	
+	@Formula("(select a.CATE_NAME from APP_BORD_CATE_INFO a where a.BORD_ID = BORD_ID and a.CATE_ID = CATE_ID)")
+	@JsonView(List.class)
+	String categoryName;
+	
+	@Column(name="USER_ID", length=32)
+	@JsonView(List.class)
+	String userId;
 	
 	@Column(name="ATCL_TITL", length=4000)
 	@NotNull
@@ -54,7 +71,7 @@ public class Article extends SystemEntity {
 	String password;
 	
 	public enum Format { HTML, MARKDOWN }
-	@Column(name = "ATCL_FOMT", length = 64)
+	@Column(name = "ATCL_FMAT", length = 64)
 	@Enumerated(EnumType.STRING)
 	@JsonView(List.class)
 	Format format;
@@ -63,27 +80,11 @@ public class Article extends SystemEntity {
 	@Lob
 	@JsonView(List.class)
 	String contents;
-	
-	@Column(name = "BORD_ID", length = 32)
-	@JsonView(List.class)
-	String boardId;
-	
-	@Column(name = "CATE_ID", length = 32)
-	@JsonView(List.class)
-	String categoryId;
-
-	@Formula("(select a.CATE_NAME from APP_BORD_CATE_INFO a where a.BORD_ID = BORD_ID and a.CATE_ID = CATE_ID)")
-	@JsonView(List.class)
-	String categoryName;
 
 	@Column(name = "NOTI_YN")
 	@Convert(converter=BooleanStringConverter.class)
 	@JsonView(List.class)
 	boolean notice;
-	
-	@Column(name="USER_ID", length=32)
-	@JsonView(List.class)
-	String userId;
 
 	@Formula("(select count(*) from APP_ATCL_FILE_INFO a where a.ATCL_ID = ATCL_ID)")
 	@JsonView(List.class)

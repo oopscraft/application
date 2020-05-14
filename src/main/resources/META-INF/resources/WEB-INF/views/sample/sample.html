@@ -57,8 +57,8 @@
 			if(search.get('status')){
 				data.status = search.get('status');
 			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
+			data.__page = search.get('page');
+			data.__rows = search.get('rows');
 			$.ajax({
 				 url: 'sample/getSamples'
 				,type: 'GET'

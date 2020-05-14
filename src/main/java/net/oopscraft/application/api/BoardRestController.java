@@ -153,21 +153,21 @@ public class BoardRestController {
 	@Transactional(rollbackFor = Exception.class)
 	public Article createArticle(
 		@PathVariable("boardId")String boardId,
-		@RequestBody Article article,
+		@RequestBody Article boardArticle,
 		@AuthenticationPrincipal UserDetails userDetails
 	) throws Exception {
-		article.setBoardId(boardId);
+		boardArticle.setBoardId(boardId);
 		if(userDetails == null) {
-			article.setUserId(null);
-			article.setAuthor(article.getAuthor());
-			article.setPassword(article.getPassword()==null?null:passwordEncoder.encode(article.getPassword()));
+			boardArticle.setUserId(null);
+			boardArticle.setAuthor(boardArticle.getAuthor());
+			boardArticle.setPassword(boardArticle.getPassword()==null?null:passwordEncoder.encode(boardArticle.getPassword()));
 		}else {
 			User user = userService.getUser(userDetails.getUsername());
-			article.setUserId(user.getId());
-			article.setAuthor(user.getNickname());
-			article.setPassword(null);
+			boardArticle.setUserId(user.getId());
+			boardArticle.setAuthor(user.getNickname());
+			boardArticle.setPassword(null);
 		}
-		return articleService.saveArticle(article);
+		return articleService.saveArticle(boardArticle);
 	}
 	
 	/**

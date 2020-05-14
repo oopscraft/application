@@ -1,4 +1,4 @@
-package net.oopscraft.application.board;
+package net.oopscraft.application.article;
 
 import java.util.List;
 
@@ -8,19 +8,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.oopscraft.application.ApplicationTestRunner;
+import net.oopscraft.application.board.Article;
+import net.oopscraft.application.board.ArticleFile;
+import net.oopscraft.application.board.ArticleReply;
+import net.oopscraft.application.board.ArticleService;
 import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.Pagination;
 
-public class ArticleRepositoryTest extends ApplicationTestRunner {
+public class ArticleServiceTest extends ApplicationTestRunner {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ArticleRepositoryTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArticleServiceTest.class);
 	
 	private static final String ARTICLE_ID = "TEST_ID";
 	
 	@Autowired
-	ArticleRepository articleRepository;
+	ArticleService articleService;
 	
 	@Test 
-	public void save() throws Exception {
+	public void saveArticle() throws Exception {
 		Article article = new Article();
 		article.setId(ARTICLE_ID);
 		article.setTitle("article title");
@@ -38,31 +43,35 @@ public class ArticleRepositoryTest extends ApplicationTestRunner {
 			article.addReply(reply);
 		}
 		
-		article = articleRepository.save(article);
+		article = articleService.saveArticle(article);
 		System.out.println(JsonConverter.toJson(article));
 		assert(true);
 	}
 	
 	@Test
-	public void findOne() throws Exception {
-		this.save();
-		Article article = articleRepository.findOne(ARTICLE_ID);
+	public void getArticle() throws Exception {
+		this.saveArticle();
+		Article article = articleService.getArticle(ARTICLE_ID);
 		LOGGER.debug("{}", JsonConverter.toJson(article));
 		assert(true);
 	}
 	
 	@Test
-	public void findAll() throws Exception {
-		this.save();
-		List<Article> articles = articleRepository.findAll();
+	public void getArticles() throws Exception {
+		this.saveArticle();
+		Article article = new Article();
+		Pagination pagination = new Pagination(10, 1, true);
+		List<Article> articles = articleService.getArticles(article, pagination);
 		LOGGER.debug("{}", JsonConverter.toJson(articles));
 		assert(true);
 	}
 	
 	@Test 
-	public void delete() throws Exception {
-		this.save();
-		articleRepository.delete(ARTICLE_ID);
+	public void deleteArticle() throws Exception {
+		this.saveArticle();
+		Article article = new Article(ARTICLE_ID);
+		articleService.deleteArticle(article);
 		assert(true);
 	}
+
 }

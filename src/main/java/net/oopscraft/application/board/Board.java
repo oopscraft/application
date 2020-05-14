@@ -125,6 +125,7 @@ public class Board extends SystemEntity {
 		inverseForeignKey = @ForeignKey(name = "none")
 	)
 	List<Authority> writeAuthorities = new ArrayList<Authority>();
+	
 
 	public Board() {}
 	

@@ -33,7 +33,7 @@ public class CodeRestController {
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public List<Code> getCodes(@ModelAttribute Code code, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Code> getCodes(@ModelAttribute Code code, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Code> codes = codeService.getCodes(code, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

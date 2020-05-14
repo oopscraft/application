@@ -5,17 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-fragment_3_1.xsd"
 	metadata-complete="false">
-	
-	<!-- 
-    <error-page>
-		<error-code>404</error-code>
-		<location>/error/error404.html</location>
-    </error-page>
-    <error-page>
-		<error-code>403</error-code>
-		<location>/error/error403.html</location>
-    </error-page>
-     -->
+
     <error-page>
     	<location>/error</location>
 	</error-page>

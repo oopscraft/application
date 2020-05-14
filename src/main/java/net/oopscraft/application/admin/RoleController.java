@@ -49,7 +49,7 @@ public class RoleController {
 	 */
 	@RequestMapping(value = "getRoles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Role> getRoles(@ModelAttribute Role role, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Role> getRoles(@ModelAttribute Role role, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Role> roles = roleService.getRoles(role, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

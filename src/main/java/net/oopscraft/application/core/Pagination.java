@@ -1,5 +1,7 @@
 package net.oopscraft.application.core;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
@@ -50,7 +52,7 @@ public class Pagination {
 	public PageRowBounds toRowBounds() {
 		return new PageRowBounds(getOffset(), getLimit(), enableTotalCount);
 	}
-
+	
 	/**
 	 * Gets Content-Range value
 	 * 
@@ -64,6 +66,14 @@ public class Pagination {
 		contentRange.append("/");
 		contentRange.append(isEnableTotalCount() ? getTotalCount() : "*");
 		return contentRange.toString();
+	}
+	
+	/**
+	 * toResponse
+	 * @param response
+	 */
+	public void setContentRangeHeader(HttpServletResponse response) {
+		response.setHeader("Content-Range", this.getContentRange());
 	}
 	
 	public int getOffset() {
@@ -82,7 +92,7 @@ public class Pagination {
 	public void setPage(int page) {
 		this.page = page;
 	}
-
+	
 	public int getRows() {
 		return rows;
 	}

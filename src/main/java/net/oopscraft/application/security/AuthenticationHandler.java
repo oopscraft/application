@@ -118,7 +118,7 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 		// Saves Login History
 		if(exception instanceof UsernameNotFoundException == false) {
 			UserLogin userLogin = new UserLogin();
-			userLogin.setUserId(request.getParameter("id"));
+			userLogin.setUserId(request.getParameter("username"));
 			userLogin.setDate(new Date());
 			userLogin.setSuccessYn("N");
 			userLogin.setFailReason(message);

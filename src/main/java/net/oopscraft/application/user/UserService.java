@@ -189,7 +189,7 @@ public class UserService {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean isCorrectPassword(String id, String password) {
+	public boolean isCorrectPassword(String id, String password) throws Exception {
 		// gets user data
 		User one = userRepository.findOne(id);
 		if(one == null) {

@@ -25,12 +25,13 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
 		String result = super.resolveCodeWithoutArguments(code, locale);
 		if(result == null) {
 			try {
-				MessageLanguage messageLanguage = messageService.getMessageLanguage(code,  locale.getLanguage());
-				if(messageLanguage != null) {
-					result = messageLanguage.getValue();
+				Message message = messageService.getMessage(code);
+				String value = message.getValue(locale.getLanguage());
+				if(value != null) {
+					result = value;
 				}
 			}catch(Exception ignore) {
-				LOGGER.warn(ignore.getMessage());	
+				LOGGER.warn(ignore.getMessage());
 			}
 		}
 		return result;
@@ -46,9 +47,10 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
 		MessageFormat messageFormat = super.resolveCode(code, locale);
 		if(messageFormat == null) {
 			try {
-				MessageLanguage messageLanguage = messageService.getMessageLanguage(code,  locale.getLanguage());
-				if(messageLanguage != null) {
-					messageFormat = new MessageFormat(messageLanguage.getValue(), locale);
+				Message message = messageService.getMessage(code);
+				String value = message.getValue(locale.getLanguage());
+				if(value != null) {
+					messageFormat = new MessageFormat(value, locale);
 				}
 			}catch(Exception ignore) {
 				LOGGER.warn(ignore.getMessage());	

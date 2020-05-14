@@ -49,7 +49,7 @@ public class AuthorityController {
 	 */
 	@RequestMapping(value = "getAuthorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Authority> getAuthorities(@ModelAttribute Authority authority, @ModelAttribute Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Authority> getAuthorities(@ModelAttribute Authority authority, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Authority> authorities = authorityService.getAuthorities(authority, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

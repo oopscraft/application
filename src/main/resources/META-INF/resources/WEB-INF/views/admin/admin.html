@@ -34,8 +34,9 @@
 			{ name:'[[#{application.message}]]', icon:'[[@{/static/image/icon_message.png}]]', linkUrl:'[[@{/admin/message}]]' },
 			{ name:'[[#{application.code}]]', icon:'[[@{/static/image/icon_code.png}]]', linkUrl:'[[@{/admin/code}]]' },
 			{ name:'[[#{application.menu}]]', icon:'[[@{/static/image/icon_menu.png}]]', linkUrl:'[[@{/admin/menu}]]' },
+			{ name:'[[#{application.page}]]', icon:'[[@{/static/image/icon_page.png}]]', linkUrl:'[[@{/admin/page}]]' },
 			{ name:'[[#{application.board}]]', icon:'[[@{/static/image/icon_board.png}]]', linkUrl:'[[@{/admin/board}]]' },
-			{ name:'[[#{application.api}]]', icon:'[[@{/static/image/icon_api.png}]]', linkUrl:'[[@{/admin/api}]]' },
+			{ name:'[[#{application.api}]]', icon:'[[@{/static/image/icon_api.png}]]', linkUrl:'[[@{/admin/api}]]' }
 		]);
 		
         /**
@@ -61,7 +62,7 @@
 		<!-- ================================================== -->
 		<!-- START: top											-->
 		<!-- ================================================== -->
-		<div class="app-row" style="padding:0px 20px; height:70px; background-color:#fafafa; border-bottom:groove 2px #ccc;">
+		<div class="app-row" style="padding:0px 20px; height:70px; background-color:#fafafa; border-bottom:groove 2px #eee;">
 			<div class="app-col left middle">
 				<a th:href="@{/admin}">
 					<img th:src="@{/static/image/application.png}"/>
@@ -87,36 +88,40 @@
 			<!-- ================================================== -->
 			<!-- START: menu										-->
 			<!-- ================================================== -->
-			<div class="app-col" style="width:10%;">
-				<ul is="duice-ul"
-				data-duice-bind="__menus,__menu" 
-				data-duice-hierarchy="id,upperId"
-				data-duice-foldable="false"
-				style="margin: 1.5rem 1rem;">
-					<li>
-						<a href="javascript:void(0);" 
-						data-link-url="[@duice[$context.__menu.get('linkUrl')]]" 
-						data-link-target="[@duice[$context.__menu.get('linkTarget')]]"
-						onclick="javascript:__openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
-						style="display:block; border-bottom:dotted 1px #ccc; line-height:2.5rem;">
-							<img is="duice-img" data-duice-bind="__menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
-							<span is="duice-span" data-duice-bind="__menu,name" style="font-weight:bold;"></span>
-						</a>
-					</li>
-				</ul>
-				<br/>
-				<div style="padding-left:20px;">
-					<a th:href="@{/swagger-ui.html}" target="blank" >
-						<img class="banner" th:src="@{/static/image/banner_swagger.png}"/>
-					</a>
-					<br/><br/>
-					<a href="https://github.com/oopscraft/application" target="blank">
-						<img class="banner" th:src="@{/static/image/banner_github.png}"/>
-					</a>
+			<div class="app-col" style="width:10%; padding-top:1rem">
+				<div class="app-row">
+					<div class="app-col">
+						<ul is="duice-ul"
+						data-duice-bind="__menus,__menu" 
+						data-duice-hierarchy="id,upperId"
+						data-duice-foldable="false"
+						style="margin: 1.5rem 1rem;">
+							<li>
+								<a href="javascript:void(0);" 
+								data-link-url="[@duice[$context.__menu.get('linkUrl')]]" 
+								data-link-target="[@duice[$context.__menu.get('linkTarget')]]"
+								onclick="javascript:__openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
+								style="display:block; border-bottom:dotted 1px #ccc; line-height:2.5rem;">
+									<img is="duice-img" data-duice-bind="__menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
+									<span is="duice-span" data-duice-bind="__menu,name" style="font-weight:bold;"></span>
+								</a>
+							</li>
+						</ul>
+						<br/>
+						<div style="padding-left:20px;">
+							<a th:href="@{/swagger-ui.html}" target="blank" >
+								<img class="banner" th:src="@{/static/image/banner_swagger.png}"/>
+							</a>
+							<br/><br/>
+							<a href="https://github.com/oopscraft/application" target="blank">
+								<img class="banner" th:src="@{/static/image/banner_github.png}"/>
+							</a>
+						</div>
+					</div>
 				</div>
 			</div>
 			<!-- ================================================== -->
-			<!-- START: menu										-->
+			<!-- END: menu										-->
 			<!-- ================================================== -->
 			<!-- ================================================== -->
 			<!-- START: content										-->
@@ -676,7 +681,7 @@
 						$.ajax({
 							 url: '[[@{/admin/getGroups}]]'
 							,type: 'GET'
-							,data: {page:page, rows:10000}
+							,data: {__page:page, __rows:10000}
 							,success: function(data, textStatus, jqXHR) {
 								_this.groups.fromJson(data);
 								_this.groups.forEach(function(group){
@@ -906,8 +911,8 @@
 	    				if(_this.search.get('key')){
 	    					data[_this.search.get('key')] = _this.search.get('value');
 	    				}
-	    				data.page = _this.search.get('page');
-	    				data.rows = _this.search.get('rows');
+	    				data.__page = _this.search.get('page');
+	    				data.__rows = _this.search.get('rows');
 						$.ajax({
 							 url: '[[@{/admin/getRoles}]]'
 							,type: 'GET'
@@ -1137,8 +1142,8 @@
 	    				if(_this.search.get('key')){
 	    					data[_this.search.get('key')] = _this.search.get('value');
 	    				}
-	    				data.page = _this.search.get('page');
-	    				data.rows = _this.search.get('rows');
+	    				data.__page = _this.search.get('page');
+	    				data.__rows = _this.search.get('rows');
 	    				$.ajax({
 	    					 url: '[[@{/admin/getAuthorities}]]'
 	    					,type: 'GET'

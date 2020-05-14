@@ -61,10 +61,10 @@ public class ArticleService {
 					predicates.add(cb.and(cb.equal(root.get("categoryId").as(String.class), article.getCategoryId())));
 				}
 				if(!StringUtils.isBlank(article.getTitle())) {
-					predicates.add(cb.and(cb.like(root.get("title").as(String.class), '%'+article.getTitle()+'%')));
+					predicates.add(cb.and(cb.like(root.get("title").as(String.class), '%'+ article.getTitle()+'%')));
 				}
 				if(!StringUtils.isBlank(article.getContents())) {
-					predicates.add(cb.and(cb.like(root.get("contents").as(String.class), '%'+article.getContents()+'%')));
+					predicates.add(cb.and(cb.like(root.get("contents").as(String.class), '%'+ article.getContents()+'%')));
 				}
 				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 			}
@@ -101,8 +101,8 @@ public class ArticleService {
 			one.setDate(new Date());
 			one.setUserId(article.getUserId());
 		}
-		one.setBoardId(article.getBoardId());
-		one.setCategoryId(article.getCategoryId());
+//		one.setBoardId(article.getBoardId());
+//		one.setCategoryId(article.getCategoryId());
 		one.setTitle(article.getTitle());
 		one.setFormat(article.getFormat());
 		one.setContents(article.getContents());

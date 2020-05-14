@@ -3,6 +3,7 @@ package net.oopscraft.application.menu;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,10 +15,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
+import net.oopscraft.application.message.MessageDetail;
 import net.oopscraft.application.security.SecurityPolicy;
 import net.oopscraft.application.user.Authority;
 
@@ -71,7 +75,7 @@ public class Menu extends SystemEntity {
 		inverseForeignKey = @ForeignKey(name = "none")
 	)
 	List<Authority> displayAuthorities = new ArrayList<Authority>();
-
+	
 	public Menu() {}
 	
 	public Menu(String id) {
@@ -157,6 +161,5 @@ public class Menu extends SystemEntity {
 	public void setDisplayAuthorities(List<Authority> displayAuthorities) {
 		this.displayAuthorities = displayAuthorities;
 	}
-
 
 }

@@ -52,8 +52,11 @@
 	// checks board properties change
 	board.onBeforeChange(async function(name,value){
 		if(name === 'id'){
-			if(await isDuplicateBoard(value)){
-				board.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
+			try{
+				await validateBoardId(value);
+			}catch(e){
+				await duice.alert( e);
+				board.setFocus('id');
 			}
 		}
 	});
@@ -85,7 +88,6 @@
 	 * Handles visible
 	 */
 	function handleVisible(board){
-		console.log(board.get('categoryUse'));
 		boardCategories.setVisible(board.get('categoryUse'));
 		boardAccessAuthorities.setVisible(board.get('accessPolicy')==='AUTHORIZED'?true:false);
 		boardReadAuthorities.setVisible(board.get('readPolicy')==='AUTHORIZED'?true:false);
@@ -166,8 +168,8 @@
 			if(search.get('status')){
 				data.status = search.get('status');
 			}
-			data.page = search.get('page');
-			data.rows = search.get('rows');
+			data.__page = search.get('page');
+			data.__rows = search.get('rows');
 			$.ajax({
 				 url: 'board/getBoards'
 				,type: 'GET'
@@ -215,29 +217,39 @@
 		board.set('rows', 10);
 		board.setReadonly('id',false);
 		isNew = true;
-		board.setFocus('id');
 		handleVisible(board);
+		board.setFocus('id');
 	}
-	
-	/**
-	 * Returns duplicate board
-	 */
-	function isDuplicateBoard(id){
-		return new Promise(function(resolve, reject){
-			$.ajax({
-				 url: 'board/getBoard'
-				,type: 'GET'
-				,data: {id:id}
-			})
-			.done(function(data, textStatus, jqXHR) {
-				if(data && data.id === id){
-					resolve(true);
+
+		/**
+		 * validateBoardId
+		 */
+		 function validateBoardId(id){
+			return new Promise(function(resolve,reject){
+				if(duice.isEmpty(id)){
+					return reject('[[#{application.global.enterItem(#{application.board.id})}]]');
+				}
+				if(!duice.isIdFormat(id)){
+					return reject('[[#{application.global.notValidItemFormat(#{application.board.id})}]]');
+				}
+				if(isNew){
+					$.ajax({
+						 url: 'board/getBoard'
+						,type: 'GET'
+						,data: {id:id}
+					})
+					.done(function(data, textStatus, jqXHR) {
+						if(data && data.id === id){
+							reject('[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
+						}else{
+							resolve(true);
+						}
+					});
 				}else{
-					resolve(false);
+					resolve(true);
 				}
 			});
-		});
-	}
+		}
 	
 	/**
 	 * Saves board
@@ -249,28 +261,20 @@
 			await duice.alert("[[#{application.global.changeNotFound}]]");
 			return false;
 		}
-		
-		// checks id
-		if(duice.isEmpty(board.get('id'))){
-			board.setFocus('id', '[[#{application.global.enterItem(#{application.board.id})}]]');
+
+		// checks email
+		try{
+			await validateBoardId(board.get('id'));
+		}catch(e){
+			await duice.alert( e);
+			board.setFocus('id');
 			return false;
-		}
-		if(!duice.isIdFormat(board.get('id'))){
-			board.setFocus('id', '[[#{application.global.notValidIdFormat}]]');
-			return false;
-		}
-		
-		// checks new board is existed
-		if(isNew){
-			if(await isDuplicateBoard(board.get('id'))){
-				board.setFocus('id', '[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
-				return false;
-			}
 		}
 		
 		// checks board name
 		if(duice.isEmpty(board.get('name'))){
-			board.setFocus('name', '[[#{application.global.enterItem(#{application.board.name})}]]');
+			await duice.alert('[[#{application.global.enterItem(#{application.board.name})}]]');
+			board.setFocus('name');
 			return false;
 		}
 
@@ -288,8 +292,8 @@
 				,contentType: 'application/json;charset=UTF-8'
 			})
 			.done(function(data, textStatus, jqXHR) {
-				new duice.Alert('[[#{application.global.saveComplete(#{application.board})}]]')
-				.onAfterClose(async function(){
+				duice.alert('[[#{application.global.saveComplete(#{application.board})}]]')
+				.then(async function(){
 					await getBoards();
 					
 					// refresh list and details
@@ -304,8 +308,7 @@
 					}else{
 						getBoard(board.get('id'));
 					}
-				})
-				.open();
+				});
 			});
 		}
 	}
@@ -313,9 +316,8 @@
 	/**
 	 * Deletes board
 	 */
-	function deleteBoard(){
-		new duice.Confirm("[[#{application.global.deleteConfirm(#{application.board})}]]")
-		.onAfterConfirm(function(){
+	async function deleteBoard(){
+		if(await duice.confirm("[[#{application.global.deleteConfirm(#{application.board})}]]")){
 			$.ajax({
 				 url: 'board/deleteBoard'
 				,type: 'DELETE'
@@ -323,14 +325,14 @@
 				,contentType: 'application/json;charset=UTF-8'
 			})
 			.done(function(data, textStatus, jqXHR) {
-					new duice.Alert("[[#{application.global.deleteComplete(#{application.board})}]]")
-					.onAfterClose(async function(){
-						await getBoards();
-						initializeDetail();
-						disableDetail(true);
-					}).open();
+				duice.alert("[[#{application.global.deleteComplete(#{application.board})}]]")
+				.then(async function(){
+					await getBoards();
+					initializeDetail();
+					disableDetail(true);
+				});
 			});
-		}).open();
+		}
 	}
 	
 	/**
@@ -425,7 +427,7 @@
 			<!-- ====================================================== -->
 			<!-- START:List												-->
 			<!-- ====================================================== -->
-			<div id="listDiv" class="app-row">
+			<div id="listDiv" class="app-row panel">
 				<div class="app-col">
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -523,7 +525,7 @@
 			<!-- ====================================================== -->
 			<!-- START:Start Detail										-->
 			<!-- ====================================================== -->
-			<div id="detailDiv" class="app-row">
+			<div id="detailDiv" class="app-row panel">
 				<div class="app-col">	
 					<div class="app-row title">
 						<div class="app-col bottom">
@@ -603,7 +605,7 @@
 										<td>
 											<small>
 												<input is="duice-input" type="number" data-duice-bind="board,fileAllowSize" data-duice-mask="number,0" style="width:100px; font-weight:bold;"/>
-												Mbytes
+												Mb
 											</small>
 										</td>
 									</tr>
@@ -611,6 +613,7 @@
 									
 									<tr>
 										<th>
+											<img class="icon small" th:src="@{/static/image/icon_category.png}"/>
 											<span data-th-text="#{application.board.categoryUse}"></span>
 										</th>
 										<td>
@@ -654,6 +657,7 @@
 									</tr>
 									<tr>
 										<th>
+											<img class="icon small" th:src="@{/static/image/icon_policy.png}"/>
 											<span data-th-text="#{application.board.accessPolicy}"></span>
 										</th>
 										<td>
@@ -698,6 +702,7 @@
 									</tr>
 									<tr>
 										<th>
+											<img class="icon small" th:src="@{/static/image/icon_policy.png}"/>
 											<span data-th-text="#{application.board.readPolicy}"></span>
 										</th>
 										<td>
@@ -742,6 +747,7 @@
 									</tr>
 									<tr>
 										<th>
+											<img class="icon small" th:src="@{/static/image/icon_policy.png}"/>
 											<span data-th-text="#{application.board.writePolicy}"></span>
 										</th>
 										<td>

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
@@ -29,6 +30,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -51,6 +56,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import net.oopscraft.application.api.ApiWebSocketHandler;
 import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.security.AuthenticationFilter;
 import net.oopscraft.application.security.AuthenticationHandler;
 import net.oopscraft.application.security.AuthenticationProvider;
@@ -171,7 +177,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     		http.formLogin()
 				.loginPage("/admin/login")
 				.loginProcessingUrl("/admin/doLogin")
-				.usernameParameter("id")
+				.usernameParameter("username")
 				.passwordParameter("password")
 				.successHandler(authenticationHandler)
 				.failureHandler(authenticationHandler)
@@ -251,7 +257,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 			http.formLogin()
 				.loginPage("/user/login")
 				.loginProcessingUrl("/user/doLogin")
-				.usernameParameter("id")
+				.usernameParameter("username")
 				.passwordParameter("password")
 				.successHandler(authenticationHandler)
 				.failureHandler(authenticationHandler)
@@ -264,6 +270,23 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 				.deleteCookies("JSESSIONID")
 				.permitAll();
         }
+    }
+    
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+    	argumentResolvers.add(new HandlerMethodArgumentResolver() {
+			@Override
+			public boolean supportsParameter(MethodParameter parameter) {
+				return parameter.getParameterType().equals(Pagination.class);
+			}
+			@Override
+			public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+				Pagination pagination = new Pagination();
+				try { pagination.setPage(Integer.parseInt(webRequest.getParameter("__page"))); }catch(Exception ignore) {}
+				try { pagination.setRows(Integer.parseInt(webRequest.getParameter("__rows"))); }catch(Exception ignore) {}
+		        return pagination;
+			}
+    	});
     }
 
 	/**
