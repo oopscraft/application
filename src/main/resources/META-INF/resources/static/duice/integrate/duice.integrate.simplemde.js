@@ -46,7 +46,17 @@ var duice;
             }
             update(map, obj) {
                 var value = map.get(this.getName());
+                // checks value is changed
+                if (value === this.simpleMDE.value()) {
+                    return;
+                }
+                // sets value
                 this.simpleMDE.value(value);
+                // Fixes CodeMirror bug (#344) - refresh not working after value changed.
+                var codemirror = this.simpleMDE.codemirror;
+                setTimeout(function () {
+                    codemirror.refresh();
+                }.bind(codemirror), 0);
             }
             getValue() {
                 var value = this.simpleMDE.value();

@@ -20,6 +20,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
@@ -40,16 +41,20 @@ public class Page extends SystemEntity {
 	@JsonView(List.class)
 	String name;
 	
+	@Column(name="PAGE_DESC", length=Integer.MAX_VALUE)
+	@Lob
+	@JsonView(List.class)
+	String description;
+	
 	public enum Format { HTML, MARKDOWN }
 	@Column(name = "PAGE_FMAT", length = 64)
 	@Enumerated(EnumType.STRING)
 	@JsonView(List.class)
 	Format format;
 	
-	@Column(name="PAGE_DESC", length=Integer.MAX_VALUE)
+	@Column(name="PAGE_CNTS", length=Integer.MAX_VALUE)
 	@Lob
-	@JsonView(List.class)
-	String description;
+	String contents;
 	
 	@Column(name = "READ_PLCY")
 	@Enumerated(EnumType.STRING)
@@ -82,6 +87,7 @@ public class Page extends SystemEntity {
 	@JsonView(List.class)
 	List<Authority> editAuthorities = new ArrayList<Authority>();
 	
+	@JsonIgnore
 	@OneToMany(
 		fetch = FetchType.LAZY, 
 		mappedBy = "id", 
@@ -89,7 +95,7 @@ public class Page extends SystemEntity {
 		orphanRemoval = true
 	)
 	@OrderBy("language")
-	List<PageDetail> details = new ArrayList<PageDetail>();
+	List<PageI18n> i18ns = new ArrayList<PageI18n>();
 	
 	public Page() {}
 	
@@ -129,6 +135,28 @@ public class Page extends SystemEntity {
 		this.format = format;
 	}
 
+	public String getContents() {
+		return contents;
+	}
+	
+	/**
+	 * getContents
+	 * @param language
+	 * @return
+	 */
+	public String getContents(String language) {
+		for(PageI18n i18n : i18ns) {
+			if(i18n.getLanguage().contentEquals(language)) {
+				return i18n.getContents();
+			}
+		}
+		return this.getContents();
+	}
+
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
+
 	public SecurityPolicy getReadPolicy() {
 		return readPolicy;
 	}
@@ -161,12 +189,12 @@ public class Page extends SystemEntity {
 		this.editAuthorities = editAuthorities;
 	}
 
-	public List<PageDetail> getDetails() {
-		return details;
+	public List<PageI18n> getI18ns() {
+		return i18ns;
 	}
 
-	public void setDetails(List<PageDetail> details) {
-		this.details = details;
+	public void setI18ns(List<PageI18n> i18ns) {
+		this.i18ns = i18ns;
 	}
 
 }

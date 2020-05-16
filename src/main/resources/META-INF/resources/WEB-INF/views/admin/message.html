@@ -13,7 +13,7 @@
 		const tabFolder = new duice.TabFolder();
 		const messages = new duice.List();
 		const message = new duice.Map();
-		const messageDetails = new duice.List();
+		const messageI18ns = new duice.List();
 		var isNew = false;
 	
 		// handle when search option is changed.
@@ -63,6 +63,13 @@
 	
 			// creates tab
 			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
+			tabFolder.onAfterSelectTab(function(selectedTab){
+				// tabButton2
+				if(selectedTab.getButton() === document.getElementById('tabButton2')){
+					getMessageI18ns();
+				}
+			});
 			tabFolder.selectTab(0);
 			
 			// gets messages
@@ -84,8 +91,7 @@
 		 * Returns detail changed.
 		 */
 		function isDetailChanged() {
-			if(message.isDirty() 
-			|| messageDetails.isDirty()){
+			if(message.isDirty()){
 				return true;
 			}else{
 				return false;
@@ -97,7 +103,6 @@
 		 */
 		function initializeDetail() {
 			message.fromJson({});
-			messageDetails.fromJson([]);
 		}
 		
 		/**
@@ -105,7 +110,6 @@
 		 */ 
 		function resetDetail() {
 			message.reset();
-			messageDetails.reset();
 		}
 		
 		/**
@@ -113,7 +117,6 @@
 		 */
 		function lockDetails(){
 			message.setReadonlyAll(true);
-			messageDetails.setReadonlyAll(true);
 		}
 		
 		/**
@@ -154,11 +157,11 @@
 			})
 			.done(function(data, textStatus, jqXHR) {
 				message.fromJson(data);
-				messageDetails.fromJson(data.details);
 				disableDetail(false);
 				message.setReadonly('id', true);
 				message.setReadonly('language', true);
 				isNew = false;
+				tabFolder.selectTab(0);
 			});
 		}
 		
@@ -236,7 +239,6 @@
 			.then(function(result){
 				if(result){
 					var data = message.toJson();
-					data.details = messageDetails.toJson();
 					$.ajax({
 						 url: 'message/saveMessage'
 						,type: 'POST'
@@ -296,21 +298,69 @@
 		}
 		
 		/**
-		 * Adds message language
+		 * Getting message i18n
 		 */
-		function addMessageDetail() {
-			var messageDetail = new duice.Map({
-				id: message.get('id')
-			});
-			messageDetails.addRow(messageDetail);
+		function getMessageI18ns() {
+			if(page.get('id')){
+				$.ajax({
+					 url: 'message/getMessageI18ns'
+					,type: 'GET'
+					,data: {id: message.get('id')}
+				})
+				.done(function(data, textStatus, jqXHR) {
+					messageI18ns.fromJson(data);
+				});
+			}
 		}
 		
 		/**
-		 * Removes message language
+		 * addMessageI18n
 		 */
-		function removeMessageDetail(index) {
-			messageDetails.removeRow(index);
+		function addMessageI18n(){
+			var messageI18n = new duice.Map({
+				id: message.get('id'),
+				language: null,
+				value: null
+			});
+			messageI18ns.addRow(messageI18n);
 		}
+		
+		/**
+		 * removeMessageI18n
+		 */
+		function removeMessageI18n(index){
+			messageI18ns.removeRow(index);
+		}
+		
+		/**
+		 * saveMessageI18ns
+		 */
+		async function saveMessageI18ns(){
+			// checks changed
+			if(!messageI18ns.isDirty()){
+				duice.alert("[[#{application.global.changeNotFound}]]");
+				return false;
+			}
+			
+			// process save
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.message.i18n})}]]")){
+				var data = messageI18ns.toJson();
+				$.ajax({
+					 url: 'message/saveMessageI18ns?id=' + message.get('id')
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					var id = data.id;
+					duice.alert('[[#{application.global.saveComplete(#{application.message.i18n})}]]')
+					.then(function(){
+						getMessageI18ns();
+					})
+				});
+			}
+		}
+
 	</script>
 	<div class="app-row">
 		<div class="app-col" style="width:50%;">
@@ -353,13 +403,11 @@
 								<col style="width:10%;"/>					
 								<col/>
 								<col/>
-								<col style="width:10%;"/>
 								<thead>
 									<tr>
 										<th data-th-text="#{application.global.no}" class="text-center"></th>
 										<th data-th-text="#{application.message.id}"></th>
 										<th data-th-text="#{application.message.name}"></th>
-										<th data-th-text="#{application.message.detail}" class="text-center"></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -372,13 +420,6 @@
 										</td>
 										<td><span is="duice-span" data-duice-bind="message,id" class="id [@duice[$context.message.get('systemEmbedded') === true ? 'embd' : '']]"></span></td>
 										<td><span is="duice-span" data-duice-bind="message,name"></span></td>
-										<td class="text-center">
-											<small is="duice-scriptlet" data-duice-bind="message" data-duice-value="
-												return $context.message.get('details').length;
-											">
-											</small>
-										</td>
-
 									</tr>
 								</tbody>
 							</table>						
@@ -420,7 +461,11 @@
 						<div class="app-col bottom">
 							<span id="tabButton1" class="tab">
 								<img class="icon small" th:src="@{/static/image/icon_message.png}"/>
-								<span data-th-text="#{application.message} + ' ' + #{application.global.detail}"></span>
+								<span data-th-text="#{application.message} + ' ' + #{application.global.details}"></span>
+							</span>
+							<span id="tabButton2" class="tab">
+								<img class="icon small" th:src="@{/static/image/icon_language.png}"/>
+								<span data-th-text="#{application.global.i18n}"></span>
 							</span>
 						</div>
 					</div>
@@ -443,49 +488,11 @@
 									</tr>
 									<tr>
 										<th data-th-text="#{application.message.description}">Description</th>
-										<td><textarea is="duice-textarea" data-duice-bind="message,description" style="height:100px;"></textarea></td>
+										<td><textarea is="duice-textarea" data-duice-bind="message,description" ></textarea></td>
 									</tr>
 									<tr>
-										<th>
-											<img class="icon small" th:src="@{/static/image/icon_detail.png}"/>
-											<span data-th-text="#{application.message.detail}"></span>
-										</th>
-										<td>
-											<div style="width:100%; max-height:1024px; overflow-y:scroll;">
-												<table is="duice-table" 
-												data-duice-bind="messageDetails,detail" 
-												style="width:100%;">
-													<col style="width:20%;"/>
-													<col/>
-													<col style="width:5%;"/>
-													<thead>
-														<tr>
-															<th data-th-text="#{application.message.detail.language}">Language</th>
-															<th data-th-text="#{application.message.detail.value}">Value</th>
-															<th class="text-center">
-																<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addMessageDetail();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MESG_EDIT'')')}?'lock'">
-															</th>
-														</tr>
-													</thead>
-													<tbody>
-														<tr>
-															<td>
-																<select is="duice-select" data-duice-bind="detail,language" style="height:50px;">
-																	<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
-																	<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
-																</select>
-															</td>
-															<td>
-																<textarea is="duice-textarea" data-duice-bind="detail,value" style="height:50px;"></textarea>
-															</td>
-															<td class="text-center">
-																<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeMessageDetail(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MESG_EDIT'')')}?'lock'">
-															</td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-										</td>
+										<th data-th-text="#{application.message.value}">Value</th>
+										<td><textarea is="duice-textarea" data-duice-bind="message,value" style="height:100px;"></textarea></td>
 									</tr>
 								</tbody>
 							</table>
@@ -505,6 +512,68 @@
 					</div>
 					<!-- ====================================================== -->
 					<!-- END: End tabContent1									-->
+					<!-- ====================================================== -->
+					<!-- ====================================================== -->
+					<!-- START: Start tabContent2								-->
+					<!-- ====================================================== -->
+					<div id="tabContent2" class="app-row">
+						<div class="app-col">
+							<div style="width:100%; max-height:800px; overflow-y:scroll; border:solid 1px #dee2e6;">
+								<table is="duice-table" 
+									data-duice-bind="messageI18ns,i18n" 
+									style="width:100%; border:none;">
+									<col/>
+									<col style="width:5%;"/>
+									<thead>
+										<tr>
+											<th class="text-center" data-th-text="#{application.message.i18n}"></th>
+											<th class="text-center">
+												<img class="icon small button" th:src="@{/static/image/icon_add.png}" onclick="addMessageI18n();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MESG_EDIT'')')}?'lock'"/>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+												<table class="table" style="width:100%;">
+													<col style="width:25%;"/>
+													<col/>
+													<tbody>
+														<tr>
+															<th data-th-text="#{application.message.i18n.language}" class="mand">Language</th>
+															<td>
+																<select is="duice-select" data-duice-bind="i18n,language">
+																	<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
+																	<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
+																</select>
+															</td>
+														</tr>
+														<tr>
+															<th data-th-text="#{application.message.i18n.value}">Value</th>
+															<td><textarea is="duice-textarea" data-duice-bind="i18n,value" style="height:100px;"></textarea></td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
+											<td class="text-center">
+												<img class="icon small button" th:src="@{/static/image/icon_remove.png}" data-index="[@duice[$context.index]]" onclick="removeMessageI18n(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MESG_EDIT'')')}?'lock'"/>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="app-row action">
+								<div class="app-col right">
+									<button class="button large" onclick="saveMessageI18ns();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MESG_EDIT'')')}?'lock'">
+										<img th:src="@{/static/image/icon_save.png}" class="icon"/>
+										<span data-th-text="#{application.global.save}"></span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- ====================================================== -->
+					<!-- END: End tabContent2									-->
 					<!-- ====================================================== -->
 				</div>
 			</div>

@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import net.oopscraft.application.core.IdGenerator;
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.jpa.SystemEmbeddedException;
+import net.oopscraft.application.message.Message;
+import net.oopscraft.application.message.MessageI18n;
 
 @Service
 public class PageService {
@@ -66,8 +68,9 @@ public class PageService {
 			one = new Page(IdGenerator.uuid());
 		}
 		one.setName(page.getName());
-		one.setFormat(page.getFormat());
 		one.setDescription(page.getDescription());
+		one.setFormat(page.getFormat());
+		one.setContents(page.getContents());
 		
 		// read policy
 		one.setReadPolicy(page.getReadPolicy());
@@ -78,13 +81,6 @@ public class PageService {
 		one.setEditPolicy(page.getEditPolicy());
 		one.getEditAuthorities().clear();
 		one.getEditAuthorities().addAll(page.getEditAuthorities());
-		
-		// details
-		one.getDetails().clear();
-		for(PageDetail pageDetail : page.getDetails()){
-			pageDetail.setId(one.getId());
-			one.getDetails().add(pageDetail);
-		}
 		
 		// returns
 		return pageRepository.save(one);
@@ -101,6 +97,35 @@ public class PageService {
 			throw new SystemEmbeddedException();
 		}
 		pageRepository.delete(one);
-	}	
+	}
+	
+	/**
+	 * Returns message i18ns
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public List<PageI18n> getPageI18ns(String id) throws Exception {
+		Page one = pageRepository.findOne(id);
+		return one.getI18ns();
+	}
+	
+	/**
+	 * saveMessageI18ns
+	 * @param id
+	 * @param messageI18ns
+	 * @return
+	 * @throws Exception
+	 */
+	public List<PageI18n> savePageI18ns(String id, List<PageI18n> pageI18ns) throws Exception {
+		Page one = pageRepository.findOne(id);
+		one.getI18ns().clear();
+		for(PageI18n element : pageI18ns) {
+			element.setId(id);
+			one.getI18ns().add(element);
+		}
+		one = pageRepository.save(one);
+		return one.getI18ns();
+	}
 
 }

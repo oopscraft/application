@@ -20,7 +20,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.message.Message;
+import net.oopscraft.application.message.MessageI18n;
 import net.oopscraft.application.page.Page;
+import net.oopscraft.application.page.PageI18n;
 import net.oopscraft.application.page.PageService;
 import net.oopscraft.application.security.SecurityPolicy;
 
@@ -105,6 +108,34 @@ public class PageController {
 	@Transactional
 	public void deletePage(@RequestBody Page page) throws Exception {
 		pageService.deletePage(page);
+	}
+	
+	/**
+	 * getMessageI18ns
+	 * @param page
+	 * @return
+	 * @throws Exception
+	 */
+	@PreAuthorize("hasAuthority('ADMN_PAGE_EDIT')")
+	@RequestMapping(value = "getPageI18ns", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public List<PageI18n> getPageI18ns(@ModelAttribute Page page) throws Exception {
+		return pageService.getPageI18ns(page.getId());
+	}
+	
+	/**
+	 * saveMessageI18ns
+	 * @param page
+	 * @param messageI18ns
+	 * @return
+	 * @throws Exception
+	 */
+	@PreAuthorize("hasAuthority('ADMN_PAGE_EDIT')")
+	@RequestMapping(value = "savePageI18ns", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional
+	public List<PageI18n> savePageI18ns(@ModelAttribute Page page, @RequestBody List<PageI18n> pageI18ns) throws Exception {
+		return pageService.savePageI18ns(page.getId(), pageI18ns);
 	}
 
 }

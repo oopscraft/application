@@ -1,4 +1,4 @@
-package net.oopscraft.application.page;
+package net.oopscraft.application.message;
 
 import java.io.Serializable;
 
@@ -8,22 +8,16 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import net.oopscraft.application.core.jpa.SystemEntity;
-import net.oopscraft.application.message.MessageDetail;
 
 @Entity
-@Table(name = "APP_PAGE_DETL")
-@IdClass(MessageDetail.Pk.class)
-public class PageDetail extends SystemEntity {
-
+@Table(name = "APP_MESG_I18N")
+@IdClass(MessageI18n.Pk.class)
+public class MessageI18n {
+	
 	public static class Pk implements Serializable {
-
-		private static final long serialVersionUID = -5084946285734554813L;
+		private static final long serialVersionUID = -8409789656417268895L;
 		String id;
 		String language;
-		
 		public Pk() {}
 		public Pk(String id, String language) {
 			this.id = id;
@@ -71,27 +65,26 @@ public class PageDetail extends SystemEntity {
 			return true;
 		}
 	}
-	
+
 	@Id
-	@Column(name="PAGE_ID", length=32)
+	@Column(name = "MESG_ID", length = 32)
 	String id;
 
 	@Id
-	@Column(name="PAGE_LANG", length=32)
-	@NotNull
+	@Column(name = "MESG_LANG", length = 32)
 	String language;
 	
-	@Column(name="PAGE_CNTS", length=Integer.MAX_VALUE)
+	@Column(name = "MESG_VAL", length = Integer.MAX_VALUE)
 	@Lob
-	String contents;
-
-	public PageDetail() {}
+	String value;
 	
-	public PageDetail(String id, String language) {
+	public MessageI18n() {}
+	
+	public MessageI18n(String id, String language) {
 		this.id = id;
 		this.language = language;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -108,12 +101,12 @@ public class PageDetail extends SystemEntity {
 		this.language = language;
 	}
 
-	public String getContents() {
-		return contents;
+	public String getValue() {
+		return value;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
+	public void setValue(String value) {
+		this.value = value;
 	}
 	
 }

@@ -1,4 +1,4 @@
-package net.oopscraft.application.message;
+package net.oopscraft.application.page;
 
 import java.io.Serializable;
 
@@ -8,16 +8,22 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import net.oopscraft.application.core.jpa.SystemEntity;
+import net.oopscraft.application.message.MessageI18n;
 
 @Entity
-@Table(name = "APP_MESG_DETL")
-@IdClass(MessageDetail.Pk.class)
-public class MessageDetail {
-	
+@Table(name = "APP_PAGE_I18N")
+@IdClass(MessageI18n.Pk.class)
+public class PageI18n extends SystemEntity {
+
 	public static class Pk implements Serializable {
-		private static final long serialVersionUID = -8409789656417268895L;
+
+		private static final long serialVersionUID = -5084946285734554813L;
 		String id;
 		String language;
+		
 		public Pk() {}
 		public Pk(String id, String language) {
 			this.id = id;
@@ -65,26 +71,27 @@ public class MessageDetail {
 			return true;
 		}
 	}
-
+	
 	@Id
-	@Column(name = "MESG_ID", length = 32)
+	@Column(name="PAGE_ID", length=32)
 	String id;
 
 	@Id
-	@Column(name = "MESG_LANG", length = 32)
+	@Column(name="PAGE_LANG", length=32)
+	@NotNull
 	String language;
 	
-	@Column(name = "MESG_VAL", length = Integer.MAX_VALUE)
+	@Column(name="PAGE_CNTS", length=Integer.MAX_VALUE)
 	@Lob
-	String value;
+	String contents;
+
+	public PageI18n() {}
 	
-	public MessageDetail() {}
-	
-	public MessageDetail(String id, String language) {
+	public PageI18n(String id, String language) {
 		this.id = id;
 		this.language = language;
 	}
-
+	
 	public String getId() {
 		return id;
 	}
@@ -101,12 +108,12 @@ public class MessageDetail {
 		this.language = language;
 	}
 
-	public String getValue() {
-		return value;
+	public String getContents() {
+		return contents;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setContents(String contents) {
+		this.contents = contents;
 	}
 	
 }

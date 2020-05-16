@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.message.Message;
+import net.oopscraft.application.message.MessageI18n;
 import net.oopscraft.application.message.MessageService;
 
 @PreAuthorize("hasAuthority('ADMN_MESG')")
@@ -50,16 +50,8 @@ public class MessageController {
 	 */
 	@RequestMapping(value = "getMessages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Message> getMessages(
-		 @RequestParam(value="id", required=false) String id
-		,@RequestParam(value="name", required=false) String name
-		,Pagination pagination
-		,HttpServletResponse response
-	) throws Exception {
+	public List<Message> getMessages(@ModelAttribute Message message, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
-		Message message = new Message();
-		message.setId(id);
-		message.setName(name);
 		List<Message> messages = messageService.getMessages(message, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
 		return messages;
@@ -73,8 +65,8 @@ public class MessageController {
 	 */
 	@RequestMapping(value = "getMessage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public Message getMessage(@RequestParam(value="id", required=false) String id) throws Exception {
-		return messageService.getMessage(id);
+	public Message getMessage(@ModelAttribute Message message) throws Exception {
+		return messageService.getMessage(message.getId());
 	}
 
 	/**
@@ -86,7 +78,7 @@ public class MessageController {
 	@PreAuthorize("hasAuthority('ADMN_MESG_EDIT')")
 	@RequestMapping(value = "saveMessage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional
 	public Message saveMessage(@RequestBody Message message) throws Exception {
 		return messageService.saveMessage(message);
 	}
@@ -99,9 +91,37 @@ public class MessageController {
 	@PreAuthorize("hasAuthority('ADMN_MESG_EDIT')")
 	@RequestMapping(value = "deleteMessage", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteMessage(@RequestParam(value="id", required=false) String id) throws Exception {
-		messageService.deleteMessage(new Message(id));
+	@Transactional
+	public void deleteMessage(@ModelAttribute Message message) throws Exception {
+		messageService.deleteMessage(message);
+	}
+	
+	/**
+	 * getMessageI18ns
+	 * @param message
+	 * @return
+	 * @throws Exception
+	 */
+	@PreAuthorize("hasAuthority('ADMN_MESG_EDIT')")
+	@RequestMapping(value = "getMessageI18ns", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public List<MessageI18n> getMessageI18ns(@ModelAttribute Message message) throws Exception {
+		return messageService.getMesageI18ns(message.getId());
+	}
+	
+	/**
+	 * saveMessageI18ns
+	 * @param message
+	 * @param messageI18ns
+	 * @return
+	 * @throws Exception
+	 */
+	@PreAuthorize("hasAuthority('ADMN_MESG_EDIT')")
+	@RequestMapping(value = "saveMessageI18ns", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional
+	public List<MessageI18n> saveMessageI18ns(@ModelAttribute Message message, @RequestBody List<MessageI18n> messageI18ns) throws Exception {
+		return messageService.saveMessageI18ns(message.getId(), messageI18ns);
 	}
 
 }

@@ -12,7 +12,6 @@ body {
 }
 body {
 	overflow-y: scroll;
-	background-color: #f9f9f9;
 }
 h1 { 
 	color: #111; 
@@ -46,13 +45,10 @@ a:hover {
 	padding: 0px;
 }
 .app-row.panel {
-	border: solid 2px #eee;
-    border-radius: 2px;
-    padding: 1rem;
-    background-color: white;
+    padding: 5px;
 }
 .app-row.title {
-	border-bottom: solid 2px #eee;
+	border-bottom: solid 1px #eee;
 	height: 3rem;
 }
 .app-row.search {
@@ -126,6 +122,15 @@ a:hover {
 }
 .text-right {
 	text-align: right;
+}
+.text-top {
+	vertical-align: top;
+}
+.text-middle {
+	vertical-align: middle;
+}
+.text-bottom {
+	vertical-align: bottom;
 }
 .banner {
 	height: 24px;

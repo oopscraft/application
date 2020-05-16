@@ -90,10 +90,7 @@ public class MessageService {
 		}
 		one.setName(message.getName());
 		one.setDescription(message.getDescription());
-		one.getDetails().clear();
-		for(MessageDetail detail : message.getDetails()) {
-			one.getDetails().add(detail);
-		}
+		one.setValue(message.getValue());
 		return messageRepository.save(one);
 	}
 	
@@ -108,6 +105,35 @@ public class MessageService {
 			throw new SystemEmbeddedException();
 		}
 		messageRepository.delete(one);
+	}
+	
+	/**
+	 * Returns message i18ns
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public List<MessageI18n> getMesageI18ns(String id) throws Exception {
+		Message one = messageRepository.findOne(id);
+		return one.getI18ns();
+	}
+	
+	/**
+	 * saveMessageI18ns
+	 * @param id
+	 * @param messageI18ns
+	 * @return
+	 * @throws Exception
+	 */
+	public List<MessageI18n> saveMessageI18ns(String id, List<MessageI18n> messageI18ns) throws Exception {
+		Message one = messageRepository.findOne(id);
+		one.getI18ns().clear();
+		for(MessageI18n element : messageI18ns) {
+			element.setId(id);
+			one.getI18ns().add(element);
+		}
+		one = messageRepository.save(one);
+		return one.getI18ns();
 	}
 
 }

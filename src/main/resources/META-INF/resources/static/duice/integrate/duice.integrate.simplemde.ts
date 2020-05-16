@@ -29,7 +29,7 @@ namespace duice {
             div:HTMLDivElement;
             config:any;
             textarea:HTMLTextAreaElement;
-            simpleMDE:object;
+            simpleMDE:any;
             constructor(div:HTMLDivElement, config:any){
                 super(div);
                 this.div = div;
@@ -50,7 +50,19 @@ namespace duice {
             }
             update(map:duice.Map, obj:object){
                 var value = map.get(this.getName());
+
+                // checks value is changed
+                if(value === this.simpleMDE.value()){
+                	return;
+                }
+
+                // sets value
                 this.simpleMDE.value(value);
+                // Fixes CodeMirror bug (#344) - refresh not working after value changed.
+            	var codemirror = this.simpleMDE.codemirror;
+            	setTimeout(function() {
+            		codemirror.refresh();
+            	}.bind(codemirror), 0);
             }
             getValue():any {
                 var value = this.simpleMDE.value();

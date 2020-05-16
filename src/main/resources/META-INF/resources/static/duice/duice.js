@@ -90,6 +90,7 @@ var duice;
                 for (var i = 0, size = elements.length; i < size; i++) {
                     var element = elements[i];
                     if (componentDefinition.getFactoryClass().prototype instanceof factoryType) {
+                        // creates component
                         var factoryInstance = Object.create(componentDefinition.getFactoryClass().prototype);
                         factoryInstance.setContext($context);
                         factoryInstance.getComponent(element);
@@ -364,6 +365,23 @@ var duice;
         }
     }
     duice.executeExpression = executeExpression;
+    /**
+     * Executes function from code.
+     * @param code
+     * @param $context
+     */
+    function executeFunction(code, $context) {
+        try {
+            const func = Function('$context', '"use strict";' + code + '');
+            var result = func($context);
+            return result;
+        }
+        catch (e) {
+            console.error(code);
+            throw e;
+        }
+    }
+    duice.executeFunction = executeFunction;
     /**
      * Escapes HTML tag from string value
      * @param value
@@ -1571,13 +1589,13 @@ var duice;
         }
         /**
          * Updates data from observable instance
-         * @param UiComponent
+         * @param mapComponent
          * @param obj
          */
-        update(UiComponent, obj) {
-            console.debug('Map.update', UiComponent, obj);
-            var name = UiComponent.getName();
-            var value = UiComponent.getValue();
+        update(mapComponent, obj) {
+            console.debug('Map.update', mapComponent, obj);
+            var name = mapComponent.getName();
+            var value = mapComponent.getValue();
             this.set(name, value);
         }
         /**
@@ -1747,8 +1765,8 @@ var duice;
          * @param observable
          * @param obj
          */
-        update(observable, obj) {
-            console.debug('List.update', observable, obj);
+        update(listComponent, obj) {
+            console.debug('List.update', listComponent, obj);
             this.setChanged();
             this.notifyObservers(obj);
         }
@@ -2232,14 +2250,7 @@ var duice;
             }
         }
         update(dataObject, obj) {
-            try {
-                const func = Function('$context', '"use strict";' + this.expression + '');
-                var result = func(this.context);
-            }
-            catch (e) {
-                console.error(this.expression);
-                throw e;
-            }
+            var result = executeFunction(this.expression, this.context);
             this.element.innerHTML = '';
             this.element.appendChild(document.createTextNode(result));
             this.element.style.display = 'unset';

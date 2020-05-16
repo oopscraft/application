@@ -21,7 +21,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
-import net.oopscraft.application.message.MessageDetail;
+import net.oopscraft.application.message.MessageI18n;
 import net.oopscraft.application.security.SecurityPolicy;
 import net.oopscraft.application.user.Authority;
 
