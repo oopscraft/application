@@ -3,8 +3,8 @@
 /// <reference path="./ckeditor/ckeditor.js" />
 var duice;
 (function (duice) {
-    let integrate;
-    (function (integrate) {
+    let plugin;
+    (function (plugin) {
         /**
          * duice.plugin.CkeditorFactory
          */
@@ -20,7 +20,7 @@ var duice;
                 return ckEditor;
             }
         }
-        integrate.CkeditorFactory = CkeditorFactory;
+        plugin.CkeditorFactory = CkeditorFactory;
         /**
          * duice.plugin.Ckeditor
          */
@@ -28,6 +28,7 @@ var duice;
             constructor(div, config) {
                 super(div);
                 this.div = div;
+                this.div.classList.add('duice-plugin-ckeditor');
                 this.config = config;
                 this.textarea = document.createElement('textarea');
                 this.div.appendChild(this.textarea);
@@ -42,15 +43,22 @@ var duice;
             }
             update(map, obj) {
                 var value = map.get(this.getName());
-                this.ckeditor.setData(value);
+                // check value is empty
+                if (!value) {
+                    value = '';
+                }
+                // sets value
+                if (value !== this.ckeditor.getData()) {
+                    this.ckeditor.setData(value);
+                }
             }
             getValue() {
                 var value = this.ckeditor.getData();
                 return value;
             }
         }
-        integrate.Ckeditor = Ckeditor;
+        plugin.Ckeditor = Ckeditor;
         // Adds component definition
-        duice.ComponentDefinitionRegistry.add(new duice.ComponentDefinition('div[is="duice-integrate-ckeditor"]', duice.integrate.CkeditorFactory));
-    })(integrate = duice.integrate || (duice.integrate = {}));
+        duice.ComponentDefinitionRegistry.add(new duice.ComponentDefinition('div[is="duice-plugin-ckeditor"]', duice.plugin.CkeditorFactory));
+    })(plugin = duice.plugin || (duice.plugin = {}));
 })(duice || (duice = {}));

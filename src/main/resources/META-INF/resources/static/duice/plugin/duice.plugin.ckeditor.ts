@@ -4,7 +4,7 @@
 
 namespace duice {
 
-    export namespace integrate {
+    export namespace plugin {
 
         /**
          * duice.plugin.CkeditorFactory
@@ -33,6 +33,7 @@ namespace duice {
             constructor(div:HTMLDivElement, config:any){
                 super(div);
                 this.div = div;
+                this.div.classList.add('duice-plugin-ckeditor');
                 this.config = config;
                 this.textarea = document.createElement('textarea');
                 this.div.appendChild(this.textarea);
@@ -47,7 +48,16 @@ namespace duice {
             }
             update(map:duice.Map, obj:object){
                 var value = map.get(this.getName());
-                this.ckeditor.setData(value);
+
+                // check value is empty
+                if(!value){
+                    value = '';
+                }
+                
+                // sets value
+                if(value !== this.ckeditor.getData()){
+                    this.ckeditor.setData(value);
+                }
             }
             getValue():any {
                 var value = this.ckeditor.getData();
@@ -56,7 +66,7 @@ namespace duice {
         }
 
         // Adds component definition
-        duice.ComponentDefinitionRegistry.add(new duice.ComponentDefinition('div[is="duice-integrate-ckeditor"]', duice.integrate.CkeditorFactory));
+        duice.ComponentDefinitionRegistry.add(new duice.ComponentDefinition('div[is="duice-plugin-ckeditor"]', duice.plugin.CkeditorFactory));
 
     }
 
