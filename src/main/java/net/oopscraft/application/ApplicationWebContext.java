@@ -3,7 +3,11 @@ package net.oopscraft.application;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.commons.lang3.LocaleUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +18,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -39,8 +44,11 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.resource.GzipResourceResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -82,16 +90,25 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigurer {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationWebContext.class);
+	
+	public static final String ACCESS_TOKEN_HEADER_NAME = "X-ACCESS-TOKEN";
+	public static final String CSRF_TOKEN_HEADER_NAME = "X-CSRF-TOKEN";
+	public static final String LOCALE_HEADER_NAME = "X-LOCALE";
+	
     static AuthenticationProvider authenticationProvider;
     static AuthenticationHandler authenticationHandler;
     static AuthenticationFilter authenticationFilter;
-	
+    static CookieCsrfTokenRepository cookieCsrfTokenRepository;
     static ThymeleafViewResolver viewResolver;
     static 	SpringResourceTemplateResolver templateResolver;
     static 	TemplateEngine templateEngine;
 
     @Value("${application.securityPolicy:AUTHENTICATED}")
     private SecurityPolicy securityPolicy;
+    
+	@Autowired
+	private Environment environment;
     
 	@Autowired
 	ApiWebSocketHandler apiWebSocketHandler;
@@ -137,7 +154,39 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 		authenticationFilter = new AuthenticationFilter();
 		return authenticationFilter;
 	}
+	
+	@Bean
+	public CookieCsrfTokenRepository csrfTokenRepository() throws Exception {
+		cookieCsrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+		cookieCsrfTokenRepository.setCookieName(CSRF_TOKEN_HEADER_NAME);
+		cookieCsrfTokenRepository.setHeaderName(CSRF_TOKEN_HEADER_NAME);
+		return cookieCsrfTokenRepository;
+	}
+	
+	@Bean
+	public CookieLocaleResolver localeResolver() throws Exception {
+		CookieLocaleResolver localeResolver = new CookieLocaleResolver();
+		try {
+			localeResolver.setCookieName(LOCALE_HEADER_NAME);
+			String locales = environment.getProperty("application.locales");
+			String defaultLocale = locales.split(",")[0];
+			localeResolver.setDefaultLocale(LocaleUtils.toLocale(defaultLocale));
+		}catch(Exception ignore) {
+			LOGGER.warn(ignore.getMessage());
+			localeResolver.setDefaultLocale(Locale.getDefault());	
+		}
+		return localeResolver;
+	}
 
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**")
+        	.addResourceLocations("/static/")
+        	.setCachePeriod(3600)
+        	.resourceChain(true)
+        	.addResolver(new GzipResourceResolver());
+	}
+	
     /**
      * Static resource security configuration
      */
@@ -170,7 +219,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 	    		.anyRequest()
 	    		.authenticated();
     		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+    		http.csrf().csrfTokenRepository(csrfTokenRepository());
 	    	http.authenticationProvider(authenticationProvider);
 	    	http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
 	    	http.exceptionHandling().authenticationEntryPoint(authenticationHandler);
@@ -186,7 +235,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 				.logoutUrl("/admin/logout")
 				.logoutSuccessUrl("/admin/login")
 				.invalidateHttpSession(true)
-				.deleteCookies("JSESSIONID")
+				.deleteCookies(ACCESS_TOKEN_HEADER_NAME)
 				.logoutSuccessHandler(authenticationHandler)
 				.permitAll();
         }
@@ -251,7 +300,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     		}
     		
     		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+    		http.csrf().csrfTokenRepository(csrfTokenRepository());
     		http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
     		http.authenticationProvider(authenticationProvider);
 			http.formLogin()
@@ -267,7 +316,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 				.logoutSuccessHandler(authenticationHandler)
 				.logoutSuccessUrl("/user/login")
 				.invalidateHttpSession(true)
-				.deleteCookies("JSESSIONID")
+				.deleteCookies(ACCESS_TOKEN_HEADER_NAME)
 				.permitAll();
         }
     }

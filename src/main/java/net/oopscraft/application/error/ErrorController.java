@@ -100,21 +100,6 @@ public class ErrorController {
 	}
 	
 	/**
-	 * 403 - Handling SystemEmbeddedException
-	 * @param request
-	 * @param response
-	 * @param exception
-	 * @throws Exception
-	 */
-	@ExceptionHandler(SystemEmbeddedException.class)
-	public ModelAndView handleSystemEmbeddedException(HttpServletRequest request, HttpServletResponse response, SystemEmbeddedException exception) throws Exception {
-		Error error = errorService.createError(exception, request);
-		error.setMessage(messageSource.getMessage("application.global.exception.SystemEmbeddedException", null, localeResolver.resolveLocale(request)));
-		error.setStatusCode(HttpServletResponse.SC_FORBIDDEN);
-		return responseError(request, response, error);
-	}
-	
-	/**
 	 * 403 - Handling Authorization Error
 	 * @param request
 	 * @param response
@@ -146,6 +131,21 @@ public class ErrorController {
 		}
 		error.setMessage(message.toString());
 		error.setStatusCode(HttpServletResponse.SC_BAD_REQUEST);
+		return responseError(request, response, error);
+	}
+	
+	/**
+	 * 403 - Handling SystemEmbeddedException
+	 * @param request
+	 * @param response
+	 * @param exception
+	 * @throws Exception
+	 */
+	@ExceptionHandler(SystemEmbeddedException.class)
+	public ModelAndView handleSystemEmbeddedException(HttpServletRequest request, HttpServletResponse response, SystemEmbeddedException exception) throws Exception {
+		Error error = errorService.createError(exception, request);
+		error.setMessage(messageSource.getMessage("application.global.exception.SystemEmbeddedException", null, localeResolver.resolveLocale(request)));
+		error.setStatusCode(HttpServletResponse.SC_FORBIDDEN);
 		return responseError(request, response, error);
 	}
 	

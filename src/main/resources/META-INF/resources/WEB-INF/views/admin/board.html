@@ -2,425 +2,425 @@
 <html layout:decorate="~{admin/admin.html}">
 <div layout:fragment="content">
 	<script>
-	// defines variables 
-	const search = new duice.Map({
-		key: null,
-		value: null,
-		status: null,
-		page: 1,
-		rows: 20,
-		totalCount: -1
-	});
-	const tabFolder = new duice.TabFolder();
-	const boards = new duice.List();
-	const board = new duice.Map();
-	const boardCategories = new duice.List();
-	const boardAccessAuthorities = new duice.List();
-	const boardReadAuthorities = new duice.List();
-	const boardWriteAuthorities = new duice.List();
-	boards.setReadonlyAll(true);
-	boardAccessAuthorities.setReadonlyAll(true);
-	boardReadAuthorities.setReadonlyAll(true);
-	boardWriteAuthorities.setReadonlyAll(true);
-	var isNew = false;
-
-	// handle when search option is changed.
-	search.onAfterChange(function(name, value){
-		// if select all option, reset value. 
-		if(name === 'key' && !value){
-			search.set('value',null);				
-		}
-	});
+		// defines variables 
+		const search = new duice.Map({
+			key: null,
+			value: null,
+			status: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		const tabFolder = new duice.TabFolder();
+		const boards = new duice.List();
+		const board = new duice.Map();
+		const boardCategories = new duice.List();
+		const boardAccessAuthorities = new duice.List();
+		const boardReadAuthorities = new duice.List();
+		const boardWriteAuthorities = new duice.List();
+		boards.setReadonlyAll(true);
+		boardAccessAuthorities.setReadonlyAll(true);
+		boardReadAuthorities.setReadonlyAll(true);
+		boardWriteAuthorities.setReadonlyAll(true);
+		var isNew = false;
 	
-	// checks when select row is changed.
-	boards.onBeforeSelectRow(async function(selectedRow){
-		if(isDetailChanged()){
-			if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
-				resetDetail();
+		// handle when search option is changed.
+		search.onAfterChange(function(name, value){
+			// if select all option, reset value. 
+			if(name === 'key' && !value){
+				search.set('value',null);				
+			}
+		});
+		
+		// checks when select row is changed.
+		boards.onBeforeSelectRow(async function(selectedRow){
+			if(isDetailChanged()){
+				if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
+					resetDetail();
+					return true;
+				}else{
+					return false;
+				}
+			}
+		});
+		
+		// event listener for select row
+		boards.onAfterSelectRow(function(selectedRow){
+			getBoard(selectedRow.get('id'));
+		});
+		
+		// checks board properties change
+		board.onBeforeChange(async function(name,value){
+			if(name === 'id'){
+				try{
+					await validateBoardId(value);
+				}catch(e){
+					await duice.alert( e);
+					board.setFocus('id');
+				}
+			}
+		});
+	
+		// listens board changes
+		board.onAfterChange(function(){
+			handleVisible(this);
+		});
+		
+		// document ready
+		$(document).ready(function() {
+			
+			// checks authorization
+			if([[${!#authorization.expression('hasAuthority("ADMN_BORD_EDIT")')}]]){
+				lockDetails();
+			}
+			
+			// creates tab
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+			tabFolder.selectTab(0);
+			
+			// gets boards
+			getBoards();
+		    disableDetail(true);
+		});
+		
+	
+		/**
+		 * Handles visible
+		 */
+		function handleVisible(board){
+			boardCategories.setVisible(board.get('categoryUse'));
+			boardAccessAuthorities.setVisible(board.get('accessPolicy')==='AUTHORIZED'?true:false);
+			boardReadAuthorities.setVisible(board.get('readPolicy')==='AUTHORIZED'?true:false);
+			boardWriteAuthorities.setVisible(board.get('writePolicy')==='AUTHORIZED'?true:false);
+		}
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			board.setDisableAll(disable);
+			$('#detailDiv').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
+		}
+		
+		/**
+		 * Returns detail changed.
+		 */
+		function isDetailChanged() {
+			if(board.isDirty()
+			|| boardCategories.isDirty()
+			|| boardAccessAuthorities.isDirty()
+			|| boardReadAuthorities.isDirty()
+			|| boardWriteAuthorities.isDirty()
+			){
 				return true;
 			}else{
 				return false;
 			}
 		}
-	});
+		
+		/**
+		 * Initializes detail
+		 */
+		function initializeDetail() {
+			board.fromJson({});
+			boardCategories.fromJson([]);
+			boardAccessAuthorities.fromJson([]);
+			boardReadAuthorities.fromJson([]);
+			boardWriteAuthorities.fromJson([]);
+		}
+		
+		/**
+		 * Resets detail
+		 */ 
+		function resetDetail() {
+			board.reset();
+			boardCategories.reset();
+			boardAccessAuthorities.reset();
+			boardReadAuthorities.reset();
+			boardWriteAuthorities.reset();
+		}
+		
+		/**
+		 * Lock details
+		 */
+		function lockDetails(){
+			board.setReadonlyAll(true);
+			boardCategories.setReadonlyAll(true);
+			boardAccessAuthorities.setReadonlyAll(true);
+			boardReadAuthorities.setReadonlyAll(true);
+			boardWriteAuthorities.setReadonlyAll(true);
+		}
+		
+		/**
+		 * Gets boards
+		 */
+		function getBoards(page) {
+			return new Promise(function(resolve,reject){
+				if(page){
+					search.set('page',page);
+				}
+				var data = {};
+				if(search.get('key')){
+					data[search.get('key')] = search.get('value');
+				}
+				if(search.get('status')){
+					data.status = search.get('status');
+				}
+				data.__page = search.get('page');
+				data.__rows = search.get('rows');
+				$.ajax({
+					 url: 'board/getBoards'
+					,type: 'GET'
+					,data: data
+				})
+				.done(function(data, textStatus, jqXHR) {
+					boards.fromJson(data);
+					search.set('totalCount', __parseTotalCount(jqXHR));
+					resolve(true);
+			   	});
+			});
+		}
+		
+		/**
+		 * Gets specified board
+		 */
+		function getBoard(id){
+			$.ajax({
+				 url: 'board/getBoard'
+				,type: 'GET'
+				,data: {id:id}
+			})
+			.done(function(data, textStatus, jqXHR) {
+				board.fromJson(data);
+				boardCategories.fromJson(data.categories);
+				boardAccessAuthorities.fromJson(data.accessAuthorities);
+				boardReadAuthorities.fromJson(data.readAuthorities);
+				boardWriteAuthorities.fromJson(data.writeAuthorities);
+				disableDetail(false);
+				board.setReadonly('id', true);
+				$('#passwordTr').hide();
+				$('#passwordConfirmTr').hide();
+				isNew = false;
+				handleVisible(board);
+			});
+		}
+		
+		/**
+		 * Adds board
+		 */
+		function addBoard() {
+			initializeDetail();
+			disableDetail(false);
+			board.set('skin', 'default');
+			board.set('rows', 10);
+			board.setReadonly('id',false);
+			isNew = true;
+			handleVisible(board);
+			board.setFocus('id');
+		}
 	
-	// event listener for select row
-	boards.onAfterSelectRow(function(selectedRow){
-		getBoard(selectedRow.get('id'));
-	});
+			/**
+			 * validateBoardId
+			 */
+			 function validateBoardId(id){
+				return new Promise(function(resolve,reject){
+					if(duice.isEmpty(id)){
+						return reject('[[#{application.global.enterItem(#{application.board.id})}]]');
+					}
+					if(!duice.isIdFormat(id)){
+						return reject('[[#{application.global.notValidItemFormat(#{application.board.id})}]]');
+					}
+					if(isNew){
+						$.ajax({
+							 url: 'board/getBoard'
+							,type: 'GET'
+							,data: {id:id}
+						})
+						.done(function(data, textStatus, jqXHR) {
+							if(data && data.id === id){
+								reject('[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
+							}else{
+								resolve(true);
+							}
+						});
+					}else{
+						resolve(true);
+					}
+				});
+			}
+		
+		/**
+		 * Saves board
+		 */
+		async function saveBoard(){
+			
+			// checks changes
+			if(isNew === false && isDetailChanged() === false) {
+				await duice.alert("[[#{application.global.changeNotFound}]]");
+				return false;
+			}
 	
-	// checks board properties change
-	board.onBeforeChange(async function(name,value){
-		if(name === 'id'){
+			// checks email
 			try{
-				await validateBoardId(value);
+				await validateBoardId(board.get('id'));
 			}catch(e){
 				await duice.alert( e);
 				board.setFocus('id');
+				return false;
 			}
-		}
-	});
-
-	// listens board changes
-	board.onAfterChange(function(){
-		handleVisible(this);
-	});
-	
-	// document ready
-	$(document).ready(function() {
-		
-		// checks authorization
-		if([[${!#authorization.expression('hasAuthority("ADMN_BORD_EDIT")')}]]){
-			lockDetails();
-		}
-		
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.selectTab(0);
-		
-		// gets boards
-		getBoards();
-	    disableDetail(true);
-	});
-	
-
-	/**
-	 * Handles visible
-	 */
-	function handleVisible(board){
-		boardCategories.setVisible(board.get('categoryUse'));
-		boardAccessAuthorities.setVisible(board.get('accessPolicy')==='AUTHORIZED'?true:false);
-		boardReadAuthorities.setVisible(board.get('readPolicy')==='AUTHORIZED'?true:false);
-		boardWriteAuthorities.setVisible(board.get('writePolicy')==='AUTHORIZED'?true:false);
-	}
-	
-	/**
-	 * Disables detail
-	 */
-	function disableDetail(disable){
-		board.setDisable(disable);
-		$('#detailDiv').find('button').each(function(index, element){
-			$(element).prop('disabled', disable);
-		});
-	}
-	
-	/**
-	 * Returns detail changed.
-	 */
-	function isDetailChanged() {
-		if(board.isDirty()
-		|| boardCategories.isDirty()
-		|| boardAccessAuthorities.isDirty()
-		|| boardReadAuthorities.isDirty()
-		|| boardWriteAuthorities.isDirty()
-		){
-			return true;
-		}else{
-			return false;
-		}
-	}
-	
-	/**
-	 * Initializes detail
-	 */
-	function initializeDetail() {
-		board.fromJson({});
-		boardCategories.fromJson([]);
-		boardAccessAuthorities.fromJson([]);
-		boardReadAuthorities.fromJson([]);
-		boardWriteAuthorities.fromJson([]);
-	}
-	
-	/**
-	 * Resets detail
-	 */ 
-	function resetDetail() {
-		board.reset();
-		boardCategories.reset();
-		boardAccessAuthorities.reset();
-		boardReadAuthorities.reset();
-		boardWriteAuthorities.reset();
-	}
-	
-	/**
-	 * Lock details
-	 */
-	function lockDetails(){
-		board.setReadonlyAll(true);
-		boardCategories.setReadonlyAll(true);
-		boardAccessAuthorities.setReadonlyAll(true);
-		boardReadAuthorities.setReadonlyAll(true);
-		boardWriteAuthorities.setReadonlyAll(true);
-	}
-	
-	/**
-	 * Gets boards
-	 */
-	function getBoards(page) {
-		return new Promise(function(resolve,reject){
-			if(page){
-				search.set('page',page);
+			
+			// checks board name
+			if(duice.isEmpty(board.get('name'))){
+				await duice.alert('[[#{application.global.enterItem(#{application.board.name})}]]');
+				board.setFocus('name');
+				return false;
 			}
-			var data = {};
-			if(search.get('key')){
-				data[search.get('key')] = search.get('value');
-			}
-			if(search.get('status')){
-				data.status = search.get('status');
-			}
-			data.__page = search.get('page');
-			data.__rows = search.get('rows');
-			$.ajax({
-				 url: 'board/getBoards'
-				,type: 'GET'
-				,data: data
-			})
-			.done(function(data, textStatus, jqXHR) {
-				boards.fromJson(data);
-				search.set('totalCount', __parseTotalCount(jqXHR));
-				resolve(true);
-		   	});
-		});
-	}
 	
-	/**
-	 * Gets specified board
-	 */
-	function getBoard(id){
-		$.ajax({
-			 url: 'board/getBoard'
-			,type: 'GET'
-			,data: {id:id}
-		})
-		.done(function(data, textStatus, jqXHR) {
-			board.fromJson(data);
-			boardCategories.fromJson(data.categories);
-			boardAccessAuthorities.fromJson(data.accessAuthorities);
-			boardReadAuthorities.fromJson(data.readAuthorities);
-			boardWriteAuthorities.fromJson(data.writeAuthorities);
-			disableDetail(false);
-			board.setReadonly('id', true);
-			$('#passwordTr').hide();
-			$('#passwordConfirmTr').hide();
-			isNew = false;
-			handleVisible(board);
-		});
-	}
-	
-	/**
-	 * Adds board
-	 */
-	function addBoard() {
-		initializeDetail();
-		disableDetail(false);
-		board.set('skin', 'default');
-		board.set('rows', 10);
-		board.setReadonly('id',false);
-		isNew = true;
-		handleVisible(board);
-		board.setFocus('id');
-	}
-
-		/**
-		 * validateBoardId
-		 */
-		 function validateBoardId(id){
-			return new Promise(function(resolve,reject){
-				if(duice.isEmpty(id)){
-					return reject('[[#{application.global.enterItem(#{application.board.id})}]]');
-				}
-				if(!duice.isIdFormat(id)){
-					return reject('[[#{application.global.notValidItemFormat(#{application.board.id})}]]');
-				}
-				if(isNew){
-					$.ajax({
-						 url: 'board/getBoard'
-						,type: 'GET'
-						,data: {id:id}
-					})
-					.done(function(data, textStatus, jqXHR) {
-						if(data && data.id === id){
-							reject('[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
+			// enters save process
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.board})}]]")){
+				var data = board.toJson();
+				data.categories = boardCategories.toJson();
+				data.accessAuthorities = boardAccessAuthorities.toJson();
+				data.readAuthorities = boardReadAuthorities.toJson();
+				data.writeAuthorities = boardWriteAuthorities.toJson();
+				$.ajax({
+					 url: 'board/saveBoard'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					duice.alert('[[#{application.global.saveComplete(#{application.board})}]]')
+					.then(async function(){
+						await getBoards();
+						
+						// refresh list and details
+						var index = boards.indexOf(function(row){
+							if(row.get('id') === board.get('id')){
+								return true;
+							}
+						});
+						if(index > -1){
+							initializeDetail();
+							boards.selectRow(index);
 						}else{
-							resolve(true);
+							getBoard(board.get('id'));
 						}
 					});
-				}else{
-					resolve(true);
+				});
+			}
+		}
+		
+		/**
+		 * Deletes board
+		 */
+		async function deleteBoard(){
+			if(await duice.confirm("[[#{application.global.deleteConfirm(#{application.board})}]]")){
+				$.ajax({
+					 url: 'board/deleteBoard'
+					,type: 'DELETE'
+					,data: JSON.stringify(board.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					duice.alert("[[#{application.global.deleteComplete(#{application.board})}]]")
+					.then(async function(){
+						await getBoards();
+						initializeDetail();
+						disableDetail(true);
+					});
+				});
+			}
+		}
+		
+		/**
+		 * Adds board category
+		 */
+		function addBoardCategory() {
+			var boardCategory = new duice.Map({
+				boardId: board.get('id')
+			});
+			boardCategories.addRow(boardCategory);
+		}
+		
+		/**
+		 * Removes authority
+		 */
+		function removeBoardCategory(index){
+			boardCategories.removeRow(index);
+		}
+		
+		/**
+		 * Adds board access authority
+		 */
+		function addBoardAccessAuthority(){
+			__authorityDialog.open({
+				disabledAuthorities: boardAccessAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						boardAccessAuthorities.addRow(new duice.Map(selectedAuthority));
+					});
 				}
 			});
 		}
-	
-	/**
-	 * Saves board
-	 */
-	async function saveBoard(){
 		
-		// checks changes
-		if(isNew === false && isDetailChanged() === false) {
-			await duice.alert("[[#{application.global.changeNotFound}]]");
-			return false;
-		}
-
-		// checks email
-		try{
-			await validateBoardId(board.get('id'));
-		}catch(e){
-			await duice.alert( e);
-			board.setFocus('id');
-			return false;
+		/**
+		 * Removes board access authority
+		 */
+		function removeBoardAccessAuthority(index){
+			boardAccessAuthorities.removeRow(index);
 		}
 		
-		// checks board name
-		if(duice.isEmpty(board.get('name'))){
-			await duice.alert('[[#{application.global.enterItem(#{application.board.name})}]]');
-			board.setFocus('name');
-			return false;
-		}
-
-		// enters save process
-		if(await duice.confirm("[[#{application.global.saveConfirm(#{application.board})}]]")){
-			var data = board.toJson();
-			data.categories = boardCategories.toJson();
-			data.accessAuthorities = boardAccessAuthorities.toJson();
-			data.readAuthorities = boardReadAuthorities.toJson();
-			data.writeAuthorities = boardWriteAuthorities.toJson();
-			$.ajax({
-				 url: 'board/saveBoard'
-				,type: 'POST'
-				,data: JSON.stringify(data)
-				,contentType: 'application/json;charset=UTF-8'
-			})
-			.done(function(data, textStatus, jqXHR) {
-				duice.alert('[[#{application.global.saveComplete(#{application.board})}]]')
-				.then(async function(){
-					await getBoards();
-					
-					// refresh list and details
-					var index = boards.indexOf(function(row){
-						if(row.get('id') === board.get('id')){
-							return true;
-						}
+		/**
+		 * Adds board read authority
+		 */
+		function addBoardReadAuthority(){
+			__authorityDialog.open({
+				disabledAuthorities: boardReadAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						boardReadAuthorities.addRow(new duice.Map(selectedAuthority));
 					});
-					if(index > -1){
-						initializeDetail();
-						boards.selectRow(index);
-					}else{
-						getBoard(board.get('id'));
-					}
-				});
+				}
 			});
 		}
-	}
-	
-	/**
-	 * Deletes board
-	 */
-	async function deleteBoard(){
-		if(await duice.confirm("[[#{application.global.deleteConfirm(#{application.board})}]]")){
-			$.ajax({
-				 url: 'board/deleteBoard'
-				,type: 'DELETE'
-				,data: JSON.stringify(board.toJson())
-				,contentType: 'application/json;charset=UTF-8'
-			})
-			.done(function(data, textStatus, jqXHR) {
-				duice.alert("[[#{application.global.deleteComplete(#{application.board})}]]")
-				.then(async function(){
-					await getBoards();
-					initializeDetail();
-					disableDetail(true);
-				});
+		
+		/**
+		 * Removes board write authority
+		 */
+		function removeBoardReadAuthority(index){
+			boardReadAuthorities.removeRow(index);
+		}
+		
+		/**
+		 * Adds board write authority
+		 */
+		function addBoardWriteAuthority(){
+			__authorityDialog.open({
+				disabledAuthorities: boardWriteAuthorities,
+				onAfterConfirm: function(selectedAuthorities){
+					selectedAuthorities.forEach(function(selectedAuthority){
+						boardWriteAuthorities.addRow(new duice.Map(selectedAuthority));
+					});
+				}
 			});
 		}
-	}
-	
-	/**
-	 * Adds board category
-	 */
-	function addBoardCategory() {
-		var boardCategory = new duice.Map({
-			boardId: board.get('id')
-		});
-		boardCategories.addRow(boardCategory);
-	}
-	
-	/**
-	 * Removes authority
-	 */
-	function removeBoardCategory(index){
-		boardCategories.removeRow(index);
-	}
-	
-	/**
-	 * Adds board access authority
-	 */
-	function addBoardAccessAuthority(){
-		__authorityDialog.open({
-			disabledAuthorities: boardAccessAuthorities,
-			onAfterConfirm: function(selectedAuthorities){
-				selectedAuthorities.forEach(function(selectedAuthority){
-					boardAccessAuthorities.addRow(new duice.Map(selectedAuthority));
-				});
-			}
-		});
-	}
-	
-	/**
-	 * Removes board access authority
-	 */
-	function removeBoardAccessAuthority(index){
-		boardAccessAuthorities.removeRow(index);
-	}
-	
-	/**
-	 * Adds board read authority
-	 */
-	function addBoardReadAuthority(){
-		__authorityDialog.open({
-			disabledAuthorities: boardReadAuthorities,
-			onAfterConfirm: function(selectedAuthorities){
-				selectedAuthorities.forEach(function(selectedAuthority){
-					boardReadAuthorities.addRow(new duice.Map(selectedAuthority));
-				});
-			}
-		});
-	}
-	
-	/**
-	 * Removes board write authority
-	 */
-	function removeBoardReadAuthority(index){
-		boardReadAuthorities.removeRow(index);
-	}
-	
-	/**
-	 * Adds board write authority
-	 */
-	function addBoardWriteAuthority(){
-		__authorityDialog.open({
-			disabledAuthorities: boardWriteAuthorities,
-			onAfterConfirm: function(selectedAuthorities){
-				selectedAuthorities.forEach(function(selectedAuthority){
-					boardWriteAuthorities.addRow(new duice.Map(selectedAuthority));
-				});
-			}
-		});
-	}
-	
-	/**
-	 * Removes board write authority
-	 */
-	function removeBoardWriteAuthority(index){
-		boardWriteAuthorities.removeRow(index);
-	}
-	
-	/**
-	 * Opens board
-	 */
-	function openBoard(){
-		window.open('/board/' + board.get('id'));
-	}
+		
+		/**
+		 * Removes board write authority
+		 */
+		function removeBoardWriteAuthority(index){
+			boardWriteAuthorities.removeRow(index);
+		}
+		
+		/**
+		 * Opens board
+		 */
+		function openBoard(){
+			window.open('/board/' + board.get('id'));
+		}
 	</script>
 	<div class="app-row">
 		<div class="app-col" style="width:50%;">
@@ -575,10 +575,8 @@
 									<tr>
 										<th><span data-th-text="#{application.board.rows}"></span></th>
 										<td>
-											<small>
-												<input is="duice-input" type="number" data-duice-bind="board,rows" data-duice-mask="number,0" style="width:100px; font-weight:bold;"/>
-												Rows
-											</small>
+											<input is="duice-input" type="number" data-duice-bind="board,rows" data-duice-mask="number,0" style="width:100px; font-variant:all-small-caps; font-weight:bold;"/>
+											<small>Rows</small>
 										</td>
 									</tr>
 									<tr>
@@ -594,23 +592,19 @@
 									<tr>
 										<th><span data-th-text="#{application.board.fileAllowCount}"></span></th>
 										<td>
-											<small>
-												<input is="duice-input" type="number" data-duice-bind="board,fileAllowCount" data-duice-mask="number,0" style="width:100px; font-weight:bold;"/>
-												Files
-											</small>
+											
+											<input is="duice-input" type="number" data-duice-bind="board,fileAllowCount" data-duice-mask="number,0" style="width:100px; font-variant:all-small-caps; font-weight:bold;"/>
+											<small>Files</small>
 										</td>
 									</tr>
 									<tr>
 										<th><span data-th-text="#{application.board.fileAllowSize}"></span></th>
 										<td>
-											<small>
-												<input is="duice-input" type="number" data-duice-bind="board,fileAllowSize" data-duice-mask="number,0" style="width:100px; font-weight:bold;"/>
-												Mb
-											</small>
+											
+											<input is="duice-input" type="number" data-duice-bind="board,fileAllowSize" data-duice-mask="number,0" style="width:100px; font-variant:all-small-caps; font-weight:bold;"/>
+											<small>Mb</small>
 										</td>
 									</tr>
-									
-									
 									<tr>
 										<th>
 											<img class="icon small" th:src="@{/static/image/icon_category.png}"/>

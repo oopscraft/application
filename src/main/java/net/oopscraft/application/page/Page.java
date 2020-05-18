@@ -46,7 +46,7 @@ public class Page extends SystemEntity {
 	@JsonView(List.class)
 	String description;
 	
-	public enum Format { HTML, MARKDOWN }
+	public enum Format { MARKDOWN, HTML }
 	@Column(name = "PAGE_FMAT", length = 64)
 	@Enumerated(EnumType.STRING)
 	@JsonView(List.class)

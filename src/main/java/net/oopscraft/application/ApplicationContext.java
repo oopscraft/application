@@ -251,18 +251,6 @@ public class ApplicationContext {
 		return messageSource;
 	}
 
-	@Bean
-	public CookieLocaleResolver localeResolver() throws Exception {
-		CookieLocaleResolver localeResolver = new CookieLocaleResolver();
-		try {
-			String locales = environment.getProperty("application.locales");
-			String defaultLocale = locales.split(",")[0];
-			localeResolver.setDefaultLocale(LocaleUtils.toLocale(defaultLocale));
-		}catch(Exception ignore) {
-			LOGGER.warn(ignore.getMessage());
-			localeResolver.setDefaultLocale(Locale.getDefault());	
-		}
-		return localeResolver;
-	}
+
 
 }

@@ -80,6 +80,7 @@
 			pageReadAuthorities.setVisible(page.get('readPolicy')==='AUTHORIZED'?true:false);
 			pageEditAuthorities.setVisible(page.get('editPolicy')==='AUTHORIZED'?true:false);
 			
+			// changes contents editor.
 			if(page.get('format') === 'MARKDOWN'){
 				document.getElementById('contentsMarkdown').style.display = 'block';
 				document.getElementById('contentsHtml').style.display = 'none';
@@ -105,6 +106,7 @@
 			if(page.isDirty()
 			|| pageReadAuthorities.isDirty()
 			|| pageEditAuthorities.isDirty()
+			|| pageI18ns.isDirty()
 			){
 				return true;
 			}else{
@@ -119,6 +121,7 @@
 			page.fromJson({});
 			pageReadAuthorities.fromJson([]);
 			pageEditAuthorities.fromJson([]);
+			pageI18ns.fromJson([]);
 		}
 		
 		/**
@@ -128,6 +131,7 @@
 			page.reset();
 			pageReadAuthorities.reset();
 			pageEditAuthorities.reset();
+			pageI18ns.reset();
 		}
 		
 		/**
@@ -137,6 +141,7 @@
 			page.setReadonlyAll(true);
 			pageReadAuthorities.setReadonlyAll(true);
 			pageEditAuthorities.setReadonlyAll(true);
+			pageI18ns.setReadonlyAll(true);
 		}
 		
 		/**
@@ -196,6 +201,10 @@
 			initializeDetail();
 			disableDetail(false);
 			isNew = true;
+			page.setReadonly('name',false);
+			page.set('format', 'MARKDOWN');
+			page.set('readPolicy', 'ANONYMOUS');
+			page.set('editPolicy', 'AUTHORIZED');
 			handleVisible(page);
 			page.setFocus('name');
 		}
@@ -393,8 +402,12 @@
 				});
 			}
 		}
-		
 	</script>
+	<style>
+		.duice-plugin-simplemde .CodeMirror {
+			height: 300px;
+		}
+	</style>
 	<div class="app-row">
 		<div class="app-col" style="width:50%;">
 			<!-- ====================================================== -->
@@ -435,7 +448,7 @@
 								style="width:100%;">
 								<col style="width:10%;"/>					
 								<col/>
-								<col style="width:20%;"/>
+								<col style="width:150px;"/>
 								<thead>
 									<tr>
 										<th data-th-text="#{application.global.no}" class="text-center">No</th>
@@ -455,7 +468,7 @@
 											<span is="duice-span" data-duice-bind="page,name" class="id"></span>
 										</td>
 										<td>
-											<select is="duice-select" data-duice-bind="page,format">
+											<select is="duice-select" data-duice-bind="page,format" class="id">
 												<option th:each="format:${Format}" th:value="${format}" th:text="#{'application.page.format.'+${format}}"></option>
 											</select>
 										</td>
@@ -522,14 +535,9 @@
 										<td><input is="duice-input" type="text" data-duice-bind="page,name" class="id"/></td>
 									</tr>
 									<tr>
-										<th data-th-text="#{application.page.description}">Profile</th>
-										<td><textarea is="duice-textarea" data-duice-bind="page,description" style="height:100px;"></textarea></td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.page.format}">Format</th>
+										<th data-th-text="#{application.page.format}" class="mand">Format</th>
 										<td>
-											<select is="duice-select" data-duice-bind="page,format">
-												<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
+											<select is="duice-select" data-duice-bind="page,format" class="id">
 												<option th:each="format:${Format}" th:value="${format}" th:text="#{'application.page.format.'+${format}}"></option>
 											</select>
 										</td>
@@ -539,9 +547,13 @@
 											<span data-th-text="#{application.page.contents}"></span>
 										</th>
 										<td>
-											<div id="contentsMarkdown" is="duice-integrate-simplemde" data-duice-bind="page,contents" data-duice-if="return ($context.page.get('format') == 'MARKDOWN' ? true : false);"></div>
-											<div id="contentsHtml" is="duice-integrate-ckeditor" data-duice-bind="page,contents"></div>
+											<div id="contentsMarkdown" is="duice-plugin-simplemde" data-duice-bind="page,contents" style="display:none;"></div>
+											<div id="contentsHtml" is="duice-plugin-ckeditor" data-duice-bind="page,contents" style="display:none;"></div>
 										</td>
+									</tr>
+									<tr>
+										<th data-th-text="#{application.page.description}">Profile</th>
+										<td><textarea is="duice-textarea" data-duice-bind="page,description" style="height:100px;"></textarea></td>
 									</tr>
 									<tr>
 										<th>
@@ -550,7 +562,6 @@
 										</th>
 										<td>
 											<select is="duice-select" data-duice-bind="page,readPolicy">
-												<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
 												<option th:each="securityPolicy:${SecurityPolicy}" th:value="${securityPolicy}" th:text="#{'application.global.securityPolicy.'+${securityPolicy}}"></option>
 											</select>
 											<table is="duice-table" 
@@ -595,7 +606,6 @@
 										</th>
 										<td>
 											<select is="duice-select" data-duice-bind="page,editPolicy">
-												<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
 												<option th:each="securityPolicy:${SecurityPolicy}" th:value="${securityPolicy}" th:text="#{'application.global.securityPolicy.'+${securityPolicy}}"></option>
 											</select>
 											<table is="duice-table" 
@@ -663,7 +673,7 @@
 					<!-- ====================================================== -->
 					<div id="tabContent2" class="app-row">
 						<div class="app-col">
-							<div style="width:100%; max-height:800px; overflow-y:scroll; border:solid 1px #dee2e6;">
+							<div style="width:100%; border:solid 1px #dee2e6;">
 								<table is="duice-table" 
 									data-duice-bind="pageI18ns,i18n" 
 									style="width:100%; border:none;">
@@ -687,17 +697,17 @@
 														<tr>
 															<th data-th-text="#{application.page.i18n.language}" class="mand">Language</th>
 															<td>
-																<select is="duice-select" data-duice-bind="i18n,language">
+																<select is="duice-select" data-duice-bind="i18n,language" class="id">
 																	<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
 																	<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
 																</select>
 															</td>
 														</tr>
 														<tr>
-															<th data-th-text="#{application.page.i18n.value}">Value</th>
+															<th data-th-text="#{application.page.i18n.contents}">Value</th>
 															<td>
-																<div is="duice-integrate-simplemde" data-duice-bind="i18n,contents" style="display:[@duice[page.get('format') === 'MARKDOWN' ? 'block' : 'none']]"></div>
-																<div is="duice-integrate-ckeditor" data-duice-bind="i18n,contents" style="display:[@duice[page.get('format') === 'HTML' ? 'block' : 'none']]"></div>
+																<div is="duice-plugin-simplemde" data-duice-bind="i18n,contents" style="display:[@duice[page.get('format') === 'MARKDOWN' ? 'block' : 'none']];"></div>
+																<div is="duice-plugin-ckeditor" data-duice-bind="i18n,contents" style="display:[@duice[page.get('format') === 'HTML' ? 'block' : 'none']]";></div>
 															</td>
 														</tr>
 													</tbody>

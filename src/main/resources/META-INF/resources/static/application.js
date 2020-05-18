@@ -10,8 +10,8 @@ $(document).ajaxStart(function(event) {
 // If not configure, "Provisional headers are shown" error found in CHROME.
 $(document).ajaxSend(function(event, jqXHR, settings) {
 	console.debug('$(document).ajaxSend',event,jqXHR,settings);
-	var csrfToken = duice.getCookie('XSRF-TOKEN');
-	jqXHR.setRequestHeader("X-XSRF-TOKEN",csrfToken);
+	var csrfToken = duice.getCookie('X-CSRF-TOKEN');
+	jqXHR.setRequestHeader("X-CSRF-TOKEN",csrfToken);
 	jqXHR.setRequestHeader('Cache-Control','no-cache, no-store, must-revalidate');
 	jqXHR.setRequestHeader('Pragma','no-cache');
 	jqXHR.setRequestHeader('Expires','0');

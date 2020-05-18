@@ -20,8 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import net.oopscraft.application.core.Pagination;
-import net.oopscraft.application.message.Message;
-import net.oopscraft.application.message.MessageI18n;
 import net.oopscraft.application.page.Page;
 import net.oopscraft.application.page.PageI18n;
 import net.oopscraft.application.page.PageService;
@@ -60,11 +58,7 @@ public class PageController {
 	@RequestMapping(value = "getPages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@JsonView(List.class)
-	public List<Page> getPages(
-		 @ModelAttribute Page page
-		,Pagination pagination
-		,HttpServletResponse response
-	) throws Exception {
+	public List<Page> getPages(@ModelAttribute Page page, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Page> properties = pageService.getPages(page, pagination);
 		pagination.setContentRangeHeader(response);

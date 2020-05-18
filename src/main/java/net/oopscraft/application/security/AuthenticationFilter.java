@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
+import net.oopscraft.application.ApplicationWebContext;
 import net.oopscraft.application.utility.StringUtility;
 
 public class AuthenticationFilter extends GenericFilterBean   {
@@ -37,11 +38,11 @@ public class AuthenticationFilter extends GenericFilterBean   {
         LOGGER.debug("[{}][{}]",  method, uri);
         
         // JWT Token
-        String accessToken = request.getHeader("X-Access-Token");
+        String accessToken = request.getHeader(ApplicationWebContext.ACCESS_TOKEN_HEADER_NAME);
         if(StringUtils.isBlank(accessToken)) {
         	if(request.getCookies() != null) {
 		        for(Cookie cookie : request.getCookies()) {
-		        	if("X-Access-Token".equals(cookie.getName())) {
+		        	if(ApplicationWebContext.ACCESS_TOKEN_HEADER_NAME.equals(cookie.getName())) {
 		        		accessToken = cookie.getValue();
 		        	}
 		        }
@@ -59,8 +60,8 @@ public class AuthenticationFilter extends GenericFilterBean   {
         		
         		// keep alive
         		accessToken = authenticationProvider.encodeAccessToken(userDetails);
-    			response.setHeader("X-Access-Token", accessToken);
-    			Cookie cookie = new Cookie("X-Access-Token", accessToken);
+    			response.setHeader(ApplicationWebContext.ACCESS_TOKEN_HEADER_NAME, accessToken);
+    			Cookie cookie = new Cookie(ApplicationWebContext.ACCESS_TOKEN_HEADER_NAME, accessToken);
     			cookie.setPath("/");
     			cookie.setHttpOnly(true);
     			response.addCookie(cookie);

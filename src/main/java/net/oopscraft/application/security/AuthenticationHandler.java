@@ -27,6 +27,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.servlet.LocaleResolver;
 
+import net.oopscraft.application.ApplicationWebContext;
 import net.oopscraft.application.user.UserLogin;
 import net.oopscraft.application.user.UserLoginRepository;
 
@@ -62,8 +63,8 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 			
 			// issue JWT access token.
 	        String accessToken = authenticationProvider.encodeAccessToken(userDetails);
-			response.setHeader("X-Access-Token", accessToken);
-			Cookie cookie = new Cookie("X-Access-Token", accessToken);
+			response.setHeader("X-ACCESS-TOKEN", accessToken);
+			Cookie cookie = new Cookie(ApplicationWebContext.ACCESS_TOKEN_HEADER_NAME, accessToken);
 			cookie.setPath("/");
 			cookie.setHttpOnly(true);
 			response.addCookie(cookie);
