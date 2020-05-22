@@ -35,14 +35,14 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		
-		// user name is email
-		String username = authentication.getName();
+		// name is email
+		String email = authentication.getName();
 		String password = (String) authentication.getCredentials();
 		
 		// retrieves user data
 		User user = null;
 		try {
-			user = userService.getUserByEmail(username);
+			user = userService.getUserByEmail(email);
 			if(user == null) {
 				throw new UsernameNotFoundException("User not found");
 			}

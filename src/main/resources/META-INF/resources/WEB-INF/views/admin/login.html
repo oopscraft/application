@@ -23,7 +23,7 @@
 		<script>
 		// defines variables 
 		const user = new duice.Map({
-			username: null,
+			email: null,
 			password: null
 		});
 		
@@ -39,9 +39,9 @@
 		function doLogin(){
 			
 			// checks input id
-			if(duice.isEmpty(user.get('username'))){
-				printMessage('[[#{application.global.enterItem(#{application.user.id})}]]');
-				user.setFocus('username');
+			if(duice.isEmpty(user.get('email'))){
+				printMessage('[[#{application.global.enterItem(#{application.user.email})}]]');
+				user.setFocus('email');
 				return false;
 			}
 			
@@ -84,7 +84,7 @@
 		<div class="app-row" style="width:300px; margin-bottom:200px;">
 			<div class="app-col">
 				<img th:src="@{/static/image/application.png}"/>
-				<input is="duice-input" type="text" data-duice-bind="user,username" style="margin:1px;"/>
+				<input is="duice-input" type="text" data-duice-bind="user,email" style="margin:1px;"/>
 				<input is="duice-input" type="password" data-duice-bind="user,password" style="margin:1px;"/>
 				<button id="loginButton" class="button" onclick="doLogin();" style="width:100%; margin:1px;">
 					<img class="icon" th:src="@{/static/image/icon_login.png}"/>

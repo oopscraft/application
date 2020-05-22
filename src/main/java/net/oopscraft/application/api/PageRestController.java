@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +15,6 @@ import org.springframework.web.servlet.LocaleResolver;
 
 import net.oopscraft.application.page.Page;
 import net.oopscraft.application.page.PageService;
-import net.oopscraft.application.security.UserDetails;
 
 @CrossOrigin
 @RestController
@@ -30,7 +28,7 @@ public class PageRestController {
 	LocaleResolver localeResolver;
 	
 	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Page getMenu(@PathVariable("id") String id) throws Exception {
+	public Page getMenu(@PathVariable("id") String id, HttpServletRequest request) throws Exception {
 		Page page = pageService.getPage(id);
 		
 		// translate menu

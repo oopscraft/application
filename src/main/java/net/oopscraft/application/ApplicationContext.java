@@ -145,6 +145,7 @@ public class ApplicationContext {
 			vendorAdapter.setGenerateDdl(true);
 			jpaProperties.setProperty(AvailableSettings.HBM2DDL_AUTO, "create-drop");
 			jpaProperties.setProperty(AvailableSettings.HBM2DDL_IMPORT_FILES, "/net/oopscraft/application/import.sql");
+			jpaProperties.setProperty(AvailableSettings.HBM2DDL_IMPORT_FILES_SQL_EXTRACTOR, org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor.class.getName());
 		}else {
 			vendorAdapter.setGenerateDdl(false);
 		}

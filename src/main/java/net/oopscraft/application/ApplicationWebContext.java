@@ -226,7 +226,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     		http.formLogin()
 				.loginPage("/admin/login")
 				.loginProcessingUrl("/admin/doLogin")
-				.usernameParameter("username")
+				.usernameParameter("email")
 				.passwordParameter("password")
 				.successHandler(authenticationHandler)
 				.failureHandler(authenticationHandler)

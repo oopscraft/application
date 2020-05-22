@@ -25,11 +25,14 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.LocaleResolver;
 
 import net.oopscraft.application.ApplicationWebContext;
+import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserLogin;
 import net.oopscraft.application.user.UserLoginRepository;
+import net.oopscraft.application.user.UserService;
 
 public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, LogoutSuccessHandler {
 	
@@ -46,6 +49,9 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 	LocaleResolver localeResolver;
 	
 	@Autowired
+	UserService userService;
+	
+	@Autowired
 	UserLoginRepository userLoginRepository;
 	
 	@Autowired
@@ -59,7 +65,7 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 		try {
-	        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
 			
 			// issue JWT access token.
 	        String accessToken = authenticationProvider.encodeAccessToken(userDetails);
@@ -75,15 +81,19 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 			}
 			
 			// Saves Login History
-			UserLogin userLogin = new UserLogin();
-			userLogin.setUserId(userDetails.getUsername());
-			userLogin.setDate(new Date());
-			userLogin.setSuccessYn("Y");
-			userLogin.setFailReason(null);
-			userLogin.setIp(request.getRemoteAddr());
-			userLogin.setAgent(request.getHeader("User-Agent"));
-			userLogin.setReferer(request.getHeader("referer"));
-			userLoginRepository.saveAndFlush(userLogin);
+			try {
+				UserLogin userLogin = new UserLogin();
+				userLogin.setUserId(userDetails.getUsername());
+				userLogin.setDate(new Date());
+				userLogin.setSuccessYn("Y");
+				userLogin.setFailReason(null);
+				userLogin.setIp(request.getRemoteAddr());
+				userLogin.setAgent(request.getHeader("User-Agent"));
+				userLogin.setReferer(request.getHeader("referer"));
+				userLoginRepository.saveAndFlush(userLogin);
+			}catch(Exception ignore) {
+				LOGGER.warn(ignore.getMessage(), ignore);
+			}
 			
 			// sets response header
 			response.setStatus(HttpServletResponse.SC_OK);
@@ -117,16 +127,21 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 		out.write(message.getBytes());
 		
 		// Saves Login History
-		if(exception instanceof UsernameNotFoundException == false) {
-			UserLogin userLogin = new UserLogin();
-			userLogin.setUserId(request.getParameter("username"));
-			userLogin.setDate(new Date());
-			userLogin.setSuccessYn("N");
-			userLogin.setFailReason(message);
-			userLogin.setIp(request.getRemoteAddr());
-			userLogin.setAgent(request.getHeader("User-Agent"));
-			userLogin.setReferer(request.getHeader("referer"));
-			userLoginRepository.saveAndFlush(userLogin);
+		if(exception instanceof BadCredentialsException) {
+			try {
+				UserLogin userLogin = new UserLogin();
+				User user = userService.getUserByEmail(request.getParameter("email"));
+				userLogin.setUserId(user.getId());
+				userLogin.setDate(new Date());
+				userLogin.setSuccessYn("N");
+				userLogin.setFailReason(message);
+				userLogin.setIp(request.getRemoteAddr());
+				userLogin.setAgent(request.getHeader("User-Agent"));
+				userLogin.setReferer(request.getHeader("referer"));
+				userLoginRepository.saveAndFlush(userLogin);
+			}catch(Exception ignore) {
+				LOGGER.warn(ignore.getMessage(), ignore);
+			}
 		}
 	}
 	
@@ -137,7 +152,7 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 		if(request.getCookies() != null) {
 	        for(Cookie cookie : request.getCookies()) {
-	        	if("X-Access-Token".equals(cookie.getName())) {
+	        	if(ApplicationWebContext.ACCESS_TOKEN_HEADER_NAME.equals(cookie.getName())) {
 	        		cookie.setPath("/");
 	        		cookie.setValue("");
 	        		cookie.setMaxAge(-1);
