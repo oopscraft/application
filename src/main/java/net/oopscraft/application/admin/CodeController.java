@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import net.oopscraft.application.code.Code;
 import net.oopscraft.application.code.CodeService;
 import net.oopscraft.application.core.Pagination;
+import net.oopscraft.application.security.UserDetails;
 
 
 @PreAuthorize("hasAuthority('ADMN_CODE')")
@@ -51,7 +53,11 @@ public class CodeController {
 	 */
 	@RequestMapping(value = "getCodes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Code> getCodes(@ModelAttribute Code code, Pagination pagination, HttpServletResponse response) throws Exception {
+	public List<Code> getCodes(
+		 @ModelAttribute Code code
+		,Pagination pagination
+		,HttpServletResponse response
+	) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Code> codes = codeService.getCodes(code, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());

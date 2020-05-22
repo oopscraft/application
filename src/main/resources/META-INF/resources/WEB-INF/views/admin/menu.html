@@ -2,309 +2,382 @@
 <html layout:decorate="~{admin/admin.html}">
 <div layout:fragment="content">
 	<script>
-	// defines variables 
-	var search = new duice.Map({
-		page: 1,
-		rows: 1000,
-		totalCount: -1
-	});
-	const tabFolder = new duice.TabFolder();
-	const menus = new duice.List();
-	const menu = new duice.Map();
-	const menuDisplayAuthorities = new duice.List();
-	menus.setReadonlyAll(true);
-	menuDisplayAuthorities.setReadonlyAll(true);
-	var isNew = false;
-	
-	// adds index changed event listener
-	menus.onBeforeSelectRow(async function(index){
-		if(isDetailChanged()){
-			if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
-				resetDetail();
+		// defines variables 
+		var search = new duice.Map({
+			page: 1,
+			rows: 1000,
+			totalCount: -1
+		});
+		const tabFolder = new duice.TabFolder();
+		const menus = new duice.List();
+		const menu = new duice.Map();
+		const menuDisplayAuthorities = new duice.List();
+		const menuI18ns = new duice.List();
+		menus.setReadonlyAll(true);
+		menuDisplayAuthorities.setReadonlyAll(true);
+		var isNew = false;
+		
+		// adds index changed event listener
+		menus.onBeforeSelectRow(async function(index){
+			if(isDetailChanged()){
+				if(await duice.confirm("[[#{application.global.changeFound}+'\n'+#{application.global.ignoreChange}]]")){
+					resetDetail();
+					return true;
+				}else{
+					return false;
+				}
+			}
+		});
+		
+		// event listener for select row
+		menus.onAfterSelectRow(function(selectedRow){
+			getMenu(selectedRow.get('id'));	
+		});
+		
+		// event listner for before move row
+		menus.onBeforeMoveRow(async function(sourceRow,targetRow){
+			return await duice.confirm("[[#{application.global.changeConfirm(#{application.menu.upperId})}]]");
+		});
+		
+		// event listner for after move row
+		menus.onAfterMoveRow(async function(sourceRow,targetRow){
+			console.log('menus.onAfterMoveRow', sourceRow.toJson(), targetRow && targetRow.toJson());
+			var group = sourceRow;
+			var id = group.get('id');
+			$.ajax({
+				 url: 'menu/changeUpperId'
+				,type: 'POST'
+				,data: JSON.stringify(group.toJson())
+				,contentType: 'application/json;charset=UTF-8'
+			})
+			.done(function(data, textStatus, jqXHR) {
+				duice.alert('[[#{application.global.changeComplete(#{application.menu.upperId})}]]')
+				.then(async function(){
+					await getMenus();
+					menus.forEach(function(row,index){
+						if(row.get('id') === id){
+							initializeDetail();
+							menus.selectRow(index);
+							return false;
+						}
+					});
+				});
+			});
+		});
+		
+		// listens menu changes
+		menu.onAfterChange(function(){
+			handleVisible(this);
+		});
+		
+		// document ready
+		$(document).ready(function() {
+			
+			// checks authorization
+			if([[${#authorization.expression('hasAuthority("ADMN_MENU_EDIT")')}]] === false){
+				lockDetails();
+			}
+			
+			// creates tab
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
+			tabFolder.onAfterSelectTab(function(selectedTab){
+				// tabButton2
+				if(selectedTab.getButton() === document.getElementById('tabButton2')){
+					getMenuI18ns();
+				}
+			});
+			tabFolder.selectTab(0);
+			
+			// gets menues
+		    getMenus();
+		    disableDetail(true);
+		});
+		
+		/**
+		 * Handles visible
+		 */
+		function handleVisible(menu){
+			menuDisplayAuthorities.setVisible(menu.get('displayPolicy')==='AUTHORIZED'?true:false);
+		}
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			menu.setDisable(disable);
+			$('#detailDiv').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
+		}
+		
+		/**
+		 * Returns detail changed.
+		 */
+		function isDetailChanged() {
+			if(menu.isDirty()
+			|| menuDisplayAuthorities.isDirty()
+			){
 				return true;
 			}else{
 				return false;
 			}
 		}
-	});
-	
-	// event listener for select row
-	menus.onAfterSelectRow(function(selectedRow){
-		getMenu(selectedRow.get('id'));	
-	});
-	
-	// event listner for before move row
-	menus.onBeforeMoveRow(async function(sourceRow,targetRow){
-		return await duice.confirm("[[#{application.global.changeConfirm(#{application.menu.upperId})}]]");
-	});
-	
-	// event listner for after move row
-	menus.onAfterMoveRow(async function(sourceRow,targetRow){
-		console.log('menus.onAfterMoveRow', sourceRow.toJson(), targetRow && targetRow.toJson());
-		var group = sourceRow;
-		var id = group.get('id');
-		$.ajax({
-			 url: 'menu/changeUpperId'
-			,type: 'POST'
-			,data: JSON.stringify(group.toJson())
-			,contentType: 'application/json;charset=UTF-8'
-		})
-		.done(function(data, textStatus, jqXHR) {
-			duice.alert('[[#{application.global.changeComplete(#{application.menu.upperId})}]]')
-			.then(async function(){
-				await getMenus();
-				menus.forEach(function(row,index){
-					if(row.get('id') === id){
-						initializeDetail();
-						menus.selectRow(index);
-						return false;
-					}
-				});
-			});
-		});
-	});
-	
-	// listens menu changes
-	menu.onAfterChange(function(){
-		handleVisible(this);
-	});
-	
-	// document ready
-	$(document).ready(function() {
 		
-		// checks authorization
-		if([[${#authorization.expression('hasAuthority("ADMN_MENU_EDIT")')}]] === false){
-			lockDetails();
+		/**
+		 * Initiates detail
+		 */
+		function initializeDetail() {
+			menu.fromJson({});
+			menuDisplayAuthorities.fromJson([]);
 		}
 		
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.selectTab(0);
-		
-		// gets menues
-	    getMenus();
-	    disableDetail(true);
-	});
-	
-	/**
-	 * Handles visible
-	 */
-	function handleVisible(menu){
-		menuDisplayAuthorities.setVisible(menu.get('displayPolicy')==='AUTHORIZED'?true:false);
-	}
-	
-	/**
-	 * Disables detail
-	 */
-	function disableDetail(disable){
-		menu.setDisable(disable);
-		$('#detailDiv').find('button').each(function(index, element){
-			$(element).prop('disabled', disable);
-		});
-	}
-	
-	/**
-	 * Returns detail changed.
-	 */
-	function isDetailChanged() {
-		if(menu.isDirty()
-		|| menuDisplayAuthorities.isDirty()
-		){
-			return true;
-		}else{
-			return false;
+		/**
+		 * Resets detail
+		 */
+		function resetDetail(){
+			menu.reset();
+			menuDisplayAuthorities.reset();
 		}
-	}
 	
-	/**
-	 * Initiates detail
-	 */
-	function initializeDetail() {
-		menu.fromJson({});
-		menuDisplayAuthorities.fromJson([]);
-	}
-	
-	/**
-	 * Resets detail
-	 */
-	function resetDetail(){
-		menu.reset();
-		menuDisplayAuthorities.reset();
-	}
-
-	/**
-	 * Lock details
-	 */
-	function lockDetails(){
-		menu.setReadonlyAll(true);
-		menuDisplayAuthorities.setReadonlyAll(true);
-	}
-	
-	/**
-	 * Gets menus
-	 * Retrieves list of menu from serer API.
-	 */
-	function getMenus() {
-		return new Promise(function(resolve,reject){
-			var data = {};
-			data.__page = search.get('page');
-			data.__rows = search.get('rows');
-			$.ajax({
-				 url: 'menu/getMenus'
-				,type: 'GET'
-				,data: data
-				,success: function(data, textStatus, jqXHR) {
+		/**
+		 * Lock details
+		 */
+		function lockDetails(){
+			menu.setReadonlyAll(true);
+			menuDisplayAuthorities.setReadonlyAll(true);
+		}
+		
+		/**
+		 * Gets menus
+		 * Retrieves list of menu from serer API.
+		 */
+		function getMenus() {
+			return new Promise(function(resolve,reject){
+				var data = {};
+				data.__page = search.get('page');
+				data.__rows = search.get('rows');
+				$.ajax({
+					 url: 'menu/getMenus'
+					,type: 'GET'
+					,data: data
+					,success: function(data, textStatus, jqXHR) {
+						menus.fromJson(data);
+						search.set('totalCount', __parseTotalCount(jqXHR));
+						resolve(true);
+			   	 	}
+				})
+				.done(function(data, textStatus, jqXHR) {
 					menus.fromJson(data);
 					search.set('totalCount', __parseTotalCount(jqXHR));
 					resolve(true);
-		   	 	}
-			})
-			.done(function(data, textStatus, jqXHR) {
-				menus.fromJson(data);
-				search.set('totalCount', __parseTotalCount(jqXHR));
-				resolve(true);
-		   	});
-		});
-	}
-	
-	/**
-	 * Gets specified menu
-	 */
-	function getMenu(id){
-		$.ajax({
-			 url: 'menu/getMenu'
-			,type: 'GET'
-			,data: {id:id}
-		})
-		.done(function(data, textStatus, jqXHR) {
-			menu.fromJson(data);
-			menuDisplayAuthorities.fromJson(data.displayAuthorities);
-			disableDetail(false);
-			isNew = false;
-			handleVisible(menu);
-		});
-	}
-	
-	/**
-	 * Adds menu
-	 */
-	function addMenu() {
-		initializeDetail();
-		disableDetail(false);
-		menu.setReadonly('name',false);
-		menu.setFocus('name');
-		isNew = true;
-	}
-	
-	/**
-	 * Adds menu as child node
-	 */
-	function addChildMenu(id) {
-		addMenu();
-		menu.set('upperId', id);
-	}
-	
-	/**
-	 * Saves menu
-	 */
-	async function saveMenu(){
-		
-		// checks changes
-		if(isNew === false && isDetailChanged() === false) {
-			await duice.alert("[[#{application.global.changeNotFound}]]");
-			return false;
+			   	});
+			});
 		}
 		
-		// checks menu name
-		if(duice.isEmpty(menu.get('name'))){
-			await duice.alert('[[#{application.global.enterItem(#{application.menu.name})}]]');
-			menu.setFocus('name');
-			return false;
-		}
-
-		
-		// enters save process
-		if(await duice.confirm("[[#{application.global.saveConfirm(#{application.menu})}]]")){
-			var data = menu.toJson();
-			data.displayAuthorities = menuDisplayAuthorities.toJson();
+		/**
+		 * Gets specified menu
+		 */
+		function getMenu(id){
 			$.ajax({
-				 url: 'menu/saveMenu'
-				,type: 'POST'
-				,data: JSON.stringify(data)
-				,contentType: 'application/json;charset=UTF-8'
+				 url: 'menu/getMenu'
+				,type: 'GET'
+				,data: {id:id}
 			})
 			.done(function(data, textStatus, jqXHR) {
-				var id = data.id;
-				duice.alert('[[#{application.global.saveComplete(#{application.menu})}]]')
-				.then(async function(){
-					await getMenus();
-					var index = menus.indexOf(function(row){
-						if(row.get('id') === id){
-							return true;
+				menu.fromJson(data);
+				menuDisplayAuthorities.fromJson(data.displayAuthorities);
+				disableDetail(false);
+				isNew = false;
+				handleVisible(menu);
+				tabFolder.selectTab(0);
+			});
+		}
+		
+		/**
+		 * Adds menu
+		 */
+		function addMenu() {
+			initializeDetail();
+			disableDetail(false);
+			menu.setReadonly('name',false);
+			menu.setFocus('name');
+			isNew = true;
+		}
+		
+		/**
+		 * Adds menu as child node
+		 */
+		function addChildMenu(id) {
+			addMenu();
+			menu.set('upperId', id);
+		}
+		
+		/**
+		 * Saves menu
+		 */
+		async function saveMenu(){
+			
+			// checks changes
+			if(isNew === false && isDetailChanged() === false) {
+				await duice.alert("[[#{application.global.changeNotFound}]]");
+				return false;
+			}
+			
+			// checks menu name
+			if(duice.isEmpty(menu.get('name'))){
+				await duice.alert('[[#{application.global.enterItem(#{application.menu.name})}]]');
+				menu.setFocus('name');
+				return false;
+			}
+	
+			
+			// enters save process
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.menu})}]]")){
+				var data = menu.toJson();
+				data.displayAuthorities = menuDisplayAuthorities.toJson();
+				$.ajax({
+					 url: 'menu/saveMenu'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					var id = data.id;
+					duice.alert('[[#{application.global.saveComplete(#{application.menu})}]]')
+					.then(async function(){
+						await getMenus();
+						var index = menus.indexOf(function(row){
+							if(row.get('id') === id){
+								return true;
+							}
+						});
+						if(index > -1){
+							initializeDetail();
+							menus.selectRow(index);
+						}else{
+							getMenu(id);
 						}
 					});
-					if(index > -1){
-						initializeDetail();
-						menus.selectRow(index);
-					}else{
-						getMenu(id);
-					}
 				});
-			});
+			}
 		}
-	}
-	
-	/**
-	 * Deletes menu
-	 */
-	async function deleteMenu(){
-		if(await duice.confirm("[[#{application.global.deleteConfirm(#{application.menu})}]]")){
-			$.ajax({
-				 url: 'menu/deleteMenu'
-				,type: 'DELETE'
-				,data: JSON.stringify(menu.toJson())
-				,contentType: 'application/json;charset=UTF-8'
+		
+		/**
+		 * Deletes menu
+		 */
+		async function deleteMenu(){
+			if(await duice.confirm("[[#{application.global.deleteConfirm(#{application.menu})}]]")){
+				$.ajax({
+					 url: 'menu/deleteMenu'
+					,type: 'DELETE'
+					,data: JSON.stringify(menu.toJson())
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					duice.alert("[[#{application.global.deleteComplete(#{application.menu})}]]")
+					.then(async function(){
+						await getMenus();
+						clearDetail();
+						disableDetail(true);
+					});
+				});
+			}
+		}
+		
+		/**
+		 * Adds menu display authority
+		 */
+		function addMenuDisplayAuthority() {
+			__authorityDialog.open({
+				checkedAuthorities: menuDisplayAuthorities.toJson(),
+				disabledAuthorities: menuDisplayAuthorities.toJson()
 			})
-			.done(function(data, textStatus, jqXHR) {
-				duice.alert("[[#{application.global.deleteComplete(#{application.menu})}]]")
-				.then(async function(){
-					await getMenus();
-					clearDetail();
-					disableDetail(true);
-				});
-			});
-		}
-	}
-	
-	/**
-	 * Adds menu display authority
-	 */
-	function addMenuDisplayAuthority() {
-		__authorityDialog.open({
-			checkedAuthorities: menuDisplayAuthorities.toJson(),
-			disabledAuthorities: menuDisplayAuthorities.toJson(),
-			onAfterConfirm: function(selectedAuthorities){
+			.then(function(selectedAuthorities){
+				console.log('fdsfdsa',selectedAuthorities);
 				selectedAuthorities.forEach(function(item){
 					menuDisplayAuthorities.addRow(new duice.Map(item));
 				});
-			}
-		});
-	}
+			});
+		}
+		
+		/**
+		 * Removes menu display authority
+		 */
+		function removeMenuDisplayAuthority(index) {
+			menuDisplayAuthorities.removeRow(index);
+		}
 	
-	/**
-	 * Removes menu display authority
-	 */
-	function removeMenuDisplayAuthority(index) {
-		menuDisplayAuthorities.removeRow(index);
-	}
-
-	/**
-	 * Opens menu
-	 */
-	function openMenu(){
-		window.open(menu.get('linkUrl'));
-	}
-
+		/**
+		 * Opens menu
+		 */
+		function openMenu(){
+			window.open(menu.get('linkUrl'));
+		}
+		
+		/**
+		 * Getting menu i18n
+		 */
+		function getMenuI18ns() {
+			if(menu.get('id')){
+				$.ajax({
+					 url: 'menu/getMenuI18ns'
+					,type: 'GET'
+					,data: {id: menu.get('id')}
+				})
+				.done(function(data, textStatus, jqXHR) {
+					menuI18ns.fromJson(data);
+				});
+			}
+		}
+		
+		/**
+		 * addMenuI18n
+		 */
+		function addMenuI18n(){
+			var menuI18n = new duice.Map({
+				id: menu.get('id'),
+				language: null,
+				name: null
+			});
+			menuI18ns.addRow(menuI18n);
+		}
+		
+		/**
+		 * removeMenuI18n
+		 */
+		function removeMenuI18n(index){
+			menuI18ns.removeRow(index);
+		}
+		
+		/**
+		 * saveMenuI18ns
+		 */
+		async function saveMenuI18ns(){
+			// checks changed
+			if(!menuI18ns.isDirty()){
+				duice.alert("[[#{application.global.changeNotFound}]]");
+				return false;
+			}
+			
+			// process save
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.menu.i18n})}]]")){
+				var data = menuI18ns.toJson();
+				$.ajax({
+					 url: 'menu/saveMenuI18ns?id=' + menu.get('id')
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					var id = data.id;
+					duice.alert('[[#{application.global.saveComplete(#{application.menu.i18n})}]]')
+					.then(function(){
+						getMenuI18ns();
+					})
+				});
+			}
+		}
 	</script>
 	<div class="app-row">
 		<div class="app-col" style="width:50%;">
@@ -375,6 +448,10 @@
 							<span id="tabButton1" class="tab">
 								<img class="icon small" th:src="@{/static/image/icon_menu.png}"/>
 								<span data-th-text="#{application.menu} + ' ' + #{application.global.details}"></span>
+							</span>
+							<span id="tabButton2" class="tab">
+								<img class="icon small" th:src="@{/static/image/icon_language.png}"/>
+								<span data-th-text="#{application.global.i18n}"></span>
 							</span>
 						</div>
 					</div>
@@ -480,7 +557,7 @@
 														</td>
 														<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
 														<td class="text-center">
-															<img class="icon small button" th:src="@{/static/image/icon_add.png}" data-index="[@duice[$context.index]]" onclick="removeMenuDisplayAuthority(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MENU_EDIT'')')}?'lock'"/>
+															<img class="icon small button" th:src="@{/static/image/icon_remove.png}" data-index="[@duice[$context.index]]" onclick="removeMenuDisplayAuthority(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MENU_EDIT'')')}?'lock'"/>
 														</td>
 													</tr>
 												</tbody>
@@ -511,6 +588,68 @@
 					</div>
 					<!-- ====================================================== -->
 					<!-- END: End tabContent1									-->
+					<!-- ====================================================== -->
+					<!-- ====================================================== -->
+					<!-- START: Start tabContent2								-->
+					<!-- ====================================================== -->
+					<div id="tabContent2" class="app-row">
+						<div class="app-col">
+							<div style="width:100%; max-height:800px; overflow-y:scroll; border:solid 1px #dee2e6;">
+								<table is="duice-table" 
+									data-duice-bind="menuI18ns,i18n" 
+									style="width:100%; border:none;">
+									<col/>
+									<col style="width:5%;"/>
+									<thead>
+										<tr>
+											<th class="text-center" data-th-text="#{application.menu.i18n}"></th>
+											<th class="text-center">
+												<img class="icon small button" th:src="@{/static/image/icon_add.png}" onclick="addMenuI18n();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MESG_EDIT'')')}?'lock'"/>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+												<table class="table" style="width:100%;">
+													<col style="width:25%;"/>
+													<col/>
+													<tbody>
+														<tr>
+															<th data-th-text="#{application.menu.i18n.language}" class="mand">Language</th>
+															<td>
+																<select is="duice-select" data-duice-bind="i18n,language">
+																	<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
+																	<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
+																</select>
+															</td>
+														</tr>
+														<tr>
+															<th data-th-text="#{application.menu.i18n.name}">Name</th>
+															<td><textarea is="duice-textarea" data-duice-bind="i18n,name" style="height:100px;"></textarea></td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
+											<td class="text-center">
+												<img class="icon small button" th:src="@{/static/image/icon_remove.png}" data-index="[@duice[$context.index]]" onclick="removeMenuI18n(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MESG_EDIT'')')}?'lock'"/>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="app-row action">
+								<div class="app-col right">
+									<button class="button large" onclick="saveMenuI18ns();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_MESG_EDIT'')')}?'lock'">
+										<img th:src="@{/static/image/icon_save.png}" class="icon"/>
+										<span data-th-text="#{application.global.save}"></span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- ====================================================== -->
+					<!-- END: End tabContent2									-->
 					<!-- ====================================================== -->
 				</div>
 			</div>

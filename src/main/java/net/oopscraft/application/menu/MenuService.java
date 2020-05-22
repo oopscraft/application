@@ -124,5 +124,34 @@ public class MenuService {
 		one.setUpperId(upperId);
 		return menuRepository.save(one);
 	}
+	
+	/**
+	 * Returns menu i18ns
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public List<MenuI18n> getMenuI18ns(String id) throws Exception {
+		Menu one = menuRepository.findOne(id);
+		return one.getI18ns();
+	}
+	
+	/**
+	 * saveMenuI18ns
+	 * @param id
+	 * @param menuI18ns
+	 * @return
+	 * @throws Exception
+	 */
+	public List<MenuI18n> saveMenuI18ns(String id, List<MenuI18n> menuI18ns) throws Exception {
+		Menu one = menuRepository.findOne(id);
+		one.getI18ns().clear();
+		for(MenuI18n element : menuI18ns) {
+			element.setId(id);
+			one.getI18ns().add(element);
+		}
+		one = menuRepository.save(one);
+		return one.getI18ns();
+	}
 
 }

@@ -20,8 +20,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import net.oopscraft.application.core.jpa.SystemEntity;
-import net.oopscraft.application.message.MessageI18n;
 import net.oopscraft.application.security.SecurityPolicy;
 import net.oopscraft.application.user.Authority;
 
@@ -76,6 +77,16 @@ public class Menu extends SystemEntity {
 	)
 	List<Authority> displayAuthorities = new ArrayList<Authority>();
 	
+	@JsonIgnore
+	@OneToMany(
+		fetch = FetchType.LAZY, 
+		mappedBy = "id", 
+		cascade = CascadeType.ALL, 
+		orphanRemoval = true
+	)
+	@OrderBy("language")
+	List<MenuI18n> i18ns = new ArrayList<MenuI18n>();
+	
 	public Menu() {}
 	
 	public Menu(String id) {
@@ -100,6 +111,20 @@ public class Menu extends SystemEntity {
 
 	public String getName() {
 		return name;
+	}
+	
+	/**
+	 * getValue
+	 * @param language
+	 * @return
+	 */
+	public String getName(String language) {
+		for(MenuI18n i18n : i18ns) {
+			if(i18n.getLanguage().contentEquals(language)) {
+				return i18n.getName();
+			}
+		}
+		return this.getName();
 	}
 
 	public void setName(String name) {
@@ -160,6 +185,14 @@ public class Menu extends SystemEntity {
 
 	public void setDisplayAuthorities(List<Authority> displayAuthorities) {
 		this.displayAuthorities = displayAuthorities;
+	}
+
+	public List<MenuI18n> getI18ns() {
+		return i18ns;
+	}
+
+	public void setI18ns(List<MenuI18n> i18ns) {
+		this.i18ns = i18ns;
 	}
 
 }

@@ -468,7 +468,7 @@
 											<span is="duice-span" data-duice-bind="page,name" class="id"></span>
 										</td>
 										<td>
-											<select is="duice-select" data-duice-bind="page,format" class="id">
+											<select is="duice-select" data-duice-bind="page,format">
 												<option th:each="format:${Format}" th:value="${format}" th:text="#{'application.page.format.'+${format}}"></option>
 											</select>
 										</td>
@@ -537,7 +537,7 @@
 									<tr>
 										<th data-th-text="#{application.page.format}" class="mand">Format</th>
 										<td>
-											<select is="duice-select" data-duice-bind="page,format" class="id">
+											<select is="duice-select" data-duice-bind="page,format">
 												<option th:each="format:${Format}" th:value="${format}" th:text="#{'application.page.format.'+${format}}"></option>
 											</select>
 										</td>

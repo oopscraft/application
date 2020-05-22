@@ -1,13 +1,7 @@
 <div class="app-row">
 	<div class="app-col">
-		<div th:utext="${page.format}"></div>
-		<th:block th:if="${page.format.toString().equals('HTML')}">
-			<div th:utext="${page.contents}"></div>
-		</th:block>
-		
-		<th:block th:if="${page.format.toString().equals('MARKDOWN')}">
-			<div th:utext="${page.contents}"></div>
-		</th:block>
+		<div id="contentsHtmlDiv" is="duice-div" data-duice-bind="page,contents"></div>
+		<div id="contentsMarkdownDiv" is="duice-plugin-marked" data-duice-bind="page,contents"></div>
 	</div>
 </div>
 
