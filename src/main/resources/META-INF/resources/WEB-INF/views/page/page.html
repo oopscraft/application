@@ -11,7 +11,7 @@
 	});
 	
 	/**
-	 * Getting articles
+	 * Getting page
 	 */
 	function getPage(){
 		$.ajax({
@@ -29,6 +29,14 @@
 			}
 	   	});
 	}
+	
+	/**
+	 * Edits page
+	 */
+	function editPage(){
+		var pageId = page.get('id');
+		window.location.href = "[[@{/page}]]/[[${page.id}]]/editPage" + "?id=" + pageId;
+	}
 	</script>
-	<th:block th:include="|../theme/application/page/page.html|"></th:block>
+	<th:block th:include="|../theme/${__theme}/page/page.html|"></th:block>
 </div>

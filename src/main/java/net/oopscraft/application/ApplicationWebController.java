@@ -1,40 +1,34 @@
 package net.oopscraft.application;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.OutputStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.locale.LocaleService;
+import net.oopscraft.application.property.Property;
+import net.oopscraft.application.property.PropertyService;
 import net.oopscraft.application.security.UserDetails;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.SourceStringReader;
 
 @Controller
 @ControllerAdvice
@@ -51,6 +45,9 @@ public class ApplicationWebController {
 	UserService userService;
 	
 	@Autowired
+	PropertyService propertyService;
+	
+	@Autowired
 	LocaleService localeService;
 	
 	@Autowired
@@ -58,6 +55,11 @@ public class ApplicationWebController {
 	
 	@Autowired
     MessageSource messageSource;
+	
+	@ModelAttribute("__theme")
+	public String getTheme() throws Exception {
+		return propertyService.getProperty("APP_THEM").getValue().trim();
+	}
 	
 	/**
 	 * Returns locale list
@@ -108,7 +110,22 @@ public class ApplicationWebController {
 	 */
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("index.html");
+		ModelAndView modelAndView = new ModelAndView();
+		
+		// in case of index page id is setting.
+		Property property = propertyService.getProperty("APP_INDX_URI");
+		if(property != null && StringUtils.isNotBlank(property.getValue())) {
+			String indexUri = property.getValue();
+		    RedirectView redirectView = new RedirectView(indexUri);
+		    redirectView.setExposeModelAttributes(false);
+			modelAndView.setView(redirectView);
+		}
+		// index page id setting not found
+		else{
+			modelAndView.setViewName("index.html");
+		}
+		
+		// return view
 		return modelAndView;
 	}
 	
@@ -131,50 +148,6 @@ public class ApplicationWebController {
 	public ModelAndView login() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("login.html");
 		return modelAndView;
-	}
-	
-	/**
-	 * Returns README.md contents
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "readme", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody
-	public String readme() throws Exception {
-		File file = null;
-		try {
-			file = new ClassPathResource("README.md").getFile();
-		}catch(Exception e) {
-			file = new File("README.md");
-		}
-		return FileUtils.readFileToString(file, "UTF-8");
-	}
-	
-	/**
-	 * Returns Plant UML image from requested code
-	 * @param plantumlCode
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "plantuml", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.IMAGE_PNG_VALUE)
-	@ResponseBody
-	public byte[] plantuml(@RequestBody String plantumlCode) throws Exception {
-		byte[] imageBytes;
-        SourceStringReader reader = new SourceStringReader(plantumlCode);
-        OutputStream os = null;
-        ByteArrayOutputStream baos = null;
-        try {
-        	os = new ByteArrayOutputStream();
-	        reader.generateImage(os, new FileFormatOption(FileFormat.PNG, false));
-	        baos = (ByteArrayOutputStream) os;  
-	        imageBytes = baos.toByteArray();
-        }catch(Exception e) {
-        	throw e;
-        }finally {
-        	if(baos != null) try { baos.close(); }catch(Exception ignore) {}
-        	if(os != null) try { os.close(); }catch(Exception ignore) {}
-        }
-		return imageBytes;
 	}
 	
 }

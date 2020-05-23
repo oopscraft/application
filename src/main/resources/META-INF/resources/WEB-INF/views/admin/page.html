@@ -465,7 +465,7 @@
 											</small>
 										</td>
 										<td>
-											<span is="duice-span" data-duice-bind="page,name" class="id"></span>
+											<span is="duice-span" data-duice-bind="page,name" class="id [@duice[$context.page.get('systemEmbedded')===true?'embd':'']]"></span>
 										</td>
 										<td>
 											<select is="duice-select" data-duice-bind="page,format">

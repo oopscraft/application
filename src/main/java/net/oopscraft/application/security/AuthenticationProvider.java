@@ -15,17 +15,18 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.property.PropertyService;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
 
 
 public class AuthenticationProvider implements org.springframework.security.authentication.AuthenticationProvider {
 	
-	private String secretKey = "temporary";
-	private int sessionTimeout = 10;
-
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	PropertyService propertyService;
 	
 	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -87,9 +88,9 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	 */
 	public String encodeAccessToken(UserDetails userDetails) throws Exception {
 		String jwt = Jwts.builder()
-				  .setExpiration(new Date(System.currentTimeMillis() + (sessionTimeout*60*1000)))
+				  .setExpiration(new Date(System.currentTimeMillis() + (getAccessTokenExpirationMinutes()*60*1000)))
 				  .claim("userDetails", JsonConverter.toJson(userDetails))
-				  .signWith(SignatureAlgorithm.HS256, secretKey.getBytes("UTF-8"))
+				  .signWith(SignatureAlgorithm.HS256, getAccessTokenSecretKey())
 				  .compact();
 		return jwt;
 	}
@@ -102,12 +103,18 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	 */
 	public UserDetails decodeAccessToken(String accessToken) throws Exception {
         Claims claims = Jwts.parser()
-        		.setSigningKey(secretKey.getBytes("UTF-8"))
+        		.setSigningKey(getAccessTokenSecretKey())
         		.parseClaimsJws(accessToken).getBody();
         String userDetailsClaim = (String)claims.get("userDetails");
         UserDetails userDetails = JsonConverter.toObject(userDetailsClaim, UserDetails.class);
 		return userDetails;
 	}
 
-
+	private byte[] getAccessTokenSecretKey() throws Exception {
+		return propertyService.getProperty("APP_TOKN_SCRT_KEY").getValue().getBytes("UTF-8");
+	}
+	
+	private int getAccessTokenExpirationMinutes() throws Exception {
+		return Integer.parseInt(propertyService.getProperty("APP_TOKN_EXPR_MINS").getValue().trim());
+	}
 }

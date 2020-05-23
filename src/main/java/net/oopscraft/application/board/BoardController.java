@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.message.MessageException;
-import net.oopscraft.application.security.SecurityPolicyEvaluator;
+import net.oopscraft.application.security.SecurityEvaluator;
 import net.oopscraft.application.security.UserDetails;
 
 @Controller
@@ -41,7 +41,7 @@ public class BoardController {
 	) throws Exception {
 		ModelAndView modelAndView = new ModelAndView("board/board.html");
 		Board board = boardService.getBoard(boardId);
-		SecurityPolicyEvaluator.checkPolicyAuthority(board.getAccessPolicy(), board.getAccessAuthorities(), userDetails);
+		SecurityEvaluator.checkPolicyAuthority(board.getAccessPolicy(), board.getAccessAuthorities());
 		modelAndView.addObject("board", board);
 		return modelAndView;
 	}
@@ -61,7 +61,7 @@ public class BoardController {
 	) throws Exception {
 		ModelAndView modelAndView = new ModelAndView("board/readArticle.html");
 		Board board = boardService.getBoard(boardId);
-		SecurityPolicyEvaluator.checkPolicyAuthority(board.getReadPolicy(), board.getReadAuthorities(), userDetails);
+		SecurityEvaluator.checkPolicyAuthority(board.getReadPolicy(), board.getReadAuthorities());
 		modelAndView.addObject("board", board);
 		Article article = articleService.getArticle(id);
 		modelAndView.addObject("article", article);
@@ -83,7 +83,7 @@ public class BoardController {
 	) throws Exception {
 		ModelAndView modelAndView = new ModelAndView("board/writeArticle.html");
 		Board board = boardService.getBoard(boardId);
-		SecurityPolicyEvaluator.checkPolicyAuthority(board.getWritePolicy(), board.getWriteAuthorities(), userDetails);
+		SecurityEvaluator.checkPolicyAuthority(board.getWritePolicy(), board.getWriteAuthorities());
 		modelAndView.addObject("board", board);
 		
 		// 게시글 수정인 경우
@@ -111,111 +111,5 @@ public class BoardController {
 		// returns model and view
 		return modelAndView;
 	}
-	
-	
-	
-//	@Autowired
-//	HttpServletRequest request;
-//
-//	@Autowired
-//	HttpServletResponse response;
-//	
-//	@Autowired
-//	BoardService boardService;
-//	
-//	@Autowired
-//	ArticleService articleService;
-//	
-//    @Autowired
-//    ApplicationContext applicationContext;
-    
-//	/**
-//	 * checks access authority
-//	 * @param boardId
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	public boolean hasAccessAuthority(String boardId) throws Exception {
-//		return boardService.hasAccessAuthority(boardId);
-//	}
-//	
-//	/**
-//	 * checks read authority
-//	 * @param boardId
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	public boolean hasReadAuthority(String boardId) throws Exception {
-//		return boardService.hasReadAuthority(boardId);
-//	}
-//	
-//	/**
-//	 * checks write authority
-//	 * @param boardId
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	public boolean hasWriteAuthority(String boardId) throws Exception {
-//		return boardService.hasWriteAuthority(boardId);
-//	}
-
-//	/**
-//	 * list
-//	 * 
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@PreAuthorize("this.hasAccessAuthority(#boardId)")
-//	@RequestMapping(value="{boardId}", method = RequestMethod.GET)
-//	public ModelAndView list(@PathVariable("boardId")String boardId) throws Exception {
-//		Board board = boardService.getBoard(boardId);
-//		ModelAndView modelAndView = new ModelAndView("board/list.tiles");
-//		modelAndView.addObject("boardController", this);
-//		modelAndView.addObject("board", board);
-//		return modelAndView;
-//	}
-	
-	/**
-	 * read
-	 * @param boardId
-	 * @param articleId
-	 * @return
-	 * @throws Exception
-	 */
-//	@PreAuthorize("this.hasReadAuthority(#boardId)")
-//	@RequestMapping(value="{boardId}/read", method = RequestMethod.GET)
-//	@Transactional(rollbackFor = Exception.class)
-//	public ModelAndView read(
-//		@PathVariable("boardId")String boardId,
-//		@RequestParam(value="articleId", required=false)String articleId
-//	) throws Exception {
-//		Board board = boardService.getBoard(boardId);
-//		Article article = articleService.getArticle(articleId);
-//		//article.increaseReadCount();
-//		ModelAndView modelAndView = new ModelAndView("board/read.tiles");
-//		modelAndView.addObject("this", this);
-//		modelAndView.addObject("board", board);
-//		return modelAndView;
-//	}
-	
-//	/**
-//	 * write
-//	 * @param boardId
-//	 * @param articleId
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@PreAuthorize("this.hasWriteAuthority(#boardId)")
-//	@RequestMapping(value="{boardId}/write", method = RequestMethod.GET)
-//	public ModelAndView write(
-//		@PathVariable("boardId")String boardId,
-//		@RequestParam(value="articleId", required=false)String articleId
-//	) throws Exception {
-//		Board board = boardService.getBoard(boardId);
-//		ModelAndView modelAndView = new ModelAndView("board/write.tiles");
-//		modelAndView.addObject("this", this);
-//		modelAndView.addObject("board", board);
-//		return modelAndView;
-//	}
 
 }

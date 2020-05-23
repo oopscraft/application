@@ -17,14 +17,14 @@ public class SystemEntityListener {
 	public void prePersist(SystemEntity systemEntity) throws Exception {
 		systemEntity.setSystemEmbedded(false);
 		systemEntity.setSystemInsertDate(new Date());
-		systemEntity.setSystemInsertUserId(USER_ID());
+		systemEntity.setSystemInsertUserId(getUserId());
 		
 	}
 	
 	@PreUpdate
 	public void preUpdate(SystemEntity systemEntity) throws Exception {
 		systemEntity.setSystemUpdateDate(new Date());
-		systemEntity.setSystemUpdateUserId(USER_ID());
+		systemEntity.setSystemUpdateUserId(getUserId());
 	}
 	
 	/*
@@ -32,7 +32,7 @@ public class SystemEntityListener {
 	 * @return
 	 * @throws Exception
 	 */
-	private static final String USER_ID() throws Exception {
+	private static final String getUserId() throws Exception {
 		SecurityContext securityContext = SecurityContextHolder.getContext();
 		if(securityContext == null) {
 			return null;

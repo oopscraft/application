@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ public class PageRestController {
 	@Autowired
 	LocaleResolver localeResolver;
 	
+	@PreAuthorize("this.hasReadAuthority(#id)")
 	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public Page getMenu(@PathVariable("id") String id, HttpServletRequest request) throws Exception {
 		Page page = pageService.getPage(id);
@@ -39,6 +41,18 @@ public class PageRestController {
 		
 		// returns page.
 		return page;
+	}
+	
+	/**
+	 * hasReadAuthority
+	 * @param id
+	 * @param userDetails
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean hasReadAuthority(String id) throws Exception {
+		Page page = pageService.getPage(id);
+		return page.hasReadAuthority();
 	}
 	
 }

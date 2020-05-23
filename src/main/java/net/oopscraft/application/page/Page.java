@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
+import net.oopscraft.application.security.SecurityEvaluator;
 import net.oopscraft.application.security.SecurityPolicy;
 import net.oopscraft.application.user.Authority;
 
@@ -44,7 +45,7 @@ public class Page extends SystemEntity {
 	@Column(name="PAGE_DESC", length=Integer.MAX_VALUE)
 	@Lob
 	@JsonView(List.class)
-	String description;
+	String description;	
 	
 	public enum Format { MARKDOWN, HTML }
 	@Column(name = "PAGE_FMAT", length = 64)
@@ -151,6 +152,14 @@ public class Page extends SystemEntity {
 			}
 		}
 		return this.getContents();
+	}
+	
+	public boolean hasReadAuthority() {
+		return SecurityEvaluator.hasPolicyAuthority(this.readPolicy, this.readAuthorities);
+	}
+	
+	public boolean hasEditAuthority() {
+		return SecurityEvaluator.hasPolicyAuthority(this.editPolicy, this.editAuthorities);
 	}
 
 	public void setContents(String contents) {
