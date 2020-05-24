@@ -152,15 +152,15 @@
 		function getGroups() {
 			return new Promise(function(resolve,reject){
 				var data = {};
-				data.__page = search.get('page');
-				data.__rows = search.get('rows');
+				data._page = search.get('page');
+				data._rows = search.get('rows');
 				$.ajax({
 					 url: 'group/getGroups'
 					,type: 'GET'
 					,data: data
 					,success: function(data, textStatus, jqXHR) {
 						groups.fromJson(data);
-						search.set('totalCount', __parseTotalCount(jqXHR));
+						search.set('totalCount', _parseTotalCount(jqXHR));
 						resolve(true);
 			   	 	}
 				});	
@@ -233,7 +233,7 @@
 			});
 			
 			// opens global group select select dialog
-			__groupDialog.open({
+			_groupDialog.open({
 				singleSelect:true,
 				checkedGroups: [{id:group.get('upperId')}],
 				disabledGroups: disabledGroups.toJson(),
@@ -332,7 +332,7 @@
 		 * Adds group role
 		 */
 		function addGroupRole() {
-			__roleDialog.open({
+			_roleDialog.open({
 				checkedRoles: groupRoles.toJson(),
 				disabledRoles: groupRoles.toJson()
 			})
@@ -356,7 +356,7 @@
 		 * Adds group authority
 		 */
 		function addGroupAuthority() {
-			__authorityDialog.open({
+			_authorityDialog.open({
 				checkedAuthorities: groupAuthorities.toJson(),
 				disabledAuthorities: groupAuthorities.toJson()
 			})

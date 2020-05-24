@@ -26,16 +26,16 @@ body {
 	<a class="navbar-brand" href="#">
 		<img th:src="@{/static/image/application.png}"/>
 	</a>
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#__menus" aria-controls="__menus" aria-expanded="false" aria-label="Toggle navigation">
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#_menus" aria-controls="_menus" aria-expanded="false" aria-label="Toggle navigation">
 		<img th:src="@{/static/image/icon_menu.png}"/>
     </button>
-	<div class="collapse navbar-collapse" id="__menus">
+	<div class="collapse navbar-collapse" id="_menus">
 		<ul is="duice-ul" class="navbar-nav"
-			data-duice-bind="__menus,__menu" data-duice-hierarchy="id,upperId">
+			data-duice-bind="_menus,_menu" data-duice-hierarchy="id,upperId">
 			<li class="[@duice[$context.depth==0?'nav-item dropdown':'dropdown-submenu']]">
 				<a class="nav-link [@duice[$context.hasChild?'dropdown-toggle':'']]" href="#" id="navbarDropdown_[@duice[$context.index]]" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<img is="duice-img" data-duice-bind="__menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:32px;"/>
-					<span is="duice-span" data-duice-bind="__menu,name"></span>
+					<img is="duice-img" data-duice-bind="_menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:32px;"/>
+					<span is="duice-span" data-duice-bind="_menu,name"></span>
 				</a>
 				<ul class="dropdown-menu" aria-labelledby="navbarDropdown_{{$context.index}}">
 				</ul>

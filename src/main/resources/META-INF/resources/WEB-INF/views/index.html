@@ -2,7 +2,8 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     	<title>Application</title>
 		<link rel="stylesheet" type="text/css" th:href="@{/static/duice/polyfill/normalize.css}">
 		<script th:src="@{/static/duice/polyfill/dataset.js}"></script>
@@ -29,40 +30,40 @@
 		<script th:src="@{/static/moment.js}"></script>
 		<script th:src="@{/static/chartjs/Chart.js}"></script>
 		<script>
-        var __menus = new duice.List();
+        var _menus = new duice.List();
         
     	// document ready
     	$(document).ready(function() {
     		
     		// getting menus
- 			__getMenus();
+ 			_getMenus();
     		
     	});
 
     	/**
     	 * Getting menus
     	 */
-    	function __getMenus() {
+    	function _getMenus() {
     		$.ajax({
 	   			 url: '[[@{/api/menus}]]'
 	   			,type: 'GET'
 	   		})
 	   		.done(function(data, textStatus, jqXHR) {
-	   			__menus.fromJson(data);
+	   			_menus.fromJson(data);
 	   	   	});
     	}
     	
         /**
          * Exeuctes login
          */ 
-        function __login(){
+        function _login(){
         	location.href='[[@{/user/login}]]'; 
         }
     	
         /**
          * Exeuctes logout
          */ 
-        function __logout(){
+        function _logout(){
 			$.ajax({
 				 url: '[[@{/user/logout}]]'
 				,type: 'POST'
@@ -74,6 +75,6 @@
 		</script>
 	</head>
 	<body> 
-		<th:block th:include="|../theme/${__theme}/index.html|"></th:block>
+		<th:block th:include="|../theme/${_theme}/index.${_device}.html|"></th:block>
 	</body>
 </html>

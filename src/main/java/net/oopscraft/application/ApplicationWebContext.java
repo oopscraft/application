@@ -25,6 +25,8 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
+import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -323,6 +325,8 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+    	
+    	// pagination
     	argumentResolvers.add(new HandlerMethodArgumentResolver() {
 			@Override
 			public boolean supportsParameter(MethodParameter parameter) {
@@ -331,11 +335,14 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 			@Override
 			public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 				Pagination pagination = new Pagination();
-				try { pagination.setPage(Integer.parseInt(webRequest.getParameter("__page"))); }catch(Exception ignore) {}
-				try { pagination.setRows(Integer.parseInt(webRequest.getParameter("__rows"))); }catch(Exception ignore) {}
+				try { pagination.setPage(Integer.parseInt(webRequest.getParameter("_page"))); }catch(Exception ignore) {}
+				try { pagination.setRows(Integer.parseInt(webRequest.getParameter("_rows"))); }catch(Exception ignore) {}
 		        return pagination;
 			}
     	});
+    	
+    	// spring-mobile argument resolver
+    	argumentResolvers.add(new DeviceHandlerMethodArgumentResolver());
     }
 
 	/**
@@ -376,9 +383,14 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
      */
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
+		
+		// locale change intercepter
 		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-		localeChangeInterceptor.setParamName("__lang");
+		localeChangeInterceptor.setParamName("_lang");
 		registry.addInterceptor(localeChangeInterceptor);
+		
+		// spring-mobile
+		registry.addInterceptor(new DeviceResolverHandlerInterceptor());
 	}
 	
     @Bean

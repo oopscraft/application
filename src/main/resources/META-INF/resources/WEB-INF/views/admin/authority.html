@@ -129,15 +129,15 @@
 				if(search.get('status')){
 					data.status = search.get('status');
 				}
-				data.__page = search.get('page');
-				data.__rows = search.get('rows');
+				data._page = search.get('page');
+				data._rows = search.get('rows');
 				$.ajax({
 					 url: 'authority/getAuthorities'
 					,type: 'GET'
 					,data: data
 					,success: function(data, textStatus, jqXHR) {
 						authorities.fromJson(data);
-						search.set('totalCount', __parseTotalCount(jqXHR));
+						search.set('totalCount', _parseTotalCount(jqXHR));
 						resolve(true);
 			   	 	}
 				});				

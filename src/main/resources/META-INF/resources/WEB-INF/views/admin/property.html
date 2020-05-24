@@ -126,8 +126,8 @@
 				if(search.get('status')){
 					data.status = search.get('status');
 				}
-				data.__page = search.get('page');
-				data.__rows = search.get('rows');
+				data._page = search.get('page');
+				data._rows = search.get('rows');
 				$.ajax({
 					 url: 'property/getProperties'
 					,type: 'GET'
@@ -135,7 +135,7 @@
 				})
 				.done(function(data, textStatus, jqXHR) {
 					properties.fromJson(data);
-					search.set('totalCount', __parseTotalCount(jqXHR));
+					search.set('totalCount', _parseTotalCount(jqXHR));
 					resolve(true);
 			   	});
 			});

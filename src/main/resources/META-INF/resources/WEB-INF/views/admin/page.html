@@ -159,8 +159,8 @@
 				if(search.get('type')){
 					data.type = search.get('type');
 				}
-				data.__page = search.get('page');
-				data.__rows = search.get('rows');
+				data._page = search.get('page');
+				data._rows = search.get('rows');
 				$.ajax({
 					 url: 'page/getPages'
 					,type: 'GET'
@@ -168,7 +168,7 @@
 				})
 				.done(function(data, textStatus, jqXHR) {
 					pages.fromJson(data);
-					search.set('totalCount', __parseTotalCount(jqXHR));
+					search.set('totalCount', _parseTotalCount(jqXHR));
 					resolve(true);
 			   	});
 			});
@@ -290,7 +290,7 @@
 		 * Adds board read authority
 		 */
 		function addPageReadAuthority(){
-			__authorityDialog.open({
+			_authorityDialog.open({
 				checkedAuthorities: pageReadAuthorities.toJson(),
 				disabledAuthorities: pageReadAuthorities.toJson()
 			}).then(function(selectedAuthorities){
@@ -313,7 +313,7 @@
 		 * Adds page edit authority
 		 */
 		function addPageEditAuthority(){
-			__authorityDialog.open({
+			_authorityDialog.open({
 				checkedAuthorities: pageEditAuthorities.toJson(),
 				disabledAuthorities: pageEditAuthorities.toJson()
 			}).then(function(selectedAuthorities){
@@ -699,7 +699,7 @@
 															<td>
 																<select is="duice-select" data-duice-bind="i18n,language" class="id">
 																	<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
-																	<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
+																	<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
 																</select>
 															</td>
 														</tr>

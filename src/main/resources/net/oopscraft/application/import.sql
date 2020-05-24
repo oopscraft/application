@@ -164,7 +164,7 @@ INSERT INTO "PUBLIC"."APP_USER_ROLE_MAP" (USER_ID,ROLE_ID) VALUES ('user','USER'
 
 INSERT INTO "PUBLIC"."PUBLIC"."APP_PAGE_INFO" (PAGE_ID,SYS_EMBD_YN,SYS_INST_DATE,SYS_INST_USER_ID,SYS_UPDT_DATE,SYS_UPDT_USER_ID,PAGE_CNTS,PAGE_DESC,EDIT_PLCY,PAGE_FMAT,PAGE_NAME,READ_PLCY) VALUES ('INDX','Y',{ts '2020-05-17 23:29:10'},'admin',{ts '2020-05-23 02:04:11'},'admin','# Platform for Standalone Application Development
 
-```
+```bash
                                        Application Daemon
 +------------------------------------------------------------------------------------------------------+
 |                                                                                                      |
@@ -237,7 +237,7 @@ INSERT INTO "PUBLIC"."PUBLIC"."APP_PAGE_INFO" (PAGE_ID,SYS_EMBD_YN,SYS_INST_DATE
 
 INSERT INTO "PUBLIC"."PUBLIC"."APP_PAGE_I18N" (PAGE_ID,PAGE_LANG,SYS_EMBD_YN,SYS_INST_DATE,SYS_INST_USER_ID,SYS_UPDT_DATE,SYS_UPDT_USER_ID,PAGE_CNTS) VALUES ('INDX','ko','N',{ts '2020-05-23 22:22:15'},'admin',null,null,'# 독립형 애플리케이션 개발을위한 플랫폼
 
-```
+```bash
                                        Application Daemon
 +------------------------------------------------------------------------------------------------------+
 |                                                                                                      |
@@ -302,7 +302,7 @@ Licence: LGPL(GNU Lesser General Public License version 3) Copyright (C) 2017 du
 ');
 INSERT INTO "PUBLIC"."PUBLIC"."APP_PAGE_I18N" (PAGE_ID,PAGE_LANG,SYS_EMBD_YN,SYS_INST_DATE,SYS_INST_USER_ID,SYS_UPDT_DATE,SYS_UPDT_USER_ID,PAGE_CNTS) VALUES ('INDX','zh','N',{ts '2020-05-23 22:26:02'},'admin',null,null,'# 独立应用程序开发平台
 
-```
+```bash
                                        Application Daemon
 +------------------------------------------------------------------------------------------------------+
 |                                                                                                      |

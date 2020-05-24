@@ -52,7 +52,7 @@ $(document).ajaxStop(function(event) {
  * Parsed total count from Content-Range header
  * @Param {Object} jqXHR
  */
-const __parseTotalCount = function(jqXHR){
+const _parseTotalCount = function(jqXHR){
 	var totalCount = -1;
 	var contentRange = jqXHR.getResponseHeader("Content-Range");
 	try {
@@ -71,7 +71,7 @@ const __parseTotalCount = function(jqXHR){
 /**
  * Opens link
  */
-const __openLink = function(linkUrl, linkTarget){
+const _openLink = function(linkUrl, linkTarget){
 	if(linkTarget === '_blank'){
 		window.open(linkUrl,'_blank');
 	}else{
@@ -82,8 +82,8 @@ const __openLink = function(linkUrl, linkTarget){
 /**
  * Changes language
  */ 
-const __changeLanguage = function(language){
-	window.location = '?__lang=' + language;
+const _changeLanguage = function(language){
+	window.location = '?_lang=' + language;
 }
 
 

@@ -155,21 +155,21 @@
 		function getMenus() {
 			return new Promise(function(resolve,reject){
 				var data = {};
-				data.__page = search.get('page');
-				data.__rows = search.get('rows');
+				data._page = search.get('page');
+				data._rows = search.get('rows');
 				$.ajax({
 					 url: 'menu/getMenus'
 					,type: 'GET'
 					,data: data
 					,success: function(data, textStatus, jqXHR) {
 						menus.fromJson(data);
-						search.set('totalCount', __parseTotalCount(jqXHR));
+						search.set('totalCount', _parseTotalCount(jqXHR));
 						resolve(true);
 			   	 	}
 				})
 				.done(function(data, textStatus, jqXHR) {
 					menus.fromJson(data);
-					search.set('totalCount', __parseTotalCount(jqXHR));
+					search.set('totalCount', _parseTotalCount(jqXHR));
 					resolve(true);
 			   	});
 			});
@@ -289,7 +289,7 @@
 		 * Adds menu display authority
 		 */
 		function addMenuDisplayAuthority() {
-			__authorityDialog.open({
+			_authorityDialog.open({
 				checkedAuthorities: menuDisplayAuthorities.toJson(),
 				disabledAuthorities: menuDisplayAuthorities.toJson()
 			})
@@ -620,7 +620,7 @@
 															<td>
 																<select is="duice-select" data-duice-bind="i18n,language">
 																	<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
-																	<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
+																	<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
 																</select>
 															</td>
 														</tr>
@@ -673,16 +673,16 @@
 			// release other items
 			upperMenus.forEach(function(item){
 				if(item.get('id') !== row.get('id')){
-					item.set('__checked', false);	
+					item.set('_checked', false);	
 				}				
 			});
 			
-			// toggles __checked in current row.
-			var __checked = row.get('__checked');
-			if(__checked === true){
-				row.set('__checked', false);
+			// toggles _checked in current row.
+			var _checked = row.get('_checked');
+			if(_checked === true){
+				row.set('_checked', false);
 			}else{
-				row.set('__checked', true);
+				row.set('_checked', true);
 			}
 		});
 	</script>
@@ -709,7 +709,7 @@
 								<span is="duice-span" data-duice-bind="menu,name" style="font-weight:bold;"></span>
 							</div>
 							<div class="app-col text-right">
-								<input is="duice-input" type="checkbox" data-duice-bind="menu,__checked"/>
+								<input is="duice-input" type="checkbox" data-duice-bind="menu,_checked"/>
 							</div>
 						</div>
 					</li>
@@ -747,9 +747,9 @@
 				upperMenus.forEach(function(row){
 					// set checked upper menu
 					if(row.get('id') === upperId) {
-						row.set('__checked', true);
+						row.set('_checked', true);
 					}else{
-						row.set('__checked', false);
+						row.set('_checked', false);
 					}
 					// sets diable self
 					if(row.get('id') === id){
@@ -778,7 +778,7 @@
 		 */
 		function changeUpperMenu() {
 			var checkedIndex = upperMenus.indexOf(function(row){
-				if(row.get('__checked') === true){
+				if(row.get('_checked') === true){
 					return true;
 				}
 			});

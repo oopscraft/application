@@ -69,15 +69,15 @@
 			if(search.get('categoryId')){
 				data.categoryId = search.get('categoryId');
 			}
-			data.__page = search.get('page');
-			data.__rows = search.get('rows');
+			data._page = search.get('page');
+			data._rows = search.get('rows');
 			$.ajax({
 				 url: '[[@{/api/boards}]]/[[${board.id}]]/articles'
 				,type: 'GET'
 				,data: data
 			})
 			.done(function(data, textStatus, jqXHR) {
-				search.set('totalCount', __parseTotalCount(jqXHR));
+				search.set('totalCount', _parseTotalCount(jqXHR));
 				articles.fromJson(data);
 				
 				// sets history
@@ -111,7 +111,7 @@
 		window.location.href = "[[@{/board}]]/[[${board.id}]]/writeArticle";
 	}
 	</script>
-	<th:block th:include="|../theme/${__theme}/board/default/board.html|"></th:block>
+	<th:block th:include="|../theme/${_theme}/board/default/board.html|"></th:block>
 </div>
 
 

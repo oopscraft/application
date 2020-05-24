@@ -4,31 +4,31 @@
 <div class="app-row" style="padding:0px 20px; height:70px; background-color:#fafafa; border-bottom:groove 2px #ccc;">
 	<div class="app-col left middle">
 		<a th:href="@{/}">
-			<img th:src="@{/static/image/application.png}"/>
+			<img th:src="@{/static/image/application.png}" style="vertical-align:middle;"/>
 		</a>
 	</div>
 	<div class="app-col right middle">
 		<span sec:authorize="isAnonymous()">
-			<span onclick="__login();" class="link">
+			<span onclick="_login();" class="link">
 				<img class="icon" th:src="@{/static/image/icon_login.png}"/>
 				<span data-th-text="#{application.global.login}"></span>
 			</span>
 		</span>
 		<span sec:authorize="isAuthenticated()">
 			<span>		
-				<img th:src="${__user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
-				<span data-th-text="${__user.name}" style="font-weight:bold;"></span>
+				<img th:src="${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
+				<span data-th-text="${_user.name}" style="font-weight:bold;"></span>
 			</span>
 			&nbsp;&nbsp;&nbsp;
-			<span onclick="__logout();" class="link">
+			<span onclick="_logout();" class="link">
 				<img class="icon" th:src="@{/static/image/icon_logout.png}"/>
 				<span data-th-text="#{application.global.logout}"></span>
 			</span>
 		</span>
 		<span style="margin-left:1rem;">
 			<img class="icon" th:src="@{/static/image/icon_language.png}"/>
-			<select class="duice-select" onchange="__changeLanguage(this.value);" style="width:100px;">
-				<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
+			<select class="duice-select" onchange="_changeLanguage(this.value);" style="width:100px;">
+				<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
 			</select>
 		</span>
 	</div>
@@ -43,18 +43,18 @@
 	<!-- ================================================== -->
 	<div class="app-col" style="width:250px;">
 		<ul is="duice-ul"
-		data-duice-bind="__menus,__menu" 
+		data-duice-bind="_menus,_menu" 
 		data-duice-hierarchy="id,upperId"
 		data-duice-foldable="false"
 		style="margin:1rem;">
 			<li>
 				<a href="javascript:void(0);" 
-				data-link-url="[@duice[$context.__menu.get('linkUrl')]]" 
-				data-link-target="[@duice[$context.__menu.get('linkTarget')]]"
-				onclick="javascript:__openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
+				data-link-url="[@duice[$context._menu.get('linkUrl')]]" 
+				data-link-target="[@duice[$context._menu.get('linkTarget')]]"
+				onclick="javascript:_openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
 				style="display:block; border-bottom:dotted 1px #ccc; line-height:2.5rem;">
-					<img is="duice-img" data-duice-bind="__menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
-					<span is="duice-span" data-duice-bind="__menu,name" style="font-weight:bold;"></span>
+					<img is="duice-img" data-duice-bind="_menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
+					<span is="duice-span" data-duice-bind="_menu,name" style="font-weight:bold;"></span>
 				</a>
 			</li>
 		</ul>

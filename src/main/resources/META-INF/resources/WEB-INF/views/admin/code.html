@@ -134,8 +134,8 @@
 				if(search.get('key')){
 					data[search.get('key')] = search.get('value');
 				}
-				data.__page = search.get('page');
-				data.__rows = search.get('rows');
+				data._page = search.get('page');
+				data._rows = search.get('rows');
 				$.ajax({
 					 url: 'code/getCodes'
 					,type: 'GET'
@@ -143,7 +143,7 @@
 				})
 				.done(function(data, textStatus, jqXHR) {
 					codes.fromJson(data);
-					search.set('totalCount', __parseTotalCount(jqXHR));
+					search.set('totalCount', _parseTotalCount(jqXHR));
 					resolve(true);
 			   	});
 			});

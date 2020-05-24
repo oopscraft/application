@@ -47,6 +47,7 @@ a:hover {
 .app-row {
 	display: flex;
 	justify-content: space-between;
+	max-width: 100%;
 	margin: 0px;
 	padding: 0px;
 }
@@ -66,6 +67,7 @@ a:hover {
 }
 .app-col {
 	flex-grow: 1;
+	max-width: 100%;
 	margin: 0px;
 	padding: 1px;
 }

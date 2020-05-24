@@ -9,11 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
+import org.springframework.mobile.device.Device;
+import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,9 +57,19 @@ public class ApplicationWebController {
 	@Autowired
     MessageSource messageSource;
 	
-	@ModelAttribute("__theme")
+	@ModelAttribute("_theme")
 	public String getTheme() throws Exception {
 		return propertyService.getProperty("APP_THEM").getValue().trim();
+	}
+	
+	@ModelAttribute("_device")
+	public String getDevice(HttpServletRequest request) throws Exception {
+		Device device = DeviceUtils.getCurrentDevice(request);
+		if(device.isMobile() || device.isTablet()) {
+			return "mobile";
+		}else {
+			return "normal";
+		}
 	}
 	
 	/**
@@ -66,7 +77,7 @@ public class ApplicationWebController {
 	 * @return
 	 * @throws Exception
 	 */
-	@ModelAttribute("__locales")
+	@ModelAttribute("_locales")
 	public List<ValueMap> getLocales(HttpServletRequest request) throws Exception {
 		return localeService.getLocales(localeResolver.resolveLocale(request));
 	}
@@ -76,7 +87,7 @@ public class ApplicationWebController {
 	 * @return
 	 * @throws Exception
 	 */
-	@ModelAttribute("__countries")
+	@ModelAttribute("_countries")
 	public List<ValueMap> getCountries(HttpServletRequest request) throws Exception {
 		return localeService.getCountries(localeResolver.resolveLocale(request));
 	}
@@ -86,12 +97,12 @@ public class ApplicationWebController {
 	 * @return
 	 * @throws Exception
 	 */
-	@ModelAttribute("__languages")
+	@ModelAttribute("_languages")
 	public List<ValueMap> getLanguages(HttpServletRequest request) throws Exception {
 		return localeService.getLanguages(localeResolver.resolveLocale(request));
 	}
 	
-	@ModelAttribute("__user")
+	@ModelAttribute("_user")
 	public User getUser() throws Exception {
 		SecurityContext securityContext = SecurityContextHolder.getContext();
 		Authentication authentication = securityContext.getAuthentication();

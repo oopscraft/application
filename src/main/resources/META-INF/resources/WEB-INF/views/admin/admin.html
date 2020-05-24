@@ -27,9 +27,9 @@
 		<script th:src="@{/static/moment.js}"></script>
 		<script th:src="@{/static/chartjs/Chart.js}"></script>
 		<script>
-			const __menus = new duice.List();
-			__menus.setReadonly('icon', true);
-			__menus.fromJson([
+			const _menus = new duice.List();
+			_menus.setReadonly('icon', true);
+			_menus.fromJson([
 				{ name:'[[#{application.user}]]', icon:'[[@{/static/image/icon_user.png}]]', linkUrl:'[[@{/admin/user}]]' },
 				{ name:'[[#{application.group}]]', icon:'[[@{/static/image/icon_group.png}]]', linkUrl:'[[@{/admin/group}]]' },
 				{ name:'[[#{application.role}]]', icon:'[[@{/static/image/icon_role.png}]]', linkUrl:'[[@{/admin/role}]]' },
@@ -46,7 +46,7 @@
 	        /**
 	         * Exeuctes logout
 	         */ 
-	        function __logout(){
+	        function _logout(){
 				$.ajax({
 					 url: '[[@{/admin/logout}]]'
 					,type: 'POST'
@@ -69,19 +69,19 @@
 		<div class="app-row" style="padding:0px 20px; height:70px; background-color:#fafafa; border-bottom:groove 2px #eee;">
 			<div class="app-col left middle">
 				<a th:href="@{/admin}">
-					<img th:src="@{/static/image/application.png}"/>
+					<img th:src="@{/static/image/application.png}" style="vertical-align:middle;"/>
 				</a>
 			</div>
 			<div class="app-col right middle">
-				<img th:src="${__user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
-				<span data-th-text="${__user.name}" style="font-weight:bold;"></span>
+				<img th:src="${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
+				<span data-th-text="${_user.name}" style="font-weight:bold;"></span>
 				&nbsp;&nbsp;&nbsp;
 				<img class="icon" th:src="@{/static/image/icon_logout.png}"/>
-				<span data-th-text="#{application.global.logout}" onclick="__logout();" class="link"></span>
+				<span data-th-text="#{application.global.logout}" onclick="_logout();" class="link"></span>
 				&nbsp;&nbsp;&nbsp;
 				<img class="icon" th:src="@{/static/image/icon_language.png}"/>
-				<select class="duice-select" onchange="__changeLanguage(this.value);" style="width:100px;">
-					<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
+				<select class="duice-select" onchange="_changeLanguage(this.value);" style="width:100px;">
+					<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
 				</select>
 			</div>
 		</div>
@@ -96,18 +96,18 @@
 				<div class="app-row panel">
 					<div class="app-col">
 						<ul is="duice-ul"
-						data-duice-bind="__menus,__menu" 
+						data-duice-bind="_menus,_menu" 
 						data-duice-hierarchy="id,upperId"
 						data-duice-foldable="false"
 						style="margin-top:0.5rem;">
 							<li>
 								<a href="javascript:void(0);" 
-								data-link-url="[@duice[$context.__menu.get('linkUrl')]]" 
-								data-link-target="[@duice[$context.__menu.get('linkTarget')]]"
-								onclick="javascript:__openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
+								data-link-url="[@duice[$context._menu.get('linkUrl')]]" 
+								data-link-target="[@duice[$context._menu.get('linkTarget')]]"
+								onclick="javascript:_openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
 								style="display:block; border-bottom:dotted 1px #ccc; line-height:2.5rem;">
-									<img is="duice-img" data-duice-bind="__menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
-									<span is="duice-span" data-duice-bind="__menu,name" style="font-weight:bold;"></span>
+									<img is="duice-img" data-duice-bind="_menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
+									<span is="duice-span" data-duice-bind="_menu,name" style="font-weight:bold;"></span>
 								</a>
 							</li>
 						</ul>
@@ -576,7 +576,7 @@
 		<!-- ====================================================== -->
 		<!-- START: Groups Dialog									-->
 		<!-- ====================================================== -->
-		<dialog is="duice-dialog" id="__groupDialog" style="width:800px;">
+		<dialog is="duice-dialog" id="_groupDialog" style="width:800px;">
 			<div class="app-row title">
 				<div class="app-col bottom">
 					<h2>
@@ -588,7 +588,7 @@
 			<div class="app-row">
 				<div class="app-col">
 					<ul is="duice-ul" 
-					data-duice-bind="__groupDialog.groups,group" 
+					data-duice-bind="_groupDialog.groups,group" 
 					data-duice-hierarchy="id,upperId"
 					data-duice-selectable="true"
 					data-duice-foldable="true"
@@ -600,7 +600,7 @@
 									<span is="duice-span" data-duice-bind="group,name" style="font-weight:bold;"></span>
 								</div>
 								<div class="app-col text-right">
-									<input is="duice-input" type="checkbox" data-duice-bind="group,__checked"/>
+									<input is="duice-input" type="checkbox" data-duice-bind="group,_checked"/>
 								</div>
 							</div>
 						</li>
@@ -609,7 +609,7 @@
 			</div>
 			<div class="app-row">
 				<div class="app-col right">
-					<button class="button" onclick="__groupDialog.confirm();">
+					<button class="button" onclick="_groupDialog.confirm();">
 						<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
 						<span data-th-text="#{application.global.confirm}"></span>
 					</button>
@@ -620,8 +620,8 @@
 			/**
 			 * Global common group select dialog
 			 */
-	        const __groupDialog = {
-	        	dialog: new duice.Dialog(document.getElementById('__groupDialog')),
+	        const _groupDialog = {
+	        	dialog: new duice.Dialog(document.getElementById('_groupDialog')),
 	        	groups: new duice.List(),
 	        	
 	        	// option
@@ -645,7 +645,7 @@
 	        		
 	        		// defines index change event
 	        		var _this = this;
-	        		this.groups.setReadonly('__checked', true);
+	        		this.groups.setReadonly('_checked', true);
 	        		this.groups.onAfterSelectRow(function(group){
 	       				
 	       				// check disabled
@@ -657,17 +657,17 @@
 	       				if(_this.singleSelect === true){
 	       					_this.groups.forEach(function(row){
 	       						if(row.get('id') !== group.get('id')){
-	       							row.set('__checked', false);        							
+	       							row.set('_checked', false);        							
 	       						}
 	       					});
 	       				}
 	
-	       				// toggles __checked
-	       				var __checked = group.get('__checked');
-	       				if(__checked === true){
-	       					group.set('__checked', false);
+	       				// toggles _checked
+	       				var _checked = group.get('_checked');
+	       				if(_checked === true){
+	       					group.set('_checked', false);
 	       				}else{
-	       					group.set('__checked', true);
+	       					group.set('_checked', true);
 	       				}
 	        		});
 	        		
@@ -685,16 +685,16 @@
 						$.ajax({
 							 url: '[[@{/admin/getGroups}]]'
 							,type: 'GET'
-							,data: {__page:page, __rows:10000}
+							,data: {_page:page, _rows:10000}
 							,success: function(data, textStatus, jqXHR) {
 								_this.groups.fromJson(data);
 								_this.groups.forEach(function(group){
 									var id = group.get('id');
 									
-									// checks __selected value, if it set as selected list.
+									// checks _selected value, if it set as selected list.
 									_this.checkedGroups.forEach(function(item){
 										if(item.id === id){
-											group.set('__checked', true);
+											group.set('_checked', true);
 										}
 									});
 									
@@ -717,7 +717,7 @@
 	        	confirm() {
 					var checkedGroups = new Array();
 					this.groups.forEach(function(group){
-						if(group.isDisable() === false && group.get('__checked') === true){
+						if(group.isDisable() === false && group.get('_checked') === true){
 							checkedGroups.push(group.toJson());
 						}
 					});
@@ -732,7 +732,7 @@
 		<!-- ====================================================== -->
 		<!-- START: Roles Dialog									-->
 		<!-- ====================================================== -->
-		<dialog is="duice-dialog" id="__roleDialog" style="width:800px;">
+		<dialog is="duice-dialog" id="_roleDialog" style="width:800px;">
 			<div class="app-row title">
 				<div class="app-col bottom">
 					<h2>
@@ -744,15 +744,15 @@
 			<div class="app-row search">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_search.png}"/>
-					<select is="duice-select" data-duice-bind="__roleDialog.search,key" style="width:125px;">
+					<select is="duice-select" data-duice-bind="_roleDialog.search,key" style="width:125px;">
 						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
 						<option value="id" data-th-text="#{application.role.id}">Role ID</option>
 						<option value="name" data-th-text="#{application.role.name}">Role Name</option>
 					</select>
-					<input is="duice-input" type="text" data-duice-bind="__roleDialog.search,value" style="width:250px;"/>
+					<input is="duice-input" type="text" data-duice-bind="_roleDialog.search,value" style="width:250px;"/>
 				</div>
 				<div class="app-col right">
-					<button class="button" onclick="__roleDialog.getRoles();">
+					<button class="button" onclick="_roleDialog.getRoles();">
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
 						<span data-th-text="#{application.global.search}"></span>
 					</button>
@@ -761,7 +761,7 @@
 			<div class="app-row">
 				<div class="app-col">
 					<table is="duice-table" 
-					data-duice-bind="__roleDialog.roles,role" 
+					data-duice-bind="_roleDialog.roles,role" 
 					data-duice-selectable="true"
 					style="width:100%;">
 						<col style="width:5%;"/>					
@@ -778,7 +778,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td class="text-center"><input is="duice-input" type="checkbox" data-duice-bind="role,__checked" /></td>
+								<td class="text-center"><input is="duice-input" type="checkbox" data-duice-bind="role,_checked" /></td>
 								<td class="text-center"><small is="duice-scriptlet" data-duice-bind="role" data-duice-value="return $context.index+1;"></small></td>
 								<td>
 									<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
@@ -792,15 +792,15 @@
 			</div>
 			<div class="app-row">
 				<div class="app-col center">
-					<ul is="duice-widget-pagination" data-duice-bind="__roleDialog.search,page,rows,totalCount" data-duice-size="5">
-						<li onclick="__roleDialog.getRoles();"></li>
+					<ul is="duice-widget-pagination" data-duice-bind="_roleDialog.search,page,rows,totalCount" data-duice-size="5">
+						<li onclick="_roleDialog.getRoles();"></li>
 					</ul>
 				</div>
 			</div>
 			<div class="app-row">
 				<div class="app-col">
 					<table is="duice-table" 
-					data-duice-bind="__roleDialog.selectedRoles,role" 
+					data-duice-bind="_roleDialog.selectedRoles,role" 
 					data-duice-selectable="true"
 					style="width:100%;">
 						<col style="width:10%;"/>
@@ -824,7 +824,7 @@
 								</td>
 								<td><span is="duice-span" data-duice-bind="role,name"></span></td>
 								<td class="text-center">
-									<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="__roleDialog.selectedRoles.removeRow(this.dataset.index);"/>
+									<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="_roleDialog.selectedRoles.removeRow(this.dataset.index);"/>
 								</td>
 							</tr>
 						</tbody>
@@ -833,7 +833,7 @@
 			</div>
 			<div class="app-row action">
 				<div class="app-col right">
-					<button class="button" onclick="__roleDialog.confirm();">
+					<button class="button" onclick="_roleDialog.confirm();">
 						<img th:src="@{/static/image/icon_confirm.png}" class="icon"/>
 						<span data-th-text="#{application.global.confirm}"></span>
 					</button>
@@ -844,8 +844,8 @@
 			/**
 			 * Global common role dialog
 			 */
-	        const __roleDialog = {
-	        	dialog: new duice.Dialog(document.getElementById('__roleDialog')),
+	        const _roleDialog = {
+	        	dialog: new duice.Dialog(document.getElementById('_roleDialog')),
 	        	search: new duice.Map({
 	        		page: 1,
 	        		rows: 10,
@@ -872,7 +872,7 @@
 	        		
 	        		// add index change event listener
 	        		var _this = this;
-	        		this.roles.setReadonly('__checked', true);
+	        		this.roles.setReadonly('_checked', true);
 	        		this.roles.onAfterSelectRow(function(role){
 	    				var id = role.get('id');
 	    				
@@ -881,10 +881,10 @@
 	    					return;
 	    				}
 	
-	    				// toggles __selected
-	    				var __checked = role.get('__checked');
-	    				if(__checked === true){
-	    					role.set('__checked', false);
+	    				// toggles _selected
+	    				var _checked = role.get('_checked');
+	    				if(_checked === true){
+	    					role.set('_checked', false);
 	    					_this.selectedRoles.forEach(function(row,index){
 	    						if(row.get('id') === id){
 	    							_this.selectedRoles.removeRow(index);
@@ -892,7 +892,7 @@
 	    						}
 	    					});
 	    				}else{
-	    					role.set('__checked', true);
+	    					role.set('_checked', true);
 	    					_this.selectedRoles.addRow(new duice.Map(role.toJson()));
 	    				}
 	        		});
@@ -915,15 +915,15 @@
 	    				if(_this.search.get('key')){
 	    					data[_this.search.get('key')] = _this.search.get('value');
 	    				}
-	    				data.__page = _this.search.get('page');
-	    				data.__rows = _this.search.get('rows');
+	    				data._page = _this.search.get('page');
+	    				data._rows = _this.search.get('rows');
 						$.ajax({
 							 url: '[[@{/admin/getRoles}]]'
 							,type: 'GET'
 							,data: data
 							,success: function(data, textStatus, jqXHR) {
 								_this.roles.fromJson(data);
-								_this.search.set('totalCount', __parseTotalCount(jqXHR));
+								_this.search.set('totalCount', _parseTotalCount(jqXHR));
 								
 								// check earch role
 								_this.roles.forEach(function(role){
@@ -933,7 +933,7 @@
 									_this.disabledRoles.forEach(function(obj){
 										if(obj.id === id){
 											role.setDisableAll(true);
-											role.set('__checked', true);
+											role.set('_checked', true);
 											return false;
 										}
 									});
@@ -941,7 +941,7 @@
 									// checks already selected
 									_this.selectedRoles.forEach(function(map){
 										if(map.get('id') === id){
-											role.set('__checked', true);
+											role.set('_checked', true);
 											return false;
 										}
 									});
@@ -967,7 +967,7 @@
 		<!-- ====================================================== -->
 		<!-- START: Authorities Dialog								-->
 		<!-- ====================================================== -->
-		<dialog is="duice-dialog" id="__authorityDialog" style="width:800px;">
+		<dialog is="duice-dialog" id="_authorityDialog" style="width:800px;">
 			<div class="app-row title">
 				<div class="app-col bottom">
 					<h2>
@@ -979,15 +979,15 @@
 			<div class="app-row search">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_search.png}"/>
-					<select is="duice-select" data-duice-bind="__authorityDialog.search,key" style="width:125px;">
+					<select is="duice-select" data-duice-bind="_authorityDialog.search,key" style="width:125px;">
 						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
 						<option value="id" data-th-text="#{application.authority.id}">ID</option>
 						<option value="name" data-th-text="#{application.authority.name}">Name</option>
 					</select>
-					<input is="duice-input" type="text" data-duice-bind="__authorityDialog.search,value" style="width:250px;"/>
+					<input is="duice-input" type="text" data-duice-bind="_authorityDialog.search,value" style="width:250px;"/>
 				</div>
 				<div class="app-col right">
-					<button class="button" onclick="__authorityDialog.getAuthorities();">
+					<button class="button" onclick="_authorityDialog.getAuthorities();">
 						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
 						<span data-th-text="#{application.global.search}"></span>
 					</button>
@@ -996,7 +996,7 @@
 			<div class="app-row">
 				<div class="app-col">
 					<table is="duice-table" 
-					data-duice-bind="__authorityDialog.authorities,authority" 
+					data-duice-bind="_authorityDialog.authorities,authority" 
 					data-duice-selectable="true"
 					style="width:100%;">
 						<col style="width:5%;"/>
@@ -1013,7 +1013,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td class="text-center"><input is="duice-input" type="checkbox" data-duice-bind="authority,__checked"/></td>
+								<td class="text-center"><input is="duice-input" type="checkbox" data-duice-bind="authority,_checked"/></td>
 								<td class="text-center"><small is="duice-scriptlet" data-duice-bind="authority" data-duice-value="return $context.index+1;"></small></td>
 								<td>
 									<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
@@ -1027,15 +1027,15 @@
 			</div>
 			<div class="app-row">
 				<div class="app-col center">
-					<ul is="duice-widget-pagination" data-duice-bind="__authorityDialog.search,page,rows,totalCount" data-duice-size="5">
-						<li data-page="[@duice[$context.page]]" onclick="__authorityDialog.getAuthorities(this.dataset.page);"></li>
+					<ul is="duice-widget-pagination" data-duice-bind="_authorityDialog.search,page,rows,totalCount" data-duice-size="5">
+						<li data-page="[@duice[$context.page]]" onclick="_authorityDialog.getAuthorities(this.dataset.page);"></li>
 					</ul>
 				</div>
 			</div>
 			<div class="app-row">
 				<div class="app-col">
 					<table is="duice-table" 
-					data-duice-bind="__authorityDialog.selectedAuthorities,authority" 
+					data-duice-bind="_authorityDialog.selectedAuthorities,authority" 
 					style="width:100%;">
 						<col style="width:10%;"/>
 						<col style="width:35%;"/>
@@ -1058,7 +1058,7 @@
 								</td>
 								<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
 								<td style="text-align:center;">
-									<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="__authorityDialog.selectedAuthorities.removeRow(this.dataset.index);"/>
+									<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="_authorityDialog.selectedAuthorities.removeRow(this.dataset.index);"/>
 								</td>
 							</tr>
 						</tbody>
@@ -1067,7 +1067,7 @@
 			</div>
 			<div class="app-row action">
 				<div class="app-col right">
-					<button class="button" onclick="__authorityDialog.confirm();">
+					<button class="button" onclick="_authorityDialog.confirm();">
 						<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
 						<span data-th-text="#{application.global.confirm}"></span>
 					</button>
@@ -1075,8 +1075,8 @@
 			</div>
 		</dialog>
 		<script>
-	        var __authorityDialog = {
-	           	dialog: new duice.Dialog(document.getElementById('__authorityDialog')),
+	        var _authorityDialog = {
+	           	dialog: new duice.Dialog(document.getElementById('_authorityDialog')),
 	           	search: new duice.Map({
 	           		page: 1,
 	           		rows: 10,
@@ -1103,7 +1103,7 @@
 	           		
 	           		// add index change event listener
 	           		var _this = this;
-	           		this.authorities.setReadonly('__checked', true);
+	           		this.authorities.setReadonly('_checked', true);
 	           		this.authorities.onAfterSelectRow(function(authority){
 	       				var id = authority.get('id');
 	       				
@@ -1112,10 +1112,10 @@
 	       					return false;
 	       				}
 	
-	       				// toggles __selected
-	       				var __checked = authority.get('__checked');
-	       				if(__checked === true){
-	       					authority.set('__checked', false);
+	       				// toggles _selected
+	       				var _checked = authority.get('_checked');
+	       				if(_checked === true){
+	       					authority.set('_checked', false);
 	       					_this.selectedAuthorities.forEach(function(row,index){
 	       						if(row.get('id') === id){
 	       							_this.selectedAuthorities.removeRow(index);
@@ -1123,7 +1123,7 @@
 	       						}
 	       					});
 	       				}else{
-	       					authority.set('__checked', true);
+	       					authority.set('_checked', true);
 	       					_this.selectedAuthorities.addRow(new duice.Map(authority.toJson()));
 	       				}
 	           		});
@@ -1146,15 +1146,15 @@
 	    				if(_this.search.get('key')){
 	    					data[_this.search.get('key')] = _this.search.get('value');
 	    				}
-	    				data.__page = _this.search.get('page');
-	    				data.__rows = _this.search.get('rows');
+	    				data._page = _this.search.get('page');
+	    				data._rows = _this.search.get('rows');
 	    				$.ajax({
 	    					 url: '[[@{/admin/getAuthorities}]]'
 	    					,type: 'GET'
 	    					,data: data
 	    					,success: function(data, textStatus, jqXHR) {
 	    						_this.authorities.fromJson(data);
-	    						_this.search.set('totalCount', __parseTotalCount(jqXHR));
+	    						_this.search.set('totalCount', _parseTotalCount(jqXHR));
 	    						
 	    						// check earch authority
 	    						_this.authorities.forEach(function(authority){
@@ -1164,7 +1164,7 @@
 	    							_this.disabledAuthorities.forEach(function(obj){
 	    								if(obj.id === id){
 	    									authority.setDisableAll(true);
-	    									authority.set('__checked', true);
+	    									authority.set('_checked', true);
 	    									return false;
 	    								}
 	    							});
@@ -1172,7 +1172,7 @@
 	    							// checks already selected
 	    							_this.selectedAuthorities.forEach(function(map){
 	    								if(map.get('id') === id){
-	    									authority.set('__checked', true);
+	    									authority.set('_checked', true);
 	    									return false;
 	    								}
 	    							});

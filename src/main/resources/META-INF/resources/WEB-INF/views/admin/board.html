@@ -168,8 +168,8 @@
 				if(search.get('status')){
 					data.status = search.get('status');
 				}
-				data.__page = search.get('page');
-				data.__rows = search.get('rows');
+				data._page = search.get('page');
+				data._rows = search.get('rows');
 				$.ajax({
 					 url: 'board/getBoards'
 					,type: 'GET'
@@ -177,7 +177,7 @@
 				})
 				.done(function(data, textStatus, jqXHR) {
 					boards.fromJson(data);
-					search.set('totalCount', __parseTotalCount(jqXHR));
+					search.set('totalCount', _parseTotalCount(jqXHR));
 					resolve(true);
 			   	});
 			});
@@ -356,7 +356,7 @@
 		 * Adds board access authority
 		 */
 		function addBoardAccessAuthority(){
-			__authorityDialog.open({
+			_authorityDialog.open({
 				disabledAuthorities: boardAccessAuthorities,
 				onAfterConfirm: function(selectedAuthorities){
 					selectedAuthorities.forEach(function(selectedAuthority){
@@ -377,7 +377,7 @@
 		 * Adds board read authority
 		 */
 		function addBoardReadAuthority(){
-			__authorityDialog.open({
+			_authorityDialog.open({
 				disabledAuthorities: boardReadAuthorities,
 				onAfterConfirm: function(selectedAuthorities){
 					selectedAuthorities.forEach(function(selectedAuthority){
@@ -398,7 +398,7 @@
 		 * Adds board write authority
 		 */
 		function addBoardWriteAuthority(){
-			__authorityDialog.open({
+			_authorityDialog.open({
 				disabledAuthorities: boardWriteAuthorities,
 				onAfterConfirm: function(selectedAuthorities){
 					selectedAuthorities.forEach(function(selectedAuthority){

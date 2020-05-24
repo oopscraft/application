@@ -159,8 +159,8 @@
 				if(search.get('status')){
 					data.status = search.get('status');
 				}
-				data.__page = search.get('page');
-				data.__rows = search.get('rows');
+				data._page = search.get('page');
+				data._rows = search.get('rows');
 				$.ajax({
 					 url: 'user/getUsers'
 					,type: 'GET'
@@ -168,7 +168,7 @@
 				})
 				.done(function(data, textStatus, jqXHR) {
 					users.fromJson(data);
-					search.set('totalCount', __parseTotalCount(jqXHR));
+					search.set('totalCount', _parseTotalCount(jqXHR));
 					resolve(true);
 			   	});
 			});
@@ -366,7 +366,7 @@
 		 * Adds user group
 		 */
 		function addUserGroup() {
-			__groupDialog.open({
+			_groupDialog.open({
 				checkedGroups: userGroups.toJson(),
 				disabledGroups: userGroups.toJson()
 			})
@@ -390,7 +390,7 @@
 		 * Adds user role
 		 */
 		function addUserRole() {
-			__roleDialog.open({
+			_roleDialog.open({
 				checkedRoles: userRoles.toJson(),
 				disabledRoles: userRoles.toJson(),
 			})
@@ -414,7 +414,7 @@
 		 * Adds user authority
 		 */
 		function addUserAuthority() {
-			__authorityDialog.open({
+			_authorityDialog.open({
 				checkedAuthorities: userAuthorities.toJson(),
 				disabledAuthorities: userAuthorities.toJson()
 			})
@@ -636,7 +636,7 @@
 												<div class="app-col" style="width:25%;">
 													<select is="duice-select" data-duice-bind="user,mobileCountry">
 														<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
-														<option th:each="country:${__countries}" th:value="${country.country}" th:text="${country.displayCountry}"></option>
+														<option th:each="country:${_countries}" th:value="${country.country}" th:text="${country.displayCountry}"></option>
 													</select>
 												</div>
 												<div class="app-col" style="width:75%;">
@@ -658,7 +658,7 @@
 										<td>
 											<select is="duice-select" data-duice-bind="user,language">
 												<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
-												<option th:each="language:${__languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
+												<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
 											</select>
 										</td>
 									</tr>
