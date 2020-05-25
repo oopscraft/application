@@ -1,0 +1,184 @@
+<th:block th:if="${_device=='PC'}">
+	<!-- ================================================== -->
+	<!-- START: top											-->
+	<!-- ================================================== -->
+	<div class="app-row" style="padding:0px 20px; height:70px; background-color:#fafafa; border-bottom:groove 2px #ccc;">
+		<div class="app-col left middle">
+			<a th:href="@{/}">
+				<img th:src="@{/static/image/application.png}" style="vertical-align:middle;"/>
+			</a>
+		</div>
+		<div class="app-col right middle">
+			<span sec:authorize="isAnonymous()">
+				<span onclick="_login();" class="link">
+					<img class="icon" th:src="@{/static/image/icon_login.png}"/>
+					<span data-th-text="#{application.global.login}"></span>
+				</span>
+			</span>
+			<span sec:authorize="isAuthenticated()">
+				<span>		
+					<img th:src="${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
+					<span data-th-text="${_user.name}" style="font-weight:bold;"></span>
+				</span>
+				&nbsp;&nbsp;&nbsp;
+				<span onclick="_logout();" class="link">
+					<img class="icon" th:src="@{/static/image/icon_logout.png}"/>
+					<span data-th-text="#{application.global.logout}"></span>
+				</span>
+			</span>
+			<span style="margin-left:1rem;">
+				<img class="icon" th:src="@{/static/image/icon_language.png}"/>
+				<select class="duice-select" onchange="_changeLanguage(this.value);" style="width:100px;">
+					<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
+				</select>
+			</span>
+		</div>
+	</div>
+	<!-- ================================================== -->
+	<!-- END: top											-->
+	<!-- ================================================== -->
+	
+	<div class="app-row" style="min-height:calc(100% - 120px);">
+		<!-- ================================================== -->
+		<!-- START: menu										-->
+		<!-- ================================================== -->
+		<div class="app-col" style="width:250px;">
+			<ul is="duice-ul"
+			data-duice-bind="_menus,_menu" 
+			data-duice-hierarchy="id,upperId"
+			data-duice-foldable="false"
+			style="margin:1rem;">
+				<li>
+					<a href="javascript:void(0);" 
+					data-link-url="[@duice[$context._menu.get('linkUrl')]]" 
+					data-link-target="[@duice[$context._menu.get('linkTarget')]]"
+					onclick="javascript:_openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
+					style="display:block; border-bottom:dotted 1px #ccc; line-height:2.5rem;">
+						<img is="duice-img" data-duice-bind="_menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
+						<span is="duice-span" data-duice-bind="_menu,name" style="font-weight:bold;"></span>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<!-- ================================================== -->
+		<!-- START: menu										-->
+		<!-- ================================================== -->
+		<!-- ================================================== -->
+		<!-- START: content										-->
+		<!-- ================================================== -->
+		<div layout:fragment="content" class="app-col" style="width:calc(100% - 500px); padding:1rem;">
+		</div>
+		<!-- ================================================== -->
+		<!-- END: content										-->
+		<!-- ================================================== -->
+		<div class="app-col" style="width:250px; padding:1rem;">
+		</div>
+	</div>
+	
+	<!-- ================================================== -->
+	<!-- START: footer										-->
+	<!-- ================================================== -->
+	<div style="text-align:center; border-top:dotted 1px #ccc;">
+		<img th:src="@{/static/image/copyright.png}"/>
+	</div>
+	<!-- ================================================== -->
+	<!-- END: footer										-->
+	<!-- ================================================== -->
+</th:block>
+
+
+<th:block th:if="${_device=='MOBILE'}">
+	<script>
+	function openMenuDiv() {
+		$('#menuDiv').slideToggle(200);
+	}
+	</script>
+	
+	<!-- ================================================== -->
+	<!-- START: top											-->
+	<!-- ================================================== -->
+	<div class="app-row" style="padding:1rem 0.5rem; background-color:#fafafa; border-bottom:groove 2px #eee;">
+		<div class="app-col left middle">
+			<a th:href="@{/}">
+				<img th:src="@{/static/image/application.png}" style="vertical-align:middle; height:2rem;"/>
+			</a>
+		</div>
+		<div class="app-col right middle">
+			<span sec:authorize="isAnonymous()">
+				<span onclick="_login();" class="link">
+					<img class="icon" th:src="@{/static/image/icon_login.png}"/>
+				</span>
+			</span>
+			<span sec:authorize="isAuthenticated()">
+				<span>		
+					<img th:src="${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
+				</span>
+				&nbsp;&nbsp;&nbsp;
+				<span onclick="_logout();" class="link">
+					<img class="icon" th:src="@{/static/image/icon_logout.png}"/>
+				</span>
+			</span>
+			<span style="margin-left:1rem;">
+				<img class="icon" th:src="@{/static/image/icon_language.png}"/>
+				<select class="duice-select" onchange="_changeLanguage(this.value);" style="width:100px; display:none;">
+					<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
+				</select>
+			</span>
+			&nbsp;&nbsp;&nbsp;
+			|
+			&nbsp;&nbsp;&nbsp;
+			<img th:src="@{/static/image/icon_menu.png}" onclick="openMenuDiv();" style="vertical-align:middle; height:2rem;"/>
+		</div>
+	</div>
+	<!-- ================================================== -->
+	<!-- END: top											-->
+	<!-- ================================================== -->
+	
+	<!-- ================================================== -->
+	<!-- START: menu										-->
+	<!-- ================================================== -->
+	<div id="menuDiv" class="app-row" style="display:none;">
+		<div class="app-col" style="width:250px;">
+			<ul is="duice-ul"
+			data-duice-bind="_menus,_menu" 
+			data-duice-hierarchy="id,upperId"
+			data-duice-foldable="false"
+			style="margin:1rem;">
+				<li>
+					<a href="javascript:void(0);" 
+					data-link-url="[@duice[$context._menu.get('linkUrl')]]" 
+					data-link-target="[@duice[$context._menu.get('linkTarget')]]"
+					onclick="javascript:_openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
+					style="display:block; border-bottom:dotted 1px #ccc; line-height:2.5rem;">
+						<img is="duice-img" data-duice-bind="_menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
+						<span is="duice-span" data-duice-bind="_menu,name" style="font-weight:bold;"></span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!-- ================================================== -->
+	<!-- MENU: menu											-->
+	<!-- ================================================== -->
+	
+	<!-- ================================================== -->
+	<!-- START: content										-->
+	<!-- ================================================== -->
+	<div class="app-row" style="margin:0.5rem;">
+		<div layout:fragment="content" class="app-col">
+		</div>
+	</div>
+	<!-- ================================================== -->
+	<!-- END: content										-->
+	<!-- ================================================== -->
+	
+	<!-- ================================================== -->
+	<!-- START: footer										-->
+	<!-- ================================================== -->
+	<div style="text-align:center; border-top:dotted 1px #ccc;">
+		<img th:src="@{/static/image/copyright.png}" style="height:1.5rem;"/>
+	</div>
+	<!-- ================================================== -->
+	<!-- END: footer										-->
+	<!-- ================================================== -->
+</th:block>

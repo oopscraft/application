@@ -42,12 +42,15 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.server.i18n.AcceptHeaderLocaleContextResolver;
+import org.springframework.web.servlet.LocaleContextResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.resource.GzipResourceResolver;
@@ -164,7 +167,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 		cookieCsrfTokenRepository.setHeaderName(CSRF_TOKEN_HEADER_NAME);
 		return cookieCsrfTokenRepository;
 	}
-	
+
 	@Bean
 	public CookieLocaleResolver localeResolver() throws Exception {
 		CookieLocaleResolver localeResolver = new CookieLocaleResolver();
@@ -184,7 +187,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**")
         	.addResourceLocations("/static/")
-        	.setCachePeriod(3600)
+        	.setCachePeriod(3)
         	.resourceChain(true)
         	.addResolver(new GzipResourceResolver());
 	}
@@ -228,8 +231,6 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     		http.formLogin()
 				.loginPage("/admin/login")
 				.loginProcessingUrl("/admin/doLogin")
-				.usernameParameter("email")
-				.passwordParameter("password")
 				.successHandler(authenticationHandler)
 				.failureHandler(authenticationHandler)
 				.permitAll();
@@ -308,8 +309,6 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 			http.formLogin()
 				.loginPage("/user/login")
 				.loginProcessingUrl("/user/doLogin")
-				.usernameParameter("username")
-				.passwordParameter("password")
 				.successHandler(authenticationHandler)
 				.failureHandler(authenticationHandler)
 				.permitAll();

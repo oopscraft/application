@@ -37,13 +37,13 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		
 		// name is email
-		String email = authentication.getName();
+		String username = authentication.getName();
 		String password = (String) authentication.getCredentials();
 		
 		// retrieves user data
 		User user = null;
 		try {
-			user = userService.getUserByEmail(email);
+			user = userService.getUserByEmail(username);
 			if(user == null) {
 				throw new UsernameNotFoundException("User not found");
 			}

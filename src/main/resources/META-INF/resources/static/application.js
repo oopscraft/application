@@ -83,6 +83,7 @@ const _openLink = function(linkUrl, linkTarget){
  * Changes language
  */ 
 const _changeLanguage = function(language){
+	duice.setCookie('X-LOCALE', language);
 	window.location = '?_lang=' + language;
 }
 

@@ -2,7 +2,8 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=2048,initial-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     	<title>Application</title>
 		<link rel="stylesheet" type="text/css" th:href="@{/static/duice/polyfill/normalize.css}">
 		<script th:src="@{/static/duice/polyfill/dataset.js}"></script>
@@ -12,18 +13,10 @@
 		<script th:src="@{/static/jquery.js}"></script>
 		<link rel="stylesheet" type="text/css" th:href="@{/static/application.css}">
 		<script th:src="@{/static/application.js}"></script>
-		<style>
-		#messageDiv {
-			white-space: pre-line;
-			font-weight: bold;
-			text-align: center;
-			color: orangered;
-		}
-		</style>
 		<script>
 		// defines variables 
 		const user = new duice.Map({
-			email: null,
+			username: null,
 			password: null
 		});
 		
@@ -36,12 +29,12 @@
 		/**
 		 * Requests login
 		 */
-		function doLogin(){
+		function login(){
 			
 			// checks input id
-			if(duice.isEmpty(user.get('email'))){
+			if(duice.isEmpty(user.get('username'))){
 				printMessage('[[#{application.global.enterItem(#{application.user.email})}]]');
-				user.setFocus('email');
+				user.setFocus('username');
 				return false;
 			}
 			
@@ -74,23 +67,38 @@
 			$('#messageDiv').text(message);
 		}
 		</script>
+		<style>
+		#messageDiv {
+			margin: 1px !important;
+			padding: 0.5rem 1rem !important;
+			white-space: pre-line;
+			font-weight: bold;
+			text-align: center;
+			color: orangered;
+		}
+		</style>
 	</head>
 	<body style="display:flex; justify-content:center; align-items:center;">
-		<!-- auto completion off -->
-		<div id="autocomplete">
-			<input type="text"/>
-			<input type="password"/>
-		</div>
-		<div class="app-row" style="width:300px; margin-bottom:200px;">
+		<div class="app-row" style="width:300px; margin-bottom:200px; text-align:center;">
 			<div class="app-col">
-				<img th:src="@{/static/image/application.png}"/>
-				<input is="duice-input" type="text" data-duice-bind="user,email" style="margin:1px;"/>
-				<input is="duice-input" type="password" data-duice-bind="user,password" style="margin:1px;"/>
-				<button id="loginButton" class="button" onclick="doLogin();" style="width:100%; margin:1px;">
-					<img class="icon" th:src="@{/static/image/icon_login.png}"/>
-					<span data-th-text="#{application.global.login}"></span>
-				</button>
-				<div id="messageDiv"></div>
+				<div class="app-row">
+					<div class="app-col">
+						<a th:href="@{/}">
+							<img th:src="@{/static/image/application.png}"/>
+						</a>
+						<input is="duice-input" type="text" data-duice-bind="user,username" th:placeholder="#{application.user.email}" style="text-align:center; margin:1px;"/>
+						<input is="duice-input" type="password" data-duice-bind="user,password" th:placeholder="#{application.user.password}" style="text-align:center; margin:1px;"/>
+						<button id="loginButton" class="button" onclick="login();" style="width:100%; margin:1px;">
+							<img class="icon" th:src="@{/static/image/icon_login.png}"/>
+							<span data-th-text="#{application.global.login}"></span>
+						</button>
+					</div>
+				</div>
+				<div class="app-row">
+					<div class="app-col">
+						<div id="messageDiv"></div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>

@@ -2,7 +2,8 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=2048,initial-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     	<title>Application</title>
 		<link rel="stylesheet" type="text/css" th:href="@{/static/duice/polyfill/normalize.css}">
 		<script th:src="@{/static/duice/polyfill/dataset.js}"></script>
@@ -21,27 +22,27 @@
 		}
 		</style>
 		<script>
+		// defines variables 
+		const user = new duice.Map({
+			username: null,
+			password: null
+		});
+
 		// document ready
 		$(document).ready(function() {
 			$('#autocomplete').hide();
-			user.setFocus('id');
+			user.setFocus('username');
 		});
 		
-		// defines variables 
-		const user = new duice.Map({
-			id:null,
-			password:null
-		});
-
 		/**
 		 * Requests login
 		 */
-		function doLogin(){
+		function login(){
 			
 			// checks input id
-			if(duice.isEmpty(user.get('id'))){
-				printMessage('[[#{application.global.enterItem(#{application.user.id})}]]');
-				user.setFocus('id');
+			if(duice.isEmpty(user.get('username'))){
+				printMessage('[[#{application.global.enterItem(#{application.user.email})}]]');
+				user.setFocus('username');
 				return false;
 			}
 			
@@ -72,6 +73,20 @@
 		 */
 		function printMessage(message){
 			$('#messageDiv').text(message);
+		}
+		
+		/**
+		 * join
+		 */
+		function join(){
+			location.href = '[[@{/user/join}]]';
+		}
+		
+		/**
+		 * findPassword
+		 */
+		function findPassword(){
+			location.href = '[[@{/user/findPassword}]]';
 		}
 		</script>
 	</head>

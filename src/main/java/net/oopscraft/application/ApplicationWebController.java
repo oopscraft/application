@@ -66,9 +66,9 @@ public class ApplicationWebController {
 	public String getDevice(HttpServletRequest request) throws Exception {
 		Device device = DeviceUtils.getCurrentDevice(request);
 		if(device.isMobile() || device.isTablet()) {
-			return "mobile";
+			return "MOBILE";
 		}else {
-			return "normal";
+			return "PC";
 		}
 	}
 	
