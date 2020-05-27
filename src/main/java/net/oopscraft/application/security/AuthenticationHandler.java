@@ -67,11 +67,26 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 			
 			// issue JWT access token.
 	        String accessToken = authenticationProvider.encodeAccessToken(userDetails);
-			response.setHeader("X-ACCESS-TOKEN", accessToken);
-			Cookie cookie = new Cookie(ApplicationWebContext.ACCESS_TOKEN_HEADER_NAME, accessToken);
-			cookie.setPath("/");
-			cookie.setHttpOnly(true);
-			response.addCookie(cookie);
+			response.setHeader(ApplicationWebContext.ACCESS_TOKEN_HEADER_NAME, accessToken);
+			Cookie accessTokenCookie = new Cookie(ApplicationWebContext.ACCESS_TOKEN_HEADER_NAME, accessToken);
+			accessTokenCookie.setPath("/");
+			accessTokenCookie.setHttpOnly(true);
+			response.addCookie(accessTokenCookie);
+			
+			// issue JWT refresh token
+			LOGGER.info("rememberMe:{}", request.getParameter("rememberMe"));
+			if(request.getParameter("rememberMe") != null 
+			&& Boolean.parseBoolean(request.getParameter("rememberMe").trim())){
+		        String refreshToken = authenticationProvider.encodeRefreshToken(userDetails);
+				response.setHeader(ApplicationWebContext.REFRESH_TOKEN_HEADER_NAME, refreshToken);
+				Cookie refreshTokenCookie = new Cookie(ApplicationWebContext.REFRESH_TOKEN_HEADER_NAME, refreshToken);
+				refreshTokenCookie.setPath("/");
+				refreshTokenCookie.setHttpOnly(true);
+				// sets max-age to persist token in browser.
+				int maxAge = authenticationProvider.getRefreshTokenTimeout()*60;
+				refreshTokenCookie.setMaxAge(maxAge);		
+				response.addCookie(refreshTokenCookie);
+			}
 			
 			// sets user default locale
 			if(StringUtils.isNotEmpty(userDetails.getLanguage())){

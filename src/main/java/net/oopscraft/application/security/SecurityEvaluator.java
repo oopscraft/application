@@ -46,7 +46,7 @@ public class SecurityEvaluator {
 				return false;
 			}
 			for(Authority policyAuthority : policyAuthorities) {
-				if(userDetails.hasAuthority(policyAuthority.getId())) {
+				if(userDetails.getUser().hasAuthority(policyAuthority.getId())) {
 					return true;
 				}
 			}

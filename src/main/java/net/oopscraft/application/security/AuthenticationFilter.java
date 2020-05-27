@@ -21,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import net.oopscraft.application.ApplicationWebContext;
-import net.oopscraft.application.utility.StringUtility;
 
 public class AuthenticationFilter extends GenericFilterBean   {
 	
@@ -44,16 +43,17 @@ public class AuthenticationFilter extends GenericFilterBean   {
 		        for(Cookie cookie : request.getCookies()) {
 		        	if(ApplicationWebContext.ACCESS_TOKEN_HEADER_NAME.equals(cookie.getName())) {
 		        		accessToken = cookie.getValue();
+		        		break;
 		        	}
 		        }
         	}
         }
         
         // decode principal
-        if(StringUtility.isNotEmpty(accessToken)) {
+        if(StringUtils.isNotBlank(accessToken)) {
             try {
                 LOGGER.debug(String.format("token:[%s]", accessToken));
-        		UserDetails userDetails = authenticationProvider.decodeAccessToken(accessToken);
+        		UserDetails userDetails = authenticationProvider.decodeToken(accessToken);
         		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
         		SecurityContext securityContext = SecurityContextHolder.getContext();
         		securityContext.setAuthentication(authentication);

@@ -542,6 +542,23 @@
 		    <artifactId>hibernate-jpa-2.1-api</artifactId>
 		    <version>1.0.2.Final</version>
 		</dependency>
+
+		<!-- hibernate cache -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jcache</artifactId>
+			<version>5.4.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>3.3.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>javax.cache</groupId>
+		    <artifactId>cache-api</artifactId>
+		    <version>1.1.1</version>
+		</dependency>
 		
 		<!-- org.springframework.security -->
 		<dependency>

@@ -12,9 +12,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.CompressionCodec;
+import io.jsonwebtoken.CompressionCodecs;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.compression.DefaultCompressionCodecResolver;
+import io.jsonwebtoken.impl.compression.GzipCompressionCodec;
 import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.core.PasswordBasedEncryptor;
 import net.oopscraft.application.property.PropertyService;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserService;
@@ -29,7 +34,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	PropertyService propertyService;
 	
 	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
+	
 	/* (non-Javadoc)
 	 * @see org.springframework.security.authentication.AuthenticationProvider#authenticate(org.springframework.security.core.Authentication)
 	 */
@@ -81,40 +86,74 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	}
 	
 	/**
+	 * encodeToken
+	 * @param userDetails
+	 * @param timeout
+	 * @return
+	 * @throws Exception
+	 */
+	private String encodeToken(UserDetails userDetails, int timeout) throws Exception {
+		byte[] tokenSecretKey = getTokenSecretKey();
+		PasswordBasedEncryptor passwordBasedEncryptor = new PasswordBasedEncryptor(new String(tokenSecretKey,"UTF-8"));
+		String jwt = Jwts.builder()
+				  .setExpiration(new Date(System.currentTimeMillis() + (timeout*60*1000)))
+				  .claim("id", passwordBasedEncryptor.encrypt(userDetails.getUsername()))
+				  .signWith(SignatureAlgorithm.HS256, tokenSecretKey)
+				  .compressWith(CompressionCodecs.GZIP)
+				  .compact();
+		return jwt;
+	}
+	
+	/**
+	 * decodeToken
+	 * @param token
+	 * @return
+	 * @throws Exception
+	 */
+	public UserDetails decodeToken(String token) throws Exception {
+		byte[] tokenSecretKey = getTokenSecretKey();
+		PasswordBasedEncryptor passwordBasedEncryptor = new PasswordBasedEncryptor(new String(tokenSecretKey,"UTF-8"));
+        Claims claims = Jwts.parser()
+        		.setSigningKey(tokenSecretKey)
+        		.parseClaimsJws(token).getBody();
+        String id = passwordBasedEncryptor.decrypt((String)claims.get("id"));
+        User user = userService.getUser(id);
+        UserDetails userDetails = new UserDetails(user);
+		return userDetails;
+	}
+	
+	/**
 	 * encode
 	 * @param user
 	 * @return
 	 * @throws Exception
 	 */
 	public String encodeAccessToken(UserDetails userDetails) throws Exception {
-		String jwt = Jwts.builder()
-				  .setExpiration(new Date(System.currentTimeMillis() + (getAccessTokenExpirationMinutes()*60*1000)))
-				  .claim("userDetails", JsonConverter.toJson(userDetails))
-				  .signWith(SignatureAlgorithm.HS256, getAccessTokenSecretKey())
-				  .compact();
-		return jwt;
+		int accessTokenTimeout = getAccessTokenTimeout();
+		return encodeToken(userDetails, accessTokenTimeout);
 	}
 	
 	/**
-	 * decode
-	 * @param accessToken
+	 * Encodes refresh token
+	 * @param userDetails
 	 * @return
 	 * @throws Exception
 	 */
-	public UserDetails decodeAccessToken(String accessToken) throws Exception {
-        Claims claims = Jwts.parser()
-        		.setSigningKey(getAccessTokenSecretKey())
-        		.parseClaimsJws(accessToken).getBody();
-        String userDetailsClaim = (String)claims.get("userDetails");
-        UserDetails userDetails = JsonConverter.toObject(userDetailsClaim, UserDetails.class);
-		return userDetails;
-	}
-
-	private byte[] getAccessTokenSecretKey() throws Exception {
-		return propertyService.getProperty("APP_TOKN_SCRT_KEY").getValue().getBytes("UTF-8");
+	public String encodeRefreshToken(UserDetails userDetails) throws Exception {
+		int refreshTokenTimeout = getRefreshTokenTimeout();
+		return encodeToken(userDetails, refreshTokenTimeout);
 	}
 	
-	private int getAccessTokenExpirationMinutes() throws Exception {
-		return Integer.parseInt(propertyService.getProperty("APP_TOKN_EXPR_MINS").getValue().trim());
+	public byte[] getTokenSecretKey() throws Exception {
+		return propertyService.getProperty("APP_TOKN_SCRT_KEY").getValue().getBytes("UTF-8");
 	}
+
+	public int getAccessTokenTimeout() throws Exception {
+		return Integer.parseInt(propertyService.getProperty("APP_TOKN_ACES_TMOT").getValue().trim());
+	}
+	
+	public int getRefreshTokenTimeout() throws Exception {
+		return Integer.parseInt(propertyService.getProperty("APP_TOKN_REFR_TMOT").getValue().trim());
+	}
+
 }

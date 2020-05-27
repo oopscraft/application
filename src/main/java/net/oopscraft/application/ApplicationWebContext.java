@@ -42,15 +42,12 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.server.i18n.AcceptHeaderLocaleContextResolver;
-import org.springframework.web.servlet.LocaleContextResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.resource.GzipResourceResolver;
@@ -97,17 +94,19 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationWebContext.class);
 	
-	public static final String ACCESS_TOKEN_HEADER_NAME = "X-ACCESS-TOKEN";
-	public static final String CSRF_TOKEN_HEADER_NAME = "X-CSRF-TOKEN";
-	public static final String LOCALE_HEADER_NAME = "X-LOCALE";
+	public static final String ACCESS_TOKEN_HEADER_NAME = "X-Acess-Token";
+	public static final String REFRESH_TOKEN_HEADER_NAME = "X-Refresh-Token";
+	public static final String CSRF_TOKEN_HEADER_NAME = "X-Csrf-Token";
+	public static final String LOCALE_HEADER_NAME = "X-Locale";
 	
+    static ThymeleafViewResolver viewResolver;
+    static SpringResourceTemplateResolver templateResolver;
+    static TemplateEngine templateEngine;
+    
     static AuthenticationProvider authenticationProvider;
     static AuthenticationHandler authenticationHandler;
     static AuthenticationFilter authenticationFilter;
-    static CookieCsrfTokenRepository cookieCsrfTokenRepository;
-    static ThymeleafViewResolver viewResolver;
-    static 	SpringResourceTemplateResolver templateResolver;
-    static 	TemplateEngine templateEngine;
+    static CookieCsrfTokenRepository csrfTokenRepository;
 
     @Value("${application.securityPolicy:AUTHENTICATED}")
     private SecurityPolicy securityPolicy;
@@ -126,48 +125,6 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 		configurer.enable();
 	}
 	
-	/**
-	 * Creates AuthenticationProvider
-	 * @return
-	 * @throws Exception
-	 */
-	@Bean
-	public AuthenticationProvider authenticationProvider() throws Exception {
-		authenticationProvider = new AuthenticationProvider();
-		return authenticationProvider;
-	}
-	
-	/**
-	 * Security access handler implementations.
-	 * (AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler, LogoutSuccessHandler)
-	 * @return
-	 * @throws Exception
-	 */
-	@Bean
-	public AuthenticationHandler authenticationHandler() throws Exception {
-		authenticationHandler = new AuthenticationHandler();
-		return authenticationHandler;
-	}
-	
-	/**
-	 * Creates AuthenticationFilter
-	 * @return
-	 * @throws Exception
-	 */
-	@Bean
-	public AuthenticationFilter authenticationFilter() throws Exception {
-		authenticationFilter = new AuthenticationFilter();
-		return authenticationFilter;
-	}
-	
-	@Bean
-	public CookieCsrfTokenRepository csrfTokenRepository() throws Exception {
-		cookieCsrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-		cookieCsrfTokenRepository.setCookieName(CSRF_TOKEN_HEADER_NAME);
-		cookieCsrfTokenRepository.setHeaderName(CSRF_TOKEN_HEADER_NAME);
-		return cookieCsrfTokenRepository;
-	}
-
 	@Bean
 	public CookieLocaleResolver localeResolver() throws Exception {
 		CookieLocaleResolver localeResolver = new CookieLocaleResolver();
@@ -182,7 +139,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 		}
 		return localeResolver;
 	}
-
+	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**")
@@ -191,136 +148,6 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
         	.resourceChain(true)
         	.addResolver(new GzipResourceResolver());
 	}
-	
-    /**
-     * Static resource security configuration
-     */
-    @Configuration
-    @Order(1)
-    public class StaticWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-    	protected void configure(HttpSecurity http) throws Exception {
-    		http.antMatcher("/static/**")
-	    		.authorizeRequests()
-	    		.anyRequest()
-	    		.permitAll();
-    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        }
-    }
-
-    /**
-     * Administrator security configuration
-     */
-    @Configuration
-    @Order(2)
-    @DependsOn({
-    	 "authenticationProvider"
-    	,"authenticationHandler" 
-    	,"authenticationFilter"
-    })
-    public class AdminWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-    	protected void configure(HttpSecurity http) throws Exception {
-    		http.antMatcher("/admin/**")
-	    		.authorizeRequests()
-	    		.anyRequest()
-	    		.authenticated();
-    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    		http.csrf().csrfTokenRepository(csrfTokenRepository());
-	    	http.authenticationProvider(authenticationProvider);
-	    	http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
-	    	http.exceptionHandling().authenticationEntryPoint(authenticationHandler);
-    		http.formLogin()
-				.loginPage("/admin/login")
-				.loginProcessingUrl("/admin/doLogin")
-				.successHandler(authenticationHandler)
-				.failureHandler(authenticationHandler)
-				.permitAll();
-			http.logout()
-				.logoutUrl("/admin/logout")
-				.logoutSuccessUrl("/admin/login")
-				.invalidateHttpSession(true)
-				.deleteCookies(ACCESS_TOKEN_HEADER_NAME)
-				.logoutSuccessHandler(authenticationHandler)
-				.permitAll();
-        }
-    }
-
-    /**
-     * API security configuration
-     */
-    @Configuration
-    @Order(3)
-    public class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-    	protected void configure(HttpSecurity http) throws Exception {
-    		
-    		// URL ant matcher
-    		String antMatcher = "/api/**";
-    		
-    		// allow anonymous
-    		if(securityPolicy == SecurityPolicy.ANONYMOUS) {
-	    		http.antMatcher(antMatcher)
-		    		.authorizeRequests()
-		    		.anyRequest()
-		    		.permitAll();
-    		}
-    		// requests authentication
-    		else{
-	    		http.antMatcher(antMatcher)
-		    		.authorizeRequests()
-		    		.anyRequest()
-		    		.authenticated();
-	    		http.httpBasic();
-    		}
-
-			http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-			http.csrf().disable();
-	    	http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
-        }
-    }
-
-    /**
-     * Global security configuration
-     */
-    @Configuration
-    public class GlobalWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-    	protected void configure(HttpSecurity http) throws Exception {
-    		
-    		// URL ant matcher
-    		String antMatcher = "/**";
-    		
-    		// allow anonymous
-    		if(securityPolicy == SecurityPolicy.ANONYMOUS) {
-	    		http.antMatcher(antMatcher)
-		    		.authorizeRequests()
-		    		.anyRequest()
-		    		.permitAll();
-    		}
-    		// requests authentication
-    		else{
-	    		http.antMatcher(antMatcher)
-		    		.authorizeRequests()
-		    		.anyRequest()
-		    		.authenticated();
-    		}
-    		
-    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    		http.csrf().csrfTokenRepository(csrfTokenRepository());
-    		http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
-    		http.authenticationProvider(authenticationProvider);
-			http.formLogin()
-				.loginPage("/user/login")
-				.loginProcessingUrl("/user/doLogin")
-				.successHandler(authenticationHandler)
-				.failureHandler(authenticationHandler)
-				.permitAll();
-			http.logout()
-				.logoutUrl("/user/logout")
-				.logoutSuccessHandler(authenticationHandler)
-				.logoutSuccessUrl("/user/login")
-				.invalidateHttpSession(true)
-				.deleteCookies(ACCESS_TOKEN_HEADER_NAME)
-				.permitAll();
-        }
-    }
     
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
@@ -465,6 +292,180 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 				.paths(PathSelectors.ant("/api/**/*"))
 				.build();                                          
 	}
+	
+    /**
+     * Static resource security configuration
+     */
+    @Configuration
+    @Order(1)
+    @DependsOn({
+    	 "authenticationProvider"
+    	,"authenticationHandler"
+    	,"authenticationFilter"
+    	,"csrfTokenRepository"
+    })
+    public class StaticWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+    	protected void configure(HttpSecurity http) throws Exception {
+    		http.antMatcher("/static/**")
+	    		.authorizeRequests()
+	    		.anyRequest()
+	    		.permitAll();
+    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        }
+    }
 
+    /**
+     * Administration security configuration
+     */
+    @Configuration
+    @Order(2)
+    public class AdminWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+    	protected void configure(HttpSecurity http) throws Exception {
+    		http.antMatcher("/admin/**")
+	    		.authorizeRequests()
+	    		.anyRequest()
+	    		.authenticated();
+    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    		http.csrf().csrfTokenRepository(csrfTokenRepository);
+	    	http.authenticationProvider(authenticationProvider);
+	    	http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
+	    	http.exceptionHandling().authenticationEntryPoint(authenticationHandler);
+    		http.formLogin()
+				.loginPage("/admin/login")
+				.loginProcessingUrl("/admin/doLogin")
+				.successHandler(authenticationHandler)
+				.failureHandler(authenticationHandler)
+				.permitAll();
+			http.logout()
+				.logoutUrl("/admin/logout")
+				.logoutSuccessUrl("/admin/login")
+				.invalidateHttpSession(true)
+				.deleteCookies(ACCESS_TOKEN_HEADER_NAME)
+				.logoutSuccessHandler(authenticationHandler)
+				.permitAll();
+        }
+    }
+
+    /**
+     * API security configuration
+     */
+    @Configuration
+    @Order(3)
+    public class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+    	protected void configure(HttpSecurity http) throws Exception {
+    		
+    		// URL ant matcher
+    		String antMatcher = "/api/**";
+    		
+    		// allow anonymous
+    		if(securityPolicy == SecurityPolicy.ANONYMOUS) {
+	    		http.antMatcher(antMatcher)
+		    		.authorizeRequests()
+		    		.anyRequest()
+		    		.permitAll();
+    		}
+    		// requests authentication
+    		else{
+	    		http.antMatcher(antMatcher)
+		    		.authorizeRequests()
+		    		.anyRequest()
+		    		.authenticated();
+	    		http.httpBasic();
+    		}
+
+			http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			http.csrf().disable();
+	    	http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
+        }
+    }
+
+    /**
+     * Global security configuration
+     */
+    @Configuration
+    @Order(4)
+    public class GlobalWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+    	protected void configure(HttpSecurity http) throws Exception {
+    		
+    		// URL ant matcher
+    		String antMatcher = "/**";
+    		
+    		// allow anonymous
+    		if(securityPolicy == SecurityPolicy.ANONYMOUS) {
+	    		http.antMatcher(antMatcher)
+		    		.authorizeRequests()
+		    		.anyRequest()
+		    		.permitAll();
+    		}
+    		// requests authentication
+    		else{
+	    		http.antMatcher(antMatcher)
+		    		.authorizeRequests()
+		    		.anyRequest()
+		    		.authenticated();
+    		}
+    		
+    		// settings
+    		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    		http.csrf().csrfTokenRepository(csrfTokenRepository);
+    		http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
+    		http.authenticationProvider(authenticationProvider);
+			http.formLogin()
+				.loginPage("/user/login")
+				.loginProcessingUrl("/user/doLogin")
+				.successHandler(authenticationHandler)
+				.failureHandler(authenticationHandler)
+				.permitAll();
+			http.logout()
+				.logoutUrl("/user/logout")
+				.logoutSuccessHandler(authenticationHandler)
+				.logoutSuccessUrl("/user/login")
+				.invalidateHttpSession(true)
+				.deleteCookies(ACCESS_TOKEN_HEADER_NAME)
+				.permitAll();
+        }
+    }
+    
+	/**
+	 * Creates AuthenticationProvider
+	 * @return
+	 * @throws Exception
+	 */
+	@Bean
+	public AuthenticationProvider authenticationProvider() throws Exception {
+		authenticationProvider = new AuthenticationProvider();
+		return authenticationProvider;
+	}
+	
+	/**
+	 * Security access handler implementations.
+	 * (AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, AccessDeniedHandler, LogoutSuccessHandler)
+	 * @return
+	 * @throws Exception
+	 */
+	@Bean
+	public AuthenticationHandler authenticationHandler() throws Exception {
+		authenticationHandler = new AuthenticationHandler();
+		return authenticationHandler;
+	}
+	
+	/**
+	 * Creates AuthenticationFilter
+	 * @return
+	 * @throws Exception
+	 */
+	@Bean
+	public AuthenticationFilter authenticationFilter() throws Exception {
+		authenticationFilter = new AuthenticationFilter();
+		return authenticationFilter;
+	}
+	
+	@Bean
+	public CookieCsrfTokenRepository csrfTokenRepository() throws Exception {
+		csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+		csrfTokenRepository.setCookieName(CSRF_TOKEN_HEADER_NAME);
+		csrfTokenRepository.setHeaderName(CSRF_TOKEN_HEADER_NAME);
+		return csrfTokenRepository;
+	}
 	
 }

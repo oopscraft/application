@@ -1,17 +1,17 @@
 /**
  * JQUERY AJAX setting
  */
-var __progress = null;
+var _progress = null;
 $(document).ajaxStart(function(event) {
 	console.debug('$(document).ajaxStart',event);
-	__progress = new duice.Progress(document.body);
-	__progress.start();
+	_progress = new duice.Progress(document.body);
+	_progress.start();
 });
 // If not configure, "Provisional headers are shown" error found in CHROME.
 $(document).ajaxSend(function(event, jqXHR, settings) {
 	console.debug('$(document).ajaxSend',event,jqXHR,settings);
-	var csrfToken = duice.getCookie('X-CSRF-TOKEN');
-	jqXHR.setRequestHeader("X-CSRF-TOKEN",csrfToken);
+	var csrfToken = duice.getCookie('X-Csrf-Token');
+	jqXHR.setRequestHeader("X-Csrf-Token",csrfToken);
 	jqXHR.setRequestHeader('Cache-Control','no-cache, no-store, must-revalidate');
 	jqXHR.setRequestHeader('Pragma','no-cache');
 	jqXHR.setRequestHeader('Expires','0');
@@ -43,8 +43,8 @@ $(document).ajaxComplete(function(event, jqXHR, settings){
 // checks stop event
 $(document).ajaxStop(function(event) {
 	console.debug('$(document).ajaxStop',event);
-	if(__progress){
-		__progress.stop();
+	if(_progress){
+		_progress.stop();
 	}
 });
 
@@ -83,7 +83,7 @@ const _openLink = function(linkUrl, linkTarget){
  * Changes language
  */ 
 const _changeLanguage = function(language){
-	duice.setCookie('X-LOCALE', language);
+	duice.setCookie('X-Locale', language);
 	window.location = '?_lang=' + language;
 }
 

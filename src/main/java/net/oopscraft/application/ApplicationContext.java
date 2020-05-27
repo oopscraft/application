@@ -1,19 +1,31 @@
 package net.oopscraft.application;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.cache.CacheManager;
+import javax.cache.Caching;
+import javax.cache.configuration.MutableConfiguration;
+import javax.cache.expiry.CreatedExpiryPolicy;
+import javax.cache.expiry.Duration;
+import javax.cache.spi.CachingProvider;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.text.CaseUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.plugin.Interceptor;
+import org.ehcache.config.CacheConfiguration;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.expiry.Expirations;
+import org.ehcache.xml.model.TimeUnit;
+import org.hibernate.cache.jcache.JCacheHelper;
 import org.hibernate.cfg.AvailableSettings;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
@@ -33,8 +45,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.transaction.ChainedTransactionManager;
-import org.springframework.instrument.classloading.LoadTimeWeaver;
-import org.springframework.instrument.classloading.SimpleLoadTimeWeaver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -43,7 +53,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import net.oopscraft.application.core.ValueMap;
 import net.oopscraft.application.core.mybatis.CamelCaseValueMap;
@@ -98,6 +107,7 @@ public class ApplicationContext {
 	 */
 	@Bean(destroyMethod="close")
 	public DataSource dataSource() throws Exception {
+		LOGGER.info("Creates dataSource");
 
 		// parses dataSource properties
 		Properties dataSourceProperties = new Properties();
@@ -138,6 +148,30 @@ public class ApplicationContext {
         jpaProperties.setProperty(AvailableSettings.HQL_BULK_ID_STRATEGY, "org.hibernate.hql.spi.id.inline.InlineIdsOrClauseBulkIdStrategy");	// Bulk-id strategies when you can’t use temporary tables
         jpaProperties.setProperty(AvailableSettings.FORMAT_SQL, "true");
         jpaProperties.setProperty(AvailableSettings.DEFAULT_NULL_ORDERING, "last");
+        
+        // cache configuration
+        jpaProperties.setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "true");
+        jpaProperties.setProperty(AvailableSettings.USE_QUERY_CACHE, "true");
+        jpaProperties.setProperty(AvailableSettings.CACHE_REGION_FACTORY, "org.hibernate.cache.jcache.JCacheRegionFactory");
+//        jpaProperties.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "org.ehcache.jsr107.EhcacheCachingProvider");
+        
+
+        
+//        CachingProvider provider = Caching.getCachingProvider(); 
+//        CacheManager cacheManager = provider.getCacheManager();
+//        MutableConfiguration<Long, String> configuration =
+//                new MutableConfiguration<Long, String>()  
+//                    .setTypes(Long.class, String.class)   
+//                    .setStoreByValue(false)   
+//                    .setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(SECONDS, 10)));
+//        cacheManager.createCache("test", configuration);
+//        
+//        CacheConfiguration<Long, String> cacheConfiguration = CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class,
+//                ResourcePoolsBuilder.heap(100)) 
+//            .withExpiry(Expirations.timeToLiveExpiration(new Duration(TimeUnit.SECONDS, 3))) 
+//            .build();
+        
+        
 
         // generates DDL options
 		String generateDdl = System.getProperty("application.entityManagerFactory.generateDdl");

@@ -1,5 +1,6 @@
 package net.oopscraft.application.property;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,6 +12,8 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
 @Table(name = "APP_PROP_INFO")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
 public class Property extends SystemEntity {
 
 	@Id

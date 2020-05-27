@@ -108,7 +108,7 @@ public class ApplicationWebController {
 		Authentication authentication = securityContext.getAuthentication();
 		if(authentication != null && authentication.getPrincipal() instanceof UserDetails) {
 			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-			return userService.getUser(userDetails.getUsername());
+			return userDetails.getUser();
 		}else {
 			return new User();
 		}

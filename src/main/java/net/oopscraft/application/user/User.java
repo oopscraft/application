@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -27,6 +28,8 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
 @Table(name = "APP_USER_INFO")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
 public class User extends SystemEntity {
 	
 	@Id
@@ -103,6 +106,7 @@ public class User extends SystemEntity {
 		inverseJoinColumns = @JoinColumn(name = "GROP_ID"), 
 		inverseForeignKey = @ForeignKey(name = "none")
 	)
+	@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
 	List<Group> groups = new ArrayList<Group>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -113,6 +117,7 @@ public class User extends SystemEntity {
 		inverseJoinColumns = @JoinColumn(name = "ROLE_ID"), 
 		inverseForeignKey = @ForeignKey(name = "none")
 	)
+	@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
 	List<Role> roles = new ArrayList<Role>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -123,6 +128,7 @@ public class User extends SystemEntity {
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"), 
 		inverseForeignKey = @ForeignKey(name = "none")
 	)
+	@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
 	List<Authority> authorities = new ArrayList<Authority>();
 	
 	public User() { }
@@ -166,6 +172,19 @@ public class User extends SystemEntity {
 		// return
 		return availableAuthorities;
 	}
+	
+	/**
+	 * hasAuthority
+	 */
+	public boolean hasAuthority(String id) {
+		for(Authority authority : getAvailableAuthorities()) {
+			if(authority.getId().contentEquals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 	public String getId() {
 		return id;

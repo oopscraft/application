@@ -11,46 +11,32 @@ public class UserDetails implements org.springframework.security.core.userdetail
 
 	private static final long serialVersionUID = 4282816224569702221L;
 	
-	String username;
-	List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-	String language;
-	
-	public UserDetails() {}
+	User user;
 	
 	public UserDetails(User user) {
-		this.username = user.getId();
-		this.language = user.getLanguage();
-		
-		// adds authorities
-		for(Authority authority : user.getAvailableAuthorities()) {
-			authorities.add(new GrantedAuthority(authority));
-		}
+		this.user = user;
 	}
 	
 	/**
-	 * hasAuthority
+	 * Returns user
+	 * @return
 	 */
-	public boolean hasAuthority(String authority) {
-		for(GrantedAuthority element : authorities) {
-			if(element.getAuthority().contentEquals(authority)) {
-				return true;
-			}
-		}
-		return false;
+	public User getUser() {
+		return this.user;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.authorities;
-	}
-	
-	public void setUsername(String username) {
-		this.username = username;
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		for(Authority authority : user.getAvailableAuthorities()) {
+			authorities.add(new GrantedAuthority(authority));
+		}
+		return authorities;
 	}
 	
 	@Override
 	public String getUsername() {
-		return username;
+		return user.getId();
 	}
 	
 	@Override
@@ -60,7 +46,6 @@ public class UserDetails implements org.springframework.security.core.userdetail
 
 	@Override
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -81,14 +66,12 @@ public class UserDetails implements org.springframework.security.core.userdetail
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 	public String getLanguage() {
-		return language;
+		if(this.user == null) {
+			return null;
+		}
+		return user.getLanguage();
 	}
-
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-
 
 }

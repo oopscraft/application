@@ -2,6 +2,7 @@ package net.oopscraft.application.user;
 
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +20,8 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
 @Table(name = "APP_ROLE_INFO")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
 public class Role extends SystemEntity {
 
 	@Id

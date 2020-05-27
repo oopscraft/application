@@ -1,5 +1,6 @@
 package net.oopscraft.application.user;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -12,6 +13,8 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
 @Table(name = "APP_AUTH_INFO")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
 public class Authority extends SystemEntity {
 
 	@Id
