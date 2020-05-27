@@ -2,6 +2,7 @@ package net.oopscraft.application.page;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -10,12 +11,17 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import net.oopscraft.application.core.jpa.SystemEntity;
 import net.oopscraft.application.message.MessageI18n;
 
 @Entity
 @Table(name = "APP_PAGE_I18N")
 @IdClass(MessageI18n.Pk.class)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PageI18n extends SystemEntity {
 
 	public static class Pk implements Serializable {

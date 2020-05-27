@@ -1,4 +1,4 @@
-package net.oopscraft.application;
+package net.oopscraft.application.test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import net.oopscraft.application.ApplicationContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration("src/main/resources/META-INF/resources")

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="3">
+	<Appenders>
+		<Console name="consoleAppender" target="SYSTEM_OUT">
+			<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%-5p](%c{10}:%L)-%m%n"/>
+		</Console>
+		<RollingFile name="fileAppender" fileName="./log/application.log"
+			filePattern="./log/application.log.%i" >
+			<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%-5p](%c{10}:%L)-%m%n"/>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="100 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10"/>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+	    <Logger name="net.oopscraft.application" level="DEBUG" additivity="false">
+			<AppenderRef ref="consoleAppender"/>
+			<AppenderRef ref="fileAppender"/>
+    	</Logger>
+	    <Logger name="org.springframework.web.servlet.DispatcherServlet" level="DEBUG" additivity="false">
+			<AppenderRef ref="consoleAppender"/>
+			<AppenderRef ref="fileAppender"/>
+    	</Logger>
+	    <Logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+			<AppenderRef ref="consoleAppender"/>
+			<AppenderRef ref="fileAppender"/>
+    	</Logger>
+	    <Logger name="org.hibernate.cache" level="DEBUG" additivity="false">
+			<AppenderRef ref="consoleAppender"/>
+			<AppenderRef ref="fileAppender"/>
+    	</Logger>
+		<Root level="INFO">
+			<AppenderRef ref="consoleAppender"/>
+			<AppenderRef ref="fileAppender"/>
+		</Root>
+	</Loggers>
+</Configuration>

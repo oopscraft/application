@@ -3,6 +3,7 @@ package net.oopscraft.application.page;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +21,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -30,6 +34,8 @@ import net.oopscraft.application.user.Authority;
 
 @Entity
 @Table(name="APP_PAGE_INFO")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Page extends SystemEntity {
 	
 	@Id

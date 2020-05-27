@@ -42,6 +42,7 @@ public class MonitorService {
 	 * Scheduled collecting monitor info
 	 * @throws Exception
 	 */
+	@SuppressWarnings("restriction")
 	@Scheduled(fixedDelay=1000*3)	
 	public void collectMonitor() throws Exception {
 		Monitor monitor = new Monitor(new Date());

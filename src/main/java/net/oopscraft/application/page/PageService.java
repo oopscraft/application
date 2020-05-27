@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import net.oopscraft.application.core.IdGenerator;
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.core.jpa.SystemEmbeddedException;
-import net.oopscraft.application.message.Message;
-import net.oopscraft.application.message.MessageI18n;
 
 @Service
 public class PageService {

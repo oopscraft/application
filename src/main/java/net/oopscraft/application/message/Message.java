@@ -3,6 +3,7 @@ package net.oopscraft.application.message;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,12 +15,17 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
 @Table(name = "APP_MESG_INFO")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Message extends SystemEntity {
 	
 	@Id

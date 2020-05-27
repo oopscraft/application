@@ -7,12 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.board.Article;
 import net.oopscraft.application.board.ArticleFile;
 import net.oopscraft.application.board.ArticleReply;
 import net.oopscraft.application.board.ArticleRepository;
 import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class ArticleRepositoryTest extends ApplicationTestRunner {
 	

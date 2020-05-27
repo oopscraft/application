@@ -20,6 +20,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -29,7 +32,7 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 @Entity
 @Table(name = "APP_USER_INFO")
 @Cacheable
-@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User extends SystemEntity {
 	
 	@Id

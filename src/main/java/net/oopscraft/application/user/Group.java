@@ -16,12 +16,15 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
 @Table(name = "APP_GROP_INFO")
 @Cacheable
-@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Group extends SystemEntity {
 
 	@Id

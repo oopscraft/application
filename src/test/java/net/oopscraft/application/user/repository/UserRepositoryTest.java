@@ -8,8 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.TextTable;
+import net.oopscraft.application.test.ApplicationTestRunner;
 import net.oopscraft.application.user.User;
 import net.oopscraft.application.user.UserRepository;
 

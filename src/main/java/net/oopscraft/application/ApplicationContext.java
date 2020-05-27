@@ -1,18 +1,10 @@
 package net.oopscraft.application;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.configuration.MutableConfiguration;
-import javax.cache.expiry.CreatedExpiryPolicy;
-import javax.cache.expiry.Duration;
-import javax.cache.spi.CachingProvider;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
@@ -20,12 +12,6 @@ import org.apache.commons.text.CaseUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.plugin.Interceptor;
-import org.ehcache.config.CacheConfiguration;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.expiry.Expirations;
-import org.ehcache.xml.model.TimeUnit;
-import org.hibernate.cache.jcache.JCacheHelper;
 import org.hibernate.cfg.AvailableSettings;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
@@ -152,26 +138,7 @@ public class ApplicationContext {
         // cache configuration
         jpaProperties.setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "true");
         jpaProperties.setProperty(AvailableSettings.USE_QUERY_CACHE, "true");
-        jpaProperties.setProperty(AvailableSettings.CACHE_REGION_FACTORY, "org.hibernate.cache.jcache.JCacheRegionFactory");
-//        jpaProperties.setProperty(AvailableSettings.CACHE_PROVIDER_CONFIG, "org.ehcache.jsr107.EhcacheCachingProvider");
-        
-
-        
-//        CachingProvider provider = Caching.getCachingProvider(); 
-//        CacheManager cacheManager = provider.getCacheManager();
-//        MutableConfiguration<Long, String> configuration =
-//                new MutableConfiguration<Long, String>()  
-//                    .setTypes(Long.class, String.class)   
-//                    .setStoreByValue(false)   
-//                    .setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(SECONDS, 10)));
-//        cacheManager.createCache("test", configuration);
-//        
-//        CacheConfiguration<Long, String> cacheConfiguration = CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class,
-//                ResourcePoolsBuilder.heap(100)) 
-//            .withExpiry(Expirations.timeToLiveExpiration(new Duration(TimeUnit.SECONDS, 3))) 
-//            .build();
-        
-        
+        jpaProperties.setProperty(AvailableSettings.CACHE_REGION_FACTORY, net.oopscraft.application.core.jpa.JCacheRegionFactory.class.getName());
 
         // generates DDL options
 		String generateDdl = System.getProperty("application.entityManagerFactory.generateDdl");

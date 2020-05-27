@@ -12,13 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.CompressionCodec;
 import io.jsonwebtoken.CompressionCodecs;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.compression.DefaultCompressionCodecResolver;
-import io.jsonwebtoken.impl.compression.GzipCompressionCodec;
-import net.oopscraft.application.core.JsonConverter;
 import net.oopscraft.application.core.PasswordBasedEncryptor;
 import net.oopscraft.application.property.PropertyService;
 import net.oopscraft.application.user.User;

@@ -2,6 +2,7 @@ package net.oopscraft.application.menu;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,9 +10,14 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name = "APP_MENU_I18N")
 @IdClass(MenuI18n.Pk.class)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class MenuI18n {
 	
 	public static class Pk implements Serializable {

@@ -3,17 +3,23 @@ package net.oopscraft.application.board;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
 @Table(name = "APP_ATCL_RPLY_INFO")
 @IdClass(ArticleReply.Pk.class)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ArticleReply extends SystemEntity {
 	
 	/**

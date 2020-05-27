@@ -1,6 +1,5 @@
 package net.oopscraft.application.admin;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,7 +23,6 @@ import net.oopscraft.application.menu.Menu;
 import net.oopscraft.application.menu.MenuI18n;
 import net.oopscraft.application.menu.MenuService;
 import net.oopscraft.application.security.SecurityPolicy;
-import net.oopscraft.application.security.UserDetails;
 
 
 @PreAuthorize("hasAuthority('ADMN_MENU')")

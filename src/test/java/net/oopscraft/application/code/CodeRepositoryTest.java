@@ -5,8 +5,8 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.oopscraft.application.ApplicationTestRunner;
 import net.oopscraft.application.core.JsonConverter;
+import net.oopscraft.application.test.ApplicationTestRunner;
 
 //@Commit
 public class CodeRepositoryTest extends ApplicationTestRunner {

@@ -3,6 +3,7 @@ package net.oopscraft.application.board;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -21,6 +22,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 
 import net.oopscraft.application.core.jpa.BooleanStringConverter;
@@ -30,6 +33,8 @@ import net.oopscraft.application.user.Authority;
 
 @Entity
 @Table(name = "APP_BORD_INFO")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Board extends SystemEntity {
 
 	@Id

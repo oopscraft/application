@@ -1,6 +1,6 @@
 package net.oopscraft.application.core.mybatis;
 
-import net.oopscraft.application.ApplicationTestRunner;
+import net.oopscraft.application.test.ApplicationTestRunner;
 
 public class PageInterceptorTest extends ApplicationTestRunner {
 

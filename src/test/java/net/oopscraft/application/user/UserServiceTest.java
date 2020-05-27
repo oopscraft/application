@@ -2,7 +2,7 @@ package net.oopscraft.application.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.oopscraft.application.ApplicationTestRunner;
+import net.oopscraft.application.test.ApplicationTestRunner;
 
 
 public class UserServiceTest extends ApplicationTestRunner {
