@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html layout:decorate="~{admin/admin.html}">
+<main layout:fragment="main">
+	<style>
+		main {
+			grid-area: main;
+			padding:0px 20px;
+			display: grid;
+			grid-template-areas:
+				'title'
+				'monitor';
+			grid-template-columns: auto;
+			grid-template-rows: 40px auto;
+			align-content: flex-start;
+			grid-gap: 0 5px;
+		}
+	</style>
+	<script>
+		// defines variables		
+		const webSocketClient = new duice.WebSocketClient();
+		var loadAverageChart = null;
+		var memoryChart = null;
+		var threadInfoChart = null;
+		var classLoadingChart = null;
+		const threadInfos = new duice.List();
+			
+		// document ready
+		$(document).ready(function() {
+			
+			// creates web socket
+			getMonitors();
+			
+			// connects web socket
+		    var webSocketUrl = (window.location.protocol === 'https'?'wss':'ws')+'://'+location.host+'/api/webSocket';
+			webSocketClient.open(webSocketUrl);
+			webSocketClient.onMessage(function(event){
+				var data = JSON.parse(event.data);
+				
+				// monitor
+				if(data.id === 'Monitor'){
+					var monitor = data;
+					$('#top').text(monitor.top);
+					Prism.highlightAll();
+					
+					// updates chart
+					updateLoadAverageChart(monitor);
+					updateMemoryChart(monitor);
+					updateThreadInfoChart(monitor);
+					updateClassLoadingChart(monitor);
+					
+					// updates threadInfos
+					threadInfos.fromJson(monitor.threadInfos);
+				}
+			});
+		});
+			
+		/**
+		 * Getting monitors
+		 */
+		function getMonitors() {
+			$.ajax({
+				 url: '[[@{/api/monitors}]]'
+				,type: 'GET'
+				,data: null
+			})
+			.done(function(data, textStatus, jqXHR) {
+				var monitors = data;
+				var lastMonitor = data[data.length-1];
+				$('#top').text(lastMonitor.top);
+				Prism.highlightAll();
+				
+				// initializes chart
+				initializeLoadAverageChart(monitors);
+				initializeMemoryChart(monitors);
+				initializeThreadInfoChart(monitors);
+				initializeClassLoadingChart(monitors);
+				
+				// setting threadInfos
+				threadInfos.fromJson(lastMonitor.threadInfos);
+		   	});
+		}
+		
+		/**
+		 * initializeLoadAverageChart
+		 */
+		function initializeLoadAverageChart(monitors) {
+			var labels = new Array();
+			var data = new Array();
+			var yMax;
+			monitors.forEach(function(monitor){
+				labels.push(moment().format('HH:mm:ss',monitor.date));
+				data.push(monitor.operatingSystem.systemLoadAverage);
+				yMax = monitor.operatingSystem.availableProcessors;
+			});
+			
+			// creates chart
+			loadAverageChart = new Chart(document.getElementById("loadAverageChart").getContext('2d'), {
+			    type: 'line',
+			    data: {
+			        labels: labels,
+			        datasets: [{
+			            label: 'System Load Average',
+			            data: data,
+			            fill: true,
+			            borderColor: 'steelblue',
+			            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+			            borderWidth: 1
+			        }]},
+			    options: {
+					responsive: true,
+					legend: {
+					    position: 'top',
+					    align: 'start',
+					    labels: {
+					    	boxWidth: 20,
+					    	fontSize: 11,
+					    	fontStyle: 'bold'
+					    }
+					},
+			    	scales: {
+						yAxes: [{
+							ticks: {
+								fontSize: 8,
+								beginAtZero: true,
+								suggestedMax: yMax
+							}
+						}],
+						xAxes: [{
+							ticks: {
+								fontSize: 8
+							}
+						}]
+					},
+					elements: {
+						point: {
+							pointStyle: 'crossRot'
+						}
+					}
+			    }
+			});
+		}
+		
+		/**
+		 * updateLoadAverageChart
+		 */
+		function updateLoadAverageChart(monitor) {
+			loadAverageChart.config.options.scales.yAxes[0].ticks.suggestedMax = monitor.operatingSystem.availableProcessors;
+			loadAverageChart.config.data.labels.shift();
+			loadAverageChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
+			loadAverageChart.config.data.datasets[0].data.shift();
+			loadAverageChart.config.data.datasets[0].data.push(monitor.operatingSystem.systemLoadAverage);
+			loadAverageChart.update();
+		}
+		
+		/**
+		 * initializeMemoryChart
+		 */
+		function initializeMemoryChart(monitors) {
+			var labels = new Array();
+			var data = new Array();
+			var yMax;
+			monitors.forEach(function(monitor){
+				console.log(monitor);
+				labels.push(moment().format('HH:mm:ss',monitor.date));
+				data.push(monitor.memory.heapMemoryUsage.used/1024/1024);
+				yMax = Math.max(monitor.memory.heapMemoryUsage.committed, monitor.memory.heapMemoryUsage.max)/1024/1024;
+			});
+			
+			// creates chart
+			memoryChart = new Chart(document.getElementById("memoryChart").getContext('2d'), {
+			    type: 'line',
+			    data: {
+			        labels: labels,
+			        datasets: [{
+			            label: 'Heap Memory Usage',
+			            data: data,
+			            fill: true,
+			            borderColor: 'steelblue',
+			            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+			            borderWidth: 1
+			        }]},
+			    options: {
+					responsive: true,
+					legend: {
+					    position: 'top',
+					    align: 'start',
+					    labels: {
+					    	boxWidth: 20,
+					    	fontSize: 11,
+					    	fontStyle: 'bold'
+					    }
+					},
+			    	scales: {
+						yAxes: [{
+							ticks: {
+								fontSize: 8,
+								beginAtZero: true,
+								suggestedMax: yMax,
+							    userCallback: function(value, index, values) {
+							        return new duice.NumberMask(0).encode(value) + ' m';
+							    }
+							}
+						}],
+						xAxes: [{
+							ticks: {
+								fontSize: 8
+							}
+						}]
+					},
+					elements: {
+						point: {
+							pointStyle: 'crossRot'
+						}
+					}
+			    }
+			});
+		}
+		
+		/**
+		 * updateMemoryChart
+		 */
+		function updateMemoryChart(monitor) {
+			memoryChart.config.options.scales.yAxes[0].ticks.suggestedMax = Math.max(monitor.memory.heapMemoryUsage.committed, monitor.memory.heapMemoryUsage.max)/1024/1024;
+			memoryChart.config.data.labels.shift();
+			memoryChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
+			memoryChart.config.data.datasets[0].data.shift();
+			memoryChart.config.data.datasets[0].data.push(monitor.memory.heapMemoryUsage.used/1024/1024);
+			memoryChart.update();
+		}
+		
+		/**
+		 * initializeThreadInfoChart
+		 */
+		function initializeThreadInfoChart(monitors) {
+			var labels = new Array();
+			var data = new Array();
+			var yMax = 100;
+			monitors.forEach(function(monitor){
+				labels.push(moment().format('HH:mm:ss',monitor.date));
+				data.push(monitor.threadInfos.length);
+				yMax = Math.pow(10,String(monitor.threadInfos.length).length);
+			});
+			
+			// creates chart
+			threadInfoChart = new Chart(document.getElementById("threadInfoChart").getContext('2d'), {
+			    type: 'line',
+			    data: {
+			        labels: labels,
+			        datasets: [{
+			            label: 'Thread Info',
+			            data: data,
+			            fill: true,
+			            borderColor: 'steelblue',
+			            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+			            borderWidth: 1
+			        }]},
+			    options: {
+					responsive: true,
+					legend: {
+					    position: 'top',
+					    align: 'start',
+					    labels: {
+					    	boxWidth: 20,
+					    	fontSize: 11,
+					    	fontStyle: 'bold'
+					    }
+					},
+			    	scales: {
+						yAxes: [{
+							ticks: {
+								fontSize: 8,
+								beginAtZero: true,
+								suggestedMax: yMax,
+							    userCallback: function(value, index, values) {
+							        return new duice.NumberMask(0).encode(value);
+							    }
+							}
+						}],
+						xAxes: [{
+							ticks: {
+								fontSize: 8
+							}
+						}]
+					},
+					elements: {
+						point: {
+							pointStyle: 'crossRot'
+						}
+					}
+			    }
+			});
+		}
+		
+		/**
+		 * updateThreadInfoChart
+		 */
+		function updateThreadInfoChart(monitor) {
+			threadInfoChart.config.options.scales.yAxes[0].ticks.suggestedMax = Math.pow(10,String(monitor.threadInfos.length).length);
+			threadInfoChart.config.data.labels.shift();
+			threadInfoChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
+			threadInfoChart.config.data.datasets[0].data.shift();
+			threadInfoChart.config.data.datasets[0].data.push(monitor.threadInfos.length);
+			threadInfoChart.update();
+		}
+		
+		/**
+		 * initializeClassLoadingChart
+		 */
+		function initializeClassLoadingChart(monitors) {
+			var labels = new Array();
+			var data = new Array();
+			var yMax = 100;
+			monitors.forEach(function(monitor){
+				labels.push(moment().format('HH:mm:ss',monitor.date));
+				data.push(monitor.classLoading.totalLoadedClassCount);
+				yMax = Math.pow(10,String(monitor.classLoading.totalLoadedClassCount).length);
+			});
+			
+			// creates chart
+			classLoadingChart = new Chart(document.getElementById("classLoadingChart").getContext('2d'), {
+			    type: 'line',
+			    data: {
+			        labels: labels,
+			        datasets: [{
+			            label: 'Class Loading',
+			            data: data,
+			            fill: true,
+			            borderColor: 'steelblue',
+			            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+			            borderWidth: 1
+			        }]},
+			    options: {
+					responsive: true,
+					legend: {
+					    position: 'top',
+					    align: 'start',
+					    labels: {
+					    	boxWidth: 20,
+					    	fontSize: 11,
+					    	fontStyle: 'bold'
+					    }
+					},
+			    	scales: {
+						yAxes: [{
+							ticks: {
+								fontSize: 8,
+								beginAtZero: true,
+								suggestedMax: yMax,
+							    userCallback: function(value, index, values) {
+							        return new duice.NumberMask(0).encode(value);
+							    }
+							}
+						}],
+						xAxes: [{
+							ticks: {
+								fontSize: 8
+							}
+						}]
+					},
+					elements: {
+						point: {
+							pointStyle: 'crossRot'
+						}
+					}
+			    }
+			});
+		}
+		
+		/**
+		 * updateClassLoadingChart
+		 */
+		function updateClassLoadingChart(monitor) {
+			classLoadingChart.config.options.scales.yAxes[0].ticks.suggestedMax = Math.pow(10,String(monitor.classLoading.totalLoadedClassCount).length);
+			classLoadingChart.config.data.labels.shift();
+			classLoadingChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
+			classLoadingChart.config.data.datasets[0].data.shift();
+			classLoadingChart.config.data.datasets[0].data.push(monitor.classLoading.totalLoadedClassCount);
+			classLoadingChart.update();
+		}
+	</script>
+	<!-- ====================================================== -->
+	<!-- START: title											-->
+	<!-- ====================================================== -->
+	<section id="title">
+		<h1>
+			<img class="icon large" th:src="@{/static/image/icon_monitor.png}"/>
+			<span data-th-text="#{application.monitor}"></span>
+		</h1>
+	</section>
+	<!-- ====================================================== -->
+	<!-- END: title											-->
+	<!-- ====================================================== -->
+	
+	<!-- ====================================================== -->
+	<!-- START: monitor											-->
+	<!-- ====================================================== -->
+	<section id="monitor">
+		<div class="app-flex fluid">
+			<pre style="height:250px; width:300px; flex: 1 1 100%;"><code id="top" class="language-bash line-numbers"></code></pre>
+		</div>
+		<div class="app-flex fluid">
+			<div style="width:25%;">
+				<canvas id="loadAverageChart"></canvas>
+			</div>
+			<div style="width:25%;">
+				<canvas id="memoryChart"></canvas>
+			</div>
+			<div style="width:25%;">
+				<canvas id="threadInfoChart"></canvas>
+			</div>
+			<div style="width:25%;">
+				<canvas id="classLoadingChart"></canvas>
+			</div>
+		</div>
+		<table is="duice-table" 
+		data-duice-bind="threadInfos,threadInfo" 
+		style="width:100%; font-size:10px;">
+			<col style="width:10%;"/>
+			<col/>
+			<col/>
+			<col style="width:10%;"/>
+			<col style="width:10%;"/>
+			<col style="width:10%;"/>
+			<col style="width:10%;"/>
+			<thead style="background-color:#fafafa;">
+				<tr>
+					<th class="text-center">Thread ID</th>
+					<th>Thread Name</th>
+					<th>Thread State</th>
+					<th>Waited Count</th>
+					<th>Waited Time</th>
+					<th>Block Count</th>
+					<th>Block Time</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="text-center"><span is="duice-span" data-duice-bind="threadInfo,threadId"></span></td>
+					<td><span is="duice-span" data-duice-bind="threadInfo,threadName"></span></td>
+					<td><span is="duice-span" data-duice-bind="threadInfo,threadState"></span></td>
+					<td class="text-right"><span is="duice-span" data-duice-bind="threadInfo,waitedCount"></span></td>
+					<td class="text-right"><span is="duice-span" data-duice-bind="threadInfo,waitedTime"></span></td>
+					<td class="text-right"><span is="duice-span" data-duice-bind="threadInfo,blockCount"></span></td>
+					<td class="text-right"><span is="duice-span" data-duice-bind="threadInfo,blockTime"></span></td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+	<!-- ====================================================== -->
+	<!-- END: monitor											-->
+	<!-- ====================================================== -->
+
+</main>
