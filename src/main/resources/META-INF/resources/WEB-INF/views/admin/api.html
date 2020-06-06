@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html layout:decorate="~{admin/admin.html}">
-<div layout:fragment="content">
+<main layout:fragment="main">
 	<script>
 	// defines variables
 	var search = new duice.Map({
@@ -55,7 +55,7 @@
 	 */
 	function disableDetail(disable){
 		api.setDisable(disable);
-		$('#detailDiv').find('button').each(function(index, element){
+		$('#detail').find('button').each(function(index, element){
 			$(element).prop('disabled', disable);
 		});
 	}
@@ -144,276 +144,263 @@
 		navigator.clipboard.writeText(response);
 	}
 	</script>
-	<div class="app-row">
-		<div class="app-col" style="width:50%;">
-			<!-- ====================================================== -->
-			<!-- START:List												-->
-			<!-- ====================================================== -->
-			<div id="listDiv" class="app-row panel">
-				<div class="app-col">
-					<div class="app-row title">
-						<div class="app-col bottom">
-							<h1>
-								<img class="icon large" th:src="@{/static/image/icon_api.png}"/>
-								<span data-th-text="#{application.api} + ' ' + #{application.global.test}"></span>
-							</h1>
-						</div>
-					</div>
-					<div class="app-row search">
-						<div class="app-col">
-							<select is="duice-select" data-duice-bind="search,key" style="width:125px;">
-								<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
-								<option value="uri" data-th-text="#{application.api.uri}">URI</option>
-								<option value="method" data-th-text="#{application.api.method}">Method</option>
-								<option value="className" data-th-text="#{application.api.className}">Class Name</option>
-								<option value="methodName" data-th-text="#{application.api.methodName}">Method Name</option>
-							</select>
-							<input is="duice-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
-						</div>
-						<div class="app-col right">
-							<button class="button" onclick="getApis(1);">
-								<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-								<span data-th-text="#{application.global.search}"></span>
-							</button>
-						</div>
-					</div>
-					<div class="app-row">
-						<div class="app-col">
+	
+	<!-- ====================================================== -->
+	<!-- START: title											-->
+	<!-- ====================================================== -->
+	<section id="title">
+		<h1>
+			<img class="icon large" th:src="@{/static/image/icon_api.png}"/>
+			<span data-th-text="#{application.api} + ' ' + #{application.global.test}"></span>
+		</h1>
+	</section>
+	<!-- ====================================================== -->
+	<!-- END: title											-->
+	<!-- ====================================================== -->
+	
+	<!-- ====================================================== -->
+	<!-- START: list											-->
+	<!-- ====================================================== -->
+	<section id="list">
+		<div class="app-flex fluid gap">
+			<div class="app-flex fluid">
+				<div class="app-flex" style="width:300px;">
+					<select is="duice-select" data-duice-bind="search,key" style="width:30%;">
+						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+						<option value="uri" data-th-text="#{application.api.uri}">URI</option>
+						<option value="method" data-th-text="#{application.api.method}">Method</option>
+						<option value="className" data-th-text="#{application.api.className}">Class Name</option>
+						<option value="methodName" data-th-text="#{application.api.methodName}">Method Name</option>
+					</select>
+					<input is="duice-input" type="text" data-duice-bind="search,value" style="width:70%;"/>
+				</div>
+			</div>
+			<button class="button" onclick="getApis(1);">
+				<img th:src="@{/static/image/icon_search.png}" class="icon"/>
+				<span data-th-text="#{application.global.search}"></span>
+			</button>
+		</div>
+		<table is="duice-table" 
+			data-duice-bind="apis,api" 
+			data-duice-selectable="true"
+			style="width:100%;">
+			<col style="width:10%;"/>
+			<col style="width:15%;"/>
+			<col/>
+			<th:block th:if="${_device!='MOBILE'}">
+			<col/>
+			<col/>
+			</th:block>
+			<thead>
+				<tr>
+					<th data-th-text="#{application.global.no}" class="text-center">No</th>
+					<th data-th-text="#{application.api.method}">Method</th>
+					<th data-th-text="#{application.api.uri}">URI</th>
+					<th:block th:if="${_device!='MOBILE'}">
+					<th data-th-text="#{application.api.className}">Class Name</th>
+					<th data-th-text="#{application.api.methodName}">Method Name</th>
+					</th:block>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="text-center">
+						<small is="duice-scriptlet" data-duice-bind="api" data-duice-value="
+							return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+						">
+						</small>
+					</td>
+					<td>
+						<span is="duice-span" data-duice-bind="api,method" class="id"></span>
+					</td>
+					<td class="text-left">
+						<span is="duice-span" data-duice-bind="api,uri" class="id"></span>
+					</td>
+					<th:block th:if="${_device!='MOBILE'}">
+					<td class="text-left">
+						<span is="duice-span" data-duice-bind="api,className"></span>
+					</td>
+					<td class="text-left">
+						<span is="duice-span" data-duice-bind="api,methodName"></span>
+					</td>
+					</th:block>
+				</tr>
+			</tbody>
+		</table>
+		<div class="app-flex fluid gap">
+			<small>
+				Total
+				<span is="duice-span" data-duice-bind="search,totalCount"></span>
+				Rows
+			</small>
+			<ul is="duice-widget-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+				<li data-page="[@duice[$context.page]]" onclick="getApis(this.dataset.page);"></li>
+			</ul>
+		</div>
+	</section>
+	<!-- ====================================================== -->
+	<!-- END: list												-->
+	<!-- ====================================================== -->
+	
+	<!-- ====================================================== -->
+	<!-- START: tab												-->
+	<!-- ====================================================== -->
+	<section id="tab">
+		<div class="app-flex left bottom">
+			<span id="tabButton1" class="tab">
+				<img class="icon small" th:src="@{/static/image/icon_api.png}"/>
+				<span data-th-text="#{application.api} + ' ' + #{application.global.details}"></span>
+			</span>
+			<span id="tabButton2" class="tab">
+				<img class="icon small" th:src="@{/static/image/icon_response.png}"/>
+				<span data-th-text="#{application.api.response}"></span>
+			</span>
+		</div>
+	</section>
+	<!-- ====================================================== -->
+	<!-- START: tab												-->
+	<!-- ====================================================== -->
+	
+	
+	<!-- ====================================================== -->
+	<!-- START: detail											-->
+	<!-- ====================================================== -->
+	<section id="detail">
+		<!-- ====================================================== -->
+		<!-- START:Start tabContent1								-->
+		<!-- ====================================================== -->
+		<div id="tabContent1">
+			<table class="table" style="width:100%;">
+				<col style="width:25%;"/>
+				<col/>
+				<tbody>
+					<tr>
+						<th>
+							<span data-th-text="#{application.api.method}" class="mand">Method</span>
+						</th>
+						<td>
+							<span is="duice-span" data-duice-bind="api,method" class="id"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<span data-th-text="#{application.api.uri}" class="mand">URI</span>
+						</th>
+						<td>
+							<input is="duice-input" type="text" data-duice-bind="api,uri" class="id"/>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<span data-th-text="#{application.api.className}">Class Name</span>
+						</th>
+						<td>
+							<span is="duice-span" data-duice-bind="api,className"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<span data-th-text="#{application.api.methodName}">Method Name</span>
+						</th>
+						<td>
+							<span is="duice-span" data-duice-bind="api,methodName"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<span data-th-text="#{application.api.variables}"></span>
+						</th>
+						<td>
 							<table is="duice-table" 
-								data-duice-bind="apis,api" 
-								data-duice-selectable="true"
-								style="width:100%;">
-								<col style="width:5%;"/>
-								<col/>
-								<col/>
-								<col/>
+							data-duice-bind="apiVariables,variable" style="width:100%;">
+								<col style="width:30%;"/>
 								<col/>
 								<thead>
 									<tr>
-										<th data-th-text="#{application.global.no}" class="text-center">No</th>
-										<th data-th-text="#{application.api.method}">Method</th>
-										<th data-th-text="#{application.api.uri}">URI</th>
-										<th data-th-text="#{application.api.className}">Class Name</th>
-										<th data-th-text="#{application.api.methodName}">Method Name</th>
+										<th data-th-text="#{application.api.variable.name}">Type</th>
+										<th data-th-text="#{application.api.variable.value}">Value</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr>
-										<td class="text-center">
-											<small is="duice-scriptlet" data-duice-bind="api" data-duice-value="
-												return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
-											">
-											</small>
+										<td>
+											<span is="duice-span" data-duice-bind="variable,name"></span>
 										</td>
 										<td>
-											<span is="duice-span" data-duice-bind="api,method" class="id"></span>
-										</td>
-										<td class="text-left">
-											<span is="duice-span" data-duice-bind="api,uri" class="id"></span>
-										</td>
-										<td class="text-left">
-											<span is="duice-span" data-duice-bind="api,className"></span>
-										</td>
-										<td class="text-left">
-											<span is="duice-span" data-duice-bind="api,methodName"></span>
+											<input is="duice-input" type="text" data-duice-bind="variable,value"/>
 										</td>
 									</tr>
 								</tbody>
 							</table>
-						</div>
-					</div>
-					<div class="app-row">
-						<div class="app-col" style="width:33%;">
-							<small>
-								Total
-								<span is="duice-span" data-duice-bind="search,totalCount"></span>
-								Rows
-							</small>
-						</div>
-						<div class="app-col left" style="width:33%;">
-							<ul is="duice-widget-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
-								<li data-page="[@duice[$context.page]]" onclick="getApis(this.dataset.page);"></li>
-							</ul>
-						</div>
-						<div class="app-col" style="width:33%;">
-						</div>
-					</div>
-				</div>
-			</div>	
-			<!-- ====================================================== -->
-			<!-- END:List												-->
-			<!-- ====================================================== -->
-		</div>
-		<div class="app-col" style="width:50%;">
-			<!-- ====================================================== -->
-			<!-- START:Start Detail										-->
-			<!-- ====================================================== -->
-			<div id="detailDiv" class="app-row panel">
-				<div class="app-col">	
-					<div class="app-row title">
-						<div class="app-col bottom">
-							<span id="tabButton1" class="tab">
-								<img class="icon small" th:src="@{/static/image/icon_api.png}"/>
-								<span data-th-text="#{application.api} + ' ' + #{application.global.details}"></span>
-							</span>
-							<span id="tabButton2" class="tab">
-								<img class="icon small" th:src="@{/static/image/icon_response.png}"/>
-								<span data-th-text="#{application.api.response}"></span>
-							</span>
-						</div>
-					</div>
-					<!-- ====================================================== -->
-					<!-- START:Start tabContent1								-->
-					<!-- ====================================================== -->
-					<div id="tabContent1" class="app-row">
-						<div class="app-col">
-							<table class="table" style="width:100%;">
-								<col style="width:25%;"/>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<span data-th-text="#{application.api.parameters}"></span>
+						</th>
+						<td>
+							<table is="duice-table" 
+							data-duice-bind="apiParameters,parameter" style="width:100%;">
+								<col style="width:30%;"/>
 								<col/>
+								<thead>
+									<tr>
+										<th data-th-text="#{application.api.parameter.name}">Type</th>
+										<th data-th-text="#{application.api.parameter.value}">Value</th>
+									</tr>
+								</thead>
 								<tbody>
 									<tr>
-										<th>
-											<span data-th-text="#{application.api.method}" class="mand">Method</span>
-										</th>
 										<td>
-											<span is="duice-span" data-duice-bind="api,method" class="id"></span>
+											<span is="duice-span" data-duice-bind="parameter,name"></span>
 										</td>
-									</tr>
-									<tr>
-										<th>
-											<span data-th-text="#{application.api.uri}" class="mand">URI</span>
-										</th>
 										<td>
-											<input is="duice-input" type="text" data-duice-bind="api,uri" class="id"/>
-										</td>
-									</tr>
-									<tr>
-										<th>
-											<span data-th-text="#{application.api.className}">Class Name</span>
-										</th>
-										<td>
-											<span is="duice-span" data-duice-bind="api,className"></span>
-										</td>
-									</tr>
-									<tr>
-										<th>
-											<span data-th-text="#{application.api.methodName}">Method Name</span>
-										</th>
-										<td>
-											<span is="duice-span" data-duice-bind="api,methodName"></span>
-										</td>
-									</tr>
-									<tr>
-										<th>
-											<span data-th-text="#{application.api.variables}"></span>
-										</th>
-										<td>
-											<table is="duice-table" 
-											data-duice-bind="apiVariables,variable" style="width:100%;">
-												<col style="width:30%;"/>
-												<col/>
-												<thead>
-													<tr>
-														<th data-th-text="#{application.api.variable.name}">Type</th>
-														<th data-th-text="#{application.api.variable.value}">Value</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td>
-															<span is="duice-span" data-duice-bind="variable,name"></span>
-														</td>
-														<td>
-															<input is="duice-input" type="text" data-duice-bind="variable,value"/>
-														</td>
-													</tr>
-												</tbody>
-											</table>
-										</td>
-									</tr>
-									<tr>
-										<th>
-											<span data-th-text="#{application.api.parameters}"></span>
-										</th>
-										<td>
-											<table is="duice-table" 
-											data-duice-bind="apiParameters,parameter" style="width:100%;">
-												<col style="width:30%;"/>
-												<col/>
-												<thead>
-													<tr>
-														<th data-th-text="#{application.api.parameter.name}">Type</th>
-														<th data-th-text="#{application.api.parameter.value}">Value</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td>
-															<span is="duice-span" data-duice-bind="parameter,name"></span>
-														</td>
-														<td>
-															<input is="duice-input" type="text" data-duice-bind="parameter,value"/>
-														</td>
-													</tr>
-												</tbody>
-											</table>
-										</td>
-									</tr>
-									<tr>
-										<th>
-											<span data-th-text="#{application.api.payload}"></span>
-										</th>
-										<td>
-											<textarea is="duice-textarea" data-duice-bind="api,payload" style="height:400px;"></textarea>
+											<input is="duice-input" type="text" data-duice-bind="parameter,value"/>
 										</td>
 									</tr>
 								</tbody>
 							</table>
-							<div class="app-row">
-								<div class="app-col right">
-									<button class="button" onclick="resetApi();">
-										<img th:src="@{/static/image/icon_reset.png}" class="icon"/>
-										<span data-th-text="#{application.global.reset}"></span>
-									</button>
-									<button class="button" onclick="testApi();">
-										<img th:src="@{/static/image/icon_test.png}" class="icon"/>
-										<span data-th-text="#{application.global.test}"></span>
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- ====================================================== -->
-					<!-- END: End tabContent1									-->
-					<!-- ====================================================== -->
-					<!-- ====================================================== -->
-					<!-- START:Start tabContent2								-->
-					<!-- ====================================================== -->
-					<div id="tabContent2" class="app-row">
-						<div class="app-col">
-							<div class="app-row">
-								<div class="app-col">
-									<pre style="margin:0px; height:800px; border-radius:3px;"><code id="response" class="language-json line-numbers"></code></pre>
-								</div>
-							</div>
-							<div class="app-row">
-								<div class="app-col right">
-									<button class="button" onclick="javascript:copyResponse();">
-										<img th:src="@{/static/image/icon_copy.png}" class="icon"/>
-										<span data-th-text="#{application.global.copy}"></span>
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- ====================================================== -->
-					<!-- END: End tabContent2									-->
-					<!-- ====================================================== -->
-				</div>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<span data-th-text="#{application.api.payload}"></span>
+						</th>
+						<td>
+							<textarea is="duice-textarea" data-duice-bind="api,payload" style="height:400px;"></textarea>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="app-flex gap right">
+				<button class="button" onclick="resetApi();">
+					<img th:src="@{/static/image/icon_reset.png}" class="icon"/>
+					<span data-th-text="#{application.global.reset}"></span>
+				</button>
+				<button class="button" onclick="testApi();">
+					<img th:src="@{/static/image/icon_test.png}" class="icon"/>
+					<span data-th-text="#{application.global.test}"></span>
+				</button>
 			</div>
-			<!-- ====================================================== -->
-			<!-- END:Start Detail										-->
-			<!-- ====================================================== -->
 		</div>
-	</div>
-</div>
+		<!-- ====================================================== -->
+		<!-- END: End tabContent1									-->
+		<!-- ====================================================== -->
+		<!-- ====================================================== -->
+		<!-- START:Start tabContent2								-->
+		<!-- ====================================================== -->
+		<div id="tabContent2">
+			<pre style="margin:0px; height:800px; border-radius:3px;"><code id="response" class="language-json line-numbers"></code></pre>
+			<div class="app-flex gap right">
+				<button class="button" onclick="javascript:copyResponse();">
+					<img th:src="@{/static/image/icon_copy.png}" class="icon"/>
+					<span data-th-text="#{application.global.copy}"></span>
+				</button>
+			</div>
+		</div>
+		<!-- ====================================================== -->
+		<!-- END: End tabContent2									-->
+		<!-- ====================================================== -->
+	</section>
+	
+</main>

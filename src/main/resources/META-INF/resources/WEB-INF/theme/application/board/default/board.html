@@ -1,7 +1,7 @@
 <!-- ====================================================== -->
 <!-- START: title											-->
 <!-- ====================================================== -->
-<div class="app-row title">
+<div class="app-flex title">
 	<div class="app-col bottom">
 		<h1>
 			<img th:src="${(board.icon==null?'/static/image/icon_board.png':board.icon)}" class="icon large"/>
@@ -16,7 +16,7 @@
 <!-- ====================================================== -->
 <!-- START: search											-->
 <!-- ====================================================== -->
-<div class="app-row search">
+<div class="app-flex search">
 	<div class="app-col">
 		<img class="icon" th:src="@{/static/image/icon_search.png}"/>
 		<select th:if="${board.categoryUse}" is="duice-select" data-duice-bind="search,categoryId" onchange="getArticlesByCategory(this.value);" style="width:200px;">
@@ -44,7 +44,7 @@
 <!-- ====================================================== -->
 <!-- START: list											-->
 <!-- ====================================================== -->
-<div class="app-row">
+<div class="app-flex">
 	<div class="app-col">
 		<table is="duice-table" 
 		data-duice-bind="articles,article" 
@@ -107,7 +107,7 @@
 <!-- ====================================================== -->
 <!-- START: pagination										-->
 <!-- ====================================================== -->
-<div class="app-row">
+<div class="app-flex">
 	<div class="app-col">
 		<small>
 			Total

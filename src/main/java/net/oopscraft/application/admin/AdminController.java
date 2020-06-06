@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.user.Authority;
@@ -48,7 +49,9 @@ public class AdminController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("admin/admin.html");
+		RedirectView redirectView = new RedirectView("/admin/monitor");
+		redirectView.setExposeModelAttributes(false);
+		ModelAndView modelAndView = new ModelAndView(redirectView);
 		return modelAndView;
 	}
 	

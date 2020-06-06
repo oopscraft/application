@@ -2,7 +2,7 @@
 	<!-- ================================================== -->
 	<!-- START: top											-->
 	<!-- ================================================== -->
-	<div class="app-row" style="padding:0px 20px; height:70px; background-color:#fafafa; border-bottom:groove 2px #ccc;">
+	<div class="app-flex middle" style="padding:0px 20px; height:70px; background-color:#fafafa; border-bottom:groove 2px #ccc;">
 		<div class="app-col left middle">
 			<a th:href="@{/}">
 				<img th:src="@{/static/image/application.png}" style="vertical-align:middle;"/>
@@ -38,7 +38,7 @@
 	<!-- END: top											-->
 	<!-- ================================================== -->
 	
-	<div class="app-row" style="min-height:calc(100% - 120px);">
+	<div class="app-flex" style="min-height:calc(100% - 120px);">
 		<!-- ================================================== -->
 		<!-- START: menu										-->
 		<!-- ================================================== -->
@@ -97,7 +97,7 @@
 	<!-- ================================================== -->
 	<!-- START: top											-->
 	<!-- ================================================== -->
-	<div class="app-row" style="padding:1rem 0.5rem; background-color:#fafafa; border-bottom:groove 2px #eee;">
+	<div class="app-flex" style="padding:1rem 0.5rem; background-color:#fafafa; border-bottom:groove 2px #eee;">
 		<div class="app-col left middle">
 			<a th:href="@{/}">
 				<img th:src="@{/static/image/application.png}" style="vertical-align:middle; height:2rem;"/>
@@ -137,7 +137,7 @@
 	<!-- ================================================== -->
 	<!-- START: menu										-->
 	<!-- ================================================== -->
-	<div id="menuDiv" class="app-row" style="display:none;">
+	<div id="menuDiv" class="app-flex" style="display:none;">
 		<div class="app-col" style="width:250px;">
 			<ul is="duice-ul"
 			data-duice-bind="_menus,_menu" 
@@ -164,7 +164,7 @@
 	<!-- ================================================== -->
 	<!-- START: content										-->
 	<!-- ================================================== -->
-	<div class="app-row" style="margin:0.5rem;">
+	<div class="app-flex" style="margin:0.5rem;">
 		<div layout:fragment="content" class="app-col">
 		</div>
 	</div>

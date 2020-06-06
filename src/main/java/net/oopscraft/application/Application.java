@@ -33,9 +33,8 @@ public class Application {
 		for(String name : applicationContext.getBeanDefinitionNames()) {
 			LOGGER.info("Bean:{}", name);
 		}
-		
-		// Sets environment
-		environment = applicationContext.getEnvironment();
+		ApplicationConfig applicationConfig = ApplicationContext.applicationConfig;
+		LOGGER.info("ApplicationConfig:{}", ApplicationContext.applicationConfig);
 		
 		// hooking kill signal
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
@@ -53,13 +52,17 @@ public class Application {
 				}
 			}
 		}));
-		
+
 		// creates web server
-		WebServerBuilder webServerBuilder = new WebServerBuilder(WebServerBuilder.Type.valueOf((String)environment.getProperty("application.webServer.type")));
-		webServerBuilder.setPort(Integer.parseInt((String)environment.getProperty("application.webServer.port")));
+		WebServerBuilder webServerBuilder = new WebServerBuilder(applicationConfig.getWebServer().getType());
+		webServerBuilder.setPort(applicationConfig.getWebServer().getPort());
+		webServerBuilder.setSsl(applicationConfig.getWebServer().isSsl());
+		webServerBuilder.setKeyStorePath(applicationConfig.getWebServer().getKeyStorePath());
+		webServerBuilder.setKeyStoreType(applicationConfig.getWebServer().getKeyStoreType());
+		webServerBuilder.setKeyStorePass(applicationConfig.getWebServer().getKeyStorePass());
 		WebServerContext context = new WebServerContext();
-		context.setContextPath((String)environment.getProperty("application.webServer.context.contextPath"));
-		context.setResourceBase((String)environment.getProperty("application.webServer.context.ResourceBase"));
+		context.setContextPath("/");
+		context.setResourceBase("webapp");
 		webServerBuilder.addContext(context);
 		webServer = webServerBuilder.build();
 		

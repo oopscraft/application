@@ -9,7 +9,6 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
@@ -18,7 +17,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -107,12 +105,9 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     static AuthenticationHandler authenticationHandler;
     static AuthenticationFilter authenticationFilter;
     static CookieCsrfTokenRepository csrfTokenRepository;
-
-    @Value("${application.securityPolicy:AUTHENTICATED}")
-    private SecurityPolicy securityPolicy;
     
-	@Autowired
-	private Environment environment;
+    @Autowired
+    ApplicationConfig applicationConfig;
     
 	@Autowired
 	ApiWebSocketHandler apiWebSocketHandler;
@@ -130,7 +125,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 		CookieLocaleResolver localeResolver = new CookieLocaleResolver();
 		try {
 			localeResolver.setCookieName(LOCALE_HEADER_NAME);
-			String locales = environment.getProperty("application.locales");
+			String locales = applicationConfig.getLocales();
 			String defaultLocale = locales.split(",")[0];
 			localeResolver.setDefaultLocale(LocaleUtils.toLocale(defaultLocale));
 		}catch(Exception ignore) {
@@ -358,7 +353,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     		String antMatcher = "/api/**";
     		
     		// allow anonymous
-    		if(securityPolicy == SecurityPolicy.ANONYMOUS) {
+    		if(applicationConfig.getSecurityPolicy() == SecurityPolicy.ANONYMOUS) {
 	    		http.antMatcher(antMatcher)
 		    		.authorizeRequests()
 		    		.anyRequest()
@@ -391,7 +386,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     		String antMatcher = "/**";
     		
     		// allow anonymous
-    		if(securityPolicy == SecurityPolicy.ANONYMOUS) {
+    		if(applicationConfig.getSecurityPolicy() == SecurityPolicy.ANONYMOUS) {
 	    		http.antMatcher(antMatcher)
 		    		.authorizeRequests()
 		    		.anyRequest()

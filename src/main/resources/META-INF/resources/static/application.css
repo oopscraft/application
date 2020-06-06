@@ -53,80 +53,52 @@ a:hover {
 	text-decoration: none;
 	color: inherit;
 }
-.app-row {
-	display: flex;
-	justify-content: space-between;
-	max-width: 100%;
-	margin: 0px;
-	padding: 0px;
-}
-.app-row.panel {
-    padding: 5px;
-}
-.app-row.title {
-	border-bottom: solid 1px #eee;
-	height: 3rem;
-}
-.app-row.search {
-	background-color: #fafafa;
-	padding-top:2px;
-}
-.app-row.action {
-	padding: 2px 1px;
-}
-.app-col {
-	flex-grow: 1;
-	max-width: 100%;
-	margin: 0px;
-	padding: 0px;
-}
-.app-col.left {
-	text-align: left;
-}
-.app-col.center {
-	text-align: center;
-}
-.app-col.right {
-	text-align: right;
-}
-.app-col.top {
-	align-self: flex-start;
-}
-.app-col.middle {
-	align-self: center;
-}
-.app-col.bottom {
-	align-self: flex-end;
-}
-.hr {
-	margin: 1px;
+
+hr {
 	border: none;
+	border-top: solid 1px #aaa;
 	border-bottom: solid 1px #eee;
 }
-.tab {
-	display:inline-block;
-	line-height: 2rem;
+
+.app-flex {
+    display: flex;
+	display: -ms-flexbox;
+    flex-wrap: nowrap;
+    justify-content: space-between;
 	margin: 0px;
-	margin-bottom: -1px;
-	padding: 1px 10px;
-	border:1px solid #ccc;
-	border-bottom: none;
-	border-top-left-radius: 2px;
-	border-top-right-radius: 2px;
-	cursor: pointer;
-	font-weight: bold;
-	box-shadow: inset 0px 1px 0px 0px #ffffff;
-    background: linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
-    background-color: #f9f9f9;
-}
-.banner {
 	padding: 0px;
-	margin: 0px;
- 	margin-right: 20px;
 }
-.banner ul {
-	list-style: none;
-	padding-left: 0px;
+.app-flex.left {
+	justify-content: flex-start;
+}
+.app-flex.center {
+	justify-content: center;
+}
+.app-flex.right {
+	justify-content: flex-end;
+}
+.app-flex.top {
+	align-items: flex-start;
+}
+.app-flex.middle {
+	align-items: center;
+}
+.app-flex.bottom {
+	align-items: flex-end;
+}
+.app-flex > * {
+	flex: 0 0 auto;
+}
+@media screen and (max-width: 768px) {
+	.app-flex.fluid {
+		flex-wrap: wrap;
+	}
+	.app-flex.fluid > * {
+		flex: 0 1 100%;
+	}
+}
+.gap > * {
+	margin: 1px !important;
 }
 .font-bold {
 	font-weight: bold;
@@ -149,21 +121,32 @@ a:hover {
 .text-bottom {
 	vertical-align: bottom;
 }
-.banner {
-	height: 24px;
+.tab {
+	display:inline-block;
+	margin: 0px;
+	margin-right: 2px;
+	padding: 1px 10px;
+	border:1px solid #ccc;
+	border-bottom: none;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
 	cursor: pointer;
+	font-weight: bold;
+	box-shadow: inset 0px 1px 0px 0px #ffffff;
+    background: linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
+    background-color: #f9f9f9;
 }
 .button {
     height: inherit;
     line-height: inherit;
-    margin: 0rem;
     padding: 0rem 0.5rem;
 	border:1px solid #adacac;
 	border-radius: 1px;
-	display:inline-block;
+	white-space:nowrap;
 	color:#333;
 	font-weight:bold;
 	text-decoration:none;
+	background: linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
     background-color: #fff;
 }
 .button > .icon {
@@ -224,13 +207,14 @@ a:hover {
 	text-decoration: underline;			
 }
 .table {
+	table-layout: fixed;
 	border-collapse: collapse;
 	border: solid 1px #dee2e6;
 }
 .table > tr ,
 .table > thead > tr ,
 .table > tbody > tr {
-	line-height: 2.0;
+	line-height: inherit;
 }
 .table > tr > th ,
 .table > thead > tr > th ,
@@ -238,11 +222,13 @@ a:hover {
 	line-height: inherit;
 	font-weight: bold;
 	margin: 0px;
-	padding: 0px;
+	padding: 0px 0.5rem;
 	border: dotted 1px #dee2e6;
 	background-color: #fafafa;
 	text-align: center;
+	white-space: nowrap;
 	text-overflow: ellipsis;
+	overflow: hidden;
 }
 .table > tr > td ,
 .table > tbody > tr > td {
@@ -251,7 +237,9 @@ a:hover {
 	border: dotted 1px #dee2e6;
 	margin: 0px;
 	padding: 1px;
+	white-space: nowrap;
 	text-overflow: ellipsis;
+	overflow: hidden;
 }
 .id {
 	font-weight: bold;
@@ -269,12 +257,10 @@ a:hover {
 }
 
 /* Mobile */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1023px) {
 	html,
 	body {
 		font-size: 0.875rem;
+		line-height: 2.5rem;
 	}
-	input,select,textarea,button {
-		padding: 0.5rem 1rem !important;
-	} 
 }

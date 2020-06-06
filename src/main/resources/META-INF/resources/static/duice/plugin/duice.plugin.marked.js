@@ -13,6 +13,7 @@ var duice;
             getComponent(element) {
                 var marked = new Marked(element);
                 var bind = element.dataset.duiceBind.split(',');
+                console.log('####', this.getContextProperty(bind[0]));
                 marked.bind(this.getContextProperty(bind[0]), bind[1]);
                 return marked;
             }
@@ -25,7 +26,6 @@ var duice;
             constructor(div) {
                 super(div);
                 this.div = div;
-                this.div.classList.add('duice-plugin-marked');
             }
             update(map, obj) {
                 this.value = map.get(this.getName());

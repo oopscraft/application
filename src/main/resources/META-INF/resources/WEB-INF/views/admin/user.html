@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html layout:decorate="~{admin/admin.html}">
-<div layout:fragment="content">
+<main layout:fragment="main">
 	<script>
 		// defines variables
 		const search = new duice.Map({
@@ -93,7 +93,7 @@
 		 */
 		function disableDetail(disable){
 			user.setDisableAll(disable);
-			$('#detailDiv').find('button').each(function(index, element){
+			$('#detail').find('button').each(function(index, element){
 				$(element).prop('disabled', disable);
 			});
 		}
@@ -447,399 +447,339 @@
 			});
 		}
 	</script>
-	<div class="app-row">
-		<div class="app-col" style="width:50%;">
-			<!-- ====================================================== -->
-			<!-- START:List												-->
-			<!-- ====================================================== -->
-			<div id="listDiv" class="app-row panel">
-				<div class="app-col">
-					<div class="app-row title">
-						<div class="app-col bottom">
-							<h1>
-								<img class="icon large" th:src="@{/static/image/icon_user.png}"/>
-								<span data-th-text="#{application.user} + ' ' + #{application.global.management}"></span>
-							</h1>
-						</div>
-					</div>
-					<div class="app-row search">
-						<div class="app-col">
-							<img class="icon" th:src="@{/static/image/icon_search.png}"/>
-							<select is="duice-select" data-duice-bind="search,key" style="width:125px;">
-								<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
-								<option value="email" data-th-text="#{application.user.email}">Email</option>
-								<option value="name" data-th-text="#{application.user.name}">Name</option>
-								<option value="nickname" data-th-text="#{application.user.nickname}">Nickname</option>
-							</select>
-							<input is="duice-input" type="text" data-duice-bind="search,value" style="width:250px;"/>
-							&nbsp;
-							<span data-th-text="#{application.user.status}">Status</span>
-							<select is="duice-select" data-duice-bind="search,status" style="width:125px;">
-								<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+
+	<!-- ====================================================== -->
+	<!-- START: title											-->
+	<!-- ====================================================== -->
+	<section id="title">
+		<h1>
+			<img class="icon large" th:src="@{/static/image/icon_user.png}"/>
+			<span data-th-text="#{application.user} + ' ' + #{application.global.management}"></span>
+		</h1>
+	</section>
+	<!-- ====================================================== -->
+	<!-- END: title											-->
+	<!-- ====================================================== -->
+
+	<!-- ====================================================== -->
+	<!-- START: list											-->
+	<!-- ====================================================== -->
+	<section id="list">
+		<div class="app-flex fluid gap">
+			<div class="app-flex fluid">
+				<div class="app-flex" style="width:300px;">
+					<select is="duice-select" data-duice-bind="search,key" style="width:30%;">
+						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+						<option value="email" data-th-text="#{application.user.email}">Email</option>
+						<option value="name" data-th-text="#{application.user.name}">Name</option>
+						<option value="nickname" data-th-text="#{application.user.nickname}">Nickname</option>
+					</select>
+					<input is="duice-input" type="text" data-duice-bind="search,value" style="width:70%;"/>
+				</div>
+				<span is="duice-span" data-th-text="#{application.user.status}" class="font-bold">
+					Status
+				</span>
+				<select is="duice-select" data-duice-bind="search,status" style="width:120px;">
+					<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
+					<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.user.status.'+${status}}"></option>
+				</select>
+			</div>
+			<button class="button" onclick="getUsers(1);">
+				<img th:src="@{/static/image/icon_search.png}" class="icon"/>
+				<span data-th-text="#{application.global.search}"></span>
+			</button>
+		</div>
+		<table is="duice-table" 
+			data-duice-bind="users,user" 
+			data-duice-selectable="true"
+			style="width:100%;">
+			<col style="width:15%;"/>
+			<col/>
+			<col/>
+			<th:block th:if="${_device!='MOBILE'}">
+			<col style="width:130px;"/>
+			<col/>
+			</th:block>
+			<thead>
+				<tr>
+					<th data-th-text="#{application.global.no}" class="text-center">No</th>
+					<th data-th-text="#{application.user.email}">Email</th>
+					<th data-th-text="#{application.user.name}">Name</th>
+					<th:block th:if="${_device!='MOBILE'}">
+					<th data-th-text="#{application.user.status}">Status</th>
+					<th data-th-text="#{application.user.nickname}">Nickname</th>
+					</th:block>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="text-center">
+						<small is="duice-scriptlet" data-duice-bind="users" data-duice-value="
+							return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
+						">
+						</small>
+					</td>
+					<td>
+						<img is="duice-img" data-duice-bind="user,thumbnail" th:src="@{/static/image/icon_user.png}" class="icon small"/>
+						<span is="duice-span" data-duice-bind="user,email" class="id [@duice[$context.user.get('systemEmbedded')===true?'embd':'']]"></span>
+					</td>
+					<td>
+						<span is="duice-span" data-duice-bind="user,name"></span>
+					</td>
+					<th:block th:if="${_device!='MOBILE'}">
+					<td class="text-center">
+						<select is="duice-select" data-duice-bind="user,status">
+							<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.user.status.'+${status}}"></option>
+						</select>
+					</td>
+					<td><span is="duice-span" data-duice-bind="user,nickname"></span></td>
+					</th:block>
+				</tr>
+			</tbody>
+		</table>
+		<div class="app-flex fluid gap">
+			<small th:if="${_device!='MOBILE'}">
+				Total
+				<span is="duice-span" data-duice-bind="search,totalCount"></span>
+				Rows
+			</small>
+			<ul is="duice-widget-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
+				<li data-page="[@duice[$context.page]]" onclick="getUsers(this.dataset.page);"></li>
+			</ul>
+			<button class="button" onclick="addUser();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
+				<img th:src="@{/static/image/icon_add.png}" class="icon"/>
+				<span data-th-text="#{application.global.add}"></span>
+			</button>
+		</div>
+	</section>
+	<!-- ====================================================== -->
+	<!-- END: list												-->
+	<!-- ====================================================== -->
+	
+	<!-- ====================================================== -->
+	<!-- START: tab												-->
+	<!-- ====================================================== -->
+	<section id="tab">
+		<div class="app-flex left bottom">
+			<span id="tabButton1" class="tab">
+				<img class="icon small" th:src="@{/static/image/icon_user.png}"/>
+				<span data-th-text="#{application.user} + ' ' + #{application.global.details}"></span>
+			</span>
+			<span id="tabButton2" class="tab">
+				<img class="icon small" th:src="@{/static/image/icon_authority.png}"/>
+				<span data-th-text="#{application.global.available} + ' ' + #{application.user.authorities}"></span>
+			</span>
+		</div>
+	</section>
+	<!-- ====================================================== -->
+	<!-- START: tab												-->
+	<!-- ====================================================== -->
+	
+	<!-- ====================================================== -->
+	<!-- START: detail											-->
+	<!-- ====================================================== -->
+	<section id="detail">
+		<!-- ====================================================== -->
+		<!-- START: tabContent1										-->
+		<!-- ====================================================== -->
+		<div id="tabContent1">
+			<table class="table" style="width:100%;">
+				<col style="width:25%;"/>
+				<col/>
+				<tbody>
+					<tr>
+						<th><span data-th-text="#{application.user.email}" class="mand">Email</span></th>
+						<td>
+							<input is="duice-input" type="text" data-duice-bind="user,email" class="id"/>
+						</td>
+					</tr>
+					<tr id="passwordTr">
+						<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
+						<td>
+							<input is="duice-input" type="password" data-duice-bind="user,password"/>
+						</td>
+					</tr>
+					<tr id="passwordConfirmTr">
+						<th><span data-th-text="#{application.user.passwordConfirm}" class="mand">Password(Confirm)</span></th>
+						<td>
+							<input is="duice-input" type="password" data-duice-bind="user,passwordConfirm"/>
+						</td>
+					</tr>
+					<tr id="changePasswordTr">
+						<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
+						<td>
+							<button id="changePasswordButton" class="button" onclick="openChangePassword();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
+								<img th:src="@{/static/image/icon_password.png}" class="icon"/>
+								<span data-th-text="#{application.user.changePassword}"></span>
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<th><span data-th-text="#{application.user.status}" class="mand">Status</span></th>
+						<td>
+							<select is="duice-select" data-duice-bind="user,status">
+								<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
 								<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.user.status.'+${status}}"></option>
 							</select>
-						</div>
-						<div class="app-col right">
-							<button class="button" onclick="getUsers(1);">
-								<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-								<span data-th-text="#{application.global.search}"></span>
-							</button>
-						</div>
-					</div>
-					<div class="app-row">
-						<div class="app-col">
-							<table is="duice-table" 
-								data-duice-bind="users,user" 
-								data-duice-selectable="true"
-								style="width:100%;">
-								<col style="width:10%;"/>
-								<col/>
-								<col/>
-								<col/>
-								<col style="width:110px;"/>
-								<thead>
-									<tr>
-										<th data-th-text="#{application.global.no}" class="text-center">No</th>
-										<th data-th-text="#{application.user.email}">Email</th>
-										<th data-th-text="#{application.user.name}">Name</th>
-										<th data-th-text="#{application.user.nickname}">Nickname</th>
-										<th data-th-text="#{application.user.status}">Status</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td class="text-center">
-											<small is="duice-scriptlet" data-duice-bind="users" data-duice-value="
-												return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
-											">
-											</small>
-										</td>
-										<td>
-											<img is="duice-img" data-duice-bind="user,thumbnail" th:src="@{/static/image/icon_user.png}" class="icon small"/>
-											<span is="duice-span" data-duice-bind="user,email" class="id [@duice[$context.user.get('systemEmbedded')===true?'embd':'']]"></span>
-										</td>
-										<td>
-											<span is="duice-span" data-duice-bind="user,name"></span>
-										</td>
-										<td><span is="duice-span" data-duice-bind="user,nickname"></span></td>
-										<td class="text-center">
-											<select is="duice-select" data-duice-bind="user,status">
-												<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.user.status.'+${status}}"></option>
-											</select>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-					<div class="app-row">
-						<div class="app-col">
-							<small>
-								Total
-								<span is="duice-span" data-duice-bind="search,totalCount"></span>
-								Rows
-							</small>
-						</div>
-						<div class="app-col center">
-							<ul is="duice-widget-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
-								<li data-page="[@duice[$context.page]]" onclick="getUsers(this.dataset.page);"></li>
-							</ul>
-						</div>
-						<div class="app-col right">
-							<button class="button" onclick="addUser();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
-								<img th:src="@{/static/image/icon_add.png}" class="icon"/>
-								<span data-th-text="#{application.global.add}"></span>
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- ====================================================== -->
-			<!-- END:List												-->
-			<!-- ====================================================== -->
-		</div>
-		<div class="app-col" style="width:50%;">
-			<!-- ====================================================== -->
-			<!-- START:Start Detail										-->
-			<!-- ====================================================== -->
-			<div id="detailDiv" class="app-row panel">
-				<div class="app-col">
-					<div class="app-row title">
-						<div class="app-col bottom">
-							<span id="tabButton1" class="tab">
-								<img class="icon small" th:src="@{/static/image/icon_user.png}"/>
-								<span data-th-text="#{application.user} + ' ' + #{application.global.details}"></span>
-							</span>
-							<span id="tabButton2" class="tab">
-								<img class="icon small" th:src="@{/static/image/icon_authority.png}"/>
-								<span data-th-text="#{application.global.available} + ' ' + #{application.user.authorities}"></span>
-							</span>
-						</div>
-					</div>
-					<!-- ====================================================== -->
-					<!-- START:Start tabContent1								-->
-					<!-- ====================================================== -->
-					<div id="tabContent1" class="app-row">
-						<div class="app-col">
-							<table class="table" style="width:100%;">
-								<col style="width:25%;"/>
-								<col/>
-								<tbody>
-									<tr>
-										<th><span data-th-text="#{application.user.email}" class="mand">Email</span></th>
-										<td>
-											<input is="duice-input" type="text" data-duice-bind="user,email" class="id"/>
-										</td>
-									</tr>
-									<tr id="passwordTr">
-										<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
-										<td>
-											<input is="duice-input" type="password" data-duice-bind="user,password"/>
-										</td>
-									</tr>
-									<tr id="passwordConfirmTr">
-										<th><span data-th-text="#{application.user.passwordConfirm}" class="mand">Password(Confirm)</span></th>
-										<td>
-											<input is="duice-input" type="password" data-duice-bind="user,passwordConfirm"/>
-										</td>
-									</tr>
-									<tr id="changePasswordTr">
-										<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
-										<td>
-											<button id="changePasswordButton" class="button" onclick="openChangePassword();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
-												<img th:src="@{/static/image/icon_password.png}" class="icon"/>
-												<span data-th-text="#{application.user.changePassword}"></span>
-											</button>
-										</td>
-									</tr>
-									<tr>
-										<th><span data-th-text="#{application.user.status}" class="mand">Status</span></th>
-										<td>
-											<select is="duice-select" data-duice-bind="user,status">
-												<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
-												<option th:each="status:${Status}" th:value="${status}" th:text="#{'application.user.status.'+${status}}"></option>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<th><span data-th-text="#{application.user.name}" class="mand">Name</span></th>
-										<td><input is="duice-input" type="text" data-duice-bind="user,name"/></td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.user.nickname}">Nickname</th>
-										<td><input is="duice-input" type="text" data-duice-bind="user,nickname"/></td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.user.mobile}">Mobile</th>
-										<td>
-											<div class="app-row">
-												<div class="app-col" style="width:25%;">
-													<select is="duice-select" data-duice-bind="user,mobileCountry">
-														<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
-														<option th:each="country:${_countries}" th:value="${country.country}" th:text="${country.displayCountry}"></option>
-													</select>
-												</div>
-												<div class="app-col" style="width:75%;">
-													<input is="duice-input" type="text" data-duice-bind="user,mobileNumber"/>
-												</div>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.user.photo}">Photo</th>
-										<td><img is="duice-img" data-duice-bind="user,photo" data-duice-size="100,100" src="data:image/png;base64,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" style="width:100px; height:100px;"/></td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.user.profile}">Profile</th>
-										<td><textarea is="duice-textarea" data-duice-bind="user,profile" style="height:100px;"></textarea></td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.user.language}">Locale</th>
-										<td>
-											<select is="duice-select" data-duice-bind="user,language">
-												<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
-												<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.user.joinDate}">Join Date</th>
-										<td>
-											<small style="font-weight:bold;">
-												<span is="duice-span" data-duice-bind="user,joinDate" data-duice-mask="date,yyyy-MM-dd HH:mm:ss"></span>
-											</small>
-										</td>
-									</tr>
-									<tr>
-										<th data-th-text="#{application.user.closeDate}">Close Date</th>
-										<td>
-											<small style="font-weight:bold;">
-												<span is="duice-span" data-duice-bind="user,closeDate" data-duice-mask="date,yyyy-MM-dd HH:mm:ss"></span>
-											</small>
-									</tr>
-									<tr>
-										<th>
-											<img class="icon small" th:src="@{/static/image/icon_group.png}"/>
-											<span data-th-text="#{application.user.groups}"></span>
-										</th>
-										<td>
-											<div style="width:100%; max-height:177px; overflow-y:scroll;">
-												<table is="duice-table" 
-												data-duice-bind="userGroups,group" style="width:100%;">
-													<col style="width:15%;"/>
-													<col/>
-													<col style="width:5%;"/>
-													<thead>
-														<tr>
-															<th data-th-text="#{application.global.no}" class="text-center"></th>
-															<th data-th-text="#{application.group.name}"></th>
-															<th class="text-center">
-																<img class="icon small button" th:src="@{/static/image/icon_add.png}" onclick="addUserGroup();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
-															</th>
-														</tr>
-													</thead>
-													<tbody>
-														<tr>
-															<td class="text-center">
-																<small is="duice-scriptlet" data-duice-bind="group" data-duice-value="return $context.index+1;"></small>
-															</td>
-															<td>
-																<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
-																<span is="duice-span" data-duice-bind="group,name"></span>
-															</td>
-															<td class="text-center">
-																<img class="icon small button" th:src="@{/static/image/icon_remove.png}" data-index="[@duice[$context.index]]" onclick="removeUserGroup(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
-															</td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<th>
-											<img class="icon small" th:src="@{/static/image/icon_role.png}"/>
-											<span data-th-text="#{application.user.roles}"></span>
-										</th>
-										<td>
-											<div style="width:100%; max-height:177px; overflow-y:scroll;">
-												<table is="duice-table" 
-												data-duice-bind="userRoles,role" 
-												style="width:100%;">
-													<col style="width:15%;"/>
-													<col style="width:30%;"/>
-													<col/>
-													<col style="width:5%;"/>
-													<thead>
-														<tr>
-															<th data-th-text="#{application.global.no}" class="text-center"></th>
-															<th data-th-text="#{application.role.id}">ID</th>
-															<th data-th-text="#{application.role.name}">Name</th>
-															<th class="text-center">
-																<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addUserRole();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
-															</th>
-														</tr>
-													</thead>
-													<tbody>
-														<tr>
-															<td class="text-center">
-																<small is="duice-scriptlet" data-duice-bind="role" data-duice-value="return $context.index+1;"></small>
-															</td>
-															<td>
-																<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
-																<span is="duice-span" data-duice-bind="role,id"></span>
-															</td>
-															<td><span is="duice-span" data-duice-bind="role,name"></span></td>
-															<td class="text-center">
-																<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeUserRole(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
-															</td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<th>
-											<img class="icon small" th:src="@{/static/image/icon_authority.png}"/>
-											<span data-th-text="#{application.user.authorities}"></span>
-										</th>
-										<td>
-											<div style="width:100%; max-height:177px; overflow-y:scroll;">
-												<table is="duice-table" 
-													data-duice-bind="userAuthorities,authority" 
-													style="width:100%;">
-													<col style="width:15%;"/>
-													<col style="width:30%;"/>
-													<col/>
-													<col style="width:5%;"/>
-													<thead>
-														<tr>
-															<th data-th-text="#{application.global.no}" class="text-center"></th>
-															<th data-th-text="#{application.authority.id}"></th>
-															<th data-th-text="#{application.authority.name}"></th>
-															<th class="text-center">
-																<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addUserAuthority();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
-															</th>
-														</tr>
-													</thead>
-													<tbody>
-														<tr>
-															<td class="text-center">
-																<small is="duice-scriptlet" data-duice-bind="authority" data-duice-value="return $context.index+1;"></small>
-															</td>
-															<td>
-																<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
-																<span is="duice-span" data-duice-bind="authority,id"></span>
-															</td>
-															<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
-															<td class="text-center">
-																<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeUserAuthority(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
-															</td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-							<div class="app-row action">
-								<div class="app-col right">
-									<button class="button" onclick="deleteUser();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
-										<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
-										<span data-th-text="#{application.global.delete}"></span>
-									</button>
-									<button class="button" onclick="saveUser();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
-										<img th:src="@{/static/image/icon_save.png}" class="icon"/>
-										<span data-th-text="#{application.global.save}"></span>
-									</button>
-								</div>
+						</td>
+					</tr>
+					<tr>
+						<th><span data-th-text="#{application.user.name}" class="mand">Name</span></th>
+						<td><input is="duice-input" type="text" data-duice-bind="user,name"/></td>
+					</tr>
+					<tr>
+						<th data-th-text="#{application.user.nickname}">Nickname</th>
+						<td><input is="duice-input" type="text" data-duice-bind="user,nickname"/></td>
+					</tr>
+					<tr>
+						<th data-th-text="#{application.user.mobile}">Mobile</th>
+						<td>
+							<div class="app-flex">
+								<select is="duice-select" data-duice-bind="user,mobileCountry" style="width:40%;">
+									<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
+									<option th:each="country:${_countries}" th:value="${country.country}" th:text="${country.displayCountry}"></option>
+								</select>
+								<input is="duice-input" type="text" data-duice-bind="user,mobileNumber"/>
 							</div>
-						</div>
-					</div>
-					<!-- ====================================================== -->
-					<!-- END: End tabContent1									-->
-					<!-- ====================================================== -->
-					<!-- ====================================================== -->
-					<!-- START: Start tabContent2								-->
-					<!-- ====================================================== -->
-					<div id="tabContent2" class="app-row">
-						<div class="app-col">
-							<div style="width:100%; max-height:800px; overflow-y:scroll; border:solid 1px #dee2e6;">
+						</td>
+					</tr>
+					<tr>
+						<th data-th-text="#{application.user.photo}">Photo</th>
+						<td><img is="duice-img" data-duice-bind="user,photo" data-duice-size="100,100" src="data:image/png;base64,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" style="width:100px; height:100px;"/></td>
+					</tr>
+					<tr>
+						<th data-th-text="#{application.user.profile}">Profile</th>
+						<td><textarea is="duice-textarea" data-duice-bind="user,profile" style="height:100px;"></textarea></td>
+					</tr>
+					<tr>
+						<th data-th-text="#{application.user.language}">Locale</th>
+						<td>
+							<select is="duice-select" data-duice-bind="user,language">
+								<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
+								<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguage}"></option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th data-th-text="#{application.user.joinDate}">Join Date</th>
+						<td>
+							<small style="font-weight:bold;">
+								<span is="duice-span" data-duice-bind="user,joinDate" data-duice-mask="date,yyyy-MM-dd HH:mm:ss"></span>
+							</small>
+						</td>
+					</tr>
+					<tr>
+						<th data-th-text="#{application.user.closeDate}">Close Date</th>
+						<td>
+							<small style="font-weight:bold;">
+								<span is="duice-span" data-duice-bind="user,closeDate" data-duice-mask="date,yyyy-MM-dd HH:mm:ss"></span>
+							</small>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<img class="icon small" th:src="@{/static/image/icon_group.png}"/>
+							<span data-th-text="#{application.user.groups}"></span>
+						</th>
+						<td>
+							<div style="width:100%; max-height:177px; overflow-y:scroll; overflow-x:auto;">
 								<table is="duice-table" 
-									data-duice-bind="userAvailableAuthorities,authority" 
-									style="width:100%; border:none;">
-									<col style="width:10%;"/>
+								data-duice-bind="userGroups,group" style="width:100%;">
+									<col style="width:50px;"/>
 									<col/>
-									<col/>
-									<col/>
+									<col style="width:40px;"/>
 									<thead>
 										<tr>
-											<th data-th-text="#{application.global.no}" class="text-center">No</th>
-											<th data-th-text="#{application.authority.id}">ID</th>
-											<th data-th-text="#{application.authority.name}">Name</th>
-											<th data-th-text="#{application.authority.holder}">Holder</th>
+											<th data-th-text="#{application.global.no}" class="text-center"></th>
+											<th data-th-text="#{application.group.name}"></th>
+											<th class="text-center">
+												<img class="icon small button" th:src="@{/static/image/icon_add.png}" onclick="addUserGroup();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td class="text-center">
+												<small is="duice-scriptlet" data-duice-bind="group" data-duice-value="return $context.index+1;"></small>
+											</td>
+											<td>
+												<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
+												<span is="duice-span" data-duice-bind="group,name"></span>
+											</td>
+											<td class="text-center">
+												<img class="icon small button" th:src="@{/static/image/icon_remove.png}" data-index="[@duice[$context.index]]" onclick="removeUserGroup(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<img class="icon small" th:src="@{/static/image/icon_role.png}"/>
+							<span data-th-text="#{application.user.roles}"></span>
+						</th>
+						<td>
+							<div style="width:100%; max-height:177px; overflow-y:scroll; overflow-x:auto;">
+								<table is="duice-table" 
+								data-duice-bind="userRoles,role" 
+								style="width:100%;">
+									<col style="width:50px;"/>
+									<col/>
+									<col/>
+									<col style="width:40px;"/>
+									<thead>
+										<tr>
+											<th data-th-text="#{application.global.no}" class="text-center"></th>
+											<th data-th-text="#{application.role.id}">ID</th>
+											<th data-th-text="#{application.role.name}">Name</th>
+											<th class="text-center">
+												<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addUserRole();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td class="text-center">
+												<small is="duice-scriptlet" data-duice-bind="role" data-duice-value="return $context.index+1;"></small>
+											</td>
+											<td>
+												<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
+												<span is="duice-span" data-duice-bind="role,id"></span>
+											</td>
+											<td><span is="duice-span" data-duice-bind="role,name"></span></td>
+											<td class="text-center">
+												<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeUserRole(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<img class="icon small" th:src="@{/static/image/icon_authority.png}"/>
+							<span data-th-text="#{application.user.authorities}"></span>
+						</th>
+						<td>
+							<div style="width:100%; max-height:177px; overflow-y:scroll; overflow-x:auto;">
+								<table is="duice-table" 
+									data-duice-bind="userAuthorities,authority" 
+									style="width:100%;">
+									<col style="width:50px;"/>
+									<col/>
+									<col/>
+									<col style="width:40px;"/>
+									<thead>
+										<tr>
+											<th data-th-text="#{application.global.no}" class="text-center"></th>
+											<th data-th-text="#{application.authority.id}"></th>
+											<th data-th-text="#{application.authority.name}"></th>
+											<th class="text-center">
+												<img th:src="@{/static/image/icon_add.png}" class="icon small button" onclick="addUserAuthority();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
+											</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -852,23 +792,75 @@
 												<span is="duice-span" data-duice-bind="authority,id"></span>
 											</td>
 											<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
-											<td><span is="duice-span" data-duice-bind="authority,holder"></span></td>
+											<td class="text-center">
+												<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="removeUserAuthority(this.dataset.index);" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'"/>
+											</td>
 										</tr>
 									</tbody>
 								</table>
 							</div>
-						</div>
-					</div>
-					<!-- ====================================================== -->
-					<!-- END: End tabContent2									-->
-					<!-- ====================================================== -->
-				</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="app-flex gap right">
+				<button class="button" onclick="deleteUser();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
+					<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
+					<span data-th-text="#{application.global.delete}"></span>
+				</button>
+				<button class="button" onclick="saveUser();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
+					<img th:src="@{/static/image/icon_save.png}" class="icon"/>
+					<span data-th-text="#{application.global.save}"></span>
+				</button>
 			</div>
-			<!-- ====================================================== -->
-			<!-- END:Start Detail										-->
-			<!-- ====================================================== -->
 		</div>
-	</div>
+		<!-- ====================================================== -->
+		<!-- END: tabContent1										-->
+		<!-- ====================================================== -->
+		<!-- ====================================================== -->
+		<!-- START: tabContent2										-->
+		<!-- ====================================================== -->
+		<div id="tabContent2">
+			<div style="width:100%; overflow-y:scroll;">
+				<table is="duice-table" 
+					data-duice-bind="userAvailableAuthorities,authority" 
+					style="width:100%; border:none;">
+					<col style="width:10%;"/>
+					<col/>
+					<col/>
+					<col/>
+					<thead>
+						<tr>
+							<th data-th-text="#{application.global.no}" class="text-center">No</th>
+							<th data-th-text="#{application.authority.id}">ID</th>
+							<th data-th-text="#{application.authority.name}">Name</th>
+							<th data-th-text="#{application.authority.holder}">Holder</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="text-center">
+								<small is="duice-scriptlet" data-duice-bind="authority" data-duice-value="return $context.index+1;"></small>
+							</td>
+							<td>
+								<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+								<span is="duice-span" data-duice-bind="authority,id"></span>
+							</td>
+							<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
+							<td><span is="duice-span" data-duice-bind="authority,holder"></span></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<!-- ====================================================== -->
+		<!-- END: tabContent2										-->
+		<!-- ====================================================== -->
+	</section>
+	<!-- ====================================================== -->
+	<!-- END: detail											-->
+	<!-- ====================================================== -->
+	
 	
 	<!-- ====================================================== -->
 	<!-- START: changePasswordDialog							-->
@@ -877,7 +869,7 @@
 	var changePassword = new duice.Map();
 	</script>
 	<dialog is="duice-dialog" id="changePasswordDialog" style="width:400px;">
-		<div class="app-row">
+		<div class="app-flex">
 			<div class="app-col">
 				<h2>
 					<img class="icon" th:src="@{/static/image/icon_password.png}"/>
@@ -885,7 +877,7 @@
 				</h2>
 			</div>
 		</div>
-		<div class="app-row">
+		<div class="app-flex">
 			<div class="app-col">
 				<table class="table" style="width:100%;">
 					<col style="width:35%;"/>
@@ -907,7 +899,7 @@
 				</table>
 			</div>
 		</div>
-		<div class="app-row">
+		<div class="app-flex">
 			<div class="app-col right">
 				<button class="button" onclick="confirmChangePassword();">
 					<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
@@ -974,12 +966,8 @@
 	<!-- ====================================================== -->
 	<!-- END: changePasswordDialog								-->
 	<!-- ====================================================== -->
-</div>
 
-
-
-
-
+</main>
 
 
 

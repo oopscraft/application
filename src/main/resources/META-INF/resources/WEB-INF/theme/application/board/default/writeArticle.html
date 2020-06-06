@@ -1,7 +1,7 @@
 <!-- ====================================================== -->
 <!-- START: title											-->
 <!-- ====================================================== -->
-<div class="app-row title">
+<div class="app-flex title">
 	<div class="app-col bottom">
 		<h1>
 			<img th:src="${(board.icon==null?'/static/image/icon_board.png':board.icon)}" class="icon large"/>
@@ -22,7 +22,7 @@
 <!-- ====================================================== -->
 <!-- START: contents										-->
 <!-- ====================================================== -->
-<div class="app-row">
+<div class="app-flex">
 	<div class="app-col" style="padding:0px;">
 		<table class="table" style="width:100%;">
 			<col style="width:10%;"/>
@@ -33,7 +33,7 @@
 						<span data-th-text="#{application.board.article.title}" class="mand">Title</span>
 					</th>
 					<td>
-						<div class="app-row">
+						<div class="app-flex">
 							<div class="app-col">
 								<input is="duice-input" type="text" data-duice-bind="article,title"/>
 							</div>
@@ -45,7 +45,7 @@
 						<span data-th-text="#{application.board.article.author}" class="mand">Author</span>
 					</th>
 					<td>
-						<div class="app-row">
+						<div class="app-flex">
 							<div class="app-col">
 								<input is="duice-input" type="text" data-duice-bind="article,author" style="width:150px;"/>
 								패스워드

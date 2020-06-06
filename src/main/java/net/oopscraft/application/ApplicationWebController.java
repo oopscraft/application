@@ -6,9 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.core.env.Environment;
 import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.security.core.Authentication;
@@ -36,11 +34,8 @@ import net.oopscraft.application.user.UserService;
 @RequestMapping("/")
 public class ApplicationWebController {
 	
-	@Value("${application.theme}")
-	String theme;
-	
 	@Autowired
-	Environment environment;
+	ApplicationConfig applicationConfig;
 	
 	@Autowired
 	UserService userService;
@@ -57,9 +52,9 @@ public class ApplicationWebController {
 	@Autowired
     MessageSource messageSource;
 	
-	@ModelAttribute("_theme")
-	public String getTheme() throws Exception {
-		return propertyService.getProperty("APP_THEM").getValue().trim();
+	@ModelAttribute("_application")
+	public ApplicationConfig getApplication() throws Exception {
+		return applicationConfig;
 	}
 	
 	@ModelAttribute("_device")
@@ -146,7 +141,7 @@ public class ApplicationWebController {
 	@RequestMapping(value = "public/**", method = RequestMethod.GET)
 	public String forwardPublic(HttpServletRequest request) throws Exception {
 		String resource = request.getRequestURI();
-		String resourceForward = String.format("forward:/WEB-INF/theme/%s%s", environment.getProperty("application.theme"), resource);
+		String resourceForward = String.format("forward:/WEB-INF/theme/%s%s", applicationConfig.getTheme(), resource);
 		return resourceForward;
 	}
 	

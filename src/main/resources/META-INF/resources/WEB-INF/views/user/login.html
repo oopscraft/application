@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    	<title>Application</title>
-		<link rel="stylesheet" type="text/css" th:href="@{/static/duice/polyfill/normalize.css}">
-		<script th:src="@{/static/duice/polyfill/dataset.js}"></script>
-		<script th:src="@{/static/duice/polyfill/classList.js}"></script>
-		<script th:src="@{/static/duice/duice.js}"></script>
-		<link rel="stylesheet" type="text/css" th:href="@{/static/duice/duice.css}">
-		<script th:src="@{/static/jquery.js}"></script>
-		<link rel="stylesheet" type="text/css" th:href="@{/static/application.css}">
-		<script th:src="@{/static/application.js}"></script>
+<html layout:decorate="~{index.html}">
+<div layout:fragment="content">
+
 		<style>
 		#messageDiv {
 			white-space: pre-line;
@@ -90,13 +78,15 @@
 			location.href = '[[@{/user/findPassword}]]';
 		}
 		</script>
-	</head>
-	<body style="display:flex; justify-content:center; align-items:center;">
+
+
 		<!-- auto completion off -->
 		<div id="autocomplete">
 			<input type="text"/>
 			<input type="password"/>
 		</div>
-		<th:block th:include="|../theme/${_theme}/user/login.html|"></th:block>
-	</body>
-</html>
+		<th:block th:include="|../theme/${_application.theme}/user/login.html|"></th:block>
+
+
+
+</div>

@@ -154,7 +154,7 @@
 			}).open();
 		}
 	</script>
-	<div class="app-row">
+	<div class="app-flex">
 		<div class="app-col">
 			<h1>
 				<img class="icon large" th:src="@{/static/image/icon_sample.png}"/>
@@ -163,9 +163,9 @@
 		</div>
 	</div>
 	<hr class="hr"/>
-	<div class="app-row">
+	<div class="app-flex">
 		<div class="app-col" style="width:50%;">
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col" style="width:50%;">
 					<select is="duice-ui-select" data-duice-bind="search,key" style="width:125px;">
 						<option value data-th-text="'- '+#{application.label.all}+' -'"></option>
@@ -181,7 +181,7 @@
 					</button>
 				</div>
 			</div>
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col">
 					<table is="duice-ui-table" 
 						data-duice-bind="samples,sample" 
@@ -224,7 +224,7 @@
 			</div>		
 		</div>
 		<div class="app-col" style="width:50%;">
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_sample.png}"/>
 					<span data-th-text="#{application.label.sample} + ' ' + #{application.label.details}" class="font-bold"></span>
@@ -244,7 +244,7 @@
 					</button>
 				</div>
 			</div>
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col">
 					<table class="table" style="width:100%;">
 						<col style="width:25%;"/>

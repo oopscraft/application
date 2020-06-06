@@ -78,28 +78,18 @@
 		}
 		</style>
 	</head>
-	<body style="display:flex; justify-content:center; align-items:center;">
-		<div class="app-row" style="width:300px; margin-bottom:200px; text-align:center;">
-			<div class="app-col">
-				<div class="app-row">
-					<div class="app-col">
-						<a th:href="@{/}">
-							<img th:src="@{/static/image/application.png}"/>
-						</a>
-						<input is="duice-input" type="text" data-duice-bind="user,username" th:placeholder="#{application.user.email}" style="text-align:center; margin:1px;"/>
-						<input is="duice-input" type="password" data-duice-bind="user,password" th:placeholder="#{application.user.password}" style="text-align:center; margin:1px;"/>
-						<button id="loginButton" class="button" onclick="login();" style="width:100%; margin:1px;">
-							<img class="icon" th:src="@{/static/image/icon_login.png}"/>
-							<span data-th-text="#{application.global.login}"></span>
-						</button>
-					</div>
-				</div>
-				<div class="app-row">
-					<div class="app-col">
-						<div id="messageDiv"></div>
-					</div>
-				</div>
-			</div>
+	<body class="app-flex center middle">
+		<div class="text-center gap" style="width:300px; margin-bottom:200px;">
+			<a th:href="@{/}">
+				<img th:src="@{/static/image/application.png}"/>
+			</a>
+			<input is="duice-input" type="text" data-duice-bind="user,username" th:placeholder="#{application.user.email}" class="text-center"/>
+			<input is="duice-input" type="password" data-duice-bind="user,password" th:placeholder="#{application.user.password}" class="text-center"/>
+			<button id="loginButton" class="button" onclick="login();" style="width:100%;">
+				<img class="icon" th:src="@{/static/image/icon_login.png}"/>
+				<span data-th-text="#{application.global.login}"></span>
+			</button>
+			<div id="messageDiv"></div>
 		</div>
 	</body>
 </html>

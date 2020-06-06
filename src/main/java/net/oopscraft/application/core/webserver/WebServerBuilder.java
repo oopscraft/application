@@ -2,10 +2,6 @@ package net.oopscraft.application.core.webserver;
 
 public class WebServerBuilder {
 	
-	public enum Type {
-		 TOMCAT
-		,JETTY
-	}
 	WebServer webServer;
 
 	public WebServerBuilder(Type type) {
@@ -18,7 +14,7 @@ public class WebServerBuilder {
 	}
 
 	public WebServerBuilder setSsl(boolean ssl) {
-		webServer.setSsl(true);
+		webServer.setSsl(ssl);
 		return this;
 	}
 

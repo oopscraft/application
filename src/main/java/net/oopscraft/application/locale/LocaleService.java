@@ -9,9 +9,10 @@ import java.util.Vector;
 import org.apache.commons.lang3.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import net.oopscraft.application.ApplicationConfig;
 import net.oopscraft.application.core.ValueMap;
 
 @Service
@@ -19,9 +20,9 @@ public class LocaleService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LocaleService.class);
 	
-    @Value("${application.locales}")
-    private String locales;
-
+	@Autowired
+	ApplicationConfig applicationConfig;
+    
 	/**
 	 * Gets available Locale list
 	 * @return
@@ -44,7 +45,7 @@ public class LocaleService {
 	 */
 	private List<Locale> getConfiguredLocales() throws Exception {
 		List<Locale> availableLocales = new ArrayList<Locale>();
-		for(String element : this.locales.split(",")) {
+		for(String element : applicationConfig.getLocales().split(",")) {
 			try {
 				availableLocales.add(LocaleUtils.toLocale(element));
 			}catch(Exception ignore) {
@@ -63,7 +64,7 @@ public class LocaleService {
 	private Locale getDefaultLocaleIfNotExist(Locale locale) throws Exception {
 		if(locale == null) {
 			try {
-				locale = LocaleUtils.toLocale(locales.split(",")[0]);
+				locale = LocaleUtils.toLocale(applicationConfig.getLocales().split(",")[0]);
 			}catch(Exception e) {
 				locale = Locale.getDefault();
 			}

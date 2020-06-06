@@ -2,7 +2,8 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=2048,initial-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     	<title>Application</title>
 		<link rel="stylesheet" type="text/css" th:href="@{/static/duice/polyfill/normalize.css}">
 		<script th:src="@{/static/duice/polyfill/dataset.js}"></script>
@@ -20,6 +21,8 @@
         <script th:src="@{/static/duice/plugin/simplemde/simplemde.min.js}"></script>
         <link rel="stylesheet" type="text/css" th:href="@{/static/duice/plugin/duice.plugin.simplemde.css}">
         <script th:src="@{/static/duice/plugin/duice.plugin.simplemde.js}"></script>
+        <link rel="stylesheet" type="text/css" th:href="@{/static/duice/plugin/duice.plugin.marked.css}">
+        <script th:src="@{/static/duice/plugin/duice.plugin.marked.js}"></script>
 		<script th:src="@{/static/jquery.js}"></script>
 		<link rel="stylesheet" type="text/css" th:href="@{/static/application.css}">
 		<script th:src="@{/static/application.js}"></script>
@@ -30,6 +33,7 @@
 			const _menus = new duice.List();
 			_menus.setReadonly('icon', true);
 			_menus.fromJson([
+				{ name:'[[#{application.monitor}]]', icon:'[[@{/static/image/icon_monitor.png}]]', linkUrl:'[[@{/admin/monitor}]]' },
 				{ name:'[[#{application.user}]]', icon:'[[@{/static/image/icon_user.png}]]', linkUrl:'[[@{/admin/user}]]' },
 				{ name:'[[#{application.group}]]', icon:'[[@{/static/image/icon_group.png}]]', linkUrl:'[[@{/admin/group}]]' },
 				{ name:'[[#{application.role}]]', icon:'[[@{/static/image/icon_role.png}]]', linkUrl:'[[@{/admin/role}]]' },
@@ -40,7 +44,9 @@
 				{ name:'[[#{application.menu}]]', icon:'[[@{/static/image/icon_menu.png}]]', linkUrl:'[[@{/admin/menu}]]' },
 				{ name:'[[#{application.page}]]', icon:'[[@{/static/image/icon_page.png}]]', linkUrl:'[[@{/admin/page}]]' },
 				{ name:'[[#{application.board}]]', icon:'[[@{/static/image/icon_board.png}]]', linkUrl:'[[@{/admin/board}]]' },
-				{ name:'[[#{application.api}]]', icon:'[[@{/static/image/icon_api.png}]]', linkUrl:'[[@{/admin/api}]]' }
+				{ name:'[[#{application.api}]]', icon:'[[@{/static/image/icon_api.png}]]', linkUrl:'[[@{/admin/api}]]' },
+				{ name:'[[#{application.global.swagger}]]', icon:'[[@{/static/image/icon_swagger.png}]]', linkUrl:'[[@{/swagger-ui.html}]]', linkTarget:'_blank' },
+				{ name:'[[#{application.global.github}]]', icon:'[[@{/static/image/icon_git.png}]]', linkUrl:'https://github.com/oopscraft/application', linkTarget:'_blank' }
 			]);
 			
 	        /**
@@ -56,6 +62,101 @@
 				});
 	        }
 		</script>
+		<style>
+			body {
+				display: grid;
+				grid-template-areas:
+				  'header header'
+				  'nav main'
+				  'footer footer';
+				grid-template-columns: 10% auto;
+				grid-template-rows: 70px auto 50px;
+				grid-gap: 10px;
+				padding: 0px;
+				
+			}
+			header {
+				grid-area: header;
+				padding:0px 20px;
+				height:70px;
+				background-color:#fafafa;
+				border-bottom:groove 2px #eee;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			nav {
+				grid-area: nav;
+				padding-left: 20px;
+			}
+			main {
+				grid-area: main;
+				padding:0px 20px;
+				display: grid;
+				grid-template-areas:
+					'title tab'
+					'list detail';
+				grid-template-columns: 50% auto;
+				grid-template-rows: 40px auto;
+				align-content: flex-start;
+				grid-gap: 0 5px;
+			}
+			footer {
+				grid-area: footer;
+				border-top: dotted 1px #ccc;
+				background-color: #fafafa;
+			}
+			section#title {
+				grid-area: title;
+				align-self: flex-end;
+				border-bottom: solid 1px #ddd;
+			}
+			section#list {
+				grid-area: list;
+				align-self: flex-start;
+			}
+			section#tab {
+				grid-area: tab;
+				align-self: flex-end;
+				border-bottom: solid 1px #fff;
+			}
+			section#detail {
+				grid-area: detail;
+				align-self: flex-start;
+			}
+			/* Mobile */
+			@media screen and (max-width: 1023px) {
+				body {
+					display: block;
+					grid-template-areas:none;
+					grid-template-columns: none;
+					grid-template-rows: none;
+				}
+				header {
+					padding: 0 0.5rem;
+				}
+				nav {
+				    width: 90%;
+				    padding: 5%;
+				}
+				main {
+					padding:0 0.5rem;
+					grid-template-areas:
+						'title'
+						'list'
+						'tab'
+						'detail';
+					grid-template-columns: 100%;
+					grid-template-rows: 40px auto auto auto;
+					align-content: flex-start;
+				}
+				section#tab {
+					margin-top: 1rem;
+					border-top: dotted 1px #ccc;
+					padding-top: 1rem;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<!-- auto completion off -->
@@ -64,15 +165,15 @@
 			<input type="password"/>
 		</div>
 		<!-- ================================================== -->
-		<!-- START: top											-->
+		<!-- START: heaer										-->
 		<!-- ================================================== -->
-		<div class="app-row" style="padding:0px 20px; height:70px; background-color:#fafafa; border-bottom:groove 2px #eee;">
-			<div class="app-col left middle">
+		<header>
+			<div>
 				<a th:href="@{/admin}">
 					<img th:src="@{/static/image/application.png}" style="vertical-align:middle;"/>
 				</a>
 			</div>
-			<div class="app-col right middle">
+			<div th:if="${_device=='PC'}">
 				<img th:src="${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
 				<span data-th-text="${_user.name}" style="font-weight:bold;"></span>
 				&nbsp;&nbsp;&nbsp;
@@ -84,500 +185,80 @@
 					<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
 				</select>
 			</div>
-		</div>
-		<!-- ================================================== -->
-		<!-- END: top											-->
-		<!-- ================================================== -->
-		<div class="app-row" style="min-height:calc(100% - 150px);">
-			<!-- ================================================== -->
-			<!-- START: menu										-->
-			<!-- ================================================== -->
-			<div class="app-col" style="width:200px; padding-left:10px;">
-				<div class="app-row panel">
-					<div class="app-col">
-						<ul is="duice-ul"
-						data-duice-bind="_menus,_menu" 
-						data-duice-hierarchy="id,upperId"
-						data-duice-foldable="false"
-						style="margin-top:0.5rem;">
-							<li>
-								<a href="javascript:void(0);" 
-								data-link-url="[@duice[$context._menu.get('linkUrl')]]" 
-								data-link-target="[@duice[$context._menu.get('linkTarget')]]"
-								onclick="javascript:_openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
-								style="display:block; border-bottom:dotted 1px #ccc; line-height:2.5rem;">
-									<img is="duice-img" data-duice-bind="_menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
-									<span is="duice-span" data-duice-bind="_menu,name" style="font-weight:bold;"></span>
-								</a>
-							</li>
-						</ul>
-						<br/>
-						<div style="padding-left:20px;">
-							<a th:href="@{/swagger-ui.html}" target="blank" >
-								<img class="banner" th:src="@{/static/image/banner_swagger.png}"/>
-							</a>
-							<br/><br/>
-							<a href="https://github.com/oopscraft/application" target="blank">
-								<img class="banner" th:src="@{/static/image/banner_github.png}"/>
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- ================================================== -->
-			<!-- END: menu										-->
-			<!-- ================================================== -->
-			<!-- ================================================== -->
-			<!-- START: content										-->
-			<!-- ================================================== -->
-			<div layout:fragment="content" class="app-col" style="width:calc(100% - 200px);">
+			<div th:if="${_device=='MOBILE'}">
 				<script>
-				// defines variables		
-				const webSocketClient = new duice.WebSocketClient();
-				var loadAverageChart = null;
-				var memoryChart = null;
-				var threadInfoChart = null;
-				var classLoadingChart = null;
-				const threadInfos = new duice.List();
-				
-				// document ready
-				$(document).ready(function() {
-					
-					// creates web socket
-					getMonitors();
-					
-					// connects web socket
-				    var webSocketUrl = (window.location.protocol === 'https'?'wss':'ws')+'://'+location.host+'/api/webSocket';
-					webSocketClient.open(webSocketUrl);
-					webSocketClient.onMessage(function(event){
-						var data = JSON.parse(event.data);
-						
-						// monitor
-						if(data.id === 'Monitor'){
-							var monitor = data;
-							$('#top').text(monitor.top);
-							
-							// updates chart
-							updateLoadAverageChart(monitor);
-							updateMemoryChart(monitor);
-							updateThreadInfoChart(monitor);
-							updateClassLoadingChart(monitor);
-							
-							// updates threadInfos
-							threadInfos.fromJson(monitor.threadInfos);
-						}
-					});
-				});
-				
-				/**
-				 * Getting monitors
-				 */
-				function getMonitors() {
-					$.ajax({
-						 url: '[[@{/api/monitors}]]'
-						,type: 'GET'
-						,data: null
-					})
-					.done(function(data, textStatus, jqXHR) {
-						var monitors = data;
-						var lastMonitor = data[data.length-1];
-						$('#top').text(lastMonitor.top);
-						
-						// initializes chart
-						initializeLoadAverageChart(monitors);
-						initializeMemoryChart(monitors);
-						initializeThreadInfoChart(monitors);
-						initializeClassLoadingChart(monitors);
-						
-						// setting threadInfos
-						threadInfos.fromJson(lastMonitor.threadInfos);
-				   	});
-				}
-				
-				/**
-				 * initializeLoadAverageChart
-				 */
-				function initializeLoadAverageChart(monitors) {
-					var labels = new Array();
-					var data = new Array();
-					var yMax;
-					monitors.forEach(function(monitor){
-						labels.push(moment().format('HH:mm:ss',monitor.date));
-						data.push(monitor.operatingSystem.systemLoadAverage);
-						yMax = monitor.operatingSystem.availableProcessors;
-					});
-					
-					// creates chart
-					loadAverageChart = new Chart(document.getElementById("loadAverageChart").getContext('2d'), {
-					    type: 'line',
-					    data: {
-					        labels: labels,
-					        datasets: [{
-					            label: 'System Load Average',
-					            data: data,
-					            fill: true,
-					            borderColor: 'steelblue',
-					            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-					            borderWidth: 1
-					        }]},
-					    options: {
-							responsive: true,
-							legend: {
-							    position: 'top',
-							    align: 'start',
-							    labels: {
-							    	boxWidth: 20,
-							    	fontSize: 11,
-							    	fontStyle: 'bold'
-							    }
-							},
-					    	scales: {
-								yAxes: [{
-									ticks: {
-										fontSize: 8,
-										beginAtZero: true,
-										suggestedMax: yMax
-									}
-								}],
-								xAxes: [{
-									ticks: {
-										fontSize: 8
-									}
-								}]
-							},
-							elements: {
-								point: {
-									pointStyle: 'crossRot'
-								}
-							}
-					    }
-					});
-				}
-				
-				/**
-				 * updateLoadAverageChart
-				 */
-				function updateLoadAverageChart(monitor) {
-					loadAverageChart.config.options.scales.yAxes[0].ticks.suggestedMax = monitor.operatingSystem.availableProcessors;
-					loadAverageChart.config.data.labels.shift();
-					loadAverageChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
-					loadAverageChart.config.data.datasets[0].data.shift();
-					loadAverageChart.config.data.datasets[0].data.push(monitor.operatingSystem.systemLoadAverage);
-					loadAverageChart.update();
-				}
-				
-				/**
-				 * initializeMemoryChart
-				 */
-				function initializeMemoryChart(monitors) {
-					var labels = new Array();
-					var data = new Array();
-					var yMax;
-					monitors.forEach(function(monitor){
-						console.log(monitor);
-						labels.push(moment().format('HH:mm:ss',monitor.date));
-						data.push(monitor.memory.heapMemoryUsage.used/1024/1024);
-						yMax = Math.max(monitor.memory.heapMemoryUsage.committed, monitor.memory.heapMemoryUsage.max)/1024/1024;
-					});
-					
-					// creates chart
-					memoryChart = new Chart(document.getElementById("memoryChart").getContext('2d'), {
-					    type: 'line',
-					    data: {
-					        labels: labels,
-					        datasets: [{
-					            label: 'Heap Memory Usage',
-					            data: data,
-					            fill: true,
-					            borderColor: 'steelblue',
-					            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-					            borderWidth: 1
-					        }]},
-					    options: {
-							responsive: true,
-							legend: {
-							    position: 'top',
-							    align: 'start',
-							    labels: {
-							    	boxWidth: 20,
-							    	fontSize: 11,
-							    	fontStyle: 'bold'
-							    }
-							},
-					    	scales: {
-								yAxes: [{
-									ticks: {
-										fontSize: 8,
-										beginAtZero: true,
-										suggestedMax: yMax,
-									    userCallback: function(value, index, values) {
-									        return new duice.NumberMask(0).encode(value) + ' m';
-									    }
-									}
-								}],
-								xAxes: [{
-									ticks: {
-										fontSize: 8
-									}
-								}]
-							},
-							elements: {
-								point: {
-									pointStyle: 'crossRot'
-								}
-							}
-					    }
-					});
-				}
-				
-				/**
-				 * updateMemoryChart
-				 */
-				function updateMemoryChart(monitor) {
-					memoryChart.config.options.scales.yAxes[0].ticks.suggestedMax = Math.max(monitor.memory.heapMemoryUsage.committed, monitor.memory.heapMemoryUsage.max)/1024/1024;
-					memoryChart.config.data.labels.shift();
-					memoryChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
-					memoryChart.config.data.datasets[0].data.shift();
-					memoryChart.config.data.datasets[0].data.push(monitor.memory.heapMemoryUsage.used/1024/1024);
-					memoryChart.update();
-				}
-				
-				/**
-				 * initializeThreadInfoChart
-				 */
-				function initializeThreadInfoChart(monitors) {
-					var labels = new Array();
-					var data = new Array();
-					var yMax = 100;
-					monitors.forEach(function(monitor){
-						labels.push(moment().format('HH:mm:ss',monitor.date));
-						data.push(monitor.threadInfos.length);
-						yMax = Math.pow(10,String(monitor.threadInfos.length).length);
-					});
-					
-					// creates chart
-					threadInfoChart = new Chart(document.getElementById("threadInfoChart").getContext('2d'), {
-					    type: 'line',
-					    data: {
-					        labels: labels,
-					        datasets: [{
-					            label: 'Thread Info',
-					            data: data,
-					            fill: true,
-					            borderColor: 'steelblue',
-					            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-					            borderWidth: 1
-					        }]},
-					    options: {
-							responsive: true,
-							legend: {
-							    position: 'top',
-							    align: 'start',
-							    labels: {
-							    	boxWidth: 20,
-							    	fontSize: 11,
-							    	fontStyle: 'bold'
-							    }
-							},
-					    	scales: {
-								yAxes: [{
-									ticks: {
-										fontSize: 8,
-										beginAtZero: true,
-										suggestedMax: yMax,
-									    userCallback: function(value, index, values) {
-									        return new duice.NumberMask(0).encode(value);
-									    }
-									}
-								}],
-								xAxes: [{
-									ticks: {
-										fontSize: 8
-									}
-								}]
-							},
-							elements: {
-								point: {
-									pointStyle: 'crossRot'
-								}
-							}
-					    }
-					});
-				}
-				
-				/**
-				 * updateThreadInfoChart
-				 */
-				function updateThreadInfoChart(monitor) {
-					threadInfoChart.config.options.scales.yAxes[0].ticks.suggestedMax = Math.pow(10,String(monitor.threadInfos.length).length);
-					threadInfoChart.config.data.labels.shift();
-					threadInfoChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
-					threadInfoChart.config.data.datasets[0].data.shift();
-					threadInfoChart.config.data.datasets[0].data.push(monitor.threadInfos.length);
-					threadInfoChart.update();
-				}
-				
-				/**
-				 * initializeClassLoadingChart
-				 */
-				function initializeClassLoadingChart(monitors) {
-					var labels = new Array();
-					var data = new Array();
-					var yMax = 100;
-					monitors.forEach(function(monitor){
-						labels.push(moment().format('HH:mm:ss',monitor.date));
-						data.push(monitor.classLoading.totalLoadedClassCount);
-						yMax = Math.pow(10,String(monitor.classLoading.totalLoadedClassCount).length);
-					});
-					
-					// creates chart
-					classLoadingChart = new Chart(document.getElementById("classLoadingChart").getContext('2d'), {
-					    type: 'line',
-					    data: {
-					        labels: labels,
-					        datasets: [{
-					            label: 'Class Loading',
-					            data: data,
-					            fill: true,
-					            borderColor: 'steelblue',
-					            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-					            borderWidth: 1
-					        }]},
-					    options: {
-							responsive: true,
-							legend: {
-							    position: 'top',
-							    align: 'start',
-							    labels: {
-							    	boxWidth: 20,
-							    	fontSize: 11,
-							    	fontStyle: 'bold'
-							    }
-							},
-					    	scales: {
-								yAxes: [{
-									ticks: {
-										fontSize: 8,
-										beginAtZero: true,
-										suggestedMax: yMax,
-									    userCallback: function(value, index, values) {
-									        return new duice.NumberMask(0).encode(value);
-									    }
-									}
-								}],
-								xAxes: [{
-									ticks: {
-										fontSize: 8
-									}
-								}]
-							},
-							elements: {
-								point: {
-									pointStyle: 'crossRot'
-								}
-							}
-					    }
-					});
-				}
-				
-				/**
-				 * updateClassLoadingChart
-				 */
-				function updateClassLoadingChart(monitor) {
-					classLoadingChart.config.options.scales.yAxes[0].ticks.suggestedMax = Math.pow(10,String(monitor.classLoading.totalLoadedClassCount).length);
-					classLoadingChart.config.data.labels.shift();
-					classLoadingChart.config.data.labels.push(moment().format('HH:mm:ss',monitor.date));
-					classLoadingChart.config.data.datasets[0].data.shift();
-					classLoadingChart.config.data.datasets[0].data.push(monitor.classLoading.totalLoadedClassCount);
-					classLoadingChart.update();
+				function openNav() {
+					$('nav').slideToggle(200);
 				}
 				</script>
-				<div class="app-row title">
-					<div class="app-col bottom">
-						<h1>
-							<img class="icon large" th:src="@{/static/image/icon_monitor.png}"/>
-							<span data-th-text="#{application.monitor}"></span>
-						</h1>
-					</div>
-				</div>
-				<div class="app-row">
-					<div class="app-col">
-						<pre style="margin:0px; height:300px; border-radius:3px;">
-							<code id="top" class="language-bash line-numbers" style="white-space:pre-wrap;"></code>
-						</pre>
-					</div>
-				</div>
-				<div class="app-row">
-					<div class="app-col" style="width:20%;">
-						<canvas id="loadAverageChart"></canvas>
-					</div>
-					<div class="app-col" style="width:20%;">
-						<canvas id="memoryChart"></canvas>
-					</div>
-					<div class="app-col" style="width:20%;">
-						<canvas id="threadInfoChart"></canvas>
-					</div>
-					<div class="app-col" style="width:20%;">
-						<canvas id="classLoadingChart"></canvas>
-					</div>
-				</div>
-				<div class="app-row">
-					<div class="app-col">
-						<table is="duice-table" 
-						data-duice-bind="threadInfos,threadInfo" 
-						style="width:100%; font-size: 10px;">
-							<col/>
-							<col/>
-							<col/>
-							<col/>
-							<col/>
-							<col/>
-							<col/>
-							<thead style="background-color:#fafafa;">
-								<tr>
-									<th>Thread ID</th>
-									<th>Thread Name</th>
-									<th>Thread State</th>
-									<th>Waited Count</th>
-									<th>Waited Time</th>
-									<th>Block Count</th>
-									<th>Block Time</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td><span is="duice-span" data-duice-bind="threadInfo,threadId"></span></td>
-									<td><span is="duice-span" data-duice-bind="threadInfo,threadName"></span></td>
-									<td><span is="duice-span" data-duice-bind="threadInfo,threadState"></span></td>
-									<td><span is="duice-span" data-duice-bind="threadInfo,waitedCount"></span></td>
-									<td><span is="duice-span" data-duice-bind="threadInfo,waitedTime"></span></td>
-									<td><span is="duice-span" data-duice-bind="threadInfo,blockCount"></span></td>
-									<td><span is="duice-span" data-duice-bind="threadInfo,blockTime"></span></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
+				<img th:src="@{/static/image/icon_menu.png}" onclick="openNav();" style="vertical-align:middle; height:2rem;"/>
 			</div>
-			<!-- ================================================== -->
-			<!-- END: content										-->
-			<!-- ================================================== -->
-		</div>
+		</header>
+		<!-- ================================================== -->
+		<!-- END: header										-->
+		<!-- ================================================== -->
+
+		<!-- ================================================== -->
+		<!-- START: nav											-->
+		<!-- ================================================== -->
+		<nav th:styleappend="${_device=='MOBILE'} ? 'display:none;' : ''">
+			<th:block th:if="${_device=='MOBILE'}">
+				<div class="app-flex">
+					<span>
+						<img th:src="${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
+						<span data-th-text="${_user.name}" style="font-weight:bold;"></span>
+					</span>
+					<span>
+						<img class="icon" th:src="@{/static/image/icon_logout.png}"/>
+						<span data-th-text="#{application.global.logout}" onclick="_logout();" class="link"></span>
+					</span>
+				</div>
+				<hr/>
+			</th:block>	
+			<ul is="duice-ul"
+			data-duice-bind="_menus,_menu" 
+			data-duice-hierarchy="id,upperId"
+			data-duice-foldable="false">
+				<li>
+					<a href="javascript:void(0);" 
+					data-link-url="[@duice[$context._menu.get('linkUrl')]]" 
+					data-link-target="[@duice[$context._menu.get('linkTarget')]]"
+					onclick="javascript:_openLink(this.dataset.linkUrl, this.dataset.linkTarget);"
+					style="display:block; border-bottom:dotted 1px #ccc; line-height:2.5rem;">
+						<img is="duice-img" data-duice-bind="_menu,icon" th:src="@{/static/image/icon_menu.png}" style="width:24px; height:24px;"/>
+						<span is="duice-span" data-duice-bind="_menu,name" style="font-weight:bold;"></span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+		<!-- ================================================== -->
+		<!-- END: nav											-->
+		<!-- ================================================== -->
+		
+		<!-- ================================================== -->
+		<!-- START: main										-->
+		<!-- ================================================== -->
+		<main layout:fragment="main">
+		</main>
+		<!-- ================================================== -->
+		<!-- END: main											-->
+		<!-- ================================================== -->
+
 		<!-- ================================================== -->
 		<!-- START: footer										-->
 		<!-- ================================================== -->
-		<div style="text-align:center; border-top:dotted 1px #ccc;">
+		<footer class="app-flex center middle">
 			<img th:src="@{/static/image/copyright.png}"/>
-		</div>
+		</footer>
 		<!-- ================================================== -->
 		<!-- END: footer										-->
 		<!-- ================================================== -->
-		
+
 		<!-- ====================================================== -->
 		<!-- START: Groups Dialog									-->
 		<!-- ====================================================== -->
 		<dialog is="duice-dialog" id="_groupDialog" style="width:800px;">
-			<div class="app-row title">
+			<div class="app-flex title">
 				<div class="app-col bottom">
 					<h2>
 						<img class="icon" th:src="@{/static/image/icon_group.png}"/>
@@ -585,7 +266,7 @@
 					</h2>
 				</div>
 			</div>
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col">
 					<ul is="duice-ul" 
 					data-duice-bind="_groupDialog.groups,group" 
@@ -594,7 +275,7 @@
 					data-duice-foldable="true"
 					style="max-height:600px; overflow-y:scroll;">
 						<li>
-							<div class="app-row" style="width:100%;border-bottom:dotted 1px #ccc;">
+							<div class="app-flex" style="width:100%;border-bottom:dotted 1px #ccc;">
 								<div class="app-col">
 									<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
 									<span is="duice-span" data-duice-bind="group,name" style="font-weight:bold;"></span>
@@ -607,7 +288,7 @@
 					</ul>				
 				</div>
 			</div>
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col right">
 					<button class="button" onclick="_groupDialog.confirm();">
 						<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
@@ -733,7 +414,7 @@
 		<!-- START: Roles Dialog									-->
 		<!-- ====================================================== -->
 		<dialog is="duice-dialog" id="_roleDialog" style="width:800px;">
-			<div class="app-row title">
+			<div class="app-flex title">
 				<div class="app-col bottom">
 					<h2>
 						<img class="icon" th:src="@{/static/image/icon_role.png}"/>
@@ -741,7 +422,7 @@
 					</h2>
 				</div>
 			</div>
-			<div class="app-row search">
+			<div class="app-flex search">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_search.png}"/>
 					<select is="duice-select" data-duice-bind="_roleDialog.search,key" style="width:125px;">
@@ -758,7 +439,7 @@
 					</button>
 				</div>
 			</div>
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col">
 					<table is="duice-table" 
 					data-duice-bind="_roleDialog.roles,role" 
@@ -790,14 +471,14 @@
 					</table>
 				</div>
 			</div>
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col center">
 					<ul is="duice-widget-pagination" data-duice-bind="_roleDialog.search,page,rows,totalCount" data-duice-size="5">
 						<li onclick="_roleDialog.getRoles();"></li>
 					</ul>
 				</div>
 			</div>
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col">
 					<table is="duice-table" 
 					data-duice-bind="_roleDialog.selectedRoles,role" 
@@ -831,7 +512,7 @@
 					</table>
 				</div>
 			</div>
-			<div class="app-row action">
+			<div class="app-flex action">
 				<div class="app-col right">
 					<button class="button" onclick="_roleDialog.confirm();">
 						<img th:src="@{/static/image/icon_confirm.png}" class="icon"/>
@@ -968,7 +649,7 @@
 		<!-- START: Authorities Dialog								-->
 		<!-- ====================================================== -->
 		<dialog is="duice-dialog" id="_authorityDialog" style="width:800px;">
-			<div class="app-row title">
+			<div class="app-flex title">
 				<div class="app-col bottom">
 					<h2>
 						<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
@@ -976,7 +657,7 @@
 					</h2>
 				</div>
 			</div>
-			<div class="app-row search">
+			<div class="app-flex search">
 				<div class="app-col">
 					<img class="icon" th:src="@{/static/image/icon_search.png}"/>
 					<select is="duice-select" data-duice-bind="_authorityDialog.search,key" style="width:125px;">
@@ -993,7 +674,7 @@
 					</button>
 				</div>
 			</div>
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col">
 					<table is="duice-table" 
 					data-duice-bind="_authorityDialog.authorities,authority" 
@@ -1025,14 +706,14 @@
 					</table>
 				</div>
 			</div>
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col center">
 					<ul is="duice-widget-pagination" data-duice-bind="_authorityDialog.search,page,rows,totalCount" data-duice-size="5">
 						<li data-page="[@duice[$context.page]]" onclick="_authorityDialog.getAuthorities(this.dataset.page);"></li>
 					</ul>
 				</div>
 			</div>
-			<div class="app-row">
+			<div class="app-flex">
 				<div class="app-col">
 					<table is="duice-table" 
 					data-duice-bind="_authorityDialog.selectedAuthorities,authority" 
@@ -1065,7 +746,7 @@
 					</table>
 				</div>
 			</div>
-			<div class="app-row action">
+			<div class="app-flex action">
 				<div class="app-col right">
 					<button class="button" onclick="_authorityDialog.confirm();">
 						<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
