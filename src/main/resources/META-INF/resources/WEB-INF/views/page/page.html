@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html layout:decorate="~{index.html}">
-<div layout:fragment="content">
+<main layout:fragment="main">
 	<script>
 	// defines variables
 	const page = new duice.Map();
@@ -31,4 +31,4 @@
 	}
 	</script>
 	<th:block th:include="|../theme/${_application.theme}/page/page.html|"></th:block>
-</div>
+</main>

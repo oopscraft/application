@@ -42,11 +42,6 @@ var duice;
      */
     function initialize() {
         // initializes component
-        var $context = typeof self !== 'undefined' ? self :
-            typeof window !== 'undefined' ? window :
-                {};
-        // initializes component
-        console.log($context);
         duice.initializeComponent(document, {});
     }
     duice.initialize = initialize;

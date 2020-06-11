@@ -47,13 +47,10 @@ public class UserService {
 	@Autowired
 	UserRepository userRepository;
 	
-	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	@Autowired
+	VerificationService verificationService;
 	
-	public static void main(String[] args) throws Exception {
-		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String password = passwordEncoder.encode("admin");
-		System.out.println(password);
-	}
+	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
 	/**
 	 * Return users.
@@ -73,10 +70,6 @@ public class UserService {
 				}
 				if(user.getName() != null) {
 					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), '%' + user.getName() + '%'));
-					predicates.add(predicate);
-				}
-				if(user.getNickname() != null) {
-					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("nickname").as(String.class), '%' + user.getNickname() + '%'));
 					predicates.add(predicate);
 				}
 				if(user.getStatus() != null) {
@@ -124,7 +117,6 @@ public class UserService {
 			one.setJoinDate(new Date());
 		}
 		one.setName(user.getName());
-		one.setNickname(user.getNickname());
 		one.setStatus(user.getStatus());
 		if(user.getStatus() == User.Status.CLOSED) {
 			one.setCloseDate(new Date());
@@ -216,9 +208,5 @@ public class UserService {
 			userRepository.save(one);
 		}
 	}
-
-	
-	
-
 
 }

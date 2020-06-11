@@ -97,14 +97,15 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 	public static final String CSRF_TOKEN_HEADER_NAME = "X-Csrf-Token";
 	public static final String LOCALE_HEADER_NAME = "X-Locale";
 	
-    static ThymeleafViewResolver viewResolver;
-    static SpringResourceTemplateResolver templateResolver;
-    static TemplateEngine templateEngine;
+	public static CookieLocaleResolver localeResolver;
+	public static ThymeleafViewResolver viewResolver;
+	public static SpringResourceTemplateResolver templateResolver;
+	public static TemplateEngine templateEngine;
     
-    static AuthenticationProvider authenticationProvider;
-    static AuthenticationHandler authenticationHandler;
-    static AuthenticationFilter authenticationFilter;
-    static CookieCsrfTokenRepository csrfTokenRepository;
+	public static AuthenticationProvider authenticationProvider;
+	public static AuthenticationHandler authenticationHandler;
+	public static AuthenticationFilter authenticationFilter;
+	public static CookieCsrfTokenRepository csrfTokenRepository;
     
     @Autowired
     ApplicationConfig applicationConfig;
@@ -122,7 +123,7 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 	
 	@Bean
 	public CookieLocaleResolver localeResolver() throws Exception {
-		CookieLocaleResolver localeResolver = new CookieLocaleResolver();
+		localeResolver = new CookieLocaleResolver();
 		try {
 			localeResolver.setCookieName(LOCALE_HEADER_NAME);
 			String locales = applicationConfig.getLocales();
@@ -327,16 +328,16 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 	    	http.exceptionHandling().authenticationEntryPoint(authenticationHandler);
     		http.formLogin()
 				.loginPage("/admin/login")
-				.loginProcessingUrl("/admin/doLogin")
+				.loginProcessingUrl("/admin/login/process")
 				.successHandler(authenticationHandler)
 				.failureHandler(authenticationHandler)
 				.permitAll();
 			http.logout()
 				.logoutUrl("/admin/logout")
 				.logoutSuccessUrl("/admin/login")
+				.logoutSuccessHandler(authenticationHandler)
 				.invalidateHttpSession(true)
 				.deleteCookies(ACCESS_TOKEN_HEADER_NAME)
-				.logoutSuccessHandler(authenticationHandler)
 				.permitAll();
         }
     }
@@ -407,14 +408,14 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     		http.authenticationProvider(authenticationProvider);
 			http.formLogin()
 				.loginPage("/user/login")
-				.loginProcessingUrl("/user/doLogin")
+				.loginProcessingUrl("/user/login/process")
 				.successHandler(authenticationHandler)
 				.failureHandler(authenticationHandler)
 				.permitAll();
 			http.logout()
 				.logoutUrl("/user/logout")
-				.logoutSuccessHandler(authenticationHandler)
 				.logoutSuccessUrl("/user/login")
+				.logoutSuccessHandler(authenticationHandler)
 				.invalidateHttpSession(true)
 				.deleteCookies(ACCESS_TOKEN_HEADER_NAME)
 				.permitAll();

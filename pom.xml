@@ -299,6 +299,11 @@
 			<artifactId>spring-aop</artifactId>
 			<version>${org.springframework.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-configuration-processor -->
 		<!-- ====================================================== -->
@@ -309,28 +314,6 @@
 		    <artifactId>spring-boot</artifactId>
 		    <version>${org.springframework.boot.version}</version>
 		</dependency>
-		<!-- 
-		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter</artifactId>
-		    <version>${org.springframework.boot.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-configuration-processor</artifactId>
-		    <version>${org.springframework.boot.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-autoconfigure</artifactId>
-		    <version>${org.springframework.boot.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-			<version>${org.springframework.boot.version}</version>
-		</dependency>
-		 -->
 		
 		<!-- ====================================================== -->
 		<!-- apache-commons											-->
@@ -631,6 +614,13 @@
 		    <groupId>io.jsonwebtoken</groupId>
 		    <artifactId>jjwt</artifactId>
 		    <version>0.9.0</version>
+		</dependency>
+		
+		<!-- java mail -->
+		<dependency>
+		    <groupId>com.sun.mail</groupId>
+		    <artifactId>javax.mail</artifactId>
+		    <version>1.6.2</version>
 		</dependency>
 
 		<!-- libphonenumber -->

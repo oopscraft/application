@@ -35,10 +35,6 @@ import net.oopscraft.application.user.UserService;
 public class AuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, AuthenticationEntryPoint, LogoutSuccessHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationHandler.class);
-
-	@Autowired
-	@Lazy
-	HttpServletRequest request;
 	
 	@Autowired
 	MessageSource messageSource;

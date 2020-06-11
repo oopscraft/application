@@ -159,8 +159,8 @@ public class ErrorController {
 	@ExceptionHandler(MessageException.class)
 	public ModelAndView handleMessageException(HttpServletRequest request, HttpServletResponse response, MessageException exception) throws Exception {
 		Error error = errorService.createError(exception, request);
+		error.setMessage(exception.getMessage());
 		error.setStatusCode(HttpServletResponse.SC_BAD_REQUEST);
-		// TODO get custom message
 		return responseError(request, response, error);
 	}
 

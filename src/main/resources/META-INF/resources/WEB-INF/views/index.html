@@ -72,9 +72,21 @@
 		    	 }
 			});
         }
+        
+        /**
+         * Join page
+         */
+        function _join() {
+        	location.href='[[@{/user/join}]]';
+        }
 		</script>
 	</head>
 	<body> 
+		<!-- auto completion off -->
+		<div style="display:none;">
+			<input type="text"/>
+			<input type="password"/>
+		</div>
 		<th:block th:include="|../theme/${_application.theme}/index.html|"></th:block>
 	</body>
 </html>

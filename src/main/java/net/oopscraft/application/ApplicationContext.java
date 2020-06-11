@@ -77,10 +77,10 @@ public class ApplicationContext {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContext.class);
 	
 	public static ApplicationConfig applicationConfig;
-	static 	DataSource dataSource;
-	static 	LocalContainerEntityManagerFactoryBean entityManagerFactory;
-	static SqlSessionFactoryBean sqlSessionFactoryBean;
-	static MessageSource messageSource;
+	public static DataSource dataSource;
+	public static LocalContainerEntityManagerFactoryBean entityManagerFactory;
+	public static SqlSessionFactoryBean sqlSessionFactoryBean;
+	public static MessageSource messageSource;
 
 	@Bean
 	public ApplicationConfig applicationConfig() throws Exception {

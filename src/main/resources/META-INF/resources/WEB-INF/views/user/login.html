@@ -1,14 +1,18 @@
-<html layout:decorate="~{index.html}">
-<div layout:fragment="content">
-
-		<style>
-		#messageDiv {
-			white-space: pre-line;
-			font-weight: bold;
-			text-align: center;
-			color: orangered;
-		}
-		</style>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    	<title>Application</title>
+		<link rel="stylesheet" type="text/css" th:href="@{/static/duice/polyfill/normalize.css}">
+		<script th:src="@{/static/duice/polyfill/dataset.js}"></script>
+		<script th:src="@{/static/duice/polyfill/classList.js}"></script>
+		<script th:src="@{/static/duice/duice.js}"></script>
+		<link rel="stylesheet" type="text/css" th:href="@{/static/duice/duice.css}">
+		<script th:src="@{/static/jquery.js}"></script>
+		<link rel="stylesheet" type="text/css" th:href="@{/static/application.css}">
+		<script th:src="@{/static/application.js}"></script>
 		<script>
 		// defines variables 
 		const user = new duice.Map({
@@ -16,7 +20,7 @@
 			password: null,
 			rememberMe: false
 		});
-
+	
 		// document ready
 		$(document).ready(function() {
 			$('#autocomplete').hide();
@@ -26,7 +30,7 @@
 		/**
 		 * Requests login
 		 */
-		function login(){
+		function process(){
 			
 			// checks input id
 			if(duice.isEmpty(user.get('username'))){
@@ -44,7 +48,7 @@
 			
 			// requests login process
 			$.ajax({
-				 url: '[[@{/user/doLogin}]]'
+				 url: '[[@{/user/login/process}]]'
 				,type: 'POST'
 				,data: user.toJson()
 				,suppressErrors: true
@@ -78,15 +82,15 @@
 			location.href = '[[@{/user/findPassword}]]';
 		}
 		</script>
-
-
+	</head>
+	<body class="app-flex center middle">
 		<!-- auto completion off -->
-		<div id="autocomplete">
+		<div style="display:none;">
 			<input type="text"/>
 			<input type="password"/>
 		</div>
 		<th:block th:include="|../theme/${_application.theme}/user/login.html|"></th:block>
+	</body>
+</html>
 
 
-
-</div>

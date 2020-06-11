@@ -18,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
@@ -30,7 +31,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
-@Table(name = "APP_USER_INFO")
+@Table(
+	name = "APP_USER_INFO",
+	uniqueConstraints={@UniqueConstraint(columnNames={"USER_EMAL"})}
+)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User extends SystemEntity {
@@ -58,10 +62,6 @@ public class User extends SystemEntity {
 	@NotNull
 	@JsonView(List.class)
 	String name;
-	
-	@Column(name = "USER_NICK", length = 1024)
-	@JsonView(List.class)
-	String nickname;
 
 	@Column(name = "USER_MOBL_CTRY")
 	@JsonView(List.class)
@@ -245,14 +245,6 @@ public class User extends SystemEntity {
 
 	public void setStatus(Status status) {
 		this.status = status;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
 	}
 
 	public String getPhoto() {

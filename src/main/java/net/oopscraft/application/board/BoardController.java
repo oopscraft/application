@@ -94,13 +94,13 @@ public class BoardController {
 			if(StringUtils.isNotEmpty(article.getUserId())) {
 				if(userDetails == null
 				|| !article.getUserId().contentEquals(userDetails.getUsername())) {
-					throw new MessageException("글쓴이만 수정이 가능합니다.");	
+					throw new Exception("글쓴이만 수정이 가능합니다.");	
 				}
 			}
 			// 익명사용자가 작성한 게시글인 경우 
 			else {
 				if(!passwordEncoder.matches(password, article.getPassword())) {
-					throw new MessageException("게시글 패스워드와 일치하지 않습니다.");
+					throw new Exception("게시글 패스워드와 일치하지 않습니다.");
 				}
 			}
 			

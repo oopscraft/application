@@ -91,7 +91,7 @@
 			}
 			main {
 				grid-area: main;
-				padding:0px 20px;
+				padding:0 0.5rem;
 				display: grid;
 				grid-template-areas:
 					'title tab'
@@ -140,7 +140,6 @@
 				    padding: 5%;
 				}
 				main {
-					padding:0 0.5rem;
 					grid-template-areas:
 						'title'
 						'list'
@@ -168,12 +167,12 @@
 		<!-- START: heaer										-->
 		<!-- ================================================== -->
 		<header>
-			<div>
+			<div class="app-flex middle">
 				<a th:href="@{/admin}">
 					<img th:src="@{/static/image/application.png}" style="vertical-align:middle;"/>
 				</a>
 			</div>
-			<div th:if="${_device=='PC'}">
+			<div class="app-flex middle" th:if="${_device=='PC'}">
 				<img th:src="${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
 				<span data-th-text="${_user.name}" style="font-weight:bold;"></span>
 				&nbsp;&nbsp;&nbsp;
@@ -185,13 +184,16 @@
 					<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
 				</select>
 			</div>
-			<div th:if="${_device=='MOBILE'}">
+			<div class="app-flex middle" th:if="${_device=='MOBILE'}">
 				<script>
 				function openNav() {
 					$('nav').slideToggle(200);
 				}
 				</script>
-				<img th:src="@{/static/image/icon_menu.png}" onclick="openNav();" style="vertical-align:middle; height:2rem;"/>
+				<select class="duice-select" onchange="_changeLanguage(this.value);" style="width:100px;">
+					<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
+				</select>
+				<img th:src="@{/static/image/icon_menu.png}" onclick="openNav();" style="margin-left:1rem;"/>
 			</div>
 		</header>
 		<!-- ================================================== -->
@@ -208,10 +210,10 @@
 						<img th:src="${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
 						<span data-th-text="${_user.name}" style="font-weight:bold;"></span>
 					</span>
-					<span>
+					<button class="button" onclick="_logout();">
 						<img class="icon" th:src="@{/static/image/icon_logout.png}"/>
-						<span data-th-text="#{application.global.logout}" onclick="_logout();" class="link"></span>
-					</span>
+						<span data-th-text="#{application.global.logout}"></span>
+					</button>
 				</div>
 				<hr/>
 			</th:block>	

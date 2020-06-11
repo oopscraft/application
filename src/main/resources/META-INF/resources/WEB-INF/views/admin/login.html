@@ -29,7 +29,7 @@
 		/**
 		 * Requests login
 		 */
-		function login(){
+		function process(){
 			
 			// checks input id
 			if(duice.isEmpty(user.get('username'))){
@@ -47,7 +47,7 @@
 			
 			// requests login process
 			$.ajax({
-				 url: '[[@{/admin/doLogin}]]'
+				 url: '[[@{/admin/login/process}]]'
 				,type: 'POST'
 				,data: user.toJson()
 				,suppressErrors: true
@@ -79,13 +79,18 @@
 		</style>
 	</head>
 	<body class="app-flex center middle">
+		<!-- auto completion off -->
+		<div style="display:none;">
+			<input type="text"/>
+			<input type="password"/>
+		</div>
 		<div class="text-center gap" style="width:300px; margin-bottom:200px;">
 			<a th:href="@{/}">
 				<img th:src="@{/static/image/application.png}"/>
 			</a>
 			<input is="duice-input" type="text" data-duice-bind="user,username" th:placeholder="#{application.user.email}" class="text-center"/>
 			<input is="duice-input" type="password" data-duice-bind="user,password" th:placeholder="#{application.user.password}" class="text-center"/>
-			<button id="loginButton" class="button" onclick="login();" style="width:100%;">
+			<button id="loginButton" class="button" onclick="process();" style="width:100%;">
 				<img class="icon" th:src="@{/static/image/icon_login.png}"/>
 				<span data-th-text="#{application.global.login}"></span>
 			</button>

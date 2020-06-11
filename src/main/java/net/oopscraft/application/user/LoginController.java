@@ -6,19 +6,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/user/login")
+public class LoginController {
 	
 	/**
 	 * Login page
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "login", method = RequestMethod.GET)
-	public ModelAndView login() throws Exception {
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView index() throws Exception {
 		ModelAndView modelAndView = new ModelAndView("user/login.html");
 		return modelAndView;
 	}
-	
 
 }

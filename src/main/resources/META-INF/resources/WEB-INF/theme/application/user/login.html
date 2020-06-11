@@ -8,37 +8,30 @@
 	color: orangered;
 }
 </style>
-<div class="app-flex center middle" style="width:100%; height:100%;">
-	<div style="width:300px;">
-		<div>
-			<a th:href="@{/}">
-				<img th:src="@{/static/image/application.png}"/>
-			</a>
-			<input is="duice-input" type="text" data-duice-bind="user,username" th:placeholder="#{application.user.email}" style="text-align:center; margin:1px;"/>
-			<input is="duice-input" type="password" data-duice-bind="user,password" th:placeholder="#{application.user.password}" style="text-align:center; margin:1px;"/>
-			<button id="loginButton" class="button" onclick="login();" style="width:100%; margin:1px;">
-				<img class="icon" th:src="@{/static/image/icon_login.png}"/>
-				<span data-th-text="#{application.global.login}"></span>
-			</button>
-		</div>
-		<div>
-			<input is="duice-input" type="checkbox" data-duice-bind="user,rememberMe"/>
-			Remember me
-		</div>
-		<div id="messageDiv"></div>
-		<div>
-			<span class="link" onclick="join();" th:text="#{application.global.join}"></span>
-			<small>&nbsp;&nbsp;|&nbsp;&nbsp;</small>
-			<span class="link" onclick="findPassword();" th:text="#{application.global.findPassword}"></span>
-			<small>&nbsp;&nbsp;|&nbsp;&nbsp;</small>
-			<select class="duice-select" onchange="_changeLanguage(this.value);" style="width:100px; margin:1px;">
-				<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
-			</select>
-		</div>
+<div class="text-center gap" style="width:300px; margin-bottom:200px;">
+	<a th:href="@{/}">
+		<img th:src="@{/static/image/application.png}"/>
+	</a>
+	<h1 data-th-text="#{application.global.login}"></h1>
+	<input is="duice-input" type="text" data-duice-bind="user,username" th:placeholder="#{application.user.email}" class="text-center"/>
+	<input is="duice-input" type="password" data-duice-bind="user,password" th:placeholder="#{application.user.password}" class="text-center"/>
+	<button id="loginButton" class="button" onclick="process();" style="width:100%;">
+		<img class="icon" th:src="@{/static/image/icon_login.png}"/>
+		<span data-th-text="#{application.global.login}"></span>
+	</button>
+	<div id="messageDiv"></div>
+	<div class="app-flex left middle">
+		<input is="duice-input" type="checkbox" data-duice-bind="user,rememberMe"/>
+		<span data-th-text="#{application.global.rememberMe}"></span>
+	</div>
+	<div id="messageDiv"></div>
+	<div class="app-flex middle">
+		<span class="link" onclick="join();" th:text="#{application.global.join}"></span>
+		<small>&nbsp;&nbsp;|&nbsp;&nbsp;</small>
+		<span class="link" onclick="findPassword();" th:text="#{application.global.findPassword}"></span>
+		<small>&nbsp;&nbsp;|&nbsp;&nbsp;</small>
+		<select class="duice-select" onchange="_changeLanguage(this.value);" style="width:100px; margin:1px;">
+			<option th:each="language:${_languages}" th:value="${language.language}" th:text="${language.displayLanguageByLocale}" th:selected="${language.language} == ${#locale.language}"></option>
+		</select>
 	</div>
 </div>
-
-
-
-
-

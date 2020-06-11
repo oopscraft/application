@@ -33,15 +33,8 @@ namespace duice {
      * initialize
      */
 	export function initialize() {
-		
-		// initializes component
-	    var $context:any = typeof self !== 'undefined' ? self : 
-	                        typeof window !== 'undefined' ? window :
-                            {};
-
         // initializes component
-        duice.initializeComponent(document, $context);
-
+        duice.initializeComponent(document, {});
     }
 
     /**

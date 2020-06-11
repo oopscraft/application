@@ -161,7 +161,6 @@ public class BoardRestController {
 		}else {
 			User user = userService.getUser(userDetails.getUsername());
 			boardArticle.setUserId(user.getId());
-			boardArticle.setAuthor(user.getNickname());
 			boardArticle.setPassword(null);
 		}
 		return articleService.saveArticle(boardArticle);
@@ -302,7 +301,6 @@ public class BoardRestController {
 		}else {
 			User user = userService.getUser(userDetails.getUsername());
 			articleReply.setUserId(user.getId());
-			articleReply.setAuthor(user.getNickname());
 			articleReply.setPassword(null);
 		}
 		article.addReply(articleReply);
