@@ -30,6 +30,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,6 +64,9 @@ public class UserService {
 	 * @throws Exception
 	 */
 	public List<User> getUsers(final User user, Pagination pagination) throws Exception {
+		List<Order> orders = new ArrayList<Order>();
+		orders.add(new Order(Direction.DESC, "systemInsertDate"));
+		PageRequest pageRequest = pagination.toPageRequest(new Sort(orders));
 		Page<User> usersPage = userRepository.findAll(new  Specification<User>() {
 			@Override
 			public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -78,7 +85,7 @@ public class UserService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pagination.toPageRequest());
+		}, pageRequest);
 		pagination.setTotalCount(usersPage.getTotalElements());
 		return usersPage.getContent();
 	}

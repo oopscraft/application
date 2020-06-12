@@ -109,7 +109,6 @@
 			section#title {
 				grid-area: title;
 				align-self: flex-end;
-				border-bottom: solid 1px #ddd;
 			}
 			section#list {
 				grid-area: list;
@@ -118,7 +117,6 @@
 			section#tab {
 				grid-area: tab;
 				align-self: flex-end;
-				border-bottom: solid 1px #fff;
 			}
 			section#detail {
 				grid-area: detail;
@@ -259,46 +257,35 @@
 		<!-- ====================================================== -->
 		<!-- START: Groups Dialog									-->
 		<!-- ====================================================== -->
-		<dialog is="duice-dialog" id="_groupDialog" style="width:800px;">
-			<div class="app-flex title">
-				<div class="app-col bottom">
-					<h2>
-						<img class="icon" th:src="@{/static/image/icon_group.png}"/>
-						<span data-th-text="#{application.group} + ' ' + #{application.global.select}" class="font-bold"></span>
-					</h2>
-				</div>
+		<div id="_groupDialog" style="display:none; width:600px; max-width:100%;">
+			<h2>
+				<img class="icon" th:src="@{/static/image/icon_group.png}"/>
+				<span data-th-text="#{application.group} + ' ' + #{application.global.select}" class="font-bold"></span>
+			</h2>
+			<ul is="duice-ul" 
+			data-duice-bind="_groupDialog.groups,group" 
+			data-duice-hierarchy="id,upperId"
+			data-duice-selectable="true"
+			data-duice-foldable="false">
+				<li>
+					<div class="app-flex" style="width:100%; border-bottom:dotted 1px #ccc;">
+						<div>
+							<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
+							<span is="duice-span" data-duice-bind="group,name" style="font-weight:bold;"></span>
+						</div>
+						<div>
+							<input is="duice-input" type="checkbox" data-duice-bind="group,_checked"/>
+						</div>
+					</div>
+				</li>
+			</ul>				
+			<div class="app-flex right gap">
+				<button class="button" onclick="_groupDialog.confirm();">
+					<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
+					<span data-th-text="#{application.global.confirm}"></span>
+				</button>
 			</div>
-			<div class="app-flex">
-				<div class="app-col">
-					<ul is="duice-ul" 
-					data-duice-bind="_groupDialog.groups,group" 
-					data-duice-hierarchy="id,upperId"
-					data-duice-selectable="true"
-					data-duice-foldable="true"
-					style="max-height:600px; overflow-y:scroll;">
-						<li>
-							<div class="app-flex" style="width:100%;border-bottom:dotted 1px #ccc;">
-								<div class="app-col">
-									<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
-									<span is="duice-span" data-duice-bind="group,name" style="font-weight:bold;"></span>
-								</div>
-								<div class="app-col text-right">
-									<input is="duice-input" type="checkbox" data-duice-bind="group,_checked"/>
-								</div>
-							</div>
-						</li>
-					</ul>				
-				</div>
-			</div>
-			<div class="app-flex">
-				<div class="app-col right">
-					<button class="button" onclick="_groupDialog.confirm();">
-						<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
-						<span data-th-text="#{application.global.confirm}"></span>
-					</button>
-				</div>
-			</div>
-		</dialog>
+		</div>
 		<script>
 			/**
 			 * Global common group select dialog
@@ -415,114 +402,92 @@
 		<!-- ====================================================== -->
 		<!-- START: Roles Dialog									-->
 		<!-- ====================================================== -->
-		<dialog is="duice-dialog" id="_roleDialog" style="width:800px;">
-			<div class="app-flex title">
-				<div class="app-col bottom">
-					<h2>
-						<img class="icon" th:src="@{/static/image/icon_role.png}"/>
-						<span data-th-text="#{application.role}+' '+#{application.global.select}" class="font-bold"></span>
-					</h2>
-				</div>
-			</div>
-			<div class="app-flex search">
-				<div class="app-col">
-					<img class="icon" th:src="@{/static/image/icon_search.png}"/>
-					<select is="duice-select" data-duice-bind="_roleDialog.search,key" style="width:125px;">
+		<div id="_roleDialog" style="display:none; width:600px; max-width:100%;">
+			<h2>
+				<img class="icon" th:src="@{/static/image/icon_role.png}"/>
+				<span data-th-text="#{application.role}+' '+#{application.global.select}" class="font-bold"></span>
+			</h2>
+			<div class="app-flex fluid gap">
+				<div class="app-flex">
+					<select is="duice-select" data-duice-bind="_roleDialog.search,key" style="width:30%;">
 						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
 						<option value="id" data-th-text="#{application.role.id}">Role ID</option>
 						<option value="name" data-th-text="#{application.role.name}">Role Name</option>
 					</select>
-					<input is="duice-input" type="text" data-duice-bind="_roleDialog.search,value" style="width:250px;"/>
+					<input is="duice-input" type="text" data-duice-bind="_roleDialog.search,value" style="width:70%;"/>
 				</div>
-				<div class="app-col right">
-					<button class="button" onclick="_roleDialog.getRoles();">
-						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-						<span data-th-text="#{application.global.search}"></span>
-					</button>
-				</div>
+				<button class="button" onclick="_roleDialog.getRoles();">
+					<img th:src="@{/static/image/icon_search.png}" class="icon"/>
+					<span data-th-text="#{application.global.search}"></span>
+				</button>
 			</div>
-			<div class="app-flex">
-				<div class="app-col">
-					<table is="duice-table" 
-					data-duice-bind="_roleDialog.roles,role" 
-					data-duice-selectable="true"
-					style="width:100%;">
-						<col style="width:5%;"/>					
-						<col style="width:10%;"/>
-						<col style="width:35%;"/>
-						<col style="width:50%;"/>
-						<thead>
-							<tr>
-								<th class="text-center">-</th>
-								<th data-th-text="#{application.global.no}" class="text-center">No</th>
-								<th data-th-text="#{application.role.id}">ID</th>
-								<th data-th-text="#{application.role.name}">Name</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="text-center"><input is="duice-input" type="checkbox" data-duice-bind="role,_checked" /></td>
-								<td class="text-center"><small is="duice-scriptlet" data-duice-bind="role" data-duice-value="return $context.index+1;"></small></td>
-								<td>
-									<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
-									<span is="duice-span" data-duice-bind="role,id"></span>
-								</td>
-								<td><span is="duice-span" data-duice-bind="role,name"></span></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+			<table is="duice-table" 
+			data-duice-bind="_roleDialog.roles,role" 
+			data-duice-selectable="true"
+			style="width:100%;">
+				<col style="width:10%;"/>					
+				<col/>
+				<col/>
+				<thead>
+					<tr>
+						<th class="text-center">-</th>
+						<th data-th-text="#{application.role.id}">ID</th>
+						<th data-th-text="#{application.role.name}">Name</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="text-center"><input is="duice-input" type="checkbox" data-duice-bind="role,_checked" /></td>
+						<td>
+							<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
+							<span is="duice-span" data-duice-bind="role,id"></span>
+						</td>
+						<td><span is="duice-span" data-duice-bind="role,name"></span></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="app-flex center">
+				<ul is="duice-widget-pagination" data-duice-bind="_roleDialog.search,page,rows,totalCount" data-duice-size="5">
+					<li onclick="_roleDialog.getRoles();"></li>
+				</ul>
 			</div>
-			<div class="app-flex">
-				<div class="app-col center">
-					<ul is="duice-widget-pagination" data-duice-bind="_roleDialog.search,page,rows,totalCount" data-duice-size="5">
-						<li onclick="_roleDialog.getRoles();"></li>
-					</ul>
-				</div>
+			<table is="duice-table" 
+			data-duice-bind="_roleDialog.selectedRoles,role" 
+			data-duice-selectable="true"
+			style="width:100%;">
+				<col style="width:10%;"/>
+				<col/>
+				<col/>
+				<col style="width:10%;"/>
+				<thead>
+					<tr>
+						<th data-th-text="#{application.global.no}" class="text-center">No</th>
+						<th data-th-text="#{application.role.id}">ID</th>
+						<th data-th-text="#{application.role.name}">Name</th>
+						<th class="text-center">-</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="text-center"><small is="duice-scriptlet" data-duice-bind="role" data-duice-value="return $context.index+1;"></small></td>
+						<td>
+							<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
+							<span is="duice-span" data-duice-bind="role,id"></span>
+						</td>
+						<td><span is="duice-span" data-duice-bind="role,name"></span></td>
+						<td class="text-center">
+							<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="_roleDialog.selectedRoles.removeRow(this.dataset.index);"/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="app-flex right">
+				<button class="button" onclick="_roleDialog.confirm();">
+					<img th:src="@{/static/image/icon_confirm.png}" class="icon"/>
+					<span data-th-text="#{application.global.confirm}"></span>
+				</button>
 			</div>
-			<div class="app-flex">
-				<div class="app-col">
-					<table is="duice-table" 
-					data-duice-bind="_roleDialog.selectedRoles,role" 
-					data-duice-selectable="true"
-					style="width:100%;">
-						<col style="width:10%;"/>
-						<col style="width:35%;"/>
-						<col/>
-						<col style="width:5%;"/>
-						<thead>
-							<tr>
-								<th data-th-text="#{application.global.no}" class="text-center">No</th>
-								<th data-th-text="#{application.role.id}">ID</th>
-								<th data-th-text="#{application.role.name}">Name</th>
-								<th class="text-center">-</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="text-center"><small is="duice-scriptlet" data-duice-bind="role" data-duice-value="return $context.index+1;"></small></td>
-								<td>
-									<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
-									<span is="duice-span" data-duice-bind="role,id"></span>
-								</td>
-								<td><span is="duice-span" data-duice-bind="role,name"></span></td>
-								<td class="text-center">
-									<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="_roleDialog.selectedRoles.removeRow(this.dataset.index);"/>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div class="app-flex action">
-				<div class="app-col right">
-					<button class="button" onclick="_roleDialog.confirm();">
-						<img th:src="@{/static/image/icon_confirm.png}" class="icon"/>
-						<span data-th-text="#{application.global.confirm}"></span>
-					</button>
-				</div>
-			</div>
-		</dialog>
+		</div>
 		<script>
 			/**
 			 * Global common role dialog
@@ -650,113 +615,91 @@
 		<!-- ====================================================== -->
 		<!-- START: Authorities Dialog								-->
 		<!-- ====================================================== -->
-		<dialog is="duice-dialog" id="_authorityDialog" style="width:800px;">
-			<div class="app-flex title">
-				<div class="app-col bottom">
-					<h2>
-						<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
-						<span data-th-text="#{application.authority}+' '+#{application.global.select}" class="font-bold"></span>
-					</h2>
-				</div>
-			</div>
-			<div class="app-flex search">
-				<div class="app-col">
-					<img class="icon" th:src="@{/static/image/icon_search.png}"/>
-					<select is="duice-select" data-duice-bind="_authorityDialog.search,key" style="width:125px;">
+		<div id="_authorityDialog" style="display:none; width:600px; max-width:100%;">
+			<h2>
+				<img class="icon" th:src="@{/static/image/icon_authority.png}"/>
+				<span data-th-text="#{application.authority}+' '+#{application.global.select}" class="font-bold"></span>
+			</h2>
+			<div class="app-flex fluid gap">
+				<div class="app-flex" style="width:300px;">
+					<select is="duice-select" data-duice-bind="_authorityDialog.search,key" style="width:30%;">
 						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
 						<option value="id" data-th-text="#{application.authority.id}">ID</option>
 						<option value="name" data-th-text="#{application.authority.name}">Name</option>
 					</select>
-					<input is="duice-input" type="text" data-duice-bind="_authorityDialog.search,value" style="width:250px;"/>
+					<input is="duice-input" type="text" data-duice-bind="_authorityDialog.search,value" style="width:70%;"/>
 				</div>
-				<div class="app-col right">
-					<button class="button" onclick="_authorityDialog.getAuthorities();">
-						<img th:src="@{/static/image/icon_search.png}" class="icon"/>
-						<span data-th-text="#{application.global.search}"></span>
-					</button>
-				</div>
+				<button class="button" onclick="_authorityDialog.getAuthorities();">
+					<img th:src="@{/static/image/icon_search.png}" class="icon"/>
+					<span data-th-text="#{application.global.search}"></span>
+				</button>
 			</div>
-			<div class="app-flex">
-				<div class="app-col">
-					<table is="duice-table" 
-					data-duice-bind="_authorityDialog.authorities,authority" 
-					data-duice-selectable="true"
-					style="width:100%;">
-						<col style="width:5%;"/>
-						<col style="width:10%;"/>
-						<col style="width:35%;"/>
-						<col style="width:50%;"/>
-						<thead>
-							<tr>
-								<th class="text-center">-</th>
-								<th data-th-text="#{application.global.no}" class="text-center">No</th>
-								<th data-th-text="#{application.authority.id}">ID</th>
-								<th data-th-text="#{application.authority.name}">Name</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="text-center"><input is="duice-input" type="checkbox" data-duice-bind="authority,_checked"/></td>
-								<td class="text-center"><small is="duice-scriptlet" data-duice-bind="authority" data-duice-value="return $context.index+1;"></small></td>
-								<td>
-									<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
-									<span is="duice-span" data-duice-bind="authority,id"></span>
-								</td>
-								<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+			<table is="duice-table" 
+			data-duice-bind="_authorityDialog.authorities,authority" 
+			data-duice-selectable="true"
+			style="width:100%;">
+				<col style="width:10%;"/>
+				<col/>
+				<col/>
+				<thead>
+					<tr>
+						<th class="text-center">-</th>
+						<th data-th-text="#{application.authority.id}">ID</th>
+						<th data-th-text="#{application.authority.name}">Name</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="text-center"><input is="duice-input" type="checkbox" data-duice-bind="authority,_checked"/></td>
+						<td>
+							<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+							<span is="duice-span" data-duice-bind="authority,id"></span>
+						</td>
+						<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="app-flex center">
+				<ul is="duice-widget-pagination" data-duice-bind="_authorityDialog.search,page,rows,totalCount" data-duice-size="5">
+					<li data-page="[@duice[$context.page]]" onclick="_authorityDialog.getAuthorities(this.dataset.page);"></li>
+				</ul>
 			</div>
-			<div class="app-flex">
-				<div class="app-col center">
-					<ul is="duice-widget-pagination" data-duice-bind="_authorityDialog.search,page,rows,totalCount" data-duice-size="5">
-						<li data-page="[@duice[$context.page]]" onclick="_authorityDialog.getAuthorities(this.dataset.page);"></li>
-					</ul>
-				</div>
+			<table is="duice-table" 
+			data-duice-bind="_authorityDialog.selectedAuthorities,authority"
+			style="width:100%;">
+				<col style="width:10%;"/>
+				<col/>
+				<col/>
+				<col style="width:10%;"/>
+				<thead>
+					<tr>
+						<th data-th-text="#{application.global.no}" class="text-center">No</th>
+						<th data-th-text="#{application.authority.id}">Authority ID</th>
+						<th data-th-text="#{application.authority.name}">Authority Name</th>
+						<th class="text-center">-</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="text-center"><small is="duice-scriptlet" data-duice-bind="authority" data-duice-value="return $context.index+1;"></small></td>
+						<td>
+							<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
+							<span is="duice-span" data-duice-bind="authority,id"></span>
+						</td>
+						<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
+						<td style="text-align:center;">
+							<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="_authorityDialog.selectedAuthorities.removeRow(this.dataset.index);"/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="app-flex right gap">
+				<button class="button" onclick="_authorityDialog.confirm();">
+					<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
+					<span data-th-text="#{application.global.confirm}"></span>
+				</button>
 			</div>
-			<div class="app-flex">
-				<div class="app-col">
-					<table is="duice-table" 
-					data-duice-bind="_authorityDialog.selectedAuthorities,authority" 
-					style="width:100%;">
-						<col style="width:10%;"/>
-						<col style="width:35%;"/>
-						<col/>
-						<col style="width:5%;"/>
-						<thead>
-							<tr>
-								<th data-th-text="#{application.global.no}" class="text-center">No</th>
-								<th data-th-text="#{application.authority.id}">Authority ID</th>
-								<th data-th-text="#{application.authority.name}">Authority Name</th>
-								<th class="text-center">-</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="text-center"><small is="duice-scriptlet" data-duice-bind="authority" data-duice-value="return $context.index+1;"></small></td>
-								<td>
-									<img is="duice-img" data-duice-bind="authority,icon" th:src="@{/static/image/icon_authority.png}" class="icon small"/>
-									<span is="duice-span" data-duice-bind="authority,id"></span>
-								</td>
-								<td><span is="duice-span" data-duice-bind="authority,name"></span></td>
-								<td style="text-align:center;">
-									<img th:src="@{/static/image/icon_remove.png}" class="icon small button" data-index="[@duice[$context.index]]" onclick="_authorityDialog.selectedAuthorities.removeRow(this.dataset.index);"/>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div class="app-flex action">
-				<div class="app-col right">
-					<button class="button" onclick="_authorityDialog.confirm();">
-						<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
-						<span data-th-text="#{application.global.confirm}"></span>
-					</button>
-				</div>
-			</div>
-		</dialog>
+		</div>
 		<script>
 	        var _authorityDialog = {
 	           	dialog: new duice.Dialog(document.getElementById('_authorityDialog')),

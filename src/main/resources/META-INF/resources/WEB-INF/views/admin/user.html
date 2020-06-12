@@ -475,7 +475,7 @@
 					</select>
 					<input is="duice-input" type="text" data-duice-bind="search,value" style="width:70%;"/>
 				</div>
-				<span is="duice-span" data-th-text="#{application.user.status}" class="font-bold">
+				<span is="duice-span" data-th-text="#{application.user.status}" class="font-bold" style="padding:0 0.5rem;">
 					Status
 				</span>
 				<select is="duice-select" data-duice-bind="search,status" style="width:120px;">
@@ -795,7 +795,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<div class="app-flex gap right">
+			<div class="app-flex right gap">
 				<button class="button" onclick="deleteUser();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_USER_EDIT'')')}?'lock'">
 					<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 					<span data-th-text="#{application.global.delete}"></span>
@@ -860,46 +860,36 @@
 	<script>
 	var changePassword = new duice.Map();
 	</script>
-	<dialog is="duice-dialog" id="changePasswordDialog" style="width:400px;">
-		<div class="app-flex">
-			<div class="app-col">
-				<h2>
-					<img class="icon" th:src="@{/static/image/icon_password.png}"/>
-					<span data-th-text="#{application.user.changePassword}" class="font-bold"></span>
-				</h2>
-			</div>
+	<div id="changePasswordDialog" style="display:none; width:400px; max-width:100%;">
+		<h2>
+			<img class="icon" th:src="@{/static/image/icon_password.png}"/>
+			<span data-th-text="#{application.user.changePassword}" class="font-bold"></span>
+		</h2>
+		<table class="table" style="width:100%;">
+			<col style="width:35%;"/>
+			<col/>
+			<tbody>
+				<tr>
+					<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
+					<td>
+						<input is="duice-input" type="password" data-duice-bind="changePassword,password"/>
+					</td>
+				</tr>
+				<tr>
+					<th><span data-th-text="#{application.user.passwordConfirm}" class="mand">Password(Confirm)</span></th>
+					<td>
+						<input is="duice-input" type="password" data-duice-bind="changePassword,passwordConfirm"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="app-flex right gap">
+			<button class="button" onclick="confirmChangePassword();">
+				<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
+				<span data-th-text="#{application.global.confirm}"></span>
+			</button>
 		</div>
-		<div class="app-flex">
-			<div class="app-col">
-				<table class="table" style="width:100%;">
-					<col style="width:35%;"/>
-					<col/>
-					<tbody>
-						<tr>
-							<th><span data-th-text="#{application.user.password}" class="mand">Password</span></th>
-							<td>
-								<input is="duice-input" type="password" data-duice-bind="changePassword,password"/>
-							</td>
-						</tr>
-						<tr>
-							<th><span data-th-text="#{application.user.passwordConfirm}" class="mand">Password(Confirm)</span></th>
-							<td>
-								<input is="duice-input" type="password" data-duice-bind="changePassword,passwordConfirm"/>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="app-flex">
-			<div class="app-col right">
-				<button class="button" onclick="confirmChangePassword();">
-					<img th:src="@{/static/image/icon_confirm.png}" class="icon small"/>
-					<span data-th-text="#{application.global.confirm}"></span>
-				</button>
-			</div>
-		</div>
-	</dialog>
+	</div>
 	<script>
 	var changePasswordDialog = new duice.Dialog($('#changePasswordDialog')[0]);
 
@@ -919,39 +909,43 @@
 	 * Confirms change password
 	 */
 	async function confirmChangePassword() {
+		
+		
 		// checks password and password confirm, in case of new
 		if(duice.isEmpty(changePassword.get('password'))){
-			changePassword.setFocus('password', '[[#{application.global.enterItem(#{application.user.password})}]]');
+			await duice.alert('[[#{application.global.enterItem(#{application.user.password})}]]');
+			changePassword.setFocus('password');
 			return false;
 		}
 		if(!duice.isPasswordFormat(changePassword.get('password'))){
-			changePassword.setFocus('password', '[[#{application.global.notValidPassowrdFormat}]]');
+			await duice.alert('[[#{application.global.notValidPassowrdFormat}]]');
+			changePassword.setFocus('password');
 			return false;
 		}
 		if(duice.isEmpty(changePassword.get('passwordConfirm'))){
-			changePassword.setFocus('passwordConfirm', '[[#{application.global.enterItem(#{application.user.passwordConfirm})}]]');
+			await duice.alert('[[#{application.global.enterItem(#{application.user.passwordConfirm})}]]');
+			changePassword.setFocus('passwordConfirm');
 			return false;
 		}
 		if(changePassword.get('passwordConfirm') !== changePassword.get('password')){
-			changePassword.setFocus('passwordConfirm', '[[#{application.global.itemNotMatch(#{application.user.passwordConfirm})}]]');
+			await duice.alert('[[#{application.global.itemNotMatch(#{application.user.passwordConfirm})}]]');
+			changePassword.setFocus('passwordConfirm');
 			return false;
 		}
 		
 		if(await duice.confirm("[[#{application.global.saveConfirm(#{application.user.password})}]]")){
-			var data = user.toJson();
-			data.groups = userGroups.toJson();
-			data.roles = userRoles.toJson();
-			data.authorities = userAuthorities.toJson();
 			$.ajax({
 				 url: 'user/changePassword'
 				,type: 'POST'
 				,data: JSON.stringify(changePassword.toJson())
 				,contentType: 'application/json;charset=UTF-8'
-				,success: async function(data, textStatus, jqXHR) {
-					await duice.alert('[[#{application.global.saveComplete(#{application.user.password})}]]');
+			})
+			.then(function(data, textStatus, jqXHR){
+				duice.alert('[[#{application.global.saveComplete(#{application.user.password})}]]')
+				.then(function(){
 					changePasswordDialog.close();
-		   	 	}
-			});	
+				});
+			});
 		}
 	}
 	</script>

@@ -50,7 +50,7 @@ public class ArticleService {
 		orders.add(new Order(Direction.DESC, "notice"));
 		orders.add(new Order(Direction.DESC, "date"));
 		PageRequest pageRequest = pagination.toPageRequest(new Sort(orders));
-		Page<Article> boardArticlesPage = articleRepository.findAll(new  Specification<Article>() {
+		Page<Article> boardArticlesPage = articleRepository.findAll(new Specification<Article>() {
 			@Override
 			public Predicate toPredicate(Root<Article> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				List<Predicate> predicates = new ArrayList<Predicate>();
