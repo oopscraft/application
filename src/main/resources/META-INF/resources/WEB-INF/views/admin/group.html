@@ -53,12 +53,11 @@
 				,contentType: 'application/json;charset=UTF-8'
 			})
 			.done(function(data, textStatus, jqXHR) {
-				duice.alert('[[#{application.global.changeComplete(#{application.group.upperId})}]]')
-				.then(async function(){
-					await getGroups();
+				getGroups()
+				.then(function(){
 					groups.forEach(function(row,index){
 						if(row.get('id') === id){
-							clearDetail();
+							initializeDetail();
 							groups.selectRow(index);
 							return false;
 						}
@@ -120,7 +119,7 @@
 		/**
 		 * Clears detail
 		 */
-		function clearDetail() {
+		function initializeDetail() {
 			group.fromJson({});
 			groupRoles.fromJson([]);
 			groupAuthorities.fromJson([]);
@@ -171,6 +170,7 @@
 		 * Gets specified group
 		 */
 		function getGroup(id){
+			initializeDetail();
 			$.ajax({
 				 url: 'group/getGroup'
 				,type: 'GET'
@@ -191,7 +191,7 @@
 		 * Adds group
 		 */
 		function addGroup() {
-			clearDetail();
+			initializeDetail();
 			disableDetail(false);
 			group.setReadonly('id',false);
 			isNew = true;
@@ -294,7 +294,7 @@
 									}
 								});
 								if(index > -1){
-									clearDetail();
+									initializeDetail();
 									groups.selectRow(index);
 								}else{
 									getGroup(id);
@@ -303,6 +303,34 @@
 						});
 					});
 				}
+			});
+		}
+		
+		/**
+		 * changeSequence
+		 */
+		function changeSequence(id, ascend) {
+			$.ajax({
+				 url: 'group/changeSequence'
+				,type: 'POST'
+				,data: { id: id, ascend: ascend }
+			})
+			.done(function(data, textStatus, jqXHR){
+				getGroups()
+				.then(function(){
+					// refresh list and details
+					var index = groups.indexOf(function(row){
+						if(row.get('id') === id){
+							return true;
+						}
+					});
+					if(index > -1){
+						initializeDetail();
+						groups.selectRow(index);
+					}else{
+						getGroup(id);
+					}
+				});
 			});
 		}
 		
@@ -321,7 +349,7 @@
 					duice.alert("[[#{application.global.deleteComplete(#{application.group})}]]")
 					.then(async function(){
 						await getGroups();
-						clearDetail();
+						initializeDetail();
 						disableDetail(true);
 					});
 				});
@@ -419,6 +447,8 @@
 						<span is="duice-span" data-duice-bind="group,name" class="id [@duice[$context.group.get('systemEmbedded') === true ? 'embd' : '']]"></span>
 					</div>
 					<div class="app-col right">
+						<img th:src="@{/static/image/icon_arrow_down.png}" class="icon small button" data-id="[@duice[$context.group.get('id')]]" onclick="changeSequence(this.dataset.id, true); event.stopPropagation();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_GROP_EDIT'')')}?'lock'"/>
+						<img th:src="@{/static/image/icon_arrow_up.png}" class="icon small button" data-id="[@duice[$context.group.get('id')]]" onclick="changeSequence(this.dataset.id, false); event.stopPropagation();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_GROP_EDIT'')')}?'lock'"/>
 						<img th:src="@{/static/image/icon_add.png}" class="icon small button" data-id="[@duice[$context.group.get('id')]]" onclick="addChildGroup(this.dataset.id); event.stopPropagation();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_GROP_EDIT'')')}?'lock'"/>
 					</div>
 				</div>

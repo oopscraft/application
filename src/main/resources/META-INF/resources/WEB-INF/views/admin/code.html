@@ -153,6 +153,7 @@
 		 * Gets specified code
 		 */
 		function getCode(id){
+			initializeDetail();
 			$.ajax({
 				 url: 'code/getCode'
 				,type: 'GET'
@@ -374,11 +375,11 @@
 			data-duice-bind="codes,code" 
 			data-duice-selectable="true"
 			style="width:100%;">
+			<col style="width:15%;"/>
+			<col/>
+			<col/>
 			<col style="width:10%;"/>
-			<col/>
-			<col/>
-			<col/>
-			<col/>
+			<col style="width:10%;"/>
 			<thead>
 				<tr>
 					<th data-th-text="#{application.global.no}" class="text-center"></th>

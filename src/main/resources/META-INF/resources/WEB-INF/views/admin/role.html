@@ -238,40 +238,40 @@
 			}
 			
 			// enters save process
-			duice.confirm("[[#{application.global.saveConfirm(#{application.role})}]]")
-			.then(function(result){
-				if(result){
-					var data = role.toJson();
-					data.authorities = roleAuthorities.toJson();
-					$.ajax({
-						 url: 'role/saveRole'
-						,type: 'POST'
-						,data: JSON.stringify(data)
-						,contentType: 'application/json;charset=UTF-8'
-					})
-					.done(function(data,textStatus,jqXHR){
-						var id = data.id;
-						duice.alert('[[#{application.global.saveComplete(#{application.role})}]]')
-						.then(function(){
-							getRoles()
-							.then(function(){
-								// refresh list and details
-								var index = roles.indexOf(function(row){
-									if(row.get('id') === id){
-										return true;
-									}
-								});
-								if(index > -1){
-									initializeDetail();
-									roles.selectRow(index);
-								}else{
-									getRole(id);
-								}
-							});
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.role})}]]")){
+				var data = role.toJson();
+				data.authorities = roleAuthorities.toJson();
+				$.ajax({
+					 url: 'role/saveRole'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data,textStatus,jqXHR){
+					var id = data.id;
+					duice.alert('[[#{application.global.saveComplete(#{application.role})}]]')
+					.then(async function(){
+						if(isNew){
+							await getRoles(1);
+						}else{
+							await getRoles();
+						}
+
+						// refresh list and details
+						var index = roles.indexOf(function(row){
+							if(row.get('id') === id){
+								return true;
+							}
 						});
+						if(index > -1){
+							initializeDetail();
+							roles.selectRow(index);
+						}else{
+							getRole(id);
+						}
 					});
-				}
-			});
+				});
+			}
 		}
 		
 		/**
@@ -367,7 +367,7 @@
 			<col/>
 			<col/>
 			<th:block th:if="${_device!='MOBILE'}">
-			<col style="width:80px;"/>
+			<col style="width:15%;"/>
 			</th:block>
 			<thead>
 				<tr>

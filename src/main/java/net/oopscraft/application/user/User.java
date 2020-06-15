@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -33,7 +34,12 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 @Entity
 @Table(
 	name = "APP_USER_INFO",
-	uniqueConstraints={@UniqueConstraint(columnNames={"USER_EMAL"})}
+	uniqueConstraints={@UniqueConstraint(columnNames={"USER_EMAL"})},
+	indexes = {
+		@Index(columnList="SYS_INST_DATE"),
+		@Index(columnList="USER_EMAL,SYS_INST_DATE"),
+		@Index(columnList="USER_NAME,SYS_INST_DATE")
+	}
 )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -109,7 +115,7 @@ public class User extends SystemEntity {
 		inverseJoinColumns = @JoinColumn(name = "GROP_ID"), 
 		inverseForeignKey = @ForeignKey(name = "none")
 	)
-	@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	List<Group> groups = new ArrayList<Group>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -120,7 +126,7 @@ public class User extends SystemEntity {
 		inverseJoinColumns = @JoinColumn(name = "ROLE_ID"), 
 		inverseForeignKey = @ForeignKey(name = "none")
 	)
-	@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	List<Role> roles = new ArrayList<Role>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -131,7 +137,7 @@ public class User extends SystemEntity {
 		inverseJoinColumns = @JoinColumn(name = "AUTH_ID"), 
 		inverseForeignKey = @ForeignKey(name = "none")
 	)
-	@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	List<Authority> authorities = new ArrayList<Authority>();
 	
 	public User() { }

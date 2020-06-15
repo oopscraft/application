@@ -278,7 +278,7 @@
 					duice.alert("[[#{application.global.deleteComplete(#{application.menu})}]]")
 					.then(async function(){
 						await getMenus();
-						clearDetail();
+						initializeDetail();
 						disableDetail(true);
 					});
 				});

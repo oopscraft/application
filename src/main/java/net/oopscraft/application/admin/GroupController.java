@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.user.Authority;
@@ -46,6 +49,7 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "getGroups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
+	@JsonView(List.class)
 	public List<Group> getGroups(@ModelAttribute Group group,Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Group> groups = groupService.getGroups(group, pagination);
@@ -104,6 +108,14 @@ public class GroupController {
 	@Transactional
 	public Group changeUpperId(@RequestBody Group group) throws Exception {
 		return groupService.changeUpperId(group.getId(), group.getUpperId());
+	}
+	
+	@PreAuthorize("hasAuthority('ADMN_GROP_EDIT')")
+	@RequestMapping(value = "changeSequence", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional
+	public Group changeSequence(@RequestParam("id")String id, @RequestParam("ascend")Boolean ascend) throws Exception {
+		return groupService.changeSequence(id, ascend);
 	}
 
 	/**

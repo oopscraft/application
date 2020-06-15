@@ -138,6 +138,8 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		
+		// adds static resource
         registry.addResourceHandler("/static/**")
         	.addResourceLocations("/static/")
         	.setCachePeriod(3)
@@ -374,12 +376,27 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
 	    	http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
         }
     }
+    
+    /**
+     * Swagger security configuration
+     */
+    @Configuration
+    @Order(4)
+    public class SwaggerWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+    	protected void configure(HttpSecurity http) throws Exception {
+            http.csrf().disable().
+            	authorizeRequests()
+            	.antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**")
+            	.permitAll();
+            http.headers().frameOptions().disable();
+        }
+    }
 
     /**
      * Global security configuration
      */
     @Configuration
-    @Order(4)
+    @Order(5)
     public class GlobalWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     	protected void configure(HttpSecurity http) throws Exception {
     		

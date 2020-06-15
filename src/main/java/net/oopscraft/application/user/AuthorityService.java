@@ -10,6 +10,10 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +35,9 @@ public class AuthorityService {
 	 * @throws Exception
 	 */
 	public List<Authority> getAuthorities(final Authority authority, Pagination pagination) throws Exception {
+		List<Order> orders = new ArrayList<Order>();
+		orders.add(new Order(Direction.DESC, "systemInsertDate"));
+		PageRequest pageRequest = pagination.toPageRequest(new Sort(orders));
 		Page<Authority> authorityPage = authorityRepository.findAll(new  Specification<Authority>() {
 			@Override
 			public Predicate toPredicate(Root<Authority> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -45,7 +52,7 @@ public class AuthorityService {
 				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pagination.toPageRequest());
+		}, pageRequest);
 		pagination.setTotalCount(authorityPage.getTotalElements());
 		return authorityPage.getContent();
 	}

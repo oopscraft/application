@@ -60,11 +60,14 @@ public class ApplicationWebController {
 	@ModelAttribute("_device")
 	public String getDevice(HttpServletRequest request) throws Exception {
 		Device device = DeviceUtils.getCurrentDevice(request);
-		if(device.isMobile() || device.isTablet()) {
-			return "MOBILE";
-		}else {
-			return "PC";
+		if(device != null) {
+			if(device.isMobile() || device.isTablet()) {
+				return "MOBILE";
+			}else {
+				return "PC";
+			}
 		}
+		return null;
 	}
 	
 	/**

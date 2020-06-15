@@ -150,6 +150,7 @@
 		 * Gets specified message
 		 */
 		function getMessage(id){
+			initializeDetail();
 			$.ajax({
 				 url: 'message/getMessage'
 				,type: 'GET'
@@ -399,7 +400,7 @@
 			data-duice-bind="messages,message" 
 			data-duice-selectable="true"
 			style="width:100%;">
-			<col style="width:10%;"/>					
+			<col style="width:15%;"/>					
 			<col/>
 			<col/>
 			<thead>

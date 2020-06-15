@@ -8,7 +8,7 @@
 			value: null,
 			status: null,
 			page: 1,
-			rows: 10,
+			rows: 20,
 			totalCount: -1
 		});
 		const tabFolder = new duice.TabFolder();
@@ -148,6 +148,7 @@
 		 * Gets specified authority
 		 */
 		function getAuthority(id){
+			initializeDetail();
 			$.ajax({
 				 url: 'authority/getAuthority'
 				,type: 'GET'
@@ -217,7 +218,7 @@
 			try{
 				await validateAuthorityId(authority.get('id'));
 			}catch(e){
-				await duice.alert( e);
+				await duice.alert(e);
 				user.setFocus('email');
 				return false;
 			}
@@ -229,38 +230,38 @@
 			}
 			
 			// enters save process
-			duice.confirm("[[#{application.global.saveConfirm(#{application.authority})}]]")
-			.then(function(result){
-				if(result){
-					var data = authority.toJson();
-					$.ajax({
-						 url: 'authority/saveAuthority'
-						,type: 'POST'
-						,data: JSON.stringify(data)
-						,contentType: 'application/json;charset=UTF-8'
-					})
-					.done(function(data, textStatus, jqXHR){
-						duice.alert('[[#{application.global.saveComplete(#{application.authority})}]]')
-						.then(function(){
-							getAuthorities()
-							.then(function(result){
-								// refresh list and details
-								var index = authorities.indexOf(function(row){
-									if(row.get('id') === authority.get('id')){
-										return true;
-									}
-								});
-								if(index > -1){
-									initializeDetail();
-									authorities.selectRow(index);
-								}else{
-									getAuthority(authority.get('id'));
-								}
-							});
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.authority})}]]")){
+				var data = authority.toJson();
+				$.ajax({
+					 url: 'authority/saveAuthority'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR){
+					duice.alert('[[#{application.global.saveComplete(#{application.authority})}]]')
+					.then(async function(){
+						if(isNew){
+							await getAuthorities(1);
+						}else{
+							await getAuthorities();
+						}
+
+						// refresh list and details
+						var index = authorities.indexOf(function(row){
+							if(row.get('id') === authority.get('id')){
+								return true;
+							}
 						});
+						if(index > -1){
+							initializeDetail();
+							authorities.selectRow(index);
+						}else{
+							getAuthority(authority.get('id'));
+						}
 					});
-				}
-			});
+				});
+			}
 		}
 		
 		/**
@@ -327,7 +328,7 @@
 			data-duice-bind="authorities,authority" 
 			data-duice-selectable="true"
 			style="width:100%;">
-			<col style="width:10%;"/>		
+			<col style="width:15%;"/>		
 			<col/>
 			<col/>
 			<thead>

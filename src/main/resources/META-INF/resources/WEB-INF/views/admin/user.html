@@ -321,7 +321,11 @@
 					var id = data.id;
 					duice.alert('[[#{application.global.saveComplete(#{application.user})}]]')
 					.then(async function(){
-						await getUsers();
+						if(isNew){
+							await getUsers(1);
+						}else{
+							await getUsers();
+						}
 
 						// refresh list and details
 						var index = users.indexOf(function(row){
