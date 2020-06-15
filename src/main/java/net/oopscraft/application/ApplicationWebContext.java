@@ -384,11 +384,14 @@ public class ApplicationWebContext implements WebMvcConfigurer, WebSocketConfigu
     @Order(4)
     public class SwaggerWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
     	protected void configure(HttpSecurity http) throws Exception {
-            http.csrf().disable().
-            	authorizeRequests()
-            	.antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**")
-            	.permitAll();
-            http.headers().frameOptions().disable();
+    		http.antMatcher("/v2/api-docs")
+	    		.authorizeRequests()
+	    		.anyRequest()
+	    		.authenticated();
+    		http.httpBasic();
+			http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			http.csrf().disable();
+	    	http.addFilterAfter(authenticationFilter, SecurityContextPersistenceFilter.class);
         }
     }
 

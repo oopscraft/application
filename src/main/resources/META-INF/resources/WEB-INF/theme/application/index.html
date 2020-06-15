@@ -69,7 +69,7 @@
 		<span data-th-text="#{application.global.login}" onclick="_login();" class="link"></span>
 		&nbsp;&nbsp;&nbsp;
 		<img class="icon" th:src="@{/static/image/icon_join.png}"/>
-		<span data-th-text="#{application.global.login}" onclick="_join();" class="link"></span>
+		<span data-th-text="#{application.global.join}" onclick="_join();" class="link"></span>
 		</th:block>
 		<th:block sec:authorize="isAuthenticated()">
 		<img th:src="${_user.photo} == null ? @{/static/image/icon_user.png} : ${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
