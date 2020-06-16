@@ -60,8 +60,7 @@
 			$.ajax({
 				 url: '[[@{/user/join/issueVerification}]]'
 				,type: 'POST'
-				,data: JSON.stringify(join.toJson())
-				,contentType: 'application/json;charset=UTF-8'
+				,data: join.toJson()
 				,suppressErrors: true
 			})
 			.done(function(data, textStatus, jqXHR) {
@@ -118,9 +117,8 @@
 			// calls api
 			$.ajax({
 				 url: '[[@{/user/join/process}]]'
-				,type: 'PUT'
-				,data: JSON.stringify(join.toJson())
-				,contentType: 'application/json;charset=UTF-8'
+				,type: 'POST'
+				,data: join.toJson()
 				,suppressErrors: true
 			})
 			.done(function(data, textStatus, jqXHR) {

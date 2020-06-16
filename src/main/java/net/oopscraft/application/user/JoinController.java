@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.oopscraft.application.ApplicationConfig;
@@ -60,10 +62,12 @@ public class JoinController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "issueVerification", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
 	@Transactional
-	public Verification issueVerification(HttpServletRequest request, @RequestBody ValueMap payloadMap) throws Exception {
-		
-		String email = payloadMap.getString("email");
+	public Verification issueVerification(
+		  HttpServletRequest request
+		 ,@RequestParam("email")String email
+	) throws Exception {
 		
 		// checks already used email address.
 		User user = userService.getUserByEmail(email);
@@ -88,9 +92,18 @@ public class JoinController {
 	 * @param passwordConfirm
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "process", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "process", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@Transactional
-	public void save(HttpServletRequest request, HttpServletResponse response, String email, String verificationId, String verificationCode, String name, String password, String passwordConfirm) throws Exception {
+	public void process(
+		 HttpServletRequest request
+		,HttpServletResponse response
+		,@RequestParam("email") String email
+		,@RequestParam("verificationId") String verificationId
+		,@RequestParam("verificationCode") String verificationCode
+		,@RequestParam("name") String name
+		,@RequestParam("password") String password
+		,@RequestParam("passwordConfirm") String passwordConfirm
+	) throws Exception {
 		
 		// checks verification info
 		boolean isCorrect = verificationService.isCorrectCode(verificationId, verificationCode);
