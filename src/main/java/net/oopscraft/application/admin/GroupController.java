@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
 import net.oopscraft.application.core.Pagination;
 import net.oopscraft.application.user.Authority;
 import net.oopscraft.application.user.Group;
@@ -49,7 +47,6 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "getGroups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@JsonView(List.class)
 	public List<Group> getGroups(@ModelAttribute Group group,Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Group> groups = groupService.getGroups(group, pagination);

@@ -251,11 +251,12 @@
 					var id = data.id;
 					duice.alert('[[#{application.global.saveComplete(#{application.role})}]]')
 					.then(async function(){
+
+						// retrieves list
 						if(isNew){
-							await getRoles(1);
-						}else{
-							await getRoles();
+							search.reset();
 						}
+						await getRoles();
 
 						// refresh list and details
 						var index = roles.indexOf(function(row){
@@ -382,10 +383,10 @@
 			<tbody>
 				<tr>
 					<td class="text-center">
-						<small is="duice-scriptlet" data-duice-bind="search" data-duice-value="
+						<span is="duice-scriptlet" data-duice-bind="search" data-duice-value="
 							return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
-						">
-						</small>
+						" class="font-small">
+						</span>
 					</td>
 					<td>
 						<img is="duice-img" data-duice-bind="role,icon" th:src="@{/static/image/icon_role.png}" class="icon small"/>
@@ -394,10 +395,10 @@
 					<td><span is="duice-span" data-duice-bind="role,name"></span></td>
 					<th:block th:if="${_device!='MOBILE'}">
 					<td class="text-center">
-						<small is="duice-scriptlet" data-duice-bind="role" data-duice-value="
+						<span is="duice-scriptlet" data-duice-bind="role" data-duice-value="
 							return $context.role.get('authorities').length;
-						">
-						</small>
+						" class="font-small">
+						</span>
 					</td>
 					</th:block>
 				</tr>

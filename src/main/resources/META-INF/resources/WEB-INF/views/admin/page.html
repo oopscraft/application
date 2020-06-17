@@ -54,7 +54,7 @@
 		$(document).ready(function() {
 			
 			// checks authorization
-			if([[${!#authorization.expression('hasAuthority("ADMN_PROP_EDIT")')}]]){
+			if([[${!#authorization.expression('hasAuthority("ADMN_PAGE_EDIT")')}]]){
 				lockDetails();
 			}
 			
@@ -241,23 +241,27 @@
 				.done(function(data, textStatus, jqXHR) {
 					var id = data.id;
 					duice.alert('[[#{application.global.saveComplete(#{application.page})}]]')
-					.then(function(){
-						getPages()
-						.then(function(){
-							// refresh list and details
-							var index = pages.indexOf(function(row){
-								if(row.get('id') === id){
-									return true;
-								}
-							});
-							if(index > -1){
-								initializeDetail();
-								pages.selectRow(index);
-							}else{
-								getPage(id);
+					.then(async function(){
+						
+						// retrieves users
+						if(isNew){
+							search.reset();
+						}
+						await getPages();
+
+						// refresh list and details
+						var index = pages.indexOf(function(row){
+							if(row.get('id') === id){
+								return true;
 							}
 						});
-					})
+						if(index > -1){
+							initializeDetail();
+							pages.selectRow(index);
+						}else{
+							getPage(id);
+						}
+					});
 				});
 			}
 		}
@@ -430,7 +434,7 @@
 				<div class="app-flex" style="width:300px;">
 					<select is="duice-select" data-duice-bind="search,key" style="width:30%;">
 						<option value data-th-text="'- '+#{application.global.all}+' -'"></option>
-						<option value="id" data-th-text="#{application.page.name}">Name</option>
+						<option value="name" data-th-text="#{application.page.name}">Name</option>
 						<option value="description" data-th-text="#{application.page.description}">Description</option>
 					</select>
 					<input is="duice-input" type="text" data-duice-bind="search,value" style="width:70%;"/>
@@ -483,7 +487,7 @@
 			<ul is="duice-widget-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
 				<li data-page="[@duice[$context.page]]" onclick="getPages(this.dataset.page);"></li>
 			</ul>
-			<button class="button" onclick="addPage();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_PROP_EDIT'')')}?'lock'">
+			<button class="button" onclick="addPage();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_PAGE_EDIT'')')}?'lock'">
 				<img th:src="@{/static/image/icon_add.png}" class="icon"/>
 				<span data-th-text="#{application.global.add}"></span>
 			</button>
@@ -639,7 +643,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<div class="app-flex">
+			<div class="app-flex gap">
 				<div>
 					<button class="button large" onclick="openPage();">
 						<img th:src="@{/static/image/icon_open.png}" class="icon"/>
@@ -647,11 +651,11 @@
 					</button>
 				</div>
 				<div>
-					<button id="deleteUserButton" class="button large" onclick="deletePage();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_PROP_EDIT'')')}?'lock'">
+					<button id="deleteUserButton" class="button large" onclick="deletePage();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_PAGE_EDIT'')')}?'lock'">
 						<img th:src="@{/static/image/icon_delete.png}" class="icon"/>
 						<span data-th-text="#{application.global.delete}"></span>
 					</button>
-					<button id="saveUserButton" class="button large" onclick="savePage();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_PROP_EDIT'')')}?'lock'">
+					<button id="saveUserButton" class="button large" onclick="savePage();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_PAGE_EDIT'')')}?'lock'">
 						<img th:src="@{/static/image/icon_save.png}" class="icon"/>
 						<span data-th-text="#{application.global.save}"></span>
 					</button>

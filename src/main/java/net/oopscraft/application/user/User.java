@@ -37,8 +37,8 @@ import net.oopscraft.application.core.jpa.SystemEntity;
 	uniqueConstraints={@UniqueConstraint(columnNames={"USER_EMAL"})},
 	indexes = {
 		@Index(columnList="SYS_INST_DATE"),
-		@Index(columnList="USER_EMAL,SYS_INST_DATE"),
-		@Index(columnList="USER_NAME,SYS_INST_DATE")
+		@Index(columnList="USER_EMAL"),
+		@Index(columnList="USER_NAME")
 	}
 )
 @Cacheable

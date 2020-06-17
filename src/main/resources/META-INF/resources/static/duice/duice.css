@@ -305,7 +305,6 @@ input[is='duice-input'][type='number'],
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
 	text-align: right;
-	font-variant: all-small-caps;
 }
 .duice-input-number:disabled { 
 	background-color: #fafafa;

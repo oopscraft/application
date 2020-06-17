@@ -4,6 +4,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -15,7 +16,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
-@Table(name = "APP_AUTH_INFO")
+@Table(
+	name = "APP_AUTH_INFO",
+	indexes = {
+		@Index(columnList="SYS_INST_DATE"),
+		@Index(columnList="AUTH_NAME")
+	}
+)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Authority extends SystemEntity {

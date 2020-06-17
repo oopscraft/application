@@ -4,6 +4,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -14,7 +15,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
-@Table(name = "APP_PROP_INFO")
+@Table(
+	name = "APP_PROP_INFO",
+	indexes = {
+		@Index(columnList="SYS_INST_DATE"),
+		@Index(columnList="PROP_NAME")
+	}
+)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Property extends SystemEntity {

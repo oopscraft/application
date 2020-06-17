@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +39,7 @@ public class MenuService {
 	public List<Menu> getMenus(final Menu menu, Pagination pagination) throws Exception {
 		List<Order> orders = new ArrayList<Order>();
 		orders.add(new Order(Direction.ASC, "upperId"));
-		orders.add(new Order(Direction.ASC, "displayNo"));
+		orders.add(new Order(Direction.ASC, "sequence"));
 		PageRequest pageRequest = pagination.toPageRequest(new Sort(orders));
 		Page<Menu> menusPage = menuRepository.findAll(new Specification<Menu>() {
 			@Override
@@ -88,8 +89,17 @@ public class MenuService {
 		Menu one = null;
 		if(menu.getId() == null || (one = menuRepository.findOne(menu.getId())) == null) {
 			one = new Menu(IdGenerator.uuid());
+			one.setUpperId(menu.getUpperId());
+			one.setSequence(this.getSiblingMaxSequence(one) + 1);
 		}
-		one.setUpperId(menu.getUpperId());
+		
+		// in case of upper id is changed.
+		if(StringUtils.compare(one.getUpperId(), menu.getUpperId()) != 0){
+			one.setUpperId(menu.getUpperId());
+			one.setSequence(this.getSiblingMaxSequence(one) + 1);
+		}
+		
+		// sets other properties
 		one.setName(menu.getName());
 		one.setIcon(menu.getIcon());
 		one.setDescription(menu.getDescription());
@@ -123,6 +133,65 @@ public class MenuService {
 		Menu one = menuRepository.findOne(id);
 		one.setUpperId(upperId);
 		return menuRepository.save(one);
+	}
+	
+	/**
+	 * changeSequencePrevious
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public Menu changeSequence(String id, boolean ascend) throws Exception {
+		Menu group = menuRepository.findOne(id);
+		List<Menu> siblingMenus = this.getSiblingMenus(group);
+		int currentIndex = -1;
+		for(int i = 0, size = siblingMenus.size(); i < size; i ++ ) {
+			if(siblingMenus.get(i).getId().contentEquals(id)) {
+				currentIndex = i;
+				break;
+			}
+		}
+		int targetIndex = ascend ? currentIndex + 1 : currentIndex - 1;
+		if(0 <= targetIndex && targetIndex <= siblingMenus.size()-1) {
+			Menu targetMenu = siblingMenus.get(targetIndex);
+			int targetSequence = targetMenu.getSequence() == null ? 0 : targetMenu.getSequence();
+			int sequence = group.getSequence() == null ? 0 : group.getSequence();
+			targetMenu.setSequence(sequence);
+			group.setSequence(targetSequence);
+			menuRepository.save(targetMenu);
+			menuRepository.save(group);
+		}
+		return menuRepository.findOne(id);
+	}
+	
+	/*
+	 * getSiblingMenus
+	 * @param group
+	 * @return
+	 * @throws Exception
+	 */
+	private List<Menu> getSiblingMenus(Menu group) throws Exception {
+		if(group.getUpperId() == null) {
+			return menuRepository.findRootMenus();
+		}else {
+			return menuRepository.findChildMenus(group.getUpperId());
+		}
+	}
+	
+	/*
+	 * getMaxSiblingMaxSequence
+	 * @param group
+	 * @return
+	 * @throws Exception
+	 */
+	private Integer getSiblingMaxSequence(Menu group) throws Exception {
+		Integer siblingMaxSequence = null;
+		if(group.getUpperId() == null) {
+			siblingMaxSequence = menuRepository.findRootMaxSequence();
+		}else {
+			siblingMaxSequence = menuRepository.findChildMaxSequence(group.getUpperId());
+		}
+		return siblingMaxSequence == null ? 0 : siblingMaxSequence;
 	}
 	
 	/**

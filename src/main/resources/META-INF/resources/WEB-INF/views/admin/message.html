@@ -236,39 +236,40 @@
 			}
 			
 			// enters save process
-			duice.confirm("[[#{application.global.saveConfirm(#{application.message})}]]")
-			.then(function(result){
-				if(result){
-					var data = message.toJson();
-					$.ajax({
-						 url: 'message/saveMessage'
-						,type: 'POST'
-						,data: JSON.stringify(data)
-						,contentType: 'application/json;charset=UTF-8'
-					})
-					.done(function(data, textStatus, jqXHR) {
-						var id = data.id;
-						duice.alert('[[#{application.global.saveComplete(#{application.message})}]]')
-						.then(function(){
-							getMessages()
-							.then(function(){
-								// refresh list and details
-								var index = messages.indexOf(function(row){
-									if(row.get('id') === id){
-										return true;
-									}
-								});
-								if(index > -1){
-									initializeDetail();
-									messages.selectRow(index);
-								}else{
-									getMessage(id);
-								}
-							});
-						})
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.message})}]]")){
+				var data = message.toJson();
+				$.ajax({
+					 url: 'message/saveMessage'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					var id = data.id;
+					duice.alert('[[#{application.global.saveComplete(#{application.message})}]]')
+					.then(async function(){
+						
+						// retrieves users
+						if(isNew){
+							search.reset();
+						}
+						await getMessages();
+						
+						// refresh list and details
+						var index = messages.indexOf(function(row){
+							if(row.get('id') === id){
+								return true;
+							}
+						});
+						if(index > -1){
+							initializeDetail();
+							messages.selectRow(index);
+						}else{
+							getMessage(id);
+						}
 					});
-				}
-			});
+				});
+			}
 		}
 	
 		/**

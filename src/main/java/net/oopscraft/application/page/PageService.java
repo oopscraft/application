@@ -9,6 +9,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +34,9 @@ public class PageService {
 	 * @throws Exception
 	 */
 	public List<Page> getPages(final Page page, Pagination pagination) throws Exception {
+		List<Order> orders = new ArrayList<Order>();
+		orders.add(new Order(Direction.DESC, "systemInsertDate"));
+		PageRequest pageRequest = pagination.toPageRequest(new Sort(orders));
 		org.springframework.data.domain.Page<Page> pagePage = pageRepository.findAll(new Specification<Page>() {
 			@Override
 			public Predicate toPredicate(Root<Page> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -38,9 +45,13 @@ public class PageService {
 					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("name").as(String.class), '%' + page.getName() + '%'));
 					predicates.add(predicate);
 				}
+				if(page.getDescription() != null) {
+					Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(root.get("description").as(String.class), '%' + page.getDescription() + '%'));
+					predicates.add(predicate);
+				}
 				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));	
 			}
-		}, pagination.toPageRequest());
+		}, pageRequest);
 		pagination.setTotalCount(pagePage.getTotalElements());
 		return pagePage.getContent();
 	}

@@ -221,35 +221,35 @@
 			board.setFocus('id');
 		}
 	
-			/**
-			 * validateBoardId
-			 */
-			 function validateBoardId(id){
-				return new Promise(function(resolve,reject){
-					if(duice.isEmpty(id)){
-						return reject('[[#{application.global.enterItem(#{application.board.id})}]]');
-					}
-					if(!duice.isIdFormat(id)){
-						return reject('[[#{application.global.notValidItemFormat(#{application.board.id})}]]');
-					}
-					if(isNew){
-						$.ajax({
-							 url: 'board/getBoard'
-							,type: 'GET'
-							,data: {id:id}
-						})
-						.done(function(data, textStatus, jqXHR) {
-							if(data && data.id === id){
-								reject('[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
-							}else{
-								resolve(true);
-							}
-						});
-					}else{
-						resolve(true);
-					}
-				});
-			}
+		/**
+		 * validateBoardId
+		 */
+		 function validateBoardId(id){
+			return new Promise(function(resolve,reject){
+				if(duice.isEmpty(id)){
+					return reject('[[#{application.global.enterItem(#{application.board.id})}]]');
+				}
+				if(!duice.isIdFormat(id)){
+					return reject('[[#{application.global.notValidItemFormat(#{application.board.id})}]]');
+				}
+				if(isNew){
+					$.ajax({
+						 url: 'board/getBoard'
+						,type: 'GET'
+						,data: {id:id}
+					})
+					.done(function(data, textStatus, jqXHR) {
+						if(data && data.id === id){
+							reject('[[#{application.global.alreadyRegisteredItem(#{application.board.id})}]]');
+						}else{
+							resolve(true);
+						}
+					});
+				}else{
+					resolve(true);
+				}
+			});
+		}
 		
 		/**
 		 * Saves board
@@ -294,6 +294,11 @@
 				.done(function(data, textStatus, jqXHR) {
 					duice.alert('[[#{application.global.saveComplete(#{application.board})}]]')
 					.then(async function(){
+						
+						// retrieves users
+						if(isNew){
+							search.reset();
+						}
 						await getBoards();
 						
 						// refresh list and details

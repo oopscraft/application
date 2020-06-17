@@ -55,7 +55,6 @@ a:hover {
 	text-decoration: none;
 	color: inherit;
 }
-
 hr {
 	border: none;
 	border-top: solid 1px #aaa;
@@ -103,6 +102,9 @@ hr {
 }
 .font-bold {
 	font-weight: bold;
+}
+.font-small {
+	font-size: smaller;
 }
 .text-left {
 	text-align: left;
@@ -170,6 +172,11 @@ hr {
 .button:active:not([disabled]) {
 	position:relative;
 	top:1px;
+}
+.button:focus {
+	outline: none;
+	box-shadow: none;
+	border: solid 1px #777;
 }
 .button.lock {
 	position:relative;

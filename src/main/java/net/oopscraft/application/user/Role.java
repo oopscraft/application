@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -22,7 +23,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
-@Table(name = "APP_ROLE_INFO")
+@Table(
+	name = "APP_ROLE_INFO",
+	indexes = {
+		@Index(columnList="SYS_INST_DATE"),
+		@Index(columnList="ROLE_NAME,SYS_INST_DATE")
+	}
+)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Role extends SystemEntity {

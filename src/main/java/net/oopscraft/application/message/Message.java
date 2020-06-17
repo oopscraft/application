@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -23,7 +24,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.oopscraft.application.core.jpa.SystemEntity;
 
 @Entity
-@Table(name = "APP_MESG_INFO")
+@Table(
+	name = "APP_MESG_INFO",
+	indexes = {
+		@Index(columnList="SYS_INST_DATE"),
+		@Index(columnList="MESG_NAME")
+	}
+)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Message extends SystemEntity {

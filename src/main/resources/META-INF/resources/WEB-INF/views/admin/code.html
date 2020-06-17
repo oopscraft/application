@@ -238,41 +238,42 @@
 			}
 			
 			// enters save process
-			duice.confirm("[[#{application.global.saveConfirm(#{application.code})}]]")
-			.then(function(result){
-				if(result){
-					var data = code.toJson();
-					data.items = codeItems.toJson();
-					data.entities = codeEntities.toJson();
-					$.ajax({
-						 url: 'code/saveCode'
-						,type: 'POST'
-						,data: JSON.stringify(data)
-						,contentType: 'application/json;charset=UTF-8'
-					})
-					.done(function(data, textStatus, jqXHR) {
-						var id = data.id;
-						duice.alert('[[#{application.global.saveComplete(#{application.code})}]]')
-						.then(function(){
-							getCodes()
-							.then(function(){
-								// refresh list and details
-								var index = codes.indexOf(function(row){
-									if(row.get('id') === id){
-										return true;
-									}
-								});
-								if(index > -1){
-									initializeDetail();
-									codes.selectRow(index);
-								}else{
-									getCode(id);
-								}
-							});
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.code})}]]")){
+				var data = code.toJson();
+				data.items = codeItems.toJson();
+				data.entities = codeEntities.toJson();
+				$.ajax({
+					 url: 'code/saveCode'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					var id = data.id;
+					duice.alert('[[#{application.global.saveComplete(#{application.code})}]]')
+					.then(async function(){
+						
+						// retrieves users
+						if(isNew){
+							search.reset();
+						}
+						await getCodes();
+						
+						// refresh list and details
+						var index = codes.indexOf(function(row){
+							if(row.get('id') === id){
+								return true;
+							}
 						});
+						if(index > -1){
+							initializeDetail();
+							codes.selectRow(index);
+						}else{
+							getCode(id);
+						}
 					});
-				}	
-			});
+				});
+			}
 		}
 		
 		/**

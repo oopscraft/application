@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -33,7 +34,13 @@ import net.oopscraft.application.security.SecurityPolicy;
 import net.oopscraft.application.user.Authority;
 
 @Entity
-@Table(name="APP_PAGE_INFO")
+@Table(
+	name="APP_PAGE_INFO",
+	indexes = {
+		@Index(columnList="SYS_INST_DATE"),
+		@Index(columnList="PAGE_NAME")
+	}
+)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Page extends SystemEntity {

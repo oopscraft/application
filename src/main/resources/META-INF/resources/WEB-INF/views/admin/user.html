@@ -321,11 +321,12 @@
 					var id = data.id;
 					duice.alert('[[#{application.global.saveComplete(#{application.user})}]]')
 					.then(async function(){
+						
+						// retrieves users
 						if(isNew){
-							await getUsers(1);
-						}else{
-							await getUsers();
+							search.reset();
 						}
+						await getUsers();
 
 						// refresh list and details
 						var index = users.indexOf(function(row){
@@ -515,10 +516,10 @@
 			<tbody>
 				<tr>
 					<td class="text-center">
-						<small is="duice-scriptlet" data-duice-bind="users" data-duice-value="
+						<span is="duice-scriptlet" data-duice-bind="users" data-duice-value="
 							return (search.get('rows')*(search.get('page')-1)) + $context.index+1;
-						">
-						</small>
+						" class="font-small">
+						</span>
 					</td>
 					<td>
 						<img is="duice-img" data-duice-bind="user,thumbnail" th:src="@{/static/image/icon_user.png}" class="icon small"/>
@@ -631,11 +632,11 @@
 						<th data-th-text="#{application.user.mobile}">Mobile</th>
 						<td>
 							<div class="app-flex">
-								<select is="duice-select" data-duice-bind="user,mobileCountry" style="width:40%;">
+								<select is="duice-select" data-duice-bind="user,mobileCountry" style="width:30%;">
 									<option value data-th-text="'- '+#{application.global.select}+' -'"></option>
 									<option th:each="country:${_countries}" th:value="${country.country}" th:text="${country.displayCountry}"></option>
 								</select>
-								<input is="duice-input" type="text" data-duice-bind="user,mobileNumber"/>
+								<input is="duice-input" type="text" data-duice-bind="user,mobileNumber" style="width:70%;"/>
 							</div>
 						</td>
 					</tr>
@@ -659,9 +660,7 @@
 					<tr>
 						<th data-th-text="#{application.user.joinDate}">Join Date</th>
 						<td>
-							<small style="font-weight:bold;">
-								<span is="duice-span" data-duice-bind="user,joinDate" data-duice-mask="date,yyyy-MM-dd HH:mm:ss"></span>
-							</small>
+							<span is="duice-span" data-duice-bind="user,joinDate" data-duice-mask="date,yyyy-MM-dd HH:mm:ss" class="font-small"></span>
 						</td>
 					</tr>
 					<tr>

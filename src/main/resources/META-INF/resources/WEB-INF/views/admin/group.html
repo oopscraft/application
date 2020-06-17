@@ -269,41 +269,38 @@
 			}
 						
 			// fires confirm message
-			duice.confirm("[[#{application.global.saveConfirm(#{application.group})}]]")
-			.then(function(result){
-				if(result){
-					var data = group.toJson();
-					data.roles = groupRoles.toJson();
-					data.authorities = groupAuthorities.toJson();
-					$.ajax({
-						 url: 'group/saveGroup'
-						,type: 'POST'
-						,data: JSON.stringify(data)
-						,contentType: 'application/json;charset=UTF-8'
-					})
-					.done(function(data, textStatus, jqXHR) {
-						var id = data.id;
-						duice.alert('[[#{application.global.saveComplete(#{application.group})}]]')
-						.then(async function(){
-							getGroups()
-							.then(function(){
-								// refresh list and details
-								var index = groups.indexOf(function(row){
-									if(row.get('id') === id){
-										return true;
-									}
-								});
-								if(index > -1){
-									initializeDetail();
-									groups.selectRow(index);
-								}else{
-									getGroup(id);
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.group})}]]")){
+				var data = group.toJson();
+				data.roles = groupRoles.toJson();
+				data.authorities = groupAuthorities.toJson();
+				$.ajax({
+					 url: 'group/saveGroup'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					var id = data.id;
+					duice.alert('[[#{application.global.saveComplete(#{application.group})}]]')
+					.then(async function(){
+						getGroups()
+						.then(function(){
+							// refresh list and details
+							var index = groups.indexOf(function(row){
+								if(row.get('id') === id){
+									return true;
 								}
 							});
+							if(index > -1){
+								initializeDetail();
+								groups.selectRow(index);
+							}else{
+								getGroup(id);
+							}
 						});
 					});
-				}
-			});
+				});
+			}
 		}
 		
 		/**
@@ -313,7 +310,7 @@
 			$.ajax({
 				 url: 'group/changeSequence'
 				,type: 'POST'
-				,data: { id: id, ascend: ascend }
+				,data: { id:id, ascend:ascend }
 			})
 			.done(function(data, textStatus, jqXHR){
 				getGroups()
@@ -442,11 +439,11 @@
 		data-duice-foldable="true">
 			<li>
 				<div class="app-flex" style="border-bottom:dotted 1px #ccc;">
-					<div class="app-col">
+					<div>
 						<img is="duice-img" data-duice-bind="group,icon" th:src="@{/static/image/icon_group.png}" class="icon small"/>
 						<span is="duice-span" data-duice-bind="group,name" class="id [@duice[$context.group.get('systemEmbedded') === true ? 'embd' : '']]"></span>
 					</div>
-					<div class="app-col right">
+					<div>
 						<img th:src="@{/static/image/icon_arrow_down.png}" class="icon small button" data-id="[@duice[$context.group.get('id')]]" onclick="changeSequence(this.dataset.id, true); event.stopPropagation();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_GROP_EDIT'')')}?'lock'"/>
 						<img th:src="@{/static/image/icon_arrow_up.png}" class="icon small button" data-id="[@duice[$context.group.get('id')]]" onclick="changeSequence(this.dataset.id, false); event.stopPropagation();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_GROP_EDIT'')')}?'lock'"/>
 						<img th:src="@{/static/image/icon_add.png}" class="icon small button" data-id="[@duice[$context.group.get('id')]]" onclick="addChildGroup(this.dataset.id); event.stopPropagation();" th:classappend="!${#authorization.expression('hasAuthority(''ADMN_GROP_EDIT'')')}?'lock'"/>

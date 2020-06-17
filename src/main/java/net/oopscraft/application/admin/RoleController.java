@@ -77,7 +77,7 @@ public class RoleController {
 	@PreAuthorize("hasAuthority('ADMN_ROLE_EDIT')")
 	@RequestMapping(value = "saveRole", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional
 	public Role saveRole(@RequestBody Role role) throws Exception {
 		return roleService.saveRole(role);
 	}
@@ -90,7 +90,7 @@ public class RoleController {
 	@PreAuthorize("hasAuthority('ADMN_ROLE_EDIT')")
 	@RequestMapping(value = "deleteRole", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional
 	public void deleteRole(@RequestBody Role role) throws Exception {
 		roleService.deleteRole(role);
 	}

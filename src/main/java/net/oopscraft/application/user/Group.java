@@ -14,17 +14,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 
 import net.oopscraft.application.core.jpa.SystemEntity;
 
@@ -41,30 +35,24 @@ public class Group extends SystemEntity {
 
 	@Id
 	@Column(name = "GROP_ID", length = 32)
-	@JsonView(List.class)
 	String id;
 
 	@Column(name = "GROP_NAME", length = 1024)
 	@NotNull
-	@JsonView(List.class)
 	String name;
 
 	@Column(name = "UPER_GROP_ID", length = 32)
-	@JsonView(List.class)
 	String upperId;
 	
 	@Column(name = "GROP_SEQ")
-	@JsonView(List.class)
 	Integer sequence;
 	
 	@Column(name = "GROP_ICON", length = Integer.MAX_VALUE)
 	@Lob
-	@JsonView(List.class)
 	String icon;
 
 	@Column(name = "GROP_DESC", length = Integer.MAX_VALUE)
 	@Lob
-	@JsonView(List.class)
 	String description;
 	
 	/**

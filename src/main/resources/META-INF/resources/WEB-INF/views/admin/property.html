@@ -227,39 +227,40 @@
 			}
 
 			// enters save process
-			duice.confirm("[[#{application.global.saveConfirm(#{application.property})}]]")
-			.then(function(result){
-				if(result){
-					var data = property.toJson();
-					$.ajax({
-						 url: 'property/saveProperty'
-						,type: 'POST'
-						,data: JSON.stringify(data)
-						,contentType: 'application/json;charset=UTF-8'
-					})
-					.done(function(data, textStatus, jqXHR) {
-						var id = data.id;
-						duice.alert('[[#{application.global.saveComplete(#{application.property})}]]')
-						.then(function(){
-							getProperties()
-							.then(function(){
-								// refresh list and details
-								var index = properties.indexOf(function(row){
-									if(row.get('id') === id){
-										return true;
-									}
-								});
-								if(index > -1){
-									initializeDetail();
-									properties.selectRow(index);
-								}else{
-									getProperty(id);
-								}
-							});
-						})
+			if(await duice.confirm("[[#{application.global.saveConfirm(#{application.property})}]]")){
+				var data = property.toJson();
+				$.ajax({
+					 url: 'property/saveProperty'
+					,type: 'POST'
+					,data: JSON.stringify(data)
+					,contentType: 'application/json;charset=UTF-8'
+				})
+				.done(function(data, textStatus, jqXHR) {
+					var id = data.id;
+					duice.alert('[[#{application.global.saveComplete(#{application.property})}]]')
+					.then(async function(){
+						
+						// retrieves users
+						if(isNew){
+							search.reset();
+						}
+						await getProperties();
+
+						// refresh list and details
+						var index = properties.indexOf(function(row){
+							if(row.get('id') === id){
+								return true;
+							}
+						});
+						if(index > -1){
+							initializeDetail();
+							properties.selectRow(index);
+						}else{
+							getProperty(id);
+						}
 					});
-				}
-			});
+				});
+			}
 		}
 		
 		/**

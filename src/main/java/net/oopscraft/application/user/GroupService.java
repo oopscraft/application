@@ -160,7 +160,7 @@ public class GroupService {
 		return groupRepository.findOne(id);
 	}
 	
-	/**
+	/*
 	 * getSiblingGroups
 	 * @param group
 	 * @return
@@ -174,7 +174,7 @@ public class GroupService {
 		}
 	}
 	
-	/**
+	/*
 	 * getMaxSiblingMaxSequence
 	 * @param group
 	 * @return

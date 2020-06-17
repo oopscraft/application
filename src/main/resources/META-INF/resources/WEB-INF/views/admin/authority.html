@@ -241,11 +241,12 @@
 				.done(function(data, textStatus, jqXHR){
 					duice.alert('[[#{application.global.saveComplete(#{application.authority})}]]')
 					.then(async function(){
+
+						// retrieves list
 						if(isNew){
-							await getAuthorities(1);
-						}else{
-							await getAuthorities();
+							search.reset();
 						}
+						await getAuthorities();
 
 						// refresh list and details
 						var index = authorities.indexOf(function(row){
@@ -354,7 +355,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<div class="app-flex fluid">
+		<div class="app-flex fluid gap">
 			<small th:if="${_device!='MOBILE'}">
 				Total
 				<span is="duice-span" data-duice-bind="search,totalCount"></span>

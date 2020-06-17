@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -56,11 +57,7 @@ public class MenuController {
 	 */
 	@RequestMapping(value = "getMenus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public List<Menu> getMenus(
-		 @ModelAttribute Menu menu
-		,Pagination pagination
-		,HttpServletResponse response
-	) throws Exception {
+	public List<Menu> getMenus(@ModelAttribute Menu menu, Pagination pagination, HttpServletResponse response) throws Exception {
 		pagination.setEnableTotalCount(true);
 		List<Menu> menus = menuService.getMenus(menu, pagination);
 		response.setHeader(HttpHeaders.CONTENT_RANGE, pagination.getContentRange());
@@ -118,6 +115,14 @@ public class MenuController {
 	@Transactional(rollbackFor = Exception.class)
 	public Menu changeUpperId(@RequestBody Menu menu) throws Exception {
 		return menuService.changeUpperId(menu.getId(), menu.getUpperId());
+	}
+	
+	@PreAuthorize("hasAuthority('ADMN_MENU_EDIT')")
+	@RequestMapping(value = "changeSequence", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	@Transactional
+	public Menu changeSequence(@RequestParam("id")String id, @RequestParam("ascend")Boolean ascend) throws Exception {
+		return menuService.changeSequence(id, ascend);
 	}
 	
 	/**

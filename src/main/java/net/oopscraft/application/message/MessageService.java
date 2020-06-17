@@ -36,7 +36,7 @@ public class MessageService {
 	 */
 	public List<Message> getMessages(final Message message, Pagination pagination) throws Exception {
 		List<Order> orders = new ArrayList<Order>();
-		orders.add(new Order(Direction.ASC, "id"));
+		orders.add(new Order(Direction.DESC, "systemInsertDate"));
 		PageRequest pageRequest = pagination.toPageRequest(new Sort(orders));
 		Page<Message> messagesPage = messageRepository.findAll(new Specification<Message>() {
 			@Override

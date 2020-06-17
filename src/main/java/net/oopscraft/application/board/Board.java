@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -32,7 +33,13 @@ import net.oopscraft.application.security.SecurityPolicy;
 import net.oopscraft.application.user.Authority;
 
 @Entity
-@Table(name = "APP_BORD_INFO")
+@Table(
+	name = "APP_BORD_INFO",
+	indexes = {
+		@Index(columnList="SYS_INST_DATE"),
+		@Index(columnList="BORD_NAME")
+	}
+)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Board extends SystemEntity {
