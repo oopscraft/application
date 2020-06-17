@@ -119,8 +119,8 @@ public class ApiRestController {
 		List<ValueMap> apisPage = new ArrayList<ValueMap>();
 		Pagination pagination = new Pagination();
 		pagination.setEnableTotalCount(true);
-		pagination.setPage(Integer.parseInt(paramMap.getOrDefault("page", "1")));
-		pagination.setRows(Integer.parseInt(paramMap.getOrDefault("rows", "10")));
+		pagination.setPage(Integer.parseInt(paramMap.getOrDefault("_page", "1")));
+		pagination.setRows(Integer.parseInt(paramMap.getOrDefault("_rows", "10")));
 		int count = 0;
 		for(ValueMap api : apis) {
 

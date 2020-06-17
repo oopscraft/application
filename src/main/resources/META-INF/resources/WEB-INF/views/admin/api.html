@@ -2,147 +2,147 @@
 <html layout:decorate="~{admin/admin.html}">
 <main layout:fragment="main">
 	<script>
-	// defines variables
-	var search = new duice.Map({
-		key: null,
-		value: null,
-		status: null,
-		page: 1,
-		rows: 20,
-		totalCount: -1
-	});
-	const tabFolder = new duice.TabFolder();
-	const apis = new duice.List();
-	const api = new duice.Map();
-	const apiVariables = new duice.List();
-	const apiParameters = new duice.List();
-	const apiPayload = new duice.Map();
-
-	// handle when search option is changed.
-	search.onAfterChange(function(name, value){
-		// if select all option, reset value. 
-		if(name === 'key' && !value){
-			search.set('value',null);				
+		// defines variables
+		var search = new duice.Map({
+			key: null,
+			value: null,
+			status: null,
+			page: 1,
+			rows: 20,
+			totalCount: -1
+		});
+		const tabFolder = new duice.TabFolder();
+		const apis = new duice.List();
+		const api = new duice.Map();
+		const apiVariables = new duice.List();
+		const apiParameters = new duice.List();
+		const apiPayload = new duice.Map();
+	
+		// handle when search option is changed.
+		search.onAfterChange(function(name, value){
+			// if select all option, reset value. 
+			if(name === 'key' && !value){
+				search.set('value',null);				
+			}
+		});
+		
+		// event listener for select row
+		apis.onAfterSelectRow(function(selectedRow){
+			api.fromJson(selectedRow.toJson());
+			apiVariables.fromJson(selectedRow.get('variables'));
+			apiParameters.fromJson(selectedRow.get('parameters'));
+			apiPayload.fromJson(selectedRow.get('payload'));
+			$('#response').empty();
+			disableDetail(false);
+			tabFolder.selectTab(0);
+		});
+		
+		// document ready
+		$(document).ready(function() {
+			
+			// creates tab
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
+			tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
+			tabFolder.selectTab(0);
+	
+			// gets apis		
+			getApis();
+		    disableDetail(true);
+		});
+		
+		/**
+		 * Disables detail
+		 */
+		function disableDetail(disable){
+			api.setDisable(disable);
+			$('#detail').find('button').each(function(index, element){
+				$(element).prop('disabled', disable);
+			});
 		}
-	});
 	
-	// event listener for select row
-	apis.onAfterSelectRow(function(selectedRow){
-		api.fromJson(selectedRow.toJson());
-		apiVariables.fromJson(selectedRow.get('variables'));
-		apiParameters.fromJson(selectedRow.get('parameters'));
-		apiPayload.fromJson(selectedRow.get('payload'));
-		$('#response').empty();
-		disableDetail(false);
-		tabFolder.selectTab(0);
-	});
-	
-	// document ready
-	$(document).ready(function() {
+		/**
+		 * Gets API list
+		 */
+		function getApis(page) {
+			return new Promise(function(resolve,reject){
+				if(page){
+					search.set('page',page);
+				}
+				var data = {};
+				if(search.get('key')){
+					data[search.get('key')] = search.get('value');
+				}
+				if(search.get('status')){
+					data.status = search.get('status');
+				}
+				data._page = search.get('page');
+				data._rows = search.get('rows');
+				$.ajax({
+					 url: '[[@{/api}]]'
+					,type: 'GET'
+					,data: data
+				})
+				.done(function(data, textStatus, jqXHR) {
+					apis.fromJson(data);
+					search.set('totalCount', _parseTotalCount(jqXHR));
+					resolve(true);
+			   	});
+			});
+		}
 		
-		// creates tab
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton1'), document.getElementById('tabContent1')));
-		tabFolder.addTab(new duice.Tab(document.getElementById('tabButton2'), document.getElementById('tabContent2')));
-		tabFolder.selectTab(0);
-
-		// gets apis		
-		getApis();
-	    disableDetail(true);
-	});
+		/**
+		 * Test API
+		 */
+		function testApi(){
+			
+			tabFolder.selectTab(1);
+			var url = api.get('uri');
+			var type = api.get('method');
+			
+			// replaces path variables
+			apiVariables.forEach(function(variable){
+				var name = variable.get('name');
+				var value = variable.get('value');
+				url = url.replace('\{' + name + '\}', value);
+			});
 	
-	/**
-	 * Disables detail
-	 */
-	function disableDetail(disable){
-		api.setDisable(disable);
-		$('#detail').find('button').each(function(index, element){
-			$(element).prop('disabled', disable);
-		});
-	}
-
-	/**
-	 * Gets API list
-	 */
-	function getApis(page) {
-		return new Promise(function(resolve,reject){
-			if(page){
-				search.set('page',page);
-			}
-			var data = {};
-			if(search.get('key')){
-				data[search.get('key')] = search.get('value');
-			}
-			if(search.get('status')){
-				data.status = search.get('status');
-			}
-			data._page = search.get('page');
-			data._rows = search.get('rows');
-			$.ajax({
-				 url: '[[@{/api}]]'
-				,type: 'GET'
-				,data: data
-			})
+			// calls api
+			var settings = new Object();
+			settings.url = url + '?' + $.param(apiParameters.toJson());
+			settings.type = type;
+			settings.data = apiPayload.toJson();
+			settings.suppressErrors = true;
+			$.ajax(settings)
 			.done(function(data, textStatus, jqXHR) {
-				apis.fromJson(data);
-				search.set('totalCount', _parseTotalCount(jqXHR));
-				resolve(true);
+				var response = JSON.stringify(data,null,2);
+				api.set('response', response);
+				$('#response').text(response);
+				Prism.highlightAll();
+		   	})
+		   	.fail(function(jqXHR, textStatus, errorThrown){
+				console.error(jqXHR);
+				$('#response').text(jqXHR.responseText);
 		   	});
-		});
-	}
-	
-	/**
-	 * Test API
-	 */
-	function testApi(){
+		}
 		
-		tabFolder.selectTab(1);
-		var url = api.get('uri');
-		var type = api.get('method');
+		/**
+		 * Reset API
+		 */
+		function resetApi(){
+			api.reset();
+			apiVariables.reset();
+			apiParameters.reset();
+			apiPayload.reset();
+			$('#response').empty();
+		}
 		
-		// replaces path variables
-		apiVariables.forEach(function(variable){
-			var name = variable.get('name');
-			var value = variable.get('value');
-			url = url.replace('\{' + name + '\}', value);
-		});
-
-		// calls api
-		var settings = new Object();
-		settings.url = url + '?' + $.param(apiParameters.toJson());
-		settings.type = type;
-		settings.data = apiPayload.toJson();
-		settings.suppressErrors = true;
-		$.ajax(settings)
-		.done(function(data, textStatus, jqXHR) {
-			var response = JSON.stringify(data,null,2);
-			api.set('response', response);
-			$('#response').text(response);
-			Prism.highlightAll();
-	   	})
-	   	.fail(function(jqXHR, textStatus, errorThrown){
-			console.error(jqXHR);
-			$('#response').text(jqXHR.responseText);
-	   	});
-	}
-	
-	/**
-	 * Reset API
-	 */
-	function resetApi(){
-		api.reset();
-		apiVariables.reset();
-		apiParameters.reset();
-		apiPayload.reset();
-		$('#response').empty();
-	}
-	
-	/**
-	 * Copy response
-	 */
-	function copyResponse(){
-		var response = api.get('response');
-		navigator.clipboard.writeText(response);
-	}
+		/**
+		 * Copy response
+		 */
+		function copyResponse(){
+			var response = api.get('response');
+			navigator.clipboard.writeText(response);
+		}
 	</script>
 	
 	<!-- ====================================================== -->
@@ -228,7 +228,7 @@
 			</tbody>
 		</table>
 		<div class="app-flex fluid gap">
-			<small>
+			<small th:if="${_device!='MOBILE'}">
 				Total
 				<span is="duice-span" data-duice-bind="search,totalCount"></span>
 				Rows
@@ -236,6 +236,7 @@
 			<ul is="duice-widget-pagination" data-duice-bind="search,page,rows,totalCount" data-duice-size="5">
 				<li data-page="[@duice[$context.page]]" onclick="getApis(this.dataset.page);"></li>
 			</ul>
+			<span style="width:100px;"></span>
 		</div>
 	</section>
 	<!-- ====================================================== -->

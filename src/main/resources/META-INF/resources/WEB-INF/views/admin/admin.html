@@ -171,7 +171,7 @@
 				</a>
 			</div>
 			<div class="app-flex middle" th:if="${_device=='PC'}">
-				<img th:src="${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
+				<img th:src="${_user.photo} == null ? @{/static/image/icon_user.png} : ${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
 				<span data-th-text="${_user.name}" style="font-weight:bold;"></span>
 				&nbsp;&nbsp;&nbsp;
 				<img class="icon" th:src="@{/static/image/icon_logout.png}"/>
@@ -205,7 +205,7 @@
 			<th:block th:if="${_device=='MOBILE'}">
 				<div class="app-flex">
 					<span>
-						<img th:src="${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
+						<img th:src="${_user.photo} == null ? @{/static/image/icon_user.png} : ${_user.photo}" class="icon" style="width:32px; height:32px; border-radius:32px;"/>
 						<span data-th-text="${_user.name}" style="font-weight:bold;"></span>
 					</span>
 					<button class="button" onclick="_logout();">

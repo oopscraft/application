@@ -141,27 +141,31 @@ public class UserService {
 		one.setAuthorities(user.getAuthorities());
 		
 		// creates thumb nail
-		ByteArrayInputStream bais = null;
-		ByteArrayOutputStream baos = null;
-		try {
-			String photoDataUrl = one.getPhoto();
-			String encodingPrefix = "base64,";
-			int contentStartIndex = photoDataUrl.indexOf(encodingPrefix) + encodingPrefix.length();
-			byte[] imageData = DatatypeConverter.parseBase64Binary(photoDataUrl.substring(contentStartIndex));
-			bais = new ByteArrayInputStream(imageData);
-			baos = new ByteArrayOutputStream();
-			BufferedImage image = ImageIO.read(bais);
-			BufferedImage thumbImg = Scalr.resize(image, Method.ULTRA_QUALITY, Mode.AUTOMATIC, 32, 32);
-			ImageIO.write(thumbImg, "PNG", baos);
-			byte[] encodeBase64 = Base64.getEncoder().encode(baos.toByteArray());
-			String base64Encoded = new String(encodeBase64);
-			String thumbnailDataUrl = "data:image/png;base64,"+base64Encoded;
-			one.setThumbnail(thumbnailDataUrl);
-		}catch(Exception ignore) {
-			LOGGER.warn(ignore.getMessage());
-		}finally {
-			if(bais != null) try { bais.close(); }catch(Exception ignore){}
-			if(baos != null) try { baos.close(); }catch(Exception ignore){}
+		if(one.getPhoto() != null) {
+			ByteArrayInputStream bais = null;
+			ByteArrayOutputStream baos = null;
+			try {
+				String photoDataUrl = one.getPhoto();
+				String encodingPrefix = "base64,";
+				int contentStartIndex = photoDataUrl.indexOf(encodingPrefix) + encodingPrefix.length();
+				byte[] imageData = DatatypeConverter.parseBase64Binary(photoDataUrl.substring(contentStartIndex));
+				bais = new ByteArrayInputStream(imageData);
+				baos = new ByteArrayOutputStream();
+				BufferedImage image = ImageIO.read(bais);
+				BufferedImage thumbImg = Scalr.resize(image, Method.ULTRA_QUALITY, Mode.AUTOMATIC, 32, 32);
+				ImageIO.write(thumbImg, "PNG", baos);
+				byte[] encodeBase64 = Base64.getEncoder().encode(baos.toByteArray());
+				String base64Encoded = new String(encodeBase64);
+				String thumbnailDataUrl = "data:image/png;base64,"+base64Encoded;
+				one.setThumbnail(thumbnailDataUrl);
+			}catch(Exception ignore) {
+				LOGGER.warn(ignore.getMessage());
+			}finally {
+				if(bais != null) try { bais.close(); }catch(Exception ignore){}
+				if(baos != null) try { baos.close(); }catch(Exception ignore){}
+			}
+		}else {
+			one.setThumbnail(null);
 		}
 
 		// save and return
