@@ -15,11 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -90,20 +88,8 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 			}
 			
 			// Saves Login History
-			try {
-				UserLogin userLogin = new UserLogin();
-				userLogin.setUserId(userDetails.getUsername());
-				userLogin.setDate(new Date());
-				userLogin.setSuccessYn("Y");
-				userLogin.setFailReason(null);
-				userLogin.setIp(request.getRemoteAddr());
-				userLogin.setAgent(request.getHeader("User-Agent"));
-				userLogin.setReferer(request.getHeader("referer"));
-				userLoginRepository.saveAndFlush(userLogin);
-			}catch(Exception ignore) {
-				LOGGER.warn(ignore.getMessage(), ignore);
-			}
-			
+			saveUserLoginHistory(request, "Y", null);
+
 			// sets response header
 			response.setStatus(HttpServletResponse.SC_OK);
 			
@@ -122,35 +108,36 @@ public class AuthenticationHandler implements AuthenticationSuccessHandler, Auth
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 		String message = null;
 		Locale locale = localeResolver.resolveLocale(request);
-		if(exception instanceof UsernameNotFoundException) {
-			String item = messageSource.getMessage("application.user", null, locale);
-			message = messageSource.getMessage("application.global.itemNotFound", new Object[]{ item }, locale);
-		}else if(exception instanceof BadCredentialsException) {
-			String item = messageSource.getMessage("application.user.password", null, locale);
-			message = messageSource.getMessage("application.global.itemNotMatch", new Object[]{ item }, locale);
-		}else {
-			message = exception.getMessage();
-		}
+		message = messageSource.getMessage(exception.getMessage(), null, locale);
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		OutputStream out = response.getOutputStream();
 		out.write(message.getBytes());
 		
 		// Saves Login History
 		if(exception instanceof BadCredentialsException) {
-			try {
+			saveUserLoginHistory(request, "N", message);
+		}
+	}
+	
+	/*
+	 * Saves user login history
+	 */
+	private void saveUserLoginHistory(HttpServletRequest request, String successYn, String failReason) {
+		try {
+			User user = userService.getUserByEmail(request.getParameter("username"));
+			if(user != null) {
 				UserLogin userLogin = new UserLogin();
-				User user = userService.getUserByEmail(request.getParameter("email"));
 				userLogin.setUserId(user.getId());
 				userLogin.setDate(new Date());
-				userLogin.setSuccessYn("N");
-				userLogin.setFailReason(message);
+				userLogin.setSuccessYn(successYn);
+				userLogin.setFailReason(failReason);
 				userLogin.setIp(request.getRemoteAddr());
 				userLogin.setAgent(request.getHeader("User-Agent"));
 				userLogin.setReferer(request.getHeader("referer"));
 				userLoginRepository.saveAndFlush(userLogin);
-			}catch(Exception ignore) {
-				LOGGER.warn(ignore.getMessage(), ignore);
 			}
+		}catch(Exception ignore) {
+			LOGGER.warn(ignore.getMessage(), ignore);
 		}
 	}
 	

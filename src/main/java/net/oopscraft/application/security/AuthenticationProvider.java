@@ -2,8 +2,11 @@ package net.oopscraft.application.security;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -29,6 +32,9 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	@Autowired
 	PropertyService propertyService;
 	
+	@Autowired
+	HttpServletRequest request;
+	
 	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
 	/* (non-Javadoc)
@@ -46,7 +52,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		try {
 			user = userService.getUserByEmail(username);
 			if(user == null) {
-				throw new UsernameNotFoundException("User not found");
+				throw new UsernameNotFoundException("application.global.login.userNotFound");
 			}
 		}catch(UsernameNotFoundException e) {
 			throw e;
@@ -54,16 +60,20 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			throw new UsernameNotFoundException(e.getMessage());
 		}
 		
-		
 		// checking password
 		try {
 			if(userService.isCorrectPassword(user.getId(), password) == false) {
-				throw new BadCredentialsException("Password is incorrect.");
+				throw new BadCredentialsException("application.global.login.passwordIncorrect");
 			}
 		}catch(BadCredentialsException e) {
 			throw e;
 		}catch(Exception e) {
 			throw new BadCredentialsException(e.getMessage());
+		}
+		
+		// checking status
+		if(user.getStatus() != User.Status.ACTIVE) {
+			throw new DisabledException("LOGIN_INVALID_STATUS");
 		}
 
 		// return authentication token.

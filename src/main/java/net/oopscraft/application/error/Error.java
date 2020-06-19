@@ -5,13 +5,19 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "APP_EROR_HIST")
+@Table(
+	name = "APP_EROR_HIST",
+	indexes = {
+		@Index(columnList="EROR_DATE")
+	}
+)
 public class Error {
 	
 	@Id
@@ -21,22 +27,22 @@ public class Error {
 	@Column(name = "EROR_DATE", length = 32)
 	Date date;
 
-	@Column(name = "EXCP", length = 32)
-	String exception;
+	@Column(name = "EXCP_CLAS", length = 32)
+	String exceptionClass;
 	
-	@Column(name = "MESG", length = 4000)
-	String message;
+	@Column(name = "EXCP_MESG", length = 4000)
+	String exceptionMessage;
 
 	@JsonIgnore
-	@Column(name = "TRAC", length = Integer.MAX_VALUE)
+	@Column(name = "EXCP_TRCE", length = Integer.MAX_VALUE)
 	@Lob
-	String trace;
+	String exceptionTrace;
 	
-	@Column(name = "URI", length = 1024)
-	String uri;
+	@Column(name = "REQ_URI", length = 1024)
+	String requestUri;
 	
-	@Column(name = "MTHD", length = 32)
-	String method;
+	@Column(name = "REQ_MTHD", length = 32)
+	String requestMethod;
 	
 	@Column(name = "QURY_STRG", length = Integer.MAX_VALUE)
 	@Lob
@@ -68,45 +74,44 @@ public class Error {
 		this.date = date;
 	}
 
-	public String getException() {
-		return exception;
+	public String getExceptionClass() {
+		return exceptionClass;
 	}
 
-	public void setException(String exception) {
-		this.exception = exception;
+	public void setExceptionClass(String exceptionClass) {
+		this.exceptionClass = exceptionClass;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getExceptionMessage() {
+		return exceptionMessage;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setExceptionMessage(String exceptionMessage) {
+		this.exceptionMessage = exceptionMessage;
 	}
 
-	public String getTrace() {
-		return trace;
+	public String getExceptionTrace() {
+		return exceptionTrace;
 	}
 
-	public void setTrace(String trace) {
-		this.trace = trace;
-	}
-	
-
-	public String getUri() {
-		return uri;
+	public void setExceptionTrace(String exceptionTrace) {
+		this.exceptionTrace = exceptionTrace;
 	}
 
-	public void setUri(String uri) {
-		this.uri = uri;
+	public String getRequestUri() {
+		return requestUri;
 	}
 
-	public String getMethod() {
-		return method;
+	public void setRequestUri(String requestUri) {
+		this.requestUri = requestUri;
 	}
 
-	public void setMethod(String method) {
-		this.method = method;
+	public String getRequestMethod() {
+		return requestMethod;
+	}
+
+	public void setRequestMethod(String requestMethod) {
+		this.requestMethod = requestMethod;
 	}
 
 	public String getQueryString() {

@@ -52,6 +52,42 @@ public class ApplicationWebController {
 	@Autowired
     MessageSource messageSource;
 	
+	/**
+	 * index
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(method=RequestMethod.GET)
+	public ModelAndView index() throws Exception {
+		ModelAndView modelAndView = new ModelAndView();
+		
+		// in case of index page id is setting.
+		Property property = propertyService.getProperty("APP_INDX_URI");
+		if(property != null && StringUtils.isNotBlank(property.getValue())) {
+			String indexUri = property.getValue();
+		    RedirectView redirectView = new RedirectView(indexUri);
+		    redirectView.setExposeModelAttributes(false);
+			modelAndView.setView(redirectView);
+		}
+		// index page id setting not found
+		else{
+			modelAndView.setViewName("index.html");
+		}
+		
+		// return view
+		return modelAndView;
+	}
+	
+	/**
+	 * public
+	 */
+	@RequestMapping(value = "public/**", method = RequestMethod.GET)
+	public String forwardPublic(HttpServletRequest request) throws Exception {
+		String resource = request.getRequestURI();
+		String resourceForward = String.format("forward:/WEB-INF/theme/%s%s", applicationConfig.getTheme(), resource);
+		return resourceForward;
+	}
+
 	@ModelAttribute("_application")
 	public ApplicationConfig getApplication() throws Exception {
 		return applicationConfig;
@@ -110,53 +146,6 @@ public class ApplicationWebController {
 		}else {
 			return new User();
 		}
-	}
-	
-	/**
-	 * index
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(method=RequestMethod.GET)
-	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView();
-		
-		// in case of index page id is setting.
-		Property property = propertyService.getProperty("APP_INDX_URI");
-		if(property != null && StringUtils.isNotBlank(property.getValue())) {
-			String indexUri = property.getValue();
-		    RedirectView redirectView = new RedirectView(indexUri);
-		    redirectView.setExposeModelAttributes(false);
-			modelAndView.setView(redirectView);
-		}
-		// index page id setting not found
-		else{
-			modelAndView.setViewName("index.html");
-		}
-		
-		// return view
-		return modelAndView;
-	}
-	
-	/**
-	 * public
-	 */
-	@RequestMapping(value = "public/**", method = RequestMethod.GET)
-	public String forwardPublic(HttpServletRequest request) throws Exception {
-		String resource = request.getRequestURI();
-		String resourceForward = String.format("forward:/WEB-INF/theme/%s%s", applicationConfig.getTheme(), resource);
-		return resourceForward;
-	}
-	
-	/**
-	 * Login page
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "login", method = RequestMethod.GET)
-	public ModelAndView login() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("login.html");
-		return modelAndView;
 	}
 	
 }
