@@ -3,8 +3,8 @@ package net.oopscraft.application.core.spring;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -13,7 +13,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 public abstract class BroadcastWebSocketHandler extends TextWebSocketHandler {
 	
-	private static final Log LOG = LogFactory.getLog(BroadcastWebSocketHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BroadcastWebSocketHandler.class);
 	
 	private List<WebSocketSession> sessionList = new CopyOnWriteArrayList<WebSocketSession>();
 	
@@ -26,20 +26,20 @@ public abstract class BroadcastWebSocketHandler extends TextWebSocketHandler {
 		try { 
 			onDestroy();
 		}catch(Exception ignore){ 
-			LOG.warn(ignore.getMessage(), ignore);
+			LOGGER.warn(ignore.getMessage(), ignore);
 		}
 	} 
 	
 	@Override
 	public final void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		LOG.debug(String.format("afterConnectionEstablished(%s)", session));
+		LOGGER.debug(String.format("afterConnectionEstablished(%s)", session));
 		sessionList.add(session);
 		onConnect(session);
 	}
 	
 	@Override
 	public final void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		LOG.debug(String.format("afterConnectionClosed(%s,%s)", session, status));
+		LOGGER.debug(String.format("afterConnectionClosed(%s,%s)", session, status));
 		sessionList.remove(session);
 		onClose(session, status);
 	}
@@ -60,7 +60,7 @@ public abstract class BroadcastWebSocketHandler extends TextWebSocketHandler {
 			try {
 				session.sendMessage(textMessage);
 			}catch(Exception ignore) {
-				LOG.warn(ignore.getMessage());
+				LOGGER.warn(ignore.getMessage());
 			}
 		}
 	}
