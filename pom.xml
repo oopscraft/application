@@ -43,7 +43,6 @@
 		<org.springframework.boot.version>2.0.9.RELEASE</org.springframework.boot.version>
 		<org.springframework.spring-data-jpa.version>1.9.6.RELEASE</org.springframework.spring-data-jpa.version>
 		<org.springframework.security.version>5.0.9.RELEASE</org.springframework.security.version>
-		<org.springframework.security.oauth.version>2.0.10.RELEASE</org.springframework.security.oauth.version>
 		<org.springframework.batch.version>3.0.9.RELEASE</org.springframework.batch.version>
 	</properties>
 	
@@ -408,6 +407,28 @@
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-websocket</artifactId>
 			<version>8.5.35</version>
+		</dependency>
+		
+		<!--  org.eclipse.jetty -->
+		<dependency>
+		    <groupId>org.eclipse.jetty</groupId>
+		    <artifactId>jetty-server</artifactId>
+		    <version>9.4.3.v20170317</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>9.4.3.v20170317</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.eclipse.jetty</groupId>
+		    <artifactId>jetty-webapp</artifactId>
+		    <version>9.4.3.v20170317</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.eclipse.jetty</groupId>
+		    <artifactId>jetty-annotations</artifactId>
+		    <version>9.4.3.v20170317</version>
 		</dependency>
 		
 		<!-- org.mybatis -->

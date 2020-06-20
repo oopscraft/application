@@ -5,7 +5,14 @@ public class WebServerBuilder {
 	WebServer webServer;
 
 	public WebServerBuilder(Type type) {
-		webServer = new TomcatWebServer();
+		switch(type) {
+		case TOMCAT :
+			this.webServer = new TomcatWebServer();
+		break;
+		case JETTY :
+			this.webServer = new JettyWebServer();
+		break;
+		}
 	}
 	
 	public WebServerBuilder setPort(int port) {
